@@ -1,16 +1,17 @@
 Package: VGAM
-Version: 1.0-1
-Date: 2016-03-15
+Version: 1.0-2
+Date: 2016-05-26
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
-Depends: R (>= 3.0.0), methods, stats, stats4, splines
-Suggests: VGAMdata, MASS
+Depends: R (>= 3.1.0), methods, stats, stats4, splines
+Suggests: VGAMdata, MASS, mgcv
 Description: An implementation of about 6 major classes of
     statistical regression models. At the heart of it are the
     vector generalized linear and additive model (VGLM/VGAM)
     classes, and the book "Vector Generalized Linear and
     Additive Models: With an Implementation in R" (Yee, 2015)
+    <DOI:10.1007/978-1-4939-2818-7>
     gives details of the statistical framework and VGAM package.
     Currently only fixed-effects models are implemented,
     i.e., no random-effects models. Many (150+) models and
@@ -30,6 +31,6 @@ NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2016-03-15 08:53:23 UTC; tyee001
+Packaged: 2016-05-26 13:22:19 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2016-03-15 10:51:21
+Date/Publication: 2016-05-27 18:08:24

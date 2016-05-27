@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -183,7 +183,7 @@ calibrate.qrrvglm <-
       BestOFpar <- rbind(BestOFpar, OFpar[index, ])
       BestOFvalues <- c(BestOFvalues, OFvalues[index])
     } else {
-      BestOFpar <- rbind(BestOFpar, rep(NA_real_, len = Rank))
+      BestOFpar <- rbind(BestOFpar, rep_len(NA_real_, Rank))
       BestOFvalues <- c(BestOFvalues, NA)
     }
   }

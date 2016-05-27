@@ -1,6 +1,13 @@
 Here is a list of known bugs.
 
 
+2016-05
+
+rcim() with alaplace2() may fail.
+
+
+
+
 2014-02
 
 The subset argument of vgam() may not work, especially with
@@ -18,13 +25,10 @@ t(cmat) %*% cmat is diagonal.
 
 
 
-
-
 2013-07
 
 quasipoisson()'s scale parameter estimate does not handle
 prior weights correctly.
-
 
 
 
@@ -64,15 +68,9 @@ from before. But cao() is still working... getting it going soon hopefully.
 
 
 
-
-
 2009/07/13
 cqo() fails... I think it is due to initial values being faulty.
 Hope to look into it soon.
-
-
-
-
 
 
 

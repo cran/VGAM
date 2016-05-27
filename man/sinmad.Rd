@@ -134,10 +134,10 @@ set.seed(3)
 sdata <- data.frame(y1 = rbeta(1000, 6, 6))
 # hist(with(sdata, y1))
 if (FALSE) {
-# This fails
+# These struggle
   fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE)
   fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE,
-               maxit = 6, crit = "coef")
+               crit = "coef")
   Coef(fit1)
 }
 # Try this remedy:

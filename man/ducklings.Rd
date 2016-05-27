@@ -2,7 +2,7 @@
 \alias{ducklings}
 \docType{data}
 \title{
-Relative Frequencies of Serum Proteins in white Pekin ducklings 
+Relative Frequencies of Serum Proteins in White Pekin Ducklings 
 
 %%   ~~ data name/kind ... ~~
 }

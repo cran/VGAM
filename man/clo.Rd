@@ -1,7 +1,7 @@
 \name{clo}
 \alias{clo}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Redirects the user to rrvglm }
+\title{ Redirects the User to rrvglm() }
 \description{
   Redirects the user to the function \code{\link{rrvglm}}.
 }

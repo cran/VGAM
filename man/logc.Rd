@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Complementary-log Link Function }
 \description{
-  Computes the complentary-log transformation, including its inverse and the
-  first two derivatives.
+  Computes the Complementary-log Transformation, Including its Inverse and the
+  First Two Derivatives.
 
 }
 \usage{

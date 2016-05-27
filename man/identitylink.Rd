@@ -40,7 +40,7 @@ identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
   The function \code{negidentity} is the negative-identity link function and
   corresponds to \eqn{g(\theta)=-\theta}{g(theta)=-theta}.
   This is useful for some models, e.g., in the literature supporting the
-  \code{\link{egev}} function it seems that half of the authors use
+  \code{\link{gevff}} function it seems that half of the authors use
   \eqn{\xi=-k}{xi=-k} for the shape parameter and the other half use \eqn{k}
   instead of \eqn{\xi}{xi}.
 

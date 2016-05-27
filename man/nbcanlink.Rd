@@ -1,7 +1,7 @@
 \name{nbcanlink}
 \alias{nbcanlink}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Negative binomial canonical link function }
+\title{ Negative Binomial Canonical Link Function }
 \description{
   Computes the negative binomial canonical link transformation,
   including its inverse and the first two derivatives.

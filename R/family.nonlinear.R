@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -25,7 +25,7 @@ vnonlinear.control <- function(save.weights = TRUE, ...) {
 subset.lohi <- function(xvec, yvec,
                         probs.x = c(0.15, 0.85),
                         type = c("median", "wtmean", "unwtmean"),
-                        wtvec = rep(1, len = length(xvec))) {
+                        wtvec = rep_len(1, length(xvec))) {
 
 
   if (!is.Numeric(probs.x, length.arg = 2))
@@ -212,8 +212,8 @@ micmen.control <- function(save.weights = TRUE, ...) {
       if (length( .init2 )) init2 <- .init2
 
       etastart <- cbind(
-          rep(theta2eta(init1, .link1 , earg = .earg1 ), len = n),
-          rep(theta2eta(init2, .link2 , earg = .earg2 ), len = n))
+          rep_len(theta2eta(init1, .link1 , earg = .earg1 ), n),
+          rep_len(theta2eta(init2, .link2 , earg = .earg2 ), n))
     } else {
       stop("cannot handle 'etastart' or 'mustart'")
     }
@@ -552,8 +552,8 @@ skira.control <- function(save.weights = TRUE, ...) {
       if (length( .init1 )) init1 <- .init1
       if (length( .init2 )) init2 <- .init2
       etastart <- cbind(
-          rep(theta2eta(init1, .link1 , earg = .earg1 ), len = n),
-          rep(theta2eta(init2, .link2 , earg = .earg2 ), len = n))
+          rep_len(theta2eta(init1, .link1 , earg = .earg1 ), n),
+          rep_len(theta2eta(init2, .link2 , earg = .earg2 ), n))
     } else {
       stop("cannot handle 'etastart' or 'mustart'")
     }

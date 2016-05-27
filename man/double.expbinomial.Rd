@@ -104,7 +104,7 @@ double.expbinomial(lmean = "logit", ldispersion = "logit",
 \author{ T. W. Yee }
 \note{
   This function processes the input in the same way
-  as \code{\link{binomialff}}, however multivariate responses are
+  as \code{\link{binomialff}}, however multiple responses are
   not allowed (\code{binomialff(multiple.responses = FALSE)}).
 
 

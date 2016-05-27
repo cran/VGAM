@@ -10,7 +10,8 @@
 \usage{
 lomax(lscale = "loge", lshape3.q = "loge", iscale = NULL, 
       ishape3.q = NULL, imethod = 1, gscale = exp(-5:5),
-      gshape3.q = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = "shape")
+      gshape3.q = seq(0.75, 4, by = 0.25),
+      probs.y = c(0.25, 0.5, 0.75), zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

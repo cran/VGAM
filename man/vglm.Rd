@@ -447,6 +447,7 @@ The \code{VGAM} Package.
   \code{\link{constraints.vlm}},
   \code{\link{hatvaluesvlm}},
   \code{\link{linkfun.vglm}},
+  \code{\link{plotvglm}},
   \code{\link{predictvglm}},
   \code{summary.vglm},
   \code{AIC.vglm},

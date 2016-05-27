@@ -136,7 +136,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 
 }
 \section{Warning }{
-    With a multivariate response, assigning a known dispersion parameter
+    With multiple responses, assigning a known dispersion parameter
     for \emph{each} response is not handled well yet.  Currently, only
     a single known dispersion parameter is handled well.
 

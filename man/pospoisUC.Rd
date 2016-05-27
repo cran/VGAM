@@ -46,7 +46,12 @@ rpospois(n, lambda)
   As \eqn{\lambda}{lambda} increases, the positive-Poisson and Poisson
   distributions become more similar.
   Unlike similar functions for the Poisson distribution, a zero value
-  of \code{lambda} is not permitted here.
+  of \code{lambda} returns a \code{NaN}.
+
+
+
+% Unlike similar functions for the Poisson distribution, a zero value
+% of \code{lambda} is not permitted here.
 
 
 }

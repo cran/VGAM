@@ -135,7 +135,7 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
   Used if \code{xij} of \code{\link{vglm.control}} was used,
   this chooses which inner argument the component is plotted against.
   This argument is related to \code{raw = TRUE} and terms such as
-  \code{NS(dum1,dum2)} and constraint matrices that have more than
+  \code{NS(dum1, dum2)} and constraint matrices that have more than
   one column. The default would plot the smooth against \code{dum1}
   but setting \code{varxij = 2} could mean plotting the smooth against
   \code{dum2}.

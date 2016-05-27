@@ -74,7 +74,7 @@ zapoissonff(llambda = "loge", lonempobs0 = "logit", type.fitted =
 % number that is estimated. It is modelled as a function of the
 % explanatory variables by \code{zero = NULL}. A negative value
 % means that the value is recycled, so setting \eqn{-1} means
-% all \eqn{p_0}{pobs0} are intercept-only (for multivariate responses).
+% all \eqn{p_0}{pobs0} are intercept-only (for multiple responses).
 
 
   }
@@ -193,7 +193,7 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 
   This family function effectively combines \code{\link{pospoisson}}
   and \code{\link{binomialff}} into one family function.
-  This family function can handle a multivariate response,
+  This family function can handle multiple responses,
   e.g., more than one species.
 
 

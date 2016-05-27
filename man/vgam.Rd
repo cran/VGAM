@@ -172,6 +172,16 @@ The \code{VGAM} Package.
 %contains further information and examples.
 
 
+
+
+%Wood, S. N. (2004).
+%Stable and efficient multiple smoothing parameter estimation
+%for generalized additive models.
+%\emph{J. Amer. Statist. Assoc.}, \bold{99}(467): 673--686.
+
+
+
+
 }
 
 \author{ Thomas W. Yee }
@@ -236,6 +246,12 @@ The \code{VGAM} Package.
   \code{\link{cao}}.
 
 
+
+% \code{\link{ps}},
+% \code{\link[mgcv]{magic}}.
+
+
+
 }
 
 \examples{ # Nonparametric proportional odds model 
@@ -257,7 +273,7 @@ pfit$sigma
 fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
              binomialff(multiple.responses = TRUE), data = hunua)
 coef(fit2, matrix = TRUE)  # Not really interpretable 
-\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2)
+\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 3:4, scol = 3:4)
 
 ooo <- with(hunua, order(altitude))
 with(hunua, matplot(altitude[ooo], fitted(fit2)[ooo,], ylim = c(0, 0.8),

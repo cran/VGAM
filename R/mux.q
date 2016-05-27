@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -19,7 +19,7 @@ mux34 <- function(xmat, cc, symmetric = FALSE) {
     stop("'cc' is not a matrix")
   c( .C("VGAM_C_mux34", as.double(xmat), as.double(cc),
          as.integer(nnn), as.integer(RRR),
-         as.integer(symmetric), ans = as.double(rep(0.0, nnn)),
+         as.integer(symmetric), ans = as.double(rep_len(0.0, nnn)),
          NAOK = TRUE)$ans)
 }
 
@@ -40,7 +40,7 @@ mux34 <- function(xmat, cc, symmetric = FALSE) {
     stop("'cc' is not a matrix")
   c( .Fortran("vgamf90mux34", as.double(xmat), as.double(cc),
                as.integer(n), as.integer(R),
-               as.integer(symmetric), ans = as.double(rep(0.0, n)),
+               as.integer(symmetric), ans = as.double(rep_len(0.0, n)),
                NAOK = TRUE)$ans)
 }
 
@@ -62,7 +62,7 @@ mux2 <- function(cc, xmat) {
   M <- d[1]
   if (d[2] != p || d[3] != n)
     stop("dimension size inconformable")
-  ans <- rep(NA_real_, n*M)
+  ans <- rep_len(NA_real_, n*M)
   fred <- .C("mux2", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(p), as.integer(n),
                as.integer(M), NAOK = TRUE)
@@ -81,7 +81,7 @@ mux22 <- function(cc, xmat, M, upper = FALSE, as.matrix = FALSE) {
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
   dimm.value <- nrow(cc)  # Usually M or M(M+1)/2
 
-  ans <- rep(NA_real_, n*M)
+  ans <- rep_len(NA_real_, n*M)
   fred <- .C("mux22", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(dimm.value),
                as.integer(index$row), as.integer(index$col),
@@ -280,7 +280,7 @@ mux15 <- function(cc, xmat) {
   if (max(abs(t(cc)-cc))>0.000001)
     stop("argument 'cc' is not symmetric")
 
-  ans <- rep(NA_real_, n*M*M)
+  ans <- rep_len(NA_real_, n*M*M)
   fred <- .C("mux15", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(M),
                as.integer(n), NAOK = TRUE)
@@ -375,7 +375,7 @@ vchol <- function(cc, M, n, silent = FALSE, callno = 0) {
     } else {
 
 
-      ans[, index] <- tmp777  # restored 16/10/03
+      ans[, index] <- tmp777  # restored 20031016
     }
   }
   dim(ans) <- c(MM, n)  # Make sure

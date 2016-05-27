@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -214,7 +214,7 @@ show.vanova <- function(x, digits = .Options$digits, ...) {
   if (!is.null(heading))
     cat(heading, sep = "\n")
   attr(x, "heading") <- NULL
-  for (ii in 1:length(x)) {
+  for (ii in seq_along(x)) {
     xx <- x[[ii]]
     xna <- is.na(xx)
     xx <- format(zapsmall(xx, digits))

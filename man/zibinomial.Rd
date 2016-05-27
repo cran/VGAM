@@ -66,7 +66,7 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
 % }
   \item{multiple.responses}{ 
   Logical. Currently it must be \code{FALSE} to mean the
-  function does not handle multivariate responses. This
+  function does not handle multiple responses. This
   is to remain compatible with the same argument in
   \code{\link{binomialff}}.
 
@@ -214,7 +214,7 @@ fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE,
 
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
-fitted(fit, type = "pobs0")  # Estimate of P(Y = 0)
+head(fitted(fit, type = "pobs0"))  # Estimate of P(Y = 0)
 head(fitted(fit))
 with(zdata, mean(y))  # Compare this with fitted(fit)
 summary(fit)

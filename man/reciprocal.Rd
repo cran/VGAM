@@ -2,7 +2,7 @@
 \alias{reciprocal}
 \alias{negreciprocal}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Reciprocal link function }
+\title{ Reciprocal Link Function }
 \description{
   Computes the reciprocal transformation, including its inverse and the
   first two derivatives.

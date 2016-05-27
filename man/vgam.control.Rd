@@ -1,7 +1,7 @@
 \name{vgam.control}
 \alias{vgam.control}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Control function for vgam }
+\title{ Control Function for vgam() }
 \description{
  Algorithmic constants and parameters for running \code{\link{vgam}}
  are set using this function. 
@@ -13,7 +13,7 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
              epsilon = 1e-07, maxit = 30, na.action = na.fail,
              nk = NULL, save.weights = FALSE, se.fit = TRUE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75,
-             ...)
+             xij = NULL, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -117,6 +117,12 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 %
 % }
 
+  \item{xij}{
+  Same as \code{\link{vglm.control}}.
+
+
+
+  }
   \item{\dots}{
   other parameters that may be picked up from control
   functions that are specific to the \pkg{VGAM} family function.

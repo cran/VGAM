@@ -27,7 +27,7 @@
 % \references{
 % }
 \examples{
-\dontrun{ fit <- vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE) }
+\dontrun{ fit <- vglm(maxtemp ~ 1, gevff, data = oxtemp, trace = TRUE) }
 }
 \keyword{datasets}
 

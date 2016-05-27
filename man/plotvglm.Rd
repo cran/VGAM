@@ -3,77 +3,65 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Plots for VGLMs }
 \description{
-  Currently not working, this function can be used to feed
-  the object to the VGAM plotting function.
-  In the future some diagnostic plots will be plotted.
+  Currently this function plots the Pearson residuals versus
+  the linear predictors (\eqn{M} plots) and
+  plots the Pearson residuals versus
+  the hat values (\eqn{M} plots).
 
 }
 \usage{
-plotvglm(x, type = c("vglm", "vgam"),
-         newdata = NULL, y = NULL, residuals = NULL,
-         rugplot = TRUE, se = FALSE, scale = 0, raw = TRUE,
-         offset.arg = 0, deriv.arg = 0, overlay = FALSE,
-         type.residuals = c("deviance", "working", "pearson", "response"),
-         plot.arg = TRUE, which.term = NULL, which.cf = NULL,
-         control = plotvgam.control(...), varxij = 1, ...)
+plotvglm(x, which = "(All)", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
   \item{x}{
-  Same as \code{\link{plotvgam}}.
+    An object of class \code{"vglm"} (see \code{\link{vglm-class}})
+    or inherits from that class.
+  
+  
+% Same as \code{\link{plotvgam}}.
 
 
   }
-  \item{type}{
-  Default is the first choice.
-  Currently the first choice gives an error (not written yet).
-  If \code{"vgam"} then all the arguments are fed into
-  \code{\link{plotvgam}}.
+  \item{which}{
+    If a subset of the plots is required, specify a subset of the
+    numbers \code{1:(2*M)}.
+    The default is to plot them all.
 
 
   }
-
-  \item{newdata, y, residuals, rugplot}{
-    Same as \code{\link{plotvgam}}.
-
-
-  }
-  \item{se, scale, raw, offset.arg}{
-    Same as \code{\link{plotvgam}}.
-
-  }
-  \item{deriv.arg, overlay, type.residuals}{
-    Same as \code{\link{plotvgam}}.
-
-  }
-  \item{plot.arg, which.term, which.cf, control}{
-    Same as \code{\link{plotvgam}}.
-
-  }
-  \item{\dots, varxij}{
-    Same as \code{\link{plotvgam}}.
+  \item{\dots}{
+    Arguments fed into the primitive \code{\link[graphics]{plot}}
+    functions.
 
   }
 
 }
 \details{
-  Currently this function has not been written.
-  When this is done some diagnostic plots based on
-  residuals and hatvalues will be done.
-  In the meanwhile, this function can be used to
-  call the plotting function for \code{\link{vgam}} objects.
+  This function is under development.
+  Currently it plots the Pearson residuals
+  against the predicted
+  values (on the transformed scale) and the hat values.
+  There are \eqn{2M} plots in total, therefore
+  users should call \code{\link[graphics]{par}}
+  to assign, e.g., the \code{mfrow} argument.
+  Note: Section 3.7 of Yee (2015) describes the
+  Pearson residuals and hat values for VGLMs.
 
 
 }
 \value{
-  Same as \code{\link{plotvgam}}.
+  Returns the object invisibly.
+
+
+% Same as \code{\link{plotvgam}}.
 
 
 }
 %\references{
 %}
-%\author{ Thomas W. Yee }
+\author{ T. W. Yee }
 
 %\note{
 % \code{plotvglm()} is quite buggy at the moment.
@@ -94,15 +82,22 @@ plotvglm(x, type = c("vglm", "vgam"),
   
 }
 \examples{
-coalminers <- transform(coalminers, Age = (age - 42) / 5)
-fit <- vglm(cbind(nBnW, nBW, BnW, BW) ~ sm.bs(Age),
-            binom2.or(zero = NULL), data = coalminers)
-\dontrun{ par(mfrow = c(1, 3))
-plot(fit, type = "vgam", se = TRUE, ylim = c(-3, 2), las = 1)
-plot(fit, type = "vgam", se = TRUE, which.cf = 1:2,
-     lcol = "blue", scol = "orange", ylim = c(-3, 2))
-plot(fit, type = "vgam", se = TRUE, which.cf = 1:2,
-     lcol = "blue", scol = "orange", overlay = TRUE) }
+\dontrun{
+ndata <- data.frame(x2 = runif(nn <- 200))
+ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)))
+fit1 <- vglm(y1 ~ x2, negbinomial, data = ndata, trace = TRUE)
+coef(fit1, matrix = TRUE)
+par(mfrow = c(2, 2))
+plot(fit1)
+
+# Manually produce the four plots
+plot(fit1, which = 1, col = "blue", las = 1, main = "main1")
+abline(h = 0, lty = "dashed", col = "gray50")
+plot(fit1, which = 2, col = "blue", las = 1, main = "main2")
+abline(h = 0, lty = "dashed", col = "gray50")
+plot(fit1, which = 3, col = "blue", las = 1, main = "main3")
+plot(fit1, which = 4, col = "blue", las = 1, main = "main4")
+}
 }
 \keyword{models}
 \keyword{regression}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -8,7 +8,7 @@
 
 
 vglm.fit <-
-  function(x, y, w = rep(1, length(x[, 1])),
+  function(x, y, w = rep_len(1, nrow(x)),
            X.vlm.arg = NULL,
            Xm2 = NULL, Ym2 = NULL,
            etastart = NULL, mustart = NULL, coefstart = NULL,
@@ -26,7 +26,7 @@ vglm.fit <-
 
   specialCM <- NULL
   post <- list()
-  check.rank <- TRUE  # Set this to false for family functions vppr() etc.
+  check.rank <- TRUE  # Set this to FALSE for family functions vppr() etc.
   check.rank <- control$Check.rank
   nonparametric <- FALSE
   epsilon <- control$epsilon
@@ -42,19 +42,16 @@ vglm.fit <-
 
 
 
-  n <- dim(x)[1]
+  n <- nrow(x)
 
 
 
 
 
-
-  copy.X.vlm <- FALSE  # May be overwritten in @initialize
   stepsize <- orig.stepsize
-  old.coeffs <- coefstart
+  old.coeffs <- coefstart  # May be a NULL
 
-  intercept.only <- ncol(x) == 1 &&
-                    dimnames(x)[[2]] == "(Intercept)"
+  intercept.only <- ncol(x) == 1 && colnames(x) == "(Intercept)"
   y.names <- predictors.names <- NULL  # May be overwritten in @initialize
 
   n.save <- n 
@@ -72,10 +69,7 @@ vglm.fit <-
   if (length(etastart)) {
     eta <- etastart
     mu <- if (length(mustart)) mustart else
-          if (length(body(slot(family, "linkinv"))))
-            slot(family, "linkinv")(eta, extra) else
-            warning("argument 'etastart' assigned a value ",
-                    "but there is no 'linkinv' slot to use it")
+            slot(family, "linkinv")(eta, extra = extra)
   }
 
 
@@ -83,7 +77,7 @@ vglm.fit <-
   if (length(mustart)) {
     mu <- mustart
     if (length(body(slot(family, "linkfun")))) {
-      eta <- slot(family, "linkfun")(mu, extra)
+      eta <- slot(family, "linkfun")(mu, extra = extra)
     } else {
       warning("argument 'mustart' assigned a value ",
               "but there is no 'linkfun' slot to use it")
@@ -91,16 +85,11 @@ vglm.fit <-
   }
 
 
-  validparams <- if (length(body(slot(family, "validparams")))) {
-    slot(family, "validparams")(eta, extra = extra)
-  } else {
-    TRUE
-  }
-  validfitted <- if (length(body(slot(family, "validfitted")))) {
-    slot(family, "validfitted")(mu, extra = extra)
-  } else {
-    TRUE
-  }
+  validparams <- validfitted <- TRUE
+  if (length(body(slot(family, "validparams"))))
+    validparams <- slot(family, "validparams")(eta, y = y, extra = extra)
+  if (length(body(slot(family, "validfitted"))))
+    validfitted <- slot(family, "validfitted")(mu, y = y, extra = extra)
   if (!(validparams && validfitted))
     stop("could not obtain valid initial values. ",
          "Try using 'etastart', 'coefstart' or 'mustart', else ",
@@ -117,24 +106,23 @@ vglm.fit <-
     eval(slot(family, "constraints"))
 
 
-  Hlist <- process.constraints(constraints, x, M,
+  Hlist <- process.constraints(constraints, x = x, M = M,
                                specialCM = specialCM,
                                Check.cm.rank = control$Check.cm.rank)
 
 
   ncolHlist <- unlist(lapply(Hlist, ncol))
-  dimB <- sum(ncolHlist)
 
 
 
 
 
-  X.vlm.save <- if (length(X.vlm.arg)) {
-                  X.vlm.arg
-                } else {
-                  lm2vlm.model.matrix(x, Hlist, xij = control$xij,
-                                                Xm2 = Xm2)
-                }
+  X.vlm.save <-
+    if (length(X.vlm.arg)) {
+      X.vlm.arg
+    } else {
+      lm2vlm.model.matrix(x, Hlist, xij = control$xij, Xm2 = Xm2)
+    }
 
 
 
@@ -142,11 +130,11 @@ vglm.fit <-
     eta <- if (ncol(X.vlm.save) > 1) {
              matrix(X.vlm.save %*% coefstart, n, M, byrow = TRUE) + offset
            } else {
-             matrix(X.vlm.save * coefstart, n, M, byrow = TRUE) + offset
+             matrix(X.vlm.save  *  coefstart, n, M, byrow = TRUE) + offset
            }
     if (M == 1)
       eta <- c(eta) 
-    mu <- slot(family, "linkinv")(eta, extra)
+    mu <- slot(family, "linkinv")(eta, extra = extra)
   }
 
 
@@ -159,74 +147,56 @@ vglm.fit <-
                      coefficients = 1,
                      tfun(mu = mu, y = y, w = w,
                           res = FALSE, eta = eta, extra))
-  old.crit <- ifelse(minimize.criterion,  10 * new.crit + 10,
-                                         -10 * new.crit - 10)
 
   deriv.mu <- eval(slot(family, "deriv"))
   wz <- eval(slot(family, "weight"))
   if (control$checkwz)
-    wz <- checkwz(wz, M = M, trace = trace,
-                  wzepsilon = control$wzepsilon)
+    wz <- checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon)
 
   U <- vchol(wz, M = M, n = n, silent = !trace)
   tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
   z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
-  c.list <- list(z = as.double(z),
-                 fit = as.double(t(eta)),
-                 one.more = TRUE,
-                 coeff = as.double(rep(1, ncol(X.vlm.save))),
-                 U = as.double(U),
-                 copy.X.vlm = copy.X.vlm,
-                 X.vlm = if (copy.X.vlm) as.double(X.vlm.save) else
-                         double(3))
+  one.more <- TRUE
 
 
-  dX.vlm <- as.integer(dim(X.vlm.save))
-  nrow.X.vlm <- dX.vlm[[1]]
-  ncol.X.vlm <- dX.vlm[[2]]
-
+  nrow.X.vlm <- nrow(X.vlm.save)
+  ncol.X.vlm <- ncol(X.vlm.save)
   if (nrow.X.vlm < ncol.X.vlm)
-    stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
+    stop("There are ", ncol.X.vlm, " parameters but only ",
+         nrow.X.vlm, " observations")
 
 
 
 
 
 
-  while (c.list$one.more) {
-    tfit <- vlm.wfit(xmat = X.vlm.save, z,
+  while (one.more) {
+    tfit <- vlm.wfit(xmat = X.vlm.save, zmat = z,
                      Hlist = NULL, U = U,
-                     matrix.out = FALSE,
-                     is.vlmX = TRUE,
-                     qr = qr.arg, xij = NULL)  # fit$smooth.frame is new
+                     matrix.out = FALSE, is.vlmX = TRUE,
+                     qr = qr.arg, xij = NULL)
     
-    c.list$coeff <- tfit$coefficients 
+
     
-    tfit$predictors <- tfit$fitted.values
-    c.list$fit <- tfit$fitted.values
-
-
-    if (!c.list$one.more) {
-      break
-    }
 
 
 
-    fv <- c.list$fit
-    new.coeffs <- c.list$coeff
+
+    fv <- tfit$fitted.values
+    new.coeffs <- tfit$coefficients  # c.list$coeff
 
     if (length(slot(family, "middle")))
       eval(slot(family, "middle"))
 
     eta <- fv + offset
-    mu <- slot(family, "linkinv")(eta, extra)
+    mu <- slot(family, "linkinv")(eta, extra = extra)
 
     if (length(slot(family, "middle2")))
       eval(slot(family, "middle2"))
 
     old.crit <- new.crit
-    new.crit <- 
+    new.crit <-
         switch(criterion,
             coefficients = new.coeffs,
             tfun(mu = mu, y = y, w = w,
@@ -247,12 +217,13 @@ vglm.fit <-
              coefficients = {if (length(new.crit) > 2) cat("\n");
              cat(UUUU, fill = TRUE, sep = ", ")},
              cat(UUUU, fill = TRUE, sep = ", "))
-    }
+    }  # if (trace && orig.stepsize == 1)
 
 
     take.half.step <- (control$half.stepsizing &&
                        length(old.coeffs)) &&
                        ((orig.stepsize != 1) ||
+                        (!is.finite(new.crit)) ||  # 20160321
                         (criterion != "coefficients" &&
                         (if (minimize.criterion) new.crit > old.crit else
                                                  new.crit < old.crit)))
@@ -261,20 +232,15 @@ vglm.fit <-
 
 
     if (!take.half.step && length(old.coeffs))  {
-      validparams <- if (length(body(slot(family, "validparams")))) {
-        slot(family, "validparams")(eta, extra = extra)
-      } else {
-        TRUE
-      }
-      validfitted <- if (length(body(slot(family, "validfitted")))) {
-        slot(family, "validfitted")(mu, extra = extra)
-      } else {
-        TRUE
-      }
+      validparams <- validfitted <- TRUE
+      if (length(body(slot(family, "validparams"))))
+        validparams <- slot(family, "validparams")(eta, y = y, extra = extra)
+      if (length(body(slot(family, "validfitted"))))
+        validfitted <- slot(family, "validfitted")(mu, y = y, extra = extra)
       take.half.step <- !(validparams && validfitted)
                         
 
-     if (take.half.step) {
+     if (FALSE && take.half.step) {
        stepsize <- orig.stepsize / 4
       }
     }
@@ -282,62 +248,58 @@ vglm.fit <-
 
 
     if (take.half.step) {
-      stepsize <- 2 * min(orig.stepsize, 2*stepsize)
+      stepsize <- (1 + (orig.stepsize != 1)) * orig.stepsize
       new.coeffs.save <- new.coeffs
-      if (trace) 
+      if (trace)
         cat("Taking a modified step")
       repeat {
-          if (trace) {
-            cat(".")
-            flush.console()
-          }
-          stepsize <- stepsize / 2
-          if (too.small <- stepsize < 1e-6)
-            break
-          new.coeffs <- (1-stepsize) * old.coeffs +
-                           stepsize  * new.coeffs.save
+        if (trace) {
+          cat(".")
+          flush.console()
+        }
+        stepsize <- stepsize / 2
+        if (too.small <- stepsize < 1e-6)
+          break
+        new.coeffs <- (1-stepsize) * old.coeffs +
+                         stepsize  * new.coeffs.save
 
-          if (length(slot(family, "middle")))
-            eval(slot(family, "middle"))
+        if (length(slot(family, "middle")))
+          eval(slot(family, "middle"))
 
-          fv <- X.vlm.save %*% new.coeffs
-          if (M > 1)
-            fv <- matrix(fv, n, M, byrow = TRUE)
+        fv <- X.vlm.save %*% new.coeffs
+        if (M > 1)
+          fv <- matrix(fv, n, M, byrow = TRUE)
 
-          eta <- fv + offset
-          mu <- slot(family, "linkinv")(eta, extra)
+        eta <- fv + offset
+        mu <- slot(family, "linkinv")(eta, extra = extra)
 
-          if (length(slot(family, "middle2")))
-            eval(slot(family, "middle2"))
+        if (length(slot(family, "middle2")))
+          eval(slot(family, "middle2"))
 
-          new.crit <- 
-            switch(criterion,
-                   coefficients = new.coeffs,
-                   tfun(mu = mu, y = y, w = w,
-                        res = FALSE, eta = eta, extra))
-
-
-          validparams <- if (length(body(slot(family, "validparams")))) {
-            slot(family, "validparams")(eta, extra = extra)
-          } else {
-            TRUE
-          }
-          validfitted <- if (length(body(slot(family, "validfitted")))) {
-            slot(family, "validfitted")(mu, extra = extra)
-          } else {
-            TRUE
-          }
+        new.crit <- 
+          switch(criterion,
+                 coefficients = new.coeffs,
+                 tfun(mu = mu, y = y, w = w,
+                      res = FALSE, eta = eta, extra))
 
 
-          if (validparams && validfitted &&
-             (criterion == "coefficients" || 
-             (( minimize.criterion && new.crit < old.crit) ||
-              (!minimize.criterion && new.crit > old.crit))))
-            break
+        validparams <- validfitted <- TRUE
+        if (length(body(slot(family, "validparams"))))
+          validparams <- slot(family, "validparams")(eta, y, extra = extra)
+        if (length(body(slot(family, "validfitted"))))
+          validfitted <- slot(family, "validfitted")(mu, y, extra = extra)
+
+        if (validparams && validfitted &&
+           (is.finite(new.crit)) &&  # 20160321
+           (criterion == "coefficients" || 
+           (( minimize.criterion && new.crit < old.crit) ||
+            (!minimize.criterion && new.crit > old.crit))))
+          break
       }  # of repeat
 
       if (trace) 
         cat("\n")
+
       if (too.small) {
         warning("iterations terminated because ",
                 "half-step sizes are very small")
@@ -361,10 +323,10 @@ vglm.fit <-
                  if (length(new.crit) > 2) cat("\n");
                  cat(UUUU, fill = TRUE, sep = ", ")},
                  cat(UUUU, fill = TRUE, sep = ", "))
-        }
+        }  # if (trace)
 
         one.more <- eval(control$convergence)
-      }
+      }  # Not too.small
     } else {
       one.more <- eval(control$convergence)
     }
@@ -372,26 +334,28 @@ vglm.fit <-
 
     if (!is.logical(one.more))
       one.more <- FALSE
+
     if (one.more) {
       iter <- iter + 1
       deriv.mu <- eval(slot(family, "deriv"))
       wz <- eval(slot(family, "weight"))
       if (control$checkwz)
-        wz <- checkwz(wz, M = M, trace = trace,
-                      wzepsilon = control$wzepsilon)
+        wz <- checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon)
 
       U <- vchol(wz, M = M, n = n, silent = !trace)
       tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
       z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
-      c.list$z <- z
-      c.list$U <- U
-      if (copy.X.vlm)
-        c.list$X.vlm <- X.vlm.save
-    }
+    }  # if (one.more)
 
-    c.list$one.more <- one.more
-    c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
+
+
+    if (!one.more && take.half.step && orig.stepsize == 1)
+      warning("some quantities such as z, residuals, SEs may ",
+              "be inaccurate due to convergence at a half-step")
+
+
+
     old.coeffs <- new.coeffs
   }  # End of while()
 
@@ -410,12 +374,12 @@ vglm.fit <-
     eval(slot(family, "fini"))
 
   if (M > 1)
-    tfit$predictors <- matrix(tfit$predictors, n, M)
+    fv <- matrix(fv, n, M)
 
-  coefs <- tfit$coefficients
+  final.coefs <- new.coeffs  # Was tfit$coefficients prior to 20160317
   asgn <- attr(X.vlm.save, "assign")
 
-  names(coefs) <- xnrow.X.vlm
+  names(final.coefs) <- xnrow.X.vlm
 
   rank <- tfit$rank
   cnames <- xnrow.X.vlm
@@ -423,30 +387,31 @@ vglm.fit <-
   if (check.rank && rank < ncol.X.vlm)
     stop("vglm only handles full-rank models (currently)")
 
+
   R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
   R[lower.tri(R)] <- 0
   attributes(R) <- list(dim = c(ncol.X.vlm, ncol.X.vlm),
                         dimnames = list(cnames, cnames), rank = rank)
 
   effects <- tfit$effects
-  neff <- rep("", nrow.X.vlm)
+  neff <- rep_len("", nrow.X.vlm)
   neff[seq(ncol.X.vlm)] <- cnames
   names(effects) <- neff
 
-  dim(tfit$predictors) <- c(n, M)
+  dim(fv) <- c(n, M)
   dn <- labels(x)
   yn <- dn[[1]]
   xn <- dn[[2]]
 
 
-  residuals <- z - tfit$predictors
+  wresiduals <- z - fv  # Replaced by fv 20160408
   if (M == 1) {
-    tfit$predictors <- as.vector(tfit$predictors)
-    residuals <- as.vector(residuals)
-    names(residuals) <- names(tfit$predictors) <- yn
+    fv <- as.vector(fv)
+    wresiduals <- as.vector(wresiduals)
+    names(wresiduals) <- names(fv) <- yn
   } else {
-    dimnames(residuals) <- dimnames(tfit$predictors) <-
-                           list(yn, predictors.names)
+    dimnames(wresiduals) <-
+    dimnames(fv)         <- list(yn, predictors.names)
   }
 
   if (is.matrix(mu)) {
@@ -464,7 +429,7 @@ vglm.fit <-
 
   df.residual <- nrow.X.vlm - rank
   fit <- list(assign = asgn,
-              coefficients = coefs,
+              coefficients = final.coefs,
               constraints = Hlist, 
               df.residual = df.residual,
               df.total = n * M,
@@ -472,7 +437,7 @@ vglm.fit <-
               fitted.values = mu,
               offset = offset, 
               rank = rank,
-              residuals = residuals,
+              residuals = wresiduals,
               R = R,
               terms = Terms)  # terms: This used to be done in vglm() 
 
@@ -501,7 +466,7 @@ vglm.fit <-
       orig.assign = attr(x, "assign"),
       p = ncol(x),
       ncol.X.vlm = ncol.X.vlm,
-      ynames = dimnames(y)[[2]])
+      ynames = colnames(y))
 
 
   crit.list <- list()
@@ -527,7 +492,7 @@ vglm.fit <-
     eval(slot(family, "last"))
 
   structure(c(fit,
-   list(predictors = tfit$predictors,
+   list(predictors = fv,  # tfit$predictors,
         contrasts = attr(x, "contrasts"),
         control = control,
         crit.list = crit.list,

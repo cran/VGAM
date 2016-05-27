@@ -1,7 +1,7 @@
 \name{melbmaxtemp}
 \alias{melbmaxtemp}
 \docType{data}
-\title{ melbmaxtemp daily maximum temperatures}
+\title{ Melbourne Daily Maximum Temperatures}
 \description{
   Melbourne daily maximum temperatures in degrees Celsius
   over the ten-year period 1981--1990.

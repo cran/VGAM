@@ -118,8 +118,9 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
 
 \seealso{ 
   \code{\link{betaR}},
+% \code{\link{zoibetaR}},
   \code{\link[stats:Beta]{Beta}},
-  \code{\link{dozibeta}},
+  \code{\link{dzoabeta}},
   \code{\link{genbetaII}},
   \code{\link{betaII}},
   \code{\link{betabinomialff}},

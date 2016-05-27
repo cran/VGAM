@@ -8,7 +8,8 @@
 \title{ Zero-Inflated Poisson Distribution }
 \description{
   Density, distribution function, quantile function and random generation
-  for the zero-inflated Poisson distribution with parameter \code{pstr0}.
+  for the zero-inflated and zero-deflated
+  Poisson distribution with parameter \code{pstr0}.
 
 }
 \usage{
@@ -29,6 +30,8 @@ rzipois(n, lambda, pstr0 = 0)
   called \eqn{\phi}{phi}.
   The default value of \eqn{\phi = 0}{phi = 0} corresponds
   to the response having an ordinary Poisson distribution.
+  This argument may be negative to allow for 0-deflation, hence
+  its interpretation as a probability ceases.
 
   }
   \item{log}{ Logical. Return the logarithm of the answer? }

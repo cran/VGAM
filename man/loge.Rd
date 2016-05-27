@@ -3,7 +3,7 @@
 \alias{negloge}
 \alias{logneg}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Log link function, and variants }
+\title{ Log Link Function, and Variants }
 \description{
   Computes the log transformation, including its inverse and the first
   two derivatives.

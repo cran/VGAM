@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -81,8 +81,8 @@
         junk <- lm.wfit(x = x, y = c(y), w = c(w))
         1.25 * sqrt( sum(w * junk$resid^2) / junk$df.residual )
       }
-      yyyy.est <- rep(yyyy.est , len = n)
-      sd.y.est <- rep(sd.y.est , len = n)
+      yyyy.est <- rep_len(yyyy.est , n)
+      sd.y.est <- rep_len(sd.y.est , n)
       etastart <- cbind(mu = theta2eta(yyyy.est, .lmu , earg =.emu ),
                         sd = theta2eta(sd.y.est, .lsd , earg =.esd ))
     }
@@ -186,11 +186,11 @@ dbisa <- function(x, scale = 1, shape, log = FALSE) {
 
 
   L <- max(length(x), length(shape), length(scale))
-  if (length(x)     != L) x     <- rep(x,     len = L)
-  if (length(shape) != L) shape <- rep(shape, len = L)
-  if (length(scale) != L) scale <- rep(scale, len = L)
+  if (length(x)     != L) x     <- rep_len(x,     L)
+  if (length(shape) != L) shape <- rep_len(shape, L)
+  if (length(scale) != L) scale <- rep_len(scale, L)
 
-  logdensity <- rep(log(0), len = L)
+  logdensity <- rep_len(log(0), L)
 
   xok <- (x > 0)
   xifun <- function(x) {
@@ -358,16 +358,16 @@ rbisa <- function(n, scale = 1, shape) {
         namesof("shape", .lshape , earg = .eshape , tag = FALSE))
 
     if (!length(etastart)) {
-      scale.init <- rep( .iscale , len = n)
-      shape.init <- if (is.Numeric( .ishape)) rep( .ishape , len = n) else {
+      scale.init <- rep_len( .iscale , n)
+      shape.init <- if (is.Numeric( .ishape)) rep_len( .ishape , n) else {
       if ( .imethod == 1) {
-        ybar <- rep(weighted.mean(y, w), len = n)
-        ybarr <- rep(1 / weighted.mean(1/y, w), len = n)  # Reqrs y > 0
+        ybar <- rep_len(weighted.mean(y, w), n)
+        ybarr <- rep_len(1 / weighted.mean(1/y, w), n)  # Reqrs y > 0
         sqrt(ybar / scale.init + scale.init / ybarr - 2)
       } else if ( .imethod == 2) {
         sqrt(2*( pmax(y, scale.init+0.1) / scale.init - 1))
       } else {
-        ybar <- rep(weighted.mean(y, w), len = n)
+        ybar <- rep_len(weighted.mean(y, w), n)
         sqrt(2*(pmax(ybar, scale.init + 0.1) / scale.init - 1))
       }
     }

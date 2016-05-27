@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -27,12 +27,12 @@ dbiclaytoncop <- function(x1, x2, apar = 0, log = FALSE) {
   logdensity[out.square] <- log(0.0)
 
 
-  index0 <- (rep(apar, length = length(A)) < sqrt(.Machine$double.eps))
+  index0 <- (rep_len(apar, length(A)) < sqrt(.Machine$double.eps))
   if (any(index0))
     logdensity[index0] <- log(1.0)
 
 
-  index1 <- (rep(apar, length = length(A)) < 0.0) | (A < 0.0)
+  index1 <- (rep_len(apar, length(A)) < 0.0) | (A < 0.0)
   if (any(index1))
     logdensity[index1] <- NaN
 
@@ -57,7 +57,7 @@ rbiclaytoncop <- function(n, apar = 0) {
         (v2^(-apar / (1 + apar)) - 1) + 1)^(-1 / apar)
 
 
-  index0 <- (rep(apar, length = length(u1)) < sqrt(.Machine$double.eps))
+  index0 <- (rep_len(apar, length(u1)) < sqrt(.Machine$double.eps))
   if (any(index0))
     u2[index0] <- runif(sum(index0))
 
@@ -175,7 +175,7 @@ rbiclaytoncop <- function(n, apar = 0) {
             rhobit(pearson.rho)
           }
 
-          if (any(is.na(apar.init[, spp.])))
+          if (anyNA(apar.init[, spp.]))
             apar.init[, spp.] <- apar.init0
         }
           
@@ -199,7 +199,7 @@ rbiclaytoncop <- function(n, apar = 0) {
   last = eval(substitute(expression({
     M1 <- extra$M1
     Q1 <- extra$Q1
-    misc$link <- rep( .lapar , length = M)
+    misc$link <- rep_len( .lapar , M)
     temp.names <- mynames1
     names(misc$link) <- temp.names
     
@@ -491,7 +491,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
           10
         }
 
-        if (any(is.na(dof.init[, spp.])))
+        if (anyNA(dof.init[, spp.]))
           dof.init[, spp.] <- dof.init0
 
 
@@ -501,7 +501,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
           cor(ymatj[, 1], ymatj[, 2])
         }
 
-        if (any(is.na(rho.init[, spp.])))
+        if (anyNA(rho.init[, spp.]))
           rho.init[, spp.] <- rho.init0
 
       }
@@ -535,9 +535,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     M1 <- extra$M1
     Q1 <- extra$Q1
     misc$link <-
-      c(rep( .ldof , length = M / M1),
-        rep( .lrho , length = M / M1))[
-                       interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .ldof , M / M1),
+        rep_len( .lrho , M / M1))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
@@ -851,7 +850,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
 
 
-        if (any(is.na(rho.init[, spp.])))
+        if (anyNA(rho.init[, spp.]))
           rho.init[, spp.] <- rho.init0
       }
 
@@ -878,7 +877,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
     M1 <- extra$M1
     Q1 <- extra$Q1
-    misc$link <- rep( .lrho , length = M)
+    misc$link <- rep_len( .lrho , M)
     temp.names <- mynames1
     names(misc$link) <- temp.names
 
@@ -1063,18 +1062,14 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
         scale.init1 <- const4 * sum(c(w) *(y[, 1] - locat.init1)^2)
         scale.init2 <- const4 * sum(c(w) *(y[, 2] - locat.init2)^2)
       }
-      loc1.init <- if (length( .iloc1 ))
-                   rep( .iloc1 , length.out = n) else
-                   rep(locat.init1, length.out = n)
-      loc2.init <- if (length( .iloc2 ))
-                   rep( .iloc2 , length.out = n) else
-                   rep(locat.init2, length.out = n)
-      scale1.init <- if (length( .iscale1 ))
-                     rep( .iscale1, length.out = n) else
-                     rep(1, length.out = n)
-      scale2.init <- if (length( .iscale2 ))
-                     rep( .iscale2, length.out = n) else
-                     rep(1, length.out = n)
+      loc1.init <- if (length( .iloc1 )) rep_len( .iloc1 , n) else
+                                         rep_len(locat.init1, n)
+      loc2.init <- if (length( .iloc2 )) rep_len( .iloc2 , n) else
+                                         rep_len(locat.init2, n)
+      scale1.init <- if (length( .iscale1 )) rep_len( .iscale1 , n) else
+                                             rep_len(1, n)
+      scale2.init <- if (length( .iscale2 )) rep_len( .iscale2 , n) else
+                                             rep_len(1, n)
 
       if ( .llocat == "loge")
         locat.init1 <- abs(locat.init1) + 0.001
@@ -1226,12 +1221,12 @@ dbilogis <- function(x1, x2, loc1 = 0, scale1 = 1,
   L <- max(length(x1), length(x2),
            length(loc1), length(loc2),
            length(scale1), length(scale2))
-  if (length(x1    ) != L) x1     <- rep(x1,     length.out = L)
-  if (length(x2    ) != L) x2     <- rep(x2,     length.out = L)
-  if (length(loc1  ) != L) loc1   <- rep(loc1,   length.out = L)
-  if (length(loc2  ) != L) loc2   <- rep(loc2,   length.out = L)
-  if (length(scale1) != L) scale1 <- rep(scale1, length.out = L)
-  if (length(scale2) != L) scale2 <- rep(scale2, length.out = L)
+  if (length(x1    ) != L) x1     <- rep_len(x1,     L)
+  if (length(x2    ) != L) x2     <- rep_len(x2,     L)
+  if (length(loc1  ) != L) loc1   <- rep_len(loc1,   L)
+  if (length(loc2  ) != L) loc2   <- rep_len(loc2,   L)
+  if (length(scale1) != L) scale1 <- rep_len(scale1, L)
+  if (length(scale2) != L) scale2 <- rep_len(scale2, L)
   zedd1 <- (x1 - loc1) / scale1
   zedd2 <- (x2 - loc2) / scale2
 
@@ -1377,20 +1372,20 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
         sumx <- sumx * 1.1; sumxp <- sumxp * 1.2;
         sumy <- sumy * 1.2; sumyp <- sumyp * 1.3;
       }
-      ainit  <- if (length( .ia  )) rep( .ia  , length.out = n) else
+      ainit  <- if (length( .ia  )) rep_len( .ia  , n) else
             arr  / (sumx  + sumyp)
-      apinit <- if (length( .iap )) rep( .iap , length.out = n) else
+      apinit <- if (length( .iap )) rep_len( .iap , n) else
          (n-arr) / (sumxp - sumyp)
-      binit  <- if (length( .ib  )) rep( .ib  , length.out = n) else
+      binit  <- if (length( .ib  )) rep_len( .ib  , n) else
          (n-arr) / (sumx  + sumyp)
-      bpinit <- if (length( .ibp )) rep( .ibp , length.out = n) else
+      bpinit <- if (length( .ibp )) rep_len( .ibp , n) else
             arr  / (sumy - sumx)
 
       etastart <-
-        cbind(theta2eta(rep(ainit,  length.out = n), .la  , earg = .ea  ),
-              theta2eta(rep(apinit, length.out = n), .lap , earg = .eap ),
-              theta2eta(rep(binit,  length.out = n), .lb  , earg = .eb  ),
-              theta2eta(rep(bpinit, length.out = n), .lbp , earg = .ebp ))
+        cbind(theta2eta(rep_len(ainit,  n), .la  , earg = .ea  ),
+              theta2eta(rep_len(apinit, n), .lap , earg = .eap ),
+              theta2eta(rep_len(binit,  n), .lb  , earg = .eb  ),
+              theta2eta(rep_len(bpinit, n), .lbp , earg = .ebp ))
     }
   }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
             .ea = ea, .eap = eap, .eb = eb, .ebp = ebp,
@@ -1611,15 +1606,12 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
       ainit <- grid.search(a.grid, objfun = mcg2.loglik,
                            y = y, x = x, w = w, maximize = TRUE,
                            extraargs = extraargs)
-      ainit <- rep(if (is.Numeric( .iscale )) .iscale else ainit,
-                   length.out = n)
+      ainit <- rep_len(if (is.Numeric( .iscale )) .iscale else ainit, n)
       pinit <- (1/ainit) * abs(momentsY[1]) + 0.01
       qinit <- (1/ainit) * abs(momentsY[2] - momentsY[1]) + 0.01
 
-      pinit <- rep(if (is.Numeric( .ishape1 )) .ishape1 else pinit,
-                   length.out = n)
-      qinit <- rep(if (is.Numeric( .ishape2 )) .ishape2 else qinit,
-                   length.out = n)
+      pinit <- rep_len(if (is.Numeric( .ishape1 )) .ishape1 else pinit, n)
+      qinit <- rep_len(if (is.Numeric( .ishape2 )) .ishape2 else qinit, n)
 
       etastart <-
         cbind(theta2eta(ainit, .lscale),
@@ -1736,7 +1728,7 @@ rbifrankcop <- function(n, apar) {
   if (!is.Numeric(apar, positive = TRUE))
     stop("bad input for argument 'apar'")
   if (length(apar) != use.n)
-    apar <- rep(apar, length.out = use.n)
+    apar <- rep_len(apar, use.n)
   U <- runif(use.n)
   V <- runif(use.n)
 
@@ -1763,9 +1755,9 @@ pbifrankcop <- function(q1, q2, apar) {
   if (!is.Numeric(apar, positive = TRUE)) stop("bad input for 'apar'")
 
   L <- max(length(q1), length(q2), length(apar))
-  if (length(apar) != L) apar <- rep(apar, length.out = L)
-  if (length(q1   ) != L) q1    <- rep(q1,    length.out = L)
-  if (length(q2   ) != L) q2    <- rep(q2,    length.out = L)
+  if (length(apar ) != L) apar  <- rep_len(apar, L)
+  if (length(q1   ) != L) q1    <- rep_len(q1,   L)
+  if (length(q2   ) != L) q2    <- rep_len(q2,   L)
 
   x <- q1; y <- q2
   index <- (x >= 1 & y <  1) | (y >= 1 & x <  1) |
@@ -1814,9 +1806,9 @@ dbifrankcop <- function(x1, x2, apar, log = FALSE) {
   if (!is.Numeric(apar, positive = TRUE)) stop("bad input for 'apar'")
 
   L <- max(length(x1), length(x2), length(apar))
-  if (length(apar) != L) apar <- rep(apar, length.out = L)
-  if (length(x1   ) != L) x1    <- rep(x1,    length.out = L)
-  if (length(x2   ) != L) x2    <- rep(x2,    length.out = L)
+  if (length(apar ) != L) apar  <- rep_len(apar, L)
+  if (length(x1   ) != L) x1    <- rep_len(x1,   L)
+  if (length(x2   ) != L) x2    <- rep_len(x2,   L)
 
   if (log.arg) {
     denom <- apar-1 + (apar^x1  - 1) * (apar^x2  - 1)
@@ -1894,7 +1886,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
       extra$dimnamesy2 <- dimnames(y)[[2]]
 
     if (!length(etastart)) {
-      apar.init <- rep(.iapar, length.out = n)
+      apar.init <- rep_len(.iapar , n)
       etastart <- cbind(theta2eta(apar.init, .lapar , earg = .eapar ))
     }
   }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar))),
@@ -2056,7 +2048,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
     if (!length(etastart)) {
       theta.init <- if (length( .itheta)) {
-        rep( .itheta , length.out = n) 
+        rep_len( .itheta , n) 
       } else {
         1 / (y[, 2] - 1 + 0.01)
       }
@@ -2171,7 +2163,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
       extra$dimnamesy2 = dimnames(y)[[2]]
 
     if (!length(etastart)) {
-      ainit  <- if (length(.iapar))  rep( .iapar , length.out = n) else {
+      ainit  <- if (length(.iapar))  rep_len( .iapar , n) else {
         mean1 <- if ( .imethod == 1) median(y[, 1]) else mean(y[, 1])
         mean2 <- if ( .imethod == 1) median(y[, 2]) else mean(y[, 2])
         Finit <- 0.01 + mean(y[, 1] <= mean1 & y[, 2] <= mean2)
@@ -2179,7 +2171,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
              expm1(-mean1) * expm1(-mean2))
           }
         etastart <-
-          theta2eta(rep(ainit, length.out = n), .lapar , earg = .earg )
+          theta2eta(rep_len(ainit, n), .lapar , earg = .earg )
       }
   }), list( .iapar = iapar, .lapar = lapar, .earg = earg,
             .imethod = imethod ))),
@@ -2291,9 +2283,9 @@ dbifgmcop <- function(x1, x2, apar, log = FALSE) {
     stop("bad input for argument 'log'")
 
   L <- max(length(x1), length(x2), length(apar))
-  if (length(x1)    != L)  x1   <- rep(x1,   length.out = L)
-  if (length(x2)    != L)  x2   <- rep(x2,   length.out = L)
-  if (length(apar)  != L)  apar <- rep(apar, length.out = L)
+  if (length(x1)    != L)  x1   <- rep_len(x1,   L)
+  if (length(x2)    != L)  x2   <- rep_len(x2,   L)
+  if (length(apar)  != L)  apar <- rep_len(apar, L)
   ans <- 0 * x1
   xnok <- (x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)
   if ( log.arg ) {
@@ -2316,9 +2308,9 @@ pbifgmcop <- function(q1, q2, apar) {
   if (any(abs(apar) > 1)) stop("'apar' values out of range")
 
   L <- max(length(q1), length(q2), length(apar))
-  if (length(q1)    != L)     q1 <- rep(q1,    length.out = L)
-  if (length(q2)    != L)     q2 <- rep(q2,    length.out = L)
-  if (length(apar) != L)  apar <- rep(apar, length.out = L)
+  if (length(q1)    != L)  q1   <- rep_len(q1,   L)
+  if (length(q2)    != L)  q2   <- rep_len(q2,   L)
+  if (length(apar)  != L)  apar <- rep_len(apar, L)
 
   x <- q1
   y <- q2
@@ -2408,8 +2400,7 @@ pbifgmcop <- function(q1, q2, apar) {
 
     ainit <- min(0.95, max(ainit, -0.95))
 
-    etastart <-
-      theta2eta(rep(ainit, length.out = n), .lapar , earg = .earg )
+    etastart <- theta2eta(rep_len(ainit, n), .lapar , earg = .earg )
     }
   }), list( .iapar = iapar, .lapar = lapar, .earg = earg,
             .imethod = imethod ))),
@@ -2532,21 +2523,21 @@ pbifgmcop <- function(q1, q2, apar) {
       c(namesof("apar", .lapar , earg = .earg , short = TRUE))
 
     if (!length(etastart)) {
-      ainit  <- if (length( .iapar ))  rep( .iapar, length.out = n) else {
+      ainit  <- if (length( .iapar ))  rep_len( .iapar, n) else {
         mean1 <- if ( .imethod == 1) median(y[, 1]) else mean(y[, 1])
         mean2 <- if ( .imethod == 1) median(y[, 2]) else mean(y[, 2])
         Finit <- 0.01 + mean(y[, 1] <= mean1 & y[, 2] <= mean2)
         (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
       }
       etastart <-
-        theta2eta(rep(ainit,  length.out = n), .lapar , earg = .earg )
+        theta2eta(rep_len(ainit,  n), .lapar , earg = .earg )
       }
   }), list( .iapar = iapar, .lapar = lapar, .earg = earg,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     alpha <- eta2theta(eta, .lapar , earg = .earg )
-    cbind(rep(1, len = length(alpha)),
-          rep(1, len = length(alpha)))
+    cbind(rep_len(1, length(alpha)),
+          rep_len(1, length(alpha)))
   }, list( .lapar = lapar, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
@@ -2630,9 +2621,9 @@ pbiplackcop <- function(q1, q2, oratio) {
   if (!is.Numeric(oratio, positive = TRUE)) stop("bad input for 'oratio'")
 
   L <- max(length(q1), length(q2), length(oratio))
-  if (length(q1) != L)  q1 <- rep(q1, length.out = L)
-  if (length(q2) != L)  q2 <- rep(q2, length.out = L)
-  if (length(oratio) != L)  oratio <- rep(oratio, length.out = L)
+  if (length(q1)     != L)  q1     <- rep_len(q1,     L)
+  if (length(q2)     != L)  q2     <- rep_len(q2,     L)
+  if (length(oratio) != L)  oratio <- rep_len(oratio, L)
 
   x <- q1; y <- q2
   index <- (x >= 1 & y <  1) | (y >= 1 & x <  1) |
@@ -2762,9 +2753,7 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
              (0.5 + sum(w[(y[, 1] >= y10) & (y[, 2] <  y20)]))))
           }
         }
-        etastart <-
-          theta2eta(rep(orinit, length.out = n),
-                    .link , earg = .earg )
+        etastart <- theta2eta(rep_len(orinit, n), .link , earg = .earg )
     }
   }), list( .ioratio = ioratio, .link = link, .earg = earg,
             .imethod = imethod ))),
@@ -2873,9 +2862,9 @@ dbiamhcop <- function(x1, x2, apar, log = FALSE) {
 
 
   L <- max(length(x1), length(x2), length(apar))
-  apar <- rep(apar,  length.out = L)
-  x1    <- rep(x1,     length.out = L)
-  x2    <- rep(x2,     length.out = L)
+  if (length(apar)     != L)  apar  <- rep_len(apar,  L)
+  if (length(x1)       != L)  x1    <- rep_len(x1,    L)
+  if (length(x2)       != L)  x2    <- rep_len(x2,    L)
   temp <- 1 - apar*(1-x1)*(1-x2)
 
   if (log.arg) {
@@ -2896,9 +2885,9 @@ pbiamhcop <- function(q1, q2, apar) {
   if (!is.Numeric(apar)) stop("bad input for 'apar'")
 
   L <- max(length(q1), length(q2), length(apar))
-  if (length(q1)    != L)  q1    <- rep(q1,    length.out = L)
-  if (length(q2)    != L)  q2    <- rep(q2,    length.out = L)
-  if (length(apar) != L)  apar <- rep(apar, length.out = L)
+  if (length(q1)    != L)  q1    <- rep_len(q1,   L)
+  if (length(q2)    != L)  q2    <- rep_len(q2,   L)
+  if (length(apar)  != L)  apar  <- rep_len(apar, L)
 
   x <- q1
   y <- q2
@@ -3006,8 +2995,7 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
           (1 - (mean1 * mean2 / Finit)) / ((1-mean1) * (1-mean2))
       }
       ainit <- min(0.95, max(ainit, -0.95))
-      etastart <-
-        theta2eta(rep(ainit, length.out = n), .lapar , earg = .eapar )
+      etastart <- theta2eta(rep_len(ainit, n), .lapar , earg = .eapar )
     }
   }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar,
             .imethod = imethod))),
@@ -3249,7 +3237,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
     con.use <- con.m
-    for (klocal in 1:length(con.m)) {
+    for (klocal in seq_along(con.m)) {
       con.use[[klocal]] <-
         cbind(con.m[[klocal]],
               con.s[[klocal]],
@@ -3304,16 +3292,13 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
       extra$dimnamesy2 <- dimnames(y)[[2]]
 
     if (!length(etastart)) {
-      imean1 <- rep(if (length( .imean1 )) .imean1 else
-                   weighted.mean(y[, 1], w = w), length.out = n)
-      imean2 <- rep(if (length( .imean2 )) .imean2 else
-                   weighted.mean(y[, 2], w = w), length.out = n)
-      isd1   <- rep(if (length( .isd1 )) .isd1 else  sd(y[, 1]),
-                   length.out = n)
-      isd2   <- rep(if (length( .isd2 )) .isd2 else  sd(y[, 2]),
-                   length.out = n)
-      irho   <- rep(if (length( .irho )) .irho else cor(y[, 1], y[, 2]),
-                   length.out = n)
+      imean1 <- rep_len(if (length( .imean1 )) .imean1 else
+                   weighted.mean(y[, 1], w = w), n)
+      imean2 <- rep_len(if (length( .imean2 )) .imean2 else
+                   weighted.mean(y[, 2], w = w), n)
+      isd1   <- rep_len(if (length( .isd1 )) .isd1 else  sd(y[, 1]), n)
+      isd2   <- rep_len(if (length( .isd2 )) .isd2 else  sd(y[, 2]), n)
+      irho   <- rep_len(if (length( .irho )) .irho else cor(y[, 1], y[,2]),n)
 
       if ( .imethod == 2) {
         imean1 <- abs(imean1) + 0.01
@@ -3533,20 +3518,19 @@ gumbelI <-
     predictors.names <-
       c(namesof("a", .la, earg =  .earg , short = TRUE))
     if (!length(etastart)) {
-        ainit  <- if (length( .ia ))  rep( .ia, len = n) else {
+        ainit  <- if (length( .ia ))  rep_len( .ia , n) else {
             mean1 <- if ( .imethod == 1) median(y[,1]) else mean(y[,1])
             mean2 <- if ( .imethod == 1) median(y[,2]) else mean(y[,2])
                 Finit <- 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
       (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
             }
-            etastart <-
-               theta2eta(rep(ainit,  len = n), .la, earg =  .earg )
+            etastart <- theta2eta(rep_len(ainit, n), .la , earg =  .earg )
       }
   }), list( .ia=ia, .la = la, .earg = earg, .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    alpha <- eta2theta(eta, .la, earg =  .earg )
-    cbind(rep(1, len = length(alpha)),
-          rep(1, len = length(alpha)))
+    alpha <- eta2theta(eta, .la , earg =  .earg )
+    cbind(rep_len(1, length(alpha)),
+          rep_len(1, length(alpha)))
   }, list( .la = la ))),
   last = eval(substitute(expression({
     misc$link <-    c("a" = .la )

@@ -1,7 +1,7 @@
 \name{depvar}
 \alias{depvar}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Response variable extracted }
+\title{ Response Variable Extracted }
 \description{
   A generic function that extracts the response/dependent
   variable from objects.

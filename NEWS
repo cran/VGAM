@@ -6,6 +6,64 @@
 
 
 
+                CHANGES IN VGAM VERSION 1.0-2
+
+NEW FEATURES
+
+    o   vglm.fit() has been simplified and handles half-stepping better.
+    o   AR1() implements the EIM of Porat and Friedlander (1986); this is
+        the work of Victor Miranda. It is specified by type.EIM = "exact"
+        (the default).
+    o   Function gevff() replaces egev(). It handles multiple responses
+        like any other ordinary VGAM family function.
+    o   A rudimentrary plotvglm() plots the Pearson residuals, firstly
+        versus the predicted values, and secondly, against the hat values.
+    o   The 'refLevel' argument of multinomial() accepts a character string,
+        e.g., multinomial(refLevel = "European") for xs.nz$ethnicity as a
+        response.
+    o   New family function: oipospoisson(dpqr), zoabetaR().
+    o   New functions: grid.search[23](), [dpqr]oiposbinom().
+    o   is.buggy() is called by vgam() immediately after estimation;
+        it gives a warning if any constraint matrix corresponding
+        to an s() term is not orthogonal.
+
+
+
+BUG FIXES and CHANGES
+
+    o   vglm.fit() did not handle half-stepping very well.
+    o   Some families for counts (i.e., [pos,z[ai]]negbinomial[ff]())
+        have been "validparams"-enabled in order to make estimation
+        near the boundary of the parameter space more stable,
+        especially when a Poisson approximation is suitable.
+    o   Other families that have been "validparams"-enabled:
+        gev(), gpd().
+    o   Actuarial or statistical size distributions families have
+        been modified with respect to initial values, e.g.,
+        sinmad, dagum, [inv.]lomax, [inv.]paralogistic, [gen]betaII().
+    o   rep_len() replaces rep() where possible.
+    o   Function gev() has been changed internally and
+        arguments such as 'gshape' have changed.
+    o   Function rzipois() may not have handled 0-deflation properly
+        but it does so now.
+    o   Function plotvgam() had a bug testing for variable names when
+        the xij facility was used.
+    o   multinomial() and multilogit() use "(Last)" to signify
+        the last level of a factor; it used to be "last".
+    o   qposbinom() returned 0 (incorrect), and not 1 (correct), for p = 0.
+    o   zipoisson() and zipoissonff() no longer store fitted values such
+        as pstr0 in the misc slot. They can be obtained by, e.g.,
+        fitted(fit, type.fitted = "pstr0").
+    o   Renamed functions:
+        egumbel() is now called gumbelff().
+        [dqpr]ozibeta() is now called [dqpr]zoabeta().
+    o   Renamed parameter names: zetaff() uses 'shape', not 'p'.
+    o   qzibinom() did not handle arguments lower.tail and log.p correctly.
+    o   Tested okay on R 3.3.0. This package now requires R 3.1.0 or higher
+        (not R 3.0.0 as before).
+
+
+
                 CHANGES IN VGAM VERSION 1.0-1
 
 NEW FEATURES

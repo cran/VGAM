@@ -3,7 +3,31 @@
 %
 %
 %
-% 201602:
+% 201605
+\alias{deflat.limit.oipospois}
+% 20160418 (keyword: mgcvvgam)
+% \alias{ps}
+\alias{Pen.psv}
+\alias{psv2magic}
+% \alias{psvglm.fit}
+% \alias{psvlm.wfit}
+\alias{psvgam-class}
+% \alias{PS}
+%
+\alias{checkwz}
+\alias{vforsub}
+\alias{vbacksub}
+\alias{vchol}
+\alias{process.constraints}
+\alias{mux22}
+\alias{mux111}
+%
+%
+% 201602, 201603, 201604:
+\alias{genbetaII.Loglikfun4}
+\alias{posNBD.Loglikfun2}
+\alias{NBD.Loglikfun2}
+\alias{AR1.gammas}
 \alias{Init.mu}
 \alias{.min.criterion.VGAM}
 \alias{predictvglmS4VGAM}
@@ -55,6 +79,9 @@
 \alias{rlevy}
 % 201407; expected.betabin.ab is needed for zibetabinomialff() in YBook.
 \alias{grid.search}
+\alias{grid.search2}
+\alias{grid.search3}
+\alias{grid.search4}
 \alias{expected.betabin.ab}
 % 201406;
 % \alias{interleave.VGAM}   DONE 20151204
@@ -478,10 +505,8 @@
 \alias{model.matrix.qrrvglm}
 \alias{model.matrixvgam}
 % \alias{mux11}
-% \alias{mux111}
 % \alias{mux15}
 % \alias{mux2}
-% \alias{mux22}
 % \alias{mux5}
 % \alias{mux55}
 % \alias{mux7}
@@ -536,7 +561,6 @@
 \alias{negzero.expression.VGAM}
 \alias{process.binomial2.data.VGAM}
 \alias{process.categorical.data.VGAM}
-% \alias{process.constraints}
 % \alias{proj.vgam}
 % \alias{proj.vglm}
 \alias{put.caption}
@@ -631,8 +655,6 @@
 % \alias{valt.2iter}
 % \alias{valt.control}
 % \alias{varassign}
-% \alias{vbacksub}
-% \alias{vchol}
 % \alias{vchol.greenstadt}
 \alias{vcontrol.expression}
 % \alias{vcovdefault}
@@ -641,7 +663,6 @@
 % \alias{vcovvlm}
 % \alias{veigen}
 % \alias{vellipse}
-% \alias{vforsub}
 % \alias{vgam.fit}
 % \alias{vgam.match}
 % \alias{vgam.nlchisq}

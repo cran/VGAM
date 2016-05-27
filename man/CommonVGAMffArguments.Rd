@@ -1,7 +1,7 @@
 \name{CommonVGAMffArguments}
 \alias{CommonVGAMffArguments}
 \alias{TypicalVGAMfamilyFunction}
-\title{Common VGAM family function Arguments }
+\title{Common VGAM Family Function Arguments }
 \description{
   Here is a description of some common and typical arguments found
   in many \pkg{VGAM} family functions, e.g.,
@@ -101,7 +101,25 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 % The actual search values will be \code{unique(sort(c(gshape)))}, etc.
   If the grid search is 2-dimensional then it is advisable not to
   make the vectors too long as a nested \code{for} loop may be used.
-  Ditto for 3-dimensions.
+  Ditto for 3-dimensions etc.
+  Sometimes a \code{".mux"} is added as a suffix, e.g., \code{gshape.mux};
+  this means that the grid is created relatively and not absolutely,
+  e.g., its values are multipled by some single initial estimate of the
+  parameter in order to create the grid on an absolute scale.
+
+
+
+  Some family functions have an argument called \code{gprobs.y}.
+  This is fed into the \code{probs}
+  argument of \code{\link[stats:quantile]{quantile}} in order to
+  obtain some values of central tendency of the response,
+  i.e., some spread of values in the middle.
+  when \code{imethod = 1} to obtain an initial value for the mean
+  Some family functions have an argument called \code{iprobs.y}, and
+  if so, then these values can overwrite \code{gprobs.y}.
+
+
+
 
 
 % Then the actual search values will be \code{unique(sort(c(gshape, 1/gshape)))}, etc.

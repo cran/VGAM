@@ -15,8 +15,7 @@ rbinom2.or(n, mu1,
            oratio = 1, exchangeable = FALSE, tol = 0.001, twoCols = TRUE,
            colnames = if (twoCols) c("y1","y2") else c("00", "01", "10", "11"),
            ErrorCheck = TRUE)
-dbinom2.or(mu1,
-           mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
+dbinom2.or(mu1, mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
            oratio = 1, exchangeable = FALSE, tol = 0.001,
            colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
 
@@ -86,9 +85,11 @@ dbinom2.or(mu1,
   \code{\link{binom2.or}}.
 
 
+
   The function \code{dbinom2.or} does not really compute the density
   (because that does not make sense here) but rather returns the
   four joint probabilities.
+
 
 
 }
@@ -110,26 +111,25 @@ dbinom2.or(mu1,
 
 }
 \examples{
-nn <- 2000  # Example 1
-ymat <- rbinom2.or(n = nn, mu1 = 0.8, oratio = exp(2), exch = TRUE)
+nn <- 1000  # Example 1
+ymat <- rbinom2.or(nn, mu1 = logit(1, inv = TRUE), oratio = exp(2), exch = TRUE)
 (mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))
 (myor <- mytab["0","0"] * mytab["1","1"] / (mytab["1","0"] * mytab["0","1"]))
 fit <- vglm(ymat ~ 1, binom2.or(exch = TRUE))
 coef(fit, matrix = TRUE)
 
-
 bdata <- data.frame(x2 = sort(runif(nn)))  # Example 2
-bdata <- transform(bdata, mu1 = logit(-2 + 4*x2, inverse = TRUE),
-                          mu2 = logit(-1 + 3*x2, inverse = TRUE))
+bdata <- transform(bdata, mu1 = logit(-2 + 4 * x2, inverse = TRUE),
+                          mu2 = logit(-1 + 3 * x2, inverse = TRUE))
 dmat <- with(bdata, dbinom2.or(mu1 = mu1, mu2 = mu2, oratio = exp(2)))
 ymat <- with(bdata, rbinom2.or(n = nn, mu1 = mu1, mu2 = mu2, oratio = exp(2)))
 fit2 <- vglm(ymat ~ x2, binom2.or, data = bdata)
 coef(fit2, matrix = TRUE)
 \dontrun{
 matplot(with(bdata, x2), dmat, lty = 1:4, col = 1:4, type = "l",
-        main = "Joint probabilities", ylim = 0:1, lwd = 2,
+        main = "Joint probabilities", ylim = 0:1,
         ylab = "Probabilities", xlab = "x2", las = 1)
-legend(x = 0, y = 0.5, lty = 1:4, col = 1:4, lwd = 2,
+legend("top", lty = 1:4, col = 1:4,
        legend = c("1 = (y1=0, y2=0)", "2 = (y1=0, y2=1)",
                   "3 = (y1=1, y2=0)", "4 = (y1=1, y2=1)"))
 }

@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -162,7 +163,7 @@ predict.vgam <-
       cs <- if (raw) cumsum(c(1, ncolHlist)) else
                      cumsum(c(1, M + 0 * ncolHlist))
       tmp6 <- vector("list", length(ncolHlist))
-      for (ii in 1:length(tmp6))
+      for (ii in seq_along(tmp6))
         tmp6[[ii]] <- cs[ii]:(cs[ii+1]-1)
       names(tmp6) <- names(ncolHlist)
     }
@@ -213,7 +214,7 @@ predict.vgam <-
 
             TT <- ncol(object@var)
             predictor$se.fit <- sqrt(predictor$se.fit^2 +
-                                     TS * object@var %*% rep(1, TT))
+                                     TS * object@var %*% rep_len(1, TT))
           } else {
             predictor <- predictor + eta.mat 
           }

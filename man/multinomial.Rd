@@ -9,7 +9,7 @@
 }
 \usage{
 multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
-            refLevel = "last", whitespace = FALSE)
+            refLevel = "(Last)", whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,16 +36,28 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
   }
   \item{refLevel}{
-  Either a single positive integer or a value of the factor.
-  If an integer then it specifies which
+  Either a (1) single positive integer or (2) a value of the factor
+  or (3) a character string.
+  If inputted as an integer then it specifies which
   column of the response matrix is the reference or baseline level.
   The default is the last one (the \eqn{(M+1)}th one).
-  If used, this argument will be often assigned the value \code{1}.
+  If used, this argument will be usually assigned the value \code{1}.
   If inputted as a value of a factor then beware of missing values
   of certain levels of the factor
   (\code{drop.unused.levels = TRUE} or
    \code{drop.unused.levels = FALSE}).
   See the example below.
+  If inputted as a character string then this should be
+  equal to (A) one of the levels of the factor response, else (B) one
+  of the column names of the matrix response of counts;
+  e.g.,
+  \code{vglm(cbind(normal, mild, severe) ~ let, multinomial(refLevel = "severe"), data = pneumo)}
+  if it was (incorrectly because the response is ordinal)
+  applied to the \code{\link{pneumo}} data set.
+  Another example is
+  \code{vglm(ethnicity ~ age, multinomial(refLevel = "European"), data = xs.nz)}
+  if it was applied to the \code{\link[VGAMdata]{xs.nz}} data set.
+
 
 
   }
@@ -233,6 +245,7 @@ Cambridge University Press.
 
 }
 %   \code{\link[base:Multinom]{rmultinom}}
+%   \code{\link{pneumo}},
 
 
 \examples{

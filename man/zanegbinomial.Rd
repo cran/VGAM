@@ -11,18 +11,20 @@
 }
 \usage{
 zanegbinomial(zero = "size", type.fitted = c("mean", "munb", "pobs0"),
-              nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
-              max.support = 4000, max.chunk.MB = 30, lpobs0 = "logit",
-              lmunb = "loge", lsize = "loge", imethod = 1, ipobs0 = NULL,
-              imunb = NULL, probs.y = 0.35, ishrinkage = 0.95,
-              isize = NULL, gsize.mux = exp((-12:6)/2))
+              mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
+              eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+              lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+              imethod = 1, ipobs0 = NULL,
+              imunb = NULL, iprobs.y = NULL, gprobs.y = (0:9)/10,
+              isize = NULL, gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
                 type.fitted = c("mean", "munb", "pobs0", "onempobs0"),
                 isize = NULL, ionempobs0 = NULL, zero = c("size",
-                "onempobs0"), probs.y = 0.35, cutoff.prob = 0.999,
-                eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-                gsize.mux = exp((-12:6)/2), imethod = 1, imunb = NULL,
-                nsimEIM = 500, ishrinkage = 0.95)
+                "onempobs0"), mds.min = 1e-3, iprobs.y = NULL, gprobs.y = (0:9)/10,
+                cutoff.prob = 0.999, eps.trig = 1e-7, max.support = 4000,
+                max.chunk.MB = 30, gsize.mux = exp(c(-30, -20, -15, -10, -6:3)),
+                imethod = 1, imunb = NULL,
+                nsimEIM = 500)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -100,22 +102,32 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
   \item{nsimEIM, imethod}{
   See \code{\link{CommonVGAMffArguments}}.
 
-  }
-  \item{ishrinkage}{
-  See \code{\link{negbinomial}}
-  and \code{\link{CommonVGAMffArguments}}.
 
   }
+% \item{ishrinkage}{
+% See \code{\link{negbinomial}}
+% and \code{\link{CommonVGAMffArguments}}.
 
 
-  \item{probs.y, cutoff.prob, gsize.mux, eps.trig}{
+% }
+
+
+  \item{iprobs.y, gsize.mux, gprobs.y}{
   See \code{\link{negbinomial}}.
 %  and \code{\link{CommonVGAMffArguments}}.
 
+
   }
-  \item{max.support, max.chunk.MB}{
+  \item{cutoff.prob, eps.trig}{
   See \code{\link{negbinomial}}.
 %  and \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{mds.min, max.support, max.chunk.MB}{
+  See \code{\link{negbinomial}}.
+%  and \code{\link{CommonVGAMffArguments}}.
+
 
   }
 }
@@ -133,11 +145,13 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
   call the zero-altered negative binomial a \emph{hurdle} model.
 
 
+
   For one response/species, by default, the three linear/additive
   predictors
   for \code{zanegbinomial()}
   are \eqn{(logit(p_0), \log(\mu_{nb}), \log(k))^T}{(logit(pobs0),
   log(munb), log(k))^T}.  This vector is recycled for multiple species.
+
 
 
   The \pkg{VGAM} family function \code{zanegbinomialff()} has a few
@@ -161,6 +175,7 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 
   The \code{fitted.values} slot of the fitted object,
@@ -227,7 +242,7 @@ for counts with extra zeros.
   one family function.
 
 
-  This family function can handle a multivariate response, e.g., more
+  This family function can handle multiple responses, e.g., more
   than one species.
 
 

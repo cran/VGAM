@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -61,11 +61,11 @@ rrvglm <- function(formula,
 
     offset <- model.offset(mf)
     if (is.null(offset)) 
-        offset <- 0 # yyy ???
+      offset <- 0  # yyy ???
     w <- model.weights(mf)
-    if (!length(w))
-        w <- rep(1, nrow(mf))
-    else if (ncol(as.matrix(w))==1 && any(w < 0))
+    if (!length(w)) {
+      w <- rep_len(1, nrow(mf))
+    } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
         stop("negative weights not allowed")
 
     if (is.character(family))
@@ -81,7 +81,6 @@ rrvglm <- function(formula,
     if (!is.null(family@first))
         eval(family@first)
 
-    # 10/12/04: testing for an empty (function) slot not elegant:
     if (control$Quadratic && control$FastAlgorithm &&
        length(as.list(family@deviance)) <= 1)
         stop("The fast algorithm requires the family ",
@@ -102,7 +101,7 @@ rrvglm <- function(formula,
                         Terms = mt, function.name = function.name, ...)
 
     if (control$Bestof > 1) {
-      deviance.Bestof <- rep(fit$crit.list$deviance, len= control$Bestof)
+      deviance.Bestof <- rep_len(fit$crit.list$deviance, control$Bestof)
       for (tries in 2:control$Bestof) {
          if (control$trace && (control$Bestof>1))
            cat(paste("\n========================= Fitting model", tries,

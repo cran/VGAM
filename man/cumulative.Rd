@@ -81,8 +81,9 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   Multiple responses? If \code{TRUE} then the input should be
   a matrix with values \eqn{1,2,\dots,L}, where \eqn{L=J+1} is the
   number of levels.
-  Each column of the matrix is a response, i.e., multivariate response.
+  Each column of the matrix is a response, i.e., multiple responses.
   A suitable matrix can be obtained from \code{Cut}.
+
 
 
   }

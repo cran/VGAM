@@ -15,8 +15,7 @@
 }
 \usage{
 dgpd(x, location = 0, scale = 1, shape = 0, log = FALSE,
-     tolshape0 = sqrt(.Machine$double.eps),
-     oobounds.log = -Inf, giveWarning = FALSE)
+     tolshape0 = sqrt(.Machine$double.eps))
 pgpd(q, location = 0, scale = 1, shape = 0,
      lower.tail = TRUE, log.p = FALSE)
 qgpd(p, location = 0, scale = 1, shape = 0,
@@ -52,23 +51,23 @@ rgpd(n, location = 0, scale = 1, shape = 0)
 
 
   }
-  \item{oobounds.log, giveWarning}{
-  Numeric and logical.
-  The GPD distribution has support in the region satisfying
-  \code{(x-location)/scale > 0}
-  and
-  \code{1+shape*(x-location)/scale > 0}.
-  Outside that region, the
-  logarithm of the density is assigned \code{oobounds.log}, which
-  equates to a zero density.
-  It should not be assigned a positive number, and ideally is very negative.
-  Since \code{\link{gpd}} uses this function it is necessary
-  to return a finite value outside this region  so as to allow
-  for half-stepping. Both arguments are in support of this.
-  This argument and others match those of \code{\link{gpd}}.
 
 
-  }
+% \item{oobounds.log, giveWarning}{
+% Numeric and logical.
+% The GPD distribution has support in the region satisfying
+% \code{(x-location)/scale > 0}
+% and
+% \code{1+shape*(x-location)/scale > 0}.
+% Outside that region, the
+% logarithm of the density is assigned \code{oobounds.log}, which
+% equates to a zero density.
+% It should not be assigned a positive number, and ideally is very negative.
+% Since \code{\link{gpd}} uses this function it is necessary
+% to return a finite value outside this region  so as to allow
+% for half-stepping. Both arguments are in support of this.
+% This argument and others match those of \code{\link{gpd}}.
+% }
 
 }
 \value{
@@ -131,3 +130,4 @@ pgpd(qgpd(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), loc, sigma, xi)
 \keyword{distribution}
 
 
+%    oobounds.log = -Inf, giveWarning = FALSE

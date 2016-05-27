@@ -5,7 +5,7 @@
 \alias{qposgeom}
 \alias{rposgeom}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Positive-geometric Distribution }
+\title{ Positive-Geometric Distribution }
 \description{
   Density, distribution function, quantile function and random generation
   for the positive-geometric distribution.

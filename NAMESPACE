@@ -1,11 +1,36 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 useDynLib(VGAM)
 
+
+export(doiposbinom, poiposbinom, qoiposbinom, roiposbinom)
+export(doipospois, poipospois, qoipospois, roipospois, oipospoisson)
+export(deflat.limit.oipospois)
+export(zoabetaR)
+
+
+
+
+export(ps, Pen.psv, psv2magic)
+
+export(checkwz)
+export(process.constraints)
+export(mux22, mux111)
+importFrom("splines", "splineDesign")
+
+
+
+
+
+
+
+export(AR1EIM)
+export(AR1.gammas)
+importFrom("stats", "cov")
 
 
 export(as.char.expression)
@@ -15,14 +40,14 @@ export(predictvglmS4VGAM)
 export(EIM.posNB.speciald, EIM.NB.speciald,
        EIM.posNB.specialp, EIM.NB.specialp)
 export(.min.criterion.VGAM)
-export(pozibetabinom, pozibetabinom.ab,
-       rozibetabinom, rozibetabinom.ab,
-       dozibetabinom, dozibetabinom.ab,
+export(pzoibetabinom, pzoibetabinom.ab,
+       rzoibetabinom, rzoibetabinom.ab,
+       dzoibetabinom, dzoibetabinom.ab,
        Init.mu)
 
 
 export(log1mexp)
-export(dozibeta, pozibeta, qozibeta, rozibeta)
+export(dzoabeta, pzoabeta, qzoabeta, rzoabeta)
 export(logitoffsetlink)
 export(showvglmS4VGAM)
 export(showvgamS4VGAM)
@@ -87,7 +112,6 @@ exportMethods(confint)  # For S4, not S3
 export(dgenpois)
 export(AR1)
 export(dAR1)
-export(AR1.control)
 export(param.names)
 export(is.buggy.vlm)
 exportMethods(is.buggy)
@@ -115,7 +139,7 @@ export(case.names,
        weights)
 
 
-export(expected.betabin.ab, grid.search)
+export(expected.betabin.ab, grid.search, grid.search2, grid.search3, grid.search4)
 
 exportMethods(QR.Q, QR.R)
 export(QR.Q, QR.R)
@@ -252,6 +276,7 @@ interleave.VGAM, interleave.cmat,
 procVec,
 ResSS.vgam,
 valt.control,
+vforsub, vbacksub, vchol,
 vcontrol.expression, 
 vplot, vplot.default, vplot.factor, vplot.list,
 vplot.matrix, vplot.numeric, vvplot.factor)
@@ -335,7 +360,7 @@ paretoIV, dparetoIV, qparetoIV, rparetoIV, pparetoIV,
 paretoIII, dparetoIII, qparetoIII, rparetoIII, pparetoIII,
 paretoII, dparetoII, qparetoII, rparetoII, pparetoII,
 dparetoI, qparetoI, rparetoI, pparetoI,
-cens.gumbel, egumbel, gumbel,
+cens.gumbel, gumbelff, gumbel,
 dgumbel, pgumbel, qgumbel, rgumbel, 
 foldnormal, dfoldnorm, pfoldnorm, qfoldnorm, rfoldnorm,
 cennormal,
@@ -480,11 +505,11 @@ show.vsmooth.spline,
 process.binomial2.data.VGAM, process.categorical.data.VGAM,
 negzero.expression.VGAM,
 qtplot,
-qtplot.default, qtplot.gumbel, qtplot.lms.bcg,
+qtplot.default, qtplot.gumbel, qtplot.gumbelff, qtplot.lms.bcg,
 qtplot.lms.bcn, qtplot.lms.yjn, qtplot.lms.yjn2, qtplot.vextremes, qtplot.vglm,
 explot.lms.bcn,
 rlplot,
-rlplot.egev, rlplot.gev,
+rlplot.gevff, rlplot.gev,
 rlplot.vextremes, rlplot.vglm,
 rlplot, rlplot.vglm, rrar.control)
 
@@ -585,7 +610,7 @@ export(dsinmad, psinmad, qsinmad, rsinmad, sinmad)
 export(lognormal)
 export(dpolono, ppolono, rpolono)
 export(dgpd, pgpd, qgpd, rgpd, gpd)
-export(dgev, pgev, qgev, rgev, gev, egev)
+export(dgev, pgev, qgev, rgev, gev, gevff)
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
 export(dalap, palap, qalap, ralap,
        alaplace1.control, alaplace2.control, alaplace3.control,
@@ -638,7 +663,8 @@ export(dgengamma.stacy, pgengamma.stacy, qgengamma.stacy, rgengamma.stacy)
 
 export(
 dbenf, pbenf, qbenf, rbenf,
-genbetaII, dgenbetaII, genpoisson,
+genbetaII.Loglikfun4, genbetaII, dgenbetaII,
+genpoisson,
 geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino, 
 grc,
@@ -678,6 +704,8 @@ deexp, peexp, qeexp, reexp)
 export(
 meplot, meplot.default, meplot.vlm,
 guplot, guplot.default, guplot.vlm,
+posNBD.Loglikfun2,
+NBD.Loglikfun2,
 negbinomial, negbinomial.size, polya, polyaR,
 uninormal, SURff, normal.vcm,
 nbcanlink,

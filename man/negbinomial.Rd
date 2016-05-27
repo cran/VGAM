@@ -11,27 +11,24 @@
 }
 \usage{
 negbinomial(zero = "size", parallel = FALSE, deviance.arg = FALSE,
-            mds.min = 1e-04, nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
-            max.support = 4000, max.chunk.MB = 30,
+            mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
+            eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
             lmu = "loge", lsize = "loge",
-            imethod = 1, imu = NULL, probs.y = 0.35,
-            ishrinkage = 0.95, isize = NULL, gsize.mux = exp((-12:6)/2))
+            imethod = 1, imu = NULL, iprobs.y = NULL,
+            gprobs.y = (0:9)/10, isize = NULL,
+            gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 polya(zero = "size", type.fitted = c("mean", "prob"),
-           mds.min = 1e-04, nsimEIM = 500, cutoff.prob = 0.999,
-           eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-           lprob = "logit", lsize = "loge",
-           imethod = 1, iprob = NULL,
-           probs.y = 0.35, ishrinkage = 0.95,
-           isize = NULL, gsize.mux = exp((-12:6)/2),
-           imunb = NULL)
+      mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
+      eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+      lprob = "logit", lsize = "loge", imethod = 1, iprob = NULL,
+      iprobs.y = NULL, gprobs.y = (0:9)/10, isize = NULL,
+      gsize.mux = exp(c(-30, -20, -15, -10, -6:3)), imunb = NULL)
 polyaR(zero = "size", type.fitted = c("mean", "prob"),
-           mds.min = 1e-04, nsimEIM = 500,  cutoff.prob = 0.999,
-           eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-           lsize = "loge", lprob = "logit", 
-           imethod = 1, isize = NULL,
-           iprob = NULL, probs.y = 0.35,
-           ishrinkage = 0.95, gsize.mux = exp((-12:6)/2),
-           imunb = NULL)
+       mds.min = 1e-3, nsimEIM = 500,  cutoff.prob = 0.999,
+       eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
+       lsize = "loge", lprob = "logit", imethod = 1, iprob = NULL,
+       iprobs.y = NULL, gprobs.y = (0:9)/10, isize = NULL,
+       gsize.mux = exp(c(-30, -20, -15, -10, -6:3)), imunb = NULL)
 }
 
 %     deviance.arg = FALSE,
@@ -62,6 +59,7 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
   computed internally using a gridsearch based on \code{gsize.mux}.
   The last argument is ignored if used within \code{\link{cqo}}; see
   the \code{iKvector} argument of \code{\link{qrrvglm.control}} instead.
+  In the future \code{isize} and \code{iprob} might be depreciated.
 
 
   }
@@ -157,7 +155,8 @@ Minimum value of the NBD mean divided by \code{size} parameter.
 The closer this ratio is to 0, the closer the distribution is
 to a Poisson.
 Iterations will stop when an estimate of \eqn{k} is so large,
-relative to the mean, than it is below this threshold.
+relative to the mean, than it is below this threshold
+(this is treated as a boundary of the parameter space).
 
 
 
@@ -190,7 +189,8 @@ respect to the \code{size} parameter.
   estimates of the NBD mean parameter.
   That is, it is on a relative scale rather than on an
   absolute scale.
-
+  If the counts are very large in value then convergence fail might
+  occur; if so, then try a smaller value such as \code{gsize.mux = exp(-40)}.
 
 
 }
@@ -230,10 +230,10 @@ respect to the \code{size} parameter.
 
   }
   \item{imethod}{
-  An integer with value \code{1} or \code{2} or \code{3} which
+  An integer with value \code{1} or \code{2} etc. which
   specifies the initialization method for the \eqn{\mu}{mu} parameter.
   If failure to converge occurs try another value
-  and/or else specify a value for \code{ishrinkage}
+  and/or else specify a value for \code{iprobs.y}
   and/or else specify a value for \code{isize}.
 
 
@@ -251,26 +251,38 @@ respect to the \code{size} parameter.
 
 
   }
-  \item{probs.y}{
+  \item{gprobs.y}{
+    A vector representing a grid;
+    passed into the \code{probs} argument
+  of \code{\link[stats:quantile]{quantile}}
+  when \code{imethod = 1} to obtain an initial value for the mean
+  of each response. Is overwritten by any value of \code{iprobs.y}.
+
+
+  }
+  \item{iprobs.y}{
   Passed into the \code{probs} argument
   of \code{\link[stats:quantile]{quantile}}
-  when \code{imethod = 3} to obtain an initial value for the mean.
+  when \code{imethod = 1} to obtain an initial value for the mean
+  of each response. Overwrites any value of \code{gprobs.y}.
+  This argument might be deleted in the future.
 
 
   }
-  \item{ishrinkage}{
-  How much shrinkage is used when initializing \eqn{\mu}{mu}.
-  The value must be between 0 and 1 inclusive, and
-  a value of 0 means the individual response values are used,
-  and a value of 1 means the median or mean is used.
-  This argument is used in conjunction with \code{imethod}.
-  If convergence failure occurs try setting this argument to 1.
+%  \item{ishrinkage}{
+%  How much shrinkage is used when initializing \eqn{\mu}{mu}.
+%  The value must be between 0 and 1 inclusive, and
+%  a value of 0 means the individual response values are used,
+%  and a value of 1 means the median or mean is used.
+%  This argument is used in conjunction with \code{imethod}.
+%  If convergence failure occurs try setting this argument to 1.
+%  }
 
 
-  }
   \item{zero}{
-  Can be an integer-valued vector, usually assigned \eqn{-2}
-  or \eqn{2} if used at all. Specifies which of the two
+    Can be an integer-valued vector, and if so, then
+    it is usually assigned \eqn{-2}
+  or \eqn{2}. Specifies which of the two
   linear/additive predictors are modelled as an intercept
   only. By default, the \eqn{k} parameter (after \code{lsize}
   is applied) is modelled as a single unknown number that
@@ -375,23 +387,25 @@ respect to the \code{size} parameter.
 \section{Warning}{
   Poisson regression corresponds to \eqn{k} equalling
   infinity.  If the data is Poisson or close to Poisson,
-  numerical problems will occur.
+  numerical problems may occur.
   Some corrective measures are taken, e.g., 
-  \eqn{k} is capped during estimation
+  \eqn{k} is effectively capped (relative to the mean) during estimation
   to some large value and a warning is issued.
-  Note that \code{dnbinom(0, mu, size = Inf)}
-  currently
-  is a \code{NaN} (a bug),
-  therefore if the data has some 0s then
-  setting \code{crit = "coef"} will avoid the problem that
-  the log-likelihood will be undefined during the last
-  stages of estimation.
   And setting \code{stepsize = 0.5} for half stepping is
-  probably a good idea too.
-  Possibly setting \code{crit = "coef"} is a good idea because
-  the log-likelihood is often a \code{NaN} when the \code{size}
-  value is very large.
+  probably a good idea too when the data is extreme.
 
+
+% Possibly setting \code{crit = "coef"} is a good idea because
+% the log-likelihood is often a \code{NaN} when the \code{size}
+% value is very large.
+
+
+% Note that \code{dnbinom(0, mu, size = Inf)} currently
+% is a \code{NaN} (a bug),
+% therefore if the data has some 0s then
+% setting \code{crit = "coef"} will avoid the problem that
+% the log-likelihood will be undefined during the last
+% stages of estimation.
 
 
 % Possibly choosing a log-log link may help in such cases,
@@ -524,7 +538,7 @@ Fitting the negative binomial distribution to biological data.
   \code{max.support},
   \code{nsimEIM},
   \code{cutoff.prob},
-  \code{ishrinkage},
+  \code{iprobs.y},
   \code{imethod},
   \code{isize},
   \code{zero},

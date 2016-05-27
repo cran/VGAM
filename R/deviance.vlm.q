@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -127,7 +127,7 @@ nvar_vlm <- function(object, ...) {
     names(numPars) <- object@misc$predictors.names
 
 
-  NumPars <- rep(0, length = M)
+  NumPars <- rep_len(0, M)
   for (jay in 1:M) {
     X.lm.jay <- model.matrix(object, type = "lm", linpred.index = jay)
     NumPars[jay] <- ncol(X.lm.jay)

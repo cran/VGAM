@@ -4,7 +4,7 @@
 \alias{dbinorm}
 \alias{pbinorm}
 \alias{rbinorm}
-\title{Bivariate normal distribution cumulative distribution function}
+\title{Bivariate Normal Distribution Cumulative Distribution Function}
 \description{
   Density,
   cumulative distribution function

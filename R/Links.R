@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -245,7 +245,7 @@ link2list <- function(link
 
   t.index <- pmatch(names(ans[-1]), names(big.list))
   t.index
-  if (any(is.na(t.index)))
+  if (anyNA(t.index))
     stop("in '", fun.name, "' could not match argument(s) ",
          paste('"', names(ans[-1])[is.na(t.index)], '"', sep = "",
                collapse = ", "))

@@ -1,6 +1,6 @@
 \name{gumbel}
 \alias{gumbel}
-\alias{egumbel}
+\alias{gumbelff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Gumbel Distribution Family Function }
 \description{
@@ -12,9 +12,9 @@
 gumbel(llocation = "identitylink", lscale = "loge",
        iscale = NULL, R = NA, percentiles = c(95, 99),
        mpv = FALSE, zero = NULL)
-egumbel(llocation = "identitylink", lscale = "loge",
-        iscale = NULL, R = NA, percentiles = c(95, 99),
-        mpv = FALSE, zero = NULL)
+gumbelff(llocation = "identitylink", lscale = "loge",
+         iscale = NULL, R = NA, percentiles = c(95, 99),
+         zero = "scale", mpv = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -147,6 +147,7 @@ egumbel(llocation = "identitylink", lscale = "loge",
 }
 \author{ T. W. Yee }
 
+
 \section{Warning}{
   When \code{R} is not given (the default) the fitted percentiles are
   that of the data, and not of the
@@ -159,11 +160,16 @@ egumbel(llocation = "identitylink", lscale = "loge",
 }
 
 \note{ 
-  \code{egumbel()} only handles a univariate response, and is
-  preferred to \code{gumbel()} because it is faster.
+  Like many other usual \pkg{VGAM} family functions,
+  \code{gumbelff()} handles (independent) multiple responses.
 
 
-  \code{gumbel()} can handle a multivariate response, i.e., a
+% and is preferred to \code{gumbel()} because it is faster.
+
+
+  \code{gumbel()} can handle
+  more of a
+  multivariate response, i.e., a
   matrix with more than one column. Each row of the matrix is
   sorted into descending order.
   Missing values in the response are allowed but require
@@ -171,6 +177,7 @@ egumbel(llocation = "identitylink", lscale = "loge",
   padded with any missing values. With a multivariate response
   one has a matrix \code{y}, say, where
   \code{y[, 2]} contains the second order statistics, etc. 
+
 
   
 % If a random variable \eqn{Y} has a \emph{reverse}
@@ -189,7 +196,7 @@ egumbel(llocation = "identitylink", lscale = "loge",
   \code{\link{cens.gumbel}},
   \code{\link{guplot}},
   \code{\link{gev}},
-  \code{\link{egev}},
+  \code{\link{gevff}},
   \code{\link{venice}}.
 
   
@@ -201,7 +208,7 @@ egumbel(llocation = "identitylink", lscale = "loge",
 \examples{
 # Example 1: Simulated data
 gdata <- data.frame(y1 = rgumbel(n = 1000, loc = 100, scale = exp(1)))
-fit1 <- vglm(y1 ~ 1, egumbel(perc = NULL), data = gdata, trace = TRUE)
+fit1 <- vglm(y1 ~ 1, gumbelff(perc = NULL), data = gdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 head(fitted(fit1))

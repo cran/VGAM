@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -87,15 +87,15 @@
                        mustart[, 2] * mustart[, 3] +
                        mustart[, 2] * mustart[, 5] +
                        mustart[, 3] * mustart[, 5], w)
-      p1 <- if (is.numeric( .ip1 )) rep( .ip1 , len = n) else
+      p1 <- if (is.numeric( .ip1 )) rep_len( .ip1 , n) else
             weighted.mean(mustart[, 2] * mustart[, 3], w) / mydeterminant
-      p2 <- if (is.numeric( .ip2 )) rep( .ip2 , len = n) else
+      p2 <- if (is.numeric( .ip2 )) rep_len( .ip2 , n) else
             weighted.mean(mustart[, 2] * mustart[, 5], w) / mydeterminant
-      ff <- if (is.numeric( .iF  )) rep( .iF  , len = n) else
+      ff <- if (is.numeric( .iF  )) rep_len( .iF  , n) else
             weighted.mean(abs(1 - mustart[, 2] / (2 * p1 * p2)), w)
-      p1 <- rep(p1, len = n)
-      p2 <- rep(p2, len = n)
-      ff <- rep(ff, len = n)
+      p1 <- rep_len(p1, n)
+      p2 <- rep_len(p2, n)
+      ff <- rep_len(ff, n)
       p1[p1 < 0.05] <- 0.05
       p1[p1 > 0.99] <- 0.99
       p2[p2 < 0.05] <- 0.05
@@ -253,12 +253,12 @@
          namesof("nS", .link , earg = .earg , tag = FALSE))
 
     if (is.null(etastart)) {
-      ms <- if (is.numeric(.ims)) rep(.ims, n) else
+      ms <- if (is.numeric(.ims)) rep_len( .ims , n) else
                  c(sqrt(mustart[, 2]))
-      ns <- c(sqrt(mustart[,6]))
-      nS <- if (is.numeric(.inS)) rep(.inS, n) else
-          c(-ns + sqrt(ns^2 + mustart[,5]))  # Solve a quadratic eqn
-      mS <- if (is.numeric(.imS)) rep(.imS, n) else
+      ns <- c(sqrt(mustart[, 6]))
+      nS <- if (is.numeric(.inS)) rep_len( .inS , n) else
+          c(-ns + sqrt(ns^2 + mustart[, 5]))  # Solve a quadratic eqn
+      mS <- if (is.numeric(.imS)) rep_len( .imS , n) else
               1-ns-ms-nS
       etastart <- cbind(theta2eta(mS, .link , earg = .earg ),
                        theta2eta(ms, .link , earg = .earg ),
@@ -391,12 +391,11 @@
     mustart <- (y + mustart) / 2
 
     if (!length(etastart)) {
-      pO <- if (is.Numeric( .ipO )) rep( .ipO , len = n) else
-        rep(c(sqrt( weighted.mean(mustart[, 4], w)) ), len = n)
-      pA <- if (is.Numeric( .ipA )) rep( .ipA , len = n) else
-        rep(c(1 - sqrt(weighted.mean(mustart[, 2] + mustart[, 4], w))),
-            len = n)
-      pB <- if (is.Numeric( .ipB )) rep( .ipB , len = n) else
+      pO <- if (is.Numeric( .ipO )) rep_len( .ipO , n) else
+        rep_len(c(sqrt( weighted.mean(mustart[, 4], w)) ), n)
+      pA <- if (is.Numeric( .ipA )) rep_len( .ipA , n) else
+        rep_len(c(1-sqrt(weighted.mean(mustart[, 2] + mustart[, 4], w))), n)
+      pB <- if (is.Numeric( .ipB )) rep_len( .ipB , n) else
             abs(1 - pA - pO)
       etastart <- cbind(theta2eta(pA, .link.pA , earg = .earg.pA ),
                         theta2eta(pB, .link.pB , earg = .earg.pB ))
@@ -510,8 +509,8 @@
     mustart <- (y + mustart) / 2
 
     if (is.null(etastart)) {
-      p.init <- if (is.numeric( .init.p )) rep( .init.p , len = n) else
-        rep(c(sqrt(4 * weighted.mean(mustart[, 4], w))), len = n)
+      p.init <- if (is.numeric( .init.p )) rep_len( .init.p , n) else
+        rep_len(c(sqrt(4 * weighted.mean(mustart[, 4], w))), n)
 
       etastart <- cbind(theta2eta(p.init, .link , earg = .earg ))
       etastart <- jitter(etastart)
@@ -648,9 +647,9 @@
         
 
     if (is.null(etastart)) {
-      pA <- if (is.numeric( .ipA )) rep( .ipA , len = n) else
-              rep(c(sqrt( weighted.mean(mustart[, 1], w))), len = n)
-      fp <- if (is.numeric( .ifp )) rep( .ifp , len = n) else
+      pA <- if (is.numeric( .ipA )) rep_len( .ipA , n) else
+              rep_len(c(sqrt( weighted.mean(mustart[, 1], w))), n)
+      fp <- if (is.numeric( .ifp )) rep_len( .ifp , n) else
               runif(n)  # 1- mustart[, 2]/(2*pA*(1-pA))
       etastart <- cbind(theta2eta(pA, .linkp , earg = .eargp ),
                         if ( .inbreeding )

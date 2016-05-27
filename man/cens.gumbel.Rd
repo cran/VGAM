@@ -102,7 +102,7 @@ London: Springer-Verlag.
 
 \seealso{
   \code{\link{gumbel}},
-  \code{\link{egumbel}},
+  \code{\link{gumbelff}},
   \code{\link{rgumbel}},
   \code{\link{guplot}},
   \code{\link{gev}},

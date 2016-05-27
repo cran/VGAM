@@ -4,6 +4,8 @@
 %\alias{ccoef-method}
 %
 %
+% 201604:
+\alias{plot,psvgam,ANY-method}
 % 201602:
 \alias{predictvglmS4VGAM,ANY,binom2.or-method}
 % 201601:

@@ -31,13 +31,22 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
   (see \code{\link[stats:NegBinomial]{dnbinom}}).
   Some arguments have been renamed slightly.
 
+
 % This is called \eqn{\theta}{theta} in the \code{\link[MASS]{rnegbin}}
 % function in the \code{MASS} library.
+
 
   Short vectors are recycled.
   The  parameter \code{1/size} is known as a dispersion parameter;
   as \code{size} approaches infinity, the negative binomial distribution
   approaches a Poisson distribution.
+
+
+
+  Note that \code{prob} must lie in \eqn{(0,1)}, otherwise a
+  \code{NaN} is returned.
+
+
 
   }
 }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -238,7 +238,7 @@ is.smart <- function(object) {
     basis <- basis[, -1L, drop = FALSE]
   n.col <- ncol(basis)
   if (nas) {
-    nmat <- matrix(NA, length(nax), n.col)
+    nmat <- matrix(NA_real_, length(nax), n.col)
     nmat[!nax, ] <- basis
     basis <- nmat
   }
@@ -325,7 +325,7 @@ attr( sm.bs, "smart") <- TRUE
       drop = FALSE])
   n.col <- ncol(basis)
   if (nas) {
-    nmat <- matrix(NA, length(nax), n.col)
+    nmat <- matrix(NA_real_, length(nax), n.col)
     nmat[!nax, ] <- basis
     basis <- nmat
   }
@@ -388,7 +388,7 @@ attr( sm.ns, "smart") <- TRUE
 
 
 
-    if (any(is.na(x))) 
+    if (anyNA(x))
       stop("missing values are not allowed in 'poly'")
     n <- degree + 1
     if (raw) {

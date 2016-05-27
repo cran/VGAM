@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -8,8 +8,9 @@
 
 
 
+
 rrvglm.fit <-
-  function(x, y, w = rep(1, length(x[, 1])),
+  function(x, y, w = rep_len(1, nrow(x)),
            etastart = NULL, mustart = NULL, coefstart = NULL,
            offset = 0, family,
            control = rrvglm.control(...),
@@ -95,7 +96,7 @@ rrvglm.fit <-
 
     if (is.character(rrcontrol$Dzero)) {
       index <- match(rrcontrol$Dzero, dimnames(as.matrix(y))[[2]]) 
-      if (any(is.na(index)))
+      if (anyNA(index))
         stop("Dzero argument didn't fully match y-names")
       if (length(index) == M)
         stop("all linear predictors are linear in the ",
@@ -259,7 +260,7 @@ rrvglm.fit <-
 
     c.list <- list(z = as.double(z), fit = as.double(t(eta)),
                    one.more = TRUE,
-                   coeff = as.double(rep(1,ncol(X.vlm.save))),
+                   coeff = as.double(rep_len(1, ncol(X.vlm.save))),
                    U = as.double(U),
                    copy.X.vlm = copy.X.vlm,
                    X.vlm = if (copy.X.vlm) as.double(X.vlm.save) else
@@ -471,7 +472,7 @@ rrvglm.fit <-
       }
 
       c.list$one.more <- one.more
-      c.list$coeff <- runif(length(new.coeffs))  # 12/3/03; twist needed!
+      c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
       old.coeffs <- new.coeffs
 
     }  # End of while()
@@ -496,7 +497,7 @@ rrvglm.fit <-
 
     asgn <- attr(X.vlm.save, "assign")
     if (nice31) {
-      coefs <- rep(0, len = length(xnrow.X.vlm))
+      coefs <- rep_len(0, length(xnrow.X.vlm))
         rank <- ncol.X.vlm
     } else {
       coefs <- tfit$coefficients
@@ -519,10 +520,10 @@ rrvglm.fit <-
     }
 
     if (nice31) {
-      effects <- rep(0, len = 77)
+      effects <- rep_len(0, 77)
     } else {
       effects <- tfit$effects
-      neff <- rep("", nrow.X.vlm)
+      neff <- rep_len("", nrow.X.vlm)
       neff[seq(ncol.X.vlm)] <- cnames
       names(effects) <- neff
 

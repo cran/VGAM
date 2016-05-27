@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -127,7 +127,7 @@ Deviance.categorical.data.vgam <-
     M <- if (is.matrix(eta)) ncol(eta) else 1
     if (M > 1)
       return(NULL)
-    devi <- devi %*% rep(1, ncol(devi))  # deviance = \sum_i devi[i]
+    devi <- devi %*% rep_len(1, ncol(devi))  # deviance = \sum_i devi[i]
     return(c(sign(y[, 1] - mu[, 1]) * sqrt(abs(devi) * w)))
   } else {
     dev.elts <- c(w) * devi
@@ -292,7 +292,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     fv.matrix
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   last = eval(substitute(expression({
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- mynames
 
     misc$earg <- vector("list", M)
@@ -495,7 +495,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   last = eval(substitute(expression({
 
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- mynames
 
     misc$earg <- vector("list", M)
@@ -641,7 +641,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  multinomial <- function(zero = NULL, parallel = FALSE,
-                         nointercept = NULL, refLevel = "last",
+                         nointercept = NULL, refLevel = "(Last)",
                          whitespace = FALSE) {
 
 
@@ -649,24 +649,27 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   if (length(refLevel) != 1)
     stop("the length of 'refLevel' must be one")
 
+  if ( is.numeric(refLevel) &&
+      !is.Numeric(refLevel, integer.valued = TRUE, positive = TRUE))
+    stop("argument 'refLevel' is not a positive integer")
+
   if (is.character(refLevel)) {
-    if (refLevel != "last")
-      stop('if a character, refLevel must be "last"')
-    refLevel <- -1
-  } else
+    if (refLevel == "(Last)")
+      refLevel <- -1
+  }
   if (is.factor(refLevel)) {
     if (is.ordered(refLevel))
-      warning("'refLevel' is from an ordered factor")
+      warning("argument 'refLevel' is from an ordered factor")
 
     refLevel <- as.character(refLevel) == levels(refLevel)
-    refLevel <- (1:length(refLevel))[refLevel]
+    refLevel <- (seq_along(refLevel))[refLevel]
     if (!is.Numeric(refLevel, length.arg = 1,
                     integer.valued = TRUE, positive = TRUE))
       stop("could not coerce 'refLevel' into a single positive integer")
-  } else
-  if (!is.Numeric(refLevel, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE))
-    stop("'refLevel' must be a single positive integer")
+  }
+
+
+
 
 
   stopifnot(is.logical(whitespace) &&
@@ -677,23 +680,31 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   new("vglmff",
   blurb = c("Multinomial logit model\n\n", 
             "Links:    ",
+         if (is.numeric(refLevel)) {
          if (refLevel < 0) {
            ifelse(whitespace,
                   "log(mu[,j] / mu[,M+1]), j = 1:M,\n",
                   "log(mu[,j]/mu[,M+1]), j=1:M,\n")
          } else {
-             if (refLevel == 1) {
-               paste("log(mu[,", "j]", fillerChar, "/", fillerChar,
-                     "mu[,", refLevel, "]), j",
-                     fillerChar, "=", fillerChar, "2:(M+1),\n",
-                     sep = "")
-             } else {
-               paste("log(mu[,", "j]", fillerChar, "/",
+            if (refLevel == 1) {
+              paste("log(mu[,", "j]", fillerChar, "/", fillerChar,
                     "mu[,", refLevel, "]), j",
-                     fillerChar, "=", fillerChar, "c(1:", refLevel-1,
-                     ",", fillerChar, refLevel+1, ":(M+1)),\n",
-                     sep = "")
-             }
+                    fillerChar, "=", fillerChar, "2:(M+1),\n",
+                    sep = "")
+            } else {
+              paste("log(mu[,", "j]", fillerChar, "/",
+                   "mu[,", refLevel, "]), j",
+                    fillerChar, "=", fillerChar, "c(1:", refLevel-1,
+                    ",", fillerChar, refLevel+1, ":(M+1)),\n",
+                    sep = "")
+            }
+         }
+         } else {  # refLevel is character
+           paste("log(mu[,", "j]", fillerChar, "/",
+                "mu[,'", refLevel, "']), j",
+                 fillerChar, " != '", fillerChar, refLevel,
+                 "',\n",
+                 sep = "")
          },
          "Variance: ",
            ifelse(whitespace,
@@ -701,11 +712,6 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                   "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
 
   constraints = eval(substitute(expression({
-
-
-
-
-
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            apply.int = TRUE,
@@ -715,14 +721,13 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                                 M1 = M)
     constraints <- cm.nointercept.VGAM(constraints, x, .nointercept , M)
   }), list( .parallel = parallel, .zero = zero,
-            .nointercept = nointercept,
-            .refLevel = refLevel ))),
+            .nointercept = nointercept ))),
 
   deviance = Deviance.categorical.data.vgam,
 
   infos = eval(substitute(function(...) {
     list(parallel = .parallel ,
-         refLevel = .refLevel ,
+         refLevel = .refLevel ,  # original
          M1 = -1,
          link = "multilogit",
          expected = TRUE,
@@ -745,9 +750,18 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     eval(process.categorical.data.VGAM)
 
     M <- ncol(y)-1
-    use.refLevel <- if ( .refLevel < 0) M+1 else .refLevel
+    use.refLevel <- if (is.numeric( .refLevel )) {
+      if ( .refLevel < 0) M+1 else .refLevel
+    } else {  # Is character. Match it with the levels of the response.
+      tmp6 <- match( .refLevel , colnames(y))
+      if (is.na(tmp6))
+        stop("could not match argument 'refLevel' with any columns ",
+             "of the response matrix")
+      tmp6
+    }
     if (use.refLevel > (M+1))
       stop("argument 'refLevel' has a value that is too high")
+    extra$use.refLevel <- use.refLevel  # Used in all other slots.
 
 
     allbut.refLevel <- (1:(M+1))[-use.refLevel]
@@ -756,18 +770,16 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             "]", .fillerChar, "/", .fillerChar, "mu[,",
             use.refLevel, "])", sep = "")
 
-    y.names <- paste("mu", 1:(M+1), sep = "")
   }), list( .refLevel = refLevel,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
-
-    if (any(is.na(eta)))
+    if (anyNA(eta))
       warning("there are NAs in eta in slot inverse")
-
-    ans <- multilogit(eta, refLevel = .refLevel , inverse = TRUE)
-    if (any(is.na(ans)))
+    ans <- multilogit(eta, refLevel = extra$use.refLevel, # .refLevel ,
+                      inverse = TRUE)
+    if (anyNA(ans))
       warning("there are NAs here in slot linkinv")
     if (min(ans) == 0 || max(ans) == 1)
       warning("fitted probabilities numerically 0 or 1 occurred")
@@ -776,7 +788,6 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   }), list( .refLevel = refLevel )),
 
   last = eval(substitute(expression({
-    misc$refLevel <- if ( .refLevel < 0) M+1 else .refLevel
     misc$link <- "multilogit"
 
     misc$earg <- list(multilogit = list(
@@ -788,10 +799,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (!is.null(dy[[2]]))
       dimnames(fit$fitted.values) <- dy
 
-    misc$multipleResponses <- FALSE
     misc$nointercept <- .nointercept
     misc$parallel <- .parallel
-    misc$refLevel <- use.refLevel
+    misc$refLevel <- use.refLevel  # if ( .refLevel < 0) M+1 else .refLevel
     misc$refLevel.orig <- .refLevel
     misc$zero <- .zero
   }), list( .refLevel = refLevel,
@@ -801,7 +811,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
-    multilogit(mu, refLevel = .refLevel )
+    multilogit(mu, refLevel = extra$use.refLevel)  # .refLevel 
   }), list( .refLevel = refLevel )),
 
   loglikelihood =
@@ -833,39 +843,32 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   },
   vfamily = c("multinomial", "VGAMcategorical"),
   deriv = eval(substitute(expression({
-    if ( .refLevel < 0) {
-      c(w) * (y[, -ncol(y)] - mu[, -ncol(y)])
-    } else {
-      use.refLevel <- if ( .refLevel < 0) M+1 else .refLevel
-      c(w) * (y[, -use.refLevel] - mu[, -use.refLevel])
-    }
+    use.refLevel <- extra$use.refLevel  # Restore its value
+    c(w) * (y[, -use.refLevel] - mu[, -use.refLevel])
   }), list( .refLevel = refLevel ))),
   weight = eval(substitute(expression({
     mytiny <- (mu < sqrt(.Machine$double.eps)) | 
               (mu > 1.0 - sqrt(.Machine$double.eps))
 
-    use.refLevel <- if ( .refLevel < 0) M+1 else .refLevel
-
     if (M == 1) {
-      wz <- mu[, 3-use.refLevel] * (1-mu[, 3-use.refLevel])
+      wz <- mu[, 3 - use.refLevel] * (1 - mu[, 3 - use.refLevel])
     } else {
       index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
-        myinc <- (index$row.index >= use.refLevel)
-        index$row.index[myinc] <- index$row.index[myinc] + 1
-        myinc <- (index$col.index >= use.refLevel)
-        index$col.index[myinc] <- index$col.index[myinc] + 1
-
-        wz <- -mu[, index$row] * mu[, index$col]
-        wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]
+      myinc <- (index$row.index >= use.refLevel)
+      index$row.index[myinc] <- index$row.index[myinc] + 1
+      myinc <- (index$col.index >= use.refLevel)
+      index$col.index[myinc] <- index$col.index[myinc] + 1
+      wz <- -mu[, index$row] * mu[, index$col]
+      wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]
     }
 
     atiny <- (mytiny %*% rep(1, ncol(mu))) > 0  # apply(mytiny, 1, any)
     if (any(atiny)) {
-      if (M == 1) wz[atiny] <- wz[atiny] *
-                               (1 + .Machine$double.eps^0.5) +
-                               .Machine$double.eps else
-      wz[atiny, 1:M] <- wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5) +
-                       .Machine$double.eps
+      if (M == 1)
+        wz[atiny] <- wz[atiny] * (1 + .Machine$double.eps^0.5) +
+                                 .Machine$double.eps else
+        wz[atiny, 1:M] <- wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5) +
+                          .Machine$double.eps
     }
     c(w) * wz
   }), list( .refLevel = refLevel ))))
@@ -1110,7 +1113,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       misc$earg <- list( .earg )
 
     } else {
-      misc$link <- rep( .link , length = M)
+      misc$link <- rep_len( .link , M)
       names(misc$link) <- mynames
 
       misc$earg <- vector("list", M)
@@ -1384,7 +1387,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
 
   last = eval(substitute(expression({
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- mynames
 
     misc$earg <- vector("list", M)
@@ -1542,11 +1545,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
         stop("use bratt(), not brat(), when there are ties")
 
     try.index <- 1:400
-    M <- (1:length(try.index))[(try.index+1)*(try.index) == ncol(y)]
+    M <- (seq_along(try.index))[(try.index+1)*(try.index) == ncol(y)]
     if (!is.finite(M))
       stop("cannot determine 'M'")
-    ialpha <- matrix(rep( .ialpha , length.out = M),
-                     n, M, byrow = TRUE)
+    ialpha <- matrix(rep_len( .ialpha , M), n, M, byrow = TRUE)
     etastart <- matrix(theta2eta(ialpha, "loge",
                                  earg = list(theta = NULL)),
                        n, M, byrow = TRUE)
@@ -1577,7 +1579,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   }, list( .refgp = refgp, .refvalue = refvalue) )),
 
   last = eval(substitute(expression({
-    misc$link <- rep("loge", length = M)
+    misc$link <- rep_len("loge", M)
     names(misc$link) <- paste("alpha", uindex, sep = "")
 
     misc$earg <- vector("list", M)
@@ -1626,7 +1628,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
                                      earg = list(theta = NULL)),
                            .refvalue, .refgp )
       ymat <- InverseBrat(y[ii, ], NCo = M+1, diag = 0)
-      answer <- rep(0, len = M)
+      answer <- rep_len(0, M)
       for (aa in 1:(M+1)) {
         answer <- answer + (1 - (aa == uindex)) *
                   (ymat[uindex, aa] * alpha[aa] - ymat[aa, uindex] *
@@ -1706,7 +1708,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
   initialize = eval(substitute(expression({
     try.index <- 1:400
-    M <- (1:length(try.index))[(try.index*(try.index-1)) == ncol(y)]
+    M <- (seq_along(try.index))[(try.index*(try.index-1)) == ncol(y)]
     if (!is.Numeric(M, length.arg = 1, integer.valued = TRUE))
       stop("cannot determine 'M'")
     NCo <- M  # Number of contestants
@@ -1721,16 +1723,14 @@ acat.deriv <- function(zeta, reverse, M, n) {
       ties <- 0 * y
     }
 
-    ialpha <- rep( .ialpha, len = NCo-1)
+    ialpha <- rep_len( .ialpha, NCo-1)
     ialpha0 <- .i0
     etastart <-
       cbind(matrix(theta2eta(ialpha,
                              "loge",
                              list(theta = NULL)),
                    n, NCo-1, byrow = TRUE),
-            theta2eta(rep(ialpha0, length.out = n),
-                      "loge",
-                      list(theta = NULL)))
+            theta2eta(rep_len(ialpha0, n), "loge", list(theta = NULL)))
     refgp <- .refgp
     if (!intercept.only)
       warning("this function only works with intercept-only models")
@@ -1766,7 +1766,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     probs
   }, list( .refgp = refgp, .refvalue = refvalue) )),
   last = eval(substitute(expression({
-    misc$link <- rep( "loge", length = M)
+    misc$link <- rep_len("loge", M)
     names(misc$link) <- c(paste("alpha", uindex, sep = ""), "alpha0")
 
 
@@ -1810,7 +1810,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha0 <- loge(eta[ii, M], inverse = TRUE)
       ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
       tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
-      answer <- rep(0, len = NCo-1)  # deriv wrt eta[-M]
+      answer <- rep_len(0, NCo-1)  # deriv wrt eta[-M]
       for (aa in 1:NCo) {
         Daj <- alpha[aa] + alpha[uindex] + alpha0
         pja <- alpha[uindex] / Daj
@@ -1868,7 +1868,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
            alphajunk[uindex[ind5$row]] / (alpha0 +
            alphajunk[uindex[ind5$row]] + alphajunk[uindex[ind5$col]])^2
       }
-      for (sss in 1:length(uindex)) {
+      for (sss in seq_along(uindex)) {
         jay <- uindex[sss]
         naj <- ymat[, jay] + ymat[jay, ] + tmat[, jay]
         Daj <- alpha[jay] + alpha + alpha0
@@ -1920,9 +1920,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
   allargs <- list(mat)  # ,...
   callit <- if (length(names(allargs))) names(allargs) else
-            as.character(1:length(allargs))
+            as.character(seq_along(allargs))
   ans <- ans.ties <- NULL
-  for (ii in 1:length(allargs)) {
+  for (ii in seq_along(allargs)) {
     m <- allargs[[ii]]
     if (!is.matrix(m) || dim(m)[1] != dim(m)[2]) 
       stop("m must be a square matrix")
@@ -1934,7 +1934,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     diag(ties) <- NA
 
     diag(m) <- 0  # Could have been NAs
-    if (any(is.na(m)))
+    if (anyNA(m))
       stop("missing values not allowed (except on the diagonal)")
     diag(m) <- NA
 
@@ -2036,7 +2036,7 @@ InverseBrat <-
                     positive = TRUE) ||
         any(Levels < 2))
       stop("'Levels' must have integer values (>= 2) only")
-    Levels <- rep(Levels, length = NOS)
+    Levels <- rep_len(Levels, NOS)
   }
 
 
@@ -2076,8 +2076,7 @@ InverseBrat <-
         stop("the 'weights' argument must be a vector of all ones")
       extra$NOS <- M <- NOS <- if (is.Numeric( .NOS )) .NOS else
           ncol(orig.y)
-      Levels <- rep(if (is.Numeric( .Levels )) .Levels else 0,
-                   len = NOS)
+      Levels <- rep_len(if (is.Numeric( .Levels )) .Levels else 0, NOS)
       if (!is.Numeric( .Levels ))
         for (iii in 1:NOS) {
           Levels[iii] <- length(unique(sort(orig.y[,iii])))
@@ -2086,9 +2085,8 @@ InverseBrat <-
     }
 
 
-    initmu <- if (is.Numeric( .init.mu ))
-             rep( .init.mu, len = NOS) else NULL
-    cutpoints <- rep( .cutpoints, len = sum(Levels))
+    initmu <- if (is.Numeric( .init.mu )) rep_len( .init.mu , NOS) else NULL
+    cutpoints <- rep_len( .cutpoints, sum(Levels))
     delete.zero.colns <- FALSE 
     use.y <- if ( .countdata ) y else matrix(0, n, sum(Levels))
     use.etastart <- matrix(0, n, M)
@@ -2113,7 +2111,7 @@ InverseBrat <-
     }
 
     ncoly <- extra$ncoly <- sum(Levels)
-    cp.vector <- rep( .cutpoints, length=ncoly)
+    cp.vector <- rep_len( .cutpoints , ncoly)
     extra$countdata <- .countdata
     extra$cutpoints <- cp.vector
     extra$n <- n
@@ -2134,7 +2132,7 @@ InverseBrat <-
       misc$link <- .link
       misc$earg <- list( .earg )
     } else {
-      misc$link <- rep( .link , length = M)
+      misc$link <- rep_len( .link , M)
       names(misc$link) <- mynames
 
       misc$earg <- vector("list", M)
@@ -2257,7 +2255,7 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
 
 findFirstMethod <- function(methodsfn, charvec) {
   answer <- NULL
-  for (ii in 1:length(charvec)) {
+  for (ii in seq_along(charvec)) {
     if (existsMethod(methodsfn, signature(VGAMff = charvec[ii]))) {
       answer <- charvec[ii]
       break
@@ -2598,7 +2596,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
         return((1 - Thetamat[, jay-1]) *
                 hdot[, tee] * cpThetamat[, jay] / Thetamat[, tee])
       }
-      return(rep(0, length = nrow(Thetamat)))  # Since jay-1 > tee
+      return(rep_len(0, nrow(Thetamat)))  # Since jay-1 > tee
     } else {  # reverse = FALSE ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
       if (jay == 1 && tee == 1) {
@@ -2612,7 +2610,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
         return((1 - Thetamat[, jay]) *
                 hdot[, tee] * cpThetamat[, jay-1] / Thetamat[, tee])
       }
-      return(rep(0, length = nrow(Thetamat)))  # Since jay < tee
+      return(rep_len(0, nrow(Thetamat)))  # Since jay < tee
     } # reverse ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
   }  # cratio.derivs
 
@@ -2944,7 +2942,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
                      dimnames = list(dimnames(B)[[1]],
                                      dimnames(B)[[2]],
                                      dimnames(fitted(object)[ii, ])[[1]]))
-        for (ilocal in 1:length(ii)) {
+        for (ilocal in seq_along(ii)) {
           pvec  <- fitted(object)[ii[ilocal], ]
           temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
           temp2 <- matrix(rowSums(temp1), ppp, M+1)
@@ -3154,7 +3152,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
         return((1 - Thetamat[, jay-1]) *
                 hdot[, tee] * cpThetamat[, jay] / Thetamat[, tee])
       }
-      return(rep(0, length = nrow(Thetamat)))  # Since jay-1 > tee
+      return(rep_len(0, nrow(Thetamat)))  # Since jay-1 > tee
     } else {  # reverse = FALSE ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
       if (jay == 1 && tee == 1) {
@@ -3168,7 +3166,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
         return((1 - Thetamat[, jay]) *
                 hdot[, tee] * cpThetamat[, jay-1] / Thetamat[, tee])
       }
-      return(rep(0, length = nrow(Thetamat)))  # Since jay < tee
+      return(rep_len(0, nrow(Thetamat)))  # Since jay < tee
     } # reverse ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
   }  # cratio.derivs
 
@@ -3380,7 +3378,7 @@ is.zero.matrix <- function(object, ...) {
   rnames <- rownames(object)
   intercept.index <- if (length(rnames)) {
     if (any(rnames == "(Intercept)")) {
-      (1:length(rnames))[rnames == "(Intercept)"]
+      (seq_along(rnames))[rnames == "(Intercept)"]
     } else {
       stop("the matrix does not seem to have an intercept")
       NULL

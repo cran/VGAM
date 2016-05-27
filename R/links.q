@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -707,7 +707,7 @@ care.exp <- function(x,
 
  multilogit <-
   function(theta,
-           refLevel = "last",
+           refLevel = "(Last)",
            M = NULL,  # stop("argument 'M' not specified"),
            whitespace = FALSE,
            bvalue = NULL,
@@ -721,15 +721,15 @@ care.exp <- function(x,
     stop("the length of 'refLevel' must be one")
 
   if (is.character(refLevel)) {
-    if (refLevel != "last")
-      stop('if a character, refLevel must be "last"')
+    if (refLevel != "(Last)")
+      stop('if a character, refLevel must be "(Last)"')
     refLevel <- -1
   } else
   if (is.factor(refLevel)) {
     if (is.ordered(refLevel))
       warning("argument 'refLevel' is from an ordered factor")
     refLevel <- as.character(refLevel) == levels(refLevel)
-    refLevel <- (1:length(refLevel))[refLevel]
+    refLevel <- (seq_along(refLevel))[refLevel]
     if (!is.Numeric(refLevel, length.arg = 1,
                     integer.valued = TRUE, positive = TRUE))
       stop("could not coerce 'refLevel' into a single positive integer")
@@ -1134,9 +1134,9 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
 
 
   thmat <- cbind(theta)
-  lambda <- rep(lambda, len = ncol(thmat))  # Allow recycling for lambda
+  lambda <- rep_len(lambda, ncol(thmat))  # Allow recycling for lambda
   if (is.Numeric(cutpoint))
-    cutpoint <- rep(cutpoint, len = ncol(thmat))
+    cutpoint <- rep_len(cutpoint, ncol(thmat))
   if (ncol(thmat) > 1) {
     answer <- thmat
     for (ii in 1:ncol(thmat))
@@ -1230,7 +1230,7 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
     thmat <- cbind(theta)
     if (ncol(thmat) > 1) {
         answer <- thmat
-        cutpoint <- rep(cutpoint, len = ncol(thmat))  # Reqd for the for loop
+        cutpoint <- rep_len(cutpoint, ncol(thmat))  # Reqd for the for loop
         for (ii in 1:ncol(thmat))
             answer[, ii] <- Recall(theta = thmat[, ii],
                                  cutpoint = cutpoint,
@@ -1351,8 +1351,8 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
 
 
   thmat <- cbind(theta)
-  kay <- rep(kay, len = ncol(thmat))  # Allow recycling for kay
-  cutpoint <- rep(cutpoint, len = ncol(thmat))  # Allow recycling for cutpoint
+  kay <- rep_len(kay, ncol(thmat))  # Allow recycling for kay
+  cutpoint <- rep_len(cutpoint, ncol(thmat))  # Allow recycling for cutpoint
   if (ncol(thmat) > 1) {
     answer <- thmat
     for (ii in 1:ncol(thmat))
@@ -1477,7 +1477,7 @@ warning("20150711; this function has not been updated")
 
 
     thmat <- cbind(theta)
-    kay <- rep(kay, len = ncol(thmat))  # Allow recycling for kay
+    kay <- rep_len(kay, ncol(thmat))  # Allow recycling for kay
     if (ncol(thmat) > 1) {
         answer <- thmat
         for (ii in 1:ncol(thmat))
@@ -1578,7 +1578,7 @@ warning("20150711; this function has not been updated")
 
   temp <- cut(y, breaks = breaks, labels = FALSE)
   temp <- c(temp)  # integer vector of integers
-  if (any(is.na(temp)))
+  if (anyNA(temp))
     warning("there are NAs")
   answer <- if (ncol(y) > 1) matrix(temp, nrow(y), ncol(y)) else temp
   if (ncol(y) > 1) {

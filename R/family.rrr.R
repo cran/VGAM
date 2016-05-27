@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -69,7 +69,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
                   Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
                                60, 80, 100, 125, 2^(8:12)),
                   Criterion = c("ResSS", "coefficients"),
-                  Crow1positive = rep(TRUE, length.out = Rank),
+                  Crow1positive = rep_len(TRUE, Rank),
                   colx1.index,
                   Linesearch = FALSE,
                   Maxit = 20, 
@@ -194,7 +194,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
           direction1 <- (xnew - xold)  # / sqrt(1 + sum((xnew-xold)^2))
           ftemp <- fit$ResSS  # Most recent objective function 
           use.alpha <- 0  # The current step relative to (xold, yold)
-          for (itter in 1:length(Alphavec)) {
+          for (itter in seq_along(Alphavec)) {
             CC <- xold + Alphavec[itter] * direction1
 
             try.latvar.mat <- x[, colx2.index, drop = FALSE] %*% CC
@@ -304,7 +304,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
       asx <- attr(x, "assign")
       asx <- vector("list", ncol(new.latvar.model.matrix))
       names(asx) <- names(clist2)
-      for (ii in 1:length(names(asx))) {
+      for (ii in seq_along(names(asx))) {
         asx[[ii]] <- ii
       }
       attr(new.latvar.model.matrix, "assign") <- asx
@@ -367,7 +367,7 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
 
       clist2 <- NULL # for vlm.wfit
 
-      i5 <- rep(0, length.out = MSratio)
+      i5 <- rep_len(0, MSratio)
       for (ii in 1:NOS) {
         i5 <- i5 + 1:MSratio
 
@@ -625,8 +625,8 @@ rrr.end.expression <- expression({
     }
     mu <- family@linkinv(eta, extra)
 
-    if (any(is.na(mu)))
-        warning("there are NAs in mu") 
+    if (anyNA(mu))
+      warning("there are NAs in mu") 
 
     deriv.mu <- eval(family@deriv)
     wz <- eval(family@weight)
@@ -712,8 +712,8 @@ rrr.derivative.expression <- expression({
                       method = which.optimizer,
                       control = list(fnscale = 1,
                                      trace = as.integer(control$trace),
-                                     parscale = rep(control$Parscale,
-                                                    length.out=length(Cmat)),
+                                     parscale = rep_len(control$Parscale,
+                                                        length(Cmat)),
                                      maxit = 250),
                       etamat = eta, xmat = x, ymat = y, wvec = w,
                       X.vlm.1save = if (nice31) NULL else X.vlm.1save,
@@ -948,7 +948,7 @@ Coef.qrrvglm <-
   lp.names <- object@misc$predictors.names
   if (!length(lp.names)) lp.names <- NULL 
 
-  dzero.vector <- rep(FALSE, length = M)
+  dzero.vector <- rep_len(FALSE, M)
   if (length(Dzero))
     dzero.vector[Dzero] <- TRUE
   names(dzero.vector) <- ynames 
@@ -989,7 +989,7 @@ Coef.qrrvglm <-
   Cmat <- object@extra$Cmat  # p2 x Rank
   Dmat <- object@extra$Dmat  #
   B1   <- object@extra$B1    #
-  bellshaped <- rep(FALSE, length = M)
+  bellshaped <- rep_len(FALSE, M)
 
   if (is.character(refResponse)) {
       refResponse <- (1:NOS)[refResponse == ynames]
@@ -1127,7 +1127,7 @@ Coef.qrrvglm <-
       mymax <- object@family@linkinv(rbind(eta.temp), extra = object@extra)  
       c(mymax)  # Convert from matrix to vector 
     } else {
-      5 * rep(NA_real_, length.out = M)  # Make "numeric"
+      5 * rep_len(NA_real_, M)  # Make "numeric"
   }
   names(maximum) <- ynames
     
@@ -1371,7 +1371,7 @@ predictqrrvglm <-
 
     if (nrow(X) != nrow(newdata)) {
       as.save <- attr(X, "assign")
-      X <- X[rep(1, nrow(newdata)),, drop = FALSE]
+      X <- X[rep_len(1, nrow(newdata)),, drop = FALSE]
       dimnames(X) <- list(dimnames(newdata)[[1]], "(Intercept)")
       attr(X, "assign") <- as.save  # Restored
     }
@@ -1413,7 +1413,7 @@ predictqrrvglm <-
 
       etamat <- as.matrix(X1mat %*% Coefs@B1 + latvarmat %*% t(Coefs@A))
       which.species <- 1:NOS  # Do it all for all species
-      for (sppno in 1:length(which.species)) {
+      for (sppno in seq_along(which.species)) {
         thisSpecies <- which.species[sppno]
         Dmat <- matrix(Coefs@D[,,thisSpecies], Rank, Rank)
         etamat[, thisSpecies] <- etamat[, thisSpecies] +
@@ -1489,7 +1489,7 @@ show.rrvglm <- function(x, ...) {
   if (any(nas <- is.na(vecOfBetas))) {
     if (is.null(names(vecOfBetas)))
       names(vecOfBetas) <- paste("b",
-            1:length(vecOfBetas), sep = "")
+            seq_along(vecOfBetas), sep = "")
     cat("\nCoefficients: (", sum(nas),
         " not defined because of singularities)\n", sep = "")
   } else 
@@ -1756,7 +1756,7 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
     if (p1) {
       ooo <- fit@assign
       bb <- NULL 
-      for (ii in 1:length(ooo)) {
+      for (ii in seq_along(ooo)) {
         if (any(ooo[[ii]][1] == colx1.index))
           bb <- c(bb, names(ooo)[ii])
       }
@@ -1948,7 +1948,7 @@ dctda.fast.only <- function(theta, wz, U, zmat, M, r, x1mat, x2mat,
   temp <- m2a(temp, M = p2 * r)  # Note M != M here!
   G <- solve(rowSums(temp, dims = 2))  # p2*r by p2*r 
 
-  dc.da <- array(NA, c(p2, r, M, r))  # different from other functions
+  dc.da <- array(NA_real_, c(p2, r, M, r))  # different from other functions
   if (length(Index.corner) == M)
       stop("cannot handle full rank models yet")
   cbindex <- (1:M)[-Index.corner]  # complement of Index.corner 
@@ -2033,7 +2033,7 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
   temp <- m2a(temp, M = r * pp)     # Note M != M here!
   G <- solve(rowSums(temp, dims = 2))
 
-  dc.da <- array(NA, c(pp,r,M,r))  # different from other functions
+  dc.da <- array(NA_real_, c(pp, r, M, r))  # different from other functions
   cbindex <- (1:M)[-Index.corner]
   resid2 <- mux22(t(wz),
                   z - matrix(int.vec, nn, M, byrow = TRUE), M = M,
@@ -2045,7 +2045,7 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
                t(xmat)) * matrix(resid2[, tt], pp, nn, byrow = TRUE) 
       temp2 <- kronecker(I.col(s, r), rowSums(fred))
 
-      temp4 <- rep(0,pp)
+      temp4 <- rep_len(0, pp)
       for (k in 1:r) {
         Wiak <- mux22(t(wz),
                       matrix(Aimat[, k], nn, M, byrow = TRUE),
@@ -2173,7 +2173,7 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
   temp <- m2a(temp, M = r * pp)  # Note M != M here!
   G <- solve(rowSums(temp, dims = 2))
 
-  dc.da <- array(NA,c(pp,r,r,M))
+  dc.da <- array(NA_real_, c(pp, r, r, M))
   cbindex <- (1:M)[-Index.corner]
   resid2 <- mux22(t(wz), z - matrix(int.vec, nn, M, byrow = TRUE),
                   M = M,
@@ -2185,7 +2185,7 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
                t(xmat)) * matrix(resid2[, tt], pp, nn, byrow = TRUE) 
       temp2 <- kronecker(I.col(s, r), rowSums(fred))
 
-      temp4 <- rep(0,pp)
+      temp4 <- rep_len(0, pp)
       for (k in 1:r) {
         Wiak <- mux22(t(wz),
                      matrix(Aimat[, k], nn, M, byrow = TRUE),
@@ -2300,7 +2300,7 @@ biplot.qrrvglm <- function(x, ...) {
     type <- match.arg(type, c("fitted.values", "predictors"))[1]
 
     if (is.numeric(OriginC))
-      OriginC <- rep(OriginC, length.out = 2) else {
+      OriginC <- rep_len(OriginC, 2) else {
       if (mode(OriginC) != "character" && mode(OriginC) != "name")
         OriginC <- as.character(substitute(OriginC))
       OriginC <- match.arg(OriginC, c("origin","mean"))[1]
@@ -2348,22 +2348,22 @@ biplot.qrrvglm <- function(x, ...) {
 
 
 
-    pch  <- rep(pch,  length = ncol(r.curves))
-    pcol <- rep(pcol, length = ncol(r.curves))
-    pcex <- rep(pcex, length = ncol(r.curves))
-    llty <- rep(llty, length = ncol(r.curves))
-    lcol <- rep(lcol, length = ncol(r.curves))
-    llwd <- rep(llwd, length = ncol(r.curves))
-    elty <- rep(elty, length = ncol(r.curves))
-    ecol <- rep(ecol, length = ncol(r.curves))
-    elwd <- rep(elwd, length = ncol(r.curves))
-    adj.arg <- rep(adj.arg, length = ncol(r.curves))
+    pch  <- rep_len(pch,  ncol(r.curves))
+    pcol <- rep_len(pcol, ncol(r.curves))
+    pcex <- rep_len(pcex, ncol(r.curves))
+    llty <- rep_len(llty, ncol(r.curves))
+    lcol <- rep_len(lcol, ncol(r.curves))
+    llwd <- rep_len(llwd, ncol(r.curves))
+    elty <- rep_len(elty, ncol(r.curves))
+    ecol <- rep_len(ecol, ncol(r.curves))
+    elwd <- rep_len(elwd, ncol(r.curves))
+    adj.arg <- rep_len(adj.arg, ncol(r.curves))
     if ( C ) {
-      Clwd <- rep(Clwd, length = nrow(Cmat))
-      Clty <- rep(Clty, length = nrow(Cmat))
-      Ccol <- rep(Ccol, length = nrow(Cmat))
-      Ccex <- rep(Ccex, length = nrow(Cmat))
-      Cadj.arg <- rep(Cadj.arg, length = nrow(Cmat))
+      Clwd <- rep_len(Clwd, nrow(Cmat))
+      Clty <- rep_len(Clty, nrow(Cmat))
+      Ccol <- rep_len(Ccol, nrow(Cmat))
+      Ccex <- rep_len(Ccex, nrow(Cmat))
+      Cadj.arg <- rep_len(Cadj.arg, nrow(Cmat))
     }
 
     if (Rank == 1) {
@@ -2420,8 +2420,8 @@ biplot.qrrvglm <- function(x, ...) {
           cutpoint <- object@family@linkfun(Coef.list@Maximum[i],
                       extra = object@extra) - cutpoint
           if (is.finite(cutpoint) && cutpoint > 0) {
-            Mmat <- diag(rep(ifelse(object@control$Crow1positive, 1, -1),
-                            length.out = Rank))
+            Mmat <- diag(rep_len(ifelse(object@control$Crow1positive, 1, -1),
+                                 Rank))
             etoli <- eigen(t(Mmat) %*% Coef.list@Tolerance[,,i] %*% Mmat)
             A <- ifelse(etoli$val[1]>0, sqrt(2*cutpoint*etoli$val[1]), Inf)
             B <- ifelse(etoli$val[2]>0, sqrt(2*cutpoint*etoli$val[2]), Inf)
@@ -2464,7 +2464,7 @@ biplot.qrrvglm <- function(x, ...) {
     if (sites) {
       text(nustar[, 1], nustar[, 2], adj = 0.5,
            labels = if (is.null(spch)) dimnames(nustar)[[1]] else
-           rep(spch, length = nrow(nustar)), col = scol,
+           rep_len(spch, nrow(nustar)), col = scol,
            cex = scex, font = sfont)
     }
   }
@@ -2534,13 +2534,13 @@ lvplot.rrvglm <- function(object,
          xlab=xlab, ylab=ylab, ...)  # xlim etc. supplied through ...
 
     if (A) {
-        Aadj <- rep(Aadj, length.out = length(index.nosz))
-        Acex <- rep(Acex, length.out = length(index.nosz))
-        Acol <- rep(Acol, length.out = length(index.nosz))
+        Aadj <- rep_len(Aadj, length(index.nosz))
+        Acex <- rep_len(Acex, length(index.nosz))
+        Acol <- rep_len(Acol, length(index.nosz))
         if (length(Alabels) != M)
           stop("'Alabels' must be of length ", M)
         if (length(Apch)) {
-            Apch <- rep(Apch, length.out = length(index.nosz))
+            Apch <- rep_len(Apch, length(index.nosz))
             for (i in index.nosz)
                 points(Amat[i, 1],
                        Amat[i, 2],
@@ -2555,12 +2555,12 @@ lvplot.rrvglm <- function(object,
 
     if (C) {
       p2 <- nrow(Cmat)
-      gapC <- rep(gapC, length.out = p2)
-      Cadj <- rep(Cadj, length.out = p2)
-      Ccex <- rep(Ccex, length.out = p2)
-      Ccol <- rep(Ccol, length.out = p2)
-      Clwd <- rep(Clwd, length.out = p2)
-      Clty <- rep(Clty, length.out = p2)
+      gapC <- rep_len(gapC, p2)
+      Cadj <- rep_len(Cadj, p2)
+      Ccex <- rep_len(Ccex, p2)
+      Ccol <- rep_len(Ccol, p2)
+      Clwd <- rep_len(Clwd, p2)
+      Clty <- rep_len(Clty, p2)
       if (length(Clabels) != p2)
         stop("'length(Clabels)' must be equal to ", p2)
       for (ii in 1:p2) {
@@ -2576,13 +2576,12 @@ lvplot.rrvglm <- function(object,
     if (scores) {
       ugrp <- unique(groups)
       nlev <- length(ugrp)  # number of groups
-      clty <- rep(clty, length.out = nlev)
-      clwd <- rep(clwd, length.out = nlev)
-      ccol <- rep(ccol, length.out = nlev)
-      if (length(spch))
-        spch <- rep(spch, length.out = n)
-      scol <- rep(scol, length.out = n)
-      scex <- rep(scex, length.out = n)
+      clty <- rep_len(clty, nlev)
+      clwd <- rep_len(clwd, nlev)
+      ccol <- rep_len(ccol, nlev)
+      if (length(spch)) spch <- rep_len(spch, n)
+      scol <- rep_len(scol, n)
+      scex <- rep_len(scex, n)
       for (ii in ugrp) {
         gp <- groups == ii
         if (nlev > 1 && (length(unique(spch[gp])) != 1 ||
@@ -2841,7 +2840,7 @@ setMethod("show", "Coef.rrvglm", function(object)
     for (ii in 2:ncol(y)) {
             cms[[paste("Col.", ii, sep = "")]] <-
                modmat.col[,ii, drop = FALSE]
-        .grc.df[[paste("Col.", ii, sep = "")]] <- rep(1, nrow(y))
+        .grc.df[[paste("Col.", ii, sep = "")]] <- rep_len(1, nrow(y))
     }
     for (ii in 2:nrow(y)) {
             cms[[yn1[ii]]] <- diag(ncol(y))
@@ -2906,9 +2905,9 @@ trplot.qrrvglm <-
            cex = par()$cex,
            col = 1:(nos*(nos-1)/2),
            log = "", 
-           lty = rep(par()$lty, length.out = nos*(nos-1)/2),
-           lwd = rep(par()$lwd, length.out = nos*(nos-1)/2),
-           tcol = rep(par()$col, length.out = nos*(nos-1)/2),
+           lty  = rep_len(par()$lty, nos*(nos-1)/2),
+           lwd  = rep_len(par()$lwd, nos*(nos-1)/2),
+           tcol = rep_len(par()$col, nos*(nos-1)/2),
            xlab = NULL, ylab = NULL, 
            main = "",   # "Trajectory plot",
            type = "b",
@@ -2922,7 +2921,7 @@ trplot.qrrvglm <-
   M <- object@misc$M  #
   nn <- nrow(fv)  # Number of sites 
   if (length(sitenames))
-    sitenames <- rep(sitenames, length.out = nn)
+    sitenames <- rep_len(sitenames, nn)
   sppNames <- dimnames(object@y)[[2]]
   if (!length(which.species)) {
     which.species <- sppNames[1:NOS]
@@ -2968,14 +2967,14 @@ trplot.qrrvglm <-
             ylab = myylab, main = main, ...)
   }
 
-  lwd  <- rep(lwd,  length.out = nos*(nos-1)/2)
-  col  <- rep(col,  length.out = nos*(nos-1)/2)
-  lty  <- rep(lty,  length.out = nos*(nos-1)/2)
-  tcol <- rep(tcol, length.out = nos*(nos-1)/2)
+  lwd  <- rep_len(lwd,  nos*(nos-1)/2)
+  col  <- rep_len(col,  nos*(nos-1)/2)
+  lty  <- rep_len(lty,  nos*(nos-1)/2)
+  tcol <- rep_len(tcol, nos*(nos-1)/2)
 
   oo <- order(coef.obj@latvar)  # Sort by the latent variable
   ii <- 0
-  col <- rep(col, length = nos*(nos-1)/2)
+  col <- rep_len(col, nos*(nos-1)/2)
   species.names <- NULL
   if (show.plot)
     for (i1 in seq(which.species.numer)) {
@@ -3017,12 +3016,13 @@ vcovrrvglm <- function(object, ...) {
 
 
 
-vcovqrrvglm <- function(object,
-                       I.tolerances = object@control$eq.tolerances,
-                       MaxScale = c("predictors", "response"),
-           dispersion = rep(if (length(sobj@dispersion))
-           sobj@dispersion else 1,
-                            length.out = M), ...) {
+vcovqrrvglm <-
+  function(object,
+           I.tolerances = object@control$eq.tolerances,
+           MaxScale = c("predictors", "response"),
+           dispersion = rep_len(if (length(sobj@dispersion))
+                                sobj@dispersion else 1, M),
+           ...) {
   stop("this function is not yet completed")
 
   if (mode(MaxScale) != "character" && mode(MaxScale) != "name")
@@ -3034,7 +3034,7 @@ vcovqrrvglm <- function(object,
   sobj <- summary(object)
   cobj <- Coef(object, I.tolerances = I.tolerances, ...)
   M <- nrow(cobj@A)
-  dispersion <- rep(dispersion, length.out = M)
+  dispersion <- rep_len(dispersion, M)
   if (cobj@Rank != 1)
     stop("object must be a rank 1 model")
 
@@ -3052,7 +3052,7 @@ vcovqrrvglm <- function(object,
          "eq.tolerances = FALSE")
 
   answer <- NULL
-  Cov.unscaled <- array(NA, c(3, 3, M), dimnames = list(
+  Cov.unscaled <- array(NA_real_, c(3, 3, M), dimnames = list(
       c("(Intercept)", "latvar", "latvar^2"),
       c("(Intercept)", "latvar", "latvar^2"), dimnames(cobj@D)[[3]]))
   for (spp in 1:M) {
@@ -3075,7 +3075,7 @@ vcovqrrvglm <- function(object,
                              if (nchar(link.function))
                            paste(link.function, "(Maximum)", sep = "") else
                            "Maximum"))
-  NAthere <- is.na(answer %*% rep(1, length.out = 3))
+  NAthere <- is.na(answer %*% rep_len(1, 3))
   answer[NAthere,] <- NA  # NA in tolerance means NA everywhere else
   new(Class = "vcov.qrrvglm",
       Cov.unscaled = Cov.unscaled,
@@ -3151,14 +3151,12 @@ perspqrrvglm <-
   NOS <- ncol(fv)  # Number of species
   M <- object@misc$M # 
 
-  xlim <- rep(if (length(xlim)) xlim else
-              range(coef.obj@latvar[, 1]), length = 2)
+  xlim <- rep_len(if (length(xlim)) xlim else range(coef.obj@latvar[, 1]), 2)
   if (!length(oylim)) {
-    ylim <- if (Rank == 1)
-              c(0, max(fv) * stretch) else
-              rep(range(coef.obj@latvar[, 2]), length = 2)
+    ylim <- if (Rank == 1) c(0, max(fv) * stretch) else
+            rep_len(range(coef.obj@latvar[, 2]), 2)
   }
-  gridlength <- rep(gridlength, length = Rank)
+  gridlength <- rep_len(gridlength, Rank)
   latvar1 <- seq(xlim[1], xlim[2], length = gridlength[1])
   if (Rank == 1) {
     m <- cbind(latvar1)
@@ -3204,14 +3202,14 @@ perspqrrvglm <-
         if (!length(oylim))
           ylim <- c(0, max(fitvals[,which.species.numer]) *
                        stretch)  # A revision
-        col <- rep(col, length.out = length(which.species.numer))
-        llty <- rep(llty, leng = length(which.species.numer))
-        llwd <- rep(llwd, leng = length(which.species.numer))
+        col  <- rep_len(col,  length(which.species.numer))
+        llty <- rep_len(llty, length(which.species.numer))
+        llwd <- rep_len(llwd, length(which.species.numer))
         if (!add1)
           matplot(latvar1, fitvals, xlab = xlab, ylab = ylab,
                   type = "n",
                   main = main, xlim = xlim, ylim = ylim, ...) 
-        for (jloc in 1:length(which.species.numer)) {
+        for (jloc in seq_along(which.species.numer)) {
           ptr2 <- which.species.numer[jloc]  # points to species column
           lines(latvar1, fitvals[, ptr2],
                 col = col[jloc],
@@ -3520,7 +3518,7 @@ is.bell.vlm <-
 is.bell.rrvglm <- function(object, ...) {
   M <- object@misc$M
   ynames <- object@misc$ynames
-  ans <- rep(FALSE, length.out = M)
+  ans <- rep_len(FALSE, M)
   if (length(ynames)) names(ans) <- ynames
   ans
 }

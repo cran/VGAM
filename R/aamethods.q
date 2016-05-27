@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -105,7 +105,7 @@ show.vglmff <- function(object) {
     cat("Informal classes:", paste(f, collapse = ", "), "\n")
   cat("\n")
 
-  for (ii in 1:length(nn))
+  for (ii in seq_along(nn))
     cat(nn[ii])
   cat("\n")
 
@@ -196,6 +196,11 @@ setClass("vgam", representation(
       "spar"                = "numeric",
       "s.xargument"         = "character",
       "var"                 = "matrix"),
+    contains = "vglm")
+
+
+setClass("psvgam", representation(
+      "psslot"              = "list"),
     contains = "vglm")
 
 

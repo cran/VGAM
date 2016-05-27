@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -28,7 +28,7 @@
             "Link:     ", namesof("mu", link, earg = earg), "\n",
             "Variance: mu"),
   initialize = eval(substitute(expression({
-    if (any(is.na(y)))
+    if (anyNA(y))
       stop("NAs are not allowed in the response")
 
 
@@ -44,16 +44,16 @@
         temp <- y[, 2]
         extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
         extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$leftcensored <- rep(FALSE, len = n)
-        extra$interval <- rep(FALSE, len = n)
+        extra$leftcensored <- rep_len(FALSE, n)
+        extra$interval <- rep_len(FALSE, n)
         init.mu <- pmax(y[, 1], 1/8)
     } else
     if (centype == "left") {
         temp <- y[, 2]
         extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- rep(FALSE, len = n)
+        extra$rightcensored <- rep_len(FALSE, n)
         extra$leftcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$interval <- rep(FALSE, len = n)
+        extra$interval <- rep_len(FALSE, n)
         init.mu <- pmax(y[, 1], 1/8)
     } else
     if (centype == "interval" ||
@@ -230,22 +230,22 @@ if (FALSE)
       temp <- y[, 2]
       extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
       extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
-      extra$leftcensored <- rep(FALSE, len = n)
-      extra$interval <- rep(FALSE, len = n)
+      extra$leftcensored <- rep_len(FALSE, n)
+      extra$interval <- rep_len(FALSE, n)
     } else
     if (type == "left") {
       temp <- y[, 2]
       extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-      extra$rightcensored <- rep(FALSE, len = n)
+      extra$rightcensored <- rep_len(FALSE, n)
       extra$leftcensored <- ifelse(temp == 0, TRUE, FALSE)
-      extra$interval <- rep(FALSE, len = n)
+      extra$interval <- rep_len(FALSE, n)
     } else
     if (type == "counting") {
       stop("type == 'counting' not recognized")
       extra$uncensored <- rep(temp == 1, TRUE, FALSE)
-      extra$interval <- rep(FALSE, len = n)
-      extra$leftcensored <- rep(FALSE, len = n)
-      extra$rightcensored <- rep(FALSE, len = n)
+      extra$interval <- rep_len(FALSE, n)
+      extra$leftcensored <- rep_len(FALSE, n)
+      extra$rightcensored <- rep_len(FALSE, n)
       extra$counting <- ifelse(temp == 0, TRUE, FALSE)
     } else
     if (type == "interval") {
@@ -385,9 +385,9 @@ if (FALSE)
 
 
     if (!length(extra$leftcensored))
-      extra$leftcensored <- rep(FALSE, len = n)
+      extra$leftcensored <- rep_len(FALSE, n)
     if (!length(extra$rightcensored))
-      extra$rightcensored <- rep(FALSE, len = n)
+      extra$rightcensored <- rep_len(FALSE, n)
     if (any(extra$rightcensored & extra$leftcensored))
         stop("some observations are both right and left censored!")
 
@@ -402,7 +402,7 @@ if (FALSE)
                       y = y[!i11], w = w[!i11])
       sd.y.est <- sqrt(sum(w[!i11] * junk$resid^2) / junk$df.residual)
       etastart <- cbind(mu = y,
-                        rep(theta2eta(sd.y.est, .lsd), length = n))
+                        rep_len(theta2eta(sd.y.est, .lsd), n))
       if (any(anyc))
         etastart[anyc, 1] <- x[anyc, , drop = FALSE] %*% junk$coeff
     }
@@ -559,7 +559,7 @@ if (FALSE)
       stop("cannot handle left-censored data")
 
     if (!length(extra$rightcensored))
-      extra$rightcensored <- rep(FALSE, len = n)
+      extra$rightcensored <- rep_len(FALSE, n)
 
     predictors.names <-
       namesof("scale", .lscale , earg = .escale , tag = FALSE)
@@ -802,8 +802,8 @@ if (FALSE)
 
 
     M1 <- extra$M1
-    avector <- c(rep( .lmeann , length = ncoly),
-                 rep( .lshape , length = ncoly))
+    avector <- c(rep_len( .lmeann , ncoly),
+                 rep_len( .lshape , ncoly))
     misc$link <- avector[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
@@ -1087,10 +1087,10 @@ if (FALSE)
 
 
     M1 <- extra$M1
-    avector <- if ( .lss ) c(rep( .lscale , length = ncoly),
-                             rep( .lshape , length = ncoly)) else
-                           c(rep( .lshape , length = ncoly),
-                             rep( .lscale , length = ncoly))
+    avector <- if ( .lss ) c(rep_len( .lscale , ncoly),
+                             rep_len( .lshape , ncoly)) else
+                           c(rep_len( .lshape , ncoly),
+                             rep_len( .lscale , ncoly))
     misc$link <- avector[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
@@ -1541,8 +1541,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
             Alpha.init[, ilocal] <- (1 / bbb.init)^aaa.init
         }  # ilocal
       } else {
-        Alpha.init <- rep( .iAlpha , length = n)
-        Betaa.init <- rep( .iBetaa , length = n)
+        Alpha.init <- rep_len( .iAlpha , n)
+        Betaa.init <- rep_len( .iBetaa , n)
       }
 
       etastart <-
@@ -1594,8 +1594,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
     M1 <- extra$M1
     misc$link <-
-      c(rep( .lAlpha , length = ncoly),
-        rep( .lBetaa , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .lAlpha , ncoly),
+        rep_len( .lBetaa , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 

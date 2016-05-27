@@ -107,7 +107,7 @@ rgumbel(n, location = 0, scale = 1)
 
 \seealso{
   \code{\link{gumbel}},
-  \code{\link{egumbel}},
+  \code{\link{gumbelff}},
   \code{\link{gev}},
   \code{\link{dgompertz}}.
 

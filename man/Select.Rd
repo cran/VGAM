@@ -3,8 +3,7 @@
 \alias{subsetcol}
 % \alias{subsetc}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-  Select variables for a formula response or the RHS of a formula
+\title{ Select Variables for a Formula Response or the RHS of a Formula
 
   
 %%  ~~function to do ... ~~

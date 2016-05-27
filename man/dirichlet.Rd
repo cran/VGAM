@@ -7,8 +7,7 @@
 
 }
 \usage{
-dirichlet(link = "loge", parallel = FALSE, zero = NULL,
-          imethod = 1)
+dirichlet(link = "loge", parallel = FALSE, zero = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -126,10 +125,10 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 \examples{
-ydata <- data.frame(rdiric(n = 1000,
+ddata <- data.frame(rdiric(n = 1000,
                            shape = exp(c(y1 = -1, y2 = 1, y3 = 0))))
 fit <- vglm(cbind(y1, y2, y3)  ~ 1, dirichlet,
-            data = ydata, trace = TRUE, crit = "coef")
+            data = ddata, trace = TRUE, crit = "coef")
 Coef(fit)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
@@ -137,7 +136,7 @@ head(fitted(fit))
 \keyword{models}
 \keyword{regression}
 
-% colnames(ydata) <- paste("y", 1:3, sep = "")
+% colnames(ddata) <- paste("y", 1:3, sep = "")
 
 
 

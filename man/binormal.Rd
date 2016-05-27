@@ -1,7 +1,7 @@
 \name{binormal}
 \alias{binormal}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Bivariate normal distribution family function }
+\title{ Bivariate Normal Distribution Family Function }
 \description{
   Maximum likelihood estimation of the five parameters of a bivariate
   normal distribution.

@@ -4,8 +4,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Poisson Distribution Family Function }
 \description{
-  Fits a zero-inflated Poisson distribution by full maximum likelihood
-  estimation.
+  Fits a zero-inflated or zero-deflated
+  Poisson distribution by full maximum likelihood estimation.
 
 }
 \usage{
@@ -182,21 +182,26 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
 % the \code{misc} slot with component name \code{pstr0}.
 
 
-  Although the functions in \code{\link{Zipois}}
-  can handle the zero-\emph{deflated} Poisson distribution,
-  this family function cannot estimate this very well in general.
-  One sets \code{lpstr0 = identitylink}, however, the iterations
-  might fall outside the parameter space.
-  Practically, it is restricted to intercept-models only
-  (see example below).
-  Also, one might need inputting good initial values
-  or using a simpler model to obtain initial values.
+  This family function can be used to estimate the 0-\emph{deflated} model,
+  hence \code{pstr0} is not to be interpreted as a probability.
+  One should set, e.g., \code{lpstr0 = "identitylink"}.
+  Likewise, the functions in \code{\link{Zipois}}
+  can handle the zero-deflated Poisson distribution too.
+  Although the iterations
+  might fall outside the parameter space, the \code{validparams} slot
+  should keep them inside.
+  A (somewhat) similar alternative for
+  zero-deflation is to try the zero-altered Poisson model
+  (see \code{\link{zapoisson}}).
+
+
+% Practically, it is restricted to intercept-models only
+% (see example below).
+% Also, one might need inputting good initial values
+% or using a simpler model to obtain initial values.
 % If there is a covariate then it is best to
 % constrain \code{pstr0} to be intercept-only, e.g.,
 % by \code{zipoisson(lpstr0 = identitylink, zero = -1)}.
-  A (somewhat) similar and more reliable method for
-  zero-deflation is to try the zero-altered Poisson model
-  (see \code{\link{zapoisson}}).
 
 
   The use of this \pkg{VGAM} family function with \code{\link{rrvglm}}
@@ -290,21 +295,22 @@ fitted(fit)
 with(abdata, weighted.mean(y, w))  # Compare this with fitted(fit)
 summary(fit)
 
-# Example 4: zero-deflated model for an intercept-only data
+# Example 4: zero-deflated model for intercept-only data
 zdata <- transform(zdata, lambda3 = loge(0.0, inverse = TRUE))
 zdata <- transform(zdata, deflat.limit = -1 / expm1(lambda3))  # Boundary
 # The 'pstr0' parameter is negative and in parameter space:
-zdata <- transform(zdata, usepstr0 = deflat.limit / 1.5)
+zdata <- transform(zdata, usepstr0 = deflat.limit / 2)  # Not too near the boundary
 zdata <- transform(zdata, y3 = rzipois(nn, lambda3, pstr0 = usepstr0))
 head(zdata)
 with(zdata, table(y3))  # A lot of deflation
-fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = identitylink),
+fit3 <- vglm(y3 ~ 1, zipoisson(zero = -1, lpstr0 = "identitylink"),
              data = zdata, trace = TRUE, crit = "coef")
 coef(fit3, matrix = TRUE)
 # Check how accurate it was:
 zdata[1, "usepstr0"]  # Answer
 coef(fit3)[1]         # Estimate
 Coef(fit3)
+vcov(fit3)  # Is positive-definite
 
 # Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
 set.seed(123)

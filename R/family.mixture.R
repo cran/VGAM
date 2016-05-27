@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -141,9 +141,9 @@ mix2normal.control <- function(trace = TRUE, ...) {
 
     if (!length(etastart)) {
       qy <- quantile(y, prob = .qmu )
-      init.phi <- rep(if (length( .iphi )) .iphi else   0.5, length = n)
-      init.mu1 <- rep(if (length( .imu1 )) .imu1 else qy[1], length = n)
-      init.mu2 <- rep(if (length( .imu2 )) .imu2 else qy[2], length = n)
+      init.phi <- rep_len(if (length( .iphi )) .iphi else   0.5, n)
+      init.mu1 <- rep_len(if (length( .imu1 )) .imu1 else qy[1], n)
+      init.mu2 <- rep_len(if (length( .imu2 )) .imu2 else qy[2], n)
       ind.1 <- if (init.mu1[1] < init.mu2[1])
                 1:round(n* init.phi[1]) else
                 round(n* init.phi[1]):n
@@ -151,10 +151,8 @@ mix2normal.control <- function(trace = TRUE, ...) {
                 round(n* init.phi[1]):n else
                 1:round(n* init.phi[1])
       sorty <- sort(y)
-      init.sd1 <- rep(if (length( .isd1 )) .isd1 else sd(sorty[ind.1]),
-                      len = n)
-      init.sd2 <- rep(if (length( .isd2 )) .isd2 else sd(sorty[ind.2]),
-                      len = n)
+      init.sd1 <- rep_len(if (length( .isd1 )) .isd1 else sd(sorty[ind.1]), n)
+      init.sd2 <- rep_len(if (length( .isd2 )) .isd2 else sd(sorty[ind.2]), n)
       if ( .eq.sd ) {
         init.sd1 <-
         init.sd2 <- (init.sd1 + init.sd2) / 2
@@ -394,9 +392,9 @@ mix2poisson.control <- function(trace = TRUE, ...) {
 
     if (!length(etastart)) {
       qy <- quantile(y, prob =  .qmu)
-      init.phi <-     rep(if (length( .iphi )) .iphi else 0.5,   length = n)
-      init.lambda1 <- rep(if (length( .il1  )) .il1  else qy[1], length = n)
-      init.lambda2 <- rep(if (length( .il2  )) .il2  else qy[2], length = n)
+      init.phi <-     rep_len(if (length( .iphi )) .iphi else 0.5,   n)
+      init.lambda1 <- rep_len(if (length( .il1  )) .il1  else qy[1], n)
+      init.lambda2 <- rep_len(if (length( .il2  )) .il2  else qy[2], n)
 
       if (!length(etastart))  
         etastart <- cbind(theta2eta(init.phi, .lphi , earg = .ephi ),
@@ -632,9 +630,9 @@ mix2exp.control <- function(trace = TRUE, ...) {
 
     if (!length(etastart)) {
       qy <- quantile(y, prob =  .qmu)
-      init.phi <-     rep(if (length(.iphi)) .iphi else 0.5, length = n)
-      init.lambda1 <- rep(if (length(.il1)) .il1 else 1/qy[1], length = n)
-      init.lambda2 <- rep(if (length(.il2)) .il2 else 1/qy[2], length = n)
+      init.phi <-     rep_len(if (length( .iphi )) .iphi else 0.5, n)
+      init.lambda1 <- rep_len(if (length( .il1 )) .il1 else 1/qy[1], n)
+      init.lambda2 <- rep_len(if (length( .il2 )) .il2 else 1/qy[2], n)
       if (!length(etastart))  
         etastart <- cbind(theta2eta(init.phi,     .lphi    , earg = .ephi ),
                           theta2eta(init.lambda1, .llambda , earg = .el1  ),

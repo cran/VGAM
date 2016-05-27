@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -21,9 +21,9 @@ dgumbelII <- function(x, scale = 1, shape, log = FALSE) {
   rm(log)
 
   LLL <- max(length(x), length(shape), length(scale))
-  if (length(x)       != LLL) x       <- rep(x,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(x)       != LLL) x       <- rep_len(x,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
 
   ans <- x
@@ -59,9 +59,9 @@ pgumbelII <- function(q, scale = 1, shape,
     stop("bad input for argument 'log.p'")
   
   LLL <- max(length(q), length(shape), length(scale)) 
-  if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(q)       != LLL) q       <- rep_len(q,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
   
   # 20150121 KaiH 
   if (lower.tail) {
@@ -111,9 +111,9 @@ qgumbelII <- function(p, scale = 1, shape,
 
 
   LLL <- max(length(p), length(shape), length(scale))
-  if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(p)       != LLL) p       <- rep_len(p,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
 
   if (lower.tail) {
@@ -324,8 +324,8 @@ rgumbelII <- function(n, scale = 1, shape) {
 
     M1 <- extra$M1
     misc$link <-
-      c(rep( .lscale , length = ncoly),
-        rep( .lshape , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .lscale , ncoly),
+        rep_len( .lshape , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
@@ -440,11 +440,11 @@ dmbeard <- function(x, shape, scale = 1, rho, epsilon, log = FALSE) {
 
   LLL <- max(length(x), length(shape), length(scale),
              length(rho), length(epsilon))
-  if (length(x)       != LLL) x       <- rep(x,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(rho)     != LLL) rho     <- rep(rho,     length.out = LLL)
-  if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
+  if (length(x)       != LLL) x       <- rep_len(x,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(rho)     != LLL) rho     <- rep_len(rho,     LLL)
+  if (length(epsilon) != LLL) epsilon <- rep_len(epsilon, LLL)
 
 
   index0 <- (x < 0)
@@ -474,11 +474,11 @@ pmbeard <- function(q, shape, scale = 1, rho, epsilon) {
 
   LLL <- max(length(q), length(shape), length(scale),
              length(rho), length(epsilon))
-  if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(rho)     != LLL) rho     <- rep(rho,     length.out = LLL)
-  if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
+  if (length(q)       != LLL) q       <- rep_len(q,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(rho)     != LLL) rho     <- rep_len(rho,     LLL)
+  if (length(epsilon) != LLL) epsilon <- rep_len(epsilon, LLL)
 
 
   ans <- -expm1(-epsilon * q -
@@ -504,10 +504,10 @@ dmperks <- function(x, scale = 1, shape, epsilon, log = FALSE) {
   rm(log)
 
   LLL <- max(length(x), length(shape), length(scale), length(epsilon))
-  if (length(x)       != LLL) x       <- rep(x,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
+  if (length(x)       != LLL) x       <- rep_len(x,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(epsilon) != LLL) epsilon <- rep_len(epsilon, LLL)
 
 
   index0 <- (x < 0)
@@ -535,9 +535,9 @@ dmperks <- function(x, scale = 1, shape, epsilon, log = FALSE) {
 pmperks <- function(q, scale = 1, shape, epsilon) {
 
   LLL <- max(length(q), length(shape), length(scale))
-  if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(q)       != LLL) q       <- rep_len(q,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
 
   ans <- -expm1(-epsilon * q -
@@ -571,10 +571,10 @@ dbeard <- function(x, shape, scale = 1, rho, log = FALSE) {
   rm(log)
 
   LLL <- max(length(x), length(shape), length(scale), length(rho))
-  if (length(x)       != LLL) x       <- rep(x,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(rho)     != LLL) rho     <- rep(rho,     length.out = LLL)
+  if (length(x)       != LLL) x       <- rep_len(x,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(rho)     != LLL) rho     <- rep_len(rho,     LLL)
 
   index0 <- (x < 0)
     ans <- log(shape) - x * scale * (rho^(-1 / scale)) +
@@ -642,9 +642,9 @@ dperks <- function(x, scale = 1, shape, log = FALSE) {
   rm(log)
 
   LLL <- max(length(x), length(shape), length(scale))
-  if (length(x)     != LLL) x     <- rep(x,     length.out = LLL)
-  if (length(shape) != LLL) shape <- rep(shape, length.out = LLL)
-  if (length(scale) != LLL) scale <- rep(scale, length.out = LLL)
+  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(scale) != LLL) scale <- rep_len(scale, LLL)
 
   index0 <- (x < 0)
     ans <- log(shape) - x +
@@ -677,9 +677,9 @@ pperks <- function(q, scale = 1, shape,
 
 
   LLL <- max(length(q), length(shape), length(scale))
-  if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(q)       != LLL) q       <- rep_len(q,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
   logS <- -q + (log1p(shape) -
           log(shape + exp(-q * scale))) / scale
@@ -721,9 +721,9 @@ qperks <- function(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE) {
     stop("bad input for argument 'log.p'")
 
   LLL <- max(length(p), length(shape), length(scale))
-  if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(p)       != LLL) p       <- rep_len(p,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
 
   if (lower.tail) {
@@ -887,29 +887,21 @@ perks.control <- function(save.weights = TRUE, ...) {
         yvec <- y[, spp.]
         wvec <- w[, spp.]
 
-        perks.Loglikfun <- function(scaleval, y, x, w, extraargs) {
-          ans <-
-          sum(c(w) * dperks(x = y, shape = extraargs$Shape,
+
+        perks.Loglikfun2 <- function(scaleval, shapeval,
+                                     y, x, w, extraargs) {
+          sum(c(w) * dperks(x = y, shape = shapeval,
                             scale = scaleval, log = TRUE))
-          ans
         }
-
-
-        mymat <- matrix(-1, length(shape.grid), 2)
-        for (jlocal in 1:length(shape.grid)) {
-          mymat[jlocal, ] <-
-            grid.search(scale.grid,
-                        objfun = perks.Loglikfun,
-                        y = yvec, x = x, w = wvec,
-                        ret.objfun = TRUE,
-                        extraargs = list(Shape = shape.grid[jlocal]))
-        }
-        index.shape <- which(mymat[, 2] == max(mymat[, 2]))[1]
-
-        if (!length( .ishape ))
-          matH[, spp.] <- shape.grid[index.shape]
+        try.this <-
+          grid.search2(scale.grid, shape.grid,
+                       objfun = perks.Loglikfun2,
+                       y = yvec, w = wvec,
+                       ret.objfun = TRUE)  # Last value is the loglik
         if (!length( .iscale ))
-          matC[, spp.] <- mymat[index.shape, 1]
+          matC[, spp.] <- try.this["Value1"]
+        if (!length( .ishape ))
+          matH[, spp.] <- try.this["Value2"]
       }  # spp.
 
       etastart <-
@@ -933,8 +925,8 @@ perks.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
 
     misc$link <-
-      c(rep( .lscale , length = ncoly),
-        rep( .lshape , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .lscale , ncoly),
+        rep_len( .lshape , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
@@ -1126,10 +1118,10 @@ dmakeham <- function(x, scale = 1, shape, epsilon = 0, log = FALSE) {
   rm(log)
 
   LLL <- max(length(x), length(shape), length(scale), length(epsilon))
-  if (length(x)       != LLL) x       <- rep(x,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
+  if (length(x)       != LLL) x       <- rep_len(x,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(epsilon) != LLL) epsilon <- rep_len(epsilon, LLL)
 
   index0 <- (x < 0)
   ans <- log(epsilon * exp(-x * scale) + shape) +
@@ -1160,10 +1152,10 @@ pmakeham <- function(q, scale = 1, shape, epsilon = 0,
     stop("bad input for argument 'log.p'")
 
   LLL <- max(length(q), length(shape), length(scale), length(epsilon))
-  if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
+  if (length(q)       != LLL) q       <- rep_len(q,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(epsilon) != LLL) epsilon <- rep_len(epsilon, LLL)
 
   if (lower.tail) {
     if (log.p) {
@@ -1203,10 +1195,10 @@ qmakeham <- function(p, scale = 1, shape, epsilon = 0,
     stop("bad input for argument 'log.p'")
 
   LLL <- max(length(p), length(shape), length(scale), length(epsilon))
-  if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
-  if (length(epsilon) != LLL) epsilon <- rep(epsilon, length.out = LLL)
+  if (length(p)       != LLL) p       <- rep_len(p,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
+  if (length(epsilon) != LLL) epsilon <- rep_len(epsilon, LLL)
 
 
   if (lower.tail) {
@@ -1405,30 +1397,23 @@ makeham.control <- function(save.weights = TRUE, ...) {
         yvec <- y[, spp.]
         wvec <- w[, spp.]
 
-        makeham.Loglikfun <- function(scaleval, y, x, w, extraargs) {
-          ans <-
-          sum(c(w) * dmakeham(x = y, shape = extraargs$Shape,
+
+        makeham.Loglikfun2 <- function(scaleval, shapeval,
+                                       y, x, w, extraargs) {
+          sum(c(w) * dmakeham(x = y, shape = shapeval,
                               epsilon = extraargs$Epsil,
                               scale = scaleval, log = TRUE))
-          ans
         }
-
-        mymat <- matrix(-1, length(shape.grid), 2)
-        for (jlocal in 1:length(shape.grid)) {
-          mymat[jlocal, ] <-
-            grid.search(scale.grid,
-                        objfun = makeham.Loglikfun,
-                        y = yvec, x = x, w = wvec,
-                        ret.objfun = TRUE,
-                        extraargs = list(Shape = shape.grid[jlocal],
-                                         Epsil = matE[1, spp.]))
-        }
-        index.shape <- which(mymat[, 2] == max(mymat[, 2]))[1]
-
-        if (!length( .ishape ))
-          matH[, spp.] <- shape.grid[index.shape]
+        try.this <-
+          grid.search2(scale.grid, shape.grid,
+                       objfun = makeham.Loglikfun2,
+                       y = yvec, w = wvec,
+                       extraargs = list(Epsilon = matE[1, spp.]),
+                       ret.objfun = TRUE)  # Last value is the loglik
         if (!length( .iscale ))
-          matC[, spp.] <- mymat[index.shape, 1]
+          matC[, spp.] <- try.this["Value1"]
+        if (!length( .ishape ))
+          matH[, spp.] <- try.this["Value2"]
       }  # spp.
 
 
@@ -1482,9 +1467,9 @@ makeham.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
     M1 <- extra$M1
     misc$link <-
-      c(rep( .lscale , length = ncoly),
-        rep( .lshape , length = ncoly),
-        rep( .lepsil , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .lscale , ncoly),
+        rep_len( .lshape , ncoly),
+        rep_len( .lepsil , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2, mynames3)[
                     interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
@@ -1643,9 +1628,9 @@ dgompertz <- function(x, scale = 1, shape, log = FALSE) {
   rm(log)
 
   LLL <- max(length(x), length(shape), length(scale))
-  if (length(x)     != LLL) x     <- rep(x,     length.out = LLL)
-  if (length(shape) != LLL) shape <- rep(shape, length.out = LLL)
-  if (length(scale) != LLL) scale <- rep(scale, length.out = LLL)
+  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(scale) != LLL) scale <- rep_len(scale, LLL)
 
 
   index0 <- (x < 0)
@@ -1679,9 +1664,9 @@ pgompertz <- function(q, scale = 1, shape,
     stop("bad input for argument 'log.p'")
 
   LLL <- max(length(q), length(shape), length(scale))
-  if (length(q)       != LLL) q       <- rep(q,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(q)       != LLL) q       <- rep_len(q,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
 
   if (lower.tail) {
@@ -1720,9 +1705,9 @@ qgompertz <- function(p, scale = 1, shape,
     stop("bad input for argument 'log.p'")
 
   LLL <- max(length(p), length(shape), length(scale))
-  if (length(p)       != LLL) p       <- rep(p,       length.out = LLL)
-  if (length(shape)   != LLL) shape   <- rep(shape,   length.out = LLL)
-  if (length(scale)   != LLL) scale   <- rep(scale,   length.out = LLL)
+  if (length(p)       != LLL) p       <- rep_len(p,       LLL)
+  if (length(shape)   != LLL) shape   <- rep_len(shape,   LLL)
+  if (length(scale)   != LLL) scale   <- rep_len(scale,   LLL)
 
   if (lower.tail) {
     if (log.p) {
@@ -1888,7 +1873,7 @@ gompertz.control <- function(save.weights = TRUE, ...) {
         }
 
         mymat <- matrix(-1, length(shape.grid), 2)
-        for (jlocal in 1:length(shape.grid)) {
+        for (jlocal in seq_along(shape.grid)) {
           mymat[jlocal, ] <-
             grid.search(scale.grid,
                         objfun = gompertz.Loglikfun,
@@ -1922,8 +1907,8 @@ gompertz.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
     M1 <- extra$M1
     misc$link <-
-      c(rep( .lscale , length = ncoly),
-        rep( .lshape , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .lscale , ncoly),
+        rep_len( .lshape , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
@@ -2079,9 +2064,9 @@ if (ii < 3) {
   LLL <- max(length(x),
              length(alpha),
              length(lambda))
-  if (length(x)      != LLL) x      <- rep(x,      length.out = LLL)
-  if (length(alpha)  != LLL) alpha  <- rep(alpha,  length.out = LLL)
-  if (length(lambda) != LLL) lambda <- rep(lambda, length.out = LLL)
+  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
+  if (length(alpha)  != LLL) alpha  <- rep_len(alpha,  LLL)
+  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
 
   index0 <- (x < 0)
   if (log.arg) {
@@ -2283,8 +2268,8 @@ exponential.mo.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
     M1 <- extra$M1
     misc$link <-
-      c(rep( .lalpha0 , length = ncoly),
-        rep( .llambda , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+      c(rep_len( .lalpha0 , ncoly),
+        rep_len( .llambda , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
@@ -2411,6 +2396,18 @@ if (ii < 3) {
 
 
 
+
+
+
+
+        genbetaII.Loglikfun4 <-
+            function(scaleval, shape1.a, shape2.p, shape3.q,
+                     y, x, w, extraargs) {
+          sum(c(w) * dgenbetaII(x = y, scale = scaleval,
+                                shape1.a = shape1.a,
+                                shape2.p = shape2.p,
+                                shape3.q = shape3.q, log = TRUE))
+        }
 
 
 
@@ -2552,43 +2549,21 @@ if (ii < 3) {
           gshape1.a  <- .gshape1.a
           gshape2.p  <- .gshape2.p        
           gshape3.q  <- .gshape3.q
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape1.a ))
-            gshape1.a <-  rep( .ishape1.a , length = NOS)
-          if (length( .ishape2.p ))
-            gshape2.p <-  rep( .ishape2.p , length = NOS)
-          if (length( .ishape3.q ))
-            gshape3.q <-  rep( .ishape3.q , length = NOS)
-          allmat1 <- expand.grid(shape1.a = gshape1.a,
-                                 shape2.p = gshape2.p,
-                                 shape3.q = gshape3.q)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <-  rep_len( .iscale    , NOS)
+          if (length( .ishape1.a )) gshape1.a <-  rep_len( .ishape1.a , NOS)
+          if (length( .ishape2.p )) gshape2.p <-  rep_len( .ishape2.p , NOS)
+          if (length( .ishape3.q )) gshape3.q <-  rep_len( .ishape3.q , NOS)
 
-          ll.gbII <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = extraargs$Shape1.a,
-                                         shape2.p = extraargs$Shape2.p,
-                                         shape3.q = extraargs$Shape3.q,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.gbII,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape1.a = allmat1[iloc, 1],
-                                             Shape2.p = allmat1[iloc, 2],
-                                             Shape3.q = allmat1[iloc, 3]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          aa.init[, spp.] <- allmat1[ind5, 1]
-          pp.init[, spp.] <- allmat1[ind5, 2]
-          qq.init[, spp.] <- allmat1[ind5, 3]
+        try.this <-
+          grid.search4(gscale, gshape1.a, gshape2.p, gshape3.q,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          aa.init[, spp.] <- try.this["Value2"]
+          pp.init[, spp.] <- try.this["Value3"]
+          qq.init[, spp.] <- try.this["Value4"]
       }  # End of for (spp. ...)
 
 
@@ -2621,7 +2596,7 @@ if (ii < 3) {
             .lss = lss ))), 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     M1 <- 4
-    NOS <- ncol(eta)/M1
+    NOS <- ncol(eta) / M1
     if ( .lss ) {
       Scale <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
                          .lscale ,  earg = .escale )
@@ -2650,10 +2625,10 @@ if (ii < 3) {
   last = eval(substitute(expression({
     M1 <- 4
 
-    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
-                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly),
-                   rep( .lshape2.p , length = ncoly),
-                   rep( .lshape3.q , length = ncoly))[
+    misc$link <- c(rep_len( if ( .lss ) .lscale else .lshape1.a , ncoly),
+                   rep_len( if ( .lss ) .lshape1.a else .lscale , ncoly),
+                   rep_len( .lshape2.p , ncoly),
+                   rep_len( .lshape3.q , ncoly))[
                    interleave.VGAM(M, M1 = M1)]
     temp.names <- if ( .lss ) {
       c(scaL.names, sha1.names, sha2.names, sha3.names)
@@ -2721,7 +2696,51 @@ if (ii < 3) {
              .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
              .lss = lss ))),
   vfamily = c("genbetaII"),
+
+
+
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 4
+    NOS <- ncol(eta) / M1
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p)
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q)
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a*p < 1 < a*q has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q,
+            .lss = lss ))),
+
+
+
+
   deriv = eval(substitute(expression({ 
+    M1 <- 4
     NOS <- ncol(eta)/M1  # Needed for summary()
     if ( .lss ) { 
       Scale <- eta2theta(eta[, M1*(1:NOS) - 3, drop = FALSE],
@@ -2850,11 +2869,11 @@ dgenbetaII <- function(x, scale = 1, shape1.a, shape2.p, shape3.q,
   if (any(x <= 0) || any(is.infinite(x))) {
     LLL <- max(length(x),        length(scale),
                length(shape1.a), length(shape2.p), length(shape3.q))
-    if (length(x)        != LLL) x        <- rep(x,        length = LLL)
-    if (length(scale)    != LLL) scale    <- rep(scale,    length = LLL)
-    if (length(shape1.a) != LLL) shape1.a <- rep(shape1.a, length = LLL)
-    if (length(shape2.p) != LLL) shape2.p <- rep(shape2.p, length = LLL)
-    if (length(shape3.q) != LLL) shape3.q <- rep(shape3.q, length = LLL)
+    if (length(x)        != LLL) x        <- rep_len(x,        LLL)
+    if (length(scale)    != LLL) scale    <- rep_len(scale,    LLL)
+    if (length(shape1.a) != LLL) shape1.a <- rep_len(shape1.a, LLL)
+    if (length(shape2.p) != LLL) shape2.p <- rep_len(shape2.p, LLL)
+    if (length(shape3.q) != LLL) shape3.q <- rep_len(shape3.q, LLL)
 
     logden[is.infinite(x)] <- log(0)
     logden[x < 0] <- log(0)  
@@ -2927,14 +2946,10 @@ qsinmad <- function(p, scale = 1, shape1.a, shape3.q,
 
   LLL <- max(length(p), length(shape1.a), length(scale),
                         length(shape3.q))
-  if (length(p) != LLL)
-    p         <- rep(p,         length.out = LLL)
-  if (length(shape1.a) != LLL)
-    shape1.a  <- rep(shape1.a,  length.out = LLL)
-  if (length(scale) != LLL)
-    scale     <- rep(scale,     length.out = LLL)
-  if (length(shape3.q) != LLL)
-    shape3.q  <- rep(shape3.q,  length.out = LLL)
+  if (length(p)        != LLL) p         <- rep_len(p,         LLL)
+  if (length(shape1.a) != LLL) shape1.a  <- rep_len(shape1.a,  LLL)
+  if (length(scale)    != LLL) scale     <- rep_len(scale,     LLL)
+  if (length(shape3.q) != LLL) shape3.q  <- rep_len(shape3.q,  LLL)
 
 
   if (lower.tail) {
@@ -2995,14 +3010,10 @@ qdagum <- function(p, scale = 1, shape1.a, shape2.p,
 
   LLL <- max(length(p), length(shape1.a), length(scale),
                         length(shape2.p))
-  if (length(p) != LLL)
-    p         <- rep(p,         length.out = LLL)
-  if (length(shape1.a) != LLL)
-    shape1.a  <- rep(shape1.a,  length.out = LLL)
-  if (length(scale) != LLL)
-    scale     <- rep(scale,     length.out = LLL)
-  if (length(shape2.p) != LLL)
-    shape2.p  <- rep(shape2.p,  length.out = LLL)
+  if (length(p)        != LLL) p         <- rep_len(p,         LLL)
+  if (length(shape1.a) != LLL) shape1.a  <- rep_len(shape1.a,  LLL)
+  if (length(scale)    != LLL) scale     <- rep_len(scale,     LLL)
+  if (length(shape2.p) != LLL) shape2.p  <- rep_len(shape2.p,  LLL)
 
   if (lower.tail) {
     if (log.p) {
@@ -3065,14 +3076,10 @@ psinmad <- function(q, scale = 1, shape1.a, shape3.q,
 
   LLL <- max(length(q), length(shape1.a), length(scale),
                         length(shape3.q))
-  if (length(q) != LLL)
-    q         <- rep(q,         length.out = LLL)
-  if (length(shape1.a) != LLL)
-    shape1.a  <- rep(shape1.a,  length.out = LLL)
-  if (length(scale) != LLL)
-    scale     <- rep(scale,     length.out = LLL)
-  if (length(shape3.q) != LLL)
-    shape3.q  <- rep(shape3.q,  length.out = LLL)
+  if (length(q)        != LLL) q         <- rep_len(q,         LLL)
+  if (length(shape1.a) != LLL) shape1.a  <- rep_len(shape1.a,  LLL)
+  if (length(scale)    != LLL) scale     <- rep_len(scale,     LLL)
+  if (length(shape3.q) != LLL) shape3.q  <- rep_len(shape3.q,  LLL)
 
   # 20150121 KaiH
   if (lower.tail) {
@@ -3142,14 +3149,10 @@ pdagum <- function(q, scale = 1, shape1.a, shape2.p,
 
   LLL <- max(length(q), length(shape1.a), length(scale),
                         length(shape2.p))
-  if (length(q) != LLL)
-    q         <- rep(q,         length.out = LLL)
-  if (length(shape1.a) != LLL)
-    shape1.a  <- rep(shape1.a,  length.out = LLL)
-  if (length(scale) != LLL)
-    scale     <- rep(scale,     length.out = LLL)
-  if (length(shape2.p) != LLL)
-    shape2.p  <- rep(shape2.p,  length.out = LLL)
+  if (length(q)        != LLL) q         <- rep_len(q,         LLL)
+  if (length(shape1.a) != LLL) shape1.a  <- rep_len(shape1.a,  LLL)
+  if (length(scale)    != LLL) scale     <- rep_len(scale,     LLL)
+  if (length(shape2.p) != LLL) shape2.p  <- rep_len(shape2.p,  LLL)
 
 
   if (lower.tail) {
@@ -3213,12 +3216,12 @@ dsinmad <- function(x, scale = 1, shape1.a, shape3.q, log = FALSE) {
 
   LLL      <- max(length(x),     length(shape1.a),
                   length(scale), length(shape3.q))
-  x        <- rep(x,         length.out = LLL)
-  shape1.a <- rep(shape1.a,  length.out = LLL)
-  scale    <- rep(scale,     length.out = LLL)
-  shape3.q <- rep(shape3.q,  length.out = LLL)
+  if (length(x)        != LLL) x         <- rep_len(x,         LLL)
+  if (length(shape1.a) != LLL) shape1.a  <- rep_len(shape1.a,  LLL)
+  if (length(scale)    != LLL) scale     <- rep_len(scale,     LLL)
+  if (length(shape3.q) != LLL) shape3.q  <- rep_len(shape3.q,  LLL)
 
-  Loglik <- rep(log(0), length.out = LLL)
+  Loglik <- rep_len(log(0), LLL)
   xok <- (x > 0) & !is.na(x)  # Avoids log(x) if x<0, and handles NAs
   Loglik[xok] <- log(shape1.a[xok]) + log(shape3.q[xok]) +
                  (shape1.a[xok]-1) * log(x[xok]) -
@@ -3261,12 +3264,12 @@ ddagum <- function(x, scale = 1, shape1.a, shape2.p, log = FALSE) {
              length(shape1.a),
              length(scale),
              length(shape2.p))
-  x        <- rep(x,        length.out = LLL)
-  shape1.a <- rep(shape1.a, length.out = LLL)
-  scale    <- rep(scale,    length.out = LLL)
-  shape2.p <- rep(shape2.p, length.out = LLL)
+  if (length(x)        != LLL) x         <- rep_len(x,         LLL)
+  if (length(shape1.a) != LLL) shape1.a  <- rep_len(shape1.a,  LLL)
+  if (length(scale)    != LLL) scale     <- rep_len(scale,     LLL)
+  if (length(shape2.p) != LLL) shape2.p  <- rep_len(shape2.p,  LLL)
 
-  Loglik <- rep(log(0), length.out = LLL)
+  Loglik <- rep_len(log(0), LLL)
   xok <- (x > 0) & !is.na(x)  # Avoids log(x) if x<0, and handles NAs
   Loglik[xok] <- log(shape1.a[xok]) +
                  log(shape2.p[xok]) +
@@ -3344,7 +3347,6 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         !is.Numeric(probs.y, positive = TRUE))
     stop("Bad input for argument 'probs.y'")
 
-  
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -3438,38 +3440,20 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
           gshape3.q  <- .gshape3.q
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape1.a ))
-            gshape1.a <-  rep( .ishape1.a , length = NOS)
-          if (length( .ishape3.q ))
-            gshape3.q <-  rep( .ishape3.q , length = NOS)
-          allmat1 <- expand.grid(shape1.a = gshape1.a,
-                                 shape3.q = gshape3.q)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
+          if (length( .ishape3.q )) gshape3.q <- rep_len( .ishape3.q , NOS)
 
-          ll.sinm <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = extraargs$Shape1.a,
-                                         shape2.p = 1,
-                                         shape3.q = extraargs$Shape3.q,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.sinm,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape1.a = allmat1[iloc, 1],
-                                             Shape3.q = allmat1[iloc, 2]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          aa.init[, spp.] <- allmat1[ind5, 1]
-          qq.init[, spp.] <- allmat1[ind5, 2]
+
+        try.this <-
+          grid.search4(gscale, gshape1.a, vov3 = 1, gshape3.q,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          aa.init[, spp.] <- try.this["Value2"]
+          qq.init[, spp.] <- try.this["Value4"]
        } else {  # .imethod == 2
           qvec <- .probs.y 
           ishape3.q <- if (length( .ishape3.q )) .ishape3.q else 1
@@ -3482,6 +3466,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
           qq.init[, spp.] <- ishape3.q
         }
       }  # End of for (spp. ...)
+
+
+
 
       finite.mean <- 1 < aa.init * qq.init
       COP.use <- 1.15
@@ -3544,9 +3531,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 3
 
-    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
-                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly),
-                   rep( .lshape3.q , length = ncoly))[
+    misc$link <- c(rep_len( if ( .lss ) .lscale else .lshape1.a , ncoly),
+                   rep_len( if ( .lss ) .lshape1.a else .lscale , ncoly),
+                   rep_len( .lshape3.q , ncoly))[
                    interleave.VGAM(M, M1 = M1)]
     temp.names <- if ( .lss ) {
       c(scaL.names, sha1.names,             sha3.names)
@@ -3644,7 +3631,46 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                                    .lshape3.q = lshape3.q,
                                    .eshape3.q = eshape3.q
                       ))),
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 3
+    NOS <- ncol(eta) / M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }
+    parg <- 1
+    qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape3.q , earg = .eshape3.q)
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a   < 1 < a*q has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q,
+            .lss = lss ))),
+
+
+
+
   deriv = eval(substitute(expression({ 
+    M1 <- 3
     NOS <- ncol(eta)/M1  # Needed for summary()
     if ( .lss ) { 
       Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
@@ -3741,19 +3767,20 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
- dagum     <- function(lscale    = "loge",
-                       lshape1.a = "loge",
-                       lshape2.p = "loge",
-                       iscale    = NULL,
-                       ishape1.a = NULL,
-                       ishape2.p = NULL,
-                       imethod   = 1,
-                       lss       = TRUE,
-                       gscale    = exp(-5:5),
-                       gshape1.a = exp(-5:5),
-                       gshape2.p = exp(-5:5),
-                       probs.y   = c(0.25, 0.50, 0.75),
-                       zero      = "shape") {
+ dagum <-
+  function(lscale    = "loge",
+           lshape1.a = "loge",
+           lshape2.p = "loge",
+           iscale    = NULL,
+           ishape1.a = NULL,
+           ishape2.p = NULL,
+           imethod   = 1,
+           lss       = TRUE,
+           gscale    = exp(-5:5),
+           gshape1.a = seq(0.75, 4, by = 0.25),  # exp(-5:5),
+           gshape2.p = exp(-5:5),
+           probs.y   = c(0.25, 0.50, 0.75),
+           zero      = "shape") {
 
 
 
@@ -3874,38 +3901,20 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
           gshape2.p  <- .gshape2.p        
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape1.a ))
-            gshape1.a <-  rep( .ishape1.a , length = NOS)
-          if (length( .ishape2.p ))
-            gshape2.p <-  rep( .ishape2.p , length = NOS)
-          allmat1 <- expand.grid(shape1.a = gshape1.a,
-                                 shape2.p = gshape2.p)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
+          if (length( .ishape2.p )) gshape2.p <- rep_len( .ishape2.p , NOS)
 
-          ll.dagu <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = extraargs$Shape1.a,
-                                         shape2.p = extraargs$Shape2.p,
-                                         shape3.q = 1,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.dagu,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape1.a = allmat1[iloc, 1],
-                                             Shape2.p = allmat1[iloc, 2]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          aa.init[, spp.] <- allmat1[ind5, 1]
-          pp.init[, spp.] <- allmat1[ind5, 2]
+
+        try.this <-
+          grid.search4(gscale, gshape1.a, gshape2.p, vov4 = 1,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          aa.init[, spp.] <- try.this["Value2"]
+          pp.init[, spp.] <- try.this["Value3"]
        } else {  # .imethod == 2
           qvec <- .probs.y 
           ishape2.p <- if (length( .ishape2.p )) .ishape2.p else 1
@@ -3982,9 +3991,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 3
 
-    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
-                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly),
-                   rep( .lshape2.p , length = ncoly))[
+    misc$link <- c(rep_len( if ( .lss ) .lscale else .lshape1.a , ncoly),
+                   rep_len( if ( .lss ) .lshape1.a else .lscale , ncoly),
+                   rep_len( .lshape2.p , ncoly))[
                    interleave.VGAM(M, M1 = M1)]
     temp.names <- if ( .lss ) {
       c(scaL.names, sha1.names, sha2.names)
@@ -4081,6 +4090,45 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
             .lss = lss ))),
 
 
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 3
+    NOS <- ncol(eta)/M1  # Needed for summary()
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale )
+    }
+    parg <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                      .lshape2.p , earg = .eshape2.p)
+    qq   <- 1
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a*p < 1 < a   has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p,
+            .lss = lss ))),
+
+
+
+
   deriv = eval(substitute(expression({
     M1 <- 3
     NOS <- ncol(eta)/M1  # Needed for summary()
@@ -4173,18 +4221,19 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
-    betaII <- function(lscale    = "loge",
-                       lshape2.p = "loge",
-                       lshape3.q = "loge",
-                       iscale    = NULL,
-                       ishape2.p = NULL,
-                       ishape3.q = NULL,
-                       imethod   = 1,
-                       gscale    = exp(-5:5),
-                       gshape2.p = exp(-5:5),
-                       gshape3.q = exp(-5:5),
-                       probs.y   = c(0.25, 0.50, 0.75),
-                       zero      = "shape") {
+ betaII <-
+  function(lscale    = "loge",
+           lshape2.p = "loge",
+           lshape3.q = "loge",
+           iscale    = NULL,
+           ishape2.p = NULL,
+           ishape3.q = NULL,
+           imethod   = 1,
+           gscale    = exp(-5:5),
+           gshape2.p = exp(-5:5),
+           gshape3.q = seq(0.75, 4, by = 0.25),  # exp(-5:5),
+           probs.y   = c(0.25, 0.50, 0.75),
+           zero      = "shape") {
 
 
 
@@ -4289,38 +4338,21 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
           gscale     <- .gscale
           gshape2.p  <- .gshape2.p        
           gshape3.q  <- .gshape3.q
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape2.p ))
-            gshape2.p <-  rep( .ishape2.p , length = NOS)
-          if (length( .ishape3.q ))
-            gshape3.q <-  rep( .ishape3.q , length = NOS)
-          allmat1 <- expand.grid(shape2.p = gshape2.p,
-                                 shape3.q = gshape3.q)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape2.p )) gshape2.p <- rep_len( .ishape2.p , NOS)
+          if (length( .ishape3.q )) gshape3.q <- rep_len( .ishape3.q , NOS)
 
-          ll.beII <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = 1,
-                                         shape2.p = extraargs$Shape2.p,
-                                         shape3.q = extraargs$Shape3.q,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.beII,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape2.p = allmat1[iloc, 1],
-                                             Shape3.q = allmat1[iloc, 2]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          pp.init[, spp.] <- allmat1[ind5, 1]
-          qq.init[, spp.] <- allmat1[ind5, 2]
+
+
+        try.this <-
+          grid.search4(gscale, vov2 = 1, gshape2.p, gshape3.q,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          pp.init[, spp.] <- try.this["Value3"]
+          qq.init[, spp.] <- try.this["Value4"]
       } else {  # .imethod == 2
 
         sc.init[, spp.] <- if (length( .iscale )) .iscale else {
@@ -4388,10 +4420,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 3
 
-    misc$link <- c(rep( .lscale    , length = ncoly),
-                   rep( .lshape2.p , length = ncoly),
-                   rep( .lshape3.q , length = ncoly))[
-                   interleave.VGAM(M, M1 = M1)]
+    misc$link <- c(rep_len( .lscale    , ncoly),
+                   rep_len( .lshape2.p , ncoly),
+                   rep_len( .lshape3.q , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(scaL.names,             sha2.names, sha3.names)
     names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
 
@@ -4440,7 +4471,39 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
              .eshape2.p = eshape2.p, .eshape3.q = eshape3.q
                         ))),
   vfamily = c("betaII"),
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 3
+    NOS <- ncol(eta)/M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    aa    <- 1
+    parg  <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lshape2.p , earg = .eshape2.p )
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape3.q , earg = .eshape3.q )
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -p < 1 <   q has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p, .lshape3.q = lshape3.q,
+            .eshape2.p = eshape2.p, .eshape3.q = eshape3.q ))),
+
+
+
+
   deriv = eval(substitute(expression({ 
+    M1 <- 3
     NOS <- ncol(eta)/M1  # Needed for summary()
     Scale <- eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
                        .lscale    , earg = .escale    )
@@ -4507,15 +4570,16 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
- lomax     <- function(lscale    = "loge",
-                       lshape3.q = "loge",
-                       iscale    = NULL,
-                       ishape3.q = NULL,
-                       imethod   = 1,
-                       gscale    = exp(-5:5),
-                       gshape3.q = exp(-5:5),  # Finite mean only if qq>1
-                       probs.y   = c(0.25, 0.50, 0.75),
-                       zero      = "shape") {
+ lomax <-
+  function(lscale    = "loge",
+           lshape3.q = "loge",
+           iscale    = NULL,
+           ishape3.q = NULL,
+           imethod   = 1,
+           gscale    = exp(-5:5),
+           gshape3.q = seq(0.75, 4, by = 0.25),  # exp(-5:5),  
+           probs.y   = c(0.25, 0.50, 0.75),
+           zero      = "shape") {
 
 
 
@@ -4606,33 +4670,18 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1) {
           gscale     <- .gscale
           gshape3.q  <- .gshape3.q
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape3.q ))
-            gshape3.q <-  rep( .ishape3.q , length = NOS)
-          allmat1 <- cbind(shape3.q = gshape3.q)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape3.q )) gshape3.q <- rep_len( .ishape3.q , NOS)
 
-          ll.lomx <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = 1,
-                                         shape2.p = 1,
-                                         shape3.q = extraargs$Shape3.q,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.lomx,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape3.q = allmat1[iloc, 1]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          qq.init[, spp.] <- allmat1[ind5, 1]
+
+        try.this <-
+          grid.search4(gscale, vov2 = 1, vov3 = 1, gshape3.q,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          qq.init[, spp.] <- try.this["Value4"]
        } else {  # .imethod == 2
           qvec <- .probs.y 
           iscale <- if (length( .iscale )) .iscale else 1
@@ -4691,9 +4740,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep( .lscale    , length = ncoly),
-                   rep( .lshape3.q , length = ncoly))[
-                   interleave.VGAM(M, M1 = M1)]
+    misc$link <- c(rep_len( .lscale    , ncoly),
+                   rep_len( .lshape3.q , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <-
       c(scaL.names,                         sha3.names)
     names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
@@ -4763,7 +4811,37 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                                    .lshape3.q = lshape3.q,
                                    .eshape3.q = eshape3.q
                       ))),
-  deriv = eval(substitute(expression({ 
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale   )
+    aa    <- 1
+    parg  <- 1
+    qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape3.q , earg = .eshape3.q)
+
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint 1 < q has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   ,
+            .escale    = escale   ,
+                                    .lshape3.q = lshape3.q,
+                                    .eshape3.q = eshape3.q ))),
+
+
+
+
+  deriv = eval(substitute(expression({
+    M1 <- 2
     NOS <- ncol(eta)/M1  # Needed for summary()
     Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
                        .lscale    , earg = .escale   )
@@ -4824,16 +4902,17 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
-  fisk     <- function(lscale    = "loge",
-                       lshape1.a = "loge",
-                       iscale    = NULL,
-                       ishape1.a = NULL,
-                       imethod   = 1,
-                       lss       = TRUE,
-                       gscale    = exp(-5:5),
-                       gshape1.a = exp(-5:5),
-                       probs.y   = c(0.25, 0.50, 0.75),
-                       zero      = "shape") {
+ fisk <-
+  function(lscale    = "loge",
+           lshape1.a = "loge",
+           iscale    = NULL,
+           ishape1.a = NULL,
+           imethod   = 1,
+           lss       = TRUE,
+           gscale    = exp(-5:5),
+           gshape1.a = seq(0.75, 4, by = 0.25),  # exp(-5:5),
+           probs.y   = c(0.25, 0.50, 0.75),
+           zero      = "shape") {
 
 
 
@@ -4936,33 +5015,19 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1 ) {
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape1.a ))
-            gshape1.a <-  rep( .ishape1.a , length = NOS)
-          allmat1 <- cbind(shape1.a = gshape1.a)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
 
-          ll.fisk <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = extraargs$Shape1.a,
-                                         shape2.p = 1,
-                                         shape3.q = 1,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.fisk,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape1.a = allmat1[iloc, 1]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          aa.init[, spp.] <- allmat1[ind5, 1]
+
+
+        try.this <-
+          grid.search4(gscale, gshape1.a, vov3 = 1, vov4 = 1,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          aa.init[, spp.] <- try.this["Value2"]
        } else {  # .imethod == 2
           qvec <- .probs.y 
           iscale <- if (length( .iscale )) .iscale else 1
@@ -5026,8 +5091,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
-                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly))[
+    misc$link <- c(rep_len( if ( .lss ) .lscale else .lshape1.a , ncoly),
+                   rep_len( if ( .lss ) .lshape1.a else .lscale , ncoly))[
                    interleave.VGAM(M, M1 = M1)]
     temp.names <- if ( .lss ) {
       c(scaL.names, sha1.names)
@@ -5109,7 +5174,44 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
            .escale    = escale   , .eshape1.a = eshape1.a,
            .lss = lss ))),
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- 1
+    qq   <- 1
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a   < 1 < a   has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))),
+
+
+
+
   deriv = eval(substitute(expression({ 
+    M1 <- 2
     NOS <- ncol(eta)/M1  # Needed for summary()
     if ( .lss ) { 
       Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
@@ -5276,7 +5378,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
       c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
         namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
-    
+
     if (!length(etastart)) {
       sc.init <-
       pp.init <- matrix(NA_real_, n, NOS)
@@ -5288,33 +5390,20 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1 ) {
           gscale     <- .gscale
           gshape2.p  <- .gshape2.p        
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape2.p ))
-            gshape2.p <-  rep( .ishape2.p , length = NOS)
-          allmat1 <- cbind(shape2.p = gshape2.p)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape2.p )) gshape2.p <- rep_len( .ishape2.p , NOS)
 
-          ll.invL <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = 1,
-                                         shape2.p = extraargs$Shape2.p,
-                                         shape3.q = 1,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.invL,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape2.p = allmat1[iloc, 1]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          pp.init[, spp.] <- allmat1[ind5, 1]
+
+
+
+        try.this <-
+          grid.search4(gscale, vov2 = 1, gshape2.p, vov4 = 1,
+                       objfun = genbetaII.Loglikfun4,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          pp.init[, spp.] <- try.this["Value3"]
        } else {  # .imethod == 2
           qvec <- .probs.y 
           ishape2.p <- if (length( .ishape2.p )) .ishape2.p else 1
@@ -5360,9 +5449,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep( .lscale    , length = ncoly),
-                   rep( .lshape2.p , length = ncoly))[
-                   interleave.VGAM(M, M1 = M1)]
+    misc$link <- c(rep_len( .lscale    , ncoly),
+                   rep_len( .lshape2.p , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(scaL.names, sha2.names)
     names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
 
@@ -5430,6 +5518,37 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                        ))),
 
 
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                       .lscale    , earg = .escale    )
+    parg  <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                       .lshape2.p , earg = .eshape2.p )
+    qq   <- 1
+    aa   <- 1
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1              ) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a*p < 1 has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   ,
+            .escale    = escale   ,
+            .lshape2.p = lshape2.p,
+            .eshape2.p = eshape2.p
+         ))),
+
+
+
+
   deriv = eval(substitute(expression({
     M1 <- 2
     NOS <- ncol(eta)/M1  # Needed for summary()
@@ -5489,16 +5608,16 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  paralogistic <-
-              function(lscale    = "loge",
-                       lshape1.a = "loge",
-                       iscale    = NULL,
-                       ishape1.a = NULL,
-                       imethod   = 1,
-                       lss       = TRUE,
-                       gscale    = exp(-5:5),
-                       gshape1.a = exp(-5:5),
-                       probs.y   = c(0.25, 0.50, 0.75),
-                       zero      = "shape") {
+  function(lscale    = "loge",
+           lshape1.a = "loge",
+           iscale    = NULL,
+           ishape1.a = NULL,
+           imethod   = 1,
+           lss       = TRUE,
+           gscale    = exp(-5:5),
+           gshape1.a = seq(0.75, 4, by = 0.25),  # exp(-5:5),
+           probs.y   = c(0.25, 0.50, 0.75),
+           zero      = "shape") {
 
 
 
@@ -5533,7 +5652,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   
 
   new("vglmff",
-  blurb = 
+  blurb =
     c("Paralogistic distribution \n\n",
       "Links:    ", 
       ifelse (lss,
@@ -5603,33 +5722,26 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1 ) {
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape1.a ))
-            gshape1.a <-  rep( .ishape1.a , length = NOS)
-          allmat1 <- expand.grid(shape1.a = gshape1.a)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
 
-          ll.para <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = extraargs$Shape1.a,
-                                         shape2.p = 1,
-                                         shape3.q = extraargs$Shape1.a,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.para,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape1.a = allmat1[iloc, 1]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          aa.init[, spp.] <- allmat1[ind5, 1]
+        paralogistic.Loglikfun2 <-
+            function(scaleval, shape1.a,
+                     y, x, w, extraargs) {
+          sum(c(w) * dgenbetaII(x = y, scale = scaleval,
+                                shape1.a = shape1.a,
+                                shape2.p = 1,
+                                shape3.q = shape1.a, log = TRUE))
+        }
+
+        try.this <-
+          grid.search2(gscale, gshape1.a, # vov3 = 1, vov4 = gshape1.a,
+                       objfun = paralogistic.Loglikfun2,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          aa.init[, spp.] <- try.this["Value2"]
        } else {  # .imethod == 2
           qvec <- .probs.y 
           ishape3.q <- if (length( .ishape1.a )) .ishape1.a else 1
@@ -5692,8 +5804,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
-                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly))[
+    misc$link <- c(rep_len(if ( .lss ) .lscale else .lshape1.a , ncoly),
+                   rep_len(if ( .lss ) .lshape1.a else .lscale , ncoly))[
                    interleave.VGAM(M, M1 = M1)]
     temp.names <- if ( .lss ) {
       c(scaL.names, sha1.names)
@@ -5778,7 +5890,44 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   }, list( .lscale    = lscale   , .lshape1.a = lshape1.a,
            .escale    = escale   , .eshape1.a = eshape1.a,
            .lss = lss ))),
-  deriv = eval(substitute(expression({ 
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    if ( .lss ) { 
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }  
+    parg <- 1
+    qq   <- aa
+
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a < 1 < a*a has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))),
+
+
+
+
+  deriv = eval(substitute(expression({
+    M1 <- 2
     NOS <- ncol(eta)/M1  # Needed for summary()
     if ( .lss ) { 
       Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
@@ -5852,6 +6001,11 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
+
+
+
+
+
  inv.paralogistic <-
               function(lscale    = "loge",
                        lshape1.a = "loge",
@@ -5860,7 +6014,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                        imethod   = 1,
                        lss       = TRUE,
                        gscale    = exp(-5:5),
-                       gshape1.a = exp(-5:5),
+                       gshape1.a = seq(0.75, 4, by = 0.25),  # exp(-5:5),
                        probs.y   = c(0.25, 0.50, 0.75),
                        zero      = "shape") {
 
@@ -5965,33 +6119,27 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1 ) {
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
-          if (length( .iscale ))
-            gscale    <-  rep( .iscale    , length = NOS)
-          if (length( .ishape1.a ))
-            gshape1.a <-  rep( .ishape1.a , length = NOS)
-          allmat1 <- cbind(shape1.a = gshape1.a)
-          allmat2 <- matrix(NA_real_, nrow(allmat1), 2)
+          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
 
-          ll.invp <- function(scaleval, x = x, y = y, w = w, extraargs) { 
-            ans <- sum(c(w) * dgenbetaII(x = y,
-                                         scale    = scaleval,
-                                         shape1.a = extraargs$Shape1.a,
-                                         shape2.p = extraargs$Shape1.a,
-                                         shape3.q = 1,
-                                         log = TRUE))
-            ans
-          }
 
-          for (iloc in 1:nrow(allmat1)) {
-            allmat2[iloc, ] <-
-              grid.search(gscale, objfun = ll.invp,
-                            y = yvec, x = x, w = wvec,
-                            ret.objfun = TRUE,  # 2nd value is the loglik
-                            extraargs = list(Shape1.a = allmat1[iloc, 1]))
-          }
-          ind5 <- which.max(allmat2[, 2])  # 2nd value is the loglik
-          sc.init[, spp.] <- allmat2[ind5, 1]
-          aa.init[, spp.] <- allmat1[ind5, 1]
+        inv.paralogistic.Loglikfun2 <-
+            function(scaleval, shape1.a,
+                     y, x, w, extraargs) {
+          sum(c(w) * dgenbetaII(x = y, scale = scaleval,
+                                shape1.a = shape1.a,
+                                shape2.p = shape1.a,
+                                shape3.q = 1, log = TRUE))
+        }
+
+
+        try.this <-
+          grid.search2(gscale, gshape1.a, # vov3 = 1, vov4 = gshape1.a,
+                       objfun = inv.paralogistic.Loglikfun2,  # x = x,
+                       y = yvec, w = wvec,  # extraargs = NULL,
+                       ret.objfun = TRUE)  # Last value is the loglik
+          sc.init[, spp.] <- try.this["Value1"]
+          aa.init[, spp.] <- try.this["Value2"]
         } else {  # .imethod == 2
           qvec <- .probs.y 
           ishape2.p <- if (length( .ishape1.a )) .ishape1.a else 1
@@ -6056,8 +6204,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep( if ( .lss ) .lscale else .lshape1.a , len = ncoly),
-                   rep( if ( .lss ) .lshape1.a else .lscale , len = ncoly))[
+    misc$link <- c(rep_len(if ( .lss ) .lscale else .lshape1.a , ncoly),
+                   rep_len(if ( .lss ) .lshape1.a else .lscale , ncoly))[
                    interleave.VGAM(M, M1 = M1)]
     temp.names <- if ( .lss ) {
       c(scaL.names, sha1.names)
@@ -6141,6 +6289,41 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
             .escale    = escale   , .eshape1.a = eshape1.a,
             .lss = lss ))),
+
+
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    if ( .lss ) {
+      Scale <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lscale    , earg = .escale   )
+      aa    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+    } else {
+      aa    <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                         .lshape1.a , earg = .eshape1.a)
+      Scale <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                         .lscale    , earg = .escale )
+    }
+    parg <- aa
+    qq   <- 1
+
+    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
+             all(is.finite(aa   ))  && all(aa     > 0) &&
+             all(is.finite(parg ))  && all(parg   > 0) &&
+             all(is.finite(qq   ))  && all(qq     > 0)
+    okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
+    if (!okay.support)
+      warning("parameter constraint -a*a < 1 < a   has been violated; ",
+              "solution may be at the boundary of the ",
+              "parameter space.")
+    okay1 && okay.support
+  }, list(  .lscale    = lscale   , .lshape1.a = lshape1.a,
+            .escale    = escale   , .eshape1.a = eshape1.a,
+            .lss = lss ))),
+
+
 
 
   deriv = eval(substitute(expression({

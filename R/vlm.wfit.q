@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -22,8 +24,15 @@ vlm.wfit <-
                      ncol(xmat)
                    },
            xij = NULL,
-           lp.names = NULL, Eta.range = NULL, Xm2 = NULL, ...) {
+           lp.names = NULL, Eta.range = NULL, Xm2 = NULL,
 
+           Xvlm.aug = NULL,
+           ps.list = NULL,
+           constraints = NULL, first.ps = FALSE,
+           trace = FALSE,
+
+           ...) {
+  mgcvvgam <- length(ps.list)
 
   missing.Hlist <- missing(Hlist)
   zmat <- as.matrix(zmat)
@@ -71,7 +80,81 @@ vlm.wfit <-
 
 
 
+
+
+
+
+  if (mgcvvgam) {
+    m.objects <- psv2magic(x.VLM = X.vlm,
+                           constraints = constraints,
+                           lambda.vlm = attr(Xvlm.aug, "lambda.vlm"),
+                           ps.list = ps.list)
+    if (FALSE && trace) {
+      cat("m.objects$sp \n")
+      print( m.objects$sp )
+      cat("m.objects$off \n")
+      print( m.objects$off )
+    }
+
+    if (first.ps) {
+      m.objects$sp <- rep_len(-1, length(m.objects$sp))
+    }
+
+
+
+    magicfit <- mgcv::magic(y   = z.vlm,
+                            X   = m.objects$x.VLM.new,
+                            sp  = m.objects$sp,
+                            S   = m.objects$S.arg,
+                            off = m.objects$off,
+                            gcv = FALSE)
+    SP <- magicfit$sp
+    if (FALSE && trace) {
+      cat("SP \n")
+      print( SP )
+    }
+
+    length.lambda.vlm <- sapply(attr(Xvlm.aug, "lambda.vlm"), length)  # lambda.new
+    sp.opt <- vector("list", length(length.lambda.vlm))  # list()
+    iioffset <- 0
+    for (ii in seq_along(length.lambda.vlm)) {
+      sp.opt[[ii]] <- SP[iioffset + 1:length.lambda.vlm[ii]]
+      iioffset <- iioffset + length.lambda.vlm[ii]
+    }
+    names(sp.opt) <- names(ps.list$which.X.ps)
+    if (FALSE && trace) {
+      cat("sp.opt \n")
+      print( sp.opt )
+    }
+
+    ps.list$lambdalist <- sp.opt
+    Xvlm.aug <- Pen.psv(constraints = constraints, ps.list = ps.list)
+
+
+    first.ps <- FALSE  # May have been TRUE on entry but is FALSE on exit
+
+
+    X.vlm <- rbind(X.vlm, Xvlm.aug)
+    z.vlm <- c(z.vlm, rep(0, nrow(Xvlm.aug)))
+  }
+
+
+
+
   ans <- lm.fit(X.vlm, y = z.vlm, ...)
+
+
+
+  if (mgcvvgam) {
+    ans$residuals     <- head(ans$residuals,     n*M)
+    ans$effects       <- head(ans$effects,       n*M)
+    ans$fitted.values <- head(ans$fitted.values, n*M)
+    ans$qr$qr         <- head(ans$qr$qr,         n*M)
+  }
+
+
+
+
 
   if (ResSS) {
     ans$ResSS <- sum(ans$resid^2)
@@ -110,6 +193,23 @@ vlm.wfit <-
 
   ans$constraints <- Hlist
   ans$contrasts <- contrast.save
+
+
+
+
+
+
+
+
+  if (mgcvvgam) {
+    ans$first.ps <- first.ps  # Updated.
+    ans$ps.list  <- ps.list   # Updated wrt "lambdalist" component.
+    ans$Xvlm.aug <- Xvlm.aug  # Updated matrix.
+    ans$magicfit <- magicfit  # Updated.
+  }
+
+
+
   if (x.ret) {
     ans$X.vlm <- X.vlm.save
   }
@@ -141,40 +241,8 @@ vlm.wfit <-
   }
   ans$mat.coefficients <- t(B)
   ans
-}
+}  # vlm.wfit
 
-
-
-
-if (FALSE)
-print.vlm.wfit <- function(x, ...) {
-  if (!is.null(cl <- x$call)) {
-    cat("Call:\n")
-    dput(cl)
-  }
-
-  coef <- x$coefficients
-  cat("\nCoefficients:\n")
-  print(coef, ...)
-
-  rank <- x$rank
-  if (is.null(rank)) {
-    rank <- sum(!is.na(coef))
-  }
-  n <- x$misc$n 
-  M <- x$misc$M 
-  rdf <- x$df.resid
-  if (is.null(rdf)) {
-    rdf <- (n - rank) * M
-  }
-  cat("\nDegrees of Freedom:", n*M, "Total;", rdf, "Residual\n")
-
-  if (!is.null(x$ResSS)) {
-    cat("Residual Sum of Squares:", format(x$ResSS), "\n")
-  }
-
-  invisible(x)
-}
 
 
 

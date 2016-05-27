@@ -2,7 +2,7 @@
 %\alias{gaussian}
 \alias{gaussianff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Gaussian (normal) Family Function }
+\title{ Gaussian (Normal) Family Function }
 \description{
   Fits a generalized linear model to a response with Gaussian (normal)
   errors.  The dispersion parameter may be known or unknown.

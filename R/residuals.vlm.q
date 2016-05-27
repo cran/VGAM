@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -36,7 +36,7 @@ residualsvlm  <-
         M <- object@misc$M
         wz <- weights(object, type = "work")  # $weights
         if (!length(wz))
-          wz <- if (M == 1) rep(1, n) else matrix(1, n, M)
+          wz <- if (M == 1) rep_len(1, n) else matrix(1, n, M)
 
         if (M == 1) {
           if (any(wz < 0))
@@ -127,7 +127,7 @@ residualsvglm  <-
 
       w <- object@prior.weights
       if (!length(w))
-        w <- rep(1, n)
+        w <- rep_len(1, n)
       eta <- object@predictors
 
       dev.fn <- object@family@deviance  # May not 'exist' for that model
@@ -156,7 +156,7 @@ residualsvglm  <-
       mu <- object@fitted
       w <- object@prior.weights
       if (is.null(w))
-          w <- rep(1, n)
+          w <- rep_len(1, n)
       eta <- object@predictors
       if (!is.null(ll.fn <- object@family@loglikelihood)) {
         extra <- object@extra

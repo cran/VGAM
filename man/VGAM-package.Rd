@@ -89,17 +89,20 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 
 }
 
+
 \section{Warning}{
-  This package is undergoing continual development and improvement.
-  Until my monograph comes out and this package is released as version 1.0-0
-  the user should treat everything subject to change.
+  This package is undergoing continual development and improvement,
+  therefore users should treat everything as subject to change.
   This includes the
   family function names,
   argument names,
   many of the internals,
   the use of link functions,
   and slot names.
-  Some future pain can be minimized by using good programming
+  For example, all link functions may be renamed so that they
+  end in \code{"link"},
+  e.g., \code{loglink()} instead of \code{loge()}.
+  Some future pain can be avoided by using good programming
   techniques, e.g., using extractor/accessor functions such as
   \code{coef()}, \code{weights()}, \code{vcov()},
   \code{predict()}.
@@ -267,7 +270,7 @@ aa@post$deplot  # Contains density function values
 
 
 # Example 5; GEV distribution for extremes
-(fit5 <- vglm(maxtemp ~ 1, egev, data = oxtemp, trace = TRUE))
+(fit5 <- vglm(maxtemp ~ 1, gevff, data = oxtemp, trace = TRUE))
 head(fitted(fit5))
 coef(fit5, matrix = TRUE)
 Coef(fit5)
@@ -276,5 +279,11 @@ vcov(fit5, untransform = TRUE)
 sqrt(diag(vcov(fit5)))  # Approximate standard errors
 \dontrun{ rlplot(fit5) }
 }
+
+
+% Until my monograph comes out and this package is released as version 1.0-0
+% the user should treat everything subject to change.
+
+
 
 

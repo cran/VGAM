@@ -85,7 +85,7 @@ guplot.vlm(object, ...)
 }
 \seealso{
   \code{\link{gumbel}},
-  \code{\link{egumbel}},
+  \code{\link{gumbelff}},
   \code{\link{gev}},
   \code{\link{venice}}.
 

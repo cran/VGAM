@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -609,8 +609,8 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
       }
       Scale.init <- if (length( .iscale )) .iscale else
         diff(quantile(y, prob = c(0.25, 0.75))) / (2 * 1.155) + 1.0e-5
-      locat.init <- rep(locat.init, length = length(y))
-      Scale.init <- rep(Scale.init, length = length(y))
+      locat.init <- rep_len(locat.init, length(y))
+      Scale.init <- rep_len(Scale.init, length(y))
       etastart <- cbind(theta2eta(locat.init, .llocat, earg = .elocat),
                         theta2eta(Scale.init, .lscale, earg = .escale))
     }
@@ -623,7 +623,7 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
     locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
     Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
     answer <- matrix(locat, nrow(eta), length(Perce))
-    for (ii in 1:length(Perce))
+    for (ii in seq_along(Perce))
       answer[, ii] <- qsc.t2(Perce[ii] / 100, loc = locat, sc = Scale)
     dimnames(answer) <- list(dimnames(eta)[[1]],
                              paste(as.character(Perce), "%", sep = ""))
@@ -642,7 +642,7 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
     misc$multipleResponses <- FALSE
 
       ncoly <- ncol(y)
-      for (ii in 1:length( .percentile )) {
+      for (ii in seq_along( .percentile )) {
         y.use <- if (ncoly > 1) y[, ii] else y
         mu <- cbind(mu)
         extra$percentile[ii] <- 100 * weighted.mean(y.use <= mu[, ii], w)

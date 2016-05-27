@@ -1,27 +1,38 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
 
+
+
+
 vgam.fit <-
-  function(x, y, w, mf,
+  function(x, y, w = rep_len(1, nrow(x)), mf,
            Xm2 = NULL, Ym2 = NULL,  # Added 20130730
-           etastart, mustart, coefstart,
-           offset, family, control, criterion = "coefficients",
-           constraints = NULL, extra, qr.arg,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
+           offset = 0, family, control = vgam.control(),
+           criterion = "coefficients",
+           constraints = NULL, extra= NULL, qr.arg = FALSE,
            Terms,
            nonparametric, smooth.labels,
-           function.name = "vgam", ...) {
+           function.name = "vgam",
+           ps.list = NULL,  # mf,
+           ...) {
+
+
+  mgcvvgam <- length(ps.list) > 0  # iff \exists ps() or PS() term
+
 
 
   eff.n <- nrow(x)  # + sum(abs(w[1:nrow(x)]))
 
   specialCM <- NULL
   post <- list()
-  check.Rank <- TRUE  # Set this to false for family functions vppr() etc.
+    check.rank <- TRUE
+    check.rank <- control$Check.rank
   epsilon <- control$epsilon
   maxit <- control$maxit
   save.weights <- control$save.weights
@@ -121,7 +132,21 @@ vgam.fit <-
       bf <- "vlm.wfit"
     }
 
-    X.vlm.save <- lm2vlm.model.matrix(x, Hlist, xij = control$xij)
+
+    X.vlm.save <- lm2vlm.model.matrix(x, Hlist, xij = control$xij,
+                                      Xm2 = Xm2)  # 20160420
+
+
+
+
+
+
+
+  if (mgcvvgam) {
+    Xvlm.aug <- Pen.psv(constraints = constraints, ps.list = ps.list)
+    first.ps <- TRUE
+  }
+
 
 
     if (length(coefstart)) {
@@ -157,7 +182,7 @@ vgam.fit <-
     c.list <- list(wz = as.double(wz), z = as.double(z),
                    fit = as.double(t(eta)),
                    one.more = TRUE, U = as.double(U),
-                   coeff = as.double(rep(1, ncol(X.vlm.save))))
+                   coeff = as.double(rep_len(1, ncol(X.vlm.save))))
 
 
     dX.vlm <- as.integer(dim(X.vlm.save))
@@ -167,8 +192,36 @@ vgam.fit <-
       stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
 
 
+
+
+
+  if (mgcvvgam) {
+    bf.call <- expression(vlm.wfit(xmat = X.vlm.save, z,
+        Hlist = Hlist, U = U, matrix.out = FALSE, is.vlmX = TRUE,
+        qr = qr.arg, xij = NULL,
+        Xvlm.aug = Xvlm.aug,
+        ps.list = ps.list, constraints = constraints,
+        first.ps = first.ps,
+        trace = trace))
+  }
+
+
     while (c.list$one.more) {
       tfit <- eval(bf.call)  # fit$smooth.frame is new
+
+
+      if (mgcvvgam) {
+        first.ps <- tfit$first.ps
+        Xvlm.aug <- tfit$Xvlm.aug
+        ps.list  <- tfit$ps.list
+        magicfit <- tfit$magicfit
+      }
+
+
+
+
+
+
 
       c.list$coeff <- tfit$coefficients
       tfit$predictors <- tfit$fitted.values + offset
@@ -182,7 +235,15 @@ vgam.fit <-
 
 
 
+
+
       fv <- c.list$fit
+
+      if (mgcvvgam) {
+        fv <- head(fv, n*M)
+      }
+
+
       new.coeffs <- c.list$coeff
 
       if (length(family@middle))
@@ -224,6 +285,9 @@ vgam.fit <-
 
       if (!is.finite(one.more) || !is.logical(one.more))
         one.more <- FALSE
+
+
+
       if (one.more) {
         iter <- iter + 1
         deriv.mu <- eval(family@deriv)
@@ -259,7 +323,7 @@ vgam.fit <-
       eval(family@fini)
 
     coefs <- tfit$coefficients
-    asgn <- attr(X.vlm.save, "assign")    # 20011129 was x 
+    asgn <- attr(X.vlm.save, "assign")  # 20011129 was x 
 
     names(coefs) <- xnrow.X.vlm
     cnames <- xnrow.X.vlm
@@ -268,7 +332,9 @@ vgam.fit <-
       rank <- tfit$rank
       if (rank < ncol(x)) 
         stop("rank < ncol(x) is bad")
-    } else rank <- ncol(x)
+    } else {
+      rank <- ncol(x)
+    }
 
     R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
     R[lower.tri(R)] <- 0
@@ -294,7 +360,7 @@ vgam.fit <-
       names(mu) <- names(fv)
     }
 
-    tfit$fitted.values <- NULL  # Have to kill it off  3/12/01
+    tfit$fitted.values <- NULL  # Have to kill it off  20011203
     fit <- structure(c(tfit,
            list(assign = asgn,
                 constraints = Hlist,
@@ -309,7 +375,7 @@ vgam.fit <-
 
     df.residual <- nrow.X.vlm - rank 
 
-    if (!se.fit) {
+    if (!mgcvvgam && !se.fit) {
       fit$varmat <- NULL
     }
 
@@ -355,7 +421,7 @@ vgam.fit <-
 
 
 
-    if (se.fit && length(fit$s.xargument)) {
+    if (!mgcvvgam && se.fit && length(fit$s.xargument)) {
       misc$varassign <- varassign(Hlist, names(fit$s.xargument))
     }
 
@@ -364,6 +430,28 @@ vgam.fit <-
     if (nonparametric) {
       misc$smooth.labels <- smooth.labels
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if (mgcvvgam) {
+    misc$Xvlm.aug <- Xvlm.aug
+    misc$ps.list  <- ps.list
+    misc$magicfit <- magicfit
+  }
+
+
 
 
     crit.list <- list()
@@ -395,7 +483,15 @@ vgam.fit <-
 
 
 
- 
+
+
+
+
+
+
+
+
+
     if (w[1] != 1 || any(w != w[1]))
       fit$prior.weights <- w
 
@@ -419,7 +515,8 @@ vgam.fit <-
 
 
 
-    fit$misc <- NULL  # 20020608; It is necessary to kill it as it
+    fit$misc <- NULL
+
     structure(c(fit, list(
         contrasts = attr(x, "contrasts"),
         control = control,
@@ -457,7 +554,7 @@ new.assign <- function(X, Hlist) {
 
   kk <- 0
   low <- 1
-  for (ii in 1:length(asgn)) {
+  for (ii in seq_along(asgn)) {
     len  <- low:(low  + ncolHlist[ii] * lasgn[ii] -1)
     temp <- matrix(len, ncolHlist[ii],  lasgn[ii])
     for (mm in 1:ncolHlist[ii])

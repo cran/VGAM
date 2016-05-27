@@ -1,7 +1,7 @@
 \name{logoff}
 \alias{logoff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Log link function with an offset }
+\title{ Log Link Function with an Offset }
 \description{
   Computes the log transformation with an offset,
   including its inverse and the first two derivatives.

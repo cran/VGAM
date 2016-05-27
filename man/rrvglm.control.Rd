@@ -1,7 +1,7 @@
 \name{rrvglm.control}
 \alias{rrvglm.control}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Control function for rrvglm }
+\title{ Control Function for rrvglm() }
 \description{
   Algorithmic constants and parameters for running \code{rrvglm} are set
   using this function.

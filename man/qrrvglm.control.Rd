@@ -1,7 +1,7 @@
 \name{qrrvglm.control}
 \alias{qrrvglm.control}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Control function for QRR-VGLMs (CQO) }
+\title{ Control Function for QRR-VGLMs (CQO) }
 \description{
   Algorithmic constants and parameters for a constrained quadratic
   ordination (CQO), by fitting a \emph{quadratic reduced-rank vector
@@ -22,7 +22,7 @@ qrrvglm.control(Rank = 1,
                 FastAlgorithm = TRUE,
                 GradientFunction = TRUE,
                 Hstep = 0.001,
-                isd.latvar = rep(c(2, 1, rep(0.5, length = Rank)), length = Rank),
+                isd.latvar = rep_len(c(2, 1, rep_len(0.5, Rank)), Rank),
                 iKvector = 0.1,
                 iShape = 0.1,
                 ITolerances = NULL,
@@ -30,7 +30,7 @@ qrrvglm.control(Rank = 1,
                 maxitl = 40,
                 imethod = 1,
                 Maxit.optim = 250,
-                MUXfactor = rep(7, length = Rank),
+                MUXfactor = rep_len(7, Rank),
                 noRRR = ~ 1, Norrr = NA,
                 optim.maxit = 20,
                 Parscale = if (I.tolerances) 0.001 else 1.0,

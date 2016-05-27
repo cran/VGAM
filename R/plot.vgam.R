@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -119,13 +119,14 @@ ylim.scale <- function(ylim, scale = 0) {
 
 
 
+
 getallresponses <- function(xij) {
   if (!is.list(xij))
     return("")
 
   allterms <- lapply(xij, terms)
   allres <- NULL
-  for (ii in 1:length(xij))
+  for (ii in seq_along(xij))
     allres <- c(allres,
                 as.character(attr(allterms[[ii]], "variables"))[2])
   allres
@@ -138,7 +139,7 @@ getallresponses <- function(xij) {
            terms = attr((object@terms)$terms, "term.labels"),
            raw = TRUE, deriv.arg = deriv.arg, se = FALSE,
            varxij = 1) {
-  Terms <- terms(object)  # 11/8/03; object@terms$terms 
+  Terms <- terms(object)  # 20030811; object@terms$terms 
   aa <- attributes(Terms)
   all.terms <- labels(Terms)
   xvars <- parse(text = all.terms)
@@ -168,7 +169,8 @@ getallresponses <- function(xij) {
       evars <- evars[[1]]
     } else
     if (length(evars) > 1 &&
-        any(getallresponses(object@control$xij) == names(xnames)) ) {
+        length(intersect(getallresponses(object@control$xij), names(xnames)))
+       ) {
 
 
 
@@ -289,61 +291,6 @@ preplotvgam <-
   attr(gamplot, "Constant") <- Constant
   invisible(gamplot) 
 }
-
-
-
-plotvlm <- function(object, residuals = NULL, rugplot= FALSE, ...) {
-  stop("sorry, this function hasn't been written yet")
-}
-
-
-
-
-plotvglm <-
-  function(x,
-           type = c("vglm", "vgam"),
-           newdata = NULL, y = NULL,
-           residuals = NULL, rugplot = TRUE,
-           se = FALSE, scale = 0,
-           raw = TRUE, offset.arg = 0,
-           deriv.arg = 0, overlay = FALSE,
-           type.residuals = c("deviance", "working", "pearson", "response"),
-           plot.arg = TRUE,
-           which.term = NULL, which.cf = NULL,
-           control = plotvgam.control(...),
-           varxij = 1, ...) {
-
-  ptype <- match.arg(type, c("vglm", "vgam"))[1]
-
-  if (ptype == "vglm") {
-    stop("this function has not been written yet!")
-  }
-
-
-
-  if (length(newdata))
-    newdata <- newdata else newdata <- NULL
-
-
-
-  invisible(
-  plot.vgam(x = x, newdata = newdata, y = y,
-            residuals = residuals, rugplot = rugplot,
-            se = se, scale = scale, 
-            raw = raw, offset.arg = offset.arg,
-            deriv.arg = deriv.arg, overlay = overlay,
-            type.residuals = type.residuals,
-            plot.arg = plot.arg,
-            which.term = which.term, which.cf = which.cf,
-            control = control,
-            varxij = varxij, ...)
-    )
-}
-
-
-
-
-
 
 
 
@@ -532,11 +479,11 @@ vplot.numeric <-
       stop("length of 'x' and 'y' do not seem to match")
     y <- as.matrix(y) 
     if (!length(which.cf))
-      which.cf <- 1:ncol(y)  # Added 7/8/04
+      which.cf <- 1:ncol(y)  # Added 20040807
 
     if (!is.null(se.y))
       se.y <- as.matrix(se.y)
-    if (!is.null(se.y) && any(is.na(se.y)))
+    if (!is.null(se.y) && anyNA(se.y))
       se.y <- NULL
 
     if (!is.null(residuals))  {
@@ -638,16 +585,16 @@ vplot.numeric <-
   } else {
     YLAB <- ylab 
 
-    pcex <- rep(pcex,  len = ncol(uy))
-    pch  <- rep(pch ,  len = ncol(uy))
-    pcol <- rep(pcol,  len = ncol(uy))
-    lcol <- rep(lcol,  len = ncol(uy))
-    llty <- rep(llty,  len = ncol(uy))
-    llwd <- rep(llwd,  len = ncol(uy))
-    slty <- rep(slty,  len = ncol(uy))
-    rcol <- rep(rcol,  len = ncol(uy))
-    scol <- rep(scol,  len = ncol(uy))
-    slwd <- rep(slwd,  len = ncol(uy))
+    pcex <- rep_len(pcex,  ncol(uy))
+    pch  <- rep_len(pch ,  ncol(uy))
+    pcol <- rep_len(pcol,  ncol(uy))
+    lcol <- rep_len(lcol,  ncol(uy))
+    llty <- rep_len(llty,  ncol(uy))
+    llwd <- rep_len(llwd,  ncol(uy))
+    slty <- rep_len(slty,  ncol(uy))
+    rcol <- rep_len(rcol,  ncol(uy))
+    scol <- rep_len(scol,  ncol(uy))
+    slwd <- rep_len(slwd,  ncol(uy))
 
     for (ii in 1:ncol(uy)) {
       if (!length(which.cf) ||
@@ -742,7 +689,7 @@ vplot.factor <-
 
   if (!is.null(se.y))
     se.y <- as.matrix(se.y)
-  if (!is.null(se.y) && any(is.na(se.y)))
+  if (!is.null(se.y) && anyNA(se.y))
     se.y <- NULL
 
   if (!is.null(residuals))  {
@@ -762,7 +709,7 @@ vplot.factor <-
                     se = se, xlim = xlim, ylim = ylim, ...) 
   } else {
     for (ii in 1:ncol(y)) {
-      ylab <- rep(ylab, len = ncol(y))
+      ylab <- rep_len(ylab, ncol(y))
       if (ncol(y) > 1)
         ylab <- dimnames(y)[[2]]
       vvplot.factor(x, y[, ii,drop = FALSE],
@@ -899,16 +846,7 @@ setMethod("vplot", "numeric", function(x, ...)
 
 
 
-setMethod("plot", "vlm",
-           function(x, y, ...) {
-           if (!missing(y))
-             stop("cannot process the 'y' argument")
-           invisible(plotvlm(x, y, ...))})
-setMethod("plot", "vglm",
-           function(x, y, ...) {
-           if (!missing(y))
-             stop("cannot process the 'y' argument")
-           invisible(plotvglm(x = x, y = y, ...))})
+
 setMethod("plot", "vgam",
            function(x, y, ...) {
            if (!missing(y))
@@ -936,7 +874,7 @@ plotqrrvglm <- function(object,
   res <- resid(object, type = rtype)
 
   my.ylab <- if (length(object@misc$ynames)) object@misc$ynames else 
-             rep(" ", len = M)
+             rep_len(" ", M)
   Rtype <- switch(rtype, pearson = "Pearson", response = "Response",
                   deviance = "Deviance", working = "Working")
 
@@ -975,6 +913,20 @@ put.caption <- function(text.arg = "(a)",
        y = weighted.mean(par()$usr[3:4], w = w.y), ...)
 }
 
+
+
+
+
+
+
+
+
+
+setMethod("plot", "psvgam",
+           function(x, y, ...) {
+           if (!missing(y))
+             stop("cannot process the 'y' argument")
+           invisible(plot.vgam(x = x, y = y, ...))})
 
 
 

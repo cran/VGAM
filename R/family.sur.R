@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -159,7 +159,7 @@
   last = eval(substitute(expression({
 
     M1 <- extra$M1
-    misc$link <- c(rep( .lmean , length = ncoly))
+    misc$link <- c(rep_len( .lmean , ncoly))
     temp.names <- predictors.names
     names(misc$link) <- temp.names
 
@@ -200,7 +200,7 @@
         stop("argument 'divisor' unmatched"))
       Sigma.elts <- Sigma.elts * ratio.df
     } else {
-      ratio.df <- rep(1, length = M*(M+1)/2)
+      ratio.df <- rep_len(1, M*(M+1)/2)
     }
 
     Sigma.mat <- matrix(0, M, M)
@@ -230,7 +230,7 @@
 
     if (length( .Varcov )) {
       Sigma.mat <- if ( .matrix.arg ) .Varcov else {
-                     temp.vec <- rep( .Varcov , len = M*(M+1)/2)
+                     temp.vec <- rep_len( .Varcov , M*(M+1)/2)
                      temp.mat <- matrix(0, M, M)
                      temp.mat[cbind(iam.indices$col.index,
                                     iam.indices$row.index)] <- temp.vec

@@ -8,7 +8,7 @@
 
 }
 \usage{
-multilogit(theta, refLevel = "last", M = NULL, whitespace = FALSE,
+multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
            bvalue = NULL, inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE)
 }

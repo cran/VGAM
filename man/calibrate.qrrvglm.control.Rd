@@ -1,7 +1,7 @@
 \name{calibrate.qrrvglm.control}
 \alias{calibrate.qrrvglm.control}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Control function for CQO/CAO calibration }
+\title{ Control Function for CQO/CAO Calibration }
 \description{
   Algorithmic constants and parameters for running
   \code{\link{calibrate.qrrvglm}} are set using this function.

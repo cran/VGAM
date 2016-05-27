@@ -1,8 +1,7 @@
 \name{plotrcim0}
 \alias{plotrcim0}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-  Main effects plot for a Row-Column Interaction Model (RCIM) 
+\title{ Main Effects Plot for a Row-Column Interaction Model (RCIM) 
 
 }
 \description{
@@ -216,8 +215,9 @@ ii@post  # Endowed with additional information
 }
 
 # Negative binomial example
+\dontrun{
 fit1 <- rcim(alcoff.e, negbinomial, trace = TRUE)
-\dontrun{ plot(fit1, ylim = c(-2, 2)) }
+plot(fit1, ylim = c(-2, 2)) }
 
 # Univariate normal example
 fit2 <- rcim(alcoff.e, uninormal, trace = TRUE)
@@ -229,9 +229,10 @@ fit3 <- rcim(alcoff.e, alaplace1(tau = 0.5), maxit = 1000, trace = FALSE)
 plot(fit3, ylim = c(-200, 250)) }
 
 # Zero-inflated Poisson example on "crashp" (no 0s in alcoff)
+\dontrun{
 cbind(rowSums(crashp))  # Easy to see the data
 cbind(colSums(crashp))  # Easy to see the data
 fit4 <- rcim(Rcim(crashp, rbaseline = "5", cbaseline = "Sun"),
              zipoissonff, trace = TRUE)
-\dontrun{ plot(fit4, ylim = c(-3, 3)) }
+plot(fit4, ylim = c(-3, 3)) }
 }

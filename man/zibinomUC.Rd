@@ -15,11 +15,19 @@
 }
 \usage{
 dzibinom(x, size, prob, pstr0 = 0, log = FALSE)
-pzibinom(q, size, prob, pstr0 = 0, lower.tail = TRUE, log.p = FALSE)
-qzibinom(p, size, prob, pstr0 = 0, lower.tail = TRUE, log.p = FALSE)
+pzibinom(q, size, prob, pstr0 = 0)
+qzibinom(p, size, prob, pstr0 = 0)
 rzibinom(n, size, prob, pstr0 = 0)
 }
 %- maybe also 'usage' for other objects documented here.
+
+
+%pzibinom(q, size, prob, pstr0 = 0, lower.tail = TRUE, log.p = FALSE)
+%qzibinom(p, size, prob, pstr0 = 0, lower.tail = TRUE, log.p = FALSE)
+
+
+
+
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
@@ -27,8 +35,9 @@ rzibinom(n, size, prob, pstr0 = 0)
    given in \code{\link{zibinomial}}. }
   \item{prob}{probability of success on each trial. }
   \item{n}{ Same as in \code{\link[stats]{runif}}.  }
-  \item{log, log.p, lower.tail}{ Arguments that are passed on to 
-      \code{\link[stats:Binomial]{pbinom}}.}
+% \item{log, log.p, lower.tail}{
+  \item{log}{
+      Same as \code{\link[stats:Binomial]{pbinom}}.}
   \item{pstr0}{ 
   Probability of a structural zero (i.e., ignoring the binomial distribution),
   called \eqn{\phi}{phi}.

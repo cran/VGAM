@@ -1,7 +1,7 @@
 \name{vglm.control}
 \alias{vglm.control}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Control function for vglm }
+\title{ Control Function for vglm() }
 \description{
   Algorithmic constants and parameters for running \code{vglm} are set
   using this function.
@@ -145,8 +145,10 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   to give \emph{every} term used by the model.
 
 
+
   The function \code{\link{Select}} can be used to
   select variables beginning with the same character string.
+
 
 
   }

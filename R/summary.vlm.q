@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -40,7 +40,7 @@ summaryvlm <-
     NULL
   }
 
-  if (any(is.na(Coefs))) {
+  if (anyNA(Coefs)) {
     warning(paste("Some NAs in the coefficients---no summary",
                   " provided; returning object\n"))
     return(object)

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -72,7 +72,7 @@ predict.vlm <- function(object,
     if (object@misc$intercept.only &&
         nrow(X) != nrow(newdata)) {
       as.save <- attr(X, "assign")
-      X <- X[rep(1, nrow(newdata)), , drop = FALSE]
+      X <- X[rep_len(1, nrow(newdata)), , drop = FALSE]
       dimnames(X) <- list(dimnames(newdata)[[1]], "(Intercept)")
       attr(X, "assign") <- as.save  # Restored 
     }
@@ -153,13 +153,13 @@ predict.vlm <- function(object,
       index <- charmatch(terms.arg, nv)
       if (all(index == 0)) {
         warning("no match found; returning all terms")
-        index <- 1:length(nv)
+        index <- seq_along(nv)
       }
       vasgn <- vasgn[nv[index]]
     }
 
-    if (any(is.na(object@coefficients)))
-        stop("cannot handle NAs in 'object@coefficients'")
+    if (anyNA(object@coefficients))
+      stop("cannot handle NAs in 'object@coefficients'")
 
     dname2 <- object@misc$predictors.names
     if (se.fit) {
@@ -250,7 +250,7 @@ predict.vlm <- function(object,
         }
       } 
 
-      temp <- if (raw) ncolHlist else rep(M, length(ncolHlist))
+      temp <- if (raw) ncolHlist else rep_len(M, length(ncolHlist))
       dd <- vlabel(names(ncolHlist), temp, M)
       if (se.fit) {
         dimnames(pred$fitted.values) <- 
@@ -273,7 +273,7 @@ predict.vlm <- function(object,
     if (!raw)
       cs <- cumsum(c(1, M + 0 * ncolHlist))
     fred <- vector("list", length(ncolHlist))
-    for (ii in 1:length(fred))
+    for (ii in seq_along(fred))
       fred[[ii]] <- cs[ii]:(cs[ii+1]-1)
     names(fred) <- names(ncolHlist)
     if (se.fit) {
@@ -362,7 +362,7 @@ subconstraints <- function(assign, constraints) {
   ans <- vector("list", length(assign))
   if (!length(assign) || !length(constraints))
     stop("assign and/or constraints is empty")
-  for (ii in 1:length(assign))
+  for (ii in seq_along(assign))
     ans[[ii]] <- constraints[[assign[[ii]][1]]]
   names(ans) <- names(assign)
   ans
@@ -372,7 +372,7 @@ subconstraints <- function(assign, constraints) {
 
 is.linear.term <- function(ch) {
   lchar <- length(ch)
-  ans <- rep(FALSE, len = lchar)
+  ans <- rep_len(FALSE, lchar)
   for (ii in 1:lchar) {
     nc <- nchar(ch[ii])
     x <- substring(ch[ii], 1:nc, 1:nc)
@@ -386,7 +386,7 @@ is.linear.term <- function(ch) {
 
 
 canonical.Hlist <- function(Hlist) {
-  for (ii in 1:length(Hlist)) {
+  for (ii in seq_along(Hlist)) {
     temp <- Hlist[[ii]] * 0
     temp[cbind(1:ncol(temp), 1:ncol(temp))] <- 1
     Hlist[[ii]] <- temp

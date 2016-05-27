@@ -28,7 +28,9 @@ rposbinom(n, size, prob)
   }
   \item{size}{number of trials.
    It is the \eqn{N} symbol in the formula
-   given in \code{\link{posbinomial}}.
+   given in \code{\link{posbinomial}} and
+   should be positive.
+
 
   }
   \item{prob}{probability of success on each trial. 
@@ -141,7 +143,7 @@ pdata <- transform(pdata, y1 = rposbinom(nn, size = sizev1, prob = prob1),
                           y2 = rposbinom(nn, size = sizev2, prob = prob2))
 with(pdata, table(y1))
 with(pdata, table(y2))
-# Multivariate response
+# Multiple responses
 fit2 <- vglm(cbind(y1, y2) ~ x2, posbinomial(multiple.responses = TRUE),
              trace  = TRUE, data = pdata, weight = cbind(sizev1, sizev2))
 coef(fit2, matrix = TRUE)

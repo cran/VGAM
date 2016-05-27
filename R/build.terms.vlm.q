@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -60,7 +60,7 @@ Build.terms.vlm <-
     if (M == 1)
       fit <- c(fit)
     if (cov.true) {
-      var <- ((x %*% cov) * x) %*% rep(1, length(coefs))
+      var <- ((x %*% cov) * x) %*% rep_len(1, length(coefs))
       list(fitted.values = fit,
            se.fit = if (M == 1) c(sqrt(var)) else
                     matrix(sqrt(var), ncol = M,
@@ -88,7 +88,7 @@ Build.terms.vlm <-
     complex <- (TL > 1)
     if (any(simple)) {
       asss <- unlist(assign[simple])
-      ones <- rep(1, nrow(x))
+      ones <- rep_len(1, nrow(x))
       fit[, simple] <- x[, asss] * outer(ones, coefs[asss])
       if (cov.true)
         se[, simple] <- abs(x[, asss]) * outer(ones, sqrt(diag(cov))[asss])
@@ -101,7 +101,7 @@ Build.terms.vlm <-
         fit[, term] <- xt %*% coefs[TT]
         if (cov.true)
           se[, term] <- sqrt(drop(((xt %*% cov[TT, TT]) * xt) %*%
-                                    rep(1, length(TT))))
+                                    rep_len(1, length(TT))))
       }
     }
     attr(fit, "constant") <- constant

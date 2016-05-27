@@ -16,7 +16,8 @@ normal.vcm(link.list = list("(Default)" = "identitylink"),
            lsd = "loge", lvar = "loge",
            esd = list(), evar = list(),
            var.arg = FALSE, imethod = 1,
-           icoefficients = NULL, isd = NULL, zero = "sd")
+           icoefficients = NULL, isd = NULL, zero = "sd",
+           sd.inflation.factor = 2.5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -55,7 +56,7 @@ normal.vcm(link.list = list("(Default)" = "identitylink"),
 
   }
   \item{var.arg, imethod, isd}{
-  Same as \code{\link{uninormal}}.
+  Same as, or similar to, \code{\link{uninormal}}.
 
 
 
@@ -64,6 +65,18 @@ normal.vcm(link.list = list("(Default)" = "identitylink"),
   See \code{\link{CommonVGAMffArguments}} for more information.
   The default applies to the last one,
   viz. the standard deviation/variance parameter.
+
+
+
+  }
+
+  \item{sd.inflation.factor}{
+  Numeric, should be greater than 1.
+  The initial value of the standard deviation is multiplied by this,
+  unless \code{isd} is inputted.
+  Experience has shown that it is safer to start off with a larger value
+  rather than a smaller one.
+
 
 
   }

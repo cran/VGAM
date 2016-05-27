@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -57,7 +57,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
     ncolHlist <- unlist(lapply(Hlist, ncol)) 
     nasgn <- names(Hlist)
     temp <- c(0, cumsum(ncolHlist))
-    for (ii in 1:length(nasgn)) {
+    for (ii in seq_along(nasgn)) {
       index <- (temp[ii] + 1):temp[ii + 1]
       cmat <- Hlist[[nasgn[ii]]]
       Bmat[ii,] <- cmat %*% ans[index]

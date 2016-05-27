@@ -120,6 +120,7 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 
 \seealso{ 
   \code{\link{betaff}},
+% \code{\link{zoibetaR}},
   \code{\link[stats:Beta]{Beta}},
   \code{\link{genbetaII}},
   \code{\link{betaII}},

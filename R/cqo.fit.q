@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -92,8 +92,8 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
      deviance = double(1+NOS), beta = as.double(usethisbeta),
          othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
-                iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS)))) else
+                iKvector = rep_len(control$iKvector, NOS),
+                iShape = rep_len(control$iShape, NOS)))) else
   .C("cqo_2",
      numat = as.double(numat), as.double(ymat), 
      as.double(if (p1) xmat[, control$colx1.index] else 999),
@@ -109,8 +109,8 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
      deviance = double(1+NOS), beta = as.double(usethisbeta),
          othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
-                iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS))))
+                iKvector = rep_len(control$iKvector, NOS),
+                iShape = rep_len(control$iShape, NOS))))
 
 
 
@@ -229,8 +229,8 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
        deviance = double(1 + NOS), beta = as.double(usethisbeta),
        othdbl = as.double(c(small = control$SmallNo,
                 epsilon = control$epsilon, .Machine$double.eps,
-                iKvector = rep(control$iKvector, len = NOS),
-                iShape = rep(control$iShape, len = NOS))),
+                iKvector = rep_len(control$iKvector, NOS),
+                iShape = rep_len(control$iShape, NOS))),
        xmat2 = as.double(xmat2),
            cmat = as.double(cmatrix),
        p2 = as.integer(p2), deriv = double(p2*Rank),
@@ -290,7 +290,7 @@ checkCMCO <- function(Hlist, control, modelno) {
 
 
 
-cqo.fit <- function(x, y, w = rep(1, length(x[, 1])),
+cqo.fit <- function(x, y, w = rep_len(1, length(x[, 1])),
     etastart = NULL, mustart = NULL, coefstart = NULL,
     offset = 0, family,
     control = qrrvglm.control(...),
@@ -368,7 +368,7 @@ ny <- names(y)
 
     if (is.character(rrcontrol$Dzero)) {
       index <- match(rrcontrol$Dzero, dimnames(as.matrix(y))[[2]])
-      if (any(is.na(index)))
+      if (anyNA(index))
         stop("Dzero argument didn't fully match y-names")
       if (length(index) == M)
         stop("all linear predictors are linear in the",
@@ -594,9 +594,10 @@ ny <- names(y)
   function(ymat, X1, X2, Rank = 1, epsilon = 1/32,
            max.ncol.etamat = 10,
            trace = FALSE,
-           Crow1positive = rep(TRUE, len = Rank),
-           isd.latvar = rep(1, length = Rank),
+           Crow1positive = rep_len(TRUE, Rank),
+           isd.latvar = rep_len(1, Rank),
            constwt = FALSE, takelog = TRUE) {
+
 
   print.CQO.expression <- expression({
     if (trace && length(X2)) {
@@ -618,8 +619,8 @@ ny <- names(y)
   })
 
   Crow1positive <- if (length(Crow1positive))
-                   rep(Crow1positive, len = Rank) else
-                   rep(TRUE, len = Rank)
+                   rep_len(Crow1positive, Rank) else
+                   rep_len(TRUE, Rank)
   if (epsilon <= 0) 
     stop("epsilon > 0 is required")
   ymat <- cbind(ymat) + epsilon  # ymat == 0 cause problems
@@ -673,7 +674,7 @@ ny <- names(y)
               rrr.normalize(rrcontrol = temp.control, A = alt$A, 
                             C = alt$C, x = cbind(X1, X2)) else
               alt
-    ans <- crow1C(ans2$C, rep(Crow1positive, length.out = effrank))
+    ans <- crow1C(ans2$C, rep_len(Crow1positive, effrank))
 
     Rank.save <- Rank
     Rank <- effrank
@@ -691,7 +692,7 @@ ny <- names(y)
                     matrix.out = TRUE,
                     is.vlmX = FALSE, ResSS = TRUE, qr = FALSE, xij = xij)
     ans <- crow1C(as.matrix(tmp$resid),
-                  rep(Crow1positive, length.out = effrank))
+                  rep_len(Crow1positive, effrank))
     if (effrank < Rank) {
       ans <- cbind(ans, ans.save[,-(1:effrank)])  # ans is better
     }
@@ -706,7 +707,7 @@ ny <- names(y)
       for (ii in 1:Rank)
         ans[,ii] <- ans[,ii] * isd.latvar[ii] / actualSD[ii]
     }
-    ans <- crow1C(ans, rep(Crow1positive, length.out = Rank))
+    ans <- crow1C(ans, rep_len(Crow1positive, Rank))
     dimnames(ans) <- list(dimnames(X1)[[1]],
                           if (Rank == 1) "latvar" else
                                          paste("latvar", 1:Rank,
@@ -768,7 +769,7 @@ cqo.derivative.expression <- expression({
       gr = if (control$GradientFunction) calldcqo else NULL,
       method = which.optimizer,
       control = list(fnscale = 1, trace = as.integer(control$trace),
-                     parscale = rep(control$Parscale, len = length(Cmat)),
+                     parscale = rep_len(control$Parscale, length(Cmat)),
                      maxit = control$Maxit.optim),
       etamat = eta, xmat = x, ymat = y, wvec = w,
       X.vlm.1save  =  X.vlm.1save,
@@ -847,7 +848,7 @@ cqo.end.expression <- expression({
   eta <- fv + offset
   mu <- family@linkinv(eta, extra)
 
-  if (any(is.na(mu)))
+  if (anyNA(mu))
     warning("there are NAs in mu") 
 
   deriv.mu <- eval(family@deriv)
@@ -865,7 +866,7 @@ cqo.end.expression <- expression({
 
 
 crow1C <- function(cmat,
-                   crow1positive = rep(TRUE, length.out = ncol(cmat)),
+                   crow1positive = rep_len(TRUE, ncol(cmat)),
                    amat = NULL) {
   if (!is.logical(crow1positive) || length(crow1positive) != ncol(cmat))
     stop("bad input in crow1C")

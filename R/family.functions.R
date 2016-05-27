@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -250,6 +250,7 @@ ima <- function(j, k, M) {
   m[col(m) <= row(m)] <- 1:(M*(M+1)/2)
   if (j >= k) m[j, k] else m[k, j]
 }
+
 
 
 

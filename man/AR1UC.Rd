@@ -1,9 +1,9 @@
 \name{dAR1}
 \alias{dAR1}
 \alias{dAR1}
-%\alias{pbisa}
-%\alias{qbisa}
-%\alias{rbisa}
+%\alias{pAR1}
+%\alias{qAR1}
+%\alias{rAR1}
 \title{The AR-1 Autoregressive Process}
 \description{
   Density for the AR-1 model.
@@ -50,13 +50,15 @@ dAR1(x, drift = 0, var.error = 1, ARcoef1 = 0.0,
 
 
   
-% \code{pbisa} gives the distribution function, and
-% \code{qbisa} gives the quantile function, and
-% \code{rbisa} generates random deviates.
+% \code{pAR1} gives the distribution function, and
+% \code{qAR1} gives the quantile function, and
+% \code{rAR1} generates random deviates.
 
 
 }
+
 \author{ T. W. Yee and Victor Miranda }
+
 \details{
   Most of the background to this function is given
   in \code{\link{AR1}}.

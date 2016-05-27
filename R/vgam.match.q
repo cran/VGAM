@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -10,7 +10,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
   if (is.list(x)) {
     nvar <- length(x)
     if (length(nk))
-      nk <- rep(nk, length = nvar)
+      nk <- rep_len(nk, nvar)
     temp <- vgam.match(x[[1]], all.knots = all.knots, nk = nk[1])
 
     ooo <- matrix(temp$matcho, length(temp$matcho), nvar)
@@ -39,7 +39,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
                 xmin = xmin, xmax = xmax))
   }
 
-  if (!is.null(attributes(x)$NAs) || any(is.na(x)))
+  if (!is.null(attributes(x)$NAs) || anyNA(x))
     stop("cannot smooth on variables with NAs") 
 
   sx <- unique(sort(as.vector(x)))  # "as.vector()" strips off attributes
@@ -53,7 +53,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
   xmax <- sx[neffec]
   xbar <- (sx - xmin) / (xmax - xmin)
 
-    noround <- TRUE   # Improvement 3/8/02
+    noround <- TRUE   # Improvement 20020803
   if (all.knots) {
     knot <- if (noround) {
       valid.vknotl2(c(rep(xbar[1], 3), xbar, rep(xbar[neffec], 3)))

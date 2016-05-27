@@ -9,8 +9,8 @@
 \usage{
 dagum(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge", 
       iscale = NULL, ishape1.a = NULL, ishape2.p = NULL, imethod = 1, 
-      lss = TRUE, gscale = exp(-5:5), gshape1.a = exp(-5:5), gshape2.p = exp(-5:5), 
-      probs.y = c(0.25, 0.5, 0.75), zero = "shape")
+      lss = TRUE, gscale = exp(-5:5), gshape1.a = seq(0.75, 4, by = 0.25),
+      gshape2.p = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 %     zero = ifelse(lss, -(2:3), -c(1, 3))

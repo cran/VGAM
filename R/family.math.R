@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -106,8 +106,8 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
  pgamma.deriv <- function(q, shape, tmax = 100) {
 
   nnn <- max(length(q), length(shape))
-  if (length(q)     != nnn) q     <- rep(q,     length = nnn)
-  if (length(shape) != nnn) shape <- rep(shape, length = nnn)
+  if (length(q)     != nnn) q     <- rep_len(q,     nnn)
+  if (length(shape) != nnn) shape <- rep_len(shape, nnn)
 
   if (!is.Numeric(q, positive = TRUE))
     stop("bad input for argument 'q'")
@@ -169,7 +169,7 @@ expint <- function (x, deriv = 0) {
     if (!is.Numeric(deriv, integer.valued = TRUE, positive = TRUE) ||
         deriv > 3)
       stop("Bad input for argument 'deriv'")
-    answer <- rep(0, length(x))
+    answer <- rep_len(0, length(x))
     if (deriv == 1) {
       answer <- exp(x) / x  
     }
@@ -220,7 +220,7 @@ expint.E1 <- function (x, deriv = 0) {
     if (!is.Numeric(deriv, integer.valued = TRUE, positive = TRUE) ||
         deriv > 3)
       stop("Bad input for argument 'deriv'")
-    answer <- rep(0, length(x))
+    answer <- rep_len(0, length(x))
     if (deriv == 1) {
       answer <- exp(-x) / x  
     }

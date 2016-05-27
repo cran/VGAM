@@ -1,10 +1,12 @@
 \name{s}
 \alias{s}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Defining smooths in VGAM formulae }
+\title{ Defining Smooths in VGAM Formulas }
 \description{
   \code{s} is used in the definition of (vector) smooth terms within
-  \code{vgam} formulae.
+  \code{vgam} formulas.
+
+
 }
 \usage{
 s(x, df = 4, spar = 0, ...)
@@ -102,6 +104,15 @@ Vector generalized additive models.
   number of unique abscissae.
 
 
+
+  Currently a bug relating to the use of \code{s()} is that
+  only constraint matrices whose columns are orthogonal are handled
+  correctly.  If any \code{s()} term has a constraint matrix that
+  does not satisfy this condition then a warning is issued.
+  See \code{\link{is.buggy}} for more information.
+
+
+
   An alternative to using
   \code{s} with \code{\link{vgam}} is
   \code{\link[splines]{bs}}
@@ -109,6 +120,7 @@ Vector generalized additive models.
   with \code{\link{vglm}}.
   The latter implements half-stepping, which is helpful if
   convergence is difficult.
+
 
 
 }
@@ -119,6 +131,7 @@ Vector generalized additive models.
   \code{\link{vgam}},
   \code{\link{is.buggy}},
   \code{\link{vsmooth.spline}}.
+% \code{\link{ps}}.
 
 
 }

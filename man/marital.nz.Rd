@@ -2,7 +2,7 @@
 \alias{marital.nz}
 \docType{data}
 \title{
-  New Zealand Marital Data.
+  New Zealand Marital Data
 }
 \description{
   Some marital data mainly from a large NZ company collected in the

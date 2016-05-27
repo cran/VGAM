@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -267,7 +267,7 @@
           "111" = exp(u1+u2+u3+u12+u13+u23)) / denom
   },
   last = expression({
-    misc$link <- rep("identitylink", length = M)
+    misc$link <- rep_len("identitylink", M)
     names(misc$link) <- predictors.names
 
     misc$earg <- list(u1  = list(), u2  = list(), u3  = list(),

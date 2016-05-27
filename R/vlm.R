@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -73,7 +73,7 @@ vlm <- function(formula,
   predictors.names <- dy2
 
   if (!length(prior.weights)) {
-    prior.weights <- rep(1, len = n)
+    prior.weights <- rep_len(1, n)
     names(prior.weights) <- dy1
   }
   if (any(prior.weights <= 0))

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -26,11 +26,11 @@ dexppois <- function(x, rate = 1, shape, log = FALSE) {
 
 
   N <- max(length(x), length(shape), length(rate))
-  x     <- rep(x,     len = N)
-  shape <- rep(shape, len = N)
-  rate  <- rep(rate,  len = N)
+  if (length(x)      != N) x      <- rep_len(x,     N)
+  if (length(shape)  != N) shape  <- rep_len(shape, N)
+  if (length(rate)   != N) rate   <- rep_len(rate,  N)
+  logdensity <- rep_len(log(0), N)
 
-  logdensity <- rep(log(0), len = N)
   xok <- (0 < x)
  
   logdensity[xok] <- log(shape[xok]) + log(rate[xok]) -
@@ -217,15 +217,15 @@ rexppois <- function(n, rate = 1, shape) {
 
     if (!length(etastart)) {
       ratee.init <- if (length( .iratee ))
-              rep( .iratee , len = n) else
+              rep_len( .iratee , n) else
               stop("Need to input a value into argument 'iratee'")
       shape.init <- if (length( .ishape ))
-                      rep( .ishape , len = n) else
+                      rep_len( .ishape , n) else
                       (1/ratee.init - mean(y)) / ((y * 
                       exp(-ratee.init * y))/n)
 
 
-      ratee.init <- rep(weighted.mean(ratee.init, w = w), len = n)
+      ratee.init <- rep_len(weighted.mean(ratee.init, w = w), n)
       
       etastart <-
         cbind(theta2eta(ratee.init, .lratee , earg = .eratee ),
@@ -334,11 +334,11 @@ dgenray <- function(x, scale = 1, shape, log = FALSE) {
 
 
   N <- max(length(x), length(shape), length(scale))
-  x <- rep(x, len = N)
-  shape <- rep(shape, len = N)
-  scale <- rep(scale, len = N)
+  if (length(x)      != N) x      <- rep_len(x,     N)
+  if (length(shape)  != N) shape  <- rep_len(shape, N)
+  if (length(scale)  != N) scale  <- rep_len(scale, N)
+  logdensity <- rep_len(log(0), N)
 
-  logdensity <- rep(log(0), len = N)
   if (any(xok <- (x > 0))) {
     temp1 <- x[xok] / scale[xok]
     logdensity[xok] <- log(2) + log(shape[xok]) + log(x[xok]) -
@@ -533,12 +533,12 @@ genrayleigh.control <- function(save.weights = TRUE, ...) {
       scale.init <- if (length( .iscale )) .iscale else
                     grid.search(scale.grid, objfun = genrayleigh.Loglikfun,
                                 y = y, x = x, w = w)
-      scale.init <- rep(scale.init, length = length(y))
+      scale.init <- rep_len(scale.init, length(y))
  
       shape.init <- if (length( .ishape )) .ishape else
                     -1 / weighted.mean(log1p(-exp(-(y/scale.init)^2)),
                      w = w)
-      shape.init <- rep(shape.init, length = length(y))
+      shape.init <- rep_len(shape.init, length(y))
 
       etastart <- cbind(theta2eta(scale.init, .lscale , earg = .escale ),
                         theta2eta(shape.init, .lshape , earg = .eshape ))
@@ -664,11 +664,11 @@ dexpgeom <- function(x, scale = 1, shape, log = FALSE) {
 
 
   N <- max(length(x), length(scale), length(shape))
-  x <- rep(x, len = N)
-  scale <- rep(scale, len = N)
-  shape <- rep(shape, len = N)
+  if (length(x)      != N) x      <- rep_len(x,     N)
+  if (length(scale)  != N) scale  <- rep_len(scale, N)
+  if (length(shape)  != N) shape  <- rep_len(shape, N)
+  logdensity <- rep_len(log(0), N)
 
-  logdensity <- rep(log(0), len = N)
   if (any(xok <- (x > 0))) {
     temp1 <- -x[xok] / scale[xok]
     logdensity[xok] <- -log(scale[xok]) + log1p(-shape[xok]) + 
@@ -798,15 +798,15 @@ expgeometric.control <- function(save.weights = TRUE, ...) {
     if (!length(etastart)) {
 
       scale.init <- if (is.Numeric( .iscale , positive = TRUE)) {
-                      rep( .iscale , len = n)
+                      rep_len( .iscale , n)
                     } else {
                       stats::sd(c(y))  # The papers scale parameter beta
                     }
 
       shape.init <- if (is.Numeric( .ishape , positive = TRUE)) {
-                      rep( .ishape , len = n)
+                      rep_len( .ishape , n)
                     } else {
-                      rep(2 - exp(median(y)/scale.init), len = n)
+                      rep_len(2 - exp(median(y)/scale.init), n)
                     }
       shape.init[shape.init >= 0.95] <- 0.95
       shape.init[shape.init <= 0.05] <- 0.05
@@ -945,11 +945,11 @@ dexplog <- function(x, scale = 1, shape, log = FALSE) {
 
 
   N <- max(length(x), length(scale), length(shape))
-  x     <- rep(x,     len = N)
-  scale <- rep(scale, len = N)
-  shape <- rep(shape, len = N)
+  if (length(x)      != N) x      <- rep_len(x,     N)
+  if (length(scale)  != N) scale  <- rep_len(scale, N)
+  if (length(shape)  != N) shape  <- rep_len(shape, N)
 
-  logdensity <- rep(log(0), len = N)
+  logdensity <- rep_len(log(0), N)
   if (any(xok <- (x > 0))) {
     temp1 <- -x[xok] / scale[xok]
     logdensity[xok] <- -log(-log(shape[xok])) - log(scale[xok]) + 
@@ -1086,15 +1086,15 @@ explogff.control <- function(save.weights = TRUE, ...) {
     if (!length(etastart)) {
 
       scale.init <- if (is.Numeric( .iscale , positive = TRUE)) {
-                     rep( .iscale , len = n)
+                     rep_len( .iscale , n)
                    } else {
                      stats::sd(c(y))  
                    }
 
       shape.init <- if (is.Numeric( .ishape , positive = TRUE)) {
-                     rep( .ishape , len = n)
+                     rep_len( .ishape , n)
                    } else {
-                      rep((exp(median(y)/scale.init) - 1)^2, len = n)
+                      rep_len((exp(median(y)/scale.init) - 1)^2, n)
                    }
       shape.init[shape.init >= 0.95] <- 0.95
       shape.init[shape.init <= 0.05] <- 0.05
@@ -1276,12 +1276,12 @@ dtpn <- function(x, location = 0, scale = 1, skewpar = 0.5,
            na.rm = TRUE))
     stop("some parameters out of bound")
 
-  LLL <- max(length(x), length(location), length(scale),
-            length(skewpar))
-  if (length(x) != LLL) x <- rep(x, length = LLL)
-  if (length(location) != LLL) location <- rep(location, length = LLL)
-  if (length(scale) != LLL) scale <- rep(scale, length = LLL)
-  if (length(skewpar) != LLL) skewpar <- rep(skewpar, length = LLL)
+  N <- max(length(x), length(location), length(scale),
+           length(skewpar))
+  if (length(x)        != N) x         <- rep_len(x,        N)
+  if (length(scale)    != N) scale     <- rep_len(scale,    N)
+  if (length(location) != N) location  <- rep_len(location, N)
+  if (length(skewpar)  != N) skewpar   <- rep_len(skewpar,  N)
     
   zedd <- (x - location) / scale
 
@@ -1311,7 +1311,7 @@ ptpn <- function(q, location = 0, scale = 1, skewpar = 0.5) {
   s2 <- skewpar + (1 - skewpar) *
         pgamma(zedd^2 / (8 * (1-skewpar)^2), 0.5)
  
-ans <- rep(0.0, length(zedd))
+ans <- rep_len(0.0, length(zedd))
 ans[zedd <= 0] <- s1[zedd <= 0]
 ans[zedd > 0] <- s2[zedd > 0]
 
@@ -1335,13 +1335,13 @@ qtpn <- function(p, location = 0, scale = 1, skewpar = 0.5) {
     stop("some parameters out of bound")
     # Recycle the vectors to equal lengths
   LLL <- max(length(pp), length(location), length(scale),
-            length(skewpar))
-  if (length(pp) != LLL) pp <- rep(pp, length = LLL)
-  if (length(location) != LLL) location <- rep(location, length = LLL)
-  if (length(scale) != LLL) scale <- rep(scale, length = LLL)
-  if (length(skewpar) != LLL) skewpar <- rep(skewpar, length = LLL)
+             length(skewpar))
+  if (length(pp)       != LLL) pp       <- rep_len(pp,       LLL)
+  if (length(location) != LLL) location <- rep_len(location, LLL)
+  if (length(scale)    != LLL) scale    <- rep_len(scale,    LLL)
+  if (length(skewpar)  != LLL) skewpar  <- rep_len(skewpar,  LLL)
        
-  qtpn <- rep(NA_real_, length(LLL))
+  qtpn <- rep_len(NA_real_, length(LLL))
   qtpn <- qnorm(pp / (2 * skewpar), sd = 2 * skewpar)
   qtpn[pp > skewpar] <- sqrt(8 * ( 1 - skewpar)^2 * 
                         qgamma(pos( pp - skewpar) / ( 
@@ -1438,9 +1438,9 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
           pmax(1/1024, y) else {
 
         if ( .method.init == 3) {
-          rep(weighted.mean(y, w), len = n)
+          rep_len(weighted.mean(y, w), n)
         } else if ( .method.init == 2) {
-          rep(median(rep(y, w)), len = n)
+          rep_len(median(rep(y, w)), n)
         } else if ( .method.init == 1) {
           junk$fitted
         } else {
@@ -1620,9 +1620,9 @@ tpnff3 <- function(llocation = "identitylink",
       scale.y.est <- sqrt(sum(c(w) * junk$resid^2) / junk$df.residual)
       location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
         if ( .method.init == 3) {
-          rep(weighted.mean(y, w), len = n)
+          rep_len(weighted.mean(y, w), n)
         } else if ( .method.init == 2) {
-          rep(median(rep(y, w)), len = n)
+          rep_len(median(rep(y, w)), n)
         } else if ( .method.init == 1) {
           junk$fitted
         } else {
@@ -1740,23 +1740,20 @@ tpnff3 <- function(llocation = "identitylink",
 
 
 
-dozibeta <- function(x, shape1, shape2, pobs0 = 0,
+
+dzoabeta <- function(x, shape1, shape2, pobs0 = 0,
                      pobs1 = 0, log = FALSE, tol = .Machine$double.eps) {
   log.arg <- log
   rm(log)
   LLL <- max(length(x), length(shape1),
              length(shape2), length(pobs0), length(pobs1))
-  if (LLL != length(x))
-    x <- rep(x, length = LLL)
-  if (LLL != length(shape1))
-    shape1 <- rep(shape1, length = LLL)
-  if (LLL != length(shape2))
-    shape2 <- rep(shape2, length = LLL)
-  if (LLL != length(pobs0))
-    pobs0 <- rep(pobs0, length = LLL)
-  if (LLL != length(pobs1))
-    pobs1 <- rep(pobs1, length = LLL)
-  ans <- rep(NA, length = LLL)
+  if (LLL != length(x))      x      <- rep_len(x,      LLL)
+  if (LLL != length(shape1)) shape1 <- rep_len(shape1, LLL)
+  if (LLL != length(shape2)) shape2 <- rep_len(shape2, LLL)
+  if (LLL != length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
+  if (LLL != length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
+  ans <- rep_len(NA_real_, LLL)
+
   k1 <- (pobs0 < -tol | pobs1 < -tol |
     (pobs0 + pobs1) > (1 + tol))
   k4 <- is.na(pobs0) | is.na(pobs1)
@@ -1777,7 +1774,8 @@ dozibeta <- function(x, shape1, shape2, pobs0 = 0,
 }
 
 
-rozibeta <- function(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
+
+rzoabeta <- function(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
                      tol = .Machine$double.eps) {
   use.n <- if ((length.n <- length(n)) > 1) {
     length.n
@@ -1789,16 +1787,16 @@ rozibeta <- function(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
       n
     }
   }
-  shape1 <- rep(shape1, length.out = use.n)
-  shape2 <- rep(shape2, length.out = use.n)
-  pobs0 <- rep(pobs0, length.out = use.n)
-  pobs1 <- rep(pobs1, length.out = use.n)
+  shape1 <- rep_len(shape1, use.n)
+  shape2 <- rep_len(shape2, use.n)
+  pobs0  <- rep_len(pobs0,  use.n)
+  pobs1  <- rep_len(pobs1,  use.n)
   random.number <- runif(use.n)
-  ans <- rep(NA, length = use.n)
+  ans <- rep_len(NA_real_, use.n)
   k5 <- (pobs0 < -tol | pobs1 < -tol |
            (pobs0 + pobs1) > (1 + tol))
   k4 <- is.na(pobs0) | is.na(pobs1)
-  ans[!k4] <- qozibeta(random.number[!k4], shape1 = shape1,
+  ans[!k4] <- qzoabeta(random.number[!k4], shape1 = shape1,
                        shape2 = shape2, pobs0 = pobs0,
                        pobs1 = pobs1)
   if (any(k5 & !k4)) {
@@ -1809,25 +1807,21 @@ rozibeta <- function(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
 }
 
 
-pozibeta <- function(q, shape1, shape2, pobs0 = 0, pobs1 = 0,
+
+pzoabeta <- function(q, shape1, shape2, pobs0 = 0, pobs1 = 0,
                      lower.tail = TRUE, log.p = FALSE,
                      tol = .Machine$double.eps) {
   LLL <- max(length(q), length(shape1),
              length(shape2), length(pobs0), length(pobs1))
-  if (LLL != length(q))
-    q <- rep(q, length = LLL)
-  if (LLL != length(shape1))
-    shape1 <- rep(shape1, length = LLL)
-  if (LLL != length(shape2))
-    shape2 <- rep(shape2, length = LLL)
-  if (LLL != length(pobs0))
-    pobs0 <- rep(pobs0, length = LLL)
-  if (LLL != length(pobs1))
-    pobs1 <- rep(pobs1, length = LLL)
+  if (LLL != length(q))      q      <- rep_len(q,      LLL)
+  if (LLL != length(shape1)) shape1 <- rep_len(shape1, LLL)
+  if (LLL != length(shape2)) shape2 <- rep_len(shape2, LLL)
+  if (LLL != length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
+  if (LLL != length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
   k3 <- (pobs0 < -tol | pobs1 < -tol |
-           (pobs0 + pobs1) > (1 + tol))
+        (pobs0 + pobs1) > (1 + tol))
   k4 <- is.na(pobs0) | is.na(pobs1)
-  ans <- rep(NA, length = LLL)
+  ans <- rep_len(NA_real_, LLL)
   ans[!k3 & !k4] <- pbeta(q[!k3 & !k4],
                           shape1[!k3 & !k4], 
                           shape2[!k3 & !k4], log.p = TRUE) +
@@ -1855,25 +1849,21 @@ pozibeta <- function(q, shape1, shape2, pobs0 = 0, pobs1 = 0,
 }
 
 
-qozibeta <- function(p, shape1, shape2, pobs0 = 0, pobs1 = 0,
+
+qzoabeta <- function(p, shape1, shape2, pobs0 = 0, pobs1 = 0,
                      lower.tail = TRUE, log.p = FALSE,
                      tol = .Machine$double.eps) {
   LLL <- max(length(p), length(shape1),
              length(shape2), length(pobs0), length(pobs1))
-  if (LLL != length(p))
-    p <- rep(p, length = LLL)
-  if (LLL != length(shape1))
-    shape1 <- rep(shape1, length = LLL)
-  if (LLL != length(shape2))
-    shape2 <- rep(shape2, length = LLL)
-  if (LLL != length(pobs0))
-    pobs0 <- rep(pobs0, length = LLL)
-  if (LLL != length(pobs1))
-    pobs1 <- rep(pobs1, length = LLL)
+  if (LLL != length(p))      p      <- rep_len(p,      LLL)
+  if (LLL != length(shape1)) shape1 <- rep_len(shape1, LLL)
+  if (LLL != length(shape2)) shape2 <- rep_len(shape2, LLL)
+  if (LLL != length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
+  if (LLL != length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
   k0 <- (pobs0 < -tol | pobs1 < -tol |
-           (pobs0 + pobs1) > (1 + tol))
+        (pobs0 + pobs1) > (1 + tol))
   k4 <- is.na(pobs0) | is.na(pobs1)
-  ans <- rep(NA, length = LLL)
+  ans <- rep_len(NA_real_, LLL)
   if (!lower.tail & log.p) {
     p <- -expm1(p)
   } else{
@@ -1924,25 +1914,19 @@ log1pexp <- function(x){
 
 
 
-dozibetabinom.ab <- function(x, size, shape1, shape2, pstr0 = 0,
+dzoibetabinom.ab <- function(x, size, shape1, shape2, pstr0 = 0,
                              pstrsize = 0, log = FALSE) {
   log.arg <- log
   rm(log)
   LLL <- max(length(x), length(size), length(shape1),
              length(shape2), length(pstr0), length(pstrsize))
-  if (LLL != length(x))
-    x <- rep(x, length = LLL)
-  if (LLL != length(size))
-    size <- rep(size, length = LLL)
-  if (LLL != length(shape1))
-    shape1 <- rep(shape1, length = LLL)
-  if (LLL != length(shape2))
-    shape2 <- rep(shape2, length = LLL)
-  if (LLL != length(pstr0))
-    pstr0 <- rep(pstr0, length = LLL)
-  if (LLL != length(pstrsize))
-    pstrsize <- rep(pstrsize, length = LLL)
-  ans <- rep(NA, length = LLL)
+  if (LLL != length(x))        x        <- rep_len(x,        LLL)
+  if (LLL != length(size))     size     <- rep_len(size,     LLL)
+  if (LLL != length(shape1))   shape1   <- rep_len(shape1,   LLL)
+  if (LLL != length(shape2))   shape2   <- rep_len(shape2,   LLL)
+  if (LLL != length(pstr0))    pstr0    <- rep_len(pstr0,    LLL)
+  if (LLL != length(pstrsize)) pstrsize <- rep_len(pstrsize, LLL)
+  ans <- rep_len(NA_real_, LLL)
   k1 <- pstr0 < 0 | pstrsize < 0 |
            (pstr0 + pstrsize) > 1
   k <- is.na(size) | is.na(shape1) | is.na(shape2) |
@@ -1971,16 +1955,16 @@ dozibetabinom.ab <- function(x, size, shape1, shape2, pstr0 = 0,
 
 
 
-dozibetabinom <- function(x, size, prob, rho = 0, pstr0 = 0,
+dzoibetabinom <- function(x, size, prob, rho = 0, pstr0 = 0,
                           pstrsize = 0, log = FALSE) {
-  dozibetabinom.ab(x, size, shape1 = prob * (1 - rho) / rho,
+  dzoibetabinom.ab(x, size, shape1 = prob * (1 - rho) / rho,
                    shape2 = (1 - prob) * (1 - rho) / rho, 
                    pstr0 = pstr0, pstrsize = pstrsize, log = log)
 }
 
 
 
-rozibetabinom.ab <- function(n, size, shape1, shape2, 
+rzoibetabinom.ab <- function(n, size, shape1, shape2, 
                              pstr0 = 0, pstrsize = 0) {
   use.n <- if ((length.n <- length(n)) > 1) {
     length.n
@@ -1992,14 +1976,14 @@ rozibetabinom.ab <- function(n, size, shape1, shape2,
       n
     }
   }
-  size <- rep(size, length.out = use.n)
-  shape1 <- rep(shape1, length.out = use.n)
-  shape2 <- rep(shape2, length.out = use.n)
-  pstr0 <- rep(pstr0, length.out = use.n)
-  pstrsize <- rep(pstrsize, length.out = use.n)
+  size     <- rep_len(size,     use.n)
+  shape1   <- rep_len(shape1,   use.n)
+  shape2   <- rep_len(shape2,   use.n)
+  pstr0    <- rep_len(pstr0,    use.n)
+  pstrsize <- rep_len(pstrsize, use.n)
+  ans      <- rep_len(NA_real_, use.n)
   k <- is.na(size) | is.na(shape1) | is.na(shape2) |
-    is.na(pstr0) | is.na(pstrsize)
-  ans <- rep(NA, length = use.n)
+       is.na(pstr0) | is.na(pstrsize)
   k1 <- pstr0 < 0 | pstrsize < 0 |
     (pstr0 + pstrsize) > 1
   random.number <- runif(use.n)
@@ -2021,9 +2005,9 @@ rozibetabinom.ab <- function(n, size, shape1, shape2,
 
 
 
-rozibetabinom <- function(n, size, prob, rho = 0, pstr0 = 0,
+rzoibetabinom <- function(n, size, prob, rho = 0, pstr0 = 0,
                           pstrsize = 0) {
-  rozibetabinom.ab(n, size, shape1 = prob * (1 - rho) / rho,
+  rzoibetabinom.ab(n, size, shape1 = prob * (1 - rho) / rho,
                    shape2 = (1 - prob) * (1 - rho) / rho, 
                    pstr0 = pstr0,
                    pstrsize = pstrsize)
@@ -2031,26 +2015,20 @@ rozibetabinom <- function(n, size, prob, rho = 0, pstr0 = 0,
 
 
 
-pozibetabinom.ab <- function(q, size, shape1, shape2, pstr0 = 0,
+pzoibetabinom.ab <- function(q, size, shape1, shape2, pstr0 = 0,
                              pstrsize = 0, lower.tail = TRUE,
                              log.p = FALSE) {
   LLL <- max(length(q), length(size), length(shape1),
              length(shape2), length(pstr0), length(pstrsize))
-  if (LLL != length(q))
-    q <- rep(q, length = LLL)
-  if (LLL != length(size))
-    size <- rep(size, length = LLL)
-  if (LLL != length(shape1))
-    shape1 <- rep(shape1, length = LLL)
-  if (LLL != length(shape2))
-    shape2 <- rep(shape2, length = LLL)
-  if (LLL != length(pstr0))
-    pstr0 <- rep(pstr0, length = LLL)
-  if (LLL != length(pstrsize))
-    pstrsize <- rep(pstrsize, length = LLL)
+  if (LLL != length(q))        q        <- rep_len(q,        LLL)
+  if (LLL != length(size))     size     <- rep_len(size,     LLL)
+  if (LLL != length(shape1))   shape1   <- rep_len(shape1,   LLL)
+  if (LLL != length(shape2))   shape2   <- rep_len(shape2,   LLL)
+  if (LLL != length(pstr0))    pstr0    <- rep_len(pstr0,    LLL)
+  if (LLL != length(pstrsize)) pstrsize <- rep_len(pstrsize, LLL)
+  ans <- rep_len(NA_real_, LLL)
   k <- is.na(size) | is.na(shape1) | is.na(shape2) |
     is.na(pstr0) | is.na(pstrsize) | is.na(q)
-  ans <- rep(NA, length = LLL)
   k1 <- pstr0 < 0 | pstrsize < 0 |
     (pstr0 + pstrsize) > 1
   if (sum(!k1 & !k) > 0)
@@ -2083,10 +2061,10 @@ pozibetabinom.ab <- function(q, size, shape1, shape2, pstr0 = 0,
 }
 
 
-pozibetabinom <- function(q, size, prob, rho, 
+pzoibetabinom <- function(q, size, prob, rho, 
                           pstr0 = 0, pstrsize = 0,
                         lower.tail = TRUE, log.p = FALSE) {
-  pozibetabinom.ab(q, size, shape1 = prob * (1 - rho) / rho,
+  pzoibetabinom.ab(q, size, shape1 = prob * (1 - rho) / rho,
                  shape2 = (1 - prob) * (1 - rho) / rho, 
                  pstr0 = pstr0, pstrsize = pstrsize,
                  lower.tail = lower.tail, log.p = log.p)
@@ -2094,6 +2072,227 @@ pozibetabinom <- function(q, size, prob, rho,
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+  AR1EIM<- function(x = NULL,
+                    var.arg   = NULL, 
+                    p.drift   = NULL, 
+                    WNsd      = NULL, 
+                    ARcoeff1  = NULL,
+                    eps.porat = 1e-2) {
+  
+    if (!is.matrix(x))
+      stop("Argument 'x' must be a matrix.")
+    
+    yy   <- x
+    M    <- 3
+    nn   <- nrow(x)
+    nn0  <- numeric(0)
+    NOS  <- ncol(x)
+    
+    if (!is.matrix(WNsd))
+      WNsd <- matrix(WNsd, nrow = nn, ncol = NOS, byrow = TRUE)
+  
+    if (!is.matrix(ARcoeff1))
+      ARcoeff1 <- matrix(ARcoeff1, nrow = nn, ncol = NOS, byrow = TRUE)
+    
+    if (!is.Numeric(eps.porat, length.arg = 1) || eps.porat < 0 ||
+        eps.porat > 1e-2)
+      stop("Bad input for argument 'eps.porat'.")
+    
+    sdTSR   <- colMeans(WNsd)
+    sdTSv   <- colMeans(WNsd)
+    drift.v <- rep(p.drift, NOS)[1:NOS]
+    Aux11   <- (NOS > 1)
+    the1v   <- colMeans(ARcoeff1)
+    JFin    <- array(0.0, dim = c(nn, NOS, M + (M - 1) + (M - 2) ))
+    
+    for (spp in 1:NOS) {
+      
+      x <- yy[, spp]
+      the1    <- the1v[spp]
+      drift.p <- drift.v[spp]
+      sdTS    <- sdTSv[spp]
+      
+      r <- numeric(nn)
+      r <- AR1.gammas(x = x, lags = nn - 1) 
+      r[nn] <- r[1]
+      
+      s0 <- numeric(nn)
+      s1 <- numeric(nn)
+      s1 <- if (var.arg) (the1^(0:(nn - 1))) / (1 - the1^2) else 
+             2 * (the1^(0:(nn - 1))) * sdTS / (1 - the1^2)
+      
+      s2    <- numeric(nn)
+      help1 <- c(0:(nn - 1))
+      s2    <- help1 * (the1^(help1 - 1)) * (sdTS^2) / (1 - the1^2) +
+                   2 * (sdTS^2) * (the1^(help1 + 1)) / (1 - the1^2)^2
+      sMat <- cbind(s0, s1, s2)
+      
+      J  <- array(NA_real_, 
+                  dim = c(length(the1) + 2, length(the1) + 2, nn))
+      Jp <- array(NA_real_, 
+                  dim = c(length(the1) + 2, length(the1) + 2, nn))
+      
+      alpha    <- numeric(nn)
+      alpha[1] <- 1
+      delta    <- r[1]
+      eta      <- matrix(NA_real_, nrow = nn, ncol = M)
+      eta[1, ] <- cbind(s0[1], s1[1], s2[1])
+      
+      psi      <- matrix(0, nrow = nn, ncol = length(the1) + 2)
+      psi[1, ] <- cbind(s0[1], s1[1], s2[1]) / r[1]
+      
+      u0   <- rep(1/(1 - sign(the1v[1]) * min(0.975, abs(the1v[1]))), nn )
+      u1   <- rep(drift.p/(1 - the1)^2, nn)
+      uMat <- cbind(u0, rep(0, nn), u1)
+      
+      aux1 <- matrix(sMat[1, ], 
+                     nrow = 2 + length(the1), 
+                     ncol = 2 + length(the1), byrow = TRUE)
+      diag(aux1) <- sMat[1, ]
+      J[, , 1]   <- Jp[, , 1] <- aux1 * t(aux1) / (2 * r[1]^2)
+      J[1, 1, 1] <- Jp[1, 1, 1] <- 1 / sdTS^2
+      JFin[1, spp, 1:M] <- Jp[, , 1][row(Jp[, , 1]) == col(Jp[, , 1])]
+      Neps.porat <- 1.819*eps.porat*(1e-10)
+      
+      dk   <- matrix(NA_real_, nrow = 1, ncol = length(the1) + 2)
+      eR   <- matrix(NA_real_, nrow = 1, ncol = length(the1) + 2)
+      cAux2 <- d55 <- numeric(nn); d55[1] <- 0.1
+      
+      for (jay in 1:(nn - 1)) {
+        
+        cAux <- as.numeric(alpha[1:jay] %*% 
+                    r[2:(jay + 1)][length(r[2:(jay + 1)]):1])/delta
+        
+        dk <- alpha[1:jay] %*% 
+         sMat[2:(jay + 1), , drop = FALSE][length(sMat[2:(jay + 1)]):1, ]
+        
+        delta        <- delta * (1 - cAux^2)
+        d55[jay + 1] <- cAux^2
+        
+        if ((d55[jay + 1] < eps.porat*1e-2) || (jay > 1e1)) {
+          nn0 <- jay
+          break
+        }
+        
+        eta[jay + 1, ] <- dk
+        tAux <- numeric(jay + 1)
+        tAux <- alpha[1:(jay + 1)] - 
+                      cAux * alpha[1:(jay + 1)][(jay + 1):1]
+        alpha[1:(jay + 1)] <- tAux[1:(jay + 1)]
+        
+        eR <- alpha[1:(jay + 1)][(jay + 1):1] %*% 
+          eta[1:(jay + 1), , drop = FALSE]
+        
+        tAux <- eta[1:(jay + 1), ] - 
+          cAux * eta[1:(jay + 1), ][(jay + 1):1, ]
+        
+        eta[1:(jay + 1), ] <- tAux
+        
+        AuxE <- matrix(eR, nrow = jay + 1, ncol = M, byrow = TRUE)
+        Aux3 <- matrix(alpha[1:(jay + 1)][(jay + 1):1],
+                       nrow = jay + 1, ncol = M, byrow = FALSE)
+        Aux4 <- matrix(alpha[1:(jay + 1)],
+                       nrow = jay + 1, ncol = M, byrow = FALSE)
+                  tAux <- psi[1:(jay + 1), ] - 
+                      cAux * psi[1:(jay + 1), ][(jay + 1):1, ] + 
+                         AuxE * (Aux3 - cAux * Aux4) / delta
+        
+        if (any(dim(psi[1:(jay + 1), ])) != any(dim(tAux)) )
+          stop("Invalids 'psi' and 'tAux'.")
+        
+        psi[1:(jay + 1), ] <- tAux
+        fk <- alpha[1:(jay + 1)] %*% eta[1:(jay + 1), ]
+        gk <- alpha[1:(jay + 1)][(jay + 1):1] %*% uMat[1:(jay + 1), ]
+        
+        Auxf <- matrix(fk, nrow = M, ncol = M, byrow = FALSE)
+        Auxg <- matrix(gk, nrow = M, ncol = M, byrow = FALSE)
+        J[, , jay + 1] <-
+          J[, , jay] + t(eta[1:(jay + 1), ]) %*% psi[1:(jay + 1), ] /
+                      delta - 0.5 * Auxf * t(Auxf) / delta^2 + 
+                          Auxg * t(Auxg) / delta  
+        
+        Jp[, , jay + 1] <- J[, , jay + 1] - J[, , jay] 
+        JFin[jay + 1, spp , 1:M ] <- 
+          Jp[, , jay + 1][col(Jp[, , jay + 1]) == row(Jp[, , jay + 1])]
+        
+        helpC <- numeric(0)
+        for (kk in 1:(M - 1))  {
+          TF1 <- ( col(Jp[, , jay + 1]) >= row(Jp[, , jay + 1]) )
+          TF2 <- (abs(col(Jp[, , jay + 1]) - row(Jp[, , jay + 1])) == kk )
+          helpC <- c(helpC, Jp[, , jay + 1][TF1 & TF2])
+        }
+        rm(TF1, TF2)
+        
+        JFin[jay + 1, spp , -(1:M) ] <- helpC
+      }
+      
+      if (length(nn0))
+        for (kk in nn0:(nn - 1)) {
+          J[, , kk + 1] <- J[, , nn0] + (kk - nn0 + 1) * Jp[, , nn0]
+          Jp[, , kk + 1] <- J[, , kk + 1] - J[, , kk]
+          
+          JFin[kk + 1, spp , 1:M ] <- 
+            Jp[, , kk + 1][col(Jp[, , kk + 1]) == row(Jp[, , kk + 1])]
+          
+          helpC <- numeric(0)
+          for (ll in 1:(M - 1))  {
+           TF1 <- ( col(Jp[, , kk + 1]) >= row(Jp[, , kk + 1]) )
+           TF2 <- (abs(col(Jp[, , kk + 1]) - row(Jp[, , kk + 1])) == ll)
+            helpC <- c(helpC, Jp[, , kk + 1][TF1 & TF2])
+          }
+          rm(TF1, TF2)
+          JFin[kk + 1, spp , -(1:M) ] <- helpC
+        }
+      JFin[which(JFin <= Neps.porat)] <- 
+        abs( JFin[which(JFin <= Neps.porat)])
+    }
+
+    JFin
+    
+  } # End
+
+
+
+
+
+
+AR1.gammas <- function(x, y = NULL, lags = 1) {
+  xx  <- matrix(x, ncol = 1)
+  nx  <- nrow(xx)
+  
+  if (lags < 0 || !(is.Numeric(lags, integer.valued = TRUE)))
+    stop("'lags' must be a positive integer.")
+
+  if (length(y)) {
+    yy <- matrix(y, ncol = 1)
+    ny <- nrow(yy)
+    if (nx != ny)
+      stop("Number of rows differs.") else
+        n <- nx
+  } else {
+    yy <- xx
+    n  <- nrow(xx)
+  }
+
+  myD <- numeric(lags + 1)
+  myD[1] <- if (length(y)) cov(xx, yy) else cov(xx, xx)  # i.e. var(xx)    
+  if (lags > 0)
+    for (ii in 1:lags) 
+      myD[ii + 1]  <- cov(xx[-(1:ii), 1], yy[1:(n - ii) , 1])
+
+  myD
+}
 
 
 

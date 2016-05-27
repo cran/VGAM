@@ -8,15 +8,15 @@
 \alias{pbetabinom.ab}
 %\alias{qbetabinom.ab}
 \alias{rbetabinom.ab}
-%\alias{Ozibetabinom}
-\alias{dozibetabinom}
-\alias{pozibetabinom}
-%\alias{qozibetabinom}
-\alias{rozibetabinom}
-\alias{dozibetabinom.ab}
-\alias{pozibetabinom.ab}
-%\alias{qozibetabinom.ab}
-\alias{rozibetabinom.ab}
+%\alias{Zoibetabinom}
+\alias{dzoibetabinom}
+\alias{pzoibetabinom}
+%\alias{qzoibetabinom}
+\alias{rzoibetabinom}
+\alias{dzoibetabinom.ab}
+\alias{pzoibetabinom.ab}
+%\alias{qzoibetabinom.ab}
+\alias{rzoibetabinom.ab}
 \title{The Beta-Binomial Distribution}
 \description{
   Density, distribution function, and random
@@ -32,14 +32,14 @@ rbetabinom(n, size, prob, rho = 0)
 dbetabinom.ab(x, size, shape1, shape2, log = FALSE, Inf.shape = 1e6)
 pbetabinom.ab(q, size, shape1, shape2, log.p = FALSE)
 rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
-dozibetabinom(x, size, prob, rho = 0, pstr0 = 0, pstrsize = 0, log = FALSE)
-pozibetabinom(q, size, prob, rho, pstr0 = 0, pstrsize = 0, 
+dzoibetabinom(x, size, prob, rho = 0, pstr0 = 0, pstrsize = 0, log = FALSE)
+pzoibetabinom(q, size, prob, rho, pstr0 = 0, pstrsize = 0, 
               lower.tail = TRUE, log.p = FALSE)
-rozibetabinom(n, size, prob, rho = 0, pstr0 = 0, pstrsize = 0)
-dozibetabinom.ab(x, size, shape1, shape2, pstr0 = 0, pstrsize = 0, log = FALSE)
-pozibetabinom.ab(q, size, shape1, shape2, pstr0 = 0, pstrsize = 0,
+rzoibetabinom(n, size, prob, rho = 0, pstr0 = 0, pstrsize = 0)
+dzoibetabinom.ab(x, size, shape1, shape2, pstr0 = 0, pstrsize = 0, log = FALSE)
+pzoibetabinom.ab(q, size, shape1, shape2, pstr0 = 0, pstrsize = 0,
               lower.tail = TRUE, log.p = FALSE)
-rozibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
+rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 }
 
 
@@ -125,9 +125,10 @@ rozibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 
 % \code{qbetabinom} and \code{qbetabinom.ab} gives the quantile function, and
 
-  \code{dozibetabinom} and \code{dozibetabinom.ab} give the inflated density,
-  \code{pozibetabinom} and \code{pozibetabinom.ab} give the inflated distribution function, and
-  \code{rozibetabinom} and \code{rozibetabinom.ab} generate random inflated deviates.
+
+  \code{dzoibetabinom} and \code{dzoibetabinom.ab} give the inflated density,
+  \code{pzoibetabinom} and \code{pzoibetabinom.ab} give the inflated distribution function, and
+  \code{rzoibetabinom} and \code{rzoibetabinom.ab} generate random inflated deviates.
 
 
 }
@@ -165,7 +166,7 @@ rozibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 
 }
 \note{
-  \code{pozibetabinom}, \code{pozibetabinom.ab}, 
+  \code{pzoibetabinom}, \code{pzoibetabinom.ab}, 
   \code{pbetabinom} and \code{pbetabinom.ab} can be particularly slow.
   The functions here ending in \code{.ab} are called from those
   functions which don't.
@@ -180,7 +181,7 @@ rozibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 \seealso{
   \code{\link{betabinomial}},
   \code{\link{betabinomialff}},
-  \code{\link{Ozibeta}}.
+  \code{\link{Zoabeta}}.
 
 
 }
@@ -212,7 +213,7 @@ barplot(rbind(dy, ty / sum(ty)),
 
 set.seed(208); N <- 1000000; size = 20;
 pstr0 <- 0.2; pstrsize <- 0.2
-k <- rozibetabinom.ab(N, size, s1, s2, pstr0, pstrsize)
+k <- rzoibetabinom.ab(N, size, s1, s2, pstr0, pstrsize)
 hist(k, probability = TRUE, border = "blue",
      main = "Blue = inflated; orange = ordinary beta-binomial",
      breaks = -0.5 : (size + 0.5))
@@ -221,7 +222,7 @@ sum(k == size) / N  # Proportion of size
 lines(0 : size,
       dbetabinom.ab(0 : size, size, s1, s2), col = "orange")
 lines(0 : size, col = "blue",
-      dozibetabinom.ab(0 : size, size, s1, s2, pstr0, pstrsize))
+      dzoibetabinom.ab(0 : size, size, s1, s2, pstr0, pstrsize))
 }
 }
 \keyword{distribution}

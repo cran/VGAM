@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -81,12 +81,12 @@ rcqo <- function(n, p, S,
   if (!is.logical(Crow1positive)) {
     stop("bad input for argument 'Crow1positive)'")
   } else {
-    Crow1positive <- rep(Crow1positive, len = Rank)
+    Crow1positive <- rep_len(Crow1positive, Rank)
   }
-  Shape <- rep(Shape, len = S)
-  sd.latvar <- rep(sd.latvar, len = Rank)
-  sd.optimums <- rep(sd.optimums, len = Rank)
-  sd.tolerances <- rep(sd.tolerances, len = Rank)
+  Shape         <- rep_len(Shape,         S)
+  sd.latvar     <- rep_len(sd.latvar,     Rank)
+  sd.optimums   <- rep_len(sd.optimums,   Rank)
+  sd.tolerances <- rep_len(sd.tolerances, Rank)
   AA <- sd.optimums / 3^0.5
   if (Rank > 1 && any(diff(sd.latvar) > 0))
    stop("argument 'sd.latvar)' must be a vector with decreasing values")
@@ -197,7 +197,7 @@ rcqo <- function(n, p, S,
 
 
   ynames <- paste("y", 1:S, sep = "")
-  Kvector <- rep(Kvector, len = S)
+  Kvector <- rep_len(Kvector, S)
   names(Kvector) <- ynames
   latvarnames <- if (Rank == 1) "latvar" else
                  paste("latvar", 1:Rank, sep = "")
@@ -397,7 +397,7 @@ getInitVals <- function(gvals, llfun, ...) {
   LLFUN <- match.fun(llfun)
   ff <- function(myx, ...) LLFUN(myx, ...)
   objFun <- gvals
-  for (ii in 1:length(gvals))
+  for (ii in seq_along(gvals))
     objFun[ii] <- ff(myx = gvals[ii], ...) 
   try.this <- gvals[objFun == max(objFun)]  # Usually scalar, maybe vector
   try.this

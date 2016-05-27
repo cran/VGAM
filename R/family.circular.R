@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -17,11 +17,11 @@ dcard <- function(x, mu, rho, log = FALSE) {
 
 
   L <- max(length(x), length(mu), length(rho))
-  if (length(x)   != L) x   <- rep(x,   len = L)
-  if (length(mu)  != L) mu  <- rep(mu,  len = L)
-  if (length(rho) != L) rho <- rep(rho, len = L)
+  if (length(x)   != L) x   <- rep_len(x,   L)
+  if (length(mu)  != L) mu  <- rep_len(mu,  L)
+  if (length(rho) != L) rho <- rep_len(rho, L)
 
-  logdensity <- rep(log(0), len = L)
+  logdensity <- rep_len(log(0), L)
   xok <- (x > 0) & (x < (2*pi))
   logdensity[xok] <- -log(2*pi) + log1p(2 * rho[xok] *
                       cos(x[xok]-mu[xok]))
@@ -75,9 +75,9 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
     stop("'p' must be between 0 and 1")
 
   nn <- max(length(p), length(mu), length(rho))
-  if (length(p)   != nn) p   <- rep(p,   len = nn)
-  if (length(mu)  != nn) mu  <- rep(mu,  len = nn)
-  if (length(rho) != nn) rho <- rep(rho, len = nn)
+  if (length(p)   != nn) p   <- rep_len(p,   nn)
+  if (length(mu)  != nn) mu  <- rep_len(mu,  nn)
+  if (length(rho) != nn) rho <- rep_len(rho, nn)
 
 
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
@@ -180,8 +180,8 @@ rcard <- function(n, mu, rho, ...) {
   if (!is.Numeric(rho) || max(abs(rho) > 0.5))
     stop("argument 'rho' must be between -0.5 and 0.5 inclusive")
 
-  mu <- rep(mu, len = use.n)
-  rho <- rep(rho, len = use.n)
+  mu  <- rep_len(mu,  use.n)
+  rho <- rep_len(rho, use.n)
   qcard(runif(use.n), mu = mu, rho = rho, ...)
 }
 
@@ -272,7 +272,7 @@ cardioid.control <- function(save.weights = TRUE, ...) {
       namesof("rho", .lrho , earg = .erho , tag = FALSE))
 
     if (!length(etastart)) {
-      rho.init <- rep(if (length( .irho )) .irho else 0.3, length = n)
+      rho.init <- rep_len(if (length( .irho )) .irho else 0.3, n)
 
       cardioid.Loglikfun <- function(mu, y, x, w, extraargs) {
         rho <- extraargs$irho
@@ -283,7 +283,7 @@ cardioid.control <- function(save.weights = TRUE, ...) {
           grid.search(mu.grid, objfun = cardioid.Loglikfun,
                       y = y,  x = x, w = w,
                       extraargs = list(irho = rho.init))
-      mu.init <- rep(mu.init, length=length(y))
+      mu.init <- rep_len(mu.init, length(y))
       etastart <-
         cbind(theta2eta( mu.init, .lmu  , earg = .emu  ),
               theta2eta(rho.init, .lrho , earg = .erho ))
@@ -438,11 +438,8 @@ cardioid.control <- function(save.weights = TRUE, ...) {
           scale.init <- sqrt(sum(w*abs(y - locat.init)) / sum(w))
         }
 
-        locat.init <- if (length( .ilocat ))
-                       rep( .ilocat , len = n) else
-                       rep(locat.init, len = n)
-        scale.init <- if (length( .iscale ))
-                     rep( .iscale , len = n) else rep(1, len = n)
+        locat.init <- rep_len(if (length( .ilocat )) .ilocat else locat.init,n)
+        scale.init <- rep_len(if (length( .iscale )) .iscale else 1, n)
         etastart <- cbind(
             theta2eta(locat.init, .llocat , earg = .elocat ),
             theta2eta(scale.init, .lscale , earg = .escale ))

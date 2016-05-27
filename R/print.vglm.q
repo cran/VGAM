@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -18,7 +18,7 @@ show.vglm <- function(object) {
   coef <- object@coefficients
   if (any(nas <- is.na(coef))) {
     if (is.null(names(coef)))
-      names(coef) <- paste("b", 1:length(coef), sep = "")  
+      names(coef) <- paste("b", seq_along(coef), sep = "")  
     cat("\nCoefficients: (", sum(nas), 
         " not defined because of singularities)\n", sep = "")
   } else {
@@ -155,7 +155,7 @@ print.vglm <- function(x, ...) {
   coef <- x@coefficients
   if (any(nas <- is.na(coef))) {
     if (is.null(names(coef)))
-      names(coef) <- paste("b", 1:length(coef), sep = "")  
+      names(coef) <- paste("b", seq_along(coef), sep = "")  
     cat("\nCoefficients: (", sum(nas), 
         " not defined because of singularities)\n", sep = "")
   } else {
@@ -223,7 +223,7 @@ print.vgam <- function(x, digits = 2, ...) {
   if (length(llx))
     cat("Log-likelihood:", format(llx), "\n")
 
-  criterion <- attr(terms(x), "criterion")  # 11/8/03; x@terms$terms,
+  criterion <- attr(terms(x), "criterion")  # 20030811; x@terms$terms,
   if (!is.null(criterion) &&
       criterion != "coefficients")
     cat(paste(criterion, ":", sep = ""), format(x[[criterion]]), "\n")

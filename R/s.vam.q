@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -36,7 +36,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     odfvec <- lapply(data, attr, "df")
     s.xargument <- lapply(data, attr, "s.xargument")
     
-    for (kk in 1:length(nwhich)) {
+    for (kk in seq_along(nwhich)) {
       ii <- nwhich[kk]
 
       temp <- osparv[[ii]]
@@ -47,7 +47,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
         warning("only the first ", ncolHlist[ii], " values of ",
                 "'spar' are used for variable '", s.xargument, "'")
       }
-      osparv[[ii]] <- rep(temp, length = ncolHlist[ii])  # Recycle
+      osparv[[ii]] <- rep_len(temp, ncolHlist[ii])  # Recycle
     
       temp <- odfvec[[ii]]
       if (!is.numeric(temp) || any(temp < 1)) {
@@ -57,7 +57,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
         warning("only the first ", ncolHlist[ii], " value(s) of 'df' ",
                 "are used for variable '", s.xargument, "'")
       }
-      odfvec[[ii]] <- rep(temp, length = ncolHlist[ii])  # Recycle
+      odfvec[[ii]] <- rep_len(temp, ncolHlist[ii])  # Recycle
       if (max(temp) > smooth.frame$neffec[kk]-1) {
         stop("'df' value too high for variable '", s.xargument, "'")
       }
@@ -90,7 +90,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     smooth.frame$s.xargument <- s.xargument    # Stored here
 
     smooth.frame$smap <-
-      as.vector(cumsum(c(1, ncolHlist[nwhich]))[1:length(nwhich)])
+      as.vector(cumsum(c(1, ncolHlist[nwhich]))[seq_along(nwhich)])
 
     smooth.frame$try.sparv <- osparv
 
@@ -230,7 +230,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
   Bspline <- vector("list", length(nwhich))
   names(Bspline) <- nwhich
-  for (ii in 1:length(nwhich)) {
+  for (ii in seq_along(nwhich)) {
     b.coefs <- fit$bcoeff[(smooth.frame$bindex[ii]):
                           (smooth.frame$bindex[ii + 1] - 1)]
     b.coefs <- matrix(b.coefs, ncol = ncolHlist[nwhich[ii]])
@@ -247,7 +247,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
   Leverages <- vector("list", length(nwhich))
   names(Leverages) <- nwhich
-  for (ii in 1:length(nwhich)) {
+  for (ii in seq_along(nwhich)) {
     levvec <- fit$levmat[(smooth.frame$lindex[ii]):
                          (smooth.frame$lindex[ii+1]-1)]
     levmat <- matrix(levvec,

@@ -9,12 +9,12 @@
 }
 \usage{
 posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
-           nsimEIM = 500, cutoff.prob = 0.999,
-           eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-           lmunb = "loge", lsize = "loge",
-           imethod = 1, imunb = NULL, probs.y = 0.35,
-           ishrinkage = 0.95, isize = NULL,
-           gsize.mux = exp((-12:6)/2))
+               mds.min = 0.001, nsimEIM = 500, cutoff.prob = 0.999,
+               eps.trig = 1e-07, max.support = 4000, max.chunk.MB = 30,
+               lmunb = "loge", lsize = "loge", imethod = 1,
+               imunb = NULL, iprobs.y = NULL,
+               gprobs.y = (0:9)/10, isize = NULL,
+               gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,7 +49,7 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
 
 
   }
-  \item{probs.y, cutoff.prob}{
+  \item{mds.min, iprobs.y, cutoff.prob}{
     Similar to \code{\link{negbinomial}}.
 
 
@@ -64,8 +64,9 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
 
 
   }
-  \item{ishrinkage, imethod}{
+  \item{imethod, gprobs.y}{
   See \code{\link{negbinomial}}.
+
 
   }
   \item{type.fitted}{

@@ -1,7 +1,7 @@
 \name{rrvglm.optim.control}
 \alias{rrvglm.optim.control}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Control function for rrvglm() calling optim() }
+\title{ Control Function for rrvglm() Calling optim() }
 \description{
   Algorithmic constants and parameters for running \code{optim} within 
   \code{rrvglm} are set using this function.

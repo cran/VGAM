@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -45,7 +45,7 @@ qtplot.lms.bcg <- function(percentiles = c(25,50,75),
   sigma <- eta[, 3]
   shape <- 1 / (lambda * sigma)^2
   for (ii in 1:lp) {
-    ccc <- rep(cc[ii]/100, len=nrow(eta))
+    ccc <- rep_len(cc[ii]/100, nrow(eta))
     ccc <- ifelse(lambda > 0, ccc, 1-ccc)
     answer[, ii] <- eta[, 2] *
                     (qgamma(ccc, shape = shape)/shape)^(1/lambda)
@@ -241,10 +241,10 @@ plotqtplot.lmscreg <-
 
   }
 
-    tcol.arg <- rep(tcol.arg, length = lp)
-    lcol.arg <- rep(lcol.arg, length = lp)
-    llwd.arg <- rep(llwd.arg, length = lp)
-    llty.arg <- rep(llty.arg, length = lp)
+    tcol.arg <- rep_len(tcol.arg, lp)
+    lcol.arg <- rep_len(lcol.arg, lp)
+    llwd.arg <- rep_len(llwd.arg, lp)
+    llty.arg <- rep_len(llty.arg, lp)
     for (ii in 1:lp) {
       temp <- cbind(xx, fitted.values[, ii])
       temp <- temp[sort.list(temp[, 1]), ]
@@ -298,7 +298,7 @@ if (TRUE) {
 }
     
  
-qtplot.egumbel <-
+qtplot.gumbelff <-
 qtplot.gumbel <-
     function(object, show.plot = TRUE, y.arg = TRUE,
              spline.fit = FALSE, label = TRUE,
@@ -324,7 +324,7 @@ qtplot.gumbel <-
 
 
   if (is.Numeric(R))
-    R <- rep(R, length = nrow(eta))
+    R <- rep_len(R, nrow(eta))
 
   if (!is.Numeric(percentiles))
     stop("the 'percentiles' argument needs to be assigned a value")
@@ -345,10 +345,10 @@ qtplot.gumbel <-
 
 
   lp <- length(percentiles)  # Does not include mpv
-  tcol.arg <- rep(tcol.arg, length = lp+mpv)
-  lcol.arg <- rep(lcol.arg, length = lp+mpv)
-  llwd.arg <- rep(llwd.arg, length = lp+mpv)
-  llty.arg <- rep(llty.arg, length = lp+mpv)
+  tcol.arg <- rep_len(tcol.arg, lp+mpv)
+  lcol.arg <- rep_len(lcol.arg, lp+mpv)
+  llwd.arg <- rep_len(llwd.arg, lp+mpv)
+  llty.arg <- rep_len(llty.arg, lp+mpv)
 
   X <- model.matrixvlm(object, type = "lm")
   if (is.matrix(X) && length(object@y) && ncol(X)==2 && 
@@ -690,6 +690,7 @@ vgety <- function(object, newdata = NULL) {
 "rlplot.vextremes" <- function(object, ...) {
 
 
+
   newcall <- paste("rlplot.", object@family@vfamily[1],
                    "(object = object, ... )", sep = "")
   newcall <- parse(text = newcall)[[1]]
@@ -698,7 +699,7 @@ vgety <- function(object, newdata = NULL) {
     
     
  
-rlplot.egev <-
+rlplot.gevff <-
 rlplot.gev <-
   function(object, show.plot = TRUE,
            probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),

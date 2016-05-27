@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -356,11 +356,11 @@ setMethod("predictvglmS4VGAM",  signature(VGAMff = "binom2.or"),
 
 
   if (se.fit) {
-    predn$junk.component <- rep(coef(object), length = n.ahead)
-    predn$se.fit.junk.component <- rep(diag(vcov(object)), length = n.ahead)
+    predn$junk.component <- rep_len(coef(object), n.ahead)
+    predn$se.fit.junk.component <- rep_len(diag(vcov(object)), n.ahead)
   } else {
     could.return.this.instead.of.predn <-
-    predn2 <- rep(coef(object), length = n.ahead)
+    predn2 <- rep_len(coef(object), n.ahead)
   }
   predn
 })

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -18,8 +18,7 @@ qrrvglm.control <- function(Rank = 1,
           FastAlgorithm = TRUE,
           GradientFunction = TRUE,
           Hstep = 0.001,
-          isd.latvar = rep(c(2, 1, rep(0.5, length = Rank)),
-                           length = Rank),
+          isd.latvar = rep_len(c(2, 1, rep_len(0.5, Rank)), Rank),
           iKvector = 0.1,
           iShape = 0.1,
           ITolerances = NULL,
@@ -27,7 +26,7 @@ qrrvglm.control <- function(Rank = 1,
           maxitl = 40,
           imethod = 1,
           Maxit.optim = 250,
-          MUXfactor = rep(7, length = Rank),
+          MUXfactor = rep_len(7, Rank),
           noRRR = ~ 1,
           Norrr = NA,
           optim.maxit = 20,
@@ -153,7 +152,7 @@ qrrvglm.control <- function(Rank = 1,
            Bestof = Bestof,
            checkwz = checkwz,
            Cinit = Cinit,
-           Crow1positive=as.logical(rep(Crow1positive, len = Rank)),
+           Crow1positive=as.logical(rep_len(Crow1positive, Rank)),
            ConstrainedQO = TRUE,  # A constant, not a control parameter
            Corner = FALSE,  # Needed for valt.1iter()
            Dzero = NULL,
@@ -163,7 +162,7 @@ qrrvglm.control <- function(Rank = 1,
            FastAlgorithm = FastAlgorithm,
            GradientFunction = GradientFunction,
            Hstep = Hstep,
-           isd.latvar = rep(isd.latvar, len = Rank),
+           isd.latvar = rep_len(isd.latvar, Rank),
            iKvector = as.numeric(iKvector),
            iShape = as.numeric(iShape),
            I.tolerances = I.tolerances,
@@ -171,7 +170,7 @@ qrrvglm.control <- function(Rank = 1,
            imethod = imethod,
            Maxit.optim = Maxit.optim,
            min.criterion = TRUE,  # needed for calibrate 
-           MUXfactor = rep(MUXfactor, length = Rank),
+           MUXfactor = rep_len(MUXfactor, Rank),
            noRRR = noRRR,
            optim.maxit = optim.maxit,
            OptimizeWrtC = TRUE,

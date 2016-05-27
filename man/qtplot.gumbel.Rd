@@ -1,6 +1,6 @@
 \name{qtplot.gumbel}
 \alias{qtplot.gumbel}
-\alias{qtplot.egumbel}
+\alias{qtplot.gumbelff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Quantile Plot for Gumbel Regression }
 \description{
@@ -21,8 +21,9 @@ qtplot.gumbel(object, show.plot = TRUE,
   \item{object}{
   A \pkg{VGAM} extremes model of the
   Gumbel type, produced by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}} with a family function either
-  \code{"gumbel"} or \code{"egumbel"}.
+  and \code{\link{vgam}}, and with a family function that is either
+  \code{\link{gumbel}} or \code{\link{gumbelff}}.
+
 
   }
   \item{show.plot}{

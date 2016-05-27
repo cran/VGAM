@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,6 +20,7 @@ vgam.control <- function(all.knots = FALSE,
                          se.fit = TRUE,
                          trace = FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
+                         xij = NULL,
                          ...) {
 
 
@@ -79,11 +80,12 @@ vgam.control <- function(all.knots = FALSE,
        criterion = criterion,
        epsilon = epsilon, 
        maxit = maxit, 
-       nk=nk,
+       nk = nk,
        min.criterion = .min.criterion.VGAM,
        save.weights = as.logical(save.weights)[1],
        se.fit = as.logical(se.fit)[1],
        trace = as.logical(trace)[1],
+       xij = if (is(xij, "formula")) list(xij) else xij,
        wzepsilon = wzepsilon)
 }
 
@@ -102,12 +104,12 @@ vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
 
   trivc <- trivial.constraints(constraints)
 
-  ans <- rep(NA_real_, length = ncol(smomat))
+  ans <- rep_len(NA_real_, ncol(smomat))
   Uderiv <- vbacksub(U, t(deriv), M = M, n = n)  # \bU_i^{-1} \biu_i
 
 
   ptr <- 0
-  for (ii in 1:length(smooth.labels)) {
+  for (ii in seq_along(smooth.labels)) {
     cmat <- constraints[[ smooth.labels[ii] ]]
     index <- (ptr + 1):(ptr + ncol(cmat))
 

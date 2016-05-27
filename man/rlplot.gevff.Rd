@@ -1,5 +1,5 @@
-\name{rlplot.egev}
-\alias{rlplot.egev}
+\name{rlplot.gevff}
+\alias{rlplot.gevff}
 \alias{rlplot.gev}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Return Level Plot for GEV Fits }
@@ -8,7 +8,7 @@
 
 }
 \usage{
-rlplot.egev(object, show.plot = TRUE,
+rlplot.gevff(object, show.plot = TRUE,
     probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),
     add.arg = FALSE, xlab = if(log.arg) "Return Period (log-scale)" else
     "Return Period", ylab = "Return Level",
@@ -24,7 +24,7 @@ rlplot.egev(object, show.plot = TRUE,
     A \pkg{VGAM} extremes model of the
     GEV-type, produced by \code{\link{vglm}}
     with a family function either
-    \code{"gev"} or \code{"egev"}.
+    \code{"gev"} or \code{"gevff"}.
 
   }
   \item{show.plot}{
@@ -130,18 +130,18 @@ London: Springer-Verlag.
 }
 
 \seealso{
-  \code{\link{egev}}.
+  \code{\link{gevff}}.
 
 
 }
 
 \examples{
 gdata <- data.frame(y = rgev(n <- 100, scale = 2, shape = -0.1))
-fit <- vglm(y ~ 1, egev, data = gdata, trace = TRUE)
+fit <- vglm(y ~ 1, gevff, data = gdata, trace = TRUE)
 
 # Identity link for all parameters:
-fit2 <- vglm(y ~ 1, egev(lshape = identitylink, lscale = identitylink,
-                         iscale = 10), data = gdata, trace = TRUE)
+fit2 <- vglm(y ~ 1, gevff(lshape = identitylink, lscale = identitylink,
+                          iscale = 10), data = gdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 2))

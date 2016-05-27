@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -32,7 +34,9 @@ vgam <- function(formula,
   if (missing(data))
     data <- environment(formula)
 
-  mtsave <- terms(formula, "s", data = data)
+  mtsave <- terms(formula, specials = c("s", "ps"), data = data)
+
+
 
   mf <- match.call(expand.dots = FALSE)
   m <- match(c("formula", "data", "subset", "weights", "na.action",
@@ -109,7 +113,7 @@ vgam <- function(formula,
     spars2 <-  lapply(mf2, attr, "spar") 
     dfs2   <-  lapply(mf2, attr, "df") 
     sx2 <-  lapply(mf2, attr, "s.xargument") 
-    for (ii in 1:length(mf)) {
+    for (ii in seq_along(mf)) {
       if (length(sx2[[ii]])) {
         attr(mf[[ii]], "spar") <- spars2[[ii]]
         attr(mf[[ii]], "dfs2") <- dfs2[[ii]]
@@ -123,7 +127,7 @@ vgam <- function(formula,
 
   w <- model.weights(mf)
   if (!length(w)) {
-    w <- rep(1, nrow(mf))
+    w <- rep_len(1, nrow(mf))
   } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
     stop("negative weights not allowed")
 
@@ -142,25 +146,21 @@ vgam <- function(formula,
 
   n <- dim(x)[1]
 
-  if (FALSE && is.R()) {
-    family@linkinv <- eval(family@linkinv)
-    family@link <- eval(family@link)
-
-    for (ii in names(.min.criterion.VGAM)) 
-      if (length(family[[ii]]))
-        family[[ii]] <- eval(family[[ii]])
-  }
 
   if (length(slot(family, "first")))
     eval(slot(family, "first"))
 
-  if (method != "vgam.fit")
-    stop("method must be \"model.frame\" or \"vgam.fit\"")
-
-    # --------------------------------------------------------------
 
   aa <- attributes(mtsave)
   smoothers <- aa$specials
+
+  mgcv.ps <- length(smoothers$ps) > 0
+  mgcv.PS <- length(smoothers$PS) > 0
+  any.ps.terms <- mgcv.ps || mgcv.PS
+  mgcv.s <- length(smoothers$s) > 0
+  if (any.ps.terms && mgcv.s)
+    stop("cannot include both s() and ps() (or PS()) terms in the formula")
+
 
 
 
@@ -175,7 +175,53 @@ vgam <- function(formula,
   } else {
     function.name <- "vglm"  # This is effectively so 
   }
+  
 
+
+
+
+
+
+  are.ps.terms <- (length(smoothers$ps) + length(smoothers$PS)) > 0
+  if (are.ps.terms) {
+    control$criterion <- "coefficients"  # Overwrite if necessary
+
+    if (length(smoothers$ps) > 0) {
+      ff.ps <- apply(aa$factors[smoothers[["ps"]],,drop = FALSE], 2, any)
+      smoothers[["ps"]] <-
+        if (any(ff.ps)) seq(along = ff.ps)[aa$order == 1 & ff.ps] else NULL
+      smooth.labels <- aa$term.labels[unlist(smoothers)]
+    }
+
+
+
+
+
+
+    assignx <- attr(x, "assign")
+    which.X.ps <- assignx[smooth.labels]
+    data <- mf[, names(which.X.ps), drop = FALSE]
+    attr(data, "class") <- NULL
+    S.arg <- lapply(data, attr, "S.arg")
+    lambdalist <- lapply(data, attr, "lambda")
+    ridge.adj <- lapply(data, attr, "ridge.adj")
+    term.labels <- aa$term.labels
+
+
+  }
+
+
+
+  ps.list <- if (any.ps.terms)
+               list(indexterms = ff.ps,
+                    intercept = aa$intercept,
+                    which.X.ps = which.X.ps,
+                    S.arg = S.arg,
+                    lambdalist = lambdalist,
+                    ridge.adj = ridge.adj,
+                    term.labels = term.labels,
+                    assignx = assignx) else
+               NULL
 
 
   fit <- vgam.fit(x = x, y = y, w = w, mf = mf,
@@ -186,7 +232,9 @@ vgam <- function(formula,
       constraints = constraints, extra = extra, qr.arg = qr.arg,
       Terms = mtsave,
       nonparametric = nonparametric, smooth.labels = smooth.labels,
-      function.name = function.name, ...)
+      function.name = function.name,
+      ps.list = ps.list,
+      ...)
 
 
   if (is.Numeric(fit$nl.df) && any(fit$nl.df < 0)) {
@@ -194,12 +242,14 @@ vgam <- function(formula,
   }
 
 
+
+
   if (!is.null(fit[["smooth.frame"]])) {
-    fit <- fit[-1]       # Strip off smooth.frame
+    fit <- fit[-1]  # Strip off smooth.frame
   } else {
   }
 
-  fit$smomat <- NULL          # Not needed
+  fit$smomat <- NULL  # Not needed
 
   fit$call <- ocall 
   if (model)
@@ -220,8 +270,14 @@ vgam <- function(formula,
     fit$smart.prediction <- get.smart.prediction()
 
 
+
+
+
+
   answer <-
-  new("vgam",
+  new(
+    if (any.ps.terms) "psvgam" else "vgam",
+
     "assign"       = attr(x, "assign"),
     "call"         = fit$call,
     "coefficients" = fit$coefficients,
@@ -260,6 +316,18 @@ vgam <- function(formula,
 
   if (x.arg)
     slot(answer, "x") <- x  # The 'small' design matrix
+
+
+
+  if (length(fit$misc$Xvlm.aug)) {
+    slot(answer, "psslot") <-
+      list(Xvlm.aug = fit$misc$Xvlm.aug,
+           ps.list  = fit$misc$ps.list,
+           magicfit = fit$misc$magicfit)
+    fit$misc$Xvlm.aug <- NULL
+    fit$misc$ps.list  <- NULL
+    fit$misc$magicfit <- NULL
+  }
 
 
 
@@ -319,13 +387,22 @@ vgam <- function(formula,
     slot(answer, "effects") <- fit$effects
 
 
+
+
+
+  if (nonparametric && is.buggy.vlm(answer)) {
+    warning("some s() terms have constraint matrices that have columns",
+            " which are not orthogonal;",
+            " try using ps() instead of s().")
+  } else {
+  }
+
+
+
+
   answer
 }
 attr(vgam, "smart") <- TRUE 
-
-
-
-
 
 
 
@@ -381,14 +458,13 @@ shadowvgam <-
 
 
 
-
 is.buggy.vlm <- function(object, each.term = FALSE, ...) {
 
 
     
   Hk.list <- constraints(object)
   ncl <- names(Hk.list)
-  TFvec <- rep(FALSE, length = length(ncl))
+  TFvec <- rep_len(FALSE, length(ncl))
   names(TFvec) <- ncl
 
 
@@ -400,7 +476,7 @@ is.buggy.vlm <- function(object, each.term = FALSE, ...) {
     return(if (each.term) TFvec else any(TFvec))
   }
 
-  for (kay in 1:length(ncl)) {
+  for (kay in seq_along(ncl)) {
     cmat <- Hk.list[[kay]]
     if (ncol(cmat) > 1 && substring(ncl[kay], 1, 2) == "s(") {
       CMat <- crossprod(cmat)  # t(cmat) %*% cmat
@@ -423,11 +499,6 @@ if (!isGeneric("is.buggy"))
 setMethod("is.buggy", signature(object = "vlm"),
           function(object, ...)
           is.buggy.vlm(object, ...))
-
-
-
-
-
 
 
 

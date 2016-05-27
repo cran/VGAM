@@ -1,7 +1,7 @@
 \name{linkfun}
 \alias{linkfun}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Link functions }
+\title{ Link Functions }
 \description{
   Generic function for returning the link functions of a fitted object.
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -186,7 +186,7 @@
     for (ii in cindex) {
       temp6.mat <- modmat.col[, ii, drop = FALSE]
          Hlist[[paste(cprefix, ii, sep = "")]] <- temp6.mat
-      .rcim.df[[paste(cprefix, ii, sep = "")]] <- rep(1, nrow(y))
+      .rcim.df[[paste(cprefix, ii, sep = "")]] <- rep_len(1, nrow(y))
     }
 
 
@@ -271,7 +271,7 @@
     kmat1[which.linpred, 1] <- 1
     kmat0 <- (diag(M1))[, -which.linpred, drop = FALSE]
 
-    for (ii in 1:length(Hlist)) {
+    for (ii in seq_along(Hlist)) {
       Hlist[[ii]] <- kronecker(Hlist[[ii]], kmat1)
     }
     if (has.intercept)
@@ -299,7 +299,7 @@
              constraints = Hlist,
              offset = offset.matrix,
              weights = if (length(weights))
-                       weights else rep(1, length = nrow(y)),
+                       weights else rep_len(1, nrow(y)),
              ...,
              control = mycontrol, data = .rcim.df )
   } else {
@@ -309,7 +309,7 @@
              constraints = Hlist,
              offset = offset.matrix,
              weights = if (length(weights))
-                       weights else rep(1, length = nrow(y)),
+                       weights else rep_len(1, nrow(y)),
              ...,
              control = mycontrol, data = .rcim.df )
   }
@@ -521,7 +521,7 @@ setMethod("summary", "rcim",
          axes = FALSE, col = rcol, main = rmain,
          sub  = rsub, xlab = rxlab, ylab = rylab, ...)
 
-    axis(1, at = 1:length(raxisl),
+    axis(1, at = seq_along(raxisl),
          cex.lab = rcex.lab,  
          cex.axis = rcex.axis,
          labels = raxisl)
@@ -537,7 +537,7 @@ setMethod("summary", "rcim",
          axes = FALSE, col = ccol, main = cmain,  # lwd = 2, xpd = FALSE,
          sub  = csub, xlab = cxlab, ylab = cylab, ...)
 
-    axis(1, at = 1:length(caxisl),
+    axis(1, at = seq_along(caxisl),
          cex.lab = ccex.lab,
          cex.axis = ccex.axis,
          labels = caxisl)
@@ -752,7 +752,7 @@ Confint.nb1 <- function(nb1, level = 0.95) {
 
 
 
-  myvec <- cbind(c(-1, 1, rep(0, len = nrow(myvcov) - 2)))
+  myvec <- cbind(c(-1, 1, rep_len(0, nrow(myvcov) - 2)))
   (se.mydiff <- sqrt(t(myvec) %*%  myvcov %*%  myvec))
 
   ci.mydiff <- mydiff + c(-1, 1) * qnorm(1 - (1 - level)/2) * se.mydiff
@@ -1059,7 +1059,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
                                  covmat[jlocal, jlocal] -
                                  covmat[ilocal, jlocal] * 2
 
-  diag(allvcov) <- rep(1.0, length = LLL)  # Any positive value should do
+  diag(allvcov) <- rep_len(1.0, LLL)  # Any positive value should do
 
 
   wmat   <- matrix(1.0, LLL, LLL)
@@ -1090,7 +1090,7 @@ WorstErrors <- function(qv.object) {
   reducedForm <- function(covmat, qvmat) {
     nlevels <- dim(covmat)[1]
     firstRow <- covmat[1, ]
-    ones <- rep(1, nlevels)
+    ones <- rep_len(1, nlevels)
     J <- outer(ones, ones)
     notzero <- 2:nlevels
     r.covmat <- covmat + (firstRow[1]*J) -
@@ -1124,7 +1124,7 @@ IndentPrint <- function(object, indent = 4, ...) {
   try(print(object, ...))
   sink()
   close(tc)
-  indent <- paste(rep(" ", indent), sep = "", collapse = "")
+  indent <- paste(rep_len(" ", indent), sep = "", collapse = "")
   cat(paste(indent, zz, sep = ""), sep = "\n")
 }
 
@@ -1154,7 +1154,7 @@ summary.qvar <- function(object, ...) {
       is.matrix(object@extra$attributes.y$estimates))
     names( estimates) <- rownames(object@extra$attributes.y$estimates)
   if (!length(names(estimates)))
-    names( estimates) <- paste("Level", 1:length(estimates), sep = "")
+    names( estimates) <- paste("Level", seq_along(estimates), sep = "")
 
 
   regularVar <- c(object@extra$attributes.y$regularVar)
@@ -1284,7 +1284,7 @@ qvplot   <-  function(object,
   if (length(level.names) == length(estimates)) {
     names(estimates) <- level.names
   } else if (!length(names(estimates)))
-    names(estimates) <- paste("Level", 1:length(estimates),
+    names(estimates) <- paste("Level", seq_along(estimates),
                               sep = "")
 
 

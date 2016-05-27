@@ -74,10 +74,12 @@ The equilibrium size distribution of freely-forming groups.
 }
 \author{ Thomas W. Yee }
 \note{
-  This family function can handle a multivariate response.
+  This family function can handle multiple responses.
+
 
   Yet to be done: a \code{quasi.pospoisson} which estimates a dispersion
   parameter.
+
 
 
 }

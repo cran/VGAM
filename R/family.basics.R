@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -43,11 +43,11 @@ Select <-
 
   col.names <- colnames(data)
   if (is.logical(prefix)) {
-    index <- if (prefix) 1:length(col.names) else
+    index <- if (prefix) seq_along(col.names) else
              stop("cannot have 'prefix = FALSE'")
   } else {
     index <- NULL
-    for (ii in 1:length(prefix)) {
+    for (ii in seq_along(prefix)) {
       small.col.names <- substr(col.names, 1, nchar(prefix[ii]))
 
       index <- c(index, grep(prefix[ii], small.col.names))
@@ -63,9 +63,9 @@ Select <-
 
   if (length(exclude)) {
     exclude.index <- NULL
-    for (ii in 1:length(exclude)) {
+    for (ii in seq_along(exclude)) {
       exclude.index <- c(exclude.index,
-                         (1:length(col.names))[exclude[ii] == col.names])
+                         (seq_along(col.names))[exclude[ii] == col.names])
     }
     exclude.index <- unique(sort(exclude.index))
     index <- setdiff(index, exclude.index)
@@ -185,7 +185,7 @@ subsetc <-
   if (!is.vector(vov))
     stop("argument 'vov' must be a vector")
   objvals <- vov
-  for (ii in 1:length(vov))
+  for (ii in seq_along(vov))
     objvals[ii] <- objfun(vov[ii], y = y, x = x, w = w,
                           extraargs = extraargs, ...)
   try.this <- if (abs.arg) {
@@ -204,6 +204,114 @@ subsetc <-
   myvec <- objvals[ans == vov]  # Could be a vector
   if (ret.objfun) c(Value = ans, ObjFun = myvec[1]) else ans
 }
+
+
+
+
+
+
+ grid.search2 <-
+    function(vov1, vov2, objfun, y, x, w, extraargs = NULL,
+             maximize = TRUE,  # abs.arg = FALSE,
+             ret.objfun = FALSE, ...) {
+  if (!is.vector(vov1))
+    stop("argument 'vov1' must be a vector")
+  if (!is.vector(vov2))
+    stop("argument 'vov2' must be a vector")
+
+  allmat1 <- expand.grid(vov1 = as.vector(vov1),
+                         vov2 = as.vector(vov2))
+  objvals <- numeric(nrow(allmat1))
+  for (ii in seq_along(objvals))
+    objvals[ii] <- objfun(allmat1[ii, "vov1"],
+                          allmat1[ii, "vov2"],
+                          y = y, x = x, w = w,
+                          extraargs = extraargs, ...)
+
+  ind5 <- if (maximize) which.max(objvals) else which.min(objvals)
+
+  
+  c(Value1 = allmat1[ind5, "vov1"],
+    Value2 = allmat1[ind5, "vov2"],
+    ObjFun = if (ret.objfun) objvals[ind5] else NULL)
+}
+
+
+
+
+ grid.search3 <-
+    function(vov1, vov2, vov3, objfun, y, x, w, extraargs = NULL,
+             maximize = TRUE,  # abs.arg = FALSE,
+             ret.objfun = FALSE, ...) {
+  if (!is.vector(vov1))
+    stop("argument 'vov1' must be a vector")
+  if (!is.vector(vov2))
+    stop("argument 'vov2' must be a vector")
+  if (!is.vector(vov3))
+    stop("argument 'vov3' must be a vector")
+
+  allmat1 <- expand.grid(vov1 = as.vector(vov1),
+                         vov2 = as.vector(vov2),
+                         vov3 = as.vector(vov3))
+  objvals <- numeric(nrow(allmat1))
+  for (ii in seq_along(objvals))
+    objvals[ii] <- objfun(allmat1[ii, "vov1"],
+                          allmat1[ii, "vov2"],
+                          allmat1[ii, "vov3"],
+                          y = y, x = x, w = w,
+                          extraargs = extraargs, ...)
+
+  ind5 <- if (maximize) which.max(objvals) else which.min(objvals)
+
+  
+  c(Value1 = allmat1[ind5, "vov1"],
+    Value2 = allmat1[ind5, "vov2"],
+    Value3 = allmat1[ind5, "vov3"],
+    ObjFun = if (ret.objfun) objvals[ind5] else NULL)
+}
+
+
+
+
+ grid.search4 <-
+    function(vov1, vov2, vov3, vov4,
+             objfun, y, x, w, extraargs = NULL,
+             maximize = TRUE,  # abs.arg = FALSE,
+             ret.objfun = FALSE, ...) {
+  if (!is.vector(vov1))
+    stop("argument 'vov1' must be a vector")
+  if (!is.vector(vov2))
+    stop("argument 'vov2' must be a vector")
+  if (!is.vector(vov3))
+    stop("argument 'vov3' must be a vector")
+  if (!is.vector(vov4))
+    stop("argument 'vov4' must be a vector")
+
+  allmat1 <- expand.grid(vov1 = as.vector(vov1),
+                         vov2 = as.vector(vov2),
+                         vov3 = as.vector(vov3),
+                         vov4 = as.vector(vov4))
+  objvals <- numeric(nrow(allmat1))
+  for (ii in seq_along(objvals))
+    objvals[ii] <- objfun(allmat1[ii, "vov1"],
+                          allmat1[ii, "vov2"],
+                          allmat1[ii, "vov3"],
+                          allmat1[ii, "vov4"],
+                          y = y, x = x, w = w,
+                          extraargs = extraargs, ...)
+
+  ind5 <- if (maximize) which.max(objvals) else which.min(objvals)
+
+  
+  c(Value1 = allmat1[ind5, "vov1"],
+    Value2 = allmat1[ind5, "vov2"],
+    Value3 = allmat1[ind5, "vov3"],
+    Value4 = allmat1[ind5, "vov4"],
+    ObjFun = if (ret.objfun) objvals[ind5] else NULL)
+}
+
+
+
 
 
 
@@ -229,7 +337,7 @@ subsetc <-
   temp2 <- matrix(unlist(constraints), nrow = M)
   for (kk in 1:M) {
     ansx <- NULL
-    for (ii in 1:length(constraints)) {
+    for (ii in seq_along(constraints)) {
       temp <- constraints[[ii]]
       isfox <- any(temp[kk, ] != 0)
       if (isfox) {
@@ -272,7 +380,7 @@ subsetc <-
 
   if (!length(constraints)) {
     constraints <- vector("list", length(nasgn))
-    for (ii in 1:length(nasgn)) {
+    for (ii in seq_along(nasgn)) {
       constraints[[ii]] <- cm.default  # diag(M)
     }
     names(constraints) <- nasgn
@@ -362,7 +470,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (!is.list(constraints))
     stop("'constraints' must be a list")
 
-  for (ii in 1:length(asgn))
+  for (ii in seq_along(asgn))
     constraints[[nasgn[ii]]] <- if (is.null(constraints[[nasgn[ii]]]))
       diag(M) else eval(constraints[[nasgn[ii]]])
 
@@ -403,7 +511,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
   which.numeric.all <- NULL
-  for (ii in 1:length(dotzero)) {
+  for (ii in seq_along(dotzero)) {
     which.ones <-
         grep(dotzero[ii], predictors.names, fixed = TRUE)
     if (length(which.ones)) {
@@ -464,7 +572,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (!is.list(constraints))
     stop("'constraints' must be a list")
 
-  for (ii in 1:length(asgn))
+  for (ii in seq_along(asgn))
     constraints[[nasgn[ii]]] <- if (is.null(constraints[[nasgn[ii]]]))
       diag(M) else eval(constraints[[nasgn[ii]]])
 
@@ -511,7 +619,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
   if (is.null(constraints)) {
     constraints <- vector("list", length(nasgn))
-    for (ii in 1:length(nasgn))
+    for (ii in seq_along(nasgn))
       constraints[[ii]] <- diag(M)
     names(constraints) <- nasgn
   }
@@ -538,16 +646,16 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     }
 
   if (is.null(names(constraints))) 
-    names(constraints) <- rep(nasgn, length.out = lenconstraints) 
+    names(constraints) <- rep_len(nasgn, lenconstraints) 
 
   temp <- vector("list", length(nasgn))
   names(temp) <- nasgn
-  for (ii in 1:length(nasgn))
+  for (ii in seq_along(nasgn))
     temp[[nasgn[ii]]] <-
       if (is.null(constraints[[nasgn[ii]]])) diag(M) else
              eval(constraints[[nasgn[ii]]])
 
-  for (ii in 1:length(asgn)) {
+  for (ii in seq_along(asgn)) {
     if (!is.matrix(temp[[ii]])) {
       stop("not a constraint matrix")
     }
@@ -560,7 +668,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
   constraints <- temp
   Hlist <- vector("list", ncol(x))
-  for (ii in 1:length(asgn)) {
+  for (ii in seq_along(asgn)) {
     cols <- asgn[[ii]]
     ictr <- 0
     for (jay in cols) {
@@ -615,9 +723,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     stop("target is not a matrix")
   dimtar <- dim(target) 
 
-  trivc <- rep(1, length(Hlist))
+  trivc <- rep_len(1, length(Hlist))
   names(trivc) <- names(Hlist)
-  for (ii in 1:length(Hlist)) {
+  for (ii in seq_along(Hlist)) {
     d <- dim(Hlist[[ii]])
     if (d[1] != dimtar[1]) trivc[ii] <- 0
     if (d[2] != dimtar[2]) trivc[ii] <- 0
@@ -720,7 +828,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
       stop("range error in j or k")
     both <- (i1 == jay & i2 == kay) |
             (i1 == kay & i2 == jay)
-    (1:length(i2))[both]
+    (seq_along(i2))[both]
   }
 }
 
@@ -829,7 +937,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   }
   if (length.arg > length(ans))
     stop("argument 'length.arg' too big")
-  rep(ans, length.out = length.arg) 
+  rep_len(ans, length.arg) 
 }
 
 
@@ -867,11 +975,11 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (any(slotNames(object) == "iter"))
     iter <- object@iter
 
-  w <- rep(1, n)
+  w <- rep_len(1, n)
   if (any(slotNames(object) == "prior.weights"))
     w <- object@prior.weights
   if (!length(w))
-    w <- rep(1, n)
+    w <- rep_len(1, n)
 
   x <- object@x
   if (!length(x))
@@ -940,7 +1048,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     ans 
   } else {
     temp <- object@y
-    ans <- rep(1, nrow(temp))  # Assumed all equal and unity.
+    ans <- rep_len(1, nrow(temp))  # Assumed all equal and unity.
     names(ans) <- dimnames(temp)[[1]]
     ans 
   }
@@ -959,7 +1067,7 @@ procVec <- function(vec, yn, Default) {
 
 
 
-  if (any(is.na(vec)))
+  if (anyNA(vec))
     stop("vec cannot contain any NAs")
   L <- length(vec)
   nvec <- names(vec)  # vec[""] undefined
@@ -971,18 +1079,18 @@ procVec <- function(vec, yn, Default) {
     default <- vec
   }
 
-  answer <- rep(default, length.out = length(yn))
+  answer <- rep_len(default, length(yn))
   names(answer) <- yn
   if (named) {
     nvec2 <- nvec[nvec != ""]
     if (length(nvec2)) {
       if (any(!is.element(nvec2, yn)))
           stop("some names given which are superfluous")
-      answer <- rep(NA_real_, length.out = length(yn))
+      answer <- rep_len(NA_real_, length(yn))
       names(answer) <- yn
       answer[nvec2] <- vec[nvec2]
       answer[is.na(answer)] <-
-        rep(default, length.out <- sum(is.na(answer)))
+        rep_len(default, sum(is.na(answer)))
     }
   }
 
@@ -1065,13 +1173,13 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
   }
   Bs <- mux22(t(wzold), deta, M = M,
               upper = FALSE, as.matrix = TRUE)  # n x M
-  sBs <- c( (deta * Bs) %*% rep(1, M) )  # should have positive values
-  sy <- c( (dderiv * deta) %*% rep(1, M) )
+  sBs <- c( (deta * Bs) %*% rep_len(1, M) )  # should have positive values
+  sy <- c( (dderiv * deta) %*% rep_len(1, M) )
   wznew <- wzold
   index <- iam(NA, NA, M = M, both = TRUE)
-  index$row.index <- rep(index$row.index, len=ncol(wzold))
-  index$col.index <- rep(index$col.index, len=ncol(wzold))
-  updateThese <- if (keeppd) (sy > effpos) else rep(TRUE, len=length(sy))
+  index$row.index <- rep_len(index$row.index, ncol(wzold))
+  index$col.index <- rep_len(index$col.index, ncol(wzold))
+  updateThese <- if (keeppd) (sy > effpos) else rep_len(TRUE, length(sy))
   if (!keeppd || any(updateThese)) {
     wznew[updateThese,] <- wznew[updateThese,] -
         Bs[updateThese,index$row] *
@@ -1171,7 +1279,7 @@ existsinVGAMenv <- function(varnames, prefix = "") {
 
 assign2VGAMenv <- function(varnames, mylist, prefix = "") {
   evarnames <- paste(prefix, varnames, sep = "")
-  for (ii in 1:length(varnames)) {
+  for (ii in seq_along(varnames)) {
     assign(evarnames[ii], mylist[[(varnames[ii])]],
            envir = VGAMenv)
   }
@@ -1204,9 +1312,9 @@ lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
     stop("bad input for argument 'iter'")
 
   L <- max(length(x), length(s), length(v))
-  x <- rep(x, length.out = L);
-  s <- rep(s, length.out = L);
-  v <- rep(v, length.out = L);
+  x <- rep_len(x, L)
+  s <- rep_len(s, L)
+  v <- rep_len(v, L)
   xok <- abs(x) < 1 & !(v <= 0 & v == round(v))
   x[!xok] <- 0  # Fix this later
 
@@ -1240,7 +1348,7 @@ negzero.expression.VGAM <- expression({
 
 
   which.numeric.all <- NULL
-  for (ii in 1:length(dotzero)) {
+  for (ii in seq_along(dotzero)) {
     which.ones <-
         grep(dotzero[ii], predictors.names, fixed = TRUE)
     if (length(which.ones)) {

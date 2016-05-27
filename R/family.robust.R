@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -55,7 +55,7 @@ rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  myl <- rep(0.0, len = use.n)
+  myl <- rep_len(0.0, use.n)
 
   lowlim <- 1
   upplim <- 0
@@ -72,15 +72,15 @@ rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
       upplim <- upplim + sumyok
 
       if (upplim > use.n)
-        myl <- rep(myl, len = upplim)
+        myl <- rep_len(myl, upplim)
 
       myl[lowlim:upplim] <- y[yok]
       lowlim <- lowlim + sumyok
     }
   }
-  myl <- rep(myl, len = use.n)  # Prune to right length
+  myl <- rep_len(myl, use.n)  # Prune to right length
 
-  rep(mu + sigma * myl, len = use.n)
+  rep_len(mu + sigma * myl, use.n)
 }
 
 
@@ -255,9 +255,9 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
       scale.y.est <- sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
       location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
         if ( .imethod == 3) {
-          rep(weighted.mean(y, w), len = n)
+          rep_len(weighted.mean(y, w), n)
         } else if ( .imethod == 2) {
-          rep(median(rep(y, w)), len = n)
+          rep_len(median(rep(y, w)), n)
         } else if ( .imethod == 1) {
           junk$fitted
         } else {
@@ -404,9 +404,9 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
       junk <- lm.wfit(x = x, y = c(y), w = c(w))
       location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
         if ( .imethod == 3) {
-          rep(weighted.mean(y, w), len = n)
+          rep_len(weighted.mean(y, w), n)
         } else if ( .imethod == 2) {
-          rep(median(rep(y, w)), len = n)
+          rep_len(median(rep(y, w)), n)
         } else if ( .imethod == 1) {
           junk$fitted
         } else {

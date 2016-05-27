@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -149,7 +149,7 @@
       if (NCOL(y) == 1) {
         if (is.factor(y))
           y <- (y != levels(y)[1])
-        nvec <- rep(1, n)
+        nvec <- rep_len(1, n)
         y[w == 0] <- 0
         if (!all(y == 0 | y == 1))
           stop("response values 'y' must be 0 or 1")
@@ -217,7 +217,7 @@
                 dtheta.deta(mu, link = .link ,
                             earg = .earg )^2)  # w cancel
       if (.multiple.responses && ! .onedpar ) {
-        dpar <- rep(NA_real_, len = M)
+        dpar <- rep_len(NA_real_, M)
         temp87 <- cbind(temp87)
         nrow.mu <- if (is.matrix(mu)) nrow(mu) else length(mu)
         for (ii in 1:M)
@@ -236,7 +236,7 @@
     misc$bred <- .bred
     misc$expected <- TRUE
 
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- if (M > 1) dn2 else new.name  # Was old.name=="mu"
 
     misc$earg <- vector("list", M)
@@ -501,7 +501,7 @@
         temp <- c(w) * dmu.deta^2
         dpar <- sum(c(w) * (y-mu)^2 * wz / temp) / (length(mu) - ncol(x))
       } else {
-        dpar <- rep(0, len = M)
+        dpar <- rep_len(0, M)
         for (spp in 1:M) {
           temp <- c(w) * dmu.deta[, spp]^2
           dpar[spp] <- sum(c(w) * (y[,spp]-mu[, spp])^2 * wz[, spp]/temp) / (
@@ -513,7 +513,7 @@
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
 
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- param.names("mu", M)
 
     misc$earg <- vector("list", M)
@@ -632,7 +632,7 @@
     misc$default.dispersion <- 0
     misc$estimated.dispersion <- .estimated.dispersion
 
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- param.names("mu", M)
 
     misc$earg <- vector("list", M)
@@ -672,11 +672,11 @@ dinv.gaussian <- function(x, mu, lambda, log = FALSE) {
     stop("bad input for argument 'log'")
   rm(log)
 
-  LLL <- max(length(x), length(mu), length(lambda))
-  x      <- rep(x,      len = LLL);
-  mu     <- rep(mu,     len = LLL);
-  lambda <- rep(lambda, len = LLL)
-  logdensity <- rep(log(0), len = LLL)
+  L <- max(length(x), length(mu), length(lambda))
+  if (length(x)          != L) x          <- rep_len(x,      L)
+  if (length(mu)         != L) mu         <- rep_len(mu,     L)
+  if (length(lambda)     != L) lambda     <- rep_len(lambda, L)
+  logdensity <- rep_len(log(0), L)
 
   xok <- (x > 0)
   logdensity[xok] = 0.5 * log(lambda[xok] / (2 * pi * x[xok]^3)) -
@@ -688,16 +688,12 @@ dinv.gaussian <- function(x, mu, lambda, log = FALSE) {
 }
 
 
-pinv.gaussian <- function(q, mu, lambda) {
-  if (any(mu  <= 0))
-    stop("mu must be positive")
-  if (any(lambda  <= 0))
-    stop("lambda must be positive")
 
-  LLL <- max(length(q), length(mu), length(lambda))
-  q      <- rep(q,      len = LLL)
-  mu     <- rep(mu,     len = LLL)
-  lambda <- rep(lambda, len = LLL)
+pinv.gaussian <- function(q, mu, lambda) {
+  L <- max(length(q), length(mu), length(lambda))
+  if (length(q)       != L) q      <- rep_len(q,      L)
+  if (length(mu)      != L) mu     <- rep_len(mu,     L)
+  if (length(lambda)  != L) lambda <- rep_len(lambda, L)
   ans <- q
 
   ans[q <= 0] <- 0
@@ -705,8 +701,11 @@ pinv.gaussian <- function(q, mu, lambda) {
   ans[bb] <- pnorm( sqrt(lambda[bb]/q[bb]) * (q[bb]/mu[bb] - 1)) +
              exp(2*lambda[bb]/mu[bb]) *
              pnorm(-sqrt(lambda[bb]/q[bb]) * (q[bb]/mu[bb] + 1))
+  ans[mu     <= 0] <- NaN
+  ans[lambda <= 0] <- NaN
   ans
 }
+
 
 
 rinv.gaussian <- function(n, mu, lambda) {
@@ -715,11 +714,11 @@ rinv.gaussian <- function(n, mu, lambda) {
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  mu     <- rep(mu,     len = use.n);
-  lambda <- rep(lambda, len = use.n)
+  mu     <- rep_len(mu,     use.n)
+  lambda <- rep_len(lambda, use.n)
 
   u <- runif(use.n)
-  Z <- rnorm(use.n)^2 # rchisq(use.n, df = 1)
+  Z <- rnorm(use.n)^2  # rchisq(use.n, df = 1)
   phi <- lambda / mu
   y1 <- 1 - 0.5 * (sqrt(Z^2 + 4*phi*Z) - Z) / phi
   ans <- mu * ifelse((1+y1)*u > 1, 1/y1, y1)
@@ -727,6 +726,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   ans[lambda <= 0] <- NaN
   ans
 }
+
 
 
 
@@ -866,9 +866,8 @@ rinv.gaussian <- function(n, mu, lambda) {
 
   last = eval(substitute(expression({
     M1 <- extra$M1
-    misc$link <-
-      c(rep( .lmu ,     length = ncoly),
-        rep( .llambda , length = ncoly))[interleave.VGAM(M, M1 = M1)]
+    misc$link <- c(rep_len( .lmu ,     ncoly),
+                   rep_len( .llambda , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
@@ -1100,7 +1099,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       temp87 <- (y-mu)^2 *
           wz / (dtheta.deta(mu, link = .link , earg = .earg )^2)  # w cancel
       if (M > 1 && ! .onedpar ) {
-        dpar <- rep(NA_real_, length = M)
+        dpar <- rep_len(NA_real_, M)
         temp87 <- cbind(temp87)
         nrow.mu <- if (is.matrix(mu)) nrow(mu) else length(mu)
         for (ii in 1:M)
@@ -1121,7 +1120,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     misc$bred <- .bred
 
 
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- if (M > 1) dn2 else new.name  # Was old.name=="mu"
 
     misc$earg <- vector("list", M)
@@ -1346,7 +1345,7 @@ rinv.gaussian <- function(n, mu, lambda) {
         namesof("dispersion", link = .ldisp, earg = .edisp, short = TRUE))
 
     init.mu <- pmax(y, 1/8)
-    tmp2 <- rep( .idisp , length.out = n)
+    tmp2 <- rep_len( .idisp , n)
 
     if (!length(etastart))
       etastart <-
@@ -1477,7 +1476,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
           if (is.factor(y)) y <- (y != levels(y)[1])
-          nvec <- rep(1, n)
+          nvec <- rep_len(1, n)
           y[w == 0] <- 0
           if (!all(y == 0 | y == 1))
             stop("response values 'y' must be 0 or 1")
@@ -1514,7 +1513,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     c(namesof(dn2,          .lmean , earg = .emean , short = TRUE),
       namesof("dispersion", .ldisp , earg = .edisp , short = TRUE))
 
-    tmp2 <- rep( .idisp , len = n)
+    tmp2 <- rep_len( .idisp , n)
 
     if (!length(etastart))
       etastart <- cbind(theta2eta(init.mu, .lmean, earg = .emean),
@@ -1680,7 +1679,7 @@ rinv.gaussian <- function(n, mu, lambda) {
                           is.data.frame(x)) ncol(x) else as.integer(1)
         if (NCOL(y) == 1) {
             if (is.factor(y)) y = (y != levels(y)[1])
-            nvec = rep(1, n)
+            nvec = rep_len(1, n)
             y[w == 0] <- 0
             if (!all(y == 0 | y == 1))
                 stop("response values 'y' must be 0 or 1")
@@ -1726,7 +1725,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     mu
   }, list( .link = link, .earg = earg  ))),
   last = eval(substitute(expression({
-    misc$link <- rep( .link , length = M)
+    misc$link <- rep_len( .link , M)
     names(misc$link) <- if (M > 1) dn2 else "mu"
 
     misc$earg <- vector("list", M)

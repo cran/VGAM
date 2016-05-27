@@ -11,7 +11,7 @@
 gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
     tolshape0 = 0.001, type.fitted = c("percentiles", "mean"),
-    giveWarning = TRUE, imethod = 1, zero = "shape")
+    imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -100,7 +100,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
 
 % }
-  \item{tolshape0, giveWarning}{
+  \item{tolshape0}{
   Passed into \code{\link{dgpd}} when computing the log-likelihood.
 
 
@@ -300,3 +300,4 @@ plot(as(fit2, "vgam"), se = TRUE, scol = "blue") }
 %
 % # gdata <- transform(gdata, yy = y2 + rnorm(nn, sd = 0.1))
 %
+%   giveWarning = TRUE, imethod = 1, zero = "shape"

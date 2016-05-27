@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -88,9 +89,8 @@ vglm <- function(formula,
     offset <- 0 # yyy ???
   w <- model.weights(mf)
   if (!length(w)) {
-    w <- rep(1, nrow(mf))
-  } else
-  if (ncol(as.matrix(w)) == 1 && any(w < 0))
+    w <- rep_len(1, nrow(mf))
+  } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
     stop("negative weights not allowed")
 
   if (is.character(family))
@@ -163,7 +163,7 @@ vglm <- function(formula,
     slot(answer, "offset") <- as.matrix(offset)
 
   if (length(fit$weights))
-      slot(answer, "weights") <- as.matrix(fit$weights)
+    slot(answer, "weights") <- as.matrix(fit$weights)
 
   if (x.arg)
     slot(answer, "x") <- fit$x  # The 'small' (lm) design matrix
@@ -257,13 +257,6 @@ shadowvglm <-
 
     list(Xm2 = x, Ym2 = y, call = ocall, Terms2 = mt)
 }
-
-
-
-
-
-
-
 
 
 

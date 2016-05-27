@@ -12,19 +12,21 @@
 zinegbinomial(zero = "size",
               type.fitted = c("mean", "munb", "pobs0", "pstr0",
               "onempstr0"),
-              nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
-              max.support = 4000, max.chunk.MB = 30,
+              mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
+              eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
               lpstr0 = "logit", lmunb = "loge", lsize = "loge",
               imethod = 1, ipstr0 = NULL, imunb =  NULL,
-              probs.y = 0.35, ishrinkage = 0.95,
-              isize = NULL, gsize.mux = exp((-12:6)/2))
+              iprobs.y = NULL, isize = NULL,
+              gprobs.y = (0:9)/10,
+              gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
                 type.fitted = c("mean", "munb", "pobs0", "pstr0",
                 "onempstr0"), imunb = NULL, isize = NULL, ionempstr0 =
                 NULL, zero = c("size", "onempstr0"), imethod = 1,
-                ishrinkage = 0.95, probs.y = 0.35, cutoff.prob = 0.999,
+                iprobs.y = NULL, cutoff.prob = 0.999,
                 eps.trig = 1e-7,  max.support = 4000, max.chunk.MB = 30,
-                gsize.mux = exp((-12:6)/2), nsimEIM = 500)
+                gprobs.y = (0:9)/10, gsize.mux = exp((-12:6)/2),
+                mds.min = 1e-3, nsimEIM = 500)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -71,8 +73,8 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method for the mean parameter.
-  If failure to converge occurs try another value
-  and/or else specify a value for \code{ishrinkage}.
+  If failure to converge occurs try another value.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
 
@@ -88,21 +90,26 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 
   }
-  \item{ishrinkage, nsimEIM}{ 
+  \item{nsimEIM}{ 
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
-  \item{probs.y, cutoff.prob, max.support, max.chunk.MB }{ 
+  \item{iprobs.y, cutoff.prob, max.support, max.chunk.MB }{ 
     See \code{\link{negbinomial}}
-    and/or \code{\link{posnegbinomial}} for details,
+    and/or \code{\link{posnegbinomial}} for details.
 
 
   }
-  \item{gsize.mux, eps.trig}{ 
+  \item{mds.min, eps.trig}{ 
+    See \code{\link{negbinomial}} for details.
+
+
+  }
+  \item{gprobs.y, gsize.mux}{ 
     These arguments relate to grid searching in the initialization process.
     See \code{\link{negbinomial}}
-    and/or \code{\link{posnegbinomial}} for details,
+    and/or \code{\link{posnegbinomial}} for details.
 
 
   }
@@ -212,7 +219,6 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
   \code{stepsize} (in \code{\link{vglm.control}}),
   \code{imethod},
   \code{imunb},
-  \code{ishrinkage},
   \code{ipstr0},
   \code{isize}, and/or
   \code{zero} if there are explanatory variables.
@@ -223,6 +229,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 %  An infinite loop might occur if some of the fitted values
 %  (the means) are too close to 0.
+% \code{ishrinkage},
 
 
 

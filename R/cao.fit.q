@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,8 +9,12 @@
 
 
 
+
+
+
+
 cao.fit <-
-  function(x, y, w = rep(1, length(x[, 1])),
+  function(x, y, w = rep_len(1, length(x[, 1])),
            etastart = NULL, mustart = NULL, coefstart = NULL,
            offset = 0, family,
            control = cao.control(...), criterion = "coefficients",
@@ -177,8 +181,8 @@ cao.fit <-
           p1, p2 = p2, imethod = control$imethod, bchat = 0)
   othdbl <- c(small = control$SmallNo, fseps = control$epsilon,
               .Machine$double.eps,
-              iKvector = rep(control$iKvector, len = NOS),
-              iShape = rep(control$iShape, len = NOS),
+              iKvector = rep_len(control$iKvector, NOS),
+              iShape   = rep_len(control$iShape,   NOS),
               resss = 0, bfeps = control$bf.epsilon, hstep = 0.1)
 
   for (iter in 1:optim.maxit) {
@@ -465,7 +469,7 @@ cao.control <- function(Rank = 1,
         Cinit = Cinit,
         ConstrainedO = TRUE,  # A constant, not a control parameter
         criterion = criterion,
-        Crow1positive = as.logical(rep(Crow1positive, len = Rank)),
+        Crow1positive = as.logical(rep_len(Crow1positive, Rank)),
         epsilon = epsilon,
         Etamat.colmax = Etamat.colmax,
         FastAlgorithm = TRUE,  # A constant, not a control parameter
@@ -585,7 +589,7 @@ callcaoc <- function(cmatrix,
         getfromVGAMenv("etamat", prefix = ".VGAM.CAO.") else
         t(etamat)
 
-  if (any(is.na(usethiseta))) {
+  if (anyNA(usethiseta)) {
     usethiseta <- t(etamat)  # So that dim(usethiseta) == c(M,n)
     rmfromVGAMenv("etamat", prefix = ".VGAM.CAO.")
   }
@@ -620,7 +624,7 @@ callcaoc <- function(cmatrix,
                         all.knots = control$all.knots, nk = NULL,
                         sf.only = TRUE)
 
-  ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 11/7/02
+  ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 20020711
 
   dimw. <- M.   # Smoothing one spp. at a time
   dim1U. <- M.
@@ -629,12 +633,12 @@ callcaoc <- function(cmatrix,
     stop("something wrong here")
   Hlist.[[1]] <- NULL
 
-  trivc <- rep(2 - M. , len = queue)
+  trivc <- rep_len(2 - M. , queue)
   ncbvec <- ncolHlist.[nwhich]
   ncolb <- max(ncbvec)
 
   qbig. <- NOS * qbig    # == NOS * Rank; holds all the smooths
-  if (!all.equal(as.vector(ncbvec), rep(1, len = queue)))
+  if (!all.equal(as.vector(ncbvec), rep_len(1, queue)))
     stop("'ncbvec' not right---should be a queue-vector of ones")
   pbig <- pstar. #
 
@@ -733,7 +737,7 @@ flush.console()
       names(Bspline) <- nwhich
       ind9 <- 0   # moving index
       for (sppno in 1:NOS) {
-        for (ii in 1:length(nwhich)) {
+        for (ii in seq_along(nwhich)) {
           ind7 <- (smooth.frame$bindex[ii]):(smooth.frame$bindex[ii+1]-1)
           ans <- ans1$bcoeff[ind9+ind7]
           ans <- matrix(ans, ncol = ncolHlist[nwhich[ii]])
@@ -831,7 +835,7 @@ calldcaoc <- function(cmatrix,
   temp.smooth.frame <- vector("list", 1+Rank)  # Temporary makeshift frame
   mynames5 <- if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
   names(temp.smooth.frame) <- c("(Intercept)", mynames5)
-  temp.smooth.frame[[1]] <- rep(1, len = n)
+  temp.smooth.frame[[1]] <- rep_len(1, n)
   for (uu in 1:Rank) {
     temp.smooth.frame[[uu+1]] <- numat[, uu]
   }
@@ -894,8 +898,8 @@ calldcaoc <- function(cmatrix,
                           all.knots = control$all.knots, nk = NULL,
                           sf.only = TRUE)
 
-    ldk <- 4 * max(ncolHlist.[nwhich])   # was M;     # Prior to 11/7/02
-    ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 11/7/02
+    ldk <- 4 * max(ncolHlist.[nwhich])   # was M;     # Prior to 20020711
+    ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 20020711
 
 
 
@@ -913,7 +917,7 @@ calldcaoc <- function(cmatrix,
 
 
     Hlist.[[1]] <- NULL
-    trivc <- rep(2 - M. , len = queue)
+    trivc <- rep_len(2 - M. , queue)
     ncbvec <- ncolHlist.[nwhich]
     ncolb <- max(ncbvec)
 
@@ -921,10 +925,10 @@ calldcaoc <- function(cmatrix,
     qbig. <- NOS * qbig    # == NOS * Rank
     pbig <- pstar. # Not sure
     if (FALSE) {
-      df1.nl <- rep(control$df1.nl, len = NOS)  # This is used
-      df2.nl <- rep(control$df2.nl, len = NOS)  # This is used
-      spar1  <- rep(control$spar1,  len = NOS)  # This is used
-      spar2  <- rep(control$spar2,  len = NOS)  # This is used
+      df1.nl <- rep_len(control$df1.nl, NOS)  # This is used
+      df2.nl <- rep_len(control$df2.nl, NOS)  # This is used
+      spar1  <- rep_len(control$spar1,  NOS)  # This is used
+      spar2  <- rep_len(control$spar2,  NOS)  # This is used
     } else {
       df1.nl <- procVec(control$df1.nl, yn = yn , Default = control$DF1)
       df2.nl <- df1.nl  # 20100417; stopgap
@@ -1030,7 +1034,7 @@ warning("20100405; this is new:")
     names(Bspline) <- nwhich
     ind9 <- 0   # moving index
     for (jay in 1:NOS) {
-      for (ii in 1:length(nwhich)) {
+      for (ii in seq_along(nwhich)) {
         ind9 <- ind9[length(ind9)] + (bindex[ii]):(bindex[ii+1]-1)
         ans <- ans1$bcoeff[ind9]
         ans <- matrix(ans, ncol = ncolHlist[nwhich[ii]])
@@ -1045,7 +1049,7 @@ warning("20100405; this is new:")
     }
 
     qrank <- npetc[7]  # Assume all species have the same qrank value
-    dim(ans1$etamat) <- c(M,n)   # bug: was c(n,M) prior to 22/8/06
+    dim(ans1$etamat) <- c(M,n)   # bug: was c(n,M) prior to 20060822
     list(deviance    = ans1$deviance[1],
          alldeviance = ans1$deviance[-1],
          bcoefficients = ans1$bcoefficients,
@@ -1126,7 +1130,7 @@ Coef.rrvgam <- function(object,
 
   ocontrol <- object@control
   if ((Rank <- ocontrol$Rank) > 2) stop("'Rank' must be 1 or 2") 
-  gridlen <- rep(gridlen, length = Rank)
+  gridlen <- rep_len(gridlen, Rank)
   M <- if (any(slotNames(object) == "predictors") &&
            is.matrix(object@predictors))
        ncol(object@predictors) else
@@ -1163,7 +1167,7 @@ Coef.rrvgam <- function(object,
                       dimnames = list(latvar.names, ynames))
     extents <- apply(latvar.mat, 2, range)  # 2 by R
 
-    maximum <- rep(NA_real_, len = NOS)
+    maximum <- rep_len(NA_real_, NOS)
 
     which.species <- 1:NOS  # Do it for all species
     if (Rank == 1) {
@@ -1175,7 +1179,7 @@ Coef.rrvgam <- function(object,
       eta2matrix <- matrix(0, NOS, 1)
     }
     gridd.orig <- gridd
-    for (sppno in 1:length(which.species)) {
+    for (sppno in seq_along(which.species)) {
       gridd <- gridd.orig 
       gridres1 <- gridd[2, 1] - gridd[1, 1]
       gridres2 <- if (Rank == 2) gridd[2, 2] - gridd[1, 2] else 0
@@ -1203,7 +1207,7 @@ Coef.rrvgam <- function(object,
         if (length(index) != 1)
           warning("could not find a single maximum")
         if (Rank == 2) {
-          initvalue <- rep(xvals[index,], length = Rank)  # for optim()
+          initvalue <- rep_len(xvals[index,], Rank)  # for optim()
           if (abs(initvalue[1] - extents[1, 1]) < smallno)
             initvalue[1] <- extents[1, 1] + smallno
           if (abs(initvalue[1] - extents[2, 1]) < smallno)
@@ -1424,18 +1428,18 @@ lvplot.rrvgam <- function(object,
     }
 
 
-    pch  <- rep(pch,  length = length(which.species))
-    pcol <- rep(pcol, length = length(which.species))
-    pcex <- rep(pcex, length = length(which.species))
-    llty <- rep(llty, length = length(which.species))
-    lcol <- rep(lcol, length = length(which.species))
-    llwd <- rep(llwd, length = length(which.species))
-    adj.arg <- rep(adj.arg, length = length(which.species))
+    pch     <- rep_len(pch,     length(which.species))
+    pcol    <- rep_len(pcol,    length(which.species))
+    pcex    <- rep_len(pcex,    length(which.species))
+    llty    <- rep_len(llty,    length(which.species))
+    lcol    <- rep_len(lcol,    length(which.species))
+    llwd    <- rep_len(llwd,    length(which.species))
+    adj.arg <- rep_len(adj.arg, length(which.species))
 
     sppnames <- if (type == "predictors") dimnames(r.curves)[[2]] else
                                           dimnames(object@y)[[2]]
     if (Rank == 1) {
-      for (sppno in 1:length(which.species)) {
+      for (sppno in seq_along(which.species)) {
         thisSpecies <- which.species[sppno]
         indexSpecies <- if (is.character(which.species))
            match(which.species[sppno], sppnames) else which.species[sppno]
@@ -1460,10 +1464,10 @@ lvplot.rrvgam <- function(object,
       if (sites) {
         text(latvarmat[,1], latvarmat[,2], adj = 0.5,
              labels = if (is.null(spch)) dimnames(latvarmat)[[1]] else
-             rep(spch, length = nrow(latvarmat)),
+             rep_len(spch, nrow(latvarmat)),
              col = scol, cex = scex, font=sfont)
       }
-      for (sppno in 1:length(which.species)) {
+      for (sppno in seq_along(which.species)) {
           thisSpecies <- which.species[sppno]
           indexSpecies <- if (is.character(which.species))
                match(which.species[sppno], sppnames) else
@@ -1475,7 +1479,7 @@ lvplot.rrvgam <- function(object,
                  col = pcol[sppno], cex = pcex[sppno], pch = pch[sppno])
       }
       if (label.arg) {
-        for (sppno in 1:length(which.species)) {
+        for (sppno in seq_along(which.species)) {
           thisSpecies <- which.species[sppno]
           indexSpecies <- if (is.character(which.species))
              match(which.species[sppno], sppnames) else
@@ -1532,7 +1536,7 @@ predict.rrvgam <- function (object, newdata = NULL,
       setup.smart("read", smart.prediction = object@smart.prediction)
     }
 
-    tt <- terms(object)  # 11/8/03; object@terms$terms 
+    tt <- terms(object)  # 20030811; object@terms$terms 
     X <- model.matrix(delete.response(tt), newdata,
                       contrasts = if (length(object@contrasts))
                                   object@contrasts else NULL,
@@ -1540,7 +1544,7 @@ predict.rrvgam <- function (object, newdata = NULL,
 
     if (nice21 && nrow(X) != nrow(newdata)) {
       as.save <- attr(X, "assign")
-      X <- X[rep(1, nrow(newdata)),, drop = FALSE]
+      X <- X[rep_len(1, nrow(newdata)),, drop = FALSE]
       dimnames(X) <- list(dimnames(newdata)[[1]], "(Intercept)")
       attr(X, "assign") <- as.save  # Restored 
     }
@@ -1572,13 +1576,13 @@ predict.rrvgam <- function (object, newdata = NULL,
     MSratio <- M / NOS  # First value is g(mean) = quadratic form in latvar
     if (type == "terms") {
       terms.mat <- matrix(0, nrow(X), Rank*NOS)  # 1st R cols for spp.1, etc.
-      interceptvector <- rep(0, len = NOS)
+      interceptvector <- rep_len(0, NOS)
     } else {
       etamat <- matrix(0, nrow(X), M)  # Could contain derivatives
     }
     ind8 <- 1:Rank
     which.species <- 1:NOS  # Do it all for all species
-    for (sppno in 1:length(which.species)) {
+    for (sppno in seq_along(which.species)) {
       thisSpecies <- which.species[sppno]
       indexSpecies <- if (is.character(which.species))
         match(which.species[sppno], sppnames) else which.species[sppno]
@@ -1632,6 +1636,8 @@ predict.rrvgam <- function (object, newdata = NULL,
 
 setMethod("predict", "rrvgam", function(object, ...)
            predict.rrvgam(object, ...))
+
+
 
 
 predictrrvgam <- function(object, grid, sppno, Rank = 1,
@@ -1725,19 +1731,19 @@ plot.rrvgam <- function(x,
   if (all((MSratio <- M / NOS) != c(1,2)))
     stop("bad value for 'MSratio'")
 
-  pcol <- rep(pcol, length = Rank*NOS)
-  pcex <- rep(pcex, length = Rank*NOS)
-  pch  <- rep(pch,  length = Rank*NOS)
-  lcol <- rep(lcol, length = Rank*NOS)
-  lwd  <- rep(lwd,  length = Rank*NOS)
-  lty  <- rep(lty,  length = Rank*NOS)
-  xlab <- rep(xlab, length = Rank)
+  pcol <- rep_len(pcol, Rank*NOS)
+  pcex <- rep_len(pcex, Rank*NOS)
+  pch  <- rep_len(pch,  Rank*NOS)
+  lcol <- rep_len(lcol, Rank*NOS)
+  lwd  <- rep_len(lwd,  Rank*NOS)
+  lty  <- rep_len(lty,  Rank*NOS)
+  xlab <- rep_len(xlab, Rank)
 
   if (!length(which.species)) which.species <- 1:NOS
   if (length(ylab)) 
-    ylab <- rep(ylab, len = length(which.species))  # Too long if overlay
+    ylab <- rep_len(ylab, length(which.species))  # Too long if overlay
   if (length(main))
-    main <- rep(main, len = length(which.species))  # Too long if overlay
+    main <- rep_len(main, length(which.species))  # Too long if overlay
   latvarmat <- latvar(x)
   nice21 <- length(x@control$colx1.index) == 1 &&
                    names(x@control$colx1.index) == "(Intercept)"
@@ -1745,7 +1751,7 @@ plot.rrvgam <- function(x,
     stop("can only handle intercept-only models")
 
   counter <- 0
-  for (sppno in 1:length(which.species)) {
+  for (sppno in seq_along(which.species)) {
     thisSpecies <- which.species[sppno]
     indexSpecies <- if (is.character(which.species))
         match(which.species[sppno], sppnames) else which.species[sppno]
@@ -1836,9 +1842,9 @@ persp.rrvgam <-
               c(0, max(fvmat)*stretch) else
               range(coefobj@latvar[,2])
   }
-  xlim <- rep(xlim, length = 2)
-  ylim <- rep(ylim, length = 2)
-  gridlength <- rep(gridlength, length = Rank)
+  xlim <- rep_len(xlim, 2)
+  ylim <- rep_len(ylim, 2)
+  gridlength <- rep_len(gridlength, Rank)
   latvar1 <- seq(xlim[1], xlim[2], length = gridlength[1])
   latvar2 <- if (Rank == 2)
                seq(ylim[1], ylim[2], len = gridlength[2]) else
@@ -1875,13 +1881,13 @@ persp.rrvgam <-
     if (show.plot) {
       if (!length(ylim.orig))
         ylim <- c(0, max(fitvals[,which.species.numer]) * stretch)  # A revision
-      col <- rep(col, len = length(which.species.numer))
-      lty <- rep(lty, len = length(which.species.numer))
-      lwd <- rep(lwd, len = length(which.species.numer))
+      col <- rep_len(col, length(which.species.numer))
+      lty <- rep_len(lty, length(which.species.numer))
+      lwd <- rep_len(lwd, length(which.species.numer))
       matplot(latvar1, fitvals, xlab = xlab, ylab = ylab,
               type = "n", main = main, xlim = xlim, ylim = ylim, ...)
       if (rugplot) rug(latvar(object)) 
-      for (sppno in 1:length(which.species.numer)) {
+      for (sppno in seq_along(which.species.numer)) {
         ptr2 <- which.species.numer[sppno]  # points to species column
         lines(latvar1, fitvals[,ptr2], col = col[sppno], 
               lty = lty[sppno], lwd = lwd [sppno], ...)
@@ -2099,12 +2105,6 @@ setMethod("Tol", "rrvgam", function(object, ...)
 
 
 setMethod("show",  "rrvgam", function(object) show.vgam(object))
-
-
-
-
-
-
 
 
 

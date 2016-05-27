@@ -4,7 +4,7 @@
 \alias{rhuber}
 \alias{qhuber}
 \alias{phuber}
-\title{Huber's least favourable distribution}
+\title{Huber's Least Favourable Distribution}
 \description{
   Density, distribution function, quantile function and random generation
   for Huber's least favourable distribution, see Huber and Ronchetti (2009).

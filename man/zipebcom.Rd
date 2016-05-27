@@ -1,13 +1,16 @@
 \name{zipebcom}
 \alias{zipebcom}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Exchangeable bivariate cloglog odds-ratio model from a
-        zero-inflated Poisson distribution }
+\title{ Exchangeable Bivariate cloglog Odds-ratio Model From a
+        Zero-inflated Poisson Distribution }
+
+
 \description{
   Fits an exchangeable bivariate odds-ratio model to two binary
   responses with a complementary log-log link.
   The data are assumed to come from a zero-inflated Poisson distribution
   that has been converted to presence/absence.
+
 
 }
 \usage{
@@ -24,11 +27,13 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   Argument \code{imu12} may be of length 2 (one element for each response).
 
 
+
   }
   \item{lphi12}{
   Link function applied to the \eqn{\phi}{phi} parameter of the
   zero-inflated Poisson distribution (see \code{\link{zipoisson}}).
   See \code{\link{Links}} for more choices.
+
 
 
   }

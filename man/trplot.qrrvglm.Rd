@@ -15,9 +15,9 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
                label.sites = FALSE, sitenames = rownames(object@y), 
                axes.equal = TRUE, cex = par()$cex, 
                col = 1:(nos * (nos - 1)/2), log = "", 
-               lty = rep(par()$lty, length.out = nos * (nos - 1)/2), 
-               lwd = rep(par()$lwd, length.out = nos * (nos - 1)/2), 
-               tcol = rep(par()$col, length.out = nos * (nos - 1)/2), 
+               lty = rep_len(par()$lty, nos * (nos - 1)/2), 
+               lwd = rep_len(par()$lwd, nos * (nos - 1)/2), 
+               tcol = rep_len(par()$col, nos * (nos - 1)/2), 
                xlab = NULL, ylab = NULL,
                main = "", type = "b", check.ok = TRUE, ...)
 }

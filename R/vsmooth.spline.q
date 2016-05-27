@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -150,7 +150,7 @@ vsmooth.spline <-
   my.call <- match.call()
   if (missing(y)) {
     if (is.list(x)) {
-      if (any(is.na(match(c("x", "y"), names(x)))))
+      if (anyNA(match(c("x", "y"), names(x))))
         stop("cannot find 'x' and 'y' in list")
       y <- x$y
       x <- x$x
@@ -175,14 +175,14 @@ vsmooth.spline <-
     stop("lengths of arguments 'x' and 'y' must match")
   }
 
-  if (any(is.na(xvector)) || any(is.na(ymat))) {
+  if (anyNA(xvector) || anyNA(ymat)) {
     stop("NAs not allowed in arguments 'x' or 'y'")
   }
 
   if (is.null(w)) {
     wzmat <- matrix(1, n_lm, M)
   } else {
-    if (any(is.na(w))) {
+    if (anyNA(w)) {
       stop("NAs not allowed in argument 'w'")
     }
     wzmat <- as.matrix(w)
@@ -226,7 +226,7 @@ vsmooth.spline <-
       stop("not enough unique 'x' values (need 7 or more)")
     }
 
-    dim1U <- dim2wz  # 10/1/00; was M * (M+1) / 2
+    dim1U <- dim2wz  # 20000110; was M * (M+1) / 2
 
     collaps <- .C("vsuff9",
       as.integer(n_lm), as.integer(neff), as.integer(ooo),
@@ -261,8 +261,8 @@ vsmooth.spline <-
     }
 
     ncb0  <- ncol(constraints[[2]])  # Of xxx and not of the intercept
-    spar  <- rep(if (length(spar)) spar else 0, length = ncb0)
-    dfvec <- rep(df, length = ncb0)
+    spar  <- rep_len(if (length(spar)) spar else 0, ncb0)
+    dfvec <- rep_len(df, ncb0)
 
     if (!missing.spar) {
       ispar <- 1
@@ -286,7 +286,7 @@ vsmooth.spline <-
                        "Bcoefficients" = matrix(NA_real_, 1, 1),
                        "knots"         = numeric(0),
                        "xmin"          = numeric(0),
-                       "xmax"          = numeric(0))  # 8/11/03
+                       "xmax"          = numeric(0))  # 20031108
 
       dratio <- NA_real_
 
@@ -294,12 +294,12 @@ vsmooth.spline <-
       new("vsmooth.spline",
           "call"         = my.call,
           "constraints"  = constraints,
-          "df"     = if (ispar == 0) dfvec else rep(2, length(spar)),
+          "df"     = if (ispar == 0) dfvec else rep_len(2, length(spar)),
           "lfit"         = lfit,
           "nlfit"        = junk.fill,
-          "spar"   = if (ispar == 1) spar   else rep(Inf, length(dfvec)),
+          "spar"   = if (ispar == 1) spar   else rep_len(Inf, length(dfvec)),
           "lambda" = if (ispar == 1) dratio * 16.0^(spar * 6.0 - 2.0) else
-                                     rep(Inf, length(dfvec)),
+                                     rep_len(Inf, length(dfvec)),
           "w"            = matrix(collaps$wzbar, neff, dim2wz),
           "x"            = usortx,
           "y"            = lfit@fitted.values,
@@ -311,13 +311,13 @@ vsmooth.spline <-
     
 
   xbar <- (usortx - usortx[1]) / (usortx[neff] - usortx[1])
-  noround <- TRUE   # Improvement 3/8/02
+  noround <- TRUE   # Improvement 20020803
   nknots <- nk
   if (all.knots) {
     knot <- if (noround) {
-      valid.vknotl2(c(rep(xbar[1], 3), xbar, rep(xbar[neff], 3)))
+      valid.vknotl2(c(rep_len(xbar[1], 3), xbar, rep_len(xbar[neff], 3)))
     } else { 
-      c(rep(xbar[1], 3), xbar, rep(xbar[neff], 3))
+      c(rep_len(xbar[1], 3), xbar, rep_len(xbar[neff], 3))
     }
     if (length(nknots)) {
       warning("overriding 'nk' by 'all.knots = TRUE'")
@@ -560,12 +560,12 @@ plotvsmooth.spline <- function(x, xlab = "x", ylab = "", points = TRUE,
                                add = FALSE, ...) {
   points.arg <- points; rm(points)
   M <- ncol(x@y)
-  pcol <- rep(pcol, length = M)
-  pcex <- rep(pcex, length = M)
-  pch  <- rep(pch,  length = M)
-  lcol <- rep(lcol, length = M)
-  lwd  <- rep(lwd,  length = M)
-  lty  <- rep(lty,  length = M)
+  pcol <- rep_len(pcol, M)
+  pcex <- rep_len(pcex, M)
+  pch  <- rep_len(pch,  M)
+  lcol <- rep_len(lcol, M)
+  lwd  <- rep_len(lwd,  M)
+  lty  <- rep_len(lty,  M)
   if (!add)
     matplot(x@x, x@yin, type = "n", xlab = xlab, ylab = ylab, ...)
   for (ii in 1:ncol(x@y)) {

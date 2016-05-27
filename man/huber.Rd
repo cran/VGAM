@@ -2,7 +2,7 @@
 \alias{huber2}
 \alias{huber1}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Huber's least favourable distribution family function }
+\title{ Huber's Least Favourable Distribution Family Function }
 \description{
   M-estimation of the two parameters of
   Huber's least favourable distribution.

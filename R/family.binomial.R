@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -173,7 +173,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
       mustart.use <- if (length(mustart.orig)) {
         mustart.orig
       } else if ( .imethod == 1) {
-        rep(weighted.mean(y, w), len = n)
+        rep_len(weighted.mean(y, w), n)
       } else if ( .imethod == 2) {
         .ishrinkage * weighted.mean(y, w) + (1 - .ishrinkage ) * y
       } else if ( .imethod == 3) {
@@ -191,9 +191,8 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
                               nvec = if (is.numeric(extra$orig.w))
                                      round(w / extra$orig.w) else round(w),
                               mustart = mustart.use))
-      init.rho <- if (is.Numeric( .irho ))
-                    rep( .irho , length = n) else
-                    rep(try.this, length = n)
+      init.rho <- if (is.Numeric( .irho )) rep_len( .irho , n) else
+                  rep_len(try.this, n)
       etastart <-
         cbind(theta2eta(mustart.use,  .lmu ,  earg = .emu ),
               theta2eta(init.rho,     .lrho , earg = .erho ))
@@ -411,9 +410,9 @@ dbinom2.or <-
   }
 
   L <- max(length(mu1), length(mu2), length(oratio))
-  if (length(oratio) != L) oratio <- rep(oratio, len = L)
-  if (length(mu1   ) != L) mu1    <- rep(mu1,    len = L)
-  if (length(mu2   ) != L) mu2    <- rep(mu2,    len = L)
+  if (length(oratio) != L) oratio <- rep_len(oratio, L)
+  if (length(mu1   ) != L) mu1    <- rep_len(mu1,    L)
+  if (length(mu2   ) != L) mu2    <- rep_len(mu2,    L)
 
   a.temp <- 1 + (mu1+mu2)*(oratio-1)
   b.temp <- -4 * oratio * (oratio-1) * mu1 * mu2
@@ -583,7 +582,7 @@ rbinom2.or <-
     if (!length(etastart)) {
         pmargin <- cbind(mustart[, 3] + mustart[, 4],
                          mustart[, 2] + mustart[, 4])
-        ioratio <- if (length( .ioratio)) rep( .ioratio , len = n) else
+        ioratio <- if (length( .ioratio)) rep_len( .ioratio , n) else
                    mustart[, 4] * mustart[, 1] / (mustart[, 2] *
                                                   mustart[, 3])
         if (length( .imu1 )) pmargin[, 1] <- .imu1
@@ -813,9 +812,9 @@ dbinom2.rho <-
   }
 
   nn <- max(length(mu1), length(mu2), length(rho))
-  rho <- rep(rho, len = nn)
-  mu1 <- rep(mu1, len = nn)
-  mu2 <- rep(mu2, len = nn)
+  rho <- rep_len(rho, nn)
+  mu1 <- rep_len(mu1, nn)
+  mu2 <- rep_len(mu2, nn)
   eta1 <- qnorm(mu1)
   eta2 <- qnorm(mu2)
   p11 <- pbinorm(eta1, eta2, cov12 = rho)
@@ -1010,10 +1009,10 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
           mu2.init <- fitted(glm2.fit)
       } else if ( .imethod == 2) {
           mu1.init <- if (is.Numeric( .imu1 ))
-                      rep( .imu1 , length = n) else
+                      rep_len( .imu1 , n) else
                       mu[, 3] + mu[, 4]
           mu2.init <- if (is.Numeric( .imu2 ))
-                      rep( .imu2 , length = n) else
+                      rep_len( .imu2 , n) else
                       mu[, 2] + mu[, 4]
       } else {
         stop("bad value for argument 'imethod'")
@@ -1055,7 +1054,7 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
 
 
       rho.init <- if (is.Numeric( .irho ))
-                   rep( .irho , len = n) else {
+                   rep_len( .irho , n) else {
           try.this
       }
 
@@ -1269,9 +1268,9 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   sd2 <- sqrt(var2)
   rho <- cov12 / (sd1 * sd2)
 
-  if (any(is.na(q1)    | is.na(q2)    |
-          is.na(sd1)   | is.na(sd2)   |
-          is.na(mean1) | is.na(mean2) | is.na(rho)))
+  if (anyNA(q1)    || anyNA(q2)    ||
+      anyNA(sd1)   || anyNA(sd2)   ||
+      anyNA(mean1) || anyNA(mean2) || anyNA(rho))
     stop("no NAs allowed in arguments or variables 'q1', 'q2', 'mean1', ",
          "'mean2', 'sd1', 'sd2', 'cov12'")
   if (min(rho) < -1 || max(rho) > +1)
@@ -1287,13 +1286,13 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
              length(mean1), length(mean2),
              length(sd1), length(sd2),
              length(rho))
-  if (length(q1)    != LLL) q1    <- rep(q1,     len = LLL)
-  if (length(q2)    != LLL) q2    <- rep(q2,     len = LLL)
-  if (length(mean1) != LLL) mean1 <- rep(mean1,  len = LLL)
-  if (length(mean2) != LLL) mean2 <- rep(mean2,  len = LLL)
-  if (length(sd1)   != LLL) sd1   <- rep(sd1,    len = LLL)
-  if (length(sd2)   != LLL) sd2   <- rep(sd2,    len = LLL)
-  if (length(rho)   != LLL) rho   <- rep(rho,    len = LLL)
+  if (length(q1)    != LLL) q1    <- rep_len(q1,     LLL)
+  if (length(q2)    != LLL) q2    <- rep_len(q2,     LLL)
+  if (length(mean1) != LLL) mean1 <- rep_len(mean1,  LLL)
+  if (length(mean2) != LLL) mean2 <- rep_len(mean2,  LLL)
+  if (length(sd1)   != LLL) sd1   <- rep_len(sd1,    LLL)
+  if (length(sd2)   != LLL) sd2   <- rep_len(sd2,    LLL)
+  if (length(rho)   != LLL) rho   <- rep_len(rho,    LLL)
 
   Zedd1 <- Z1 <- (q1 - mean1) / sd1
   Zedd2 <- Z2 <- (q2 - mean2) / sd2
@@ -1341,9 +1340,9 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   sd2 <- sqrt(var2)
   rho <- cov12 / (sd1 * sd2)
 
-  if (any(is.na(x1)    | is.na(x2)    |
-          is.na(sd1)   | is.na(sd2)   |
-          is.na(mean1) | is.na(mean2) | is.na(rho)))
+  if (anyNA(x1)    || anyNA(x2)    ||
+      anyNA(sd1)   || anyNA(sd2)   ||
+      anyNA(mean1) || anyNA(mean2) || anyNA(rho))
     stop("no NAs allowed in arguments or variables 'x1', 'x2', 'mean1', ",
          "'mean2', 'sd1', 'sd2', 'cov12'")
   if (min(rho) < -1 || max(rho) > +1)
@@ -1359,13 +1358,13 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
              length(mean1), length(mean2),
              length(sd1), length(sd2),
              length(rho))
-  if (length(x1)    != LLL) x1    <- rep(x1,     len = LLL)
-  if (length(x2)    != LLL) x2    <- rep(x2,     len = LLL)
-  if (length(mean1) != LLL) mean1 <- rep(mean1,  len = LLL)
-  if (length(mean2) != LLL) mean2 <- rep(mean2,  len = LLL)
-  if (length(sd1)   != LLL) sd1   <- rep(sd1,    len = LLL)
-  if (length(sd2)   != LLL) sd2   <- rep(sd2,    len = LLL)
-  if (length(rho)   != LLL) rho   <- rep(rho,    len = LLL)
+  if (length(x1)    != LLL) x1    <- rep_len(x1,     LLL)
+  if (length(x2)    != LLL) x2    <- rep_len(x2,     LLL)
+  if (length(mean1) != LLL) mean1 <- rep_len(mean1,  LLL)
+  if (length(mean2) != LLL) mean2 <- rep_len(mean2,  LLL)
+  if (length(sd1)   != LLL) sd1   <- rep_len(sd1,    LLL)
+  if (length(sd2)   != LLL) sd2   <- rep_len(sd2,    LLL)
+  if (length(rho)   != LLL) rho   <- rep_len(rho,    LLL)
 
   Z1 <- (x1 - mean1) / sd1
   Z2 <- (x2 - mean2) / sd2
@@ -1420,7 +1419,7 @@ my.dbinom <- function(x,
             " Var(size) is intractable"),
   initialize = eval(substitute(expression({
     predictors.names <- "size"
-    extra$temp2 <- rep( .prob , length = n)
+    extra$temp2 <- rep_len( .prob , n)
 
     if (is.null(etastart)) {
       nvec <- (y+0.1)/extra$temp2
@@ -1492,10 +1491,10 @@ my.dbinom <- function(x,
 
 
   LLL <- max(length(x), length(size), length(shape1), length(shape2))
-  if (length(x)      != LLL) x      <- rep(x,      len = LLL)
-  if (length(size)   != LLL) size   <- rep(size,   len = LLL)
-  if (length(shape1) != LLL) shape1 <- rep(shape1, len = LLL)
-  if (length(shape2) != LLL) shape2 <- rep(shape2, len = LLL)
+  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
+  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
+  if (length(shape1) != LLL) shape1 <- rep_len(shape1, LLL)
+  if (length(shape2) != LLL) shape2 <- rep_len(shape2, LLL)
 
   ans <- x
   ans[TRUE] <- log(0)
@@ -1606,10 +1605,10 @@ my.dbinom <- function(x,
     stop("bad input for argument 'shape2'")
   LLL <- max(length(q), length(size), length(shape1), length(shape2))
 
-  if (length(q)       != LLL) q      <- rep(q,      len = LLL)
-  if (length(shape1)  != LLL) shape1 <- rep(shape1, len = LLL)
-  if (length(shape2)  != LLL) shape2 <- rep(shape2, len = LLL)
-  if (length(size)    != LLL) size   <- rep(size,   len = LLL)
+  if (length(q)       != LLL) q      <- rep_len(q,      LLL)
+  if (length(shape1)  != LLL) shape1 <- rep_len(shape1, LLL)
+  if (length(shape2)  != LLL) shape2 <- rep_len(shape2, LLL)
+  if (length(size)    != LLL) size   <- rep_len(size,   LLL)
 
   ans <- q   # Retains names(q)
   ans[] <- 0  #  Set all elements to 0
@@ -1661,11 +1660,11 @@ my.dbinom <- function(x,
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
-  if (length(size)   != use.n) size   <- rep(size,   len = use.n)
-  if (length(shape1) != use.n) shape1 <- rep(shape1, len = use.n)
-  if (length(shape2) != use.n) shape2 <- rep(shape2, len = use.n)
+  if (length(size)   != use.n) size   <- rep_len(size,   use.n)
+  if (length(shape1) != use.n) shape1 <- rep_len(shape1, use.n)
+  if (length(shape2) != use.n) shape2 <- rep_len(shape2, use.n)
 
-  ans <- rep(NA_real_, len = use.n)
+  ans <- rep_len(NA_real_, use.n)
   okay0 <- is.finite(shape1) & is.finite(shape2)
   if (smalln <- sum(okay0))
     ans[okay0] <- rbinom(n = smalln, size = size[okay0],
@@ -1684,7 +1683,7 @@ my.dbinom <- function(x,
                          prob = 1)
   if (sum.okay3 <- sum(okay3)) {
     if (length( .dontuse.prob ) != use.n)
-      .dontuse.prob   <- rep(.dontuse.prob,   len = use.n)
+      .dontuse.prob   <- rep_len( .dontuse.prob , use.n)
     ans[okay3] <- rbinom(n = sum.okay3, size = size[okay3],
                          prob = .dontuse.prob[okay3])
   }
@@ -1723,7 +1722,7 @@ my.dbinom <- function(x,
 
 
   NN <- length(nvec)
-  ans <- rep(0.0, len = NN)
+  ans <- rep_len(0.0, NN)
   if (first) {
     for (ii in 1:NN) {
       temp639 <- lbeta(shape1[ii], shape2[ii])
@@ -1840,9 +1839,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       mustart.use <- if (length(mustart.orig)) mustart.orig else
                      mustart
 
-      shape1 <- rep( .ishape1 , len = n)
+      shape1 <- rep_len( .ishape1 , n)
       shape2 <- if (length( .ishape2 )) {
-                  rep( .ishape2 , len = n)
+                  rep_len( .ishape2 , n)
                 } else if (length(mustart.orig)) {
                   shape1 * (1 / mustart.use - 1)
                 } else if ( .imethod == 1) {
@@ -2083,11 +2082,11 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
            namesof("shape", .lshape , earg = .eshape , tag = FALSE))
 
     if (length( .iprob ))
-      prob.init <- rep( .iprob , len = n)
+      prob.init <- rep_len( .iprob , n)
 
     if (!length(etastart) ||
       ncol(cbind(etastart)) != 2) {
-      shape.init <- rep( .ishape , len = n)
+      shape.init <- rep_len( .ishape , n)
       etastart <-
         cbind(theta2eta(prob.init,  .lprob ,  earg = .eprob ),
               theta2eta(shape.init, .lshape , earg = .eshape ))
@@ -2316,12 +2315,11 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
           namesof("prob2", .lprob2,earg =  .eprob2, tag = FALSE))
 
     prob1.init <- if (is.Numeric( .iprob1))
-                   rep( .iprob1 , len = n) else
-                   rep(weighted.mean(y[, 1], w = w), len = n)
+                   rep_len( .iprob1 , n) else
+                   rep_len(weighted.mean(y[, 1], w = w), n)
     prob2.init <- if (is.Numeric( .iprob2 ))
-                   rep( .iprob2 , length = n) else
-                   rep(weighted.mean(y[, 2], w = w*y[, 1]),
-                       length = n)
+                   rep_len( .iprob2 , n) else
+                   rep_len(weighted.mean(y[, 2], w = w*y[, 1]), n)
 
     if (!length(etastart)) {
       etastart <-
@@ -2497,11 +2495,11 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
     if (!length(etastart)) {
         pstar.init <- ((mu[, 3]+mu[, 4]) + (mu[, 2]+mu[, 4])) / 2
-        phi.init <- if (length(.iphi12)) rep(.iphi12, len = n) else
+        phi.init <- if (length(.iphi12)) rep_len( .iphi12 , n) else
             min(propY1.eq.0 * 0.95, propY2.eq.0 * 0.95, pstar.init/1.5)
-        oratio.init <- if (length( .ioratio)) rep( .ioratio, len = n) else
+        oratio.init <- if (length( .ioratio)) rep_len( .ioratio , n) else
                   mu[, 4]*mu[, 1]/(mu[, 2]*mu[, 3])
-        mu12.init <- if (length(.imu12)) rep(.imu12, len = n) else
+        mu12.init <- if (length(.imu12)) rep_len( .imu12 , n) else
             pstar.init / (1-phi.init)
 
         etastart <- cbind(
@@ -2670,11 +2668,11 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
          save.weights <- control$save.weights <- FALSE
     }
     if (is.null(etastart)) {
-      mu1.init= if (is.Numeric(.imu1))
-                rep(.imu1, length = n) else
+      mu1.init= if (is.Numeric( .imu1 ))
+                rep_len( .imu1 , n) else
                 mu[, 3] + mu[, 4]
-      mu2.init= if (is.Numeric(.imu2))
-                rep(.imu2, length = n) else
+      mu2.init= if (is.Numeric( .imu2 ))
+                rep_len( .imu2 , n) else
                 mu[, 2] + mu[, 4]
       etastart <-
         cbind(theta2eta(mu1.init, .lmu12 , earg = .emu12 ),
@@ -2685,7 +2683,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   linkinv = eval(substitute(function(eta, extra = NULL) {
     pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
                      eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
-    rhovec <- rep( .rho , len = nrow(eta))
+    rhovec <- rep_len( .rho , nrow(eta))
     p11 <- pbinorm(eta[, 1], eta[, 2], cov12 = rhovec)
     p01 <- pmin(pmargin[, 2] - p11, pmargin[, 2])
     p10 <- pmin(pmargin[, 1] - p11, pmargin[, 1])
@@ -2736,7 +2734,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   deriv = eval(substitute(expression({
     pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
                      eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
-    rhovec <- rep( .rho , len = nrow(eta))
+    rhovec <- rep_len( .rho , nrow(eta))
     p11 <- pbinorm(eta[, 1], eta[, 2], cov12 = rhovec)
     p01 <- pmargin[, 2]-p11
     p10 <- pmargin[, 1]-p11
@@ -2921,8 +2919,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
         mu1.init <- weighted.mean(extra$ymat2col[, 1], c(w))
         index1 <- (extra$ymat2col[, 1] == 1)
         mu2.init <- weighted.mean(extra$ymat2col[index1, 2], w[index1, 1])
-        mu1.init <- rep(mu1.init, len = n)
-        mu2.init <- rep(mu2.init, len = n)
+        mu1.init <- rep_len(mu1.init, n)
+        mu2.init <- rep_len(mu2.init, n)
 
       } else if ( .imethod == 2) {
  warning("not working yet2")
@@ -2939,9 +2937,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       }
 
       if (length( .imu1 ))
-        mu1.init <- rep( .imu1 , length = n)
+        mu1.init <- rep_len( .imu1 , n)
       if (length( .imu2 ))
-        mu2.init <- rep( .imu2 , length = n)
+        mu2.init <- rep_len( .imu2 , n)
 
 
 
@@ -2982,8 +2980,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                                 initmu2  = mu2.init,
                                 nvec = nvec ))
 
-      rho.init <- if (is.Numeric( .irho ))
-                   rep( .irho , len = n) else {
+      rho.init <- if (is.Numeric( .irho )) rep_len( .irho , n) else {
           try.this
       }
 

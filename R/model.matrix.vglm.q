@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -55,8 +55,8 @@ attrassignlm <- function(object, ...)
 
 
  vlm2lm.model.matrix <-
-  function(x.vlm, Hlist = NULL,
-           which.linpred = 1,
+  function(x.vlm, Hlist = NULL, 
+           which.linpred = 1, 
            M = NULL) {
 
  
@@ -83,7 +83,7 @@ attrassignlm <- function(object, ...)
     stop("'n.lm' does not seem to be an integer")
   linpred.index <- which.linpred
   vecTF <- Hmatrices[linpred.index, ] != 0
-  X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index, vecTF,
+  X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index, vecTF, 
                     drop = FALSE]
   X.lm.jay
 }
@@ -93,7 +93,7 @@ attrassignlm <- function(object, ...)
 
 
  lm2vlm.model.matrix <-
-  function(x, Hlist = NULL, assign.attributes = TRUE,
+  function(x, Hlist = NULL, assign.attributes = TRUE, 
            M = NULL, xij = NULL, Xm2 = NULL) {
 
 
@@ -144,7 +144,7 @@ attrassignlm <- function(object, ...)
     
       nasgn <- oasgn <- attr(x, "assign")
       lowind <- 0
-      for (ii in 1:length(oasgn)) {
+      for (ii in seq_along(oasgn)) {
           mylen <- length(oasgn[[ii]]) * ncolHlist[oasgn[[ii]][1]]
           nasgn[[ii]] <- (lowind+1):(lowind+mylen)
           lowind <- lowind + mylen
@@ -157,11 +157,11 @@ attrassignlm <- function(object, ...)
       fred <- unlist(lapply(nasgn, length)) / unlist(lapply(oasgn, length))
       vasgn <- vector("list", sum(fred))
       kk <- 0
-      for (ii in 1:length(oasgn)) {
+      for (ii in seq_along(oasgn)) {
         temp <- matrix(nasgn[[ii]], ncol = length(oasgn[[ii]]))
         for (jloc in 1:nrow(temp)) {
           kk <- kk + 1
-          vasgn[[kk]] <- temp[jloc,]
+          vasgn[[kk]] <- temp[jloc, ]
         }
       }
       names(vasgn) <- vlabel(names(oasgn), fred, M)
@@ -186,41 +186,41 @@ attrassignlm <- function(object, ...)
   at.vlmx <- attr(X.vlm, "assign")
   at.Xm2 <- attr(Xm2, "assign")
 
-  for (ii in 1:length(xij)) {
-      form.xij <- xij[[ii]]
-      if (length(form.xij) != 3) 
-        stop("xij[[", ii, "]] is not a formula with a response")
-      tform.xij <- terms(form.xij)
-      aterm.form <- attr(tform.xij, "term.labels")  # Does not include response
-      if (length(aterm.form) != M)
-        stop("xij[[", ii, "]] does not contain ", M, " terms")
+  for (ii in seq_along(xij)) {
+    form.xij <- xij[[ii]]
+    if (length(form.xij) != 3) 
+      stop("xij[[", ii, "]] is not a formula with a response")
+    tform.xij <- terms(form.xij)
+    aterm.form <- attr(tform.xij, "term.labels")  # Does not include response
+    if (length(aterm.form) != M)
+      stop("xij[[", ii, "]] does not contain ", M, " terms")
 
-      name.term.y <- as.character(form.xij)[2]
-      cols.X.vlm <- at.vlmx[[name.term.y]]  # May be > 1 in length.
+    name.term.y <- as.character(form.xij)[2]
+    cols.X.vlm <- at.vlmx[[name.term.y]]  # May be > 1 in length.
 
-      x.name.term.2 <- aterm.form[1]   # Choose the first one
-      One.such.term <- at.Xm2[[x.name.term.2]]
-      for (bbb in 1:length(One.such.term)) {
-        use.cols.Xm2 <- NULL
-        for (sss in 1:M) {
-          x.name.term.2 <- aterm.form[sss]
-          one.such.term <- at.Xm2[[x.name.term.2]]
-          use.cols.Xm2 <- c(use.cols.Xm2, one.such.term[bbb])
-        } # End of sss
+    x.name.term.2 <- aterm.form[1]   # Choose the first one
+    One.such.term <- at.Xm2[[x.name.term.2]]
+    for (bbb in seq_along(One.such.term)) {
+      use.cols.Xm2 <- NULL
+      for (sss in 1:M) {
+        x.name.term.2 <- aterm.form[sss]
+        one.such.term <- at.Xm2[[x.name.term.2]]
+        use.cols.Xm2 <- c(use.cols.Xm2, one.such.term[bbb])
+      } # End of sss
 
-      allXk <- Xm2[,use.cols.Xm2,drop=FALSE]
-      cmat.no <- (at.x[[name.term.y]])[1]  # First one will do (all the same).
+      allXk <- Xm2[, use.cols.Xm2, drop = FALSE]
+      cmat.no <- (at.x[[name.term.y]])[1]  # 1st one will do (all the same).
       cmat <- Hlist[[cmat.no]]
       Rsum.k <- ncol(cmat)
       tmp44 <- kronecker(matrix(1, nrow.X.lm, 1), t(cmat)) *
-               kronecker(allXk, matrix(1,ncol(cmat), 1))  # n*Rsum.k x M
+               kronecker(allXk, matrix(1, ncol(cmat), 1))  # n*Rsum.k x M
 
       tmp44 <- array(t(tmp44), c(M, Rsum.k, nrow.X.lm))
-      tmp44 <- aperm(tmp44, c(1,3,2))  # c(M, n, Rsum.k)
+      tmp44 <- aperm(tmp44, c(1, 3, 2))  # c(M, n, Rsum.k)
       rep.index <- cols.X.vlm[((bbb-1)*Rsum.k+1):(bbb*Rsum.k)]
-      X.vlm[,rep.index] <- c(tmp44) 
-    } # End of bbb
-  } # End of for (ii in 1:length(xij))
+      X.vlm[, rep.index] <- c(tmp44) 
+    }  # End of bbb
+  }  # End of for (ii in seq_along(xij))
 
   if (assign.attributes) {
     attr(X.vlm, "vassign") <- vasgn
@@ -228,7 +228,7 @@ attrassignlm <- function(object, ...)
     attr(X.vlm, "xij") <- xij
   }
   X.vlm
-}
+}  # lm2vlm.model.matrix
 
 
 
@@ -245,9 +245,9 @@ model.matrix.vlm <- function(object, ...)
 
 
 
- model.matrixvlm <- function(object,
-                             type = c("vlm", "lm", "lm2", "bothlmlm2"),
-                             linpred.index = NULL,
+ model.matrixvlm <- function(object, 
+                             type = c("vlm", "lm", "lm2", "bothlmlm2"), 
+                             linpred.index = NULL, 
                             ...) {
 
 
@@ -258,11 +258,11 @@ model.matrix.vlm <- function(object, ...)
 
   if (length(linpred.index) &&
       type != "lm")
-    stop("Must set 'type = \"lm\"' when 'linpred.index' is ",
+    stop("Must set 'type = \"lm\"' when 'linpred.index' is ", 
          "assigned a value")
   if (length(linpred.index) &&
       length(object@control$xij))
-    stop("Currently cannot handle 'xij' models when 'linpred.index' is ",
+    stop("Currently cannot handle 'xij' models when 'linpred.index' is ", 
          "assigned a value")
 
 
@@ -277,7 +277,7 @@ model.matrix.vlm <- function(object, ...)
 
     kill.con <- if (length(object@contrasts)) object@contrasts else NULL
 
-    x <- vmodel.matrix.default(object, data = data,
+    x <- vmodel.matrix.default(object, data = data, 
                                contrasts.arg = kill.con)
     tt <- terms(object)
     attr(x, "assign") <- attrassigndefault(x, tt)
@@ -291,7 +291,7 @@ model.matrix.vlm <- function(object, ...)
     kill.con <- if (length(object.copy2@contrasts))
                 object.copy2@contrasts else NULL
 
-    Xm2 <- vmodel.matrix.default(object.copy2, data = data,
+    Xm2 <- vmodel.matrix.default(object.copy2, data = data, 
                                  contrasts.arg = kill.con)
     ttXm2 <- terms(object.copy2@misc$form2)
     attr(Xm2, "assign") <- attrassigndefault(Xm2, ttXm2)
@@ -312,17 +312,17 @@ model.matrix.vlm <- function(object, ...)
 
   M <- object@misc$M  
   Hlist <- object@constraints  # == constraints(object, type = "lm")
-  X.vlm <- lm2vlm.model.matrix(x = x, Hlist = Hlist,
+  X.vlm <- lm2vlm.model.matrix(x = x, Hlist = Hlist, 
                                xij = object@control$xij, Xm2 = Xm2)
 
   if (type == "vlm") {
     return(X.vlm)
   } else if (type == "lm" && length(linpred.index)) {
-    if (!is.Numeric(linpred.index, integer.valued = TRUE, positive = TRUE,
+    if (!is.Numeric(linpred.index, integer.valued = TRUE, positive = TRUE, 
                     length.arg = 1))
       stop("bad input for argument 'linpred.index'")
     if (!length(intersect(linpred.index, 1:M)))
-      stop("argument 'linpred.index' should have ",
+      stop("argument 'linpred.index' should have ", 
            "a single value from the set 1:", M)
 
     Hlist <- Hlist
@@ -348,12 +348,12 @@ setMethod("model.matrix",  "vlm", function(object, ...)
 
 
  model.matrixvgam <-
-  function(object,
-           type = c("lm", "vlm", "lm", "lm2", "bothlmlm2"),
-           linpred.index = NULL,
+  function(object, 
+           type = c("lm", "vlm", "lm", "lm2", "bothlmlm2"), 
+           linpred.index = NULL, 
            ...) {
   model.matrixvlm(object = object, 
-                  type = type[1],
+                  type = type[1], 
                   linpred.index = linpred.index, ...)
 }
 setMethod("model.matrix",  "vgam", function(object, ...)
@@ -365,7 +365,7 @@ setMethod("model.matrix",  "vgam", function(object, ...)
 
 
  model.framevlm <- function(object, 
-                            setupsmart = TRUE,
+                            setupsmart = TRUE, 
                             wrapupsmart = TRUE, ...) {
 
   dots <- list(...)
@@ -406,15 +406,15 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
 
  vmodel.matrix.default <-
-  function(object, data = environment(object),
+  function(object, data = environment(object), 
            contrasts.arg = NULL, xlev = NULL, ...) {
 
   t <- if (missing(data)) terms(object) else terms(object, data = data)
   if (is.null(attr(data, "terms")))
     data <- model.frame(object, data, xlev = xlev) else {
-    reorder <- match(sapply(attr(t, "variables"), deparse,
+    reorder <- match(sapply(attr(t, "variables"), deparse, 
                      width.cutoff = 500)[-1], names(data))
-    if (any(is.na(reorder)))
+    if (anyNA(reorder))
       stop("model frame and formula mismatch in model.matrix()")
     if (!identical(reorder, seq_len(ncol(data))))
       data <- data[, reorder, drop = FALSE]
@@ -425,7 +425,7 @@ setMethod("model.frame",  "vlm", function(formula, ...)
     namD <- names(data)
     for (i in namD) if (is.character(data[[i]])) {
       data[[i]] <- factor(data[[i]])
-      warning(gettextf("variable '%s' converted to a factor", i),
+      warning(gettextf("variable '%s' converted to a factor", i), 
               domain = NA)
     }
     isF <- sapply(data, function(x) is.factor(x) || is.logical(x))
@@ -439,7 +439,7 @@ setMethod("model.frame",  "vlm", function(formula, ...)
       for (nn in namC) {
         if (is.na(ni <- match(nn, namD)))
           warning(gettextf(
-            "variable '%s' is absent, its contrast will be ignored",
+            "variable '%s' is absent, its contrast will be ignored", 
             nn), domain = NA) else {
           ca <- contrasts.arg[[nn]]
           if (is.matrix(ca))
@@ -470,9 +470,9 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
 
 depvar.vlm <-
-  function(object,
-           type = c("lm", "lm2"),
-           drop = FALSE,
+  function(object, 
+           type = c("lm", "lm2"), 
+           drop = FALSE, 
            ...) {
   type <- match.arg(type, c("lm", "lm2"))[1]
   ans <- if (type == "lm") {
@@ -486,9 +486,9 @@ depvar.vlm <-
 
 
 if (!isGeneric("depvar"))
-    setGeneric("depvar",
+    setGeneric("depvar", 
                function(object, ...)
-                 standardGeneric("depvar"),
+                 standardGeneric("depvar"), 
                package = "VGAM")
 
 
@@ -507,8 +507,8 @@ setMethod("depvar",  "rcim", function(object, ...)
 
 
 
-npred.vlm <- function(object,
-                      type = c("total", "one.response"),
+npred.vlm <- function(object, 
+                      type = c("total", "one.response"), 
                       ...) {
   if (!missing(type))
     type <- as.character(substitute(type))
@@ -549,7 +549,7 @@ npred.vlm <- function(object,
 
 
 if (!isGeneric("npred"))
-    setGeneric("npred", function(object, ...) standardGeneric("npred"),
+    setGeneric("npred", function(object, ...) standardGeneric("npred"), 
                package = "VGAM")
 
 
@@ -570,7 +570,7 @@ setMethod("npred",  "rcim", function(object, ...)
 
 
 hatvaluesvlm <-
-  function(model,
+  function(model, 
            type = c("diagonal", "matrix", "centralBlocks"), ...) {
 
 
@@ -665,10 +665,10 @@ setMethod("hatvalues",  "rcim", function(model, ...)
 
 
 hatplot.vlm <-
-  function(model, multiplier = c(2, 3),
-           lty = "dashed",
-           xlab = "Observation",
-           ylab = "Hat values",
+  function(model, multiplier = c(2, 3), 
+           lty = "dashed", 
+           xlab = "Observation", 
+           ylab = "Hat values", 
            ylim = NULL, ...) {
 
   if (is(model, "vlm")) {
@@ -698,8 +698,8 @@ hatplot.vlm <-
   if (is.null(ylim))
     ylim <- c(0, max(hatval))
   for (jay in 1:M) {
-    plot(hatval[, jay], type = "n", main = predictors.names[jay],
-         ylim = ylim, xlab = xlab, ylab = ylab,
+    plot(hatval[, jay], type = "n", main = predictors.names[jay], 
+         ylim = ylim, xlab = xlab, ylab = ylab, 
          ...)
     points(1:N, hatval[, jay], ...)
     abline(h = multiplier * ncol.X.vlm / (N * M), lty = lty, ...)
@@ -739,10 +739,10 @@ setMethod("hatplot",  "rcim", function(model, ...)
 
 
 dfbetavlm <-
-  function(model,
-           maxit.new = 1,
-           trace.new = FALSE,
-           smallno = 1.0e-8,
+  function(model, 
+           maxit.new = 1, 
+           trace.new = FALSE, 
+           smallno = 1.0e-8, 
            ...) {
 
   if (!is(model, "vlm"))
@@ -782,26 +782,26 @@ dfbetavlm <-
     }
 
     w.orig <- if (length(orig.w) != n.lm)
-                rep(orig.w, length.out = n.lm) else
+                rep_len(orig.w, n.lm) else
                 orig.w
     w.orig[ii] <- w.orig[ii] * smallno  # Relative
 
-    fit <- vglm.fit(x = X.lm,
+    fit <- vglm.fit(x = X.lm, 
                     X.vlm.arg = X.vlm,  # Should be more efficient
                     y = if (y.integer)
                       round(depvar(model) * c(pweights) / c(orig.w)) else
-                           (depvar(model) * c(pweights) / c(orig.w)),
+                           (depvar(model) * c(pweights) / c(orig.w)), 
                     w = w.orig,  # Set to zero so that it is 'deleted'.
-                    Xm2 = NULL, Ym2 = NULL,
-                    etastart = etastart,  # coefstart = NULL,
-                    offset = offset,
-                    family = model@family,
-                    control = new.control,
-                    criterion =  new.control$criterion,  # "coefficients",
-                    qr.arg = FALSE,
-                    constraints = constraints(model, type = "term"),
-                    extra = model@extra,
-                    Terms = Terms.zz,
+                    Xm2 = NULL, Ym2 = NULL, 
+                    etastart = etastart,  # coefstart = NULL, 
+                    offset = offset, 
+                    family = model@family, 
+                    control = new.control, 
+                    criterion =  new.control$criterion,  # "coefficients", 
+                    qr.arg = FALSE, 
+                    constraints = constraints(model, type = "term"), 
+                    extra = model@extra, 
+                    Terms = Terms.zz, 
                     function.name = "vglm")
 
     dfbeta[ii, ] <- coef.model - fit$coeff
@@ -840,8 +840,8 @@ setMethod("dfbeta",  "rcim", function(model, ...)
 
 
 
-hatvaluesbasic <- function(X.vlm,
-                           diagWm,
+hatvaluesbasic <- function(X.vlm, 
+                           diagWm, 
                            M = 1) {
 
 

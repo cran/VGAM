@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2015 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -56,7 +58,7 @@ cqo <- function(formula,
     offset <- 0  # yyy ???
   w <- model.weights(mf)
   if (!length(w)) {
-    w <- rep(1, nrow(mf))
+    w <- rep_len(1, nrow(mf))
   } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
     stop("negative weights not allowed")
 
@@ -78,7 +80,7 @@ cqo <- function(formula,
   cqo.fitter <- get(method)
 
 
-  deviance.Bestof <- rep(NA_real_, len = control$Bestof)
+  deviance.Bestof <- rep_len(NA_real_, control$Bestof)
   for (tries in 1:control$Bestof) {
     if (control$trace && (control$Bestof>1))
     cat(paste("\n========================= Fitting model", tries,

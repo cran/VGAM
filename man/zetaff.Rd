@@ -6,15 +6,20 @@
   Estimates the parameter of the zeta distribution.
 }
 \usage{
-zetaff(link = "loge", init.p = NULL, zero = NULL)
+zetaff(link = "loge", ishape = NULL, gshape = exp(-3:4)/4, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, init.p, zero}{
+  \item{link, ishape, zero}{
   These arguments apply to the (positive) parameter \eqn{p}.
   See \code{\link{Links}} for more choices.
   Choosing \code{\link{loglog}} constrains \eqn{p>1}, but
   may fail if the maximum likelihood estimate is less than one.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+  }
+  \item{gshape}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
