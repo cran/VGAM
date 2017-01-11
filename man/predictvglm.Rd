@@ -11,7 +11,8 @@
 predictvglm(object, newdata = NULL,
             type = c("link", "response", "terms"),
             se.fit = FALSE, deriv = 0, dispersion = NULL,
-            untransform = FALSE, extra = object@extra, ...)
+            untransform = FALSE,
+            type.fitted = NULL, percentiles = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,20 +60,38 @@ predictvglm(object, newdata = NULL,
   }
   \item{deriv}{
   Non-negative integer. Currently this must be zero.
-  Later, this may be implemented for general values. 
+  Later, this may be implemented for general values.
 
 
   }
   \item{dispersion}{
-  Dispersion parameter. 
+  Dispersion parameter.
   This may be inputted at this stage, but the default is to use
   the dispersion parameter of the fitted model.
 
 
   }
-  \item{extra}{
-  A list containing extra information.
-  This argument should be ignored.
+% \item{extra}{
+% A list containing extra information.
+% This argument should be ignored.
+
+
+% }
+  \item{type.fitted}{
+    Some \pkg{VGAM} family functions have an argument by
+    the same name. If so,  then one can obtain fitted values
+    by setting \code{type = "response"} and
+    choosing a value of \code{type.fitted} from what's
+    available.
+    If \code{type.fitted = "quantiles"} is available then
+    the \code{percentiles} argument can be used to specify
+    what quantile values are requested.
+
+
+  }
+  \item{percentiles}{
+    Used only if \code{type.fitted = "quantiles"} is
+    available and is selected.
 
 
   }
@@ -117,7 +136,7 @@ predictvglm(object, newdata = NULL,
 
 
 }
-\references{ 
+\references{
 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
@@ -133,6 +152,13 @@ Reduced-rank vector generalized linear models.
   will generate an error.
 
 
+
+  The arguments \code{type.fitted}  and \code{percentiles}
+  are provided in this function to give more convenience than
+  modifying the \code{extra} slot directly.
+
+
+
 }
 
 \section{Warning }{
@@ -141,7 +167,7 @@ Reduced-rank vector generalized linear models.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link[stats]{predict}},
   \code{\link{vglm}},
   \code{predictvlm},
@@ -179,3 +205,4 @@ predict(fit, type = "terms", se = TRUE)
 \keyword{models}
 \keyword{regression}
 
+%           untransform = FALSE, extra = object@extra,

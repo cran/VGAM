@@ -80,7 +80,7 @@ very close to 0 or 1.
 
 }
 
-%\references{ 
+%\references{
 %
 %Jones, M. C. (1994)
 %Expectiles and M-quantiles are quantiles.
@@ -90,7 +90,7 @@ very close to 0 or 1.
 %}
 \author{ T. W. Yee and Kai Huang }
 
-%\note{ 
+%\note{
 %The ``\code{q}'', as the first character of ``\code{qeunif}'',
 %may be changed to ``\code{e}'' in the future,
 %the reason being to emphasize that the expectiles are returned.

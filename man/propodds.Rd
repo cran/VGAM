@@ -3,7 +3,7 @@
 \title{ Proportional Odds Model for Ordinal Regression }
 \description{
   Fits the proportional odds model
-  to a (preferably ordered) factor response. 
+  to a (preferably ordered) factor response.
 
 }
 \usage{

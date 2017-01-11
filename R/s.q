@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,7 +15,7 @@ s <- function(x, df = 4, spar = 0, ...) {
   call <- deparse(sys.call())
 
   if (ncol(as.matrix(x)) > 1)
-    stop("argument 'x' must be a vector") 
+    stop("argument 'x' must be a vector")
   if (!is.null(levels(x))) {
     x <- if (is.ordered(x)) {
       as.vector(x)
@@ -27,7 +27,7 @@ s <- function(x, df = 4, spar = 0, ...) {
   attr(x, "call") <- call
   attr(x, "class") <- "smooth"
   attr(x, "s.xargument") <- ans   # Needed for prediction and constraints
- 
+
 
   a <- is.na(x)
   if (any(a))

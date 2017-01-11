@@ -41,7 +41,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   For technical reasons (see \bold{Details}) it is a good idea
   for \eqn{A = 0.5}.
 
- 
+
   }
 
 
@@ -151,7 +151,7 @@ gevff(llocation = "identitylink", lscale = "loge",
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   A specifying which
   linear/additive predictors are modelled as intercepts only.
   The values can be from the set \{1,2,3\} corresponding
@@ -174,7 +174,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   Here, \eqn{x_+ = \max(x,0)}{x_+ = max(x,0)}.
   The \eqn{\mu}{mu}, \eqn{\sigma}{sigma}, \eqn{\xi}{xi} are known as the
   \emph{location}, \emph{scale} and \emph{shape} parameters respectively.
-  The cases 
+  The cases
   \eqn{\xi>0}{xi>0},
   \eqn{\xi<0}{xi<0},
   \eqn{\xi = 0}{xi = 0}
@@ -235,7 +235,7 @@ gevff(llocation = "identitylink", lscale = "loge",
 
 
 }
-\references{ 
+\references{
   Yee, T. W. and Stephenson, A. G. (2007)
   Vector generalized linear and additive extreme value models.
   \emph{Extremes}, \bold{10}, 1--19.
@@ -254,13 +254,13 @@ gevff(llocation = "identitylink", lscale = "loge",
 
   Smith, R. L. (1985)
   Maximum likelihood estimation in a class of nonregular cases.
-  \emph{Biometrika}, \bold{72}, 67--90. 
+  \emph{Biometrika}, \bold{72}, 67--90.
 
 
 }
 \author{ T. W. Yee }
 
-\note{ 
+\note{
   The \pkg{VGAM} family function \code{gev} can handle a multivariate
   (matrix) response, cf. multiple responses.
   If so, each row of the matrix is sorted into
@@ -268,7 +268,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   With a vector or one-column matrix response using
   \code{gevff} will give the same result but be faster and it handles
   the \eqn{\xi = 0}{xi = 0} case.
-  The function \code{gev} implements Tawn (1988) while 
+  The function \code{gev} implements Tawn (1988) while
   \code{gevff} implements Prescott and Walden (1980).
 
 
@@ -289,20 +289,20 @@ gevff(llocation = "identitylink", lscale = "loge",
   accurately unless there is a lot of data.
   Convergence is slow when \eqn{\xi}{xi} is near \eqn{-0.5}.
   Given many explanatory variables, it is often a good idea
-  to make sure \code{zero = 3}. 
+  to make sure \code{zero = 3}.
   The range restrictions of the parameter \eqn{\xi}{xi} are not
   enforced; thus it is possible for a violation to occur.
 
 
   Successful convergence often depends on having a reasonably good initial
   value for \eqn{\xi}{xi}. If failure occurs try various values for the
-  argument \code{ishape}, and if there are covariates, 
+  argument \code{ishape}, and if there are covariates,
   having \code{zero = 3} is advised.
 
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{rgev}},
   \code{\link{gumbel}},
   \code{\link{gumbelff}},

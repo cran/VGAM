@@ -98,7 +98,7 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
 
 
   Yee, T. W. (2012)
-  \emph{Ordinal ordination with normalizing link functions for count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 
 
@@ -116,11 +116,11 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
   The input requires care as little to no checking is done.
   If \code{fit} is the fitted object, have a look at \code{fit@extra} and
   \code{depvar(fit)} to check.
-  
+
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{poissonff}},
   \code{\link{polf}},
   \code{\link[base:factor]{ordered}}.

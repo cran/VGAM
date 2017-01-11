@@ -46,7 +46,7 @@ biamhcop(lapar = "rhobit", iapar = NULL, imethod = 1, nsimEIM = 250)
   The cumulative distribution function is
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = y_1 y_2
           / ( 1 - \alpha (1 - y_1) (1 - y_2) ) }{%
-        P(Y1 < =  y1, Y2 < =  y2)  = 
+        P(Y1 < =  y1, Y2 < =  y2)  =
         y1 * y2 / ( 1 - alpha * (1 - y1) * (1 - y2) ) }
   for \eqn{-1 < \alpha < 1}{-1 < alpha < 1}.
   The support of the function is the unit square.

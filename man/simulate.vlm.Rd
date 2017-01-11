@@ -1,7 +1,7 @@
 % 20131230; adapted from simulate.Rd from R 3.0.2
 
 
-\newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+% \newcommand{\CRANpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
 
 \name{simulate.vlm}
@@ -49,7 +49,7 @@
 }
 \value{
   Similar to \code{\link[stats]{simulate}}.
-  Note that many \pkg{VGAM} family functions can handle multiple responses. 
+  Note that many \pkg{VGAM} family functions can handle multiple responses.
   This can result in a longer data frame with more rows
   (\code{nsim} multiplied by \code{n} rather than the
    ordinary \code{n}).
@@ -183,15 +183,15 @@
 \section{Warning}{
   With multiple response and/or multivariate responses,
   the order of the elements may differ.
-  For some \pkg{VGAM} families, the order is 
+  For some \pkg{VGAM} families, the order is
   \eqn{n \times N \times F}{n x N x F},
   where \eqn{n} is the sample size,
   \eqn{N} is \code{nsim} and
   \eqn{F} is \code{ncol(fitted(vglmObject))}.
-  For other \pkg{VGAM} families, the order is 
+  For other \pkg{VGAM} families, the order is
   \eqn{n \times F \times N}{n x F x N}.
   An example of each is given below.
-  
+
 
 }
 

@@ -7,7 +7,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Skew-Normal Distribution }
 \description{
-  Density and 
+  Density and
   random generation
   for the univariate skew-normal distribution.
 
@@ -33,7 +33,7 @@ rskewnorm(n, location = 0, scale = 1, shape = 0)
   }
 
   \item{location}{
-  The location parameter \eqn{\xi}{xi}. A vector. 
+  The location parameter \eqn{\xi}{xi}. A vector.
 
 
   }
@@ -77,7 +77,7 @@ rskewnorm(n, location = 0, scale = 1, shape = 0)
 
 
 }
-\references{ 
+\references{
     \url{http://tango.stat.unipd.it/SN}.
 
 
@@ -91,7 +91,7 @@ rskewnorm(n, location = 0, scale = 1, shape = 0)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{skewnormal}}.
 
 

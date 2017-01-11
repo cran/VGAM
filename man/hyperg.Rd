@@ -15,7 +15,7 @@ hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{N}{ 
+  \item{N}{
     Total number of white and black balls in the urn.
     Must be a vector with positive values, and is recycled, if necessary,
     to the same length as the response.
@@ -23,7 +23,7 @@ hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
 
 
   }
-  \item{D}{ 
+  \item{D}{
     Number of white balls in the urn.
     Must be a vector with positive values, and is recycled, if necessary,
     to the same length as the response.
@@ -32,13 +32,13 @@ hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
 
   }
 
-  \item{lprob}{ 
+  \item{lprob}{
   Link function for the probabilities.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{iprob}{ 
+  \item{iprob}{
   Optional initial value for the probabilities.
   The default is to choose initial values internally.
 
@@ -53,7 +53,7 @@ hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
   are black. A simple random sample (i.e., \emph{without} replacement) of
   \eqn{k} balls is taken.
   The response here is the sample \emph{proportion} of white balls.
-  In this document, 
+  In this document,
   \code{N} is \eqn{N=m+n},
   \code{D} is \eqn{m} (for the number of ``defectives'', in quality
   control terminology, or equivalently, the number of marked individuals).

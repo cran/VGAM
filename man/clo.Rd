@@ -34,7 +34,7 @@ The new CLO/CQO/CAO nomenclature described in Yee (2006).
 
 
 }
-\references{ 
+\references{
 
 Yee, T. W. (2006)
 Constrained additive ordination.
@@ -48,7 +48,7 @@ Reduced-rank vector generalized linear models.
 }
 \author{Thomas W. Yee}
 
-\seealso{ 
+\seealso{
   \code{\link{rrvglm}},
   \code{\link{cqo}}.
 }

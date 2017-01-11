@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -64,7 +64,7 @@ nparam.vgam <- function(object, dpar = TRUE,
   check.omit.constant(object)
 
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
-             length(object@misc$dispersion) else 0 
+             length(object@misc$dispersion) else 0
   nldf <- if (is.Numeric(object@nl.df)) sum(object@nl.df) else 0
 
   if (linear.only) {
@@ -82,7 +82,7 @@ nparam.rrvglm <- function(object, dpar = TRUE, ...) {
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
-    length(object@misc$dispersion) else 0 
+    length(object@misc$dispersion) else 0
   str0 <- object@control$str0
   MMM <- object@misc$M
   Rank <- object@control$Rank
@@ -101,7 +101,7 @@ nparam.qrrvglm <- function(object, dpar = TRUE, ...) {
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
-             length(object@misc$dispersion) else 0 
+             length(object@misc$dispersion) else 0
   str0 <- object@control$str0
   MMM <- object@misc$M
   Rank <- object@control$Rank
@@ -152,7 +152,7 @@ nparam.rrvgam <- function(object, dpar = TRUE, ...) {
 
   estdisp <- object@misc$estimated.dispersion
   no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
-             length(object@misc$dispersion) else 0 
+             length(object@misc$dispersion) else 0
   str0 <- object@control$str0
   MMM <- object@misc$M
   Rank <- object@control$Rank
@@ -226,7 +226,7 @@ if (!isGeneric("AIC"))
 
 
 
-AICvlm <- function(object, ..., 
+AICvlm <- function(object, ...,
                    corrected = FALSE,
                    k = 2) {
   estdisp <- object@misc$estimated.dispersion
@@ -299,7 +299,7 @@ AICqrrvglm <- function(object, ...,
 
 
 
- 
+
  AICrrvgam <- function(object, ...,
                        k = 2) {
 

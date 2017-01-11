@@ -45,6 +45,14 @@ is.buggy.vlm(object, each.term = FALSE, ...)
   if necessary).
 
 
+
+
+  Second-generation VGAMs based on \code{\link{sm.ps}} are a
+  modern alternative to using \code{\link{s}}. It does not
+  suffer from this bug. However, G2-VGAMs require a reasonably
+  large sample size in order to work more reliably.
+
+
 }
 \value{
   The default is a single logical (\code{TRUE} if any term is
@@ -53,7 +61,7 @@ is.buggy.vlm(object, each.term = FALSE, ...)
   If the value is \code{TRUE} then I suggest replacing the VGAM
   by a similar model fitted by \code{\link{vglm}} and using
   regression splines, e.g., \code{\link[splines]{bs}},
-  \code{\link[splines]{ns}}. 
+  \code{\link[splines]{ns}}.
 
 
 
@@ -64,17 +72,20 @@ is.buggy.vlm(object, each.term = FALSE, ...)
 %}
 
 \author{ T. W. Yee }
-\note{ 
+\note{
   When the bug is fixed this function may be withdrawn, otherwise
   always return \code{FALSE}s!
+
 
 
 }
 \seealso{
   \code{\link{vgam}}.
   \code{\link{vglm}},
+  \code{\link[VGAM]{s}},
+  \code{\link[VGAM]{sm.ps}},
   \code{\link[splines]{bs}},
-  \code{\link[splines]{ns}}. 
+  \code{\link[splines]{ns}}.
 
 
 }

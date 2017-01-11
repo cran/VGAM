@@ -180,6 +180,8 @@ sm.scale(x, center = TRUE, scale = TRUE)
   \code{\link{smart.mode.is}},
   \code{\link{setup.smart}},
   \code{\link{wrapup.smart}}.
+  For \code{\link[VGAM]{vgam}} in \pkg{VGAM},
+  \code{\link[VGAM]{sm.ps}} is important.
   Commonly used data-dependent functions include
   \code{\link[base]{scale}}, 
   \code{\link[stats]{poly}}, 

@@ -167,7 +167,8 @@ C
       IF (N .EQ. 1) GO TO 1001
 C
       DO 100 I = 2, N
-  100 E(I-1) = E(I)
+        E(I-1) = E(I)
+  100 CONTINUE
 C
       F = 0.0D0
       TST1 = 0.0D0
@@ -201,7 +202,8 @@ C     .......... FORM SHIFT ..........
          IF (L2 .GT. N) GO TO 145
 C
          DO 140 I = L2, N
-  140    D(I) = D(I) - H
+           D(I) = D(I) - H
+  140    CONTINUE
 C
   145    F = F + H
 C     .......... QL TRANSFORMATION ..........
@@ -326,7 +328,8 @@ C
       IF (N .EQ. 1) GO TO 1001
 C
       DO 100 I = 2, N
-  100 E2(I-1) = E2(I)
+        E2(I-1) = E2(I)
+  100 CONTINUE
 C
       F = 0.0D0
       T = 0.0D0
@@ -359,7 +362,8 @@ C     .......... FORM SHIFT ..........
          H = G - D(L)
 C
          DO 140 I = L1, N
-  140    D(I) = D(I) - H
+           D(I) = D(I) - H
+  140 CONTINUE
 C
          F = F + H
 C     .......... RATIONAL QL TRANSFORMATION ..........
@@ -470,7 +474,8 @@ C     .......... FOR I=N STEP -1 UNTIL 1 DO -- ..........
          IF (L .LT. 1) GO TO 130
 C     .......... SCALE ROW (ALGOL TOL THEN NOT NEEDED) ..........
          DO 120 K = 1, L
-  120    SCALE = SCALE + DABS(D(K))
+           SCALE = SCALE + DABS(D(K))
+  120    CONTINUE
 C
          IF (SCALE .NE. 0.0D0) GO TO 140
 C
@@ -498,7 +503,8 @@ C
          IF (L .EQ. 1) GO TO 285
 C     .......... FORM A*U ..........
          DO 170 J = 1, L
-  170    E(J) = 0.0D0
+           E(J) = 0.0D0
+  170    CONTINUE
 C
          DO 240 J = 1, L
             F = D(J)
@@ -524,14 +530,16 @@ C
          H = F / (H + H)
 C     .......... FORM Q ..........
          DO 250 J = 1, L
-  250    E(J) = E(J) - H * D(J)
+           E(J) = E(J) - H * D(J)
+  250    CONTINUE
 C     .......... FORM REDUCED A ..........
          DO 280 J = 1, L
             F = D(J)
             G = E(J)
 C
             DO 260 K = J, L
-  260       A(K,J) = A(K,J) - F * E(K) - G * D(K)
+              A(K,J) = A(K,J) - F * E(K) - G * D(K)
+  260       CONTINUE
 C
   280    CONTINUE
 C
@@ -596,7 +604,8 @@ C
       DO 100 I = 1, N
 C
          DO 80 J = I, N
-   80    Z(J,I) = A(J,I)
+           Z(J,I) = A(J,I)
+   80    CONTINUE
 C
          D(I) = A(N,I)
   100 CONTINUE
@@ -611,7 +620,8 @@ C     .......... FOR I=N STEP -1 UNTIL 2 DO -- ..........
          IF (L .LT. 2) GO TO 130
 C     .......... SCALE ROW (ALGOL TOL THEN NOT NEEDED) ..........
          DO 120 K = 1, L
-  120    SCALE = SCALE + DABS(D(K))
+           SCALE = SCALE + DABS(D(K))
+  120    CONTINUE
 C
          IF (SCALE .NE. 0.0D0) GO TO 140
   130    E(I) = D(L)
@@ -636,7 +646,8 @@ C
          D(L) = F - G
 C     .......... FORM A*U ..........
          DO 170 J = 1, L
-  170    E(J) = 0.0D0
+           E(J) = 0.0D0
+  170    CONTINUE
 C
          DO 240 J = 1, L
             F = D(J)
@@ -663,14 +674,16 @@ C
          HH = F / (H + H)
 C     .......... FORM Q ..........
          DO 250 J = 1, L
-  250    E(J) = E(J) - HH * D(J)
+           E(J) = E(J) - HH * D(J)
+  250    CONTINUE
 C     .......... FORM REDUCED A ..........
          DO 280 J = 1, L
             F = D(J)
             G = E(J)
 C
             DO 260 K = J, L
-  260       Z(K,J) = Z(K,J) - F * E(K) - G * D(K)
+              Z(K,J) = Z(K,J) - F * E(K) - G * D(K)
+  260       CONTINUE
 C
             D(J) = Z(L,J)
             Z(I,J) = 0.0D0
@@ -687,20 +700,26 @@ C     .......... ACCUMULATION OF TRANSFORMATION MATRICES ..........
          IF (H .EQ. 0.0D0) GO TO 380
 C
          DO 330 K = 1, L
-  330    D(K) = Z(K,I) / H
+           D(K) = Z(K,I) / H
+  330    CONTINUE
 C
-         DO 360 J = 1, L
+         DO 3600 J = 1, L
+c 20161111; originally was:
+c        DO 360 J = 1, L
             G = 0.0D0
 C
             DO 340 K = 1, L
-  340       G = G + Z(K,I) * Z(K,J)
+              G = G + Z(K,I) * Z(K,J)
+  340       CONTINUE
 C
             DO 360 K = 1, L
                Z(K,J) = Z(K,J) - G * D(K)
-  360    CONTINUE
+  360       CONTINUE
+ 3600    CONTINUE
 C
   380    DO 400 K = 1, L
-  400    Z(K,I) = 0.0D0
+           Z(K,I) = 0.0D0
+  400    CONTINUE
 C
   500 CONTINUE
 C

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,7 +14,7 @@
 
 
 update_default <- function (object, formula., ..., evaluate = TRUE) {
-  if (is.null(call <- getCall(object))) 
+  if (is.null(call <- getCall(object)))
     stop("need an object with call component")
 
   extras <- match.call(expand.dots = FALSE)$...
@@ -80,8 +80,8 @@ print_anova <- function (x, digits = max(getOption("digits") - 2, 3),
   tst.i <- i
   if (length(i <- grep("Df$", cn)))
     zap.i <- zap.i[!(zap.i %in% i)]
-  stats::printCoefmat(x, digits = digits, signif.stars = signif.stars, 
-      has.Pvalue = has.P, P.values = has.P, cs.ind = NULL, 
+  stats::printCoefmat(x, digits = digits, signif.stars = signif.stars,
+      has.Pvalue = has.P, P.values = has.P, cs.ind = NULL,
       zap.ind = zap.i, tst.ind = tst.i, na.print = "", ...)
   invisible(x)
 }
@@ -101,7 +101,10 @@ setClass("VGAManova", representation(
 
 
 
-lrtest_vglm <- function(object, ..., name = NULL) {
+lrtest_vglm <-
+  function(object, ...,
+           no.warning = FALSE,  # 20160802
+           name = NULL) {
 
 
 
@@ -122,19 +125,20 @@ lrtest_vglm <- function(object, ..., name = NULL) {
     name <- function(x) paste(deparse(formula(x)), collapse = "\n")
 
 
-
-  modelUpdate <- function(fm, update) {
+  modelUpdate <- function(fm, update, no.warning = FALSE) {
 
     if (is.numeric(update)) {
       if (any(update < 1)) {
+        if (!no.warning)
         warning("for numeric model specifications all values ",
                 "have to be >=1")
         update <- abs(update)[abs(update) > 0]
       }
       if (any(update > length(tlab(fm)))) {
-        warning(paste("more terms specified than existent in the model:",
+        if (!no.warning)
+        warning("more terms specified than existent in the model: ",
                 paste(as.character(update[update > length(tlab(fm))]),
-                      collapse = ", ")))
+                      collapse = ", "))
         update <- update[update <= length(tlab(fm))]
       }
       update <- tlab(fm)[update]
@@ -142,12 +146,13 @@ lrtest_vglm <- function(object, ..., name = NULL) {
 
     if (is.character(update)) {
       if (!all(update %in% tlab(fm))) {
-        warning(paste("terms specified that are not in the model:",
+        if (!no.warning)
+        warning("terms specified that are not in the model:",
                 paste(dQuote(update[!(update %in% tlab(fm))]),
-                      collapse = ", ")))
+                      collapse = ", "))
         update <- update[update %in% tlab(fm)]
       }
-      if (length(update) < 1) stop("empty model specification")  
+      if (length(update) < 1) stop("empty model specification")
       update <- as.formula(paste(". ~ . -",
                            paste(update, collapse = " - ")))
     }
@@ -156,9 +161,9 @@ lrtest_vglm <- function(object, ..., name = NULL) {
       update <- update_default(fm, update)
     }
     if (!inherits(update, cls)) {
-      warning(paste("original model was of class \"", cls,
-                    "\", updated model is of class \"",
-                    class(update)[1], "\"", sep = ""))
+      if (!no.warning)
+        warning("original model was of class '", cls,
+                "', updated model is of class '", class(update)[1], "'")
     }
     return(update)
   }
@@ -170,11 +175,12 @@ lrtest_vglm <- function(object, ..., name = NULL) {
     objects <- c(objects, . ~ 1)
     nmodels <- 2
   }
-  
+
   no.update <- sapply(objects, function(obj) inherits(obj, cls))
-  
+
   for (i in 2:nmodels) {
-    objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
+    objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]],
+                                no.warning = no.warning)
   }
 
 
@@ -202,7 +208,7 @@ lrtest_vglm <- function(object, ..., name = NULL) {
   rval <- matrix(rep_len(NA_real_, 5 * nmodels), ncol = 5)
   colnames(rval) <- c("#Df", "LogLik", "Df", "Chisq", "Pr(>Chisq)")
   rownames(rval) <- 1:nmodels
-  
+
   logLlist <- lapply(objects, logLik)
 
   dflist <- lapply(objects, df.residual)
@@ -307,29 +313,28 @@ lrtest.default <- function(object, ..., name = NULL) {
         update <- abs(update)[abs(update) > 0]
       }
       if (any(update > length(tlab(fm)))) {
-        warning(paste("more terms specified than existent in the model:",
+        warning("more terms specified than existent in the model: ",
                 paste(as.character(update[update > length(tlab(fm))]),
-                      collapse = ", ")))
+                      collapse = ", "))
         update <- update[update <= length(tlab(fm))]
       }
       update <- tlab(fm)[update]
     }
     if (is.character(update)) {
       if (!all(update %in% tlab(fm))) {
-        warning(paste("terms specified that are not in the model:",
+        warning("terms specified that are not in the model: ",
                 paste(dQuote(update[!(update %in% tlab(fm))]),
-                      collapse = ", ")))
+                      collapse = ", "))
         update <- update[update %in% tlab(fm)]
       }
-      if (length(update) < 1) stop("empty model specification")  
+      if (length(update) < 1) stop("empty model specification")
       update <- as.formula(paste(". ~ . -",
                            paste(update, collapse = " - ")))
     }
     if (inherits(update, "formula")) update <- update(fm, update)
     if (!inherits(update, cls))
-      warning(paste("original model was of class \"", cls,
-                    "\", updated model is of class \"",
-                    class(update)[1], "\"", sep = ""))
+      warning("original model was of class '", cls,
+              "', updated model is of class '", class(update)[1], "'")
     return(update)
   }
 
@@ -342,11 +347,11 @@ lrtest.default <- function(object, ..., name = NULL) {
  print( objects )
     nmodels <- 2
   }
-  
+
   no.update <- sapply(objects, function(obj) inherits(obj, cls))
  print("no.update")
  print( no.update )
-  
+
   for (i in 2:nmodels)
     objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
 
@@ -377,9 +382,9 @@ lrtest.default <- function(object, ..., name = NULL) {
   rval <- matrix(rep_len(NA_real_, 5 * nmodels), ncol = 5)
   colnames(rval) <- c("#Df", "LogLik", "Df", "Chisq", "Pr(>Chisq)")
   rownames(rval) <- 1:nmodels
-  
+
   logL <- lapply(objects, logLik)
-  rval[,1] <- as.numeric(sapply(logL, function(x) attr(x, "df")))  
+  rval[,1] <- as.numeric(sapply(logL, function(x) attr(x, "df")))
   rval[,2] <- sapply(logL, as.numeric)
   rval[2:nmodels, 3] <- rval[2:nmodels, 1] - rval[1:(nmodels-1), 1]
   rval[2:nmodels, 4] <- 2 * abs(rval[2:nmodels, 2] - rval[1:(nmodels-1), 2])
@@ -422,7 +427,7 @@ waldtest_formula <- function(object, ..., data = list()) {
          environment(object))) else
     eval(call("lm", formula = as.formula(deparse(substitute(object))),
          data = as.name(deparse(substitute(data))), environment(data)))
- 
+
 }
 
 
@@ -453,29 +458,28 @@ waldtest_default <- function(object, ..., vcov = NULL,
         update <- abs(update)[abs(update) > 0]
       }
       if (any(update > length(tlab(fm)))) {
-        warning(paste("more terms specified than existent in the model:",
+        warning("more terms specified than existent in the model: ",
                 paste(as.character(update[update > length(tlab(fm))]),
-                      collapse = ", ")))
+                      collapse = ", "))
         update <- update[update <= length(tlab(fm))]
       }
       update <- tlab(fm)[update]
     }
     if (is.character(update)) {
       if (!all(update %in% tlab(fm))) {
-        warning(paste("terms specified that are not in the model:",
+        warning("terms specified that are not in the model: ",
                 paste(dQuote(update[!(update %in% tlab(fm))]),
-                      collapse = ", ")))
+                      collapse = ", "))
         update <- update[update %in% tlab(fm)]
       }
-      if (length(update) < 1) stop("empty model specification")  
+      if (length(update) < 1) stop("empty model specification")
       update <- as.formula(paste(". ~ . -",
                            paste(update, collapse = " - ")))
     }
     if (inherits(update, "formula")) update <- update(fm, update)
     if (!inherits(update, cls))
-      stop(paste("original model was of class \"", cls,
-                 "\", updated model is of class \"",
-                 class(update)[1], "\"", sep = ""))
+      stop("original model was of class '", cls,
+           "', updated model is of class '", class(update)[1], "'")
     return(update)
   }
 
@@ -511,9 +515,9 @@ waldtest_default <- function(object, ..., vcov = NULL,
     objects <- c(objects, . ~ 1)
     nmodels <- 2
   }
-  
+
   no.update <- sapply(objects, function(obj) inherits(obj, cls))
-  
+
   for (i in 2:nmodels)
     objects[[i]] <- modelUpdate(objects[[i-1]], objects[[i]])
 

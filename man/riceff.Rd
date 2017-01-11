@@ -46,7 +46,7 @@ riceff(lsigma = "loge", lvee = "loge", isigma = NULL,
   \deqn{f(y;v,\sigma) =
   \frac{ y }{\sigma^2} \, \exp(-(y^2+v^2) / (2\sigma^2)) \, I_0(y v / \sigma^2)
   }{%
-  f(y;v,sigma) = 
+  f(y;v,sigma) =
   (y/sigma^2) * exp(-(y^2+v^2) / (2*sigma^2)) * I_0(y*v/sigma^2)}
   where \eqn{y > 0},
   \eqn{v > 0},
@@ -91,7 +91,7 @@ Mathematical Analysis of Random Noise.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{drice}},
   \code{\link{rayleigh}},
   \code{\link[base:Bessel]{besselI}},

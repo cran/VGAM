@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Returns Important Matrices etc. of a RR-VGLM Object }
 \description{
-  This methods function returns important matrices etc. of a 
+  This methods function returns important matrices etc. of a
   RR-VGLM object.
 }
 \usage{
@@ -22,12 +22,12 @@ Coef.rrvglm(object, ...)
 
 }
 \value{
-  An object of class \code{"Coef.rrvglm"} 
+  An object of class \code{"Coef.rrvglm"}
 (see \code{\link{Coef.rrvglm-class}}).
 
 
 }
-\references{ 
+\references{
 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
@@ -43,8 +43,8 @@ This function is an alternative to \code{coef.rrvglm}.
 
 }
 
-% ~Make other sections like Warning with \section{Warning }{....} ~ 
-\seealso{ 
+% ~Make other sections like Warning with \section{Warning }{....} ~
+\seealso{
   \code{\link{Coef.rrvglm-class}},
   \code{print.Coef.rrvglm},
   \code{\link{rrvglm}}.

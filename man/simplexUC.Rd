@@ -49,7 +49,7 @@ rsimplex(n, mu = 0.5, dispersion = 1)
 
 
 }
-% \references{ 
+% \references{
 %
 %}
 \author{ T. W. Yee }

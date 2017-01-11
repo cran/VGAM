@@ -1,22 +1,31 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
-fill <- 
-fill1 <- fill2 <- fill3 <- 
+
+
+
+fill <-
+fill1 <- fill2 <- fill3 <-
   function(x, values = 0, ncolx = ncol(x)) {
   x <- as.matrix(x)
   matrix(values, nrow = nrow(x), ncol = ncolx, byrow = TRUE)
 }
 
 
+
+
+
 extract.arg <- function(a) {
   s <- substitute(a)
   as.character(s)
 }
+
+
+
 
 
 
@@ -33,10 +42,14 @@ remove.arg <- function(string) {
 }
 
 
+
+
+
+
 add.arg <- function(string, arg.string) {
 
   if (arg.string == "")
-    return(string) 
+    return(string)
   nc <- nchar(string)
   lastc <- substring(string, nc, nc)
   if (lastc == ")") {
@@ -51,6 +64,10 @@ add.arg <- function(string, arg.string) {
     paste(string, "(", arg.string, ")", sep = "")
   }
 }
+
+
+
+
 
 
 get.arg <- function(string) {
@@ -74,9 +91,12 @@ get.arg <- function(string) {
     cbind(as.numeric((1:n) == i))
 
 
+
  eifun <-
  I.col <- function(i, n)
     diag(n)[, i, drop = FALSE]
+
+
 
  eijfun <- function(i, n) {
   temp <- matrix(0, n, 1)
@@ -86,11 +106,7 @@ get.arg <- function(string) {
 }
 
 
-dneg.binomial <- function(x, k, prob) {
 
-  care.exp(x * log1p(-prob) + k * log(prob) + lgamma(x+k) -
-           lgamma(k) - lgamma(x + 1))
-}
 
 
 
@@ -121,6 +137,9 @@ tapplymat1 <- function(mat, function.arg = c("cumsum", "diff", "cumprod")) {
 
 
 
+
+
+
 matrix.power <- function(wz, M, power, fast = TRUE) {
 
 
@@ -134,20 +153,20 @@ matrix.power <- function(wz, M, power, fast = TRUE) {
 
 
   if (M == 1 || dimm.value == M) {
-      WW <- wz^power          # May contain NAs
-      return(t(WW))
+    WW <- wz^power  # May contain NAs
+    return(t(WW))
   }
 
   if (fast) {
     k <- veigen(t(wz), M = M)  # matrix.arg)
-    evals <- k$values           # M x n
-    evects <- k$vectors         # M x M x n
+    evals  <- k$values   # M x n
+    evects <- k$vectors  # M x M x n
   } else {
     stop("sorry, cannot handle matrix-band form yet")
     k <- unlist(apply(wz, 3, eigen), use.names = FALSE)
     dim(k) <- c(M, M+1, n)
-    evals <- k[, 1, , drop = TRUE]      # M x n
-    evects <- k[, -1, , drop = TRUE]    # M x M x n
+    evals  <- k[,  1, , drop = TRUE]  # M x n
+    evects <- k[, -1, , drop = TRUE]  # M x M x n
   }
 
   temp <- evals^power    # Some values may be NAs
@@ -158,8 +177,8 @@ matrix.power <- function(wz, M, power, fast = TRUE) {
 
   index <- (index == 0)
   if (!all(index)) {
-    warning(paste("Some weight matrices have negative",
-                  "eigenvalues. They\nwill be assigned NAs"))
+    warning("Some weight matrices have negative ",
+            "eigenvalues. They will be assigned NAs")
     temp[,!index] <- 1
   }
 
@@ -167,6 +186,9 @@ matrix.power <- function(wz, M, power, fast = TRUE) {
   WW[,!index] <- NA
   WW
 }
+
+
+
 
 
 
@@ -182,14 +204,17 @@ ResSS.vgam <- function(z, wz, M) {
 
 
 
+
+
+
 wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE) {
   if (!matrix.arg)
-    stop("currently, matrix.arg must be TRUE")
+    stop("currently, argument 'matrix.arg' must be TRUE")
   y <- as.matrix(y)
   M <- ncol(y)
   n <- nrow(y)
   if (M == 1) {
-    if (missing(w)) mean(y) else sum(w * y)/sum(w)
+    if (missing(w)) mean(y) else sum(w * y) / sum(w)
   } else {
     if (missing(w)) y %*% rep(1, n) else {
       numer <- mux22(t(w), y, M, as.matrix = TRUE)
@@ -202,6 +227,8 @@ wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE) {
     }
   }
 }
+
+
 
 
 
@@ -242,6 +269,7 @@ veigen <- function(x, M) {
 
 
 
+
 ima <- function(j, k, M) {
   if (length(M) > 1 || M <= 0 || j <= 0 || k <= 0 ||
       j > M || k > M)
@@ -254,18 +282,88 @@ ima <- function(j, k, M) {
 
 
 
+
+
 checkwz <- function(wz, M, trace = FALSE,
                     wzepsilon = .Machine$double.eps^0.75) {
   if (wzepsilon > 0.5)
-    warning("'wzepsilon' is probably too large")
+    warning("argument 'wzepsilon' is probably too large")
   if (!is.matrix(wz))
     wz <- as.matrix(wz)
-  if ((temp <- sum(wz[, 1:M, drop = FALSE] < wzepsilon)))
-    warning(paste(temp, "elements replaced by",
-                  signif(wzepsilon, 5)))
-  wz[, 1:M] <- pmax(wzepsilon, wz[, 1:M])
+  wzsubset <- wz[, 1:M, drop = FALSE]
+  if (any(is.na(wzsubset)))
+    stop("NAs found in the working weights variable 'wz'")
+  if (any(!is.finite(wzsubset)))
+    stop("Some elements in the working weights variable 'wz' are ",
+         "not finite")
+
+  if ((temp <- sum(wzsubset < wzepsilon)))
+    warning(temp, " diagonal elements of the working weights variable ",
+            "'wz' have been replaced by ", signif(wzepsilon, 5))
+  wz[, 1:M] <- pmax(wzepsilon, wzsubset)
   wz
 }
+
+
+
+
+
+
+
+
+label.cols.y <-
+  function(answer,
+           colnames.y = NULL,
+           NOS = 1,
+           percentiles = c(25, 50, 75),
+           one.on.one = TRUE,
+           byy = TRUE) {
+  if (!is.matrix(answer))
+    answer <- as.matrix(answer)
+
+  if (one.on.one) {
+    colnames(answer) <-
+      if (length(colnames.y) == ncol(answer))
+        colnames.y else NULL
+    return(answer)
+  }
+
+
+
+  if (is.null(percentiles))
+    percentiles <- c(25, 50, 75)  # Restore to the default
+
+  if (!is.Numeric(percentiles) ||
+      min(percentiles) <= 0 ||
+      max(percentiles) >= 100)
+    stop("values of 'percentiles' should be in [0, 100]")
+
+  percentiles <- signif(percentiles, digits = 5)
+
+  ab1 <- rep(as.character(percentiles), length = ncol(answer))
+  ab1 <- paste(ab1, "%", sep = "")
+  if (NOS > 1) {
+    suffix.char <- if (length(colnames.y) == NOS)
+      colnames.y else as.character(1:NOS)
+    ab1 <- paste(ab1, rep(suffix.char, each = length(percentiles)),
+                 sep = "")
+  }
+  colnames(answer) <- ab1
+
+
+  if (byy) {
+    answer <-
+      answer[, interleave.VGAM(.M = NCOL(answer),
+                               M1 = NOS),   # length(percentiles)),
+             drop = FALSE]
+  }
+  answer
+}
+
+
+
+
+
 
 
 

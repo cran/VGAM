@@ -49,13 +49,13 @@ rzapois(n, lambda, pobs0 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{zapoisson}},
     \code{\link{dzipois}}.
 

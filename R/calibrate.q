@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -49,11 +49,11 @@ if (!isGeneric("calibrate"))
                function(object, ...) standardGeneric("calibrate"))
 
 
- 
- 
- 
+
+
+
 calibrate.qrrvglm <-
-  function(object, 
+  function(object,
            newdata = NULL,
            type = c("latvar", "predictors", "response", "vcov", "all3or4"),
            initial.vals = NULL, ...) {
@@ -90,7 +90,7 @@ calibrate.qrrvglm <-
   minimize.obfunct <-
     if (Quadratic) object@control$min.criterion else
     TRUE  # Logical; TRUE for CAO objects because deviance is minimized
-  if (!is.logical(minimize.obfunct)) 
+  if (!is.logical(minimize.obfunct))
     stop("object@control$min.criterion is not a logical")
   optim.control <- calibrate.qrrvglm.control(object = object, ...)
 
@@ -121,7 +121,7 @@ calibrate.qrrvglm <-
     stop("The x1 vector must be an intercept only")
 
   nn <- nrow(newdata)
-  BestOFpar <- NULL   # It may be more efficient not to append 
+  BestOFpar <- NULL   # It may be more efficient not to append
   BestOFvalues <- NULL   # Best OF objective function values
   for (i1 in 1:nn) {
     if (optim.control$trace)
@@ -161,7 +161,7 @@ calibrate.qrrvglm <-
 
         if (optim.control$trace) {
           if (ans$convergence == 0)
-            cat("Successful convergence\n") else 
+            cat("Successful convergence\n") else
             cat("Unsuccessful convergence\n")
           flush.console()
         }
@@ -175,8 +175,8 @@ calibrate.qrrvglm <-
             (1:nrow(OFpar))[OFvalues == min(OFvalues)] else
             (1:nrow(OFpar))[OFvalues == max(OFvalues)]
      if (length(index) > 1) {
-         warning(paste("multiple solutions found for observation ", i1,
-                       ". Choosing one randomly.", sep = ""))
+         warning("multiple solutions found for observation ", i1,
+                 ". Choosing one randomly.")
          index <- sample(index, size = 1)
      } else if (length(index) == 0)
         stop("length(index) is zero")
@@ -190,7 +190,7 @@ calibrate.qrrvglm <-
 
   pretty <- function(BestOFpar, newdata, Rank) {
     if (Rank == 1) {
-      BestOFpar <- c(BestOFpar) 
+      BestOFpar <- c(BestOFpar)
       names(BestOFpar) <- dimnames(newdata)[[1]]
     } else
       dimnames(BestOFpar) <-
@@ -243,13 +243,13 @@ calibrate.qrrvglm <-
        etaValues
     } else if (type == "vcov") {
        if (Quadratic)
-         dimnames(vcValues) <- list(as.character(1:Rank), 
+         dimnames(vcValues) <- list(as.character(1:Rank),
                                     as.character(1:Rank),
                                     dimnames(newdata)[[1]])
        vcValues
     } else if (type == "all3or4") {
        if (Quadratic)
-         dimnames(vcValues) <- list(as.character(1:Rank), 
+         dimnames(vcValues) <- list(as.character(1:Rank),
                                     as.character(1:Rank),
                                     dimnames(newdata)[[1]])
        dimnames(muValues) <- dimnames(newdata)
@@ -269,7 +269,7 @@ calibrate.qrrvglm <-
 
 
 
- 
+
 
 
 .my.calib.objfunction.qrrvglm <-
@@ -289,7 +289,7 @@ calibrate.qrrvglm <-
     eta[s, 1] <- eta[s, 1] + t(bnumat) %*% temp %*% bnumat
   }
   eta <- matrix(eta, 1, M, byrow = TRUE)
-  mu <- rbind(mu.function(eta, extra))  # Make sure it has one row 
+  mu <- rbind(mu.function(eta, extra))  # Make sure it has one row
   value <- objfun(mu = mu, y = y,
                  w = 1,  # ignore prior.weights on the object
                  residuals = FALSE, eta = eta, extra = extra)
@@ -314,7 +314,7 @@ calibrate.qrrvglm <-
 
 
 
- 
+
 
 .my.calib.objfunction.rrvgam <-
   function(bnu, y, extra = NULL,
@@ -323,13 +323,13 @@ calibrate.qrrvglm <-
            everything=TRUE,
            mu.function) {
     Rank <- length(bnu)
-    NOS <- Coefs@NOS 
+    NOS <- Coefs@NOS
     eta <- matrix(NA_real_, 1, NOS)
     for (jlocal in 1:NOS) {
       eta[1, jlocal] <- predictrrvgam(object, grid = bnu, sppno = jlocal,
                                       Rank = Rank, deriv = 0)$yvals
     }
-    mu <- rbind(mu.function(eta, extra))  # Make sure it has one row 
+    mu <- rbind(mu.function(eta, extra))  # Make sure it has one row
     value <- objfun(mu = mu, y = y,
                    w = 1,  # ignore prior.weights on the object
                    residuals = FALSE, eta = eta, extra = extra)

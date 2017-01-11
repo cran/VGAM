@@ -117,12 +117,12 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The notation used here differs from Stacy (1962) and Prentice (1974).
-  Poor initial values may result in failure to converge so 
+  Poor initial values may result in failure to converge so
   if there are covariates and there are convergence problems,
   try using the \code{zero} argument (e.g., \code{zero = 2:3})
-  or the \code{ik} argument. 
+  or the \code{ik} argument.
 
 
 }

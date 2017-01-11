@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -56,8 +56,7 @@
          lmu = .lmu ,
          lsd = .lsd ,
          zero = .zero )
-  }, list( .zero = zero, .lmu = lmu, .lsd = lsd
-         ))),
+  }, list( .zero = zero, .lmu = lmu, .lsd = lsd ))),
 
   initialize = eval(substitute(expression({
     predictors.names <-
@@ -83,14 +82,14 @@
       }
       yyyy.est <- rep_len(yyyy.est , n)
       sd.y.est <- rep_len(sd.y.est , n)
-      etastart <- cbind(mu = theta2eta(yyyy.est, .lmu , earg =.emu ),
-                        sd = theta2eta(sd.y.est, .lsd , earg =.esd ))
+      etastart <- cbind(mu = theta2eta(yyyy.est, .lmu , earg = .emu ),
+                        sd = theta2eta(sd.y.est, .lsd , earg = .esd ))
     }
   }) , list( .lmu = lmu, .lsd = lsd,
              .emu = emu, .esd = esd,
              .imu = imu, .isd = isd,
              .r1 = r1, .r2 = r2 ))),
-  linkinv = function(eta, extra = NULL) eta[, 1], 
+  linkinv = function(eta, extra = NULL) eta[, 1],
   last = eval(substitute(expression({
     misc$link <-    c(mu = .lmu , sd = .lsd )
 
@@ -106,7 +105,7 @@
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    sd <- eta2theta(eta[, 2], .lsd, earg = .esd )
+    sd <- eta2theta(eta[, 2], .lsd , earg = .esd )
 
     if (!summation)
       stop("cannot handle 'summation = FALSE' yet")
@@ -128,6 +127,15 @@
             .emu = emu, .esd = esd,
             .r1 = r1, .r2 = r2 ))),
   vfamily = c("double.cens.normal"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mu <- eta[, 1]
+    sd <- eta2theta(eta[, 2], .lsd , earg = .esd )
+    okay1 <- all(is.finite(mu)) &&
+             all(is.finite(sd)) && all(0 < sd)
+    okay1
+  }, list( .lmu = lmu, .lsd = lsd,
+           .emu = emu, .esd = esd,
+           .r1 = r1, .r2 = r2 ))),
   deriv = eval(substitute(expression({
     sd <- eta2theta(eta[, 2], .lsd, earg =.esd)
 
@@ -159,11 +167,11 @@
     Q.1 <- ifelse(q1 == 0, 1, q1)  # Saves division by 0 below; not elegant
     Q.2 <- ifelse(q2 == 0, 1, q2)  # Saves division by 0 below; not elegant
 
-    ed2l.dmu2 <- 1 / (sd^2) + 
+    ed2l.dmu2 <- 1 / (sd^2) +
                  ((fz1*(z1+fz1/Q.1) - fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
     ed2l.dmusd <- ((fz1-fz2 + z1*fz1*(z1+fz1/Q.1) -
                   z2*fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
-    ed2l.dsd2 <- 2 / (sd^2) + 
+    ed2l.dsd2 <- 2 / (sd^2) +
                  ((z1*fz1-z2*fz2 + z1^2 *fz1 *(z1+fz1/Q.1) -
                  z2^2 *fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
 
@@ -211,7 +219,7 @@ dbisa <- function(x, scale = 1, shape, log = FALSE) {
 pbisa <- function(q, scale = 1, shape,
                   lower.tail = TRUE, log.p = FALSE) {
 
-  
+
   ans <- pnorm(((temp <- sqrt(q/scale)) - 1/temp) / shape,
                lower.tail = lower.tail, log.p = log.p)
   ans[scale < 0 | shape < 0] <- NaN
@@ -260,7 +268,7 @@ qbisa <- function(p, scale = 1, shape,
       ans[ln.p == -Inf] <- Inf
       ans[ln.p == 0] <- 0
      #ans[ln.p > 0] <- NaN
-    } else { 
+    } else {
       ans <- ifelse(p > 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
      #ans[p < 0] <- NaN
       ans[p == 0] <- Inf
@@ -413,11 +421,19 @@ rbisa <- function(n, scale = 1, shape) {
            .eshape = eshape, .escale = escale ))),
 
   vfamily = c("bisa"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    sc <- eta2theta(eta[, 1], .lscale , earg = .escale )
+    sh <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    okay1 <- all(is.finite(sc)) && all(0 < sc) &&
+             all(is.finite(sh)) && all(0 < sh)
+    okay1
+  }, list( .lshape = lshape, .lscale = lscale,
+           .eshape = eshape, .escale = escale ))),
   deriv = eval(substitute(expression({
     sc <- eta2theta(eta[, 1], .lscale , earg = .escale )
     sh <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
-    dl.dsh <- ((y/sc - 2 + sc/y) / sh^2 - 1) / sh 
+    dl.dsh <- ((y/sc - 2 + sc/y) / sh^2 - 1) / sh
     dl.dsc <- -0.5 / sc + 1/(y+sc) + sqrt(y) * ((y+sc)/y) *
              (sqrt(y/sc) - sqrt(sc/y)) / (2 * sh^2 * sc^1.5)
 

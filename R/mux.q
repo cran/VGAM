@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -101,8 +101,8 @@ mux5 <- function(cc, x, M, matrix.arg = FALSE) {
 
 
 
-  dimx <- dim(x) 
-  dimcc <- dim(cc) 
+  dimx <- dim(x)
+  dimcc <- dim(cc)
   r <- dimx[2]
 
   if (matrix.arg) {
@@ -115,7 +115,7 @@ mux5 <- function(cc, x, M, matrix.arg = FALSE) {
         dimx[1]  != dimcc[1] ||
         (length(dimx) == 3 && dimx[3] != dimcc[3]))
       stop('input nonconformable')
-    neltscci <- M*(M+1)/2 
+    neltscci <- M*(M+1)/2
   }
 
   if (is.matrix(x))
@@ -128,15 +128,15 @@ mux5 <- function(cc, x, M, matrix.arg = FALSE) {
                ans = double(size),
                as.integer(M), as.integer(n), as.integer(r),
                as.integer(neltscci),
-               as.integer(dimm(r)), 
+               as.integer(dimm(r)),
                as.integer(as.numeric(matrix.arg)),
-               double(M*M), double(r*r), 
+               double(M*M), double(r*r),
                as.integer(index.M$row), as.integer(index.M$col),
-               as.integer(index.r$row), as.integer(index.r$col), 
+               as.integer(index.r$row), as.integer(index.r$col),
                ok3 = as.integer(1), NAOK = TRUE)
   if (fred$ok3 == 0)
     stop("can only handle matrix.arg == 1")
- 
+
 
   if (matrix.arg) {
     ans <- fred$ans
@@ -163,7 +163,7 @@ mux55 <- function(evects, evals, M) {
   fred <- .C("mux55", as.double(evects), as.double(evals),
              ans = double(MMp1d2 * n),
              double(M*M), double(M*M),
-             as.integer(index$row), as.integer(index$col), 
+             as.integer(index$row), as.integer(index$col),
              as.integer(M), as.integer(n), NAOK = TRUE)
   dim(fred$ans) <- c(MMp1d2, n)
   fred$ans
@@ -174,8 +174,8 @@ mux55 <- function(evects, evals, M) {
 
 mux7 <- function(cc, x) {
 
-  dimx <- dim(x) 
-  dimcc <- dim(cc) 
+  dimx <- dim(x)
+  dimcc <- dim(cc)
   if (dimx[1]!= dimcc[2] ||
      (length(dimx) == 3 && dimx[3]!= dimcc[3]))
     stop('input nonconformable')
@@ -202,8 +202,8 @@ mux9 <- function(cc, xmat) {
 
   if (is.vector(xmat))
     xmat <- cbind(xmat)
-  dimxmat <- dim(xmat) 
-  dimcc <- dim(cc) 
+  dimxmat <- dim(xmat)
+  dimcc <- dim(cc)
 
   if (dimcc[1]   != dimcc[2] ||
       dimxmat[1] != dimcc[3] ||
@@ -380,7 +380,7 @@ vchol <- function(cc, M, n, silent = FALSE, callno = 0) {
   }
   dim(ans) <- c(MM, n)  # Make sure
 
-  ans 
+  ans
 }
 
 
@@ -402,7 +402,7 @@ vchol.greenstadt <- function(cc, M, silent = FALSE,
 
 
 
-  temp <- veigen(cc, M = M)  # , mat = TRUE) 
+  temp <- veigen(cc, M = M)  # , mat = TRUE)
   dim(temp$vectors) <- c(M, M, n)  # Make sure (when M = 1) for mux5
   dim(temp$values)  <- c(M, n)    # Make sure (when M = 1) for mux5
 
@@ -437,7 +437,7 @@ vchol.greenstadt <- function(cc, M, silent = FALSE,
   temp3 <- mux55(temp$vectors, temp$values, M = M)  #, matrix.arg = TRUE)
   ans <- vchol(t(temp3), M = M, n = n, silent = silent,
                callno = callno + 1)  #, matrix.arg = TRUE)
-                                   
+
 
 
   if (nrow(ans) == MM) ans else ans[1:MM, , drop = FALSE]

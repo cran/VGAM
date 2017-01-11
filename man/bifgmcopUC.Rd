@@ -6,7 +6,7 @@
 \title{Farlie-Gumbel-Morgenstern's Bivariate Distribution}
 \description{
   Density, distribution function, and random
-  generation for the (one parameter) bivariate 
+  generation for the (one parameter) bivariate
   Farlie-Gumbel-Morgenstern's distribution.
 
 

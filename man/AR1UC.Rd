@@ -49,7 +49,7 @@ dAR1(x, drift = 0, var.error = 1, ARcoef1 = 0.0,
   \code{dAR1} gives the density.
 
 
-  
+
 % \code{pAR1} gives the distribution function, and
 % \code{qAR1} gives the quantile function, and
 % \code{rAR1} generates random deviates.

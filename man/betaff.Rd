@@ -8,21 +8,22 @@
 }
 \usage{
 betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
-       imu = NULL, iphi = NULL, imethod = 1, zero = NULL)
+       imu = NULL, iphi = NULL,
+       gprobs.y = ppoints(8), gphi  = exp(-3:5)/4, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
 
-  \item{A, B}{ 
+  \item{A, B}{
   Lower and upper limits of the distribution.
   The defaults correspond to the \emph{standard beta distribution}
   where the response lies between 0 and 1.
   }
 
 
-  \item{lmu, lphi}{ 
-  Link function for the mean and precision parameters. 
+  \item{lmu, lphi}{
+  Link function for the mean and precision parameters.
   The values \eqn{A} and \eqn{B} are extracted from the
   \code{min} and \code{max} arguments of \code{\link{extlogit}}.
   Consequently, only \code{\link{extlogit}} is allowed.
@@ -40,14 +41,14 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
 
 
   }
-  \item{imethod, zero}{
+  \item{gprobs.y, gphi, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
 }
 \details{
-  The two-parameter beta distribution can be written 
+  The two-parameter beta distribution can be written
   \eqn{f(y) =}
     \deqn{(y-A)^{\mu_1 \phi-1} \times (B-y)^{(1-\mu_1) \phi-1} / [beta(\mu_1
           \phi,(1-\mu_1) \phi) \times (B-A)^{\phi-1}]}{%
@@ -93,7 +94,7 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
 
 
 }
-\references{ 
+\references{
   Ferrari, S. L. P. and Francisco C.-N. (2004)
   Beta regression for modelling rates and proportions.
   \emph{Journal of Applied Statistics},
@@ -111,12 +112,12 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   The response must have values in the interval (\eqn{A}, \eqn{B}).
   The user currently needs to manually choose \code{lmu} to match
   the input of arguments \code{A} and \code{B}, e.g.,
-  with \code{\link{extlogit}}; see the example below. 
+  with \code{\link{extlogit}}; see the example below.
 
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{betaR}},
 % \code{\link{zoibetaR}},
   \code{\link[stats:Beta]{Beta}},
@@ -155,3 +156,7 @@ coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}
+%      imu = NULL, iphi = NULL, imethod = 1, zero = NULL)
+
+
+

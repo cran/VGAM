@@ -11,20 +11,20 @@
 
 }
 \usage{
-lvplot.rrvglm(object, 
+lvplot.rrvglm(object,
               A = TRUE, C = TRUE, scores = FALSE, show.plot = TRUE,
-              groups = rep(1, n), gapC = sqrt(sum(par()$cxy^2)), 
-              scaleA = 1, 
-              xlab = "Latent Variable 1", ylab = "Latent Variable 2", 
-              Alabels = if (length(object@misc$predictors.names)) 
-              object@misc$predictors.names else paste("LP", 1:M, sep = ""), 
-              Aadj = par()$adj, Acex = par()$cex, Acol = par()$col, 
-              Apch = NULL, 
-              Clabels = rownames(Cmat), Cadj = par()$adj, 
-              Ccex = par()$cex, Ccol = par()$col, Clty = par()$lty, 
-              Clwd = par()$lwd, 
-              chull.arg = FALSE, ccex = par()$cex, ccol = par()$col, 
-              clty = par()$lty, clwd = par()$lwd, 
+              groups = rep(1, n), gapC = sqrt(sum(par()$cxy^2)),
+              scaleA = 1,
+              xlab = "Latent Variable 1", ylab = "Latent Variable 2",
+              Alabels = if (length(object@misc$predictors.names))
+              object@misc$predictors.names else paste("LP", 1:M, sep = ""),
+              Aadj = par()$adj, Acex = par()$cex, Acol = par()$col,
+              Apch = NULL,
+              Clabels = rownames(Cmat), Cadj = par()$adj,
+              Ccex = par()$cex, Ccol = par()$col, Clty = par()$lty,
+              Clwd = par()$lwd,
+              chull.arg = FALSE, ccex = par()$cex, ccol = par()$col,
+              clty = par()$lty, clwd = par()$lwd,
               spch = NULL, scex = par()$cex, scol = par()$col,
               slabels = rownames(x2mat), ...)
 }
@@ -34,7 +34,7 @@ lvplot.rrvglm(object,
   \item{A}{ Logical. Allow the plotting of \bold{A}? }
   \item{C}{ Logical. Allow the plotting of \bold{C}? If \code{TRUE} then
             \bold{C} is represented by arrows emenating from the origin. }
-  \item{scores}{ Logical. Allow the plotting of the \eqn{n} scores? 
+  \item{scores}{ Logical. Allow the plotting of the \eqn{n} scores?
                  The scores are the values of the latent variables for each
                  observation. }
   \item{show.plot}{ Logical. Plot it? If \code{FALSE}, no plot is produced
@@ -42,8 +42,8 @@ lvplot.rrvglm(object,
   If \code{TRUE}, the rank of \code{object} need not be 2.
   }
   \item{groups}{ A vector whose distinct values indicate which group the
-  observation belongs to. By default, all the observations belong to a 
-  single group. Useful for the multinomial logit model (see 
+  observation belongs to. By default, all the observations belong to a
+  single group. Useful for the multinomial logit model (see
   \code{\link{multinomial}}.}
   \item{gapC}{ The gap between the end of the arrow and the text labelling
   of \bold{C}, in latent variable units.}
@@ -93,7 +93,7 @@ lvplot.rrvglm(object,
   See the \code{cex} argument of \code{\link[graphics]{par}}. }
   \item{scol}{ Line color of the arrows representing \bold{C}.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
-  \item{slabels}{ Character vector to label the scores. 
+  \item{slabels}{ Character vector to label the scores.
         Must be of length \eqn{n}. }
   \item{\dots}{ Arguments passed into the \code{plot} function
   when setting up the entire plot. Useful arguments here include

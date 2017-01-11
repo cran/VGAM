@@ -7,10 +7,10 @@
   associated with a LMS quantile regression.
 }
 \usage{
-plotqtplot.lmscreg(fitted.values, object, newdata = NULL, 
-    percentiles = object@misc$percentiles, lp = NULL, 
-    add.arg = FALSE, y = if (length(newdata)) FALSE else TRUE, 
-    spline.fit = FALSE, label = TRUE, size.label = 0.06, 
+plotqtplot.lmscreg(fitted.values, object, newdata = NULL,
+    percentiles = object@misc$percentiles, lp = NULL,
+    add.arg = FALSE, y = if (length(newdata)) FALSE else TRUE,
+    spline.fit = FALSE, label = TRUE, size.label = 0.06,
     xlab = NULL, ylab = "",
     pch = par()$pch, pcex = par()$cex, pcol.arg = par()$col,
     xlim = NULL, ylim = NULL,
@@ -45,20 +45,20 @@ plotqtplot.lmscreg(fitted.values, object, newdata = NULL,
   \item{pch}{ Plotting character. See \code{\link[graphics]{par}}. }
   \item{pcex}{ Character expansion of the points.
     See \code{\link[graphics]{par}}. }
-  \item{pcol.arg}{ Color of the points. 
+  \item{pcol.arg}{ Color of the points.
     See the \code{col} argument of \code{\link[graphics]{par}}.  }
   \item{xlim}{ Limits of the x-axis. See \code{\link[graphics]{par}}. }
   \item{ylim}{ Limits of the y-axis. See \code{\link[graphics]{par}}. }
   \item{llty.arg}{ Line type. Line type.
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
-  \item{lcol.arg}{ Color of the lines. 
+  \item{lcol.arg}{ Color of the lines.
   See the \code{col} argument of \code{\link[graphics]{par}}.
   }
   \item{llwd.arg}{ Line width.
   See the \code{lwd} argument of \code{\link[graphics]{par}}.
   }
-  \item{tcol.arg}{ Color of the text 
-  (if \code{label} is \code{TRUE}). 
+  \item{tcol.arg}{ Color of the text
+  (if \code{label} is \code{TRUE}).
   See the \code{col} argument of \code{\link[graphics]{par}}.
   }
   \item{tadj}{ Text justification.

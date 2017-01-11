@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -92,7 +92,7 @@ get.smart.prediction <- function() {
       for(i in max.smart:(smart.prediction.counter + 1))
         smart.prediction[[i]] <- NULL
     smart.prediction
-  } else 
+  } else
     NULL
 }
 
@@ -139,7 +139,7 @@ smart.expression <- expression({
   assign(".smart.prediction.mode", "neutral", envir = smartpredenv)
 
   .smart.match.call <- as.character(smart$match.call)
-  smart$match.call <- NULL  # Kill it off for the do.call 
+  smart$match.call <- NULL  # Kill it off for the do.call
 
   ans.smart <- do.call(.smart.match.call[1], c(list(x=x), smart))
   assign(".smart.prediction.mode", "read", envir = smartpredenv)
@@ -180,7 +180,7 @@ is.smart <- function(object) {
 
 
  sm.bs <-
-  function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE, 
+  function (x, df = NULL, knots = NULL, degree = 3, intercept = FALSE,
             Boundary.knots = range(x)) {
   x <- x  # Evaluate x; needed for nested calls, e.g., sm.bs(sm.scale(x)).
   if (smart.mode.is("read")) {
@@ -190,15 +190,15 @@ is.smart <- function(object) {
   nx <- names(x)
   x <- as.vector(x)
   nax <- is.na(x)
-  if (nas <- any(nax)) 
+  if (nas <- any(nax))
     x <- x[!nax]
   if (!missing(Boundary.knots)) {
     Boundary.knots <- sort(Boundary.knots)
-    outside <- (ol <- x < Boundary.knots[1]) | (or <- x > 
+    outside <- (ol <- x < Boundary.knots[1]) | (or <- x >
         Boundary.knots[2L])
   } else outside <- FALSE
   ord <- 1 + (degree <- as.integer(degree))
-  if (ord <= 1) 
+  if (ord <= 1)
     stop("'degree' must be integer >= 1")
   if (!missing(df) && missing(knots)) {
     nIknots <- df - ord + (1 - intercept)
@@ -231,10 +231,10 @@ is.smart <- function(object) {
         tt <- splines::splineDesign(Aknots, rep(k.pivot, ord), ord, derivs)
         basis[or, ] <- xr %*% (tt/scalef)
       }
-      if (any(inside <- !outside)) 
+      if (any(inside <- !outside))
         basis[inside, ] <- splines::splineDesign(Aknots, x[inside], ord)
   } else basis <- splines::splineDesign(Aknots, x, ord)
-  if (!intercept) 
+  if (!intercept)
     basis <- basis[, -1L, drop = FALSE]
   n.col <- ncol(basis)
   if (nas) {
@@ -244,7 +244,7 @@ is.smart <- function(object) {
   }
   dimnames(basis) <- list(nx, 1L:n.col)
   a <- list(degree = degree,
-            knots = if (is.null(knots)) numeric(0L) else knots, 
+            knots = if (is.null(knots)) numeric(0L) else knots,
             Boundary.knots = Boundary.knots,
             intercept = intercept,
             Aknots = Aknots)
@@ -279,11 +279,11 @@ attr( sm.bs, "smart") <- TRUE
   nx <- names(x)
   x <- as.vector(x)
   nax <- is.na(x)
-  if (nas <- any(nax)) 
+  if (nas <- any(nax))
     x <- x[!nax]
   if (!missing(Boundary.knots)) {
     Boundary.knots <- sort(Boundary.knots)
-    outside <- (ol <- x < Boundary.knots[1L]) | (or <- x > 
+    outside <- (ol <- x < Boundary.knots[1L]) | (or <- x >
         Boundary.knots[2L])
   } else outside <- FALSE
   if (!missing(df) && missing(knots)) {
@@ -312,7 +312,7 @@ attr( sm.bs, "smart") <- TRUE
         tt <- splines::splineDesign(Aknots, rep(k.pivot, 2L), 4, c(0, 1))
         basis[or, ] <- xr %*% tt
       }
-      if (any(inside <- !outside)) 
+      if (any(inside <- !outside))
         basis[inside, ] <- splines::splineDesign(Aknots, x[inside], 4)
     } else basis <- splines::splineDesign(Aknots, x, 4)
   const <- splines::splineDesign(Aknots, Boundary.knots, 4, c(2, 2))
@@ -331,7 +331,7 @@ attr( sm.bs, "smart") <- TRUE
   }
   dimnames(basis) <- list(nx, 1L:n.col)
   a <- list(degree = 3,
-            knots = if (is.null(knots)) numeric(0) else knots, 
+            knots = if (is.null(knots)) numeric(0) else knots,
             Boundary.knots = Boundary.knots,
             intercept = intercept,
             Aknots = Aknots)
@@ -376,7 +376,7 @@ attr( sm.ns, "smart") <- TRUE
       m <- unclass(as.data.frame(cbind(x, ...)))
       return(do.call("polym", c(m, degree = degree, raw = raw)))
     }
-    if (degree < 1) 
+    if (degree < 1)
       stop("'degree' must be at least 1")
 
 
@@ -401,7 +401,7 @@ attr( sm.ns, "smart") <- TRUE
       return(Z)
     }
     if (is.null(coefs)) {
-      if (degree >= length(unique(x))) 
+      if (degree >= length(unique(x)))
         stop("'degree' must be less than number of unique points")
       xbar <- mean(x)
       x <- x - xbar
@@ -428,8 +428,8 @@ attr( sm.ns, "smart") <- TRUE
       Z <- matrix(, length(x), n)
       Z[, 1] <- 1
       Z[, 2] <- x - alpha[1L]
-      if (degree > 1) 
-        for (i in 2:degree) Z[, i + 1] <- (x - alpha[i]) * 
+      if (degree > 1)
+        for (i in 2:degree) Z[, i + 1] <- (x - alpha[i]) *
             Z[, i] - (norm2[i + 1]/norm2[i]) * Z[, i - 1]
       Z <- Z/rep(sqrt(norm2[-1L]), each = length(x))
       colnames(Z) <- 0:degree
@@ -467,7 +467,7 @@ attr(sm.poly, "smart") <- TRUE
       center <- colMeans(x, na.rm = TRUE)
       x <- sweep(x, 2L, center, check.margin = FALSE)
     }
-  } else if (is.numeric(center) && (length(center) == nc)) 
+  } else if (is.numeric(center) && (length(center) == nc))
     x <- sweep(x, 2L, center, check.margin = FALSE) else
     stop("length of 'center' must equal the number of columns of 'x'")
   if (is.logical(scale)) {
@@ -479,12 +479,12 @@ attr(sm.poly, "smart") <- TRUE
       scale <- apply(x, 2L, f)
       x <- sweep(x, 2L, scale, "/", check.margin = FALSE)
     }
-  } else if (is.numeric(scale) && length(scale) == nc) 
-    x <- sweep(x, 2L, scale, "/", check.margin = FALSE) else 
+  } else if (is.numeric(scale) && length(scale) == nc)
+    x <- sweep(x, 2L, scale, "/", check.margin = FALSE) else
     stop("length of 'scale' must equal the number of columns of 'x'")
-  if (is.numeric(center)) 
+  if (is.numeric(center))
     attr(x, "scaled:center") <- center
-  if (is.numeric(scale)) 
+  if (is.numeric(scale))
     attr(x, "scaled:scale") <- scale
 
   if (smart.mode.is("write")) {
@@ -501,7 +501,7 @@ attr(sm.scale.default, "smart") <- TRUE
 
 
 
- sm.scale <- function (x, center = TRUE, scale = TRUE) 
+ sm.scale <- function (x, center = TRUE, scale = TRUE)
   UseMethod("sm.scale")
 
 
@@ -542,7 +542,7 @@ sm.min2 <- function(x, .minx = min(x)) {
   x <- x  # Evaluate x; needed for nested calls, e.g., sm.bs(sm.scale(x)).
   if (smart.mode.is("read")) {  # Use recursion
     return(eval(smart.expression))
-  } else 
+  } else
   if (smart.mode.is("write"))
     put.smart(list( .minx = .minx , match.call = match.call()))
   .minx

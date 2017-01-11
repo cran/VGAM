@@ -41,7 +41,7 @@ Yee, T. W. (2010)
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
-\url{http://www.jstatsoft.org/v32/i10/}. 
+\url{http://www.jstatsoft.org/v32/i10/}.
 
 
 }

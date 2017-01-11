@@ -6,8 +6,8 @@
   Plots quantiles associated with a LMS quantile regression.
 }
 \usage{
-qtplot.lmscreg(object, newdata = NULL, 
-               percentiles = object@misc$percentiles, 
+qtplot.lmscreg(object, newdata = NULL,
+               percentiles = object@misc$percentiles,
                show.plot = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,8 +21,8 @@ qtplot.lmscreg(object, newdata = NULL,
   If missing, the original data is used.
   }
   \item{percentiles}{ Numerical vector with values between 0 and 100
-  that specify the percentiles (quantiles). 
-  The default are the percentiles used when the model was fitted. 
+  that specify the percentiles (quantiles).
+  The default are the percentiles used when the model was fitted.
   }
   \item{show.plot}{ Logical. Plot it? If \code{FALSE} no plot will
   be done. }
@@ -36,7 +36,7 @@ the regression or smoothing is performed. For example, in medical
 studies, it is often the age.
 In \pkg{VGAM}, it is possible to handle more than one covariate, however,
 the primary variable must be the first term after the intercept.
-  
+
 }
 \value{
    A list with the following components.
@@ -57,12 +57,12 @@ Quantile regression via vector generalized additive models.
 }
 \author{ Thomas W. Yee }
 \note{
-  \code{\link{plotqtplot.lmscreg}} does the actual plotting. 
+  \code{\link{plotqtplot.lmscreg}} does the actual plotting.
 
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{plotqtplot.lmscreg}},
   \code{\link{deplot.lmscreg}},
   \code{\link{lms.bcn}},

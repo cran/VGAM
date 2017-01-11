@@ -122,7 +122,7 @@ zapoissonff(llambda = "loge", lonempobs0 = "logit", type.fitted =
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted},
-  returns the mean \eqn{\mu}{mu} (default) which is given by 
+  returns the mean \eqn{\mu}{mu} (default) which is given by
   \deqn{\mu = (1-p_0)  \lambda / [1 - \exp(-\lambda)].}{%
          mu = (1-pobs0) * lambda / [1 - exp(-lambda)].}
   If \code{type.fitted = "pobs0"} then \eqn{p_0}{pobs0} is returned.

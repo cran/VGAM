@@ -17,7 +17,7 @@ linkfun.vglm(object, earg = FALSE, ...)
     Return the extra arguments associated with each
     link function? If \code{TRUE}  then a list is returned.
 
-    
+
   }
   \item{\dots}{ Arguments that might be used
     in the future.
@@ -54,7 +54,7 @@ linkfun.vglm(object, earg = FALSE, ...)
 
 \author{ Thomas W. Yee }
 
-\note{ 
+\note{
   Presently,  the multinomial logit model has only
   one link function, \code{\link{multilogit}}, so a warning
   is not issued for that link.
@@ -68,7 +68,7 @@ linkfun.vglm(object, earg = FALSE, ...)
   \code{\link{linkfun}},
   \code{\link{multilogit}},
   \code{\link{vglm}}.
-  
+
 
 }
 

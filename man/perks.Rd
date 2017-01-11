@@ -3,14 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Perks Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 2-parameter 
+  Maximum likelihood estimation of the 2-parameter
   Perks distribution.
 
 }
 \usage{
 perks(lscale = "loge", lshape = "loge",
       iscale = NULL,   ishape = NULL,
-      gscale = exp(-5:5), gshape = exp(-5:5), 
+      gscale = exp(-5:5), gshape = exp(-5:5),
       nsimEIM = 500, oim.mean = FALSE, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -61,31 +61,33 @@ perks(lscale = "loge", lshape = "loge",
 \details{
 The Perks distribution
 has cumulative distribution function
-\deqn{F(x; \alpha, \beta) =
+\deqn{F(y; \alpha, \beta) =
 1 -
 \left\{
 \frac{1 + \alpha}{1 + \alpha e^{\beta y}}
 \right\}^{1 / \beta}
 }{%
-F(x; alpha, beta) = 1 - ((1 + \alpha)/(1 + alpha * e^(beta * y)))^(1 / beta)
+F(y; alpha, beta) = 1 - ((1 + \alpha)/(1 + alpha * e^(beta * y)))^(1 / beta)
 }
 which leads to a probability density function
-\deqn{f(x; \alpha, \beta) =
+\deqn{f(y; \alpha, \beta) =
 \left[ 1 + \alpha \right]^{1 / \beta}
 \alpha  e^{\beta y} / (1 + \alpha e^{\beta y})^{1 + 1 / \beta}
 }{%
-f(x; alpha, beta) = [ 1 + alpha]^(1 / \beta) * alpha * exp(beta * y) / (1 + alpha * exp(beta * y))^(1 + 1 / beta)
+f(y; alpha, beta) = [ 1 + alpha]^(1 / \beta) * alpha * exp(beta * y) / (1 + alpha * exp(beta * y))^(1 + 1 / beta)
 }
 for \eqn{\alpha > 0}{alpha > 0},
 \eqn{\beta > 0}{beta > 0},
-\eqn{x > 0}.
+\eqn{y > 0}.
 Here, \eqn{\beta}{beta} is called the scale parameter \code{scale},
 and \eqn{\alpha}{alpha} is called a shape parameter.
 The moments for this distribution do
 not appear to be available in closed form.
 
 
+
 Simulated Fisher scoring is used and multiple responses are handled.
+
 
 
 }
@@ -97,6 +99,7 @@ Simulated Fisher scoring is used and multiple responses are handled.
 
 }
 \references{
+
 
 Perks, W. (1932)
 On some experiments in the graduation of mortality statistics.

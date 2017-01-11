@@ -23,14 +23,14 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
 
 
   }
-  \item{ilambda, parallel}{ 
+  \item{ilambda, parallel}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   If \code{parallel = TRUE} then the constraint is not applied to the
   intercept.
 
 
   }
-  \item{imethod, ishrinkage, zero}{ 
+  \item{imethod, ishrinkage, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -67,7 +67,7 @@ inv.gaussianff(lmu = "loge", llambda = "loge",
 
 
 }
-\references{ 
+\references{
 
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},
@@ -90,7 +90,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Inv.gaussian}},
   \code{\link{waldff}},
   \code{\link{bisa}}.

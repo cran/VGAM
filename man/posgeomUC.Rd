@@ -21,7 +21,7 @@ rposgeom(n, prob)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. 
+  \item{n}{number of observations.
   Fed into \code{\link[stats]{runif}}.
 
   }
@@ -56,7 +56,7 @@ rposgeom(n, prob)
 
 
 }
-%\references{ 
+%\references{
 %None.
 %}
 
@@ -76,7 +76,7 @@ rposgeom(n, prob)
 
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{zageometric}},
   \code{\link{zigeometric}},
   \code{\link[stats:Geometric]{rgeom}}.

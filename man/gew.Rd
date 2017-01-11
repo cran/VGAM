@@ -51,7 +51,7 @@ dollars deflated by \eqn{P_2}.
   Here,
   \eqn{P_1 =} Implicit price deflator of producers durable
   equipment (base 1947),
-  \eqn{P_2 =} Implicit price deflator of G.N.P. 
+  \eqn{P_2 =} Implicit price deflator of G.N.P.
   (base 1947),
   \eqn{P_3 =} Depreciation expense deflator = ten years
   moving average of wholesale price index of metals and metal

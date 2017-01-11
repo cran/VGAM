@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -78,7 +78,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
   new("vglmff",
   blurb = c("Mixture of two univariate normals\n\n",
             "Links:    ",
-            namesof("phi", lphi, earg = ephi, tag = FALSE), ", ", 
+            namesof("phi", lphi, earg = ephi, tag = FALSE), ", ",
             namesof("mu1",  lmu, earg = emu1, tag = FALSE), ", ",
             namesof("sd1",  lsd, earg = esd1, tag = FALSE), ", ",
             namesof("mu2",  lmu, earg = emu2, tag = FALSE), ", ",
@@ -156,7 +156,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
       if ( .eq.sd ) {
         init.sd1 <-
         init.sd2 <- (init.sd1 + init.sd2) / 2
-        if (!all.equal( .esd1, .esd2 ))
+        if (!identical( .esd1 , .esd2 ))
           stop("'esd1' and 'esd2' must be equal if 'eq.sd = TRUE'")
       }
       etastart <- cbind(
@@ -220,6 +220,22 @@ mix2normal.control <- function(trace = TRUE, ...) {
           .esd1 = esd1, .esd2 = esd2,
           .lsd = lsd ))),
   vfamily = c("mix2normal"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    phi <- eta2theta(eta[, 1], link = .lphi , earg = .ephi )
+    mu1 <- eta2theta(eta[, 2], link = .lmu  , earg = .emu1 )
+    sd1 <- eta2theta(eta[, 3], link = .lsd  , earg = .esd1 )
+    mu2 <- eta2theta(eta[, 4], link = .lmu  , earg = .emu2 )
+    sd2 <- eta2theta(eta[, 5], link = .lsd  , earg = .esd2 )
+    okay1 <- all(is.finite(mu1)) &&
+             all(is.finite(mu2)) &&
+             all(is.finite(sd1)) && all(0 < sd1) &&
+             all(is.finite(sd2)) && all(0 < sd2) &&
+             all(is.finite(phi)) && all(0 < phi & phi < 1)
+    okay1
+  }, list(.lphi = lphi, .lmu = lmu,
+          .ephi = ephi, .emu1 = emu1, .emu2 = emu2,
+          .esd1 = esd1, .esd2 = esd2,
+          .lsd = lsd ))),
   deriv = eval(substitute(expression({
     phi <- eta2theta(eta[, 1], link = .lphi , earg = .ephi )
     mu1 <- eta2theta(eta[, 2], link = .lmu  , earg = .emu1 )
@@ -338,9 +354,9 @@ mix2poisson.control <- function(trace = TRUE, ...) {
   new("vglmff",
   blurb = c("Mixture of two Poisson distributions\n\n",
             "Links:    ",
-            namesof("phi",lphi, earg = ephi), ", ", 
-            namesof("lambda1", llambda, earg = el1, tag = FALSE), ", ",
-            namesof("lambda2", llambda, earg = el2, tag = FALSE), "\n",
+            namesof("phi",     lphi,    earg = ephi, tag = FALSE), ", ",
+            namesof("lambda1", llambda, earg = el1,  tag = FALSE), ", ",
+            namesof("lambda2", llambda, earg = el2,  tag = FALSE), "\n",
             "Mean:     phi*lambda1 + (1 - phi)*lambda2"),
   constraints = eval(substitute(expression({
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
@@ -363,8 +379,7 @@ mix2poisson.control <- function(trace = TRUE, ...) {
   }, list( .zero = zero,
            .nsimEIM = nsimEIM,
            .lphi = lphi,
-           .llambda = llambda
-         ))),
+           .llambda = llambda ))),
 
 
   initialize = eval(substitute(expression({
@@ -396,22 +411,22 @@ mix2poisson.control <- function(trace = TRUE, ...) {
       init.lambda1 <- rep_len(if (length( .il1  )) .il1  else qy[1], n)
       init.lambda2 <- rep_len(if (length( .il2  )) .il2  else qy[2], n)
 
-      if (!length(etastart))  
+      if (!length(etastart))
         etastart <- cbind(theta2eta(init.phi, .lphi , earg = .ephi ),
                           theta2eta(init.lambda1, .llambda , earg = .el1 ),
                           theta2eta(init.lambda2, .llambda , earg = .el2 ))
     }
-  }), list(.lphi = lphi, .llambda = llambda,
-           .ephi = ephi, .el1 = el1, .el2 = el2,
-           .iphi = iphi, .il1 = il1, .il2 = il2,
-           .qmu = qmu))),
+  }), list( .lphi = lphi, .llambda = llambda,
+            .ephi = ephi, .el1 = el1, .el2 = el2,
+            .iphi = iphi, .il1 = il1, .il2 = il2,
+            .qmu = qmu))),
   linkinv = eval(substitute(function(eta, extra = NULL){
     phi     <- eta2theta(eta[, 1], link = .lphi ,    earg = .ephi )
     lambda1 <- eta2theta(eta[, 2], link = .llambda , earg = .el1  )
     lambda2 <- eta2theta(eta[, 3], link = .llambda , earg = .el2  )
     phi * lambda1 + (1 - phi) * lambda2
-  }, list(.lphi = lphi, .llambda = llambda,
-          .ephi = ephi, .el1 = el1, .el2 = el2 ))),
+  }, list( .lphi = lphi, .llambda = llambda,
+           .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   last = eval(substitute(expression({
     misc$link <-
          c("phi" = .lphi , "lambda1" = .llambda , "lambda2" = .llambda )
@@ -422,9 +437,9 @@ mix2poisson.control <- function(trace = TRUE, ...) {
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
     misc$multipleResponses <- FALSE
-  }), list(.lphi = lphi, .llambda = llambda,
-           .ephi = ephi, .el1 = el1, .el2 = el2,
-           .nsimEIM = nsimEIM ))),
+  }), list( .lphi = lphi, .llambda = llambda,
+            .ephi = ephi, .el1 = el1, .el2 = el2,
+            .nsimEIM = nsimEIM ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -444,9 +459,19 @@ mix2poisson.control <- function(trace = TRUE, ...) {
         ll.elts
       }
     }
-  }, list(.lphi = lphi, .llambda = llambda,
+  }, list( .lphi = lphi, .llambda = llambda,
            .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   vfamily = c("mix2poisson"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    phi     <- eta2theta(eta[, 1], link = .lphi    , earg = .ephi )
+    lambda1 <- eta2theta(eta[, 2], link = .llambda , earg = .el1  )
+    lambda2 <- eta2theta(eta[, 3], link = .llambda , earg = .el2  )
+    okay1 <- all(is.finite(phi))     && all(0 < phi & phi < 1) &&
+             all(is.finite(lambda1)) && all(0 < lambda1) &&
+             all(is.finite(lambda2)) && all(0 < lambda2)
+    okay1
+  }, list( .lphi = lphi, .llambda = llambda,
+           .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   deriv = eval(substitute(expression({
     phi     <- eta2theta(eta[, 1], link = .lphi    , earg = .ephi )
     lambda1 <- eta2theta(eta[, 2], link = .llambda , earg = .el1  )
@@ -468,9 +493,9 @@ mix2poisson.control <- function(trace = TRUE, ...) {
     c(w) * cbind(dl.dphi * dphi.deta,
                  dl.dlambda1 * dlambda1.deta,
                  dl.dlambda2 * dlambda2.deta)
-  }), list(.lphi = lphi, .llambda = llambda,
-           .ephi = ephi, .el1 = el1, .el2 = el2,
-           .nsimEIM = nsimEIM ))),
+  }), list( .lphi = lphi, .llambda = llambda,
+            .ephi = ephi, .el1 = el1, .el2 = el2,
+            .nsimEIM = nsimEIM ))),
   weight = eval(substitute(expression({
     run.mean <- 0
     for (ii in 1:( .nsimEIM )) {
@@ -524,9 +549,9 @@ mix2poisson.control <- function(trace = TRUE, ...) {
                dtheta.detas[, index0$col]
 
     c(w) * wz
-  }), list(.lphi = lphi, .llambda = llambda,
-           .ephi = ephi, .el1 = el1, .el2 = el2,
-           .nsimEIM = nsimEIM ))))
+  }), list( .lphi = lphi, .llambda = llambda,
+            .ephi = ephi, .el1 = el1, .el2 = el2,
+            .nsimEIM = nsimEIM ))))
 }
 
 
@@ -577,7 +602,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
   new("vglmff",
   blurb = c("Mixture of two univariate exponentials\n\n",
             "Links:    ",
-            namesof("phi",     lphi,    earg = ephi, tag = FALSE), ", ", 
+            namesof("phi",     lphi,    earg = ephi, tag = FALSE), ", ",
             namesof("lambda1", llambda, earg = el1 , tag = FALSE), ", ",
             namesof("lambda2", llambda, earg = el2 , tag = FALSE), "\n",
             "Mean:     phi / lambda1 + (1 - phi) / lambda2\n"),
@@ -633,7 +658,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
       init.phi <-     rep_len(if (length( .iphi )) .iphi else 0.5, n)
       init.lambda1 <- rep_len(if (length( .il1 )) .il1 else 1/qy[1], n)
       init.lambda2 <- rep_len(if (length( .il2 )) .il2 else 1/qy[2], n)
-      if (!length(etastart))  
+      if (!length(etastart))
         etastart <- cbind(theta2eta(init.phi,     .lphi    , earg = .ephi ),
                           theta2eta(init.lambda1, .llambda , earg = .el1  ),
                           theta2eta(init.lambda2, .llambda , earg = .el2  ))
@@ -684,6 +709,16 @@ mix2exp.control <- function(trace = TRUE, ...) {
   }, list(.lphi = lphi, .llambda = llambda,
           .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   vfamily = c("mix2exp"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    phi     <- eta2theta(eta[, 1], link = .lphi    , earg = .ephi )
+    lambda1 <- eta2theta(eta[, 2], link = .llambda , earg = .el1  )
+    lambda2 <- eta2theta(eta[, 3], link = .llambda , earg = .el2  )
+    okay1 <- all(is.finite(phi))     && all(0 < phi & phi < 1) &&
+             all(is.finite(lambda1)) && all(0 < lambda1) &&
+             all(is.finite(lambda2)) && all(0 < lambda2)
+    okay1
+  }, list( .lphi = lphi, .llambda = llambda,
+           .ephi = ephi, .el1 = el1, .el2 = el2 ))),
   deriv = eval(substitute(expression({
     phi     <- eta2theta(eta[, 1], link = .lphi    , earg = .ephi )
     lambda1 <- eta2theta(eta[, 2], link = .llambda , earg = .el1  )

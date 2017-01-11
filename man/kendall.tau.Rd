@@ -25,7 +25,7 @@ kendall.tau(x, y, exact = FALSE, max.n = 3000)
 }
   \item{exact}{
     Logical. If \code{TRUE} then the exact value is computed.
-    
+
 
 }
 \item{max.n}{
@@ -41,8 +41,8 @@ kendall.tau(x, y, exact = FALSE, max.n = 3000)
   Loosely, two random variables are \emph{concordant} if large values
   of one random variable are associated with large values of the
   other random variable.
-  Similarly, two random variables are \emph{disconcordant} if large values 
-  of one random variable are associated with small values of the 
+  Similarly, two random variables are \emph{disconcordant} if large values
+  of one random variable are associated with small values of the
   other random variable.
   More formally, if \code{(x[i] - x[j])*(y[i] - y[j]) > 0} then
   that comparison is concordant \eqn{(i \neq j)}.
@@ -55,7 +55,7 @@ kendall.tau(x, y, exact = FALSE, max.n = 3000)
   If there are ties then half the ties are deemed concordant and
   half disconcordant so that \eqn{(c-d)/(c+d+t)} is used.
 
-  
+
 }
 \value{
   Kendall's tau, which lies between \eqn{-1} and \eqn{1}.

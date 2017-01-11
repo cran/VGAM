@@ -7,7 +7,7 @@
 
 }
 \usage{
-zipf(N = NULL, link = "loge", init.s = NULL)
+zipf(N = NULL, lshape = "loge", ishape = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,13 +20,13 @@ zipf(N = NULL, link = "loge", init.s = NULL)
 
 
   }
-  \item{link}{
-  Parameter link function applied to the (positive) parameter \eqn{s}.
+  \item{lshape}{
+  Parameter link function applied to the (positive) shape parameter \eqn{s}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{init.s}{
+  \item{ishape}{
   Optional initial value for the parameter \eqn{s}.
   The default is to choose an initial value internally.
   If converge failure occurs use this argument to input a value.
@@ -45,6 +45,7 @@ zipf(N = NULL, link = "loge", init.s = NULL)
   is the \eqn{n}th generalized harmonic number.
 
 
+
   Zipf's law is an experimental law which is often applied
   to the study of the frequency of words in a corpus of
   natural language utterances. It states that the frequency
@@ -53,6 +54,7 @@ zipf(N = NULL, link = "loge", init.s = NULL)
   are first two most common words, and Zipf's law states
   that \code{"the"} is twice as common as \code{"of"}.
   Many other natural phenomena conform to Zipf's law.
+
 
 
 }
@@ -65,7 +67,7 @@ zipf(N = NULL, link = "loge", init.s = NULL)
 
 }
 
-\references{ 
+\references{
 
   pp.526-- of Chapter 11 of
   Johnson N. L., Kemp, A. W. and Kotz S. (2005)
@@ -82,7 +84,7 @@ zipf(N = NULL, link = "loge", init.s = NULL)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{dzipf}},
   \code{\link{zetaff}},
   \code{\link{simulate.vlm}}.
@@ -91,13 +93,13 @@ zipf(N = NULL, link = "loge", init.s = NULL)
 }
 \examples{
 zdata <- data.frame(y = 1:5, ofreq = c(63, 14, 5, 1, 2))
-fit <- vglm(y ~ 1, zipf, data = zdata, trace = TRUE, weight = ofreq, crit = "coef")
-fit <- vglm(y ~ 1, zipf(link = identitylink, init = 3.4), data = zdata,
-            trace = TRUE, weight = ofreq)
-fit@misc$N
-(shat <- Coef(fit))
+zfit <- vglm(y ~ 1, zipf, data = zdata, trace = TRUE, weight = ofreq)
+zfit <- vglm(y ~ 1, zipf(lshape = "identitylink", ishape = 3.4), data = zdata,
+            trace = TRUE, weight = ofreq, crit = "coef")
+zfit@misc$N
+(shape.hat <- Coef(zfit))
 with(zdata, weighted.mean(y, ofreq))
-fitted(fit, matrix = FALSE)
+fitted(zfit, matrix = FALSE)
 }
 \keyword{models}
 \keyword{regression}
@@ -108,4 +110,8 @@ fitted(fit, matrix = FALSE)
 %\emph{Univariate Discrete Distributions},
 %2nd ed.
 %New York: Wiley.
+
+%http://www.math.uah.edu/stat/special/Zeta.html calls s 'shape'
+
+
 

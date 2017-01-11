@@ -21,7 +21,7 @@ rzabinom(n, size, prob, pobs0 = 0)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. 
+  \item{n}{number of observations.
   If \code{length(n) > 1} then the length is taken to be the number required.
   }
   \item{size, prob, log}{
@@ -54,14 +54,14 @@ rzabinom(n, size, prob, pobs0 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
 
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{zibinomial}},
     \code{\link{rposbinom}}.
 

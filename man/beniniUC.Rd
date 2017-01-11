@@ -74,7 +74,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 %\note{
-%  
+%
 %}
 \seealso{
   \code{\link{benini1}}.

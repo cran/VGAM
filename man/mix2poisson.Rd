@@ -57,7 +57,7 @@ mix2poisson(lphi = "logit", llambda = "loge",
   }
 }
 \details{
-  The probability function can be loosely written as 
+  The probability function can be loosely written as
   \deqn{P(Y=y) = \phi \, Poisson(\lambda_1) + (1-\phi) \, Poisson(\lambda_2)}{%
         P(Y=y) = phi * Poisson(lambda1) + (1-phi) * Poisson(lambda2)}
   where \eqn{\phi}{phi} is the probability an observation belongs

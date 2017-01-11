@@ -7,43 +7,30 @@
 \title{ Haight's Zeta Distribution  }
 \description{
   Density, distribution function, quantile function and random generation
-  for Haight's zeta distribution with parameter \code{alpha}.
+  for Haight's zeta distribution with parameter \code{shape}.
 
 
 }
 \usage{
-dhzeta(x, alpha, log = FALSE)
-phzeta(q, alpha, log.p = FALSE)
-qhzeta(p, alpha)
-rhzeta(n, alpha)
+dhzeta(x, shape, log = FALSE)
+phzeta(q, shape, log.p = FALSE)
+qhzeta(p, shape)
+rhzeta(n, shape)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x, q}{
-   Vector of quantiles. For the density, it should be a vector with
-   positive integer values in order for the probabilities to be positive.
+  \item{x, q, p, n}{
+  Same meaning as \code{\link[stats]{runif}}.
 
 
   }
-  \item{p}{vector of probabilities.}
-  \item{n}{number of observations.
-  Same as \code{\link[stats]{runif}}.
+  \item{shape}{
+   The positive shape parameter.
+   Called \eqn{\alpha}{alpha} below.
 
 
   }
-  \item{alpha}{ 
-   The parameter value. Must contain positive values and is recycled to
-   the length of \code{x} or \code{p} or \code{q} if necessary.
-
-
-  }
-  \item{log}{
-  Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
-
-
-  }
-  \item{log.p}{
+  \item{log,log.p}{
   Same meaning as in \code{\link[stats:Normal]{pnorm}}
   or \code{\link[stats:Normal]{qnorm}}.
 
@@ -66,7 +53,7 @@ rhzeta(n, alpha)
 
 
 }
-%\references{ 
+%\references{
 %
 %    Pages 533--4 of
 %    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
@@ -77,9 +64,9 @@ rhzeta(n, alpha)
 %
 %}
 \author{ T. W. Yee and Kai Huang }
-\note{ 
+\note{
   Given some response data, the \pkg{VGAM} family function
-  \code{\link{hzeta}} estimates the parameter \code{alpha}.
+  \code{\link{hzeta}} estimates the parameter \code{shape}.
 
 
 }
@@ -99,11 +86,11 @@ rhzeta(20, 2.1)
 round(1000 * dhzeta(1:8, 2))
 table(rhzeta(1000, 2))
 
-\dontrun{ alpha <- 1.1; x <- 1:10
-plot(x, dhzeta(x, alpha = alpha), type = "h", ylim = 0:1, lwd = 2,
-     sub = paste("alpha =", alpha), las = 1, col = "blue", ylab = "Probability",
+\dontrun{ shape <- 1.1; x <- 1:10
+plot(x, dhzeta(x, shape = shape), type = "h", ylim = 0:1, lwd = 2,
+     sub = paste("shape =", shape), las = 1, col = "blue", ylab = "Probability",
      main = "Haight's zeta: blue = density; orange = distribution function")
-lines(x+0.1, phzeta(x, alpha = alpha), col = "orange", lty = 3, lwd = 2,
+lines(x+0.1, phzeta(x, shape = shape), col = "orange", lty = 3, lwd = 2,
       type = "h")
 }
 }

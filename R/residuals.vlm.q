@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -27,7 +27,7 @@ residualsvlm  <-
   if (is.null(pooled.weight))
     pooled.weight <- FALSE
 
-  answer <- 
+  answer <-
   switch(type,
     working = if (pooled.weight) NULL else object@residuals,
     pearson = {
@@ -40,17 +40,17 @@ residualsvlm  <-
 
         if (M == 1) {
           if (any(wz < 0))
-            warning(paste("some weights are negative.",
-                          "Their residual will be assigned NA"))
+            warning("some weights are negative. ",
+                    "Their residual will be assigned NA")
           ans <- sqrt(c(wz)) * c(object@residuals)
           names(ans) <- names(object@residuals)
-          ans 
+          ans
         } else {
           wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
           ans <- mux22(wz.sqrt, object@residuals,
                        M = M, upper = FALSE)
-          dim(ans) <- c(M, n) 
-          ans <- t(ans) 
+          dim(ans) <- c(M, n)
+          ans <- t(ans)
           dimnames(ans) <- dimnames(object@residuals)  # n x M
           ans
         }
@@ -91,7 +91,7 @@ residualsvglm  <-
   if (is.null(pooled.weight))
     pooled.weight <- FALSE
 
-  answer <- 
+  answer <-
   switch(type,
     working = if (pooled.weight) NULL else object@residuals,
     pearson = {
@@ -103,17 +103,17 @@ residualsvglm  <-
 
       if (M == 1) {
         if (any(wz < 0))
-          warning(paste("some weights are negative.",
-                        "Their residual will be assigned NA"))
+          warning("some weights are negative. ",
+                  "Their residual will be assigned NA")
         ans <- sqrt(c(wz)) * c(object@residuals)
         names(ans) <- names(object@residuals)
-        ans 
+        ans
       } else {
         wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
         ans <- mux22(wz.sqrt, object@residuals,
                      M = M, upper = FALSE)
         dim(ans) <- c(M, n)
-        ans <- t(ans) 
+        ans <- t(ans)
         dimnames(ans) <- dimnames(object@residuals)   # n x M
         ans
       }
@@ -147,7 +147,7 @@ residualsvglm  <-
         }
         ans
       } else {
-        NULL 
+        NULL
       }
     },
     ldot = {
@@ -168,7 +168,7 @@ residualsvglm  <-
         }
         ans
       } else {
-        NULL 
+        NULL
       }
     },
     response = {
@@ -185,8 +185,8 @@ residualsvglm  <-
 
       if (!matrix.arg && length(ans)) {
         if (ncol(ans) == 1) {
-          names.ans <- dimnames(ans)[[1]] 
-          ans <- c(ans) 
+          names.ans <- dimnames(ans)[[1]]
+          ans <- c(ans)
           names(ans) <- names.ans
           ans
         } else {
@@ -225,7 +225,7 @@ residualsqrrvglm  <- function(object,
   if (is.null(pooled.weight))
     pooled.weight <- FALSE
 
-  answer <- 
+  answer <-
   switch(type,
     working = if (pooled.weight) NULL else object@residuals,
     pearson = {
@@ -250,8 +250,8 @@ residualsqrrvglm  <- function(object,
 
       if (!matrix.arg && length(ans)) {
         if (ncol(ans) == 1) {
-          names.ans <- dimnames(ans)[[1]] 
-          ans <- c(ans) 
+          names.ans <- dimnames(ans)[[1]]
+          ans <- c(ans)
           names(ans) <- names.ans
           ans
         } else {
@@ -274,29 +274,29 @@ residualsqrrvglm  <- function(object,
 
 
 setMethod("residuals",  "vlm",
-          function(object, ...) 
+          function(object, ...)
           residualsvlm(object, ...))
 setMethod("residuals",  "vglm",
-          function(object, ...) 
+          function(object, ...)
           residualsvglm(object, ...))
 setMethod("residuals",  "vgam",
-          function(object, ...) 
+          function(object, ...)
           residualsvglm(object, ...))
 setMethod("residuals",  "qrrvglm",
-          function(object, ...) 
+          function(object, ...)
           residualsqrrvglm(object, ...))
 
 setMethod("resid",  "vlm",
-          function(object, ...) 
+          function(object, ...)
           residualsvlm(object, ...))
 setMethod("resid",  "vglm",
-          function(object, ...) 
+          function(object, ...)
           residualsvglm(object, ...))
 setMethod("resid",  "vgam",
-          function(object, ...) 
+          function(object, ...)
           residualsvglm(object, ...))
 setMethod("resid",  "qrrvglm",
-          function(object, ...) 
+          function(object, ...)
           residualsqrrvglm(object, ...))
 
 

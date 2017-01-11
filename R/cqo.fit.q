@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -26,7 +26,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
   if (I.tol <- control$I.tolerances) {
     if (Rank > 1) {
       numat <- xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
-      evnu <- eigen(var(numat))
+      evnu <- eigen(var(numat), symmetric = TRUE)
       cmatrix <- cmatrix %*% evnu$vector
     }
 
@@ -50,7 +50,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
       }
   } else {
     numat <- xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
-    evnu <- eigen(var(numat))
+    evnu <- eigen(var(numat), symmetric = TRUE)
     temp7 <- if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
                            evnu$vector %*% evnu$value^(-0.5)
     cmatrix <- cmatrix %*% temp7
@@ -61,9 +61,9 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
   inited <- ifelse(exists(".VGAM.CQO.etamat", envir = VGAMenv), 1, 0)
 
 
-  usethiseta <- if (inited == 1) 
+  usethiseta <- if (inited == 1)
     getfromVGAMenv("etamat", prefix = ".VGAM.CQO.") else t(etamat)
-  usethisbeta <- if (inited == 2) 
+  usethisbeta <- if (inited == 2)
     getfromVGAMenv("beta", prefix = ".VGAM.CQO.") else double(lenbeta)
 
   othint <- c(Rank = Rank, control$eq.tol, pstar = pstar,
@@ -75,10 +75,10 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
   bnumat <- if (nice31) matrix(0,nstar,pstar) else
             cbind(matrix(0, nstar, p2star), X.vlm.1save)
 
- 
+
 
   ans1 <- if (nice31) .C("cqo_1",
-     numat = as.double(numat), as.double(ymat), 
+     numat = as.double(numat), as.double(ymat),
      as.double(if (p1) xmat[, control$colx1.index] else 999),
      as.double(wvec), etamat = as.double(usethiseta),
      moff = double(if (I.tol) n else 1),
@@ -95,7 +95,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
                 iKvector = rep_len(control$iKvector, NOS),
                 iShape = rep_len(control$iShape, NOS)))) else
   .C("cqo_2",
-     numat = as.double(numat), as.double(ymat), 
+     numat = as.double(numat), as.double(ymat),
      as.double(if (p1) xmat[, control$colx1.index] else 999),
      as.double(wvec), etamat = as.double(usethiseta),
      moff = double(if (I.tol) n else 1),
@@ -162,7 +162,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
   if (I.tol <- control$I.tolerances) {
     if (Rank > 1) {
       numat <- xmat[, control$colx2.index, drop=FALSE] %*% cmatrix
-      evnu <- eigen(var(numat))
+      evnu <- eigen(var(numat), symmetric = TRUE)
       cmatrix <- cmatrix %*% evnu$vector
     }
 
@@ -185,7 +185,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
       }
   } else {
     numat <- xmat[,control$colx2.index,drop=FALSE] %*% cmatrix
-    evnu <- eigen(var(numat))
+    evnu <- eigen(var(numat), symmetric = TRUE)
     temp7 <- if (Rank > 1)
                evnu$vector %*% diag(evnu$value^(-0.5)) else
                evnu$vector %*% evnu$value^(-0.5)
@@ -198,9 +198,9 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
                             envir = VGAMenv), 1, 0)
 
 
-    usethiseta <- if (inited == 1) 
+    usethiseta <- if (inited == 1)
       getfromVGAMenv("etamat", prefix = ".VGAM.CQO.") else t(etamat)
-    usethisbeta <- if (inited == 2) 
+    usethisbeta <- if (inited == 2)
       getfromVGAMenv("beta", prefix = ".VGAM.CQO.") else double(lenbeta)
 
     othint <- c(Rank, control$eq.tol, pstar, dimw = 1, inited = inited,
@@ -213,9 +213,9 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
              cbind(matrix(0,nstar,p2star), X.vlm.1save)
     flush.console()
 
-    ans1 <- 
+    ans1 <-
     .C("dcqo1",
-       numat = as.double(numat), as.double(ymat), 
+       numat = as.double(numat), as.double(ymat),
        as.double(if (p1) xmat[,control$colx1.index] else 999),
        as.double(wvec), etamat = as.double(usethiseta),
            moff = double(if (I.tol) n else 1),
@@ -256,7 +256,7 @@ checkCMCO <- function(Hlist, control, modelno) {
     stop("Some variables are needed in noRRR and non-noRRR arguments")
   if (all(names(colx1.index) != "(Intercept)"))
     stop("an intercept term must be in the argument 'noRRR' formula")
-  Hlist1 <- vector("list", p1) 
+  Hlist1 <- vector("list", p1)
   Hlist2 <- vector("list", p2)
   for (kk in 1:p1)
     Hlist1[[kk]] <- Hlist[[(colx1.index[kk])]]
@@ -282,7 +282,7 @@ checkCMCO <- function(Hlist, control, modelno) {
         if (!trivial.constraints(list(Hlist1[[kk]])))
           stop("the constraint matrices for some 'noRRR' ",
                "terms is not trivial")
-            
+
   nice31 <- if (control$Quadratic)
               (!control$eq.tol || control$I.tolerances) else TRUE
   as.numeric(nice31)
@@ -329,8 +329,8 @@ ny <- names(y)
   intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
   y.names <- predictors.names <- NULL  # May be overwritten in @initialize
 
- 
-    n.save <- n 
+
+    n.save <- n
 
 
 
@@ -339,7 +339,7 @@ ny <- names(y)
 
     if (length(family@initialize))
       eval(family@initialize)  # Initialize mu and M (and optionally w)
-    n <- n.save 
+    n <- n.save
 
     eval(rrr.init.expression)
 
@@ -460,18 +460,17 @@ ny <- names(y)
     Hlist <- process.constraints(constraints, x, M, specialCM = specialCM)
     nice31 <- checkCMCO(Hlist, control = control, modelno = modelno)
     ncolHlist <- unlist(lapply(Hlist, ncol))
-    dimB <- sum(ncolHlist)
 
     X.vlm.save <- if (nice31) {
-      NULL 
+      NULL
     } else {
       tmp500 <- lm2qrrvlm.model.matrix(x = x, Hlist = Hlist,
                                        C = Cmat, control = control)
-      xsmall.qrr <- tmp500$new.latvar.model.matrix 
+      xsmall.qrr <- tmp500$new.latvar.model.matrix
       H.list <- tmp500$constraints
       latvar.mat <- tmp500$latvar.mat
       if (length(tmp500$offset)) {
-        offset <- tmp500$offset 
+        offset <- tmp500$offset
       }
       lm2vlm.model.matrix(xsmall.qrr, H.list, xij = control$xij)
     }
@@ -480,7 +479,7 @@ ny <- names(y)
       eta <- if (ncol(X.vlm.save) > 1)
                X.vlm.save %*% coefstart + offset else
                X.vlm.save  *  coefstart + offset
-      eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta) 
+      eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta)
       mu <- family@linkinv(eta, extra)
     }
 
@@ -539,9 +538,9 @@ ny <- names(y)
                 df.residual = df.residual,
                 df.total = n*M,
                 fitted.values = mu,
-                offset = offset, 
+                offset = offset,
                 residuals = residuals,
-                terms = Terms)  # terms: This used to be done in vglm() 
+                terms = Terms)  # terms: This used to be done in vglm()
 
     if (M == 1) {
       wz <- as.vector(wz)  # Convert wz into a vector
@@ -551,7 +550,7 @@ ny <- names(y)
     misc <- list(
         colnames.x = xn,
         criterion = "deviance",
-        function.name = function.name, 
+        function.name = function.name,
         intercept.only=intercept.only,
         predictors.names = predictors.names,
         M = M,
@@ -621,7 +620,7 @@ ny <- names(y)
   Crow1positive <- if (length(Crow1positive))
                    rep_len(Crow1positive, Rank) else
                    rep_len(TRUE, Rank)
-  if (epsilon <= 0) 
+  if (epsilon <= 0)
     stop("epsilon > 0 is required")
   ymat <- cbind(ymat) + epsilon  # ymat == 0 cause problems
   NOS <- ncol(ymat)
@@ -631,7 +630,7 @@ ny <- names(y)
                   Crow1positive)
     eval(sd.scale.X2.expression)
     if (NOS == 1) {
-      eval(print.CQO.expression) 
+      eval(print.CQO.expression)
       return(ans)
     } else {
       ans.save <- ans;   # ans.save contains scaled guesses
@@ -669,9 +668,9 @@ ny <- names(y)
                          colx2.index = (ncol(X1)+1):(ncol(X1) + ncol(X2)),
                          Corner = FALSE, Svd.arg = TRUE,
                          Uncorrelated.latvar = TRUE, Quadratic = FALSE)
-    
+
     ans2 <- if (Rank > 1)
-              rrr.normalize(rrcontrol = temp.control, A = alt$A, 
+              rrr.normalize(rrcontrol = temp.control, A = alt$A,
                             C = alt$C, x = cbind(X1, X2)) else
               alt
     ans <- crow1C(ans2$C, rep_len(Crow1positive, effrank))
@@ -679,7 +678,7 @@ ny <- names(y)
     Rank.save <- Rank
     Rank <- effrank
     eval(sd.scale.X2.expression)
-    Rank <- Rank.save 
+    Rank <- Rank.save
 
     if (effrank < Rank) {
       ans <- cbind(ans, ans.save[,-(1:effrank)])  # ans is better
@@ -698,7 +697,7 @@ ny <- names(y)
     }
 
     if (Rank > 1) {
-      evnu <- eigen(var(ans))
+      evnu <- eigen(var(ans), symmetric = TRUE)
       ans <- ans %*% evnu$vector
     }
 
@@ -723,7 +722,7 @@ ny <- names(y)
 
 cqo.init.derivative.expression <- expression({
   which.optimizer <- if (control$Quadratic && control$FastAlgorithm) {
-    "BFGS" 
+    "BFGS"
   } else {
     ifelse(iter <= rrcontrol$Switch.optimizer, "Nelder-Mead", "BFGS")
   }
@@ -732,7 +731,7 @@ cqo.init.derivative.expression <- expression({
   if (trace && control$OptimizeWrtC) {
     cat("\nUsing", which.optimizer, "algorithm\n")
     flush.console()
-  } 
+  }
 
 
  if (FALSE) {
@@ -749,7 +748,7 @@ cqo.init.derivative.expression <- expression({
   if (!canfitok)
     stop("cannot fit this model using fast algorithm")
 
-  p2star <- if (nice31) 
+  p2star <- if (nice31)
     ifelse(control$I.toleran, Rank, Rank + Rank*(Rank+1)/2) else
     (NOS*Rank + Rank*(Rank+1)/2 * ifelse(control$eq.tol, 1, NOS))
 
@@ -757,7 +756,7 @@ cqo.init.derivative.expression <- expression({
             (ncol(X.vlm.save) - p2star)
   X.vlm.1save <- if (p1star > 0) X.vlm.save[, -(1:p2star)] else NULL
 })
-    
+
 
 
 
@@ -799,7 +798,7 @@ cqo.derivative.expression <- expression({
   if (length(alt$offset))
     offset <- alt$offset
 
-  B1.save <- alt$B1  # Put later into extra  
+  B1.save <- alt$B1  # Put later into extra
   tmp.fitted <- alt$fitted  # contains \bI_{Rank} \bnu if Corner
 
   if (trace && control$OptimizeWrtC) {
@@ -817,9 +816,9 @@ cqo.derivative.expression <- expression({
     flush.console()
   }
 
-  Amat <- alt$Amat  # 
-  Cmat <- alt$Cmat  # 
-  Dmat <- alt$Dmat  # 
+  Amat <- alt$Amat  #
+  Cmat <- alt$Cmat  #
+  Dmat <- alt$Dmat  #
 
   eval(cqo.end.expression)  #
 })
@@ -836,7 +835,7 @@ cqo.end.expression <- expression({
     if (!length(extra))
       extra <- list()
     extra$Amat <- Amat  # Not the latest iteration ??
-    extra$Cmat <- Cmat  # Saves the latest iteration 
+    extra$Cmat <- Cmat  # Saves the latest iteration
     extra$Dmat <- Dmat     # Not the latest iteration
     extra$B1   <- B1.save  # Not the latest iteration (not good)
   } else {
@@ -849,7 +848,7 @@ cqo.end.expression <- expression({
   mu <- family@linkinv(eta, extra)
 
   if (anyNA(mu))
-    warning("there are NAs in mu") 
+    warning("there are NAs in mu")
 
   deriv.mu <- eval(family@deriv)
   wz <- eval(family@weight)

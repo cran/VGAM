@@ -66,14 +66,14 @@ Christensen, R. H. B. (2013)
 Analysis of ordinal data with cumulative link models---estimation
 with the R-package \pkg{ordinal}.
 R Package Version 2013.9-30.
-\url{http://cran.r-project.org/package=ordinal}.
-%\url{http://www.r-project.org/package=ordinal}.
-%\url{http://www.cran.r-project.org/package=ordinal}.  % Prior to 20150728
+\url{https://CRAN.R-project.org/package=ordinal}.
+%\url{https://www.R-project.org/package=ordinal}.
+%\url{https://www.CRAN.R-project.org/package=ordinal}.  % Prior to 20150728
 
 
 
 
-  Randall, J. H. (1989) 
+  Randall, J. H. (1989)
   The analysis of sensory data by generalized linear model.
   \emph{Biometrical Journal} \bold{31}(7), 781--793.
 

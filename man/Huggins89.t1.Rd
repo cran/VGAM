@@ -35,7 +35,7 @@ data(Huggins89.t1)
 
 
   Both \code{Huggins89table1} and \code{Huggins89.t1} are identical.
-  The latter used variables beginning with \code{z}, 
+  The latter used variables beginning with \code{z},
   not \code{t}, and may be withdrawn very soon.
 
 

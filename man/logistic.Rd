@@ -81,7 +81,7 @@ logistic(llocation = "identitylink", lscale = "loge",
 
 
 }
-\references{ 
+\references{
 
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},

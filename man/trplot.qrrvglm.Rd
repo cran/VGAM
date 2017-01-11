@@ -12,12 +12,12 @@ It is only applicable for rank-1 models with argument
 }
 \usage{
 trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
-               label.sites = FALSE, sitenames = rownames(object@y), 
-               axes.equal = TRUE, cex = par()$cex, 
-               col = 1:(nos * (nos - 1)/2), log = "", 
-               lty = rep_len(par()$lty, nos * (nos - 1)/2), 
-               lwd = rep_len(par()$lwd, nos * (nos - 1)/2), 
-               tcol = rep_len(par()$col, nos * (nos - 1)/2), 
+               label.sites = FALSE, sitenames = rownames(object@y),
+               axes.equal = TRUE, cex = par()$cex,
+               col = 1:(nos * (nos - 1)/2), log = "",
+               lty = rep_len(par()$lty, nos * (nos - 1)/2),
+               lwd = rep_len(par()$lwd, nos * (nos - 1)/2),
+               tcol = rep_len(par()$col, nos * (nos - 1)/2),
                xlab = NULL, ylab = NULL,
                main = "", type = "b", check.ok = TRUE, ...)
 }
@@ -27,7 +27,7 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
   \item{which.species}{ Integer or character vector specifying the
   species to be plotted. If integer, these are the columns of the
   response matrix. If character, these must match exactly with the
-  species' names. 
+  species' names.
   The default is to use all species.
 
 
@@ -39,12 +39,12 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
   curves/trajectories are labelled with the \code{sitenames}. }
   \item{sitenames}{ Character vector. The names of the sites. }
   \item{axes.equal}{ Logical. If \code{TRUE}, the x- and y-axes
-  will be on the same scale. 
+  will be on the same scale.
 
 
   }
   \item{cex}{ Character expansion of the labelling of the site names.
-  Used only if \code{label.sites} is \code{TRUE}.   
+  Used only if \code{label.sites} is \code{TRUE}.
   See the \code{cex} argument in \code{\link[graphics]{par}}.
 
 
@@ -73,26 +73,26 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
   }
   \item{tcol}{Color of the text for the site names.
   See the \code{col} argument in \code{\link[graphics]{par}}.
-  Used only if \code{label.sites} is \code{TRUE}.  
+  Used only if \code{label.sites} is \code{TRUE}.
 
 
   }
   \item{xlab}{Character caption for the x-axis.
   By default, a suitable caption is found.
-  See the \code{xlab} argument in \code{\link[graphics]{plot}} 
+  See the \code{xlab} argument in \code{\link[graphics]{plot}}
   or \code{\link[graphics]{title}}.
 
 
   }
   \item{ylab}{Character caption for the y-axis.
   By default, a suitable caption is found.
-  See the \code{xlab} argument in \code{\link[graphics]{plot}} 
+  See the \code{xlab} argument in \code{\link[graphics]{plot}}
   or \code{\link[graphics]{title}}.
 
 
   }
   \item{main}{ Character, giving the title of the plot.
-  See the \code{main} argument in \code{\link[graphics]{plot}} 
+  See the \code{main} argument in \code{\link[graphics]{plot}}
   or \code{\link[graphics]{title}}.
 
 
@@ -104,7 +104,7 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
 
   }
   \item{check.ok}{ Logical. Whether a check is performed to see
-  that \code{noRRR = ~ 1} was used. 
+  that \code{noRRR = ~ 1} was used.
   It doesn't make sense to have a trace plot unless this is so.
 
 
@@ -120,9 +120,9 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
  A trajectory plot plots the fitted values of a `second' species
  against a `first' species. The argument \code{which.species} must
  therefore contain at least two species. By default, all of the
- species that were fitted in \code{object} are plotted. 
+ species that were fitted in \code{object} are plotted.
  With more than a few species
- the resulting plot will be very congested, and so it is recommended 
+ the resulting plot will be very congested, and so it is recommended
  that only a few species be selected for plotting.
 
 
@@ -163,7 +163,7 @@ quadratic ordination.
 
 \author{ Thomas W. Yee }
 
-\note{ 
+\note{
    Plotting the axes on a log scale is often a good idea.
    The use of \code{xlim} and \code{ylim} to control the axis limits
    is also a good idea, so as to limit the extent of the curves at low

@@ -25,7 +25,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
   }
-  \item{dispersion}{ 
+  \item{dispersion}{
   Dispersion parameter. By default, maximum likelihood is used to
   estimate the model because it is known.  However, the user can specify
   \code{dispersion = 0} to have it estimated, or else specify a known
@@ -33,7 +33,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
   }
-  \item{multiple.responses}{ 
+  \item{multiple.responses}{
   Multivariate response? If \code{TRUE}, then the response is interpreted
   as \eqn{M} independent binary responses, where \eqn{M} is the number
   of columns of the response matrix. In this case, the response matrix
@@ -52,7 +52,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
   }
-  \item{onedpar}{ 
+  \item{onedpar}{
   One dispersion parameter? If \code{multiple.responses}, then a separate dispersion
   parameter will be computed for each response (column), by default.
   Setting \code{onedpar = TRUE} will pool them so that there is only one
@@ -60,7 +60,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
   }
-  \item{parallel}{ 
+  \item{parallel}{
   A logical or formula. Used only if \code{multiple.responses} is \code{TRUE}.  This
   argument allows for the parallelism assumption whereby the regression
   coefficients for a variable is constrained to be equal over the \eqn{M}
@@ -70,7 +70,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   An integer-valued vector specifying which linear/additive predictors
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of the
@@ -79,7 +79,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
   }
-  \item{earg.link}{ 
+  \item{earg.link}{
   Details at \code{\link{CommonVGAMffArguments}}.
 
 

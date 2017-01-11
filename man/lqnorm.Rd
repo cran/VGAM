@@ -119,8 +119,8 @@ ldata <- transform(ldata, y = c(4*y[1], y[-1]), x = c(-1, x[-1]))
 fit <- vglm(y ~ x, lqnorm(qpower = 1.2), data = ldata)
 coef(fit, matrix = TRUE)
 head(fitted(fit))
-fit@misc$qpower 
-fit@misc$objectiveFunction 
+fit@misc$qpower
+fit@misc$objectiveFunction
 
 \dontrun{
 # Graphical check

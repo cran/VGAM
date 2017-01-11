@@ -131,8 +131,9 @@ c
 c                   phase 3.  sum is mid-range.  no scaling.
 c
       do 95 j =i,nn,incx
-      if(dabs(dx(j)) .ge. hitest) go to 100
-   95    sum = sum + dx(j)**2
+        if(dabs(dx(j)) .ge. hitest) go to 100
+        sum = sum + dx(j)**2
+   95 continue
       vdnrm2 = dsqrt( sum )
       go to 300
 c

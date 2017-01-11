@@ -22,7 +22,7 @@ gumbelII(lscale = "loge", lshape = "loge", iscale = NULL, ishape = NULL,
 
 
   \item{lshape, lscale}{
-  Parameter link functions applied to the 
+  Parameter link functions applied to the
   (positive) shape parameter (called \eqn{s} below) and
   (positive) scale parameter (called \eqn{b} below).
   See \code{\link{Links}} for more choices.
@@ -36,7 +36,7 @@ gumbelII(lscale = "loge", lshape = "loge", iscale = NULL, ishape = NULL,
 % See \code{earg} in \code{\link{Links}} for general information.
 % }
 
-  Parameter link functions applied to the 
+  Parameter link functions applied to the
   \item{ishape, iscale}{
   Optional initial values for the shape and scale parameters.
 
@@ -57,14 +57,14 @@ gumbelII(lscale = "loge", lshape = "loge", iscale = NULL, ishape = NULL,
   argument to be the percentiles of these, e.g., 50 for median.
 
   }
-  
+
 }
 \details{
-  The Gumbel-II density for a response \eqn{Y} is 
+  The Gumbel-II density for a response \eqn{Y} is
   \deqn{f(y;b,s) = s y^{s-1} \exp[-(y/b)^s] / (b^s)}{%
         f(y;b,s) = s y^(s-1) * exp(-(y/b)^s) / [b^s]}
   for \eqn{b > 0}, \eqn{s > 0}, \eqn{y > 0}.
-  The cumulative distribution function is 
+  The cumulative distribution function is
   \deqn{F(y;b,s) = \exp[-(y/b)^{-s}].}{%
         F(y;b,s) = exp(-(y/b)^(-s)).}
   The mean of \eqn{Y} is \eqn{b \, \Gamma(1 - 1/s)}{b * gamma(1 - 1/s)}
@@ -113,7 +113,7 @@ U.S. Department of Commerce, National Bureau of Standards, USA.
 %  This function is under development to handle other censoring situations.
 %  The version of this function which will handle censored data will be
 %  called \code{cengumbelII()}. It is currently being written and will use
-%  \code{\link{SurvS4}} as input. 
+%  \code{\link{SurvS4}} as input.
 %  It should be released in later versions of \pkg{VGAM}.
 %
 %

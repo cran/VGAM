@@ -39,7 +39,7 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{control}{
-  a list of parameters for controlling the fitting process. 
+  a list of parameters for controlling the fitting process.
   See \code{\link{rrvglm.control}} for details.
 
   }
@@ -59,7 +59,7 @@ rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
   process should be assigned in the \code{x} and \code{y} slots.
   Note the model matrix is the LM model matrix; to get the VGLM
   model matrix type \code{model.matrix(vglmfit)} where
-  \code{vglmfit} is a \code{vglm} object. 
+  \code{vglmfit} is a \code{vglm} object.
 
   }
   \item{constraints}{
@@ -270,7 +270,7 @@ Confint.rrnb(rrnb2)  # Quick way to get it
 
 # Plot the abundances and fitted values against the latent variable
 plot(y2 ~ latvar(rrnb2), data = mydata, col = "blue",
-     xlab = "Latent variable", las = 1) 
+     xlab = "Latent variable", las = 1)
 ooo <- order(latvar(rrnb2))
 lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "orange")
 

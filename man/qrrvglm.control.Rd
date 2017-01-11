@@ -35,9 +35,9 @@ qrrvglm.control(Rank = 1,
                 optim.maxit = 20,
                 Parscale = if (I.tolerances) 0.001 else 1.0,
                 sd.Cinit = 0.02,
-                SmallNo = 5.0e-13, 
+                SmallNo = 5.0e-13,
                 trace = TRUE,
-                Use.Init.Poisson.QO = TRUE, 
+                Use.Init.Poisson.QO = TRUE,
                 wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
@@ -77,7 +77,7 @@ qrrvglm.control(Rank = 1,
     initial values.
 
   }
-  \item{Crow1positive}{ 
+  \item{Crow1positive}{
       Logical vector of length \code{Rank} (recycled if necessary): are
       the elements of the first row of \eqn{C} positive? For example,
       if \code{Rank} is 4, then specifying \code{Crow1positive = c(FALSE,
@@ -141,7 +141,7 @@ qrrvglm.control(Rank = 1,
 
   }
 
-  \item{FastAlgorithm}{ 
+  \item{FastAlgorithm}{
    Logical. Whether a new fast algorithm is to be used. The fast
    algorithm results in a large speed increases compared to Yee
    (2004).
@@ -149,19 +149,19 @@ qrrvglm.control(Rank = 1,
    Setting \code{FastAlgorithm = FALSE} will give an error.
 
   }
-  \item{GradientFunction}{ 
+  \item{GradientFunction}{
    Logical. Whether \code{\link[stats]{optim}}'s argument \code{gr}
    is used or not, i.e., to compute gradient values. Used only if
    \code{FastAlgorithm} is \code{TRUE}. The default value is usually
    faster on most problems.
 
-  } 
-  \item{Hstep}{ 
+  }
+  \item{Hstep}{
    Positive value. Used as the step size in the finite difference
    approximation to the derivatives by \code{\link[stats]{optim}}.
 
 %  Used only if \code{FastAlgorithm} is \code{TRUE}.
-  } 
+  }
   \item{isd.latvar}{
    Initial standard deviations for the latent variables (site scores).
    Numeric, positive and of length \eqn{R} (recycled if necessary).
@@ -176,7 +176,7 @@ qrrvglm.control(Rank = 1,
    the most spread of site scores, followed by the second ordination
    axis, etc.
 
-  } 
+  }
   \item{iKvector, iShape}{
    Numeric, recycled to length \eqn{S} if necessary.
    Initial values used for estimating the positive \eqn{k} and
@@ -186,7 +186,7 @@ qrrvglm.control(Rank = 1,
    These arguments override the \code{ik} and \code{ishape}
    arguments in \code{\link{negbinomial}} and \code{\link{gamma2}}.
 
-  } 
+  }
 
   \item{I.tolerances}{
    Logical. If \code{TRUE} then the (common) tolerance matrix is the
@@ -194,7 +194,7 @@ qrrvglm.control(Rank = 1,
    \code{I.tolerances = TRUE} implies \code{eq.tolerances = TRUE}, but
    not vice versa. Internally, the quadratic terms will be treated as
    offsets (in GLM jargon) and so the models can potentially be fitted
-   very efficiently. \emph{However, it is a very good idea to center 
+   very efficiently. \emph{However, it is a very good idea to center
    and scale all numerical variables in the \eqn{x_2} vector}.
    See \bold{Details} for more details.
    The success of \code{I.tolerances = TRUE} often
@@ -217,14 +217,14 @@ qrrvglm.control(Rank = 1,
     Maximum number of times the optimizer is called or restarted.
     Most users should ignore this argument.
 
-  } 
+  }
   \item{imethod}{
     Method of initialization. A positive integer 1 or 2 or 3 etc.
     depending on the \pkg{VGAM} family function.
-    Currently it is used for \code{\link{negbinomial}} and 
+    Currently it is used for \code{\link{negbinomial}} and
     \code{\link{gamma2}} only, and used within the C.
 
-  } 
+  }
   \item{Maxit.optim}{
     Positive integer. Number of iterations given to the function
     \code{\link[stats]{optim}} at each of the \code{optim.maxit}
@@ -232,7 +232,7 @@ qrrvglm.control(Rank = 1,
 
   }
 
-  \item{MUXfactor}{ 
+  \item{MUXfactor}{
    Multiplication factor for detecting large offset values. Numeric,
    positive and of length \eqn{R} (recycled if necessary). This argument
    is used only if \code{I.tolerances = TRUE}. Offsets are \eqn{-0.5}
@@ -245,7 +245,7 @@ qrrvglm.control(Rank = 1,
    \eqn{x_2} is recommended). A value about 3 or 4 is recommended.
    If failure to converge occurs, try a slightly lower value.
 
-} 
+}
   \item{optim.maxit}{
     Positive integer. Number of times \code{\link[stats]{optim}}
     is invoked. At iteration \code{i}, the \code{i}th value of
@@ -253,7 +253,7 @@ qrrvglm.control(Rank = 1,
 
   }
 
-  \item{noRRR}{ 
+  \item{noRRR}{
     Formula giving terms that are \emph{not} to be included in the
     reduced-rank regression (or formation of the latent variables),
     i.e., those belong to \eqn{x_1}.
@@ -262,7 +262,7 @@ qrrvglm.control(Rank = 1,
     The default is to omit the intercept term from the latent variables.
 
 
-  } 
+  }
   \item{Norrr}{
   Defunct. Please use \code{noRRR}.
   Use of \code{Norrr} will become an error soon.
@@ -278,11 +278,11 @@ qrrvglm.control(Rank = 1,
    the elements of \eqn{C} become \eqn{C} / \code{Parscale}.
    Setting \code{I.tolerances = TRUE} results in line searches that
    are very large, therefore \eqn{C} has to be scaled accordingly
-   to avoid large step sizes. 
+   to avoid large step sizes.
    See \bold{Details} for more information.
    It's probably best to leave this argument alone.
-  } 
-  \item{sd.Cinit}{ 
+  }
+  \item{sd.Cinit}{
       Standard deviation of the initial values for the elements
       of \eqn{C}.
       These are normally distributed with mean zero.
@@ -301,7 +301,7 @@ qrrvglm.control(Rank = 1,
 
 %  \item{Kinit}{ Initial values for the index parameters \code{k} in the
 %   negative binomial distribution (one per species).
-%   In general, a smaller number is preferred over a larger number. 
+%   In general, a smaller number is preferred over a larger number.
 %   The vector is recycled to the number of responses (species).
 %   The argument is currently not used.
 %   }
@@ -313,8 +313,8 @@ qrrvglm.control(Rank = 1,
 %      Used only if \code{Quadratic = TRUE} and \code{FastAlgorithm = FALSE}.
 %  }
 \item{SmallNo}{
-  Positive numeric between \code{.Machine$double.eps} and \code{0.0001}. 
-  Used to avoid under- or over-flow in the IRLS algorithm. 
+  Positive numeric between \code{.Machine$double.eps} and \code{0.0001}.
+  Used to avoid under- or over-flow in the IRLS algorithm.
   Used only if \code{FastAlgorithm} is \code{TRUE}.
   }
   \item{Use.Init.Poisson.QO}{
@@ -516,10 +516,10 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
 sort(deviance(p1, history = TRUE))  # A history of all the iterations
 
 (isd.latvar <- apply(latvar(p1), 2, sd))  # Should be approx isd.latvar
- 
+
 # Refit the model with better initial values
 set.seed(111)  # This leads to the global solution
-p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           I.tolerances = TRUE, quasipoissonff, data = hspider,
@@ -536,7 +536,7 @@ sort(deviance(p1, history = TRUE))  # A history of all the iterations
 %# 20120221; withdrawn for a while coz it creates a lot of error messages.
 %# Negative binomial CQO; smallest deviance is about 275.389
 %set.seed(1234)  # This leads to a reasonable (but not the global) solution?
-%nb1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi, 
+%nb1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
 %                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
 %          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
 %          I.tol = FALSE, eq.tol = TRUE,  # A good idea for negbinomial

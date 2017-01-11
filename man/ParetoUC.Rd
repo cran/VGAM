@@ -65,7 +65,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 %%\note{
-%%  The Pareto distribution is 
+%%  The Pareto distribution is
 %%}
 
 \seealso{

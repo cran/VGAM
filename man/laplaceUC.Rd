@@ -54,14 +54,14 @@ rlaplace(n, location = 0, scale = 1)
   The Laplace distribution is often known as the double-exponential
   distribution and, for modelling, has heavier tail
   than the normal distribution.
-  The Laplace density function is 
+  The Laplace density function is
   \deqn{f(y) = \frac{1}{2b} \exp \left( - \frac{|y-a|}{b}
                     \right) }{%
         f(y) =  (1/(2b)) exp( -|y-a|/b ) }
   where \eqn{-\infty<y<\infty}{-Inf<y<Inf},
   \eqn{-\infty<a<\infty}{-Inf<a<Inf} and
   \eqn{b>0}.
-  The mean is \eqn{a}{a} and the variance is \eqn{2b^2}. 
+  The mean is \eqn{a}{a} and the variance is \eqn{2b^2}.
 
 
   See \code{\link{laplace}}, the \pkg{VGAM} family function

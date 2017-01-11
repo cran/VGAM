@@ -8,12 +8,13 @@
 
 }
 \usage{
-felix(link = extlogit(min = 0, max = 0.5), imethod = 1)
+felix(lrate = extlogit(min = 0, max = 0.5), imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Link function for the parameter;
+  \item{lrate}{
+  Link function for the parameter,
+  called \eqn{a} below;
   see \code{\link{Links}} for more choices and for general information.
 
 
@@ -31,7 +32,7 @@ felix(link = extlogit(min = 0, max = 0.5), imethod = 1)
   \deqn{f(y;a) =
   \frac{ 1 }{((y-1)/2)!} y^{(y-3)/2} a^{(y-1)/2}  \exp(-ay)
   }{%
-  f(y;a) = 
+  f(y;a) =
   (1 / ((y-1)/2)!) * y^((y-3)/2) * a^((y-1)/2) * exp(-ay)}
   where \eqn{y=1,3,5,\ldots} and
   \eqn{0 < a < 0.5}.
@@ -60,7 +61,7 @@ Boston, USA: Birkhauser.
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{dfelix}},
   \code{\link{borel.tanner}}.
 

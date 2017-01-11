@@ -4,7 +4,7 @@
 \title{Hunua Ranges Data}
 \description{
   The \code{hunua} data frame has 392 rows and 18 columns.
-  Altitude is explanatory, and there are binary responses 
+  Altitude is explanatory, and there are binary responses
   (presence/absence = 1/0 respectively) for 17 plant species.
 
 
@@ -36,18 +36,18 @@
 \details{
   These were collected from the Hunua Ranges, a small forest in southern
   Auckland, New Zealand. At 392 sites in the forest, the presence/absence
-  of 17 plant species was recorded, as well as the altitude. 
+  of 17 plant species was recorded, as well as the altitude.
   Each site was of area size 200\eqn{m^2}{m^2}.
 
 
 }
 \source{
-  Dr Neil Mitchell, University of Auckland. 
+  Dr Neil Mitchell, University of Auckland.
 
 
 }
 %\references{
-%  None. 
+%  None.
 %}
 \seealso{
   \code{\link{waitakere}}.
@@ -65,6 +65,6 @@ head(predict(fit.h, hunua, type = "response"))
 fit.w <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = waitakere)
 \dontrun{
 plot(fit.w, se = TRUE, lcol = "blue", scol = "blue", add = TRUE) }
-head(predict(fit.w, hunua, type = "response"))   # Same as above? 
+head(predict(fit.w, hunua, type = "response"))   # Same as above?
 }
 \keyword{datasets}

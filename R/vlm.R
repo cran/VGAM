@@ -1,20 +1,20 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
 vlm <- function(formula,
-                data = list(), 
+                data = list(),
                 weights = NULL, subset = NULL, na.action = na.fail,
-                prior.weights = NULL, 
-                control = vlm.control(...), 
+                prior.weights = NULL,
+                control = vlm.control(...),
                 method = "qr",
                 model = FALSE, x.arg = FALSE, y.arg = TRUE, qr.arg = TRUE,
-                contrasts = NULL, 
+                contrasts = NULL,
                 constraints = NULL,
-                extra = NULL, offset = NULL,  
+                extra = NULL, offset = NULL,
                 smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vlm"
@@ -85,7 +85,7 @@ vlm <- function(formula,
     identity.wts <- FALSE
     temp <- ncol(as.matrix(wz))
     if (temp < M || temp > M*(M+1)/2)
-      stop("input 'w' must have between ", M, " and ", M*(M+1)/2, 
+      stop("input 'w' must have between ", M, " and ", M*(M+1)/2,
            " columns")
     wz <- prior.weights * wz
   }
@@ -129,25 +129,25 @@ vlm <- function(formula,
         p = ncol(x),
         ncol.X.vlm = ncol.X.vlm,
         ynames = dimnames(y)[[2]])
-    
+
     fit$misc <- misc
 
     fit$misc$dataname <- dataname
-    
 
-    
+
+
     if (smart) {
       fit$smart.prediction <- get.smart.prediction()
       wrapup.smart()
     }
 
     answer <-
-    new("vlm", 
+    new("vlm",
       "assign"       = attr(x, "assign"),
       "call"         = ocall,
       "coefficients" = fit$coefficients,
       "constraints"  = fit$constraints,
-      "control"      = control, 
+      "control"      = control,
       "criterion"    = list(deviance = fit$ResSS),
       "dispersion"   = 1,
       "df.residual"  = fit$df.residual,
@@ -190,7 +190,7 @@ vlm <- function(formula,
 
   answer
 }
-attr(vlm, "smart") <- TRUE    
+attr(vlm, "smart") <- TRUE
 
 
 

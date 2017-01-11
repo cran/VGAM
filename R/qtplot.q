@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,9 +12,9 @@
 
 
 
- 
- 
- 
+
+
+
 qtplot.lms.bcn <- function(percentiles = c(25, 50, 75),
                            eta = NULL, yoffset = 0) {
 
@@ -28,11 +28,11 @@ qtplot.lms.bcn <- function(percentiles = c(25, 50, 75),
                              mu     = eta[, 2],
                              sigma  = eta[, 3])
   }
-  answer 
+  answer
 }
- 
- 
- 
+
+
+
 qtplot.lms.bcg <- function(percentiles = c(25,50,75),
                            eta = NULL, yoffset = 0) {
 
@@ -50,11 +50,11 @@ qtplot.lms.bcg <- function(percentiles = c(25,50,75),
     answer[, ii] <- eta[, 2] *
                     (qgamma(ccc, shape = shape)/shape)^(1/lambda)
   }
-  answer 
+  answer
 }
- 
- 
-qtplot.lms.yjn2 <- 
+
+
+qtplot.lms.yjn2 <-
 qtplot.lms.yjn <- function(percentiles = c(25,50,75),
                            eta = NULL, yoffset = 0) {
 
@@ -70,10 +70,10 @@ qtplot.lms.yjn <- function(percentiles = c(25,50,75),
     ccc <- mu + sigma * qnorm(cc[ii]/100)
     answer[, ii] <- yeo.johnson(ccc, lambda, inverse= TRUE) - yoffset
   }
-  answer 
+  answer
 }
- 
- 
+
+
 qtplot.default <- function(object, ...) {
 
   warning("no methods function. Returning the object")
@@ -85,14 +85,14 @@ qtplot.default <- function(object, ...) {
 "qtplot.vglm" <- function(object, Attach= TRUE, ...) {
 
   LL <- length(object@family@vfamily)
-  newcall <- paste("qtplot.", object@family@vfamily[LL], 
+  newcall <- paste("qtplot.", object@family@vfamily[LL],
                    "(object, ...)", sep = "")
   newcall <- parse(text = newcall)[[1]]
 
   if (Attach) {
     object@post$qtplot <- eval(newcall)
     invisible(object)
-  } else 
+  } else
     eval(newcall)
 }
 
@@ -109,7 +109,7 @@ qtplot.lmscreg <- function(object,
   if (same) {
     fitted.values <- if (!length(newdata))
       object@fitted.values else {
-      predict(object, newdata = newdata, type = "response") 
+      predict(object, newdata = newdata, type = "response")
     }
     fitted.values <- as.matrix(fitted.values)
   } else {
@@ -154,13 +154,13 @@ qtplot.lmscreg <- function(object,
 
   list(fitted.values = fitted.values, percentiles = percentiles)
 }
-    
- 
+
+
 
 plotqtplot.lmscreg <-
   function(fitted.values, object,
            newdata = NULL,
-           percentiles = object@misc$percentiles, 
+           percentiles = object@misc$percentiles,
            lp = NULL,
            add.arg = FALSE,
            y = if (length(newdata)) FALSE else TRUE,
@@ -173,14 +173,14 @@ plotqtplot.lmscreg <-
            xlim = NULL, ylim = NULL,
            llty.arg = par()$lty,
            lcol.arg = par()$col, llwd.arg = par()$lwd,
-           tcol.arg = par()$col, 
+           tcol.arg = par()$col,
            tadj = 1, ...) {
 
 
 
   if (!length(newdata)) {
     X <- model.matrixvlm(object, type = "lm")
-    if (is.matrix(X) && length(object@y) && ncol(X)==2 && 
+    if (is.matrix(X) && length(object@y) && ncol(X)==2 &&
        dimnames(X)[[2]][1] == "(Intercept)") {
       xx <- X[, 2]
       if (is.null(xlab)) {
@@ -198,7 +198,7 @@ plotqtplot.lmscreg <-
         if (!is.numeric(ylim))
           ylim <- c(min(fred), max(fred))
         matplot(x = xx, y = fred,
-                xlab = xlab, ylab = ylab, type = "n", 
+                xlab = xlab, ylab = ylab, type = "n",
                 xlim = xlim, ylim = ylim, ...)
       }
 
@@ -208,7 +208,7 @@ plotqtplot.lmscreg <-
     } else {
       warning("there is not a single covariate. ",
               "Returning the object.")
-      return(fitted.values) 
+      return(fitted.values)
     }
   } else {
 
@@ -218,13 +218,13 @@ plotqtplot.lmscreg <-
        length(object@s.xargument[firstterm]))
       firstterm <-  object@s.xargument[firstterm]
 
-    xx <- newdata[[firstterm]] 
+    xx <- newdata[[firstterm]]
     if (!is.numeric(xx))
       stop("couldn't extract the 'primary' variable from newdata")
 
     if (!add.arg) {
-      if (is.null(xlab)) 
-        xlab <- firstterm 
+      if (is.null(xlab))
+        xlab <- firstterm
       if (!is.numeric(xlim))
         xlim <- if (label)
             c(min(xx), max(xx)+size.label*diff(range(xx))) else
@@ -232,7 +232,7 @@ plotqtplot.lmscreg <-
       if (!is.numeric(ylim))
         ylim <- c(min(fitted.values), max(fitted.values))
       matplot(x = xx, y = fitted.values,
-              xlab = xlab, ylab = ylab, type = "n", 
+              xlab = xlab, ylab = ylab, type = "n",
                   xlim = xlim, ylim = ylim, col = pcol.arg)
     }
     if (y && length(object@y))
@@ -266,7 +266,7 @@ plotqtplot.lmscreg <-
 
     invisible(fitted.values)
 }
- 
+
 
 if (TRUE) {
   if (!isGeneric("qtplot"))
@@ -275,10 +275,10 @@ if (TRUE) {
 
 
   setMethod("qtplot", signature(object = "vglm"),
-            function(object, ...) 
+            function(object, ...)
             invisible(qtplot.vglm(object, ...)))
   setMethod("qtplot", signature(object = "vgam"),
-            function(object, ...) 
+            function(object, ...)
             invisible(qtplot.vglm(object, ...)))
 }
 
@@ -296,8 +296,8 @@ if (TRUE) {
   newcall <- parse(text = newcall)[[1]]
   eval(newcall)
 }
-    
- 
+
+
 qtplot.gumbelff <-
 qtplot.gumbel <-
     function(object, show.plot = TRUE, y.arg = TRUE,
@@ -334,7 +334,7 @@ qtplot.gumbel <-
   extra$mpv <- mpv  # Overwrite if necessary
   extra$R <- R
   extra$percentiles <- percentiles
-  fitted.values <- object@family@linkinv(eta = eta, extra = extra) 
+  fitted.values <- object@family@linkinv(eta = eta, extra = extra)
 
   answer <- list(fitted.values = fitted.values,
                  percentiles   = percentiles)
@@ -351,10 +351,10 @@ qtplot.gumbel <-
   llty.arg <- rep_len(llty.arg, lp+mpv)
 
   X <- model.matrixvlm(object, type = "lm")
-  if (is.matrix(X) && length(object@y) && ncol(X)==2 && 
+  if (is.matrix(X) && length(object@y) && ncol(X)==2 &&
      dimnames(X)[[2]][1] == "(Intercept)") {
     xx <- X[, 2]
-    if (!length(xlab)) 
+    if (!length(xlab))
       xlab <- if (object@misc$nonparametric &&
                  length(object@s.xargument))
                   object@s.xargument else names(object@assign)[2]
@@ -364,7 +364,7 @@ qtplot.gumbel <-
               xlab = xlab, ylab = ylab, type = "n", ...)
 
     if (y.arg) {
-       matpoints(x = xx, y = object@y, pch = pch, col = pcol.arg) 
+       matpoints(x = xx, y = object@y, pch = pch, col = pcol.arg)
     }
   } else {
     warning("there is not a single covariate.")
@@ -399,14 +399,14 @@ qtplot.gumbel <-
 
 deplot.lms.bcn <- function(object,
                            newdata,
-                           y.arg, 
+                           y.arg,
                            eta0) {
-  if (!any(object@family@vfamily == "lms.bcn")) 
+  if (!any(object@family@vfamily == "lms.bcn"))
     warning("I think you've called the wrong function")
 
   Zvec <- ((y.arg/eta0[, 2])^(eta0[, 1]) -1) / (eta0[, 1] * eta0[, 3])
   dZ.dy <- ((y.arg/eta0[, 2])^(eta0[, 1]-1)) / (eta0[, 2] * eta0[, 3])
-  yvec <- dnorm(Zvec) * abs(dZ.dy) 
+  yvec <- dnorm(Zvec) * abs(dZ.dy)
 
   list(newdata = newdata, y = y.arg, density = yvec)
 }
@@ -415,9 +415,9 @@ deplot.lms.bcn <- function(object,
 
 deplot.lms.bcg <- function(object,
                            newdata,
-                           y.arg, 
+                           y.arg,
                            eta0) {
-  if (!any(object@family@vfamily == "lms.bcg")) 
+  if (!any(object@family@vfamily == "lms.bcg"))
     warning("I think you've called the wrong function")
 
   Zvec <- (y.arg/eta0[, 2])^(eta0[, 1])  # different from lms.bcn
@@ -434,7 +434,7 @@ deplot.lms.bcg <- function(object,
 deplot.lms.yjn2 <-
 deplot.lms.yjn <- function(object,
                            newdata,
-                           y.arg, 
+                           y.arg,
                            eta0) {
 
   if (!length(intersect(object@family@vfamily, c("lms.yjn","lms.yjn2"))))
@@ -445,12 +445,12 @@ deplot.lms.yjn <- function(object,
                eta0[, 2]) / eta0[, 3]
   dZ.dy <- dyj.dy.yeojohnson(y.arg+object@misc$yoffset,
                              lambda = eta0[, 1]) / eta0[, 3]
-  yvec <- dnorm(Zvec) * abs(dZ.dy) 
+  yvec <- dnorm(Zvec) * abs(dZ.dy)
 
   list(newdata = newdata, y = y.arg, density = yvec)
 }
 
- 
+
 deplot.default <- function(object, ...) {
 
   warning("no methods function. Returning the object")
@@ -462,7 +462,7 @@ deplot.default <- function(object, ...) {
 
 "deplot.vglm" <- function(object, Attach= TRUE, ...) {
   LL <- length(object@family@vfamily)
-  newcall <- paste("deplot.", object@family@vfamily[LL], 
+  newcall <- paste("deplot.", object@family@vfamily[LL],
                    "(object, ...)", sep = "")
   newcall <- parse(text = newcall)[[1]]
 
@@ -484,10 +484,10 @@ deplot.default <- function(object, ...) {
 
   if (!length(newdata)) {
     newdata <- data.frame(x0=x0)
-    var1name <- attr(terms(object), "term.labels")[1] 
+    var1name <- attr(terms(object), "term.labels")[1]
     names(newdata) <- var1name
 
-    ii <- if (object@misc$nonparametric) 
+    ii <- if (object@misc$nonparametric)
           slot(object, "s.xargument") else NULL
     if (length(ii) && any(logic.vec <-
         names(slot(object, "s.xargument")) == var1name))
@@ -502,16 +502,16 @@ deplot.default <- function(object, ...) {
   eta0 <- eta2theta(eta0, link = object@misc$link,
                     earg = double.check.earg)  # lambda, mu, sigma
 
-  newcall <- paste("deplot.", object@family@vfamily[1], 
+  newcall <- paste("deplot.", object@family@vfamily[1],
                    "(object, newdata, y.arg = y.arg, eta0 = eta0)",
                    sep = "")
   newcall <- parse(text = newcall)[[1]]
   answer <- eval(newcall)
 
-  if (show.plot) 
+  if (show.plot)
     plotdeplot.lmscreg(answer, y.arg=y.arg, ...)
 
-  invisible(answer) 
+  invisible(answer)
 }
 
 
@@ -533,7 +533,7 @@ plotdeplot.lmscreg <- function(answer,
     if (!is.numeric(ylim))
       ylim <- c(min(yvec), max(yvec))
     matplot(x = xx, y = yvec,
-            xlab = xlab, ylab = ylab, type = "n", 
+            xlab = xlab, ylab = ylab, type = "n",
             xlim = xlim, ylim = ylim, ...)
   }
 
@@ -545,8 +545,8 @@ plotdeplot.lmscreg <- function(answer,
 
   invisible(answer)
 }
- 
- 
+
+
 
 
 if (TRUE) {
@@ -555,10 +555,10 @@ if (TRUE) {
   setGeneric("deplot", function(object, ...) standardGeneric("deplot"))
 
   setMethod("deplot", signature(object = "vglm"),
-            function(object, ...) 
+            function(object, ...)
             invisible(deplot.vglm(object, ...)))
   setMethod("deplot", signature(object = "vgam"),
-            function(object, ...) 
+            function(object, ...)
             invisible(deplot.vglm(object, ...)))
 }
 
@@ -571,18 +571,18 @@ if (TRUE) {
     setGeneric("cdf", function(object, ...) standardGeneric("cdf"))
 
   setMethod("cdf", signature(object = "vglm"),
-            function(object, ...) 
+            function(object, ...)
             cdf.vglm(object, ...))
 
   setMethod("cdf", signature(object = "vgam"),
-            function(object, ...) 
+            function(object, ...)
             cdf.vglm(object, ...))
 }
 
 
 "cdf.vglm" <- function(object, newdata = NULL, Attach = FALSE, ...) {
   LL <- length(object@family@vfamily)
-  newcall <- paste("cdf.", object@family@vfamily[LL], 
+  newcall <- paste("cdf.", object@family@vfamily[LL],
                   "(object, newdata, ...)", sep = "")
   newcall <- parse(text = newcall)[[1]]
 
@@ -611,9 +611,9 @@ if (TRUE) {
   eta0 <- eta2theta(eta0, link = object@misc$link,
                     earg = double.check.earg)  # lambda, mu, sigma
 
-  y <- vgety(object, newdata)   # Includes yoffset 
+  y <- vgety(object, newdata)   # Includes yoffset
 
-  newcall <- paste("cdf.", object@family@vfamily[1], 
+  newcall <- paste("cdf.", object@family@vfamily[1],
                    "(y, eta0, ... )", sep = "")
   newcall <- parse(text = newcall)[[1]]
   eval(newcall)
@@ -696,9 +696,9 @@ vgety <- function(object, newdata = NULL) {
   newcall <- parse(text = newcall)[[1]]
   eval(newcall)
 }
-    
-    
- 
+
+
+
 rlplot.gevff <-
 rlplot.gev <-
   function(object, show.plot = TRUE,
@@ -745,10 +745,10 @@ rlplot.gev <-
       plot(log(1/yp), zp, log = "", type = "n",
            ylim = if (length(ylim)) ylim else
                 c(min(c(ydata, zp)), max(c(ydata, zp))),
-           xlab = xlab, ylab = ylab, main = main, 
-           cex.axis = par()$cex.axis, 
-           cex.main = par()$cex.main, 
-           cex.lab  = par()$cex.lab, 
+           xlab = xlab, ylab = ylab, main = main,
+           cex.axis = par()$cex.axis,
+           cex.main = par()$cex.main,
+           cex.lab  = par()$cex.lab,
            ...)
     points(log(-1/log((1:n)/(n+1))), ydata, col = pcol.arg,
            pch = pch, cex = pcex)
@@ -761,9 +761,9 @@ rlplot.gev <-
                   c(min(c(ydata, zp)),
                     max(c(ydata, zp))),
            xlab = xlab, ylab = ylab, main = main,
-           cex.axis = par()$cex.axis, 
-           cex.main = par()$cex.main, 
-           cex.lab  = par()$cex.lab, 
+           cex.axis = par()$cex.axis,
+           cex.main = par()$cex.main,
+           cex.lab  = par()$cex.lab,
            ...)
     points(-1/log((1:n)/(n+1)), ydata, col = pcol.arg,
            pch = pch, cex = pcex)
@@ -860,9 +860,9 @@ explot.lms.bcn <- function(percentiles = c(25, 50, 75),
     answer[, ii] <- eta[, 2] * (1 + eta[, 1] * eta[, 3] *
                     qenorm(percentiles[ii]/100))^(1/eta[, 1])
   }
-  answer 
+  answer
 }
- 
+
 
 
 

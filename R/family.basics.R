@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -36,7 +36,7 @@ Select <-
   if (is.character(exclude))
     if (any(nchar(prefix) == 0))
       stop("bad input for argument 'exclude'")
-  if (!is.logical(sort.arg) || 
+  if (!is.logical(sort.arg) ||
       length(sort.arg) != 1)
     stop("bad input for argument 'sort.arg'")
 
@@ -230,7 +230,7 @@ subsetc <-
 
   ind5 <- if (maximize) which.max(objvals) else which.min(objvals)
 
-  
+
   c(Value1 = allmat1[ind5, "vov1"],
     Value2 = allmat1[ind5, "vov2"],
     ObjFun = if (ret.objfun) objvals[ind5] else NULL)
@@ -263,7 +263,7 @@ subsetc <-
 
   ind5 <- if (maximize) which.max(objvals) else which.min(objvals)
 
-  
+
   c(Value1 = allmat1[ind5, "vov1"],
     Value2 = allmat1[ind5, "vov2"],
     Value3 = allmat1[ind5, "vov3"],
@@ -302,7 +302,7 @@ subsetc <-
 
   ind5 <- if (maximize) which.max(objvals) else which.min(objvals)
 
-  
+
   c(Value1 = allmat1[ind5, "vov1"],
     Value2 = allmat1[ind5, "vov2"],
     Value3 = allmat1[ind5, "vov3"],
@@ -357,7 +357,7 @@ subsetc <-
 
  cm.VGAM <-
   function(cm, x, bool, constraints,
-           apply.int = FALSE, 
+           apply.int = FALSE,
            cm.default = diag(nrow(cm)),  # 20121226
            cm.intercept.default = diag(nrow(cm))  # 20121226
           ) {
@@ -388,7 +388,7 @@ subsetc <-
 
     if (any(nasgn == "(Intercept)"))
       constraints[["(Intercept)"]] <- cm.intercept.default
-  } 
+  }
 
   if (!is.list(constraints))
     stop("argument 'constraints' must be a list")
@@ -487,12 +487,12 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     stop("'nointercept' out of range")
   if (nasgn[1] != "(Intercept)" || M == 1)
     stop("Need an (Intercept) constraint matrix with M>1")
-  if (!all.equal(constraints[["(Intercept)"]], diag(M)))
+  if (!identical(constraints[["(Intercept)"]], diag(M)))
     warning("Constraint matrix of (Intercept) not diagonal")
 
   temp <- constraints[["(Intercept)"]]
   temp <- temp[, -nointercept, drop = FALSE]
-  constraints[["(Intercept)"]] <- temp 
+  constraints[["(Intercept)"]] <- temp
   constraints
 }
 
@@ -505,32 +505,35 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
   dotzero <- zero  # Transition
 
+  if (length(dotzero) == 1 && (dotzero == "" || is.na(dotzero)))
+    dotzero <- NULL
+
   if (is.character(dotzero)) {
 
 
 
 
-  which.numeric.all <- NULL
-  for (ii in seq_along(dotzero)) {
-    which.ones <-
-        grep(dotzero[ii], predictors.names, fixed = TRUE)
-    if (length(which.ones)) {
-      which.numeric.all <- c(which.numeric.all, which.ones)
-    } else {
-      warning("some values of argument 'zero' are unmatched. Ignoring them")
-    }
-  }
-  which.numeric <- unique(sort(which.numeric.all))
+    which.numeric.all <- NULL
+    for (ii in seq_along(dotzero)) {
+      which.ones <-
+          grep(dotzero[ii], predictors.names, fixed = TRUE)
+      if (length(which.ones)) {
+        which.numeric.all <- c(which.numeric.all, which.ones)
+      } else {
+        warning("some values of argument 'zero' are unmatched. Ignoring them")
+      }
+    }  # for ii
+    which.numeric <- unique(sort(which.numeric.all))
 
-  if (!length(which.numeric)) {
-    warning("No values of argument 'zero' were matched.")
-    which.numeric <- NULL
-  } else if (length(which.numeric.all) > length(which.numeric)) {
-    warning("There were redundant values of argument 'zero'.")
-  }
+    if (!length(which.numeric)) {
+      warning("No values of argument 'zero' were matched.")
+      which.numeric <- NULL
+    } else if (length(which.numeric.all) > length(which.numeric)) {
+      warning("There were redundant values of argument 'zero'.")
+    }
 
     dotzero <- which.numeric
-  }
+  }  # if is.character(dotzero)
 
 
 
@@ -554,8 +557,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   }
 
   zpos.index <- if (length(posdotzero)) posdotzero else NULL
-  z.Index <- if (!length(dotzero))
-               NULL else
+  z.Index <- if (!length(dotzero)) NULL else
                unique(sort(c(zneg.index, zpos.index)))
 
 
@@ -580,7 +582,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     return(constraints)
 
   if (any(zero < 1 | zero > M))
-    stop("argument 'zero' out of range")
+    stop("argument 'zero' out of range; should have values between ",
+         "1 and ", M, " inclusive")
   if (nasgn[1] != "(Intercept)")
     stop("cannot fit an intercept to a no-intercept model")
 
@@ -590,13 +593,15 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
       Hmatk[zero, ] <- 0
       index <- NULL
       for (kk in 1:ncol(Hmatk))
-        if (all(Hmatk[, kk] == 0)) index <- c(index, kk)
-      if (length(index) == ncol(Hmatk)) 
+        if (all(Hmatk[, kk] == 0))
+          index <- c(index, kk)
+      if (length(index) == ncol(Hmatk))
         stop("constraint matrix has no columns!")
       if (!is.null(index))
         Hmatk <- Hmatk[, -index, drop = FALSE]
-      constraints[[nasgn[ii]]] <- Hmatk 
-    }
+      constraints[[nasgn[ii]]] <- Hmatk
+    }  # for ii
+
   constraints
 }
 
@@ -645,8 +650,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
         stop("'constraints[[", ii, "]]' is not a matrix")
     }
 
-  if (is.null(names(constraints))) 
-    names(constraints) <- rep_len(nasgn, lenconstraints) 
+  if (is.null(names(constraints)))
+    names(constraints) <- rep_len(nasgn, lenconstraints)
 
   temp <- vector("list", length(nasgn))
   names(temp) <- nasgn
@@ -680,7 +685,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
             } else {
               constraints[[ii]]
             }
-      Hlist[[jay]] <- cm 
+      Hlist[[jay]] <- cm
     }
   }
   names(Hlist) <- dimnames(x)[[2]]
@@ -709,6 +714,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
+
  trivial.constraints <- function(Hlist, target = diag(M)) {
 
 
@@ -719,9 +725,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     Hlist <- list(Hlist)
   M <- dim(Hlist[[1]])[1]
 
-  if (!is.matrix(target)) 
+  if (!is.matrix(target))
     stop("target is not a matrix")
-  dimtar <- dim(target) 
+  dimtar <- dim(target)
 
   trivc <- rep_len(1, length(Hlist))
   names(trivc) <- names(Hlist)
@@ -742,6 +748,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
+
+
+
  add.constraints <- function(constraints, new.constraints,
                              overwrite = FALSE, check = FALSE) {
 
@@ -750,7 +759,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
   if (empty.list(constraints))
     if (is.list(new.constraints))
-      return(new.constraints) else 
+      return(new.constraints) else
       return(list())  # Both NULL probably
 
   constraints <- as.list(constraints)
@@ -773,7 +782,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
                "of the constraints")
         if (overwrite)
           constraints[[ii]] <- new.constraints[[ii]]
-      } else 
+      } else
         constraints[[ii]] <- new.constraints[[ii]]
     }
   } else {
@@ -799,15 +808,16 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
+
  iam <- function(j, k, M,  # hbw = M,
                  both = FALSE, diag = TRUE) {
 
 
-  jay <- j 
+  jay <- j
   kay <- k
 
   if (M == 1)
-    if (!diag) stop("cannot handle this") 
+    if (!diag) stop("cannot handle this")
 
   if (M == 1)
     if (both) return(list(row.index = 1, col.index = 1)) else return(1)
@@ -817,7 +827,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   i2 <- lapply(i2, seq)
   i2 <- unlist(i2)
 
-  i1 <- matrix(1:M, M, M) 
+  i1 <- matrix(1:M, M, M)
   i1 <- if (diag) c(i1[row(i1) >= col(i1)]) else
                   c(i1[row(i1) >  col(i1)])
 
@@ -836,6 +846,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
+
  dimm <- function(M, hbw = M) {
 
   if (!is.numeric(hbw))
@@ -843,7 +854,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
   if (hbw > M || hbw < 1)
     stop("range error in argument 'hbw'")
-  hbw * (2 * M - hbw +1) / 2 
+  hbw * (2 * M - hbw +1) / 2
 }
 
 
@@ -866,22 +877,25 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   dimm <- ncol(m)
   index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
   if (dimm > length(index$row.index))
-    stop("bad value for 'M'; it is too small") 
+    stop("bad value for 'M'; it is too small")
   if (dimm < M) {
-    stop("bad value for 'M'; it is too big") 
+    stop("bad value for 'M'; it is too big")
   }
 
   fred <- .C("m2a", as.double(t(m)), ans=double(M*M*n),
       as.integer(dimm),
-      as.integer(index$row-1),  
-      as.integer(index$col-1),  
-      as.integer(n),  as.integer(M),  
+      as.integer(index$row-1),
+      as.integer(index$col-1),
+      as.integer(n),  as.integer(M),
       as.integer(as.numeric(upper)), NAOK = TRUE)
   dim(fred$ans) <- c(M, M, n)
   alpn <- NULL
   dimnames(fred$ans) <- list(alpn, alpn, dimnames(m)[[1]])
   fred$a
 }
+
+
+
 
 
 
@@ -903,17 +917,20 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   fred <- .C("a2m",
              as.double(a), m = double(dimm.value * n),
       as.integer(dimm.value),
-      as.integer(index$row-1),  as.integer(index$col-1),  
+      as.integer(index$row-1),  as.integer(index$col-1),
       as.integer(n),  as.integer(M), NAOK = TRUE)
   dim(fred$m) <- c(dimm.value,n)
   fred$m <- t(fred$m)
 
-  if (hbw != M) 
+  if (hbw != M)
     attr(fred$m, "hbw") <- hbw
   if (length(lpn <- dimnames(a)[[1]]) != 0)
     attr(fred$m, "predictors.names") <- lpn
   fred$m
 }
+
+
+
 
 
 
@@ -923,7 +940,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
   if ((row.arg + col.arg) != 1)
-    stop("only one of row and col must be TRUE") 
+    stop("only one of row and col must be TRUE")
   if (M == 1) {
     ans <- 1
   } else {
@@ -931,14 +948,15 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
       i1 <- matrix(1:M, M, M)
       ans <- c(i1[row(i1) + col(i1) <= (M + 1)])
     } else {
-      i1 <- matrix(1:M, M, M) 
+      i1 <- matrix(1:M, M, M)
       ans <- c(i1[row(i1) >= col(i1)])
     }
   }
   if (length.arg > length(ans))
     stop("argument 'length.arg' too big")
-  rep_len(ans, length.arg) 
+  rep_len(ans, length.arg)
 }
+
 
 
 
@@ -953,8 +971,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
-  if (length(wz <- object@weights) && !ignore.slot && !deriv.arg) { 
-    return(wz) 
+  if (length(wz <- object@weights) && !ignore.slot && !deriv.arg) {
+    return(wz)
   }
 
   M <- object@misc$M  # Done below
@@ -970,7 +988,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (any(slotNames(object) == "predictors"))
     eta <- object@predictors
   mt <- terms(object)  # object@terms$terms; 20030811
-  Hlist <- constraints <- object@constraints 
+  Hlist <- constraints <- object@constraints
   new.coeffs <- object@coefficients
   if (any(slotNames(object) == "iter"))
     iter <- object@iter
@@ -1014,12 +1032,12 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (any(slotNames(object) == "control"))
     for (ii in names(object@control)) {
       assign(ii, object@control[[ii]])
-    } 
+    }
 
   if (length(object@misc))
     for (ii in names(object@misc)) {
-      assign(ii, object@misc[[ii]]) 
-    } 
+      assign(ii, object@misc[[ii]])
+    }
 
   if (any(slotNames(object) == "family")) {
     expr <- object@family@deriv
@@ -1029,15 +1047,17 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
       wz <- eval(expr)
 
 
-      if (M > 1) 
+      if (M > 1)
         dimnames(wz) <- list(dimnames(wz)[[1]], NULL)  # Remove colnames
-      wz <- if (matrix.arg) as.matrix(wz) else c(wz) 
+      wz <- if (matrix.arg) as.matrix(wz) else c(wz)
     }
     if (deriv.arg) list(deriv = deriv.mu, weights = wz) else wz
   } else {
-    NULL 
+    NULL
   }
 }
+
+
 
 
 
@@ -1045,14 +1065,17 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
  pweights <- function(object, ...) {
   ans <- object@prior.weights
   if (length(ans)) {
-    ans 
+    ans
   } else {
     temp <- object@y
     ans <- rep_len(1, nrow(temp))  # Assumed all equal and unity.
     names(ans) <- dimnames(temp)[[1]]
-    ans 
+    ans
   }
 }
+
+
+
 
 
 
@@ -1106,6 +1129,8 @@ if (FALSE) {
 
 
 
+
+
  weightsvglm <- function(object, type = c("prior", "working"),
                         matrix.arg = TRUE, ignore.slot = FALSE,
                         deriv.arg = FALSE, ...) {
@@ -1136,6 +1161,7 @@ if (FALSE) {
 }
 
 
+
 if (!isGeneric("weights"))
     setGeneric("weights", function(object, ...)
   standardGeneric("weights"))
@@ -1161,10 +1187,9 @@ setMethod("weights", "vglm",
 
 
 
-
-qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE, 
-                    trace = FALSE, reset = FALSE,
-                    effpos=.Machine$double.eps^0.75) {
+qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
+                     trace = FALSE, reset = FALSE,
+                     effpos=.Machine$double.eps^0.75) {
 
 
   if (M == 1) {
@@ -1220,7 +1245,7 @@ mbesselI0 <- function(x, deriv.arg = 0) {
 
     ans <- matrix(NA_real_, nrow = nn, ncol = deriv.arg+1)
     ans[, 1] <- besselI(x, nu = 0)
-    if (deriv.arg>=1) ans[,2] <- besselI(x, nu = 1) 
+    if (deriv.arg>=1) ans[,2] <- besselI(x, nu = 1)
     if (deriv.arg>=2) ans[,3] <- ans[,1] - ans[,2] / x
     ans
 }
@@ -1232,11 +1257,11 @@ VGAM.matrix.norm <- function(A, power = 2, suppressWarning = FALSE) {
     warning("norms should be calculated for square matrices; ",
             "'A' is not square")
   if (power == "F") {
-    sqrt(sum(A^2)) 
+    sqrt(sum(A^2))
   } else if (power == 1) {
     max(colSums(abs(A)))
   } else if (power == 2) {
-    sqrt(max(eigen(t(A) %*% A)$value))
+    sqrt(max(eigen(t(A) %*% A, symmetric = TRUE)$value))
   } else if (!is.finite(power)) {
     max(colSums(abs(A)))
   } else {
@@ -1297,7 +1322,7 @@ getfromVGAMenv <- function(varname, prefix = "") {
   get(varname, envir = VGAMenv)
 }
 
- 
+
 
 lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
   if (!is.Numeric(x) || !is.Numeric(s) || !is.Numeric(v))
@@ -1339,6 +1364,10 @@ negzero.expression.VGAM <- expression({
 
 
 
+
+
+  if (length(dotzero) == 1 && (dotzero == "" || is.na(dotzero)))
+    dotzero <- NULL
 
 
 
@@ -1445,7 +1474,7 @@ interleave.cmat <- function(cmat1, cmat2) {
       return(cbind(cmat1[, 1], cmat2, cmat1[, -1]))
     } else {  # ncol1 == ncol2 and both are > 1.
       kronecker(cmat1, cbind(1, 0)) +
-      kronecker(cmat2, cbind(0, 1))        
+      kronecker(cmat2, cbind(0, 1))
     }
   }
 }
@@ -1594,7 +1623,7 @@ w.y.check <- function(w, y,
                             sep = ""))
     y <- matrix(y, n.lm, Ncol.max.y, dimnames = list(rn.y, cn.y))
   }
-       
+
   list(w = if (out.wy) w else NULL,
        y = if (out.wy) y else NULL)
 }
@@ -1712,6 +1741,33 @@ setMethod("familyname", "vlm",
 
 
 
+
+
+
+
+bisection.basic <- function(f, a, b, tol = 1e-9, nmax = 500, ...) {
+
+
+
+  if (!all(sign(f(a, ...)) * sign(f(b, ...)) <= 0))
+    stop("roots do not exist between 'a' and 'b'")
+
+  N <- 1
+  while (N <= nmax) {
+    mid <- (a + b) / 2
+    save.f <- f(mid, ...)
+    if (all(save.f == 0 | (b - a)/2 < tol)) {
+      return(mid)
+    }
+    N <- N + 1
+    vecTF <- sign(save.f) == sign(f(a, ...))
+    a[ vecTF] <- mid[ vecTF]
+    b[!vecTF] <- mid[!vecTF]
+  }
+
+  warning("did not coverge. Returning final root")
+  mid
+}
 
 
 

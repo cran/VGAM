@@ -62,7 +62,7 @@ vcovvlm(object, dispersion = NULL, untransform = FALSE)
   is not entirely reliable because the elements of the
   \bold{A}--\bold{C} part of the matrix sometimes cannot be
   computed very accurately, so that the entire matrix is
-  not positive-definite. 
+  not positive-definite.
 
 
 }

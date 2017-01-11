@@ -38,9 +38,9 @@ logitlaplace1(tau = NULL, llocation = "logit",
   However, this argument should be left unchanged with
   count data because it restricts the quantiles to be positive.
   With proportions data  \code{llocation} can be assigned a link such as
-  \code{\link{logit}}, 
-  \code{\link{probit}}, 
-  \code{\link{cloglog}}, 
+  \code{\link{logit}},
+  \code{\link{probit}},
+  \code{\link{cloglog}},
   etc.
 
 
@@ -99,7 +99,7 @@ logitlaplace1(tau = NULL, llocation = "logit",
   The minimum and maximum values possible in the quantiles.
   These argument are effectively ignored by default since
   \code{\link{loge}} keeps all quantiles positive.
-  However, if 
+  However, if
   \code{llocation = logoff(offset = 1)}
   then it is possible that the fitted quantiles have value 0
   because \code{minquantile = 0}.
@@ -178,7 +178,7 @@ Log-Laplace distributions.
 
 
 }
-\note{ 
+\note{
   The form of input for \code{\link{logitlaplace1}} as response
   is a vector of proportions (values in \eqn{[0,1]}) and the
   number of trials is entered into the \code{weights} argument of
@@ -206,7 +206,7 @@ mytau <- c(0.1, 0.25, 0.5, 0.75, 0.9); mydof = 3
 # halfstepping is usual:
 fitp <- vglm(y ~ sm.bs(x2, df = mydof), data = adata, trace = TRUE,
             loglaplace1(tau = mytau, parallel.locat = TRUE))
- 
+
 \dontrun{
 par(las = 1)  # Plot on a log1p() scale
 mylwd <- 1.5

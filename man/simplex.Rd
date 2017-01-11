@@ -16,7 +16,7 @@ simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmu, lsigma}{
-  Link function for \code{mu} and \code{sigma}. 
+  Link function for \code{mu} and \code{sigma}.
   See \code{\link{Links}} for more choices.
 
 
@@ -87,14 +87,14 @@ simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL,
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   This distribution is potentially useful for dispersion modelling.
   Numerical problems may occur when \code{mu} is very close to 0 or 1.
 
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{dsimplex}},
   \code{\link{dirichlet}},
   \code{\link{rig}},

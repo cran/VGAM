@@ -23,7 +23,7 @@ gamma2(lmu = "loge", lshape = "loge",
 
   }
   \item{ishape}{
-  Optional initial value for \emph{shape}. 
+  Optional initial value for \emph{shape}.
   A \code{NULL} means a value is computed internally.
   If a failure to converge occurs, try using this argument.
   This argument is ignored if used within \code{\link{cqo}}; see the
@@ -87,7 +87,7 @@ gamma2(lmu = "loge", lshape = "loge",
                (a y / \mu)^{a-1}
                \times a}{
                \mu \times \Gamma(a)}}{%
-   f(y;mu,shape) = exp(-shape * y / mu) y^(shape-1) shape^(shape) / 
+   f(y;mu,shape) = exp(-shape * y / mu) y^(shape-1) shape^(shape) /
           [mu^(shape) * gamma(shape)]}
   for
   \eqn{\mu > 0}{mu > 0},

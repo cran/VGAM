@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generalized Beta Distribution of the Second Kind }
 \description{
-  Maximum likelihood estimation of the 4-parameter 
+  Maximum likelihood estimation of the 4-parameter
   generalized beta II distribution.
 
 }
@@ -85,10 +85,10 @@ The 4-parameter generalized beta II distribution has density
   \deqn{f(y) = a y^{ap-1} / [b^{ap} B(p,q) \{1 + (y/b)^a\}^{p+q}]}{%
         f(y) = a y^(ap-1) / [b^(ap) B(p,q) (1 + (y/b)^a)^(p+q)]}
   for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
-Here \eqn{B} is the beta function, and 
+Here \eqn{B} is the beta function, and
 \eqn{b} is the scale parameter \code{scale},
 while the others are shape parameters.
-The mean is 
+The mean is
   \deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(q - 1/a) / (\Gamma(p) \, \Gamma(q))}{%
         E(Y) = b  gamma(p + 1/a)  gamma(q - 1/a) / ( gamma(p)  gamma(q))}
 provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.

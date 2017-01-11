@@ -36,17 +36,17 @@ data(venice90)
    number of hours since the midnight of 31 Dec 1939 and 1 Jan 1940.
 
   }
- 
+
   \item{Year}{numeric vector;
   approximate year as a real number.
   The formula is \code{start.year + ohour / (365.26 * 24)}
   where \code{start.year} is 1940.
   One can treat \code{Year} as continuous whereas
   \code{year} can be treated as both continuous and discrete.
-  
+
   }
-    
-  
+
+
   }
 
 }
@@ -62,7 +62,7 @@ data(venice90)
   (now) a very low and unusual measurement.
 
 
-  For \code{venice}, in 1935 only the top six values were recorded.   
+  For \code{venice}, in 1935 only the top six values were recorded.
 
 
   For \code{venice90}, this is a subset of a data set provided by
@@ -101,8 +101,8 @@ data(venice90)
   Extreme value theory based on the \emph{r} largest annual events.
   \emph{Journal of Hydrology},
   \bold{86}, 27--43.
-  
-  
+
+
 Battistin, D. and Canestrelli, P. (2006).
 \emph{La serie storica delle maree a Venezia, 1872--2004} (in Italian),
 Comune di Venezia.

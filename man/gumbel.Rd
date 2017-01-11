@@ -18,28 +18,28 @@ gumbelff(llocation = "identitylink", lscale = "loge",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{llocation, lscale}{ 
+  \item{llocation, lscale}{
   Parameter link functions for \eqn{\mu}{mu} and \eqn{\sigma}{sigma}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{iscale}{ 
-  Numeric and positive. 
+  \item{iscale}{
+  Numeric and positive.
   Optional initial value for \eqn{\sigma}{sigma}.
   Recycled to the appropriate length.
   In general, a larger value is better than a smaller value.
-  A \code{NULL} means an initial value is computed internally. 
+  A \code{NULL} means an initial value is computed internally.
 
 
   }
 
-  \item{R}{ 
+  \item{R}{
   Numeric. Maximum number of values possible.
-  See \bold{Details} for more details. 
+  See \bold{Details} for more details.
 
   }
-  \item{percentiles}{ 
+  \item{percentiles}{
   Numeric vector of percentiles used
   for the fitted values. Values should be between 0 and 100.
   This argument uses the argument \code{R} if assigned.
@@ -49,23 +49,23 @@ gumbelff(llocation = "identitylink", lscale = "loge",
 % This argument is ignored if \code{mean = TRUE}.
 
   }
-  \item{mpv}{ 
+  \item{mpv}{
   Logical. If \code{mpv = TRUE} then the \emph{median predicted value} (MPV)
   is computed and returned as the (last) column of the fitted values.
   This argument is ignored if \code{percentiles = NULL}.
-  See \bold{Details} for more details. 
+  See \bold{Details} for more details.
 
 % This argument is ignored if \code{mean = TRUE}.
 
   }
-% \item{mean}{ 
+% \item{mean}{
 % Logical. If \code{TRUE}, the mean is computed and returned
 % as the fitted values. This argument overrides the
 % \code{percentiles} and \code{mpv} arguments.
-% See \bold{Details} for more details. 
+% See \bold{Details} for more details.
 
 % }
-  \item{zero}{ 
+  \item{zero}{
   A vector specifying which linear/additive predictors
   are modelled as intercepts only.  The value (possibly values) can
   be from the set \{1, 2\} corresponding respectively to \eqn{\mu}{mu}
@@ -73,12 +73,12 @@ gumbelff(llocation = "identitylink", lscale = "loge",
   are modelled as a linear combination of the explanatory variables.
   See \code{\link{CommonVGAMffArguments}} for more details.
 
-  
+
 
   }
 }
 \details{
-  The Gumbel distribution is a generalized extreme value (GEV) 
+  The Gumbel distribution is a generalized extreme value (GEV)
   distribution with \emph{shape} parameter \eqn{\xi = 0}{xi = 0}.
   Consequently it is more easily estimated than the GEV.
   See \code{\link{gev}} for more details.
@@ -132,7 +132,7 @@ gumbelff(llocation = "identitylink", lscale = "loge",
 
   Rosen, O. and Cohen, A. (1996)
   Extreme percentile regression.
-  In: Haerdle, W. and Schimek, M. G. (eds.), 
+  In: Haerdle, W. and Schimek, M. G. (eds.),
   \emph{Statistical Theory and Computational Aspects of Smoothing:
   Proceedings of the COMPSTAT '94 Satellite Meeting held in
   Semmering, Austria, 27--28 August 1994}, pp.200--214,
@@ -156,10 +156,10 @@ gumbelff(llocation = "identitylink", lscale = "loge",
   however, the data are the highest sea level measurements recorded each
   year (it therefore equates to the median predicted value or MPV).
 
-  
+
 }
 
-\note{ 
+\note{
   Like many other usual \pkg{VGAM} family functions,
   \code{gumbelff()} handles (independent) multiple responses.
 
@@ -176,10 +176,10 @@ gumbelff(llocation = "identitylink", lscale = "loge",
   \code{na.action = na.pass}. The response matrix needs to be
   padded with any missing values. With a multivariate response
   one has a matrix \code{y}, say, where
-  \code{y[, 2]} contains the second order statistics, etc. 
+  \code{y[, 2]} contains the second order statistics, etc.
 
 
-  
+
 % If a random variable \eqn{Y} has a \emph{reverse}
 % \eqn{Gumbel(\mu,\sigma)}{Gumbel(mu,sigma)} distribution then \eqn{-Y}
 % has a \eqn{Gumbel(-\mu,\sigma)}{Gumbel(-mu,sigma)} distribution.
@@ -199,7 +199,7 @@ gumbelff(llocation = "identitylink", lscale = "loge",
   \code{\link{gevff}},
   \code{\link{venice}}.
 
-  
+
 % \code{\link{ogev}},
 
 
@@ -224,7 +224,7 @@ sqrt(diag(vcov(summary(fit2))))   # Standard errors
 # Example 3: Try a nonparametric fit ---------------------
 # Use the entire data set, including missing values
 # Same as as.matrix(venice[, paste0("r", 1:10)]):
-Y <- Select(venice, "r", sort = FALSE) 
+Y <- Select(venice, "r", sort = FALSE)
 fit3 <- vgam(Y ~ s(year, df = 3), gumbel(R = 365, mpv = TRUE),
              data = venice, trace = TRUE, na.action = na.pass)
 depvar(fit3)[4:5, ]  # NAs used to pad the matrix
@@ -245,7 +245,7 @@ matpoints(year, Y, pch = "*", col = "blue")
 lines(year, fitted(fit3)[, "99\%"], lwd = 2, col = "orange")
 
 # Check the 99 percentiles with a smoothing spline.
-# Nb. (1-0.99) * 365 = 3.65 is approx. 4, meaning the 4th order 
+# Nb. (1-0.99) * 365 = 3.65 is approx. 4, meaning the 4th order
 # statistic is approximately the 99 percentile.
 plot(year, Y[, 4], ylab = "Sea level (cm)", type = "n",
      main = "Orange is 99 percentile, Green is a smoothing spline")

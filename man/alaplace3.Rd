@@ -189,12 +189,13 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
    location parameter \eqn{\xi}{xi} corresponds to the regression
    quantile estimate of the classical quantile regression approach of
    Koenker and Bassett (1978). An important property of the ALD is that
-   \eqn{P(Y \leq \xi) = \tau}{P(Y <=   xi) = tau} where 
+   \eqn{P(Y \leq \xi) = \tau}{P(Y <=   xi) = tau} where
    \eqn{\tau = \kappa^2 / (1 + \kappa^2)}{tau = kappa^2 / (1 + kappa^2)}
    so that
    \eqn{\kappa =  \sqrt{\tau / (1-\tau)}}{kappa = sqrt(tau / (1-tau))}.
    Thus \code{alaplace2()} might be used as an alternative to \code{rq}
-   in the \pkg{quantreg} package.
+   in the \pkg{quantreg} package, although scoring is really
+   an unsuitable algorithm for estimation here.
 
 
    Both \code{alaplace1()} and \code{alaplace2()} can handle
@@ -233,13 +234,6 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   Boston: Birkhauser.
 
 
-Yee, T. W. (2015)
-Vector Generalized Linear and Additive Models: With an
-Implementation in R.
-\emph{Monograph to appear}.
-
-
-
 
 %  Yee, T. W. (2014)
 %  Quantile regression for counts and proportions.
@@ -264,10 +258,10 @@ Implementation in R.
 
 
 }
-\note{ 
+\note{
 % Commented out 20090326
 % The function \code{alaplace2()} is recommended over \code{alaplace1()}
-% for quantile regression because the solution is 
+% for quantile regression because the solution is
 % invariant to location and scale,
 % i.e., linear transformation of the response produces the
 % same linear transformation of the fitted quantiles.
@@ -298,7 +292,7 @@ Implementation in R.
   A second method for solving the noncrossing quantile problem is
   illustrated below in Example 3.
   This is called the \emph{accumulative quantile method} (AQM)
-  and details are in Yee (2014).
+  and details are in Yee (2015).
   It does not make the strong parallelism assumption.
 
 
@@ -337,7 +331,7 @@ fit <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
                       parallel.locat = FALSE))
 fitp <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
              alaplace2(tau = mytau, llocat = "loge", parallel.locat = TRUE))
- 
+
 par(las = 1); mylwd <- 1.5
 with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
                  main = "Example 1; green: parallel.locat = TRUE",
@@ -365,7 +359,7 @@ fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[, 1]),
 with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
                pch = "o", cex = 0.75, ylab = "y",
                main = "Example 2; parallel.locat = TRUE"))
-with(adata, matlines(x2, fitted(fitp2), col = "blue", 
+with(adata, matlines(x2, fitted(fitp2), col = "blue",
                      lty = 1, lwd = mylwd))
 with(adata, matlines(x2, fitted(fitp3), col = "black",
                      lty = 1, lwd = mylwd))

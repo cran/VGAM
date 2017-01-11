@@ -82,7 +82,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}},
     \code{\link{loge}},
     \code{\link{rcim}},

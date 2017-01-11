@@ -7,7 +7,7 @@
 \title{A Short-tailed Symmetric Distribution }
 \description{
   Density, cumulative distribution function, quantile function and
-  random generation for 
+  random generation for
   the short-tailed symmetric distribution of Tiku and Vaughan (1999).
 
 

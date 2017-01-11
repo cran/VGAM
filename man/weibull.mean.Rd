@@ -19,7 +19,7 @@ weibull.mean(lmean = "loge", lshape = "loge", imean = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmean, lshape}{
-  Parameter link functions applied to the 
+  Parameter link functions applied to the
   (positive) mean parameter (called \eqn{mu} below) and
   (positive) shape parameter (called \eqn{a} below).
   See \code{\link{Links}} for more choices.
@@ -47,7 +47,7 @@ weibull.mean(lmean = "loge", lshape = "loge", imean = NULL,
   also having a default \code{\link{loge}} link.
 
 
-  This \pkg{VGAM} family function currently does not handle 
+  This \pkg{VGAM} family function currently does not handle
   censored data.
   Fisher scoring is used to estimate the two parameters.
   Although the expected information matrices used here are valid

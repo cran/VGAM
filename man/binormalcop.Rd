@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Gaussian Copula (Bivariate) Family Function }
 \description{
-  Estimate the correlation parameter of 
+  Estimate the correlation parameter of
   the (bivariate) Gaussian copula
   distribution by maximum likelihood estimation.
 
@@ -33,7 +33,7 @@ binormalcop(lrho = "rhobit", irho = NULL, imethod = 1,
   The cumulative distribution function is
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = \Phi_2
              ( \Phi^{-1}(y_1), \Phi^{-1}(y_2); \rho ) }{%
-        P(Y1 <= y1, Y2 <= y2) = 
+        P(Y1 <= y1, Y2 <= y2) =
         Phi_2(\Phi^(-1)(y_1), \Phi^(-1)(y_2); \rho)}
   for \eqn{-1 < \rho < 1}{-1 < rho < 1},
   \eqn{\Phi_2}{Phi_2} is the cumulative distribution function

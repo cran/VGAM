@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Returns Important Matrices etc. of a QO Object }
 \description{
-  This methods function returns important matrices etc. of a 
+  This methods function returns important matrices etc. of a
   QO object.
 
 
@@ -88,7 +88,7 @@ Coef.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL, ...)
 
 
 }
-\references{ 
+\references{
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
@@ -121,7 +121,7 @@ about how much information the parameters contain.
 
 }
 
-% ~Make other sections like Warning with \section{Warning }{....} ~ 
+% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{
 \code{\link{cqo}},
 \code{\link{Coef.qrrvglm-class}},

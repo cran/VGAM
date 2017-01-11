@@ -16,9 +16,9 @@ data(machinists)
   A data frame with the following variables.
 
   \describe{
-   
+
     \item{accidents}{
-      The number of accidents 
+      The number of accidents
 
     }
     \item{ofreq}{

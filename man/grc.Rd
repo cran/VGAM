@@ -10,7 +10,7 @@
   and more generally, row-column interaction models (RCIMs).
   RCIMs allow for unconstrained quadratic ordination (UQO).
 
-  
+
 
 }
 \usage{
@@ -22,7 +22,7 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
      rprefix = "Row.", cprefix = "Col.", iprefix = "X2.",
      offset = 0, str0 = if (Rank) 1 else NULL,
      summary.arg = FALSE, h.step = 0.0001,
-     rbaseline = 1, cbaseline = 1, 
+     rbaseline = 1, cbaseline = 1,
      has.intercept = TRUE, M = NULL,
      rindex = 2:nrow(y), cindex = 2:ncol(y), iindex = 2:nrow(y), ...)
 }
@@ -69,7 +69,7 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
 
   }
   \item{weights}{
-  Prior weights. Fed into 
+  Prior weights. Fed into
   \code{\link{rrvglm}}
   or
   \code{\link{vglm}}.
@@ -92,19 +92,19 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
 
 
   }
-  \item{rprefix, cprefix, iprefix}{ 
+  \item{rprefix, cprefix, iprefix}{
   Character, for rows and columns and interactions respectively.
   For labelling the indicator variables.
 
 
   }
-  \item{offset}{ 
+  \item{offset}{
   Numeric. Either a matrix of the right dimension, else
   a single numeric expanded into such a matrix.
 
 
   }
-  \item{str0}{ 
+  \item{str0}{
   Ignored if \code{Rank = 0}, else
   an integer from the set \{1,\ldots,\code{min(nrow(y), ncol(y))}\},
   specifying the row that is used as the structural zero.
@@ -189,12 +189,12 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
   the product of two `thin' matrices.
   Indeed, \code{A} and \code{C} have \code{Rank} columns.
 By default, the first column and row of the interaction matrix
-\code{A \%*\% t(C)} is chosen 
+\code{A \%*\% t(C)} is chosen
 to be structural zeros, because \code{str0 = 1}.
-This means the first row of \code{A} are all zeros. 
+This means the first row of \code{A} are all zeros.
 
 
-This function uses \code{options()$contrasts} to set up the row and 
+This function uses \code{options()$contrasts} to set up the row and
 column indicator variables.
 In particular, Equation (4.5) of Yee and Hastie (2003) is used.
 These are called \code{Row.} and \code{Col.} (by default) followed
@@ -208,7 +208,7 @@ row and column has a dummy variable associated with it.
 The first row and first column are baseline.
 The power of \code{rcim()} is that many \pkg{VGAM} family functions
 can be assigned to its \code{family} argument.
-For example, 
+For example,
 \code{\link{uninormal}} fits something in between a 2-way
 ANOVA with and without interactions,
 \code{\link{alaplace2}} with \code{Rank = 0} is something like
@@ -254,7 +254,7 @@ and tolerance matrix.
   a rank-0 \code{rcim()} object is of class \code{\link{rcim0-class}},
   else of class \code{"rcim"} (this may change in the future).
 
-  
+
 % Currently,
 % a rank-0 \code{rcim()} object is of class \code{\link{vglm-class}},
 % but it may become of class \code{"rcim"} one day.
@@ -282,12 +282,12 @@ of cross-classifications having ordered categories.
 \bold{76}, 320--334.
 
 
-%Documentation accompanying the \pkg{VGAM} package at 
+%Documentation accompanying the \pkg{VGAM} package at
 %\url{http://www.stat.auckland.ac.nz/~yee}
 %contains further information about the setting up of the
 %indicator variables.
 
- 
+
 }
 \author{
 Thomas W. Yee, with

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -39,8 +39,8 @@ summaryvglm <-
 
 
   if (length(dispersion) &&
-      dispersion == 0 && 
-      length(object@family@summary.dispersion) && 
+      dispersion == 0 &&
+      length(object@family@summary.dispersion) &&
       !object@family@summary.dispersion) {
     stop("cannot use the general VGLM formula (based on a residual ",
          "sum of squares) for computing the dispersion parameter")
@@ -52,7 +52,7 @@ summaryvglm <-
                       object,
 
                       presid = FALSE,
- 
+
                       correlation = correlation,
                       dispersion = dispersion)
 
@@ -137,7 +137,7 @@ setMethod("summaryvglmS4VGAM",  signature(VGAMff = "cumulative"),
                     object = object,
                     ...)
   object@post$reverse <- object@misc$reverse
- 
+
 
   cfit <- coef(object, matrix = TRUE)
   M <- ncol(cfit)
@@ -231,10 +231,13 @@ show.summary.vglm <-
            quote = TRUE,
            prefix = "",
            presid = TRUE,
-           signif.stars = NULL,  # Use this if logical; 20140728
+           signif.stars = NULL,   # Use this if logical; 20140728
            nopredictors = NULL,   # Use this if logical; 20150831
+           top.half.only = FALSE,  # Added 20160803
            ...  # Added 20151214
            ) {
+
+
 
   M <- x@misc$M
   coef <- x@coef3  # icients
@@ -242,8 +245,10 @@ show.summary.vglm <-
 
   digits <- if (is.null(digits)) options()$digits - 2 else digits
 
-  cat("\nCall:\n")
-  dput(x@call)
+  cat("\nCall:\n", paste(deparse(x@call), sep = "\n", collapse = "\n"),
+      "\n\n", sep = "")
+
+
 
   Presid <- x@pearson.resid
   rdf <- x@df[2]
@@ -280,10 +285,17 @@ show.summary.vglm <-
   }
 
 
-  cat("\nCoefficients:\n")
-  printCoefmat(coef, digits = digits,
-               signif.stars = use.signif.stars,
-               na.print = "NA")
+
+  if (length(coef)) {
+    cat(if (top.half.only) "\nParametric coefficients:" else
+        "\nCoefficients:", "\n")
+    printCoefmat(coef, digits = digits,
+                 signif.stars = use.signif.stars,
+                 na.print = "NA")
+  }
+
+  if (top.half.only)
+    return(invisible(NULL))
 
 
 
@@ -292,7 +304,7 @@ show.summary.vglm <-
   if (!is.null(x@misc$predictors.names) && !use.nopredictors) {
     if (M == 1) {
       cat("\nName of linear predictor:",
-          paste(x@misc$predictors.names, collapse = ", "), "\n") 
+          paste(x@misc$predictors.names, collapse = ", "), "\n")
     } else
     if (M <= 5) {
       cat("\nNames of linear predictors:",
@@ -314,6 +326,7 @@ show.summary.vglm <-
           x@dispersion != x@misc$default.dispersion)
         prose <- "(Pre-specified) "
     }
+    if (any(x@dispersion != 1))
     cat(paste("\n", prose, "Dispersion Parameter for ",
               x@family@vfamily[1],
               " family:   ", yformat(x@dispersion, digits), "\n",
@@ -456,7 +469,7 @@ function(object, dispersion = NULL, untransform = FALSE) {
 
   so <- summaryvlm(object, correlation = FALSE,
                    dispersion = dispersion)
-  d <- if (any(slotNames(so) == "dispersion") && 
+  d <- if (any(slotNames(so) == "dispersion") &&
            is.Numeric(so@dispersion))
        so@dispersion else 1
   answer <- d * so@cov.unscaled
@@ -472,7 +485,7 @@ function(object, dispersion = NULL, untransform = FALSE) {
 
 
 
-  new.way <- TRUE 
+  new.way <- TRUE
 
 
 
@@ -493,7 +506,7 @@ function(object, dispersion = NULL, untransform = FALSE) {
 
   tvector <- numeric(M)
   etavector <- predict(object)[1, ]  # Contains transformed parameters
-  LINK <- object@misc$link  # link.names # This should be a character vector.
+  LINK <- object@misc$link
   EARG <- object@misc$earg  # This could be a NULL
   if (is.null(EARG))
     EARG <- list(theta = NULL)

@@ -4,7 +4,7 @@
 \title{ Upper Record Values from a Univariate Normal Distribution }
 \description{
   Maximum likelihood estimation of the two parameters of a
-  univariate normal distribution when the observations are upper 
+  univariate normal distribution when the observations are upper
   record values.
 
 }
@@ -69,7 +69,7 @@ rec.normal(lmean = "identitylink", lsd = "loge",
 \note{
   This family function tries to solve a difficult problem, and the
   larger the data set the better.
-  Convergence failure can commonly occur, and 
+  Convergence failure can commonly occur, and
   convergence may be very slow, so set \code{maxit = 200, trace = TRUE}, say.
   Inputting good initial values are advised.
 

@@ -32,7 +32,7 @@ data(alclevels)
   The \code{alclevels} dataset has hourly times and alcohol levels.
 
   \describe{
-   
+
     \item{Mon, Tue, Wed, Thu, Fri, Sat, Sun}{
     Day of the week.
 
@@ -56,13 +56,13 @@ data(alclevels)
     The \code{rownames} of each data frame is the
     start time (hourly from midnight onwards) on a 24 hour clock,
     e.g., 21 means 9.00pm to 9.59pm.
-     
-     
+
+
   For crashes,
      \code{chrashi} are the number of injuries by car,
      \code{crashf}  are the number of fatalities by car
      (not included in \code{chrashi}),
-     \code{crashtr} are the number of crashes involving trucks, 
+     \code{crashtr} are the number of crashes involving trucks,
      \code{crashmc} are the number of crashes involving motorcyclists,
      \code{crashbc} are the number of crashes involving bicycles,
      and
@@ -73,10 +73,10 @@ data(alclevels)
      and
      \code{alclevels} are the blood alcohol levels of fatally injured drivers.
 
-     
+
 }
 \source{
-  
+
   \url{http://www.transport.govt.nz/research/Pages/Motor-Vehicle-Crashes-in-New-Zealand-2009.aspx}.
   Thanks to Warwick Goold and Alfian F. Hadi for assistance.
 

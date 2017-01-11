@@ -1,7 +1,7 @@
 \name{plotrcim0}
 \alias{plotrcim0}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Main Effects Plot for a Row-Column Interaction Model (RCIM) 
+\title{ Main Effects Plot for a Row-Column Interaction Model (RCIM)
 
 }
 \description{
@@ -25,21 +25,21 @@
 
 }
 \arguments{
-\item{object}{   
+\item{object}{
   An \code{\link{rcim}} object.
   This should be of rank-0, i.e., main effects only and no
   interactions.
 
 
 }
-\item{which.plots}{  
+\item{which.plots}{
   Numeric, describing which plots are to be plotted.
   The row effects plot is 1 and the column effects plot is 2.
   Set the value \code{0}, say, for no plots at all.
 
 
 }
-\item{centered}{  
+\item{centered}{
   Logical.
   If \code{TRUE} then the row and column effects are centered
   (but not scaled) by \code{\link[base]{scale}}.
@@ -48,7 +48,7 @@
 
 
 }
-\item{hline0, hlty, hcol, hlwd}{  
+\item{hline0, hlty, hcol, hlwd}{
   \code{hline0} is logical. If \code{TRUE} then a horizontal line is
   plotted at 0 and the other arguments describe this line.
   Probably having \code{hline0 = TRUE} only makes sense when
@@ -56,20 +56,20 @@
 
 
 }
-\item{rfirst, cfirst}{  
+\item{rfirst, cfirst}{
   \code{rfirst} is the level of row that is placed first in the
   row effects plot, etc.
 
 
-} 
-\item{rmain, cmain}{  
+}
+\item{rmain, cmain}{
   Character.
   \code{rmain} is the main label in the row effects plot, etc.
 
 
 }
 \item{rtype, ctype, rsub, csub}{
-  See the \code{type} and \code{sub} arguments of 
+  See the \code{type} and \code{sub} arguments of
   \code{\link[graphics:plot]{plot}}.
 
 
@@ -78,7 +78,7 @@
 % rlabels = FALSE, clabels = FALSE,
 %  Currently not functioning properly.
 %  zz.
-%  See \code{labels} argument of 
+%  See \code{labels} argument of
 %  \code{\link[graphics:plot]{plot}}.
 %
 %}
@@ -92,7 +92,7 @@
 
 
 }
-\item{rcex.lab, ccex.lab}{  
+\item{rcex.lab, ccex.lab}{
   Numeric.
   \code{rcex.lab} is \code{cex} for the row effects plot label,
   etc.
@@ -170,7 +170,7 @@
 
 \note{
   This function should be only used to plot the object of rank-0 RCIM.
-  If the rank is positive then it will issue a warning. 
+  If the rank is positive then it will issue a warning.
 
 
   Using an argument \code{ylim} will mean the row and column
@@ -196,8 +196,8 @@
 
 
 \seealso{
-  \code{\link{moffset}} 
-  \code{\link{Rcim}}, 
+  \code{\link{moffset}}
+  \code{\link{Rcim}},
   \code{\link{rcim}}.
 
 

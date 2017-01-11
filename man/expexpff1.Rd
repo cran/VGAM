@@ -73,7 +73,7 @@ expexpff1(lrate = "loge", irate = NULL, ishape = 1)
   The estimate of  \eqn{\alpha}{shape} is attached to the
   \code{misc} slot of the object, which is a list and contains
   the component \code{shape}.
-  
+
 
   As Newton-Raphson is used, the working weights are sometimes
   negative, and some adjustment is made to these to make them

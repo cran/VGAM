@@ -3,14 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Paralogistic Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 2-parameter 
+  Maximum likelihood estimation of the 2-parameter
   paralogistic distribution.
 
 
 }
 \usage{
-paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL, 
-    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), 
+paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL,
+    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5),
     gshape1.a = seq(0.75, 4, by = 0.25), probs.y = c(0.25, 0.5, 0.75),
     zero = "shape")
 }
@@ -18,8 +18,8 @@ paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL,
 %   zero = ifelse(lss, -2, -1)
 \arguments{
   \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
-  
-  
+
+
   }
   \item{lshape1.a, lscale}{
   Parameter link functions applied to the

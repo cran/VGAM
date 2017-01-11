@@ -25,7 +25,7 @@ rdiric(n, shape, dimension = NULL, is.matrix.shape = FALSE)
 
   }
   \item{dimension}{
-  the dimension of the distribution. 
+  the dimension of the distribution.
   If \code{dimension} is not numeric then it is taken to be
   \code{length(shape)}
   (or \code{ncol(shape)} if \code{is.matrix.shape == TRUE}).
@@ -47,7 +47,7 @@ rdiric(n, shape, dimension = NULL, is.matrix.shape = FALSE)
 \details{
   This function is based on a relationship between the gamma and
   Dirichlet distribution. Random gamma variates are generated, and
-  then Dirichlet random variates are formed from these. 
+  then Dirichlet random variates are formed from these.
 
 
 }
@@ -58,9 +58,9 @@ rdiric(n, shape, dimension = NULL, is.matrix.shape = FALSE)
   of the answer.
 
 
-} 
- 
-\references{ 
+}
+
+\references{
 
 Lange, K. (2002)
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
@@ -70,12 +70,12 @@ New York: Springer-Verlag.
 
 }
 \author{ Thomas W. Yee }
-\seealso{ 
+\seealso{
   \code{\link{dirichlet}} is a \pkg{VGAM} family function for
   fitting a Dirichlet distribution to data.
 
 
-} 
+}
 
 \examples{
 ddata <- data.frame(rdiric(n = 1000, shape = c(y1 = 3, y2 = 1, y3 = 4)))

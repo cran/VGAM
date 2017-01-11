@@ -63,7 +63,7 @@ rlino(n, shape1, shape2, lambda = 1)
 \author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{lino}}, the \pkg{VGAM} family function
-  for estimating the parameters, 
+  for estimating the parameters,
   for the formula of the probability density function and other details.
 
 

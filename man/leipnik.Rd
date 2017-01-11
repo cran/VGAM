@@ -9,7 +9,8 @@
 
 }
 \usage{
-leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
+leipnik(lmu = "logit", llambda = logoff(offset = 1),
+        imu = NULL, ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,8 +33,8 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
   \mbox{Beta}( \frac{\lambda+1}{2}, \frac12 )}
   \left[ 1 +  \frac{(y-\mu)^2 }{y(1-y)}
   \right]^{ -\frac{\lambda}{2}}}{%
-  f(y;mu,lambda) = 
-  (y(1-y))^(-1/2) * (1 + (y-mu)^2 / (y*(1-y)))^(-lambda/2) / 
+  f(y;mu,lambda) =
+  (y(1-y))^(-1/2) * (1 + (y-mu)^2 / (y*(1-y)))^(-lambda/2) /
   Beta((lambda+1)/2, 1/2)}
   where \eqn{0 < y < 1} and \eqn{\lambda > -1}{lambda > -1}.
   The mean is \eqn{\mu}{mu} (returned as the fitted values)
@@ -85,25 +86,23 @@ leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
 
 }
 
-\section{Warning }{
-  If \code{llambda="identitylink"} then it is possible that the
-  \code{lambda} estimate becomes less than \eqn{-1}, i.e., out of
-  bounds. One way to stop this is to choose \code{llambda = "loge"},
-  however, \code{lambda} is then constrained to be positive.
+%\section{Warning }{
+% If \code{llambda="identitylink"} then it is possible that the
+% \code{lambda} estimate becomes less than \eqn{-1}, i.e., out of
+% bounds. One way to stop this is to choose \code{llambda = "loge"},
+% however, \code{lambda} is then constrained to be positive.
 
 
-}
+%}
 
-\seealso{ 
+\seealso{
   \code{\link{mccullagh89}}.
 
 
 }
 \examples{
 ldata <- data.frame(y = rnorm(n = 2000, mean = 0.5, sd = 0.1))  # Not proper data
-fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE, checkwz = FALSE)
-fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logoff(offset = 1)),
-            data = ldata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE)
 head(fitted(fit))
 with(ldata, mean(y))
 summary(fit)
@@ -117,5 +116,13 @@ sum(weights(fit, type = "work"))  # Sum of the working weights
 \keyword{regression}
 
 %fit <- vglm(y ~ 1, leipnik(ilambda = 1), tr = TRUE, cri = "c", checkwz = FALSE)
+
+
+% leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
+
+
+%fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logoff(offset = 1)),
+%            data = ldata, trace = TRUE, crit = "coef")
+% fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE, checkwz = FALSE)
 
 

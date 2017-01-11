@@ -32,7 +32,7 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
   \emph{component}.
 
   }
-  \item{pstr0}{ 
+  \item{pstr0}{
   Probability of structural zero
   (i.e., ignoring the negative binomial distribution),
   called \eqn{\phi}{phi}.
@@ -42,7 +42,7 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 \details{
   The probability function of \eqn{Y} is 0 with probability
   \eqn{\phi}{phi}, and a negative binomial distribution with
-  probability \eqn{1-\phi}{1-phi}. Thus 
+  probability \eqn{1-\phi}{1-phi}. Thus
   \deqn{P(Y=0) =\phi + (1-\phi) P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
   where \eqn{W} is distributed as a negative binomial distribution
@@ -64,7 +64,7 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The argument \code{pstr0} is recycled to the required
   length, and must have values which lie in the interval
   \eqn{[0,1]}.
@@ -73,13 +73,13 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
   These functions actually allow for \emph{zero-deflation}.
   That is, the resulting probability of a zero count
   is \emph{less than} the nominal value of the parent
-  distribution. 
+  distribution.
   See \code{\link{Zipois}} for more information.
 
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{zinegbinomial}},
     \code{\link[stats:NegBinomial]{rnbinom}},
     \code{\link{rzipois}}.

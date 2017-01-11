@@ -41,7 +41,7 @@ fill(x, values = 0, ncolx = ncol(x))
 
 
   }
-  \item{values}{ 
+  \item{values}{
     Numeric.
     The answer contains these values,
     which are recycled \emph{columnwise} if necessary, i.e.,
@@ -49,7 +49,7 @@ fill(x, values = 0, ncolx = ncol(x))
 
 
   }
-  \item{ncolx}{ 
+  \item{ncolx}{
     The number of columns of the returned matrix.
     The default is the number of columns of \code{x}.
 
@@ -86,7 +86,7 @@ fill(x, values = 0, ncolx = ncol(x))
 
 
 }
-%\references{ 
+%\references{
 %  More information can be found at
 %  \url{http://www.stat.auckland.ac.nz/~yee}.
 %
@@ -100,7 +100,7 @@ fill(x, values = 0, ncolx = ncol(x))
 %}
 
 \author{ T. W. Yee }
-\note{ 
+\note{
   The effect of the \code{xij} argument is after other arguments such as
   \code{exchangeable} and \code{zero}.
   Hence \code{xij} does not affect constraint matrices.
@@ -111,8 +111,8 @@ fill(x, values = 0, ncolx = ncol(x))
   if you need more then assign \code{fill4 = fill5 = fill1} etc.
   The reason for this is that if more than one \code{fill} function is
   needed then they must be unique.
-  For example, if \eqn{M=4} then 
-  \code{xij = op ~ lop + rop + fill(mop) + fill(mop)} would reduce to 
+  For example, if \eqn{M=4} then
+  \code{xij = op ~ lop + rop + fill(mop) + fill(mop)} would reduce to
   \code{xij = op ~ lop + rop + fill(mop)}, whereas
   \code{xij = op ~ lop + rop + fill1(mop) + fill2(mop)} would retain
   all \eqn{M} terms, which is needed.
@@ -132,7 +132,7 @@ fill(x, values = 0, ncolx = ncol(x))
 %
 % Examples 1 and 2 are deliberately misspecified.
 % The output from, e.g., \code{coef(fit, matrix=TRUE)}, looks wrong but
-% is correct because the coefficients are multiplied by the zeros 
+% is correct because the coefficients are multiplied by the zeros
 % produced from \code{fill}.
 
 
@@ -152,7 +152,7 @@ fill(x, values = 0, ncolx = ncol(x))
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{vglm.control}},
   \code{\link{vglm}},
   \code{\link{multinomial}},

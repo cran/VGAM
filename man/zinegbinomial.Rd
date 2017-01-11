@@ -30,7 +30,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lpstr0, lmunb, lsize}{ 
+  \item{lpstr0, lmunb, lsize}{
   Link functions for the parameters \eqn{\phi}{pstr0},
   the mean and \eqn{k}; see \code{\link{negbinomial}} for details,
   and \code{\link{Links}} for more choices.
@@ -46,7 +46,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 % }
 
   \item{type.fitted}{
-  See \code{\link{CommonVGAMffArguments}} 
+  See \code{\link{CommonVGAMffArguments}}
   and \code{\link{fittedvlm}} for more information.
 
 
@@ -79,7 +79,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   Specifies which linear/additive predictors are to be modelled
   as intercept-only.  They can be such that their absolute values are
   either 1 or 2 or 3.
@@ -90,23 +90,23 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 
   }
-  \item{nsimEIM}{ 
+  \item{nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
-  \item{iprobs.y, cutoff.prob, max.support, max.chunk.MB }{ 
+  \item{iprobs.y, cutoff.prob, max.support, max.chunk.MB }{
     See \code{\link{negbinomial}}
     and/or \code{\link{posnegbinomial}} for details.
 
 
   }
-  \item{mds.min, eps.trig}{ 
+  \item{mds.min, eps.trig}{
     See \code{\link{negbinomial}} for details.
 
 
   }
-  \item{gprobs.y, gsize.mux}{ 
+  \item{gprobs.y, gsize.mux}{
     These arguments relate to grid searching in the initialization process.
     See \code{\link{negbinomial}}
     and/or \code{\link{posnegbinomial}} for details.
@@ -176,7 +176,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 
 % 20130316: adding this:
-  Estimated probabilities of a structural zero and an 
+  Estimated probabilities of a structural zero and an
   observed zero can be returned, as in \code{\link{zipoisson}};
   see \code{\link{fittedvlm}} for more information.
 
@@ -246,7 +246,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 
 
-} 
+}
 
 \seealso{
   \code{\link{Zinegbin}},
@@ -257,6 +257,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 
 }
 \examples{
+\dontrun{
 # Example 1
 ndata <- data.frame(x2 = runif(nn <- 1000))
 ndata <- transform(ndata, pstr0 = logit(-0.5 + 1 * x2, inverse = TRUE),
@@ -265,15 +266,14 @@ ndata <- transform(ndata, pstr0 = logit(-0.5 + 1 * x2, inverse = TRUE),
 ndata <- transform(ndata,
                    y1 = rzinegbin(nn, mu = munb, size = size, pstr0 = pstr0))
 with(ndata, table(y1)["0"] / sum(table(y1)))
-fit <- vglm(y1 ~ x2, zinegbinomial(zero = NULL), data = ndata)
-coef(fit, matrix = TRUE)
-summary(fit)
-head(cbind(fitted(fit), with(ndata, (1 - pstr0) * munb)))
-round(vcov(fit), 3)
+nfit <- vglm(y1 ~ x2, zinegbinomial(zero = NULL), data = ndata)
+coef(nfit, matrix = TRUE)
+summary(nfit)
+head(cbind(fitted(nfit), with(ndata, (1 - pstr0) * munb)))
+round(vcov(nfit), 3)
 
 
 # Example 2: RR-ZINB could also be called a COZIVGLM-ZINB-2
-\dontrun{
 ndata <- data.frame(x2 = runif(nn <- 2000))
 ndata <- transform(ndata, x3 = runif(nn))
 ndata <- transform(ndata, eta1 =          3   + 1   * x2 + 2 * x3)

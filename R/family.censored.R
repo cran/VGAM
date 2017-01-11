@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -79,7 +79,7 @@
       stop("response have to be in a class of SurvS4")
 
       if (length( .imu )) init.mu <- 0 * y[, 1] + .imu
-  
+
       predictors.names <-
         namesof("mu", .link, earg = .earg, short = TRUE)
 
@@ -119,12 +119,17 @@
     }
   },
   vfamily = "cens.poisson",
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    lambda <- eta2theta(eta, link = .link , earg = .earg )
+    okay1 <- all(is.finite(lambda)) && all(0 < lambda)
+    okay1
+  }, list(  .link = link, .earg = earg ))),
   deriv = eval(substitute(expression({
     cen0 <- extra$uncensored
     cenL <- extra$leftcensored
     cenU <- extra$rightcensored
     cenI <- extra$intervalcensored
-      lambda <- eta2theta(eta, link = .link, earg = .earg)
+      lambda <- eta2theta(eta, link = .link , earg = .earg )
 
       dl.dlambda <- (y[, 1] - lambda)/lambda   # uncensored
 
@@ -188,7 +193,7 @@
 
 
 if (FALSE)
- cens.exponential <- 
+ cens.exponential <-
  ecens.exponential <- function(link = "loge", location = 0) {
   if (!is.Numeric(location, length.arg = 1))
     stop("bad input for 'location'")
@@ -286,6 +291,11 @@ if (FALSE)
     exp(-rate[cenI]*(y[cenI, 1]-extra$location))))
   }, list( .link = link ))),
   vfamily = c("ecens.exponential"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    rate <- 1 / (mu - extra$location)
+    okay1 <- all(is.finite(rate)) && all(0 < rate)
+    okay1
+  }, list(  .link = link ))),
   deriv = eval(substitute(expression({
     rate <- 1 / (mu - extra$location)
     cen0 <- extra$uncensored
@@ -443,6 +453,14 @@ if (FALSE)
   }, list( .lmu = lmu, .lsd = lsd,
            .emu = emu, .esd = esd ))),
   vfamily = c("cens.normal"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mum <- eta2theta(eta[, 1], .lmu )
+    sdv <- eta2theta(eta[, 2], .lsd )
+    okay1 <- all(is.finite(mum)) &&
+             all(is.finite(sdv)) && all(0 < sdv)
+    okay1
+  }, list( .lmu = lmu, .lsd = lsd,
+           .emu = emu, .esd = esd ))),
   deriv = eval(substitute(expression({
     cenL <- extra$leftcensored
     cenU <- extra$rightcensored
@@ -450,8 +468,8 @@ if (FALSE)
     Lower <- ifelse(cenL, y, -Inf)
     Upper <- ifelse(cenU, y,  Inf)
 
-    mum <- eta2theta(eta[, 1], .lmu)
-    sdv <- eta2theta(eta[, 2], .lsd)
+    mum <- eta2theta(eta[, 1], .lmu )
+    sdv <- eta2theta(eta[, 2], .lsd )
 
     dl.dmu <- (y-mum) / sdv^2
     dl.dsd <- (((y-mum)/sdv)^2 - 1) / sdv
@@ -494,7 +512,7 @@ if (FALSE)
     temp21L <- mumL / sdv
     PhiL <- pnorm(temp21L)
     phiL <- dnorm(temp21L)
-    temp31L <- ((1-PhiL) * sdv)^2 
+    temp31L <- ((1-PhiL) * sdv)^2
     wz.cenL11 <- phiL * (phiL - (1-PhiL)*temp21L) / temp31L
     wz.cenL22 <- mumL * phiL * ((1-PhiL) * (2 - temp21L^2) +
                  mumL * phiL / sdv) / (sdv * temp31L)
@@ -574,9 +592,9 @@ if (FALSE)
     Scale * sqrt(pi/2)
   }, list( .lscale = lscale, .escale = escale ))),
   last = eval(substitute(expression({
-    misc$link <-    c("scale" = .lscale)
+    misc$link <-    c("scale" = .lscale )
 
-    misc$earg <- list("scale" = .escale)
+    misc$earg <- list("scale" = .escale )
 
     misc$oim <- .oim
   }), list( .lscale = lscale, .escale = escale,
@@ -593,9 +611,13 @@ if (FALSE)
       sum(w[cen0] * (log(y[cen0]) - 2*log(Scale[cen0]) -
                      0.5*(y[cen0]/Scale[cen0])^2)) -
       sum(w[cenU] * (y[cenU]/Scale[cenU])^2) * 0.5
-  }, list( .lscale = lscale,
-           .escale = escale ))),
+  }, list( .lscale = lscale, .escale = escale ))),
   vfamily = c("cens.rayleigh"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Scale <- eta2theta(eta, .lscale , earg = .escale )
+    okay1 <- all(is.finite(Scale)) && all(0 < Scale)
+    okay1
+  }, list( .lscale = lscale, .escale = escale ))),
   deriv = eval(substitute(expression({
     cen0 <- !extra$rightcensored   # uncensored obsns
     cenU <- extra$rightcensored
@@ -765,7 +787,7 @@ if (FALSE)
             Shape.init[, ilocal] <- 1 / fit0$coef["X"]
         }  # ilocal
 
-        etastart <- 
+        etastart <-
           cbind(theta2eta(Meann.init, .lmeann , earg = .emeann ),
                 theta2eta(Shape.init, .lshape , earg = .eshape ))[,
                 interleave.VGAM(M, M1 = M1)]
@@ -840,6 +862,14 @@ if (FALSE)
   }, list( .lmeann = lmeann, .lshape = lshape,
            .emeann = emeann, .eshape = eshape ) )),
   vfamily = c("weibull.mean"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Meann <- eta2theta(eta[, c(TRUE, FALSE)], .lmeann , earg = .emeann )
+    Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
+    okay1 <- all(is.finite(Meann)) && all(0 < Meann) &&
+             all(is.finite(Shape)) && all(0 < Shape)
+    okay1
+  }, list( .lmeann = lmeann, .lshape = lshape,
+           .emeann = emeann, .eshape = eshape ) )),
   deriv = eval(substitute(expression({
     M1 <- 2
     Meann <- eta2theta(eta[, c(TRUE, FALSE)], .lmeann , earg = .emeann )
@@ -853,7 +883,7 @@ if (FALSE)
       CC <- y * gamma(1 + 1/Shape) / Meann
       dl.dmeann <- (CC^Shape - 1) * Shape / Meann  # Agrees
       dl.dshape <- 1/Shape -
-                   (log(y/Meann) + lgamma(1 + 1/Shape)) * (CC^Shape - 1) + 
+                   (log(y/Meann) + lgamma(1 + 1/Shape)) * (CC^Shape - 1) +
                    (BB / Shape) * (CC^Shape - 1)
     }
 
@@ -973,7 +1003,7 @@ if (FALSE)
   }, list( .zero = zero, .scale.12 = scale.12, .scale.TF = scale.TF,
            .lscale = lscale ,
            .lshape = lshape ,
-           .lss = lss 
+           .lss = lss
          ))),
 
   initialize = eval(substitute(expression({
@@ -1007,7 +1037,7 @@ if (FALSE)
       predictors.names <-
           c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
             namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
-            
+
     } else {
       mynames1 <- param.names("shape", ncoly)
       mynames2 <- param.names("scale", ncoly)
@@ -1128,6 +1158,15 @@ if (FALSE)
            .escale = escale, .eshape = eshape,
            .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
   vfamily = c("weibullR"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Scale <- eta2theta(eta[,    .scale.TF  ], .lscale , earg = .escale )
+    Shape <- eta2theta(eta[, !( .scale.TF )], .lshape , earg = .eshape )
+    okay1 <- all(is.finite(Scale)) && all(0 < Scale) &&
+             all(is.finite(Shape)) && all(0 < Shape)
+    okay1
+  }, list( .lscale = lscale, .lshape = lshape,
+           .escale = escale, .eshape = eshape,
+           .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
   deriv = eval(substitute(expression({
     M1 <- 2
     Scale <- eta2theta(eta[,    .scale.TF  ], .lscale , earg = .escale )
@@ -1371,7 +1410,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
   alld <- pgamma.deriv(q = q, shape = shape)  # 6-coln matrix
   tmp3 <- alld[, 3] / I.sq  # RHS of eqn (4.5) of \cite{wing:1989}
-    
+
   G1s <- digamma(shape) + tmp3  # eqn (4.9)
   gam1 <- gam0 * G1s
 
@@ -1447,8 +1486,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
   new("vglmff",
   blurb = c("Truncated weibull distribution\n\n",
             "Links:    ",
-            namesof("Alpha", lAlpha, earg = eAlpha), ", ", 
-            namesof("Betaa", lBetaa, earg = eBetaa), "\n", 
+            namesof("Alpha", lAlpha, earg = eAlpha), ", ",
+            namesof("Betaa", lBetaa, earg = eBetaa), "\n",
             if (length( lower.limit ) < 5)
               paste("Truncation point(s):     ",
                     lower.limit, sep = ", ") else
@@ -1643,6 +1682,15 @@ pgamma.deriv.unscaled <- function(q, shape) {
            .lower.limit = lower.limit ) )),
 
   vfamily = c("truncweibull"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Alpha <- eta2theta(eta[, c(TRUE, FALSE)], .lAlpha , earg = .eAlpha )
+    Betaa <- eta2theta(eta[, c(FALSE, TRUE)], .lBetaa , earg = .eBetaa )
+    okay1 <- all(is.finite(Alpha)) && all(0 < Alpha) &&
+             all(is.finite(Betaa)) && all(0 < Betaa)
+    okay1
+  }, list( .lBetaa = lBetaa, .lAlpha = lAlpha,
+           .eBetaa = eBetaa, .eAlpha = eAlpha,
+           .lower.limit = lower.limit ) )),
 
   deriv = eval(substitute(expression({
     M1 <- 2
@@ -1675,12 +1723,12 @@ pgamma.deriv.unscaled <- function(q, shape) {
     wingo3 <- pgamma.deriv.unscaled(q = aTb,
                                     shape = 2)  # 3-cols
 
- 
+
     Eyblogy <- (exp.aTb * (digamma(2) - wingo3[, 2]) -
                (aTb + 1) * log(Alpha)) / (Alpha * Betaa)
 
 
- 
+
     Eyblog2y <- (exp.aTb * (digamma(2)^2 + trigamma(2) -
                  wingo3[, 3]) - 2 * log(Alpha) *
                 (digamma(2) - wingo3[, 2])) / (Alpha * Betaa^2) +

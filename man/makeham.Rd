@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Makeham Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 3-parameter 
+  Maximum likelihood estimation of the 3-parameter
   Makeham distribution.
 
 }
@@ -69,32 +69,32 @@ makeham(lscale = "loge", lshape = "loge", lepsilon = "loge",
 The Makeham distribution, which adds another parameter
 to the Gompertz distribution,
 has cumulative distribution function
-\deqn{F(x; \alpha, \beta, \varepsilon) =
+\deqn{F(y; \alpha, \beta, \varepsilon) =
 1 - \exp
 \left\{
 -y \varepsilon + \frac {\alpha}{\beta}
 \left[ 1 - e^{\beta y} \right]
 \right\}
 }{%
-F(x; alpha, beta, epsilon) = 1 - exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
+F(y; alpha, beta, epsilon) = 1 - exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
 }
 which leads to a probability density function
-\deqn{f(x; \alpha, \beta, \varepsilon) =
+\deqn{f(y; \alpha, \beta, \varepsilon) =
 \left[
-\varepsilon + \alpha e^{\beta x} \right]
+\varepsilon + \alpha e^{\beta y} \right]
 \;
 \exp
 \left\{
--x \varepsilon + \frac {\alpha}{\beta}
-\left[ 1 - e^{\beta x} \right]
+-y \varepsilon + \frac {\alpha}{\beta}
+\left[ 1 - e^{\beta y} \right]
 \right\},
 }{%
-f(x; alpha, beta, epsilon) = (epsilon + alpha * e^(beta x) ) * exp(-x * epsilon + (alpha / beta) * [1 - e^(beta * x)])
+f(y; alpha, beta, epsilon) = (epsilon + alpha * e^(beta y) ) * exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
 }
 for \eqn{\alpha > 0}{alpha > 0},
 \eqn{\beta > 0}{beta > 0},
 \eqn{\varepsilon \geq 0}{epsilon >= 0},
-\eqn{x > 0}.
+\eqn{y > 0}.
 Here, \eqn{\beta}{beta} is called the scale parameter \code{scale},
 and \eqn{\alpha}{alpha} is called a shape parameter.
 The moments for this distribution do

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -44,7 +44,7 @@
 
 
            ...) {
-                           
+
 
 
 
@@ -208,9 +208,9 @@
   str1 <- paste(if (has.intercept) "~ 1 + " else "~ -1 + ", rprefix,
                 as.character(min.row.val),  # "2",
                 sep = "")
-  
 
-  if (nrow(y) > 2) 
+
+  if (nrow(y) > 2)
     str1 <- paste(str1,
                   paste(rprefix, rindex[-1], sep = "", collapse = " + "),
                   sep = " + ")
@@ -320,7 +320,7 @@
   answer <- if (summary.arg) {
     if (Rank > 0) {
       summary.rrvglm(as(answer, "rrvglm"), h.step = h.step)
-    } else { 
+    } else {
       summary(answer)
     }
   } else {
@@ -385,7 +385,7 @@ setMethod("summary", "rcim",
   mat <- as.matrix(mat)
   RRR <- dim(mat)[1]
   CCC <- dim(mat)[2]
-    
+
   rnames <- if (is.null(rownames(mat))) {
     paste("X", 1:RRR, sep = "")
   } else {
@@ -398,13 +398,13 @@ setMethod("summary", "rcim",
     colnames(mat)
   }
 
-  r.index <- if (is.character(rbaseline))  
+  r.index <- if (is.character(rbaseline))
                which(rownames(mat) == rbaseline) else
                      if (is.numeric(rbaseline)) rbaseline else
-                         stop("argement 'rbaseline' must be numeric", 
+                         stop("argement 'rbaseline' must be numeric",
                                "or character of the level of row")
- 
-  c.index <- if (is.character(cbaseline))  
+
+  c.index <- if (is.character(cbaseline))
                which(colnames(mat) == cbaseline) else
                      if (is.numeric(cbaseline)) cbaseline else
                          stop("argement 'cbaseline' must be numeric",
@@ -424,11 +424,11 @@ setMethod("summary", "rcim",
 
   new.rnames <- rnames[c(r.index:RRR,
                          if (r.index > 1) 1:(r.index - 1) else NULL)]
-  new.cnames <- cnames[c(c.index:CCC, 
+  new.cnames <- cnames[c(c.index:CCC,
                          if (c.index > 1) 1:(c.index - 1) else NULL)]
   colnames(yswap) <- new.cnames
   rownames(yswap) <- new.rnames
-  
+
   yswap
 }
 
@@ -461,7 +461,7 @@ setMethod("summary", "rcim",
      no.warning = FALSE,
      ...) {
 
- 
+
   nparff <- if (is.numeric(object@family@infos()$M1)) {
     object@family@infos()$M1
   } else {
@@ -491,16 +491,16 @@ setMethod("summary", "rcim",
 
 
   orig.raxisl  <- rownames(object@y)
-  orig.caxisl  <- colnames(object@y) 
+  orig.caxisl  <- colnames(object@y)
   if (is.null(orig.raxisl))
     orig.raxisl <- as.character(1:nrow(object@y))
   if (is.null(orig.caxisl))
     orig.caxisl <- as.character(1:ncol(object@y))
-    
-  roweff.orig <- 
+
+  roweff.orig <-
   roweff <- orig.roweff[c(rfirst:last.r,
                           if (rfirst > 1) 1:(rfirst-1) else NULL)]
-  coleff.orig <- 
+  coleff.orig <-
   coleff <- orig.coleff[c(cfirst:last.c,
                           if (cfirst > 1) 1:(cfirst-1) else NULL)]
 
@@ -512,17 +512,17 @@ setMethod("summary", "rcim",
   raxisl <- orig.raxisl[c(rfirst:last.r,
                           if (rfirst > 1) 1:(rfirst-1) else NULL)]
 
-  caxisl <- orig.caxisl[c(cfirst:last.c, 
+  caxisl <- orig.caxisl[c(cfirst:last.c,
                           if (cfirst > 1) 1:(cfirst-1) else NULL)]
 
 
   if (any(which.plots == 1, na.rm = TRUE)) {
-    plot(roweff, type = rtype, 
+    plot(roweff, type = rtype,
          axes = FALSE, col = rcol, main = rmain,
          sub  = rsub, xlab = rxlab, ylab = rylab, ...)
 
     axis(1, at = seq_along(raxisl),
-         cex.lab = rcex.lab,  
+         cex.lab = rcex.lab,
          cex.axis = rcex.axis,
          labels = raxisl)
     axis(2, cex.lab = rcex.lab, ...)  # las = rlas)
@@ -533,7 +533,7 @@ setMethod("summary", "rcim",
 
 
   if (any(which.plots == 2, na.rm = TRUE)) {
-    plot(coleff, type = ctype, 
+    plot(coleff, type = ctype,
          axes = FALSE, col = ccol, main = cmain,  # lwd = 2, xpd = FALSE,
          sub  = csub, xlab = cxlab, ylab = cylab, ...)
 
@@ -542,7 +542,7 @@ setMethod("summary", "rcim",
          cex.axis = ccex.axis,
          labels = caxisl)
     axis(2, cex.lab = ccex.lab, ...)  # las = clas)
-    
+
     if (hline0)
       abline(h = 0, lty = hlty, col = hcol, lwd = hlwd)
   }
@@ -773,7 +773,8 @@ Confint.nb1 <- function(nb1, level = 0.95) {
 
 plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
                     se.eachway = c(5, 5),  # == c(LHS, RHS),
-                    trace.arg = TRUE, ...) {
+                    trace.arg = TRUE,
+                    lwd = 2, ...) {
 
 
 
@@ -859,7 +860,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
            col = "darkorange", lty = "dashed")
 
     abline(v = a21.hat +  c(-1, 1) * 1.96 * SE.a21.hat,
-           col = "gray50", lty = "dashed", lwd = 2.0)
+           col = "gray50", lty = "dashed", lwd = lwd)
 
   }  # End of (show.plot)
 
@@ -1362,8 +1363,8 @@ qvplot   <-  function(object,
 
 
   if (any(slotNames(object) == "post")) {
-    object@post$estimates  <- estimates 
-    object@post$xvalues    <- xvalues  
+    object@post$estimates  <- estimates
+    object@post$xvalues    <- xvalues
     if (is.numeric(interval.width)) {
       object@post$tails <- tails
       object@post$tops  <- tops

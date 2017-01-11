@@ -23,11 +23,11 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{formula}{ a symbolic description of the model to be fit.
   The RHS of the formula is applied to each linear predictor. Different
   variables in each linear predictor can be chosen by specifying
-  constraint matrices. 
+  constraint matrices.
 
 
   }
-  \item{family}{ 
+  \item{family}{
   a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
   describing what statistical model is to be fitted. This is called a
   ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
@@ -58,7 +58,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
   }
-  \item{weights}{ an optional vector or matrix of (prior) weights 
+  \item{weights}{ an optional vector or matrix of (prior) weights
     to be used in the fitting process.
     Currently, this argument should not be used.
 
@@ -70,7 +70,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
   }
-  \item{na.action}{ 
+  \item{na.action}{
   a function which indicates what should happen when the data contain
   \code{NA}s.  The default is set by the \code{na.action} setting of
   \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
@@ -87,8 +87,8 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{mustart}{
-  starting values for the 
-  fitted values. It can be a vector or a matrix. 
+  starting values for the
+  fitted values. It can be a vector or a matrix.
   Some family functions do not make use of this argument.
   Currently, this argument probably should not be used.
 
@@ -107,7 +107,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
   }
-  \item{offset}{ 
+  \item{offset}{
   This argument must not be used.
 
 %   especially when \code{I.tolerances = TRUE}.
@@ -138,7 +138,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 %    ; to get the VGLM
 %    model matrix type \code{model.matrix(vglmfit)} where
-%    \code{vglmfit} is a \code{vglm} object. 
+%    \code{vglmfit} is a \code{vglm} object.
 
 
   }
@@ -151,11 +151,11 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{constraints}{
   an optional list  of constraint matrices.
   The components of the list must be named with the term it corresponds
-  to (and it must match in character format). 
+  to (and it must match in character format).
   Each constraint matrix must have \eqn{M} rows, and be of full-column
   rank. By default, constraint matrices are the \eqn{M} by \eqn{M}
   identity
-  matrix unless arguments in the family function itself override these values. 
+  matrix unless arguments in the family function itself override these values.
   If \code{constraints} is used it must contain \emph{all} the
   terms; an incomplete list is not accepted.
   Constraint matrices for \eqn{x_2}{x_2} variables are taken as the
@@ -179,7 +179,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
   }
-  \item{\dots}{ 
+  \item{\dots}{
   further arguments passed into \code{\link{qrrvglm.control}}.
 
 
@@ -275,7 +275,7 @@ cqo(formula, family, data = list(), weights = NULL, subset = NULL,
 
 }
 \value{
-  An object of class \code{"qrrvglm"}. 
+  An object of class \code{"qrrvglm"}.
 
 
 % Note that the slot \code{misc} has a list component called
@@ -301,7 +301,7 @@ A theory of gradient analysis.
 
 
 %Yee, T. W. (2005)
-%On constrained and unconstrained 
+%On constrained and unconstrained
 %quadratic ordination.
 %\emph{Manuscript in preparation}.
 
@@ -318,7 +318,7 @@ Thanks to Alvin Sou for converting a lot of the
 original FORTRAN code into C.
 
 
-} 
+}
 
 \note{
   The input requires care, preparation and
@@ -386,7 +386,7 @@ original FORTRAN code into C.
   Try \code{I.tolerance = TRUE} or \code{eq.tolerance = FALSE}
   if the inputted data set is large,
   so as to reduce the computational expense.
-  That's because the default, \code{I.tolerance = FALSE} and 
+  That's because the default, \code{I.tolerance = FALSE} and
   \code{eq.tolerance = TRUE}, is very memory hungry.
 
 
@@ -422,10 +422,10 @@ original FORTRAN code into C.
   %\code{eq.tolerances = TRUE} may help, especially when the number of sites,
   %\eqn{n}, is small.
 
-  %If the negative binomial family function \code{\link{negbinomial}} is 
+  %If the negative binomial family function \code{\link{negbinomial}} is
   %used for \code{cqo} then set \code{negbinomial(deviance = TRUE)}
   %is necessary. This means to minimize the deviance, which the fast
-  %algorithm can handle. 
+  %algorithm can handle.
 
 
   Many of the arguments applicable to \code{cqo} are common to
@@ -433,7 +433,7 @@ original FORTRAN code into C.
   The most important arguments are
   \code{Rank},
   \code{noRRR},
-  \code{Bestof}, 
+  \code{Bestof},
   \code{I.tolerances},
   \code{eq.tolerances},
   \code{isd.latvar}, and
@@ -631,7 +631,7 @@ p2 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
 sort(deviance(p2, history = TRUE))  # A history of all the iterations
 if (deviance(p2) > 1127) warning("suboptimal fit obtained")
 lvplot(p2, ellips = FALSE, label = TRUE, xlim = c(-3,4),
-       C = TRUE, Ccol = "brown", sites = TRUE, scol = "grey", 
+       C = TRUE, Ccol = "brown", sites = TRUE, scol = "grey",
        pcol = "blue", pch = "+", chull = TRUE, ccol = "grey")
 
 

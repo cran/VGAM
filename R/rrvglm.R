@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,27 +9,27 @@
 
 
 rrvglm <- function(formula,
-                 family, data=list(), 
+                 family, data=list(),
                  weights = NULL, subset = NULL, na.action=na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control=rrvglm.control(...), 
-                 offset = NULL, 
+                 control=rrvglm.control(...),
+                 offset = NULL,
                  method="rrvglm.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL, 
+                 contrasts = NULL,
                  constraints = NULL,
-                 extra = NULL, 
+                 extra = NULL,
                  qr.arg = FALSE, smart = TRUE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "rrvglm"
 
     ocall <- match.call()
 
-    if (smart) 
+    if (smart)
         setup.smart("write")
 
     mt <- terms(formula, data = data)
-    if (missing(data)) 
+    if (missing(data))
         data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
@@ -38,9 +38,9 @@ rrvglm <- function(formula,
     mf$qr.arg <- NULL
     mf$coefstart <- mf$etastart <- mf$... <- NULL
     mf$smart <- NULL
-    mf$drop.unused.levels <- TRUE 
+    mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")
-    mf <- eval(mf, parent.frame()) 
+    mf <- eval(mf, parent.frame())
     if (method == "model.frame")
         return(mf)
     na.act <- attr(mf, "na.action")
@@ -60,7 +60,7 @@ rrvglm <- function(formula,
 
 
     offset <- model.offset(mf)
-    if (is.null(offset)) 
+    if (is.null(offset))
       offset <- 0  # yyy ???
     w <- model.weights(mf)
     if (!length(w)) {
@@ -92,7 +92,7 @@ rrvglm <- function(formula,
     fit <- rrvglm.fitter(x = x, y = y, w = w, offset = offset,
                         etastart = etastart, mustart = mustart,
                         coefstart = coefstart,
-                        family = family, 
+                        family = family,
                         control = control,
                         constraints = constraints,
                         criterion = control$criterion,
@@ -106,10 +106,10 @@ rrvglm <- function(formula,
          if (control$trace && (control$Bestof>1))
            cat(paste("\n========================= Fitting model", tries,
                        "=========================\n\n"))
-         it <- rrvglm.fitter(x = x, y = y, w = w, offset = offset, 
+         it <- rrvglm.fitter(x = x, y = y, w = w, offset = offset,
                    etastart = etastart, mustart = mustart,
                    coefstart = coefstart,
-                   family = family, 
+                   family = family,
                    control = control,
                    constraints = constraints,
                    criterion = control$criterion,
@@ -138,7 +138,7 @@ rrvglm <- function(formula,
       "constraints"  = fit$constraints,
       "criterion"    = fit$crit.list,
       "df.residual"  = fit$df.residual,
-      "df.total"     = fit$df.total, 
+      "df.total"     = fit$df.total,
       "dispersion"   = 1,
       "effects"      = fit$effects,
       "family"       = fit$family,
@@ -184,7 +184,7 @@ rrvglm <- function(formula,
     } else list()  # R-1.5.0
 
     slot(answer, "iter") = fit$iter
-    fit$predictors = as.matrix(fit$predictors)  # Must be a matrix 
+    fit$predictors = as.matrix(fit$predictors)  # Must be a matrix
     dimnames(fit$predictors) = list(dimnames(fit$predictors)[[1]],
                                     fit$misc$predictors.names)
     slot(answer, "predictors") = fit$predictors

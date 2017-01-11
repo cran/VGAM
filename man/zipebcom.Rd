@@ -15,7 +15,7 @@
 }
 \usage{
 zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
-         imu12 = NULL, iphi12 = NULL, ioratio = NULL, 
+         imu12 = NULL, iphi12 = NULL, ioratio = NULL,
          zero = c("phi12", "oratio"), tol = 0.001, addRidge = 0.001)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -78,7 +78,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   }
   \item{addRidge}{
   Some small positive numerical value.
-  The first two diagonal elements of the working weight matrices are 
+  The first two diagonal elements of the working weight matrices are
   multiplied by \code{1+addRidge} to make it diagonally dominant,
   therefore positive-definite.
 
@@ -149,7 +149,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 
   The default models \eqn{\eta_2}{eta2} and \eqn{\eta_3}{eta3} as
   single parameters only, but this
-  can be circumvented by setting \code{zero=NULL} in order to model the 
+  can be circumvented by setting \code{zero=NULL} in order to model the
   \eqn{\phi}{phi} and odds ratio as a function of all the explanatory
   variables.
 
@@ -168,7 +168,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   generic function.
 
 
-} 
+}
 \section{Warning }{
   The fact that the EIM is not of full rank may mean the model is
   naturally ill-conditioned.
@@ -178,7 +178,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   responses.
 
 
-} 
+}
 \references{
 
   Yee, T. W. and Dirnbock, T. (2009)

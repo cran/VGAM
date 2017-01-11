@@ -58,7 +58,7 @@ rfoldnorm(n, mean = 0, sd = 1, a1 = 1, a2 = 1)
 \author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{foldnormal}}, the \pkg{VGAM} family function
-  for estimating the parameters, 
+  for estimating the parameters,
   for the formula of the probability density function and other details.
 
 

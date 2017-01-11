@@ -49,7 +49,7 @@ gaussianff(dispersion = 0, parallel = FALSE, zero = NULL)
 }
 \details{
   This function is usually used in conjunction with \code{\link{vglm}}, else
-  \code{vlm} is recommended instead.  
+  \code{vlm} is recommended instead.
   The notation \eqn{M} is used to denote the number of
   linear/additive predictors.
   This function can handle any finite \eqn{M}, and the default is to

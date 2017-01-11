@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,10 +16,12 @@
 fittedvlm <- function(object,
                       drop = FALSE,
                       type.fitted = NULL,
+                      percentiles = NULL,
                       ...) {
 
 
-  if (is.null(type.fitted)) {
+  if (is.null(type.fitted) &&
+      is.null(percentiles)) {
     answer <- if (drop) {
       if (!is.matrix(object@fitted.values) ||
           !length(object@fitted.values))
@@ -31,13 +33,22 @@ fittedvlm <- function(object,
         c(object@fitted.values)
       }
     } else {
-        object@fitted.values
+      object@fitted.values
     }
   } else {
     linkinv <- object@family@linkinv
     new.extra <- object@extra
-    new.extra$type.fitted <- type.fitted
+
+
+    if (length(percentiles)) {
+      new.extra$percentiles <- percentiles
+    }
+    if (length(type.fitted)) {
+      new.extra$type.fitted <- type.fitted
+    }
+
     answer <- linkinv(eta = predict(object), extra = new.extra)
+    linkinv <- object@family@linkinv
 
     answer <- if (drop) {
       c(answer)
@@ -103,7 +114,7 @@ predictors.vglm <- function(object, matrix = TRUE, ...) {
 }
 
 
-if (!isGeneric("predictors")) 
+if (!isGeneric("predictors"))
     setGeneric("predictors",
       function(object, ...)
         standardGeneric("predictors"))

@@ -60,7 +60,7 @@ The mean of \eqn{Y} is \eqn{a} (returned as the fitted values).
 This is a different parameterization compared to \code{\link{lgamma3}}.
 
 
-Special cases: 
+Special cases:
 \eqn{q = 0} is the normal distribution with standard deviation \eqn{b},
 \eqn{q = -1} is the extreme value distribution for maximums,
 \eqn{q = 1} is the extreme value distribution for minima (Weibull).
@@ -97,11 +97,11 @@ else \eqn{q < 0} is right skew.
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The notation used here differs from Prentice (1974):
   \eqn{\alpha = a}{alpha = a},
   \eqn{\sigma = b}{sigma = b}.
-  Fisher scoring is used. 
+  Fisher scoring is used.
 
 
 }

@@ -104,7 +104,7 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
   baseline/reference group, and therefore excluded from
   the estimation.
 
-  
+
   By default,
   the log of the standard deviation is the last
   linear/additive predictor. It is recommended that this

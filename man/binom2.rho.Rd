@@ -71,7 +71,8 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
   \item{rho}{
   Numeric vector.
   Values are recycled to the needed length,
-  and ought to be in range.
+  and ought to be in range, which is \eqn{(-1, 1)}.
+
 
 
   }
@@ -200,7 +201,7 @@ Freedman, D. A. and Sekhon, J. S. (2010)
 \seealso{
   \code{\link{rbinom2.rho}},
   \code{\link{rhobit}},
-  \code{\link{pnorm2}},
+  \code{\link{pbinorm}},
   \code{\link{binom2.or}},
   \code{\link{loglinb2}},
   \code{\link{coalminers}},
@@ -210,6 +211,7 @@ Freedman, D. A. and Sekhon, J. S. (2010)
 
 
 
+% \code{\link{pnorm2}},
 
 }
 \examples{

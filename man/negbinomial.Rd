@@ -11,23 +11,25 @@
 }
 \usage{
 negbinomial(zero = "size", parallel = FALSE, deviance.arg = FALSE,
+            type.fitted = c("mean", "quantiles"),
+            percentiles = c(25, 50, 75),
             mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
             eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
             lmu = "loge", lsize = "loge",
             imethod = 1, imu = NULL, iprobs.y = NULL,
-            gprobs.y = (0:9)/10, isize = NULL,
+            gprobs.y = ppoints(6), isize = NULL,
             gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 polya(zero = "size", type.fitted = c("mean", "prob"),
       mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
       eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
       lprob = "logit", lsize = "loge", imethod = 1, iprob = NULL,
-      iprobs.y = NULL, gprobs.y = (0:9)/10, isize = NULL,
+      iprobs.y = NULL, gprobs.y = ppoints(6), isize = NULL,
       gsize.mux = exp(c(-30, -20, -15, -10, -6:3)), imunb = NULL)
 polyaR(zero = "size", type.fitted = c("mean", "prob"),
        mds.min = 1e-3, nsimEIM = 500,  cutoff.prob = 0.999,
        eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
        lsize = "loge", lprob = "logit", imethod = 1, iprob = NULL,
-       iprobs.y = NULL, gprobs.y = (0:9)/10, isize = NULL,
+       iprobs.y = NULL, gprobs.y = ppoints(6), isize = NULL,
        gsize.mux = exp(c(-30, -20, -15, -10, -6:3)), imunb = NULL)
 }
 
@@ -41,7 +43,7 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
   See \code{\link{Links}} for more choices.
   Note that the \eqn{\mu}{mu}, \eqn{k}
   and \eqn{p}  parameters are the \code{mu},
-  \code{size} and \code{prob} arguments of 
+  \code{size} and \code{prob} arguments of
   \code{\link[stats:NegBinomial]{rnbinom}} respectively.
   Common alternatives for \code{lsize} are
   \code{\link{negloge}} and
@@ -89,7 +91,7 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
   in order to obtain a lower limit for the approximate
   support of the distribution, called \code{Qmin}, say.
   Hence the approximate support is \code{Qmin:Qmax}.
-  This argument should be 
+  This argument should be
   a numeric and close to 1 but never exactly 1.
   Used to specify how many terms of the infinite series
   for computing the second diagonal element of the
@@ -109,7 +111,7 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
 
   }
   \item{max.chunk.MB, max.support}{
-    \code{max.support} is used to describe the eligibility of 
+    \code{max.support} is used to describe the eligibility of
     individual observations
     to have their EIM computed by the \emph{exact method}.
     Here, we are concerned about
@@ -169,7 +171,7 @@ A small positive value used in the computation of the EIMs.
 It focusses on the denominator of the terms of a series.
 Each term in the series (that is used to approximate an infinite series)
 has a value greater than \code{size / sqrt(eps.trig)},
-thus very small terms are ignored. 
+thus very small terms are ignored.
 It's a good idea to set a smaller value that will result in more accuracy,
 but it will require a greater computing time (when \eqn{k} is close to 0).
 And adjustment to \code{max.support} may be needed.
@@ -204,6 +206,19 @@ respect to the \code{size} parameter.
 
 
 % }
+
+
+
+
+
+  \item{type.fitted, percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+  }
+
+
+
   \item{deviance.arg}{
   Logical.
   If \code{TRUE}, the deviance is computed \emph{after} convergence.
@@ -295,11 +310,6 @@ respect to the \code{size} parameter.
 
 
   }
-  \item{type.fitted}{
-    See \code{\link{CommonVGAMffArguments}} for details.
-
-
-  }
 }
 \details{
   The negative binomial distribution can be motivated in several ways,
@@ -310,7 +320,7 @@ respect to the \code{size} parameter.
   The one used by \code{negbinomial()} uses the
   mean \eqn{\mu}{mu} and an \emph{index} parameter
   \eqn{k}, both which are positive.
-  Specifically, the density of a random variable \eqn{Y} is 
+  Specifically, the density of a random variable \eqn{Y} is
   \deqn{f(y;\mu,k) = {y + k - 1 \choose y} \,
     \left( \frac{\mu}{\mu+k} \right)^y\,
     \left( \frac{k}{k+\mu} \right)^k }{%
@@ -318,7 +328,7 @@ respect to the \code{size} parameter.
     [mu/(mu+k)]^y [k/(k+mu)]^k}
   where \eqn{y=0,1,2,\ldots},
   and \eqn{\mu > 0}{mu > 0} and \eqn{k > 0}.
-  Note that the \emph{dispersion} parameter is 
+  Note that the \emph{dispersion} parameter is
   \eqn{1/k}, so that as \eqn{k} approaches infinity the negative
   binomial distribution approaches a Poisson distribution.
   The response has variance \eqn{Var(Y)=\mu+\mu^2/k}{Var(Y)=mu*(1+mu/k)}.
@@ -339,7 +349,7 @@ respect to the \code{size} parameter.
     f(y;p,k) = C_{y}^{y + k - 1}
     [1 - p]^y p^k}
   where \eqn{y=0,1,2,\ldots},
-  and \eqn{k > 0} and \eqn{0 < p < 1}{0 < p < 1}. 
+  and \eqn{k > 0} and \eqn{0 < p < 1}{0 < p < 1}.
 
 
   Family function \code{polyaR()} is the same as \code{polya()} except
@@ -382,13 +392,13 @@ respect to the \code{size} parameter.
   intercept only.
 
 
-  
+
 }
 \section{Warning}{
   Poisson regression corresponds to \eqn{k} equalling
   infinity.  If the data is Poisson or close to Poisson,
   numerical problems may occur.
-  Some corrective measures are taken, e.g., 
+  Some corrective measures are taken, e.g.,
   \eqn{k} is effectively capped (relative to the mean) during estimation
   to some large value and a warning is issued.
   And setting \code{stepsize = 0.5} for half stepping is
@@ -410,16 +420,25 @@ respect to the \code{size} parameter.
 
 % Possibly choosing a log-log link may help in such cases,
 % otherwise try \code{\link{poissonff}} or
-% \code{\link{quasipoissonff}}.  It is possible to fit a NBD
+% \code{\link{quasipoissonff}}. It is possible to fit a NBD
 % that has a similar variance function as a quasi-Poisson; see
 % the NB-1 example below.
+
+
+
+The negative binomial distribution (NBD) is a strictly unimodal
+distribution. Any data set that does not exhibit a mode (somewhere
+in the middle) makes the estimation problem difficult.
+Set \code{trace = TRUE} to monitor convergence.
+
+
 
 
 
   These functions are fragile; the maximum likelihood
   estimate of the index parameter is fraught (see Lawless,
   1987). In general, the \code{\link{quasipoissonff}} is
-  more robust.  Other alternatives to \code{negbinomial} are
+  more robust. Other alternatives to \code{negbinomial} are
   to fit a NB-1 or RR-NB (aka NB-P) model; see Yee (2014).
   Also available are the NB-C, NB-H and NB-G.
   Assigning values to the \code{isize} argument may lead
@@ -441,7 +460,7 @@ respect to the \code{size} parameter.
   If SFS is used at all, then the \code{@weights} slot of the
   fitted object will be a matrix;
   otherwise that slot will be a \code{0 x 0} matrix.
-  
+
 
 
   Yet to do: write a family function which uses the methods
@@ -516,7 +535,7 @@ Fitting the negative binomial distribution to biological data.
   SFS should be better if \code{max(ymat)} is large,
   e.g., \code{max(ymat) > 1000},
   or if there are any outliers in \code{ymat}.
-  The default algorithm involves a finite series approximation 
+  The default algorithm involves a finite series approximation
   to the support \code{0:Inf};
   the arguments
   \code{max.memory},
@@ -570,7 +589,7 @@ Fitting the negative binomial distribution to biological data.
 
   There are two special uses of \code{negbinomial} for handling count data.
   Firstly,
-  when used by \code{\link{rrvglm}}  this 
+  when used by \code{\link{rrvglm}}  this
   results in a continuum of models in between and
   inclusive of quasi-Poisson and negative binomial regression.
   This is known as a reduced-rank negative binomial model \emph{(RR-NB)}.
@@ -601,7 +620,7 @@ Fitting the negative binomial distribution to biological data.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{quasipoissonff}},
   \code{\link{poissonff}},
   \code{\link{zinegbinomial}},
@@ -616,6 +635,7 @@ Fitting the negative binomial distribution to biological data.
   \code{\link{cqo}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}},
+  \code{\link[stats:ppoints]{ppoints}},
   \code{\link[stats:NegBinomial]{qnbinom}}.
 
 
@@ -702,7 +722,7 @@ summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 %polya(lprob = "logit", lsize = "loge",
 %      iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
 %      imethod = 1, ishrinkage = 0.95, zero = "size")
-%polyaR(lsize = "loge", lprob = "logit", 
+%polyaR(lsize = "loge", lprob = "logit",
 %       isize = NULL, iprob = NULL, probs.y = 0.75, nsimEIM = 100,
 %       imethod = 1, ishrinkage = 0.95, zero = "size")
 

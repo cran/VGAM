@@ -49,7 +49,7 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 
 % \item{rho}{
 % See \code{\link{binormal}}.
-% } 
+% }
 
 
 
@@ -124,11 +124,11 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 
 
 % \code{dbinorm()}'s arguments might change!
-% Currently they differ from \code{pbinorm()} 
+% Currently they differ from \code{pbinorm()}
 % and \code{rbinorm()}, so use the full argument name
 % to future-proof possible changes!
 
- 
+
 }
 
 

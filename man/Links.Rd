@@ -18,7 +18,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   This is usually \eqn{\theta}{theta} (default) but can sometimes
   be \eqn{\eta}{eta},
   depending on the other arguments.
-  If \code{theta} is character then \code{inverse} and 
+  If \code{theta} is character then \code{inverse} and
   \code{deriv} are ignored.
   The name \code{theta} should always be the name of the first argument.
 
@@ -60,7 +60,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 % For \pkg{VGAM} family functions with more than one link
 % function there usually will be an \code{earg}-type argument for
 % each link. For example, if there are two links called
-% \code{lshape} and \code{lscale} then 
+% \code{lshape} and \code{lscale} then
 % the \code{earg}-type arguments for these might be called
 % \code{eshape} and \code{escale}, say.
 %
@@ -116,7 +116,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
   If \code{inverse = FALSE} and \code{deriv = 1} then it is
-  \eqn{d\eta / d\theta}{d eta / d theta} 
+  \eqn{d\eta / d\theta}{d eta / d theta}
   \emph{as a function of} \eqn{\theta}{theta}.
   If \code{inverse = FALSE} and \code{deriv = 2} then it is
   \eqn{d^2\eta / d\theta^2}{d^2 eta / d theta^2}
@@ -124,7 +124,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
   If \code{inverse = TRUE} and \code{deriv = 1} then it is
-  \eqn{d\theta / d\eta}{d theta / d eta} 
+  \eqn{d\theta / d\eta}{d theta / d eta}
   \emph{as a function of} \eqn{\theta}{theta}.
   If \code{inverse = TRUE} and \code{deriv = 2} then it is
   \eqn{d^2\theta / d\eta^2}{d^2 theta / d eta^2}
@@ -146,9 +146,9 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
 % Prior to 20150711; this was what it was:
-  
+
 % If \code{inverse = FALSE} and \code{deriv = 1} then it is
-% \eqn{d\theta / d\eta}{d theta / d eta} 
+% \eqn{d\theta / d\eta}{d theta / d eta}
 % \emph{as a function of} \eqn{\theta}{theta}.
 % If \code{inverse = FALSE} and \code{deriv = 2} then it is
 % \eqn{d^2\theta / d\eta^2}{d^2 theta / d eta^2}
@@ -158,11 +158,11 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 % If \code{inverse = TRUE} and \code{deriv = 0} then the inverse
 % link function is returned, hence \code{theta} is really
 % \eqn{\eta}{eta}.
-% If \code{inverse = TRUE} and \code{deriv} is positive then the 
+% If \code{inverse = TRUE} and \code{deriv} is positive then the
 % \emph{reciprocal} of the same link function with
 % \code{(theta = theta, someParameter, inverse = TRUE, deriv = deriv)}
 % is returned.
-  
+
 
 }
 \details{
@@ -252,12 +252,12 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   Altogether, these are big changes and the user should beware!
 
 
-  
+
   One day in the future, \emph{all} \pkg{VGAM} link functions
   may be renamed to end in the characters \code{"link"}.
 
 
-  
+
 }
 
 \seealso{
@@ -286,7 +286,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   all \pkg{VGAM} family functions will only
   contain one default value for each link argument rather than giving a
   vector of choices.
-  For example, rather than 
+  For example, rather than
   \code{binomialff(link = c("logit", "probit", "cloglog",
   "cauchit", "identitylink"), ...)}
   it is now

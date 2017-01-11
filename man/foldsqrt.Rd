@@ -74,7 +74,7 @@ foldsqrt(theta, min = 0, max = 1, mux = sqrt(2),
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}}.
 
 

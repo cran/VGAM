@@ -38,10 +38,10 @@ lindley(link = "loge", itheta = NULL, zero = NULL)
   The density function is given by
   \deqn{f(y; \theta) = \theta^2 (1 + y) \exp(-\theta y) / (1 + \theta)}{%
         f(y; theta) = theta^2 * (1 + y) * exp(-theta * y) / (1 + theta)}
-  for \eqn{theta > 0} and \eqn{y > 0}.
+  for \eqn{\theta > 0}{theta > 0} and \eqn{y > 0}.
   The mean of \eqn{Y} (returned as the fitted values)
   is \eqn{\mu = (\theta + 2) / (\theta (\theta + 1))}{mu = (theta + 2) / (theta * (theta + 1))}.
-  The variance 
+  The variance
   is \eqn{(\theta^2 + 4 \theta + 2) / (\theta (\theta + 1))^2}{(theta^2 + 4 * theta + 2) / (theta * (theta + 1))^2}.
 
 
@@ -70,7 +70,7 @@ Lindley distribution and its application.
 }
 \author{ T. W. Yee }
 \note{
-  This \pkg{VGAM} family function can handle multiple 
+  This \pkg{VGAM} family function can handle multiple
   responses (inputted as a matrix).
   Fisher scoring is implemented.
 

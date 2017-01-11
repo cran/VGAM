@@ -83,10 +83,12 @@ The equilibrium size distribution of freely-forming groups.
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{Pospois}},
   \code{\link{posnegbinomial}},
   \code{\link{poissonff}},
+  \code{\link{otpospoisson}},
+  \code{\link{zapoisson}},
   \code{\link{zipoisson}},
   \code{\link{simulate.vlm}}.
 

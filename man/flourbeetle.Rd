@@ -34,7 +34,7 @@ and their mortality measured.
 }
 \source{
 
- Bliss, C.I., 1935. 
+ Bliss, C.I., 1935.
  The calculation of the dosage-mortality curve.
  \emph{Annals of Applied Biology}, \bold{22}, 134--167.
 
@@ -49,8 +49,8 @@ and their mortality measured.
 
 %\references{
 %
-%  
-%  
+%
+%
 %
 %
 %}

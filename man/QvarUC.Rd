@@ -125,7 +125,7 @@ Qvar(object, factorname = NULL, which.linpred = 1,
   and \eqn{j}. The diagonal elements are abitrary and are set
   to zero.
 
-  
+
   The matrix has an attribute that corresponds to the prior
   weight matrix; it is accessed by \code{\link{uninormal}}
   and replaces the usual \code{weights} argument.

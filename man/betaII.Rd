@@ -3,12 +3,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Beta Distribution of the Second Kind }
 \description{
-  Maximum likelihood estimation of the 3-parameter 
+  Maximum likelihood estimation of the 3-parameter
   beta II distribution.
 }
 \usage{
-betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge", 
-       iscale = NULL, ishape2.p = NULL, ishape3.q = NULL, imethod = 1, 
+betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
+       iscale = NULL, ishape2.p = NULL, ishape3.q = NULL, imethod = 1,
        gscale = exp(-5:5), gshape2.p = exp(-5:5),
        gshape3.q = seq(0.75, 4, by = 0.25),
        probs.y = c(0.25, 0.5, 0.75), zero = "shape")
@@ -54,7 +54,7 @@ The beta II distribution has density
   for \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
 Here, \eqn{b} is the scale parameter \code{scale},
 and the others are shape parameters.
-The mean is 
+The mean is
   \deqn{E(Y) = b \, \Gamma(p + 1) \, \Gamma(q - 1) / (\Gamma(p) \, \Gamma(q))}{%
         E(Y) = b  gamma(p + 1)  gamma(q - 1) / ( gamma(p)  gamma(q))}
 provided \eqn{q > 1}; these are returned as the fitted values.

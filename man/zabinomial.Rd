@@ -19,13 +19,13 @@ zabinomialff(lprob = "logit", lonempobs0 = "logit",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lprob}{ 
+  \item{lprob}{
     Parameter link function applied to the probability parameter
     of the binomial distribution.
     See \code{\link{Links}} for more choices.
 
   }
-  \item{lpobs0}{ 
+  \item{lpobs0}{
     Link function for the parameter \eqn{p_0}{pobs0}, called \code{pobs0} here.
     See \code{\link{Links}} for more choices.
 
@@ -38,7 +38,7 @@ zabinomialff(lprob = "logit", lonempobs0 = "logit",
 
   }
 
-  \item{iprob, ipobs0}{ 
+  \item{iprob, ipobs0}{
   See
   \code{\link{CommonVGAMffArguments}}.
 
@@ -70,7 +70,7 @@ zabinomialff(lprob = "logit", lonempobs0 = "logit",
   has zeros coming from one source, whereas the latter
   has zeros coming from the binomial distribution too. The
   zero-inflated binomial distribution is implemented in
-  \code{\link{zibinomial}}. 
+  \code{\link{zibinomial}}.
   Some people call the zero-altered binomial a \emph{hurdle} model.
 
 
@@ -107,7 +107,7 @@ zabinomialff(lprob = "logit", lonempobs0 = "logit",
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted}, returns
-  the mean \eqn{\mu}{mu} (default) which is given by 
+  the mean \eqn{\mu}{mu} (default) which is given by
   \deqn{\mu = (1-p_0) \mu_{b} / [1 - (1 - \mu_{b})^N]}{%
          mu = (1-pobs0) * mub / [1 - (1 - mub)^N]}
   where \eqn{\mu_{b}}{mub} is the usual binomial mean.

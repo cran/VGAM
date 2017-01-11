@@ -26,13 +26,13 @@ bratt(refgp = "last", refvalue = 1, ialpha = 1, i0 = 0.01)
 
   }
   \item{ialpha}{
-  Initial values for the \eqn{\alpha}{alpha}s. 
+  Initial values for the \eqn{\alpha}{alpha}s.
   These are recycled to the appropriate length.
 
 
   }
   \item{i0}{
-  Initial value for \eqn{\alpha_0}{alpha_0}. 
+  Initial value for \eqn{\alpha_0}{alpha_0}.
   If convergence fails, try another positive value.
 
 
@@ -84,7 +84,7 @@ bratt(refgp = "last", refvalue = 1, ialpha = 1, i0 = 0.01)
 
 
 }
-\references{ 
+\references{
 
   Torsney, B. (2004)
   Fitting Bradley Terry models using a multiplicative algorithm.
@@ -95,7 +95,7 @@ bratt(refgp = "last", refvalue = 1, ialpha = 1, i0 = 0.01)
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The function \code{\link{Brat}} is useful for coercing
   a \eqn{M} by \eqn{M} matrix of counts into a one-row
   matrix suitable for \code{bratt}.  Diagonal elements
@@ -124,10 +124,10 @@ bratt(refgp = "last", refvalue = 1, ialpha = 1, i0 = 0.01)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{brat}},
   \code{\link{Brat}},
-  \code{\link{binomialff}}. 
+  \code{\link{binomialff}}.
 
 
 }
@@ -157,10 +157,10 @@ fit@misc$alpha0  # alpha_0
 
 fitted(fit)  # Probabilities of winning and tying, in awkward form
 predict(fit)
-(check <- InverseBrat(fitted(fit)))    # Probabilities of winning 
-qprob <- attr(fitted(fit), "probtie")  # Probabilities of a tie 
+(check <- InverseBrat(fitted(fit)))    # Probabilities of winning
+qprob <- attr(fitted(fit), "probtie")  # Probabilities of a tie
 qprobmat <- InverseBrat(c(qprob), NCo = nrow(ties))  # Probabilities of a tie
-check + t(check) + qprobmat  # Should be 1s in the off-diagonals 
+check + t(check) + qprobmat  # Should be 1s in the off-diagonals
 }
 \keyword{models}
 \keyword{regression}

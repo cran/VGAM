@@ -10,7 +10,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
     \emph{vector linear model} (VLM).
 
   }
-  \item{type}{Type of design matrix returned. The first is the default. 
+  \item{type}{Type of design matrix returned. The first is the default.
   The value \code{"vlm"} is the VLM model matrix corresponding
   to the \code{formula} argument.
   The value \code{"lm"} is the LM model matrix corresponding
@@ -31,7 +31,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
     this is a LM-type matrix.
 
 
-  }    
+  }
   \item{\dots}{further arguments passed to or from other methods.
     These include \code{data} (which
     is a data frame created with \code{\link{model.framevlm}}),
@@ -39,7 +39,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
     See \code{\link[stats]{model.matrix}} for more information.
 
 
-  }    
+  }
 }
 
 \description{
@@ -55,7 +55,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
   This can be a small LM object or a big VLM object (default).
   The latter is constructed from the former and the constraint
   matrices.
-  
+
 
   This code implements \emph{smart prediction}
   (see \code{\link{smartpred}}).
@@ -64,7 +64,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
 }
 \value{
   The design matrix for a regression model with the specified formula
-  and data. 
+  and data.
   If \code{type = "bothlmlm2"} then a list is returned with components
   \code{"X"} and \code{"Xm2"}.
 

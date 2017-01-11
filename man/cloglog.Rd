@@ -6,7 +6,7 @@
   Computes the complementary log-log transformation,
   including its inverse and the
   first two derivatives.
-  
+
 }
 \usage{
 cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
@@ -17,7 +17,7 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \item{theta}{
     Numeric or character.
     See below for further details.
-    
+
   }
   \item{bvalue}{
   See \code{\link{Links}} for general information about links.
@@ -50,14 +50,14 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 
   Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
-  
+
 
 }
 \references{
     McCullagh, P. and Nelder, J. A. (1989)
     \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
-    
-    
+
+
 }
 \author{ Thomas W. Yee }
 
@@ -85,7 +85,7 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}},
     \code{\link{logitoffsetlink}},
     \code{\link{logit}},

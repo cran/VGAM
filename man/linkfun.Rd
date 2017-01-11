@@ -14,7 +14,7 @@ linkfun(object, ...)
 \arguments{
   \item{object}{ An object which has parameter link functions.
 
-    
+
   }
   \item{\dots}{ Other arguments fed into the specific
     methods function of the model.

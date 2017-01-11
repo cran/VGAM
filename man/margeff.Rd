@@ -77,7 +77,7 @@ margeff(object, subset = NULL, ...)
   \code{is.numeric(subset)}
   and
   \code{length(subset) == 1} then a
-  \eqn{p} by \eqn{M+1} matrix is returned. 
+  \eqn{p} by \eqn{M+1} matrix is returned.
 
 
 }

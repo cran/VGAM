@@ -31,7 +31,7 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \details{
   The probit link function is commonly used for parameters that
-  lie in the unit interval. 
+  lie in the unit interval.
   Numerical values of \code{theta} close to 0 or 1 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
@@ -71,7 +71,7 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{logit}},
   \code{\link{cloglog}},
@@ -95,7 +95,7 @@ lines(p,  probit(p), col = "purple")
 lines(p, cloglog(p), col = "chocolate")
 lines(p, cauchit(p), col = "tan")
 abline(v = 0.5, h = 0, lty = "dashed")
-legend(0.1, 4.0, c("logit", "probit", "cloglog", "cauchit"), 
+legend(0.1, 4.0, c("logit", "probit", "cloglog", "cauchit"),
        col = c("limegreen", "purple", "chocolate", "tan"), lwd = mylwd)
 par(lwd = 1) }
 }

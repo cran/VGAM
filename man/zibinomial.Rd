@@ -55,7 +55,7 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
   }
 
 
-% \item{zero}{ 
+% \item{zero}{
 % An integer specifying which linear/additive predictor is modelled
 % as intercepts only.  If given, the value must be either 1 or 2,
 % and the default is the first. Setting \code{zero = NULL} enables both
@@ -64,7 +64,7 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
 % See \code{\link{CommonVGAMffArguments}} for more information.
 
 % }
-  \item{multiple.responses}{ 
+  \item{multiple.responses}{
   Logical. Currently it must be \code{FALSE} to mean the
   function does not handle multiple responses. This
   is to remain compatible with the same argument in
@@ -72,7 +72,7 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
 
 
   }
-  \item{zero, imethod}{ 
+  \item{zero, imethod}{
   See \code{\link{CommonVGAMffArguments}} for information.
   Argument \code{zero} changed its default value for version 0.9-2.
 
@@ -83,7 +83,7 @@ zibinomialff(lprob = "logit", lonempstr0 = "logit",
   These functions are based on
   \deqn{P(Y=0) =  \phi + (1-\phi) (1-\mu)^N,}{%
         P(Y=0) =   phi + (1- phi) * (1-prob)^N,}
-  for \eqn{y=0}, and 
+  for \eqn{y=0}, and
   \deqn{P(Y=y) = (1-\phi) {N \choose Ny} \mu^{Ny} (1-\mu)^{N(1-y)}.}{%
         P(Y=y) = (1-phi) * choose(N,Ny) * prob^(N*y) * (1-prob)^(N*(1-y)).}
   for \eqn{y=1/N,2/N,\ldots,1}. That is, the response is a sample
@@ -141,7 +141,7 @@ Fitting and interpreting occupancy models.
 \note{
   The response variable must have one of the formats described by
   \code{\link{binomialff}}, e.g., a factor or two column matrix or a
-  vector of sample proportions with the \code{weights} argument 
+  vector of sample proportions with the \code{weights} argument
   specifying the values of \eqn{N}.
 
 
@@ -165,7 +165,7 @@ Fitting and interpreting occupancy models.
 % response (only \code{multiple.responses = FALSE} can be handled).
 
 % 20130316; adding this:
-  Estimated probabilities of a structural zero and an 
+  Estimated probabilities of a structural zero and an
   observed zero are returned, as in \code{\link{zipoisson}}.
 
 
@@ -189,7 +189,7 @@ Fitting and interpreting occupancy models.
   or \code{imethod}.
 
 
-} 
+}
 
 \seealso{
   \code{\link{rzibinom}},
@@ -205,7 +205,7 @@ nn <- 200
 zdata <- data.frame(pstr0 = logit( 0, inverse = TRUE),  # 0.50
                     mubin = logit(-1, inverse = TRUE),  # Mean of usual binomial
                     sv    = rep(size, length = nn))
-zdata <- transform(zdata, 
+zdata <- transform(zdata,
                    y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))
 with(zdata, table(y))
 fit <- vglm(cbind(y, sv - y) ~ 1, zibinomialff, data = zdata, trace = TRUE)

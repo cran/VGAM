@@ -5,7 +5,7 @@
 \description{
   Amongst other things, this function applies inverse
   link functions to the parameters of intercept-only
-  VGLMs. 
+  VGLMs.
 }
 \usage{
 Coef.vlm(object, ...)
@@ -13,7 +13,7 @@ Coef.vlm(object, ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ A fitted model. }
-  \item{\dots}{ Arguments which may be passed into 
+  \item{\dots}{ Arguments which may be passed into
   \code{\link[stats]{coef}}.
   }
 }

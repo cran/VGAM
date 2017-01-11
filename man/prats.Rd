@@ -20,7 +20,7 @@ data(prats)
   A data frame with the following variables.
 
   \describe{
-   
+
     \item{treatment}{
     A \code{0} means control;
     a \code{1} means the chemical treatment.
@@ -51,7 +51,7 @@ data(prats)
 
 }
 \source{
- 
+
   Weil, C. S. (1970)
   Selection of the valid number of sampling units and a consideration
   of their combination in toxicological studies involving
@@ -64,7 +64,7 @@ data(prats)
 %Fd. Cosmet. Toxicol.
 
 
- 
+
 }
 \references{
 

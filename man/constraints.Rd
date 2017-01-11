@@ -176,7 +176,7 @@ abs(max(coef(fit1, matrix = TRUE) -
 
 # Fit a rank-1 stereotype (RR-multinomial logit) model:
 fit <- rrvglm(Country ~ Width + Height + HP, multinomial, data = car.all)
-constraints(fit)  # All except the first are the estimated A matrix 
+constraints(fit)  # All except the first are the estimated A matrix
 }
 \keyword{models}
 \keyword{regression}

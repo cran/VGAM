@@ -34,7 +34,7 @@ pgamma.deriv(q, shape, tmax = 100)
   The first and second derivatives with respect to \eqn{q} and \eqn{a}
   are returned. This function is similar in spirit to
   \code{\link[stats]{pgamma}};
-  define 
+  define
   \deqn{P(a,x) = \frac{1}{\Gamma(a)} \int_0^x t^{a-1} e^{-t} dt}{P(a,x) =
     1/Gamma(a) integral_0^x t^(a-1) exp(-t) dt}
   so that
@@ -42,7 +42,7 @@ pgamma.deriv(q, shape, tmax = 100)
   Currently a 6-column matrix is returned (in the future this
   may change and an argument may be supplied so that only what
   is required by the user is computed.)
-  
+
 
   The computations use a series expansion
   for \eqn{a \leq x \leq 1}{a <= x <= 1} or
@@ -57,9 +57,9 @@ pgamma.deriv(q, shape, tmax = 100)
 \value{
   The first 5 columns, running from left to right, are the derivatives
   with respect to:
-  \eqn{x}, 
+  \eqn{x},
   \eqn{x^2},
-  \eqn{a}, 
+  \eqn{a},
   \eqn{a^2},
   \eqn{xa}.
   The 6th column is \eqn{P(a, x)} (but it is not as accurate
@@ -84,7 +84,7 @@ pgamma.deriv(q, shape, tmax = 100)
   The original code came from \code{http://lib.stat.cmu.edu/apstat/187}.
   but this website has since become stale.
 
-  
+
 }
 \note{
   If convergence does not occur then try increasing the value of

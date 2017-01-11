@@ -8,9 +8,9 @@
 \usage{
 vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
                i.constraint = diag(M),
-               x.constraint = diag(M), 
+               x.constraint = diag(M),
                constraints = list("(Intercepts)" = i.constraint,
-                                  x = x.constraint), 
+                                  x = x.constraint),
                all.knots = FALSE, var.arg = FALSE, scale.w = TRUE,
                nk = NULL, control.spar = list())
 }
@@ -22,7 +22,7 @@ vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
   If a matrix, the first column is used.
   \code{x} may also be a complex vector, in which case
   the real part is used, and the imaginary part is used for the response.
-  In this help file, \code{n} is the number of unique values of \code{x}. 
+  In this help file, \code{n} is the number of unique values of \code{x}.
 
 
 }
@@ -31,11 +31,11 @@ vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
   If a list, the  \code{y} component is used.
   If a matrix, all but the first column is used.
   In this help file, \code{M} is the number of columns of \code{y} if
-  there are no constraints on the functions. 
+  there are no constraints on the functions.
 
 
 }
-  \item{w}{ 
+  \item{w}{
   The weight matrices or the number of observations.
   If the  weight matrices, then this must be a \code{n}-row matrix
   with the elements in matrix-band form (see \code{iam}).
@@ -47,7 +47,7 @@ vsmooth.spline(x, y, w = NULL, df = rep(5, M), spar = NULL,
 }
   \item{df}{
 Numerical vector containing the degrees of
-freedom for each component function (smooth). 
+freedom for each component function (smooth).
 If necessary, the vector is recycled to have length equal
 to the number of component functions to be estimated
 (\code{M} if there are no constraints), which
@@ -59,15 +59,15 @@ smooths.
 
 
 }
-  \item{spar}{ 
+  \item{spar}{
 Numerical vector containing the non-negative smoothing
-parameters for each component function (smooth). 
+parameters for each component function (smooth).
 If necessary, the vector is recycled to have length equal
 to the number of component functions to be estimated
 (\code{M} if there are no constraints), which
 equals the number of columns of the \code{x}-constraint matrix.
 A value of zero means the smooth goes through the data and hence
-is wiggly. 
+is wiggly.
 A value of \code{Inf} may be assigned, meaning the smooth will
 be linear.
 By default, the \code{NULL} value of \code{spar} means
@@ -79,7 +79,7 @@ parameters.
   \item{all.knots}{ Logical. If \code{TRUE} then each distinct
 value of \code{x} will be a knot. By default, only a subset of
 the unique values  of \code{x} are used; typically, the number
-of knots is \code{O(n^0.25)} for \code{n} large, 
+of knots is \code{O(n^0.25)} for \code{n} large,
 but if \code{n <= 40} then all the unique values of \code{x} are used.
 
 
@@ -91,14 +91,14 @@ By default, the constraint matrix for the intercepts is the
 
 
 }
-  \item{x.constraint}{ A \code{M}-row constraint matrix for \code{x}. 
+  \item{x.constraint}{ A \code{M}-row constraint matrix for \code{x}.
 It must be of full column rank.
 By default, the constraint matrix for the intercepts is the
 \code{M} by \code{M} identity matrix, meaning no constraints.
 
 
 }
-  \item{constraints}{ 
+  \item{constraints}{
 An alternative to specifying \code{i.constraint} and \code{x.constraint},
 this is a list with two components corresponding to the
 intercept and \code{x} respectively. They must both be a
@@ -106,14 +106,14 @@ intercept and \code{x} respectively. They must both be a
 
 
 }
-  \item{var.arg}{ Logical: return the pointwise variances 
+  \item{var.arg}{ Logical: return the pointwise variances
 of the fit?
 Currently, this corresponds only to the nonlinear part of the
 fit, and may be wrong.
 
 
 }
-  \item{scale.w}{ 
+  \item{scale.w}{
 Logical.
 By default, the weights \code{w} are scaled so that the
 diagonal elements have mean 1.
@@ -133,7 +133,7 @@ See \code{\link[stats]{smooth.spline}}.
 }
 }
 \details{
-  The algorithm implemented is detailed in Yee (2000). 
+  The algorithm implemented is detailed in Yee (2000).
   It involves decomposing the component functions into a linear and
   nonlinear part, and using B-splines.
   The cost of the computation is \code{O(n M^3)}.
@@ -189,12 +189,13 @@ Heidelberg: Physica-Verlag.
 
 
 \seealso{
-\code{vsmooth.spline-class},
-\code{plot.vsmooth.spline},
-\code{predict.vsmooth.spline},
-\code{iam},
-\code{\link[VGAM]{s}},
-\code{\link[stats]{smooth.spline}}.
+  \code{vsmooth.spline-class},
+  \code{plot.vsmooth.spline},
+  \code{predict.vsmooth.spline},
+  \code{iam},
+  \code{\link{sm.os}},
+  \code{\link[VGAM]{s}},
+  \code{\link[stats]{smooth.spline}}.
 
 
 }

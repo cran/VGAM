@@ -95,7 +95,7 @@ posnormal(lmean = "identitylink", lsd = "loge",
   \deqn{f(y) = \frac{1}{\sigma} \frac{\phi((y-\mu) / \sigma)}{
                1-\Phi(-\mu/ \sigma)}.}{%
         f(y) = (1/sigma) * dnorm((y-mu)/sigma) / [1-pnorm(-mu/ sigma)].}
-  where \eqn{\phi()}{dnorm()} is the probability density function of a 
+  where \eqn{\phi()}{dnorm()} is the probability density function of a
   standard normal distribution (\code{\link[stats:Normal]{dnorm}}).
 
 
@@ -127,7 +127,7 @@ posnormal(lmean = "identitylink", lsd = "loge",
   The response variable for this family function is the same as
   \code{\link{uninormal}} except positive values are required.
   Reasonably good initial values are needed.
-  
+
 
 
   The distribution of the reciprocal of a positive normal random variable
@@ -138,14 +138,14 @@ posnormal(lmean = "identitylink", lsd = "loge",
 
 \section{Warning }{
   It is recommended that \code{trace = TRUE} be used to monitor convergence;
-  sometimes the estimated mean is \code{-Inf} and the 
+  sometimes the estimated mean is \code{-Inf} and the
   estimated mean standard deviation is \code{Inf}, especially
   when the sample size is small.
   Under- or over-flow may occur if the data is ill-conditioned.
 
 
 }
-\seealso{ 
+\seealso{
     \code{\link{uninormal}},
     \code{\link{tobit}}.
 

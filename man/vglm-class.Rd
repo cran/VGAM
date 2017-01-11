@@ -5,7 +5,7 @@
 \description{  Vector generalized linear models. }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{vglm(...)}.
-%   ~~ describe objects here ~~ 
+%   ~~ describe objects here ~~
 }
 \section{Slots}{
 
@@ -20,7 +20,7 @@ contains any extra information that might be needed
 The family function.  }
     \item{\code{iter}:}{Object of class \code{"numeric"}.
 The number of IRLS iterations used. }
-    \item{\code{predictors}:}{Object of class \code{"matrix"} 
+    \item{\code{predictors}:}{Object of class \code{"matrix"}
 with \eqn{M} columns which holds the \eqn{M} linear predictors. }
     \item{\code{assign}:}{Object of class \code{"list"},
   from class \code{ "vlm"}.
@@ -73,7 +73,7 @@ The effects.
 \code{"matrix"}, from class \code{ "vlm"}.
 The fitted values.
 %This may be missing or consist entirely
-%of \code{NA}s, e.g., the Cauchy model. 
+%of \code{NA}s, e.g., the Cauchy model.
  }
     \item{\code{misc}:}{Object of class \code{"list"},
  from class \code{ "vlm"}.
@@ -101,16 +101,16 @@ used by \code{\link{plotvgam}}; the plotting parameters
         may be put here.
  }
     \item{\code{prior.weights}:}{Object of class
-\code{"matrix"}, from class \code{ "vlm"} 
+\code{"matrix"}, from class \code{ "vlm"}
 holding the initially supplied weights.
  }
     \item{\code{qr}:}{Object of class \code{"list"},
  from class \code{ "vlm"}.
-QR decomposition at the final iteration. 
+QR decomposition at the final iteration.
  }
     \item{\code{R}:}{Object of class \code{"matrix"},
  from class \code{ "vlm"}.
-The \bold{R} matrix in the QR decomposition used in the fitting. 
+The \bold{R} matrix in the QR decomposition used in the fitting.
  }
     \item{\code{rank}:}{Object of class \code{"integer"},
  from class \code{ "vlm"}.
@@ -171,32 +171,32 @@ Class \code{"vlm"}, directly.
 \section{Methods}{
   \describe{
     \item{cdf}{\code{signature(object = "vglm")}:
-cumulative distribution function. 
+cumulative distribution function.
 Applicable to, e.g., quantile regression and extreme value data models.}
-    \item{deplot}{\code{signature(object = "vglm")}: 
+    \item{deplot}{\code{signature(object = "vglm")}:
 Applicable to, e.g., quantile regression.}
-    \item{deviance}{\code{signature(object = "vglm")}: 
+    \item{deviance}{\code{signature(object = "vglm")}:
 deviance of the model (where applicable). }
-    \item{plot}{\code{signature(x = "vglm")}: 
+    \item{plot}{\code{signature(x = "vglm")}:
 diagnostic plots. }
-    \item{predict}{\code{signature(object = "vglm")}: 
-extract the linear predictors or 
+    \item{predict}{\code{signature(object = "vglm")}:
+extract the linear predictors or
 predict the linear predictors at a new data frame.}
-    \item{print}{\code{signature(x = "vglm")}: 
+    \item{print}{\code{signature(x = "vglm")}:
 short summary of the object. }
-    \item{qtplot}{\code{signature(object = "vglm")}: 
+    \item{qtplot}{\code{signature(object = "vglm")}:
 quantile plot (only applicable to some models). }
-    \item{resid}{\code{signature(object = "vglm")}: 
+    \item{resid}{\code{signature(object = "vglm")}:
 residuals. There are various types of these. }
-    \item{residuals}{\code{signature(object = "vglm")}: 
+    \item{residuals}{\code{signature(object = "vglm")}:
 residuals. Shorthand for \code{resid}. }
-    \item{rlplot}{\code{signature(object = "vglm")}: return level plot. 
+    \item{rlplot}{\code{signature(object = "vglm")}: return level plot.
 Useful for extreme value data models.}
-    \item{summary}{\code{signature(object = "vglm")}: 
+    \item{summary}{\code{signature(object = "vglm")}:
 a more detailed summary of the object. }
   }
 }
-\references{ 
+\references{
 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
@@ -229,7 +229,7 @@ Vector generalized additive models.
 }
 
 \examples{
-# Multinomial logit model 
+# Multinomial logit model
 pneumo <- transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo)
 }

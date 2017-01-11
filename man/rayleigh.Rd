@@ -43,7 +43,7 @@ cens.rayleigh(lscale = "loge", oim = TRUE)
   \item{oim}{
   Logical.
   For censored data only,
-  \code{TRUE} means the Newton-Raphson algorithm, and 
+  \code{TRUE} means the Newton-Raphson algorithm, and
   \code{FALSE} means Fisher scoring.
 
 

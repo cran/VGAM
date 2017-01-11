@@ -3,20 +3,20 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Inverse Paralogistic Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 2-parameter 
+  Maximum likelihood estimation of the 2-parameter
   inverse paralogistic distribution.
 }
 \usage{
-inv.paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL, 
-    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), 
+inv.paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL,
+    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5),
     gshape1.a = seq(0.75, 4, by = 0.25), probs.y = c(0.25, 0.5, 0.75),
     zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
-  
-  
+
+
   }
 
  \item{lshape1.a, lscale}{
@@ -27,7 +27,7 @@ inv.paralogistic(lscale = "loge", lshape1.a = "loge", iscale = NULL,
   }
   \item{iscale, ishape1.a, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
-  For \code{imethod = 2} a good initial value for 
+  For \code{imethod = 2} a good initial value for
   \code{ishape1.a} is needed to obtain a good estimate for
   the other parameter.
 

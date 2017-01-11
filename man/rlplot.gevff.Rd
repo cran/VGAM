@@ -77,7 +77,7 @@ rlplot.gevff(object, show.plot = TRUE,
     when setting up the entire plot. Useful arguments here include
     \code{sub} and \code{las}.
 
-    
+
   }
 }
 \details{
@@ -100,8 +100,8 @@ rlplot.gevff(object, show.plot = TRUE,
 
 
   The points in the plot are the actual data.
-  
-  
+
+
 }
 \value{
   In the \code{post} slot of the object is a list called

@@ -20,7 +20,7 @@ nbolf(theta, cutpoint = NULL, k = NULL,
   }
   \item{cutpoint, k}{
   Here, \code{k} is the \eqn{k} parameter associated
-  with the negative binomial distribution; see 
+  with the negative binomial distribution; see
   \code{\link{negbinomial}}.
   The cutpoints should be non-negative integers.
   If \code{nbolf()} is used as the link function in
@@ -57,7 +57,7 @@ nbolf(theta, cutpoint = NULL, k = NULL,
 }
 \references{
   Yee, T. W. (2012)
-  \emph{Ordinal ordination with normalizing link functions for count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 
 
@@ -87,7 +87,7 @@ nbolf(theta, cutpoint = NULL, k = NULL,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{negbinomial}},
   \code{\link{polf}},

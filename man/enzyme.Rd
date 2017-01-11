@@ -3,7 +3,7 @@
 \docType{data}
 \title{ Enzyme Data}
 \description{
-  Enzyme velocity and substrate concentration. 
+  Enzyme velocity and substrate concentration.
 }
 \usage{data(enzyme)}
 \format{

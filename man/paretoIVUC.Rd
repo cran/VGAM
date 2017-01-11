@@ -104,7 +104,7 @@ Fairland, Maryland: International Cooperative Publishing House.
 }
 \author{ T. W. Yee and Kai Huang }
 \details{
-  For the formulas and other details 
+  For the formulas and other details
   see \code{\link{paretoIV}}.
 
 

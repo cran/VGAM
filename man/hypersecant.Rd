@@ -35,7 +35,7 @@ hypersecant01(link.theta = extlogit(min = -pi/2, max = pi/2), init.theta = NULL)
   is given by
   \deqn{f(y;\theta) = \exp(\theta y + \log(\cos(\theta ))) / (2 \cosh(\pi y/2)),}{%
         f(y; theta) = exp(theta*y + log(cos(theta))) / (2*cosh(pi*y/2)),}
-  for parameter \eqn{-\pi/2 < \theta < \pi/2}{pi/2 < theta < pi/2}
+  for parameter \eqn{-\pi/2 < \theta < \pi/2}{-pi/2 < theta < pi/2}
   and all real \eqn{y}.
   The mean of \eqn{Y} is \eqn{\tan(\theta)}{tan(theta)}
   (returned as the fitted values).
@@ -53,14 +53,16 @@ hypersecant01(link.theta = extlogit(min = -pi/2, max = pi/2), init.theta = NULL)
                          u^{-0.5+\theta/\pi} \times
                      (1-u)^{-0.5-\theta/\pi},}{%
         f(u;theta) = (cos(theta)/pi) * u^(-0.5+theta/pi) * (1-u)^(-0.5-theta/pi),}
-  for parameter \eqn{-\pi/2 < \theta < \pi/2}{pi/2 < theta < pi/2}
+  for parameter \eqn{-\pi/2 < \theta < \pi/2}{-pi/2 < theta < pi/2}
   and \eqn{0 < u < 1}.
   Then the mean of \eqn{U} is \eqn{0.5 + \theta/\pi}{0.5 + theta/pi}
   (returned as the fitted values) and the variance is
   \eqn{(\pi^2 - 4 \theta^2) / (8\pi^2)}{(pi^2 - 4*theta^2) / (8*pi^2)}.
 
 
+
   For both parameterizations Newton-Raphson is same as Fisher scoring.
+
 
 
 }
@@ -90,7 +92,7 @@ Natural exponential families with quadratic variance functions.
 }
 
 \author{ T. W. Yee }
-%\note{ 
+%\note{
 
 %}
 \seealso{

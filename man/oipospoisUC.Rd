@@ -24,7 +24,7 @@ roipospois(n, lambda, pstr1 = 0)
 \arguments{
   \item{x, p, q, n}{Same as \code{\link{Pospois}}.}
   \item{lambda}{ Vector of positive means. }
-  \item{pstr1}{ 
+  \item{pstr1}{
   Probability of a structural one
   (i.e., ignoring the positive Poisson distribution),
   called \eqn{\phi}{phi}.
@@ -38,7 +38,7 @@ roipospois(n, lambda, pstr1 = 0)
 \details{
   The probability function of \eqn{Y} is 1 with probability
   \eqn{\phi}{phi}, and \eqn{PosPoisson(\lambda)}{PosPoisson(lambda)} with
-  probability \eqn{1-\phi}{1-phi}. Thus 
+  probability \eqn{1-\phi}{1-phi}. Thus
   \deqn{P(Y=1) =\phi + (1-\phi)  P(W=1)}{%
         P(Y=1) = phi + (1-phi) * P(W=1)}
       where \eqn{W} is distributed as a
@@ -56,7 +56,7 @@ roipospois(n, lambda, pstr1 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The argument \code{pstr1} is recycled to the required length, and
   usually has values which lie in the interval \eqn{[0,1]}.
 
@@ -78,9 +78,11 @@ roipospois(n, lambda, pstr1 = 0)
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Pospois}},
+    \code{\link{oapospoisson}},
     \code{\link{oipospoisson}},
+    \code{\link{otpospoisson}},
     \code{\link{pospoisson}},
     \code{\link[stats:Poisson]{dpois}},
     \code{\link{poissonff}}.

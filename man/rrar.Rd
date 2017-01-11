@@ -4,7 +4,7 @@
 \title{ Nested reduced-rank autoregressive models for multiple
 time series }
 \description{
-  Estimates the parameters of a 
+  Estimates the parameters of a
   nested reduced-rank autoregressive model for multiple
   time series.
 
@@ -17,14 +17,14 @@ rrar(Ranks = 1, coefstart = NULL)
   \item{Ranks}{
   Vector of integers: the ranks of the model.
   Each value must be at least one and no more than \code{M},
-  where \code{M} is the number of response variables in the time series. 
+  where \code{M} is the number of response variables in the time series.
   The length of \code{Ranks} is the \emph{lag}, which is often denoted by
   the symbol \emph{L} in the literature.
 
 
   }
   \item{coefstart}{
-  Optional numerical vector of initial values for the coefficients. 
+  Optional numerical vector of initial values for the coefficients.
   By default, the family function chooses these automatically.
 
 
@@ -33,8 +33,8 @@ rrar(Ranks = 1, coefstart = NULL)
 \details{
    Full details are given in Ahn and Reinsel (1988).
    Convergence may be very slow, so setting \code{maxits = 50}, say, may help.
-   If convergence is not obtained, you might like to try inputting different 
-   initial values. 
+   If convergence is not obtained, you might like to try inputting different
+   initial values.
 
 
    Setting \code{trace = TRUE} in \code{\link{vglm}} is useful for monitoring
@@ -60,7 +60,7 @@ time series.
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   This family function should be used within \code{\link{vglm}}
   and not with \code{\link{rrvglm}} because it does not fit into
   the RR-VGLM framework exactly. Instead, the reduced-rank model
@@ -68,7 +68,7 @@ time series.
 
 
   A methods function \code{Coef.rrar}, say, has yet to be written.
-  It would return the quantities 
+  It would return the quantities
   \code{Ak1},
   \code{C},
   \code{D},

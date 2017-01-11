@@ -66,7 +66,8 @@ rtriangle(n, theta, lower = 0, upper = 1)
 %
 %}
 \seealso{
-  \code{\link{triangle}}.
+  \code{\link{triangle}},
+  \code{\link{topple}}.
 
 
 }

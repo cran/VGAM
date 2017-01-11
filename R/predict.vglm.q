@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,12 +15,23 @@ predictvglm <-
            deriv = 0,
            dispersion = NULL,
            untransform = FALSE,
-           extra = object@extra, ...) {
+           type.fitted = NULL,
+           percentiles = NULL,
+           ...) {
   na.act <- object@na.action
   object@na.action <- list()
 
-  if (missing(extra)) {
+
+
+
+  new.extra <- object@extra
+  if (length(percentiles)) {
+    new.extra$percentiles <- percentiles
   }
+  if (length(type.fitted)) {
+    new.extra$type.fitted <- type.fitted
+  }
+
 
 
   if (deriv != 0)
@@ -47,9 +58,9 @@ predictvglm <-
                se.fit <- FALSE
                predictor <- predict.vlm(object, newdata = newdata,
                                         type = type, se.fit = se.fit,
-                                        deriv = deriv, 
-                                        dispersion = dispersion, ...) 
-               fv <- object@family@linkinv(predictor, extra)
+                                        deriv = deriv,
+                                        dispersion = dispersion, ...)
+               fv <- object@family@linkinv(predictor, extra = new.extra)
 
 
                fv <- as.matrix(fv)
@@ -58,34 +69,35 @@ predictvglm <-
                if (nrow(fv) == length(dn1) &&
                    ncol(fv) == length(dn2))
                  dimnames(fv) <- list(dn1, dn2)
-
-
                fv
              },
              link = {
                predict.vlm(object, newdata = newdata,
                            type = "response", se.fit = se.fit,
-                           deriv = deriv, dispersion = dispersion, ...) 
+                           deriv = deriv, dispersion = dispersion, ...)
              },
              terms = {
                predict.vlm(object, newdata = newdata,
                            type = type, se.fit = se.fit,
-                           deriv = deriv, dispersion = dispersion, ...) 
+                           deriv = deriv, dispersion = dispersion, ...)
              })  # End of switch
   } else {
     if (is.null(newdata)) {
-      switch(type, 
-             link = object@predictors, 
-             response = object@fitted.values,
+      switch(type,
+             link = object@predictors,
+             response = {
+               object@family@linkinv(eta = object@predictors,
+                                     extra = new.extra)
+             },
              terms = {
                  predict.vlm(object, newdata = newdata,
                              type = type, se.fit = se.fit,
-                             deriv = deriv, dispersion = dispersion, ...) 
+                             deriv = deriv, dispersion = dispersion, ...)
              })
     } else {
       if (!(length(object@offset) == 1 && object@offset == 0))
-        warning("zero offset used") 
-      switch(type, 
+        warning("zero offset used")
+      switch(type,
              response = {
 
 
@@ -93,25 +105,25 @@ predictvglm <-
 
                predictor <- predict.vlm(object, newdata = newdata,
                                         type = type, se.fit = se.fit,
-                                        deriv = deriv, 
+                                        deriv = deriv,
                                         dispersion = dispersion, ...)
 
 
 
                M <- object@misc$M
 
-               fv <- object@family@linkinv(predictor, extra)
-               if (M > 1 && is.matrix(fv)) {
-
-               fv <- as.matrix(fv)
-               dn1 <- dimnames(fv)[[1]]
-               dn2 <- dimnames(object@fitted.values)[[2]]
-               if (nrow(fv) == length(dn1) &&
-                   ncol(fv) == length(dn2))
-                 dimnames(fv) <- list(dn1, dn2)
+               fv <- object@family@linkinv(predictor, extra = new.extra)
+               double.check <- is.null(new.extra$type.fitted)
+               if (M > 1 && is.matrix(fv) && double.check) {
+                 fv <- as.matrix(fv)
+                 dn1 <- dimnames(fv)[[1]]
+                 dn2 <- dimnames(object@fitted.values)[[2]]
+                 if (nrow(fv) == length(dn1) &&
+                     ncol(fv) == length(dn2))
+                   dimnames(fv) <- list(dn1, dn2)
                } else {
                }
-                 fv
+               fv
                },
                link = {
                  predict.vlm(object, newdata = newdata,
@@ -121,10 +133,11 @@ predictvglm <-
                terms = {
                  predict.vlm(object, newdata = newdata,
                              type = type, se.fit = se.fit,
-                             deriv = deriv, dispersion = dispersion, ...) 
+                             deriv = deriv, dispersion = dispersion, ...)
                })  # End of switch
         }
   }  # End of se.fit == FALSE
+
 
 
 
@@ -156,14 +169,14 @@ predictvglm <-
       predn <- napredict(na.act[[1]], predn)
     }
   }
-  
+
   if (untransform) untransformVGAM(object, predn) else predn
 }  # predictvglm
 
 
 
 
-setMethod("predict", "vglm", function(object, ...) 
+setMethod("predict", "vglm", function(object, ...)
   predictvglm(object, ...))
 
 
@@ -173,17 +186,17 @@ setMethod("predict", "vglm", function(object, ...)
 
 
 predict.rrvglm <-
-  function(object, 
-           newdata = NULL, 
+  function(object,
+           newdata = NULL,
            type = c("link", "response", "terms"),
-           se.fit = FALSE, 
+           se.fit = FALSE,
            deriv = 0,
-           dispersion = NULL, 
+           dispersion = NULL,
            extra = object@extra, ...) {
 
   if (se.fit) {
-    stop("20030811; predict.rrvglm(..., se.fit=TRUE) not complete yet") 
-    pred <- 
+    stop("20030811; predict.rrvglm(..., se.fit=TRUE) not complete yet")
+    pred <-
     switch(type,
            response = {
              warning("'type=\"response\"' and 'se.fit=TRUE' not valid ",
@@ -191,9 +204,9 @@ predict.rrvglm <-
              se.fit <- FALSE
                predictor <- predict.vlm(object, newdata = newdata,
                                         type = type, se.fit = se.fit,
-                                        deriv = deriv, 
-                                        dispersion = dispersion, ...) 
-             fv <- object@family@linkinv(predictor, extra)
+                                        deriv = deriv,
+                                        dispersion = dispersion, ...)
+             fv <- object@family@linkinv(predictor, extra = extra)
 
 
              fv <- as.matrix(fv)
@@ -210,18 +223,18 @@ predict.rrvglm <-
              type <- "response"
              predict.vlm(object, newdata = newdata,
                          type = type, se.fit = se.fit,
-                         deriv = deriv, dispersion = dispersion, ...) 
+                         deriv = deriv, dispersion = dispersion, ...)
            },
            terms = {
              predict.vlm(object, newdata = newdata,
                          type = type, se.fit = se.fit,
-                         deriv = deriv, dispersion = dispersion, ...) 
+                         deriv = deriv, dispersion = dispersion, ...)
            }
           )
   } else {
     return(predictvglm(object, newdata = newdata,
                        type = type, se.fit = se.fit,
-                       deriv = deriv, 
+                       deriv = deriv,
                        dispersion = dispersion, ...))
   }
 
@@ -240,7 +253,7 @@ predict.rrvglm <-
 }
 
 
-setMethod("predict", "rrvglm", function(object, ...) 
+setMethod("predict", "rrvglm", function(object, ...)
   predict.rrvglm(object, ...))
 
 
@@ -249,7 +262,7 @@ setMethod("predict", "rrvglm", function(object, ...)
 
 
 untransformVGAM <- function(object, pred) {
- 
+
 
   M <- object@misc$M
   Links <- object@misc$link

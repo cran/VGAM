@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -86,7 +86,7 @@ predict.vgam <-
           return(untransformVGAM(object, answer)) else
           return(answer)
       }
-    } else 
+    } else
     if (type == "response") {
       if (se.fit) {
         stop("cannot handle this option (se.fit = TRUE) currently")
@@ -113,7 +113,7 @@ predict.vgam <-
 
   } else {
 
-    temp.type <- if (type == "link") "response" else type 
+    temp.type <- if (type == "link") "response" else type
 
 
     predictor <- predict.vlm(object, newdata,
@@ -121,7 +121,7 @@ predict.vgam <-
                              se.fit = se.fit,
                              terms.arg = terms.arg,
                              raw = raw,
-                             all = all, offset = offset, 
+                             all = all, offset = offset,
                              dispersion = dispersion,
                              ...)  # deriv.arg = deriv.arg,
   }
@@ -159,7 +159,7 @@ predict.vgam <-
       ncolHlist <- unlist(lapply(Hlist, ncol))
       if (intercept)
         ncolHlist <- ncolHlist[-1]
-    
+
       cs <- if (raw) cumsum(c(1, ncolHlist)) else
                      cumsum(c(1, M + 0 * ncolHlist))
       tmp6 <- vector("list", length(ncolHlist))
@@ -187,7 +187,7 @@ predict.vgam <-
         if (type == "terms") {
           hhh <- tmp6[[ii]]
           if (se.fit) {
-            predictor$fitted.values[, hhh] <- 
+            predictor$fitted.values[, hhh] <-
             predictor$fitted.values[, hhh] + eta.mat
 
             TS <- predictor$sigma^2
@@ -207,7 +207,7 @@ predict.vgam <-
                 }
         } else {
           if (se.fit) {
-            predictor$fitted.values <- predictor$fitted.values + eta.mat 
+            predictor$fitted.values <- predictor$fitted.values + eta.mat
 
             TS <- 1  # out$residual.scale^2
             TS <- predictor$sigma^2
@@ -216,7 +216,7 @@ predict.vgam <-
             predictor$se.fit <- sqrt(predictor$se.fit^2 +
                                      TS * object@var %*% rep_len(1, TT))
           } else {
-            predictor <- predictor + eta.mat 
+            predictor <- predictor + eta.mat
           }
         }
       }
@@ -260,7 +260,7 @@ predict.vgam <-
 
 
     if (deriv.arg >= 1) {
-      v <- attr(if (se.fit) predictor$fitted.values else 
+      v <- attr(if (se.fit) predictor$fitted.values else
           predictor, "vterm.assign")
       is.lin <- is.linear.term(names(v))
         coefmat <- coefvlm(object, matrix.out = TRUE)
@@ -293,14 +293,14 @@ predict.vgam <-
               ans <- coefmat[ii, 1:lindex]
               if (se.fit) {
                 predictor$fitted.values[, index] <-
-                predictor$fitted.values[, index] + 
+                predictor$fitted.values[, index] +
                      (if (deriv.arg == 1)
                       matrix(ans, nrow = nrow(predictor$fitted.values),
                              ncol = lindex, byrow = TRUE) else 0)
               } else {
                 predictor[, index] <- predictor[, index] +
                      (if (deriv.arg == 1)
-                      matrix(ans, nrow = nrow(predictor), 
+                      matrix(ans, nrow = nrow(predictor),
                        ncol = lindex, byrow = TRUE) else 0)
               }
           } else {
@@ -341,7 +341,7 @@ setMethod("predict", "vgam",
 
 
 
-varassign <- function(constraints, n.s.xargument) { 
+varassign <- function(constraints, n.s.xargument) {
 
   if (!length(n.s.xargument))
     stop("length(n.s.xargument) must be > 0")
@@ -357,7 +357,7 @@ varassign <- function(constraints, n.s.xargument) {
     ans[[ii]] <- ptr:(ptr + temp - 1)
     ptr <- ptr + temp
   }
-  ans 
+  ans
 }
 
 

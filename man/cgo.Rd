@@ -13,7 +13,7 @@ cgo(...)
   \item{\dots}{ Ignored. }
 }
 \details{
-The former function \code{cgo} has been renamed \code{\link{cqo}} 
+The former function \code{cgo} has been renamed \code{\link{cqo}}
 because CGO (for \emph{canonical Gaussian ordination}) is a confusing
 and inaccurate name.
 CQO (for \emph{constrained quadratic ordination}) is better.
@@ -26,12 +26,12 @@ This new nomenclature described in Yee (2006).
 
 
 }
-\references{ 
+\references{
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
-\emph{Ecological Monographs}, 
-\bold{74}, 685--701. 
+\emph{Ecological Monographs},
+\bold{74}, 685--701.
 
 Yee, T. W. (2006)
 Constrained additive ordination.
@@ -47,7 +47,7 @@ The code, therefore, in Yee (2004) will not run without changing the
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{cqo}}.
 
 }

@@ -98,7 +98,7 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
   Here,
   \eqn{D_t=\{x_t,\ldots,x_1,y_{t-1},\ldots,y_1,\mu_{t-1},\ldots,\mu_1\}}{
        D_t={x_t,\ldots,x_1,y_(t-1),\ldots,y_1,mu_(t-1),\ldots,mu_1}}
-  is the previous information set. 
+  is the previous information set.
   Secondly, the GARMA(\eqn{p, q}) model is defined by
   \deqn{g(\mu_t) = \eta_t = x_t^T \beta +
     \sum_{k=1}^p \phi_k (g(y_{t-k}) - x_{t-k}^T \beta) +
@@ -129,7 +129,7 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
   \emph{Journal of the American Statistical Association},
   \bold{98}: 214--223.
 
-  
+
   Zeger, S. L. and Qaqish, B. (1988)
   Markov regression models for time series: a quasi-likelihood approach.
   \emph{Biometrics},

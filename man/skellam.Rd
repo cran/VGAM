@@ -46,7 +46,7 @@ skellam(lmu1 = "loge", lmu2 = "loge", imu1 = NULL, imu2 = NULL,
   }{%
 f(y;mu1,mu2) =
   ( \mu1 / mu_2 )^(y/2) *
-  exp(-mu1-mu2 ) * I_(|y|)( 2 * sqrt(mu1*mu2)) 
+  exp(-mu1-mu2 ) * I_(|y|)( 2 * sqrt(mu1*mu2))
   }
   where \eqn{y} is an integer,
   \eqn{\mu_1 > 0}{mu1 > 0},
@@ -80,7 +80,7 @@ f(y;mu1,mu2) =
 \references{
 
 Skellam, J. G. (1946)
-The frequency distribution of the difference between 
+The frequency distribution of the difference between
 two Poisson variates belonging to different populations.
 \emph{Journal of the Royal Statistical Society, Series A},
 \bold{109}, 296.
@@ -95,7 +95,7 @@ two Poisson variates belonging to different populations.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{dskellam}},
   \code{\link[stats:Poisson]{dpois}},
   \code{\link{poissonff}}.

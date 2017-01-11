@@ -14,7 +14,7 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{y0}{
-  Positive scale parameter. 
+  Positive scale parameter.
 
   }
   \item{lshape}{
@@ -70,7 +70,7 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
 
 
 }
-\references{ 
+\references{
 
 Kleiber, C. and Kotz, S. (2003)
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},

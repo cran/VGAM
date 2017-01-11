@@ -5,7 +5,7 @@
 \title{Clayton Copula (Bivariate) Distribution}
 \description{
   Density and random generation
-  for the (one parameter) bivariate 
+  for the (one parameter) bivariate
   Clayton copula distribution.
 
 

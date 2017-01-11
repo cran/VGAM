@@ -18,7 +18,7 @@ weibullR(lscale = "loge", lshape = "loge",
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lshape, lscale}{
-  Parameter link functions applied to the 
+  Parameter link functions applied to the
   (positive) shape parameter (called \eqn{a} below) and
   (positive) scale parameter (called \eqn{b} below).
   See \code{\link{Links}} for more choices.
@@ -53,11 +53,11 @@ weibullR(lscale = "loge", lshape = "loge",
   }
 }
 \details{
-  The Weibull density for a response \eqn{Y} is 
+  The Weibull density for a response \eqn{Y} is
   \deqn{f(y;a,b) = a y^{a-1} \exp[-(y/b)^a] / (b^a)}{%
         f(y;a,b) = a y^(a-1) * exp(-(y/b)^a) / [b^a]}
   for \eqn{a > 0}, \eqn{b > 0}, \eqn{y > 0}.
-  The cumulative distribution function is 
+  The cumulative distribution function is
   \deqn{F(y;a,b) = 1 - \exp[-(y/b)^a].}{%
         F(y;a,b) = 1 - exp(-(y/b)^a).}
   The mean of \eqn{Y} is \eqn{b \, \Gamma(1+ 1/a)}{b * gamma(1+ 1/a)}
@@ -70,7 +70,7 @@ weibullR(lscale = "loge", lshape = "loge",
   The hazard function is \eqn{a t^{a-1} / b^a}{a * t^(a-1) / b^a}.
 
 
-  This \pkg{VGAM} family function currently does not handle 
+  This \pkg{VGAM} family function currently does not handle
   censored data.
   Fisher scoring is used to estimate the two parameters.
   Although the expected information matrices used here are valid
@@ -198,7 +198,7 @@ Concerns about Maximum Likelihood Estimation for
   This function is under development to handle other censoring situations.
   The version of this function which will handle censored data will be
   called \code{cenweibull()}. It is currently being written and will use
-  \code{\link{SurvS4}} as input. 
+  \code{\link{SurvS4}} as input.
   It should be released in later versions of \pkg{VGAM}.
 
 

@@ -25,7 +25,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
-  \item{Rank}{ 
+  \item{Rank}{
     The numerical rank \eqn{R} of the model, i.e., the number of latent
     variables.  Currently only \code{Rank = 1} is implemented.
 
@@ -38,7 +38,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
     expense. See \code{\link{vgam.control}} for details.
 
   }
-  \item{criterion}{ 
+  \item{criterion}{
     Convergence criterion. Currently, only one is supported:
     the deviance is minimized.
 
@@ -48,7 +48,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
     convergence.
 
   }
-  \item{Crow1positive}{ 
+  \item{Crow1positive}{
     Logical vector of length \code{Rank} (recycled if
     necessary): are the elements of the first row of \bold{C}
     positive?  For example, if \code{Rank} is 4, then specifying
@@ -78,7 +78,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %   Logical.
 %   Whether compiled code is used.
 %   For \code{\link{cao}} this must be \code{TRUE}.
-% 
+%
 % }
 
 \item{GradientFunction}{
@@ -100,9 +100,9 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %   \code{\link[stats]{optim}}.
 %   Used only if \code{GradientFunction} is \code{TRUE}.
 %
-%  } 
+%  }
 
-% \item{Kinit}{ 
+% \item{Kinit}{
 %  Initial values for the index parameters \code{k} in the negative
 %  binomial distribution (one per species).  In general, a smaller number
 %  is preferred over a larger number.  The vector is recycled to the
@@ -127,7 +127,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
 
 
-% \item{Parscale}{ 
+% \item{Parscale}{
 %  Numerical and positive-valued vector of length \bold{C}
 %  (recycled if necessary).  Passed into \code{optim(...,
 %  control = list(parscale = Parscale))}; the elements of \bold{C} become
@@ -156,7 +156,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
   }
 
-  \item{Bestof}{ 
+  \item{Bestof}{
     Integer. The best of \code{Bestof} models fitted is returned. This
     argument helps guard against local solutions by (hopefully) finding
     the global solution from many fits. The argument works only when
@@ -167,7 +167,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
 
   }
-  \item{maxitl}{ 
+  \item{maxitl}{
     Positive integer. Maximum number of
     Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
 
@@ -177,22 +177,22 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
   See \code{\link{qrrvglm.control}}.
 
   }
-  \item{bf.epsilon}{ 
+  \item{bf.epsilon}{
     Positive numeric. Tolerance used by the modified vector backfitting
     algorithm for testing convergence.
 
   }
-  \item{bf.maxit}{ 
+  \item{bf.maxit}{
     Positive integer.
     Number of backfitting iterations allowed in the compiled code.
   }
-  \item{Maxit.optim}{ 
+  \item{Maxit.optim}{
     Positive integer.
     Number of iterations given to the function \code{\link[stats]{optim}}
     at each of the \code{optim.maxit} iterations.
 
   }
-  \item{optim.maxit}{ 
+  \item{optim.maxit}{
     Positive integer.
     Number of times \code{\link[stats]{optim}} is invoked.
 
@@ -200,13 +200,13 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %   is fed into \code{\link[stats]{optim}}.
 
     }
-% \item{se.fit}{ 
+% \item{se.fit}{
 %   Logical indicating whether approximate
 %   pointwise standard errors are to be saved on the object.
 %   Currently this argument must have the value \code{FALSE}.
 
 % }
-  \item{sd.sitescores}{ 
+  \item{sd.sitescores}{
     Numeric. Standard deviation of the
     initial values of the site scores, which are generated from
     a normal distribution.
@@ -214,25 +214,25 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
 
     }
-  \item{sd.Cinit}{ 
+  \item{sd.Cinit}{
     Standard deviation of the initial values for the elements
     of \bold{C}.
     These are normally distributed with mean zero.
     This argument is used only if \code{Use.Init.Poisson.QO = FALSE}.
 
-  }   
-  \item{suppress.warnings}{ 
+  }
+  \item{suppress.warnings}{
     Logical. Suppress warnings?
- 
 
-  }   
-  \item{trace}{ 
+
+  }
+  \item{trace}{
     Logical indicating if output should be produced for each
     iteration. Having the value \code{TRUE} is a good idea for large
     data sets.
 
   }
-  \item{df1.nl, df2.nl}{ 
+  \item{df1.nl, df2.nl}{
     Numeric and non-negative, recycled to length \emph{S}.
     Nonlinear degrees
     of freedom for smooths of the first and second latent variables.
@@ -244,7 +244,7 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
     for \code{df2.nl}.
 
   }
-  \item{spar1, spar2}{ 
+  \item{spar1, spar2}{
     Numeric and non-negative, recycled to length \emph{S}.
     Smoothing parameters of the
     smooths of the first and second latent variables. The larger the value, the
@@ -311,7 +311,7 @@ London: Chapman & Hall.
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{cao}}.
 
 
@@ -360,13 +360,13 @@ persp(ap1, label = TRUE, col = 1:4)
 %            iKvector = 0.1,
 %            iShape = 0.1,
 %            noRRR = ~1,
-%%           Parscale = 1, 
+%%           Parscale = 1,
 %            SmallNo = 5e-13,
-%            Use.Init.Poisson.QO = TRUE, 
+%            Use.Init.Poisson.QO = TRUE,
 %            Bestof = if (length(Cinit)) 1 else 10, maxitl = 40,
 %            bf.epsilon = 1.0e-7, bf.maxit = 40,
 %            Maxit.optim = 250, optim.maxit = 20,
-%%           se.fit = FALSE, 
+%%           se.fit = FALSE,
 %            sd.sitescores = 1,
 %            sd.Cinit = 0.02, trace = TRUE,
 %%            df1.nl = 2.5, spar1 = 0, ...)

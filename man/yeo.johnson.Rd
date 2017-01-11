@@ -4,16 +4,16 @@
 \title{Yeo-Johnson Transformation}
 \description{
   Computes the Yeo-Johnson transformation, which is a
-  normalizing transformation. 
+  normalizing transformation.
 }
 \usage{
-yeo.johnson(y, lambda, derivative = 0, 
+yeo.johnson(y, lambda, derivative = 0,
             epsilon = sqrt(.Machine$double.eps), inverse = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{y}{Numeric, a vector or matrix. }
-  \item{lambda}{Numeric. It is recycled to the same length as 
+  \item{lambda}{Numeric. It is recycled to the same length as
    \code{y} if necessary. }
   \item{derivative}{Non-negative integer. The default is
    the ordinary function evaluation, otherwise the derivative
@@ -27,7 +27,7 @@ yeo.johnson(y, lambda, derivative = 0,
 }
 \details{
   The Yeo-Johnson transformation can be thought of as an extension
-  of the Box-Cox transformation. It handles both positive and 
+  of the Box-Cox transformation. It handles both positive and
   negative values, whereas the Box-Cox transformation only handles
   positive values. Both can be used to transform the data so
   as to improve normality. They can be used to perform LMS

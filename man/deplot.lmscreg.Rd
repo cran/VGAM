@@ -29,7 +29,7 @@ deplot.lmscreg(object, newdata = NULL, x0, y.arg, show.plot = TRUE, ...)
 
 
   }
-  \item{y.arg}{ Numerical vector. The values of the response variable 
+  \item{y.arg}{ Numerical vector. The values of the response variable
   at which to evaluate the density. This should be a grid that is fine
   enough to ensure the plotted curves are smooth.  }
   \item{show.plot}{ Logical. Plot it? If \code{FALSE} no plot will
@@ -50,7 +50,7 @@ deplot.lmscreg(object, newdata = NULL, x0, y.arg, show.plot = TRUE, ...)
 
 }
 \value{
-  The original \code{object} but with a list 
+  The original \code{object} but with a list
   placed in the slot \code{post}, called
   \code{@post$deplot}. The list has components
   \item{newdata }{ The argument \code{newdata} above, or a one-row

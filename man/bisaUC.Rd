@@ -55,7 +55,7 @@ rbisa(n, scale = 1, shape)
   The Birnbaum-Saunders distribution
   is a distribution which is used in survival analysis.
   See \code{\link{bisa}}, the \pkg{VGAM} family function
-  for estimating the parameters, 
+  for estimating the parameters,
   for more details.
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -22,8 +22,8 @@ show.vlm <- function(object) {
   rank <- object@rank
   if (is.null(rank))
     rank <- sum(!is.na(coef))
-  n <- object@misc$n 
-  M <- object@misc$M 
+  n <- object@misc$n
+  M <- object@misc$M
   nobs <- if (length(object@df.total)) object@df.total else n * M
   rdf <- object@df.residual
   if (is.null(rdf))
@@ -67,8 +67,8 @@ print.vlm <- function(x, ...) {
   rank <- x@rank
   if (is.null(rank))
     rank <- sum(!is.na(coef))
-  n <- x@misc$n 
-  M <- x@misc$M 
+  n <- x@misc$n
+  M <- x@misc$M
   nobs <- if (length(x@df.total)) x@df.total else n * M
   rdf <- x@df.residual
   if (is.null(rdf))

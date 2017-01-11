@@ -160,7 +160,7 @@ posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{posbernoulli.t}} and
   \code{\link{posbernoulli.tb}} (including estimating \eqn{N}),
   \code{\link{deermice}},

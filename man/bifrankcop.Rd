@@ -36,7 +36,7 @@ bifrankcop(lapar = "loge", iapar = 2, nsimEIM = 250)
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = H_{\alpha}(y_1,y_2) =
              \log_{\alpha} [1 + (\alpha^{y_1}-1)(\alpha^{y_2}-1)/
                      (\alpha-1)] }{%
-        P(Y1 <= y1, Y2 <= y2) = 
+        P(Y1 <= y1, Y2 <= y2) =
         H_{alpha}(y1,y2) =  log_{alpha} [1 + (alpha^(y1)-1)*(alpha^(y2)-1)/
                      (alpha-1)] }
   for \eqn{\alpha \ne 1}{alpha != 1}.
@@ -44,7 +44,7 @@ bifrankcop(lapar = "loge", iapar = 2, nsimEIM = 250)
   The support of the function is the unit square.
 
 
-  When \eqn{0 < \alpha < 1}{0<alpha<1} the probability density function 
+  When \eqn{0 < \alpha < 1}{0<alpha<1} the probability density function
   \eqn{h_{\alpha}(y_1,y_2)}{h_{alpha}(y_1,y_2)}
   is symmetric with respect to the lines \eqn{y_2=y_1}{y2=y1}
   and \eqn{y_2=1-y_1}{y2=1-y1}.

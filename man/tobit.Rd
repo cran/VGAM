@@ -8,7 +8,7 @@
 }
 \usage{
 tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
-      imu = NULL, isd = NULL, 
+      imu = NULL, isd = NULL,
       type.fitted = c("uncensored", "censored", "mean.obs"),
       byrow.arg = FALSE, imethod = 1, zero = "sd")
 }
@@ -25,7 +25,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
 \arguments{
   \item{Lower}{
   Numeric. It is the value \eqn{L} described below.
-  Any value of the linear model 
+  Any value of the linear model
   \eqn{x_i^T \beta}{x_i^T beta} that
   is less than this lowerbound is assigned this value.
   Hence this should be the smallest possible value in the response
@@ -35,8 +35,8 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
 
   }
   \item{Upper}{
-  Numeric. It is the value \eqn{U} described below. 
-  Any value of the linear model 
+  Numeric. It is the value \eqn{U} described below.
+  Any value of the linear model
   \eqn{x_i^T \beta}{x_i^T beta} that
   is greater than this upperbound is assigned this value.
   Hence this should be the largest possible value in the response
@@ -48,7 +48,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   \item{lmu, lsd}{
   Parameter link functions for the mean and standard deviation parameters.
   See \code{\link{Links}} for more choices.
-  The standard deviation is a positive quantity, therefore a log link 
+  The standard deviation is a positive quantity, therefore a log link
   is its default.
 
 
@@ -100,7 +100,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   However, we measure \eqn{y_i = y_i^*} only if \eqn{y_i^* > L} and
   \eqn{y_i^* < U} for some
   cutpoints \eqn{L} and \eqn{U}. Otherwise we let \eqn{y_i=L} or
-  \eqn{y_i=U}, whatever is closer. 
+  \eqn{y_i=U}, whatever is closer.
   The Tobit model is thus a multiple linear regression but with censored
   responses if it is below or above certain cutpoints.
 
@@ -130,7 +130,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   Currently, if any \code{y < Lower} or \code{y > Upper} then
   a warning is issued.
 
- 
+
 }
 
 \value{
@@ -212,7 +212,7 @@ meanfun2 <- function(x) 2 + 2*x
 meanfun3 <- function(x) 2 + 2*x
 meanfun4 <- function(x) 3 + 2*x
 tdata <- transform(tdata,
-  y1 = rtobit(nn, mean = meanfun1(x2)),  # Standard Tobit model 
+  y1 = rtobit(nn, mean = meanfun1(x2)),  # Standard Tobit model
   y2 = rtobit(nn, mean = meanfun2(x2), Lower = Lower, Upper = Upper),
   y3 = rtobit(nn, mean = meanfun3(x2), Lower = Lower.vec, Upper = Upper.vec),
   y4 = rtobit(nn, mean = meanfun3(x2), Lower = Lower.vec, Upper = Upper.vec))

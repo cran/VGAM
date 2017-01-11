@@ -15,10 +15,10 @@
 \usage{
  lrtest(object, \dots)
 
- lrtest_vglm(object, \dots, name = NULL)
+ lrtest_vglm(object, \dots, no.warning = FALSE, name = NULL)
 
 }
-%\method{lrtest}{default}(object, \dots, name = NULL) 
+%\method{lrtest}{default}(object, \dots, name = NULL)
 
 %\method{lrtest}{formula}(object, \dots, data = list())
 
@@ -34,6 +34,14 @@
   \item{\dots}{
   further object specifications passed to methods.
   See below for details.
+
+
+  }
+  \item{no.warning}{
+  logical; if \code{TRUE} then no warning is issued.
+  For example, setting \code{TRUE} might be a good idea when testing
+  for linearity of a variable for a \code{"pvgam"} object.
+
 
 
   }

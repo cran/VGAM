@@ -118,7 +118,7 @@ plot(x, dgpd(x, loc, sigma, xi), type = "l", col = "blue", ylim = c(0, 1),
      main = "Blue is density, red is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)
 abline(h = 0, col = "blue", lty = 2)
-lines(qgpd(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), 
+lines(qgpd(seq(0.05, 0.95, by = 0.05), loc, sigma, xi),
       dgpd(qgpd(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), loc, sigma, xi),
       col = "purple", lty = 3, type = "h")
 lines(x, pgpd(x, loc, sigma, xi), type = "l", col = "red")

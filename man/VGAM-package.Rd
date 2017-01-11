@@ -17,7 +17,6 @@ Vector Generalized Linear and Additive Models
 
 }
 \details{
-
 This package centers on the \emph{iteratively reweighted least squares} (IRLS)
 algorithm.
 Other key words include Fisher scoring, additive models, penalized
@@ -30,7 +29,7 @@ The central modelling functions are
 \code{\link{cqo}},
 \code{\link{cao}}.
 For detailed control of fitting,
-each of these has its own control function, e.g., 
+each of these has its own control function, e.g.,
 \code{\link{vglm.control}}.
 The package uses S4 (see \code{\link[methods]{methods-package}}).
 A companion package called \pkg{VGAMdata} contains some larger
@@ -59,10 +58,30 @@ problems.
 
 
 
-VGAMs are to VGLMs what GAMs are to GLMs.
-Vector smoothing (see \code{\link{vsmooth.spline}}) allows several
-additive predictors to be estimated as a sum of smooth functions of
-the covariates.
+Crudely, VGAMs are to VGLMs what GAMs are to GLMs.
+Two types of VGAMs are implemented:
+1st-generation VGAMs with \code{\link{s}} use vector backfitting,
+while
+2nd-generation VGAMs with \code{\link{sm.os}} and
+\code{\link{sm.ps}} use O-splines and P-splines,
+do not use the backfitting algorithm,
+and have automatic smoothing parameter selection.
+The former is older and is based on Yee and Wild (1996).
+The latter is more modern
+(Yee, Somchit and Wild, 2017)
+but it requires a reasonably large number of observations
+to work well.
+
+
+
+%(e.g., \eqn{n > 500}, say); and it does not always converge
+%and is not entirely reliable.
+
+
+
+%Vector smoothing (see \code{\link{vsmooth.spline}}) allows several
+%additive predictors to be estimated as a sum of smooth functions of
+%the covariates.
 
 
 
@@ -174,6 +193,12 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
+Yee, T. W. and Somchit, C. and Wild, C. J. (2017)
+Penalized vector generalized additive models.
+Manuscript in preparation.
+
+
+
 My website for the \pkg{VGAM} package and book is at
 \url{https://www.stat.auckland.ac.nz/~yee}
 and I hope to put more resources there in the future,
@@ -192,7 +217,7 @@ especially as relating to my book.
 }
 
 
-\keyword{ package }
+\keyword{package}
 \keyword{models}
 \keyword{regression}
 \seealso{
@@ -203,7 +228,8 @@ especially as relating to my book.
   \code{\link{cqo}},
   \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{CommonVGAMffArguments}},
-  \code{\link{Links}}.
+  \code{\link{Links}},
+  \url{https://CRAN.R-project.org/package=VGAM}.
 
 
 

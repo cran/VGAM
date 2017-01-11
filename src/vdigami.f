@@ -104,8 +104,8 @@ C
       PN(4) = X * B
       S0 = PN(3) / PN(4)
       DO 31 I = 1, 4
-	DP(I) = ZERO
-	DPP(I) = ZERO
+        DP(I) = ZERO
+        DPP(I) = ZERO
    31 CONTINUE
       DP(4) = -X
 C
@@ -137,9 +137,9 @@ C
       IF (TERM .GT. TMAX) GO TO 1001
       IF (DABS(PN(5)) .LT. OFLO) GO TO 32
       DO 41 I = 1, 4
-	DP(I) = DP(I) / OFLO
-	DPP(I) = DPP(I) / OFLO
-	PN(I) = PN(I) / OFLO
+        DP(I) = DP(I) / OFLO
+        DPP(I) = DPP(I) / OFLO
+        PN(I) = PN(I) / OFLO
    41 CONTINUE
       GO TO 32
 C

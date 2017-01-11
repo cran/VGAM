@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -238,7 +238,7 @@ micmen.control <- function(save.weights = TRUE, ...) {
     fit$df.residual <- n - rank   # Not nrow.X.vlm - rank
     fit$df.total <- n             # Not nrow.X.vlm
 
-    extra$Xm2 <- NULL             # Regressor is in control$regressor 
+    extra$Xm2 <- NULL             # Regressor is in control$regressor
     dpar <- .dispersion
     if (!dpar) {
       dpar <- sum(c(w) * (y - mu)^2) / (n - ncol.X.vlm)
@@ -267,6 +267,17 @@ micmen.control <- function(save.weights = TRUE, ...) {
   summary.dispersion = FALSE,
 
   vfamily = c("micmen", "vnonlinear"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
+    theta2 <- eta2theta(eta[, 2], .link2 , earg = .earg2 )
+    okay1 <- all(is.finite(theta1)) &&
+             all(is.finite(theta2))
+    okay1
+  }, list( .link1 = link1, .earg1 = earg1,
+           .link2 = link2, .earg2 = earg2,
+           .firstDeriv = firstDeriv,
+           .rpar = rpar, .divisor = divisor ))),
+
 
   deriv = eval(substitute(expression({
     theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
@@ -336,7 +347,7 @@ micmen.control <- function(save.weights = TRUE, ...) {
       } else {
         wz <- cbind(( dmus.dthetas[, 1] * dthetas.detas[, 1])^2,
                     ( dmus.dthetas[, 2] * dthetas.detas[, 2])^2 + rpar,
-                      dmus.dthetas[, 1] *  dmus.dthetas[, 2] * 
+                      dmus.dthetas[, 1] *  dmus.dthetas[, 2] *
                      dthetas.detas[, 1] * dthetas.detas[, 2])
       }
     } else {
@@ -598,6 +609,16 @@ skira.control <- function(save.weights = TRUE, ...) {
             .estimated.dispersion = estimated.dispersion ))),
   summary.dispersion = FALSE,
   vfamily = c("skira", "vnonlinear"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    theta1 <- eta2theta(eta[, 1], .link1 , earg = .earg1 )
+    theta2 <- eta2theta(eta[, 2], .link2 , earg = .earg2 )
+    okay1 <- all(is.finite(theta1)) &&
+             all(is.finite(theta2))
+    okay1
+  }, list( .link1 = link1, .earg1 = earg1,
+           .link2 = link2, .earg2 = earg2,
+           .firstDeriv = firstDeriv,
+           .rpar = rpar, .divisor = divisor ))),
   deriv = eval(substitute(expression({
     rpar <- if ( .firstDeriv == "rpar") {
       if (iter > 1) {

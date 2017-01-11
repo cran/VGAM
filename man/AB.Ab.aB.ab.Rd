@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The AB-Ab-aB-ab Blood Group System }
 \description{
-   Estimates the parameter of the 
+   Estimates the parameter of the
    AB-Ab-aB-ab blood group system.
 
 }
@@ -41,11 +41,11 @@ Lange, K. (2002)
 
 }
 \author{ T. W. Yee }
-\note{ 
-  The input can be a 4-column matrix of counts, where the columns 
+\note{
+  The input can be a 4-column matrix of counts, where the columns
   are AB, Ab, aB and ab
   (in order).
-  Alternatively, the input can be a 4-column matrix of 
+  Alternatively, the input can be a 4-column matrix of
   proportions (so each row adds to 1) and the \code{weights}
   argument is used to specify the total number of counts for each row.
 

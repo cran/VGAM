@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -60,7 +62,7 @@ Build.terms.vlm <-
     if (M == 1)
       fit <- c(fit)
     if (cov.true) {
-      var <- ((x %*% cov) * x) %*% rep_len(1, length(coefs))
+      var <- rowSums((x %*% cov) * x)
       list(fitted.values = fit,
            se.fit = if (M == 1) c(sqrt(var)) else
                     matrix(sqrt(var), ncol = M,
@@ -72,9 +74,9 @@ Build.terms.vlm <-
 
     constant <- attr(x, "constant")
     if (!is.null(constant)) {
-      constant <- as.vector( t(coefmat) %*% constant )
+      constant <- as.vector(t(coefmat) %*% constant)
     }
-    
+
     if (missing(assign))
       assign <- attr(x, "assign")
     if (is.null(assign))
@@ -99,19 +101,19 @@ Build.terms.vlm <-
         TT <- assign[[term]]
         xt <- x[, TT]
         fit[, term] <- xt %*% coefs[TT]
-        if (cov.true)
-          se[, term] <- sqrt(drop(((xt %*% cov[TT, TT]) * xt) %*%
-                                    rep_len(1, length(TT))))
+        if (cov.true) {
+          se[, term] <- sqrt(rowSums((xt %*% cov[TT, TT]) * xt))
+        }
       }
     }
     attr(fit, "constant") <- constant
-    
+
     if (cov.true)
       list(fitted.values = fit,
            se.fit        = se) else
       fit
   }
-}
+}  # Build.terms.vlm()
 
 
 

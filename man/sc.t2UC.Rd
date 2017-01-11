@@ -67,7 +67,7 @@ rsc.t2(n, location = 0, scale = 1)
 }
 \author{ T. W. Yee and Kai Huang }
 
-%\note{ 
+%\note{
 %}
 
 \seealso{

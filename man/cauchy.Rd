@@ -18,20 +18,20 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{llocation, lscale}{ 
+  \item{llocation, lscale}{
   Parameter link functions for the location parameter \eqn{a}{a}
   and the scale parameter \eqn{b}{b}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{ilocation, iscale}{ 
+  \item{ilocation, iscale}{
   Optional initial value for \eqn{a}{a} and \eqn{b}{b}.
   By default, an initial value is chosen internally for each.
 
 
   }
-  \item{imethod}{ 
+  \item{imethod}{
   Integer, either 1 or 2 or 3.
   Initial method, three algorithms are implemented.
   The user should try all possible values to help avoid converging
@@ -59,7 +59,7 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
   }
 }
 \details{
-  The Cauchy distribution has density function 
+  The Cauchy distribution has density function
  \deqn{f(y;a,b) = \left\{ \pi  b [1 + ((y-a)/b)^2] \right\}^{-1} }{%
        f(y;a,b) = 1 / [pi * b * [1 + ((y-a)/b)^2]] }
   where \eqn{y} and \eqn{a} are real and finite,
@@ -96,7 +96,7 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
 
 }
 
-\references{ 
+\references{
 
 Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
@@ -136,7 +136,7 @@ Observed versus expected Fisher information.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link[stats:Cauchy]{Cauchy}},
   \code{\link{cauchit}},
   \code{\link{studentt}},

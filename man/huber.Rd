@@ -22,13 +22,13 @@ huber2(llocation = "identitylink", lscale = "loge",
 
 
   }
-  \item{k}{ 
+  \item{k}{
   Tuning constant.
   See \code{\link{rhuber}} for more information.
 
 
   }
-  \item{imethod, zero}{ 
+  \item{imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
   The default value of \code{zero} means the scale parameter is
   modelled as intercept-only.
@@ -44,7 +44,7 @@ huber2(llocation = "identitylink", lscale = "loge",
 
 
   By default, the mean is the first linear/additive predictor (returned
-  as the fitted values; this is the location parameter), and 
+  as the fitted values; this is the location parameter), and
   the log of the scale parameter is the second linear/additive predictor.
   The Fisher information matrix is diagonal; Fisher scoring is implemented.
 
@@ -100,7 +100,7 @@ hdata <- data.frame(x2 = sort(runif(NN)))
 hdata <- transform(hdata, y  = rhuber(NN, mu = coef1 + coef2 * x2))
 
 hdata$x2[1] <- 0.0  # Add an outlier
-hdata$y[1] <- 10  
+hdata$y[1] <- 10
 
 fit.huber2 <- vglm(y ~ x2, huber2(imethod = 3), data = hdata, trace = TRUE)
 fit.huber1 <- vglm(y ~ x2, huber1(imethod = 3), data = hdata, trace = TRUE)

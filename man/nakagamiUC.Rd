@@ -7,7 +7,7 @@
 \title{Nakagami Distribution }
 \description{
   Density, cumulative distribution function, quantile function and
-  random generation for 
+  random generation for
   the Nakagami distribution.
 
 }

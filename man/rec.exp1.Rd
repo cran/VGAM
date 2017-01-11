@@ -4,7 +4,7 @@
 \title{ Upper Record Values from a 1-parameter Exponential Distribution }
 \description{
   Maximum likelihood estimation of the rate parameter of a
-  1-parameter exponential distribution when the observations are upper 
+  1-parameter exponential distribution when the observations are upper
   record values.
 
 }

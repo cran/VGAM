@@ -22,18 +22,18 @@ rzoabeta(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
          tol = .Machine$double.eps)
 }
 
-                                                                                                
-\arguments{                                                                                     
-  \item{x, q, p, n}{Same as \code{\link[stats]{Beta}}. }                                                          
+
+\arguments{
+  \item{x, q, p, n}{Same as \code{\link[stats]{Beta}}. }
   \item{pobs0, pobs1}{
     vector of probabilities that 0 and 1 are observed
     (\eqn{\omega_0}{omega_0}
     and
     \eqn{\omega_1}{omega_1}).
   }
-  
+
   \item{shape1, shape2}{
-  Same as \code{\link[stats]{Beta}}.   
+  Same as \code{\link[stats]{Beta}}.
   They are called \code{a} and \code{b} in
   \code{\link[base:Special]{beta}} respectively.
 
@@ -53,8 +53,8 @@ rzoabeta(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
 
 }
 \value{
-  \code{dzoabeta} gives the density, 
-  \code{pzoabeta} gives the distribution function, 
+  \code{dzoabeta} gives the density,
+  \code{pzoabeta} gives the distribution function,
   \code{qzoabeta} gives the quantile, and
   \code{rzoabeta} generates random deviates.
 
@@ -73,7 +73,7 @@ rzoabeta(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
         omega_1 * I[1 <= y]}
   where \eqn{B(y)} is the cumulative distribution function
   of the beta distribution with the same shape parameters
-  (\code{\link[stats]{pbeta}}), 
+  (\code{\link[stats]{pbeta}}),
   \eqn{\omega_0}{omega_0} is the inflated probability at 0
   and \eqn{\omega_1}{omega_1} is the inflated probability at 1.
   The default values of \eqn{\omega_j}{omega_j} mean that these
@@ -81,7 +81,7 @@ rzoabeta(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
   when only the essential arguments are inputted.
 
 
-  
+
 }
 %\note{
 %

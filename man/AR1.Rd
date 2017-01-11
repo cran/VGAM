@@ -12,7 +12,7 @@
 AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
     idrift  = NULL, isd  = NULL, ivar = NULL, irho = NULL, imethod = 1,
     ishrinkage = 0.95, type.likelihood = c("exact", "conditional"),
-    type.EIM  = c("exact", "approximate"), var.arg = FALSE, nodrift = FALSE, 
+    type.EIM  = c("exact", "approximate"), var.arg = FALSE, nodrift = FALSE,
     print.EIM = FALSE, zero = c(if (var.arg) "var" else "sd", "rho"))
 
 }
@@ -30,7 +30,7 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
     it is a scaled mean.
     See \code{\link{Links}} for more choices.
 
-  
+
   }
   \item{idrift, isd, ivar, irho}{
   Optional initial values for the parameters.
@@ -67,26 +67,26 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
 
   }
   \item{type.EIM}{
-   What type of expected information matrix (EIM) is used in 
+   What type of expected information matrix (EIM) is used in
    Fisher scoring. By default, this family function calls
    \code{\link[VGAM:AR1EIM]{AR1EIM}}, which recursively
    computes the exact EIM for the AR process with Gaussian
-   white noise. See Porat and Friedlander (1986) for further 
+   white noise. See Porat and Friedlander (1986) for further
    details on the exact EIM.
-   
+
    If \code{type.EIM = "approximate"} then
    approximate expression for the EIM of Autoregressive processes
    is used; this approach holds when the number of observations
    is large enough. Succinct details about the approximate EIM
    are delineated at Porat and Friedlander (1987).
 
-  
+
   }
   \item{print.EIM}{
-  Logical. If \code{TRUE}, then the first few EIMs are printed. 
+  Logical. If \code{TRUE}, then the first few EIMs are printed.
   Here, the result shown is the sum of each EIM.
-  
-  
+
+
   }
   \item{type.likelihood}{
     What type of likelihood function is maximized.
@@ -102,8 +102,8 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
   }
 %  \item{epsilon, maxit, stepsize,...}{
 %  Same as \code{\link[VGAM:vglm.control]{vglm.control}}.
-%  
-%  
+%
+%
 %  }
 
 
@@ -127,42 +127,42 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
   these are returned as the fitted values.
   (3). The correlation of all the \eqn{Y_i}{Y(i)} with \eqn{Y_{i-1}}{Y(i-1)}
   is \eqn{\rho}{rho}.
-  (4). The default link function ensures that 
+  (4). The default link function ensures that
                          \eqn{-1 < \rho < 1}{-1 < rho < 1}.
 
 
 
 % (1). ...  whether \eqn{\mu^*}{mu^*} is intercept-only.
 
-  
+
 }
 \section{Warning}{
   Monitoring convergence is urged, i.e., set \code{trace = TRUE}.
-  
+
   Moreover, if the exact EIMs are used, set \code{print.EIM = TRUE}
   to compare the computed exact to the approximate EIM.
-  
-  Under the VGLM/VGAM approach, parameters can be modelled in terms 
-  of covariates. Particularly, if the standard deviation of 
-  the white noise is modelled in this way, then 
-  \code{type.EIM = "exact"} may certainly lead to unstable 
+
+  Under the VGLM/VGAM approach, parameters can be modelled in terms
+  of covariates. Particularly, if the standard deviation of
+  the white noise is modelled in this way, then
+  \code{type.EIM = "exact"} may certainly lead to unstable
   results. The reason is that white noise is a stationary
-  process, and consequently, its variance must remain as a constant. 
+  process, and consequently, its variance must remain as a constant.
   Consequently, the use of variates to model
   this parameter contradicts the assumption of
   stationary random components to compute the exact EIMs proposed
   by Porat and Friedlander (1987).
-  
-  To prevent convergence issues in such cases, this family function 
-  internally verifies whether the variance of the white noise remains 
+
+  To prevent convergence issues in such cases, this family function
+  internally verifies whether the variance of the white noise remains
   as a constant at each Fisher scoring iteration.
-  If this assumption is violated and \code{type.EIM = "exact"} is set, 
+  If this assumption is violated and \code{type.EIM = "exact"} is set,
   then \code{AR1} automatically shifts to
   \code{type.EIM = "approximate"}.
   Also, a warning is accordingly displayed.
 
-  
-  %Thus, if modelling the standard deviation of the white noise 
+
+  %Thus, if modelling the standard deviation of the white noise
   %is required, the use of \code{type.EIM = "approximate"} is
   %highly recommended.
 
@@ -202,17 +202,17 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
 
   Multiple responses are handled.
   The mean is returned as the fitted values.
-  
+
 
 % Argument \code{zero} can be either a numeric or a character
-% vector. It must specify the position(s) or name(s) of the 
+% vector. It must specify the position(s) or name(s) of the
 % parameters to be modeled as intercept-only. If names are used,
 % notice that parameter names in this family function are
 
-  
+
 % \deqn{c("drift", "var" or "sd", "rho").}
 
-  
+
   %Practical experience has shown that half-stepping is a very
   %good idea. The default options use step sizes that are
   %about one third the usual step size. Consequently,
@@ -221,7 +221,7 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
 
 
 }
-  
+
 \seealso{
   \code{\link{AR1EIM}},
   \code{\link{vglm.control}},
@@ -243,7 +243,7 @@ tsdata  <- transform(tsdata,
                               sd = exp(1.5)),
               TS2 = arima.sim(nn, model = list(ar = ar.coef.2),
                               sd = exp(1.0 + 1.5 * x2)))
-                              
+
 ### An autoregressive intercept--only model.   ###
 ### Using the exact EIM, and "nodrift = TRUE"  ###
 fit1a <- vglm(TS1 ~ 1, data = tsdata, trace = TRUE,
@@ -254,10 +254,11 @@ fit1a <- vglm(TS1 ~ 1, data = tsdata, trace = TRUE,
 Coef(fit1a)
 summary(fit1a)
 
+\dontrun{
 ### Two responses. Here, the white noise standard deviation of TS2   ###
 ### is modelled in terms of 'x2'. Also, 'type.EIM = exact'.  ###
-fit1b <- vglm(cbind(TS1, TS2) ~ x2, 
-              AR1(zero = NULL, nodrift = TRUE, 
+fit1b <- vglm(cbind(TS1, TS2) ~ x2,
+              AR1(zero = NULL, nodrift = TRUE,
                   var.arg = FALSE,
                   type.EIM = "exact"),
               constraints = list("(Intercept)" = diag(4),
@@ -266,7 +267,6 @@ fit1b <- vglm(cbind(TS1, TS2) ~ x2,
 coef(fit1b, matrix = TRUE)
 summary(fit1b)
 
-\dontrun{
 ### Example 2: another stationary time series
 nn     <- 500
 my.rho <- rhobit(1.0, inverse = TRUE)
@@ -276,7 +276,7 @@ tsdata  <- data.frame(index = 1:nn, TS3 = runif(nn))
 
 set.seed(2)
 for (ii in 2:nn)
-  tsdata$TS3[ii] <- my.mu/(1 - my.rho) + 
+  tsdata$TS3[ii] <- my.mu/(1 - my.rho) +
                     my.rho * tsdata$TS3[ii-1] + rnorm(1, sd = my.sd)
 tsdata <- tsdata[-(1:ceiling(nn/5)), ]  # Remove the burn-in data:
 

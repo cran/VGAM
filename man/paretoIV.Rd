@@ -30,7 +30,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   \item{lscale, linequality, lshape}{
   Parameter link functions for the
   scale parameter (called \eqn{b} below),
-  inequality parameter (called \eqn{g} below), and 
+  inequality parameter (called \eqn{g} below), and
   shape parameter (called \eqn{s} below).
   See \code{\link{Links}} for more choices.
   A log link is the default for all because all these parameters are
@@ -63,7 +63,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   for \eqn{y > a}, \eqn{b>0}, \eqn{g>0} and \eqn{s>0}.
   The \eqn{a}{a} is called the \emph{location} parameter,
   \eqn{b} the \emph{scale} parameter,
-  \eqn{g} the \emph{inequality} parameter, and 
+  \eqn{g} the \emph{inequality} parameter, and
   \eqn{s} the \emph{shape} parameter.
 
 
@@ -100,17 +100,17 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
 
 
 % The maximum likelihood estimator for the location parameter is
-% \code{min(y)}, i.e., the smallest response value. 
+% \code{min(y)}, i.e., the smallest response value.
 
 
   There are a number of special cases of the Pareto(IV) distribution.
   These include the Pareto(I), Pareto(II), Pareto(III), and Burr family
   of distributions.
-  Denoting \eqn{PIV(a,b,g,s)} as the Pareto(IV) distribution, 
+  Denoting \eqn{PIV(a,b,g,s)} as the Pareto(IV) distribution,
   the Burr distribution \eqn{Burr(b,g,s)} is \eqn{PIV(a=0,b,1/g,s)},
   the Pareto(III) distribution \eqn{PIII(a,b,g)} is \eqn{PIV(a,b,g,s=1)},
   the Pareto(II) distribution \eqn{PII(a,b,s)} is \eqn{PIV(a,b,g=1,s)},
-  and 
+  and
   the Pareto(I) distribution \eqn{PI(b,s)} is \eqn{PIV(b,b,g=1,s)}.
   Thus the Burr distribution can be fitted using the
   \code{\link{negloge}} link
@@ -128,7 +128,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
 
 
 }
-\references{ 
+\references{
 
 
 Johnson N. L., Kotz S., and Balakrishnan N. (1994)
@@ -151,7 +151,7 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The \code{extra} slot of the fitted object has a component called
   \code{"location"} which stores the location parameter value(s).
 
@@ -171,7 +171,7 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 
 
- 
+
  }
 \seealso{
   \code{\link{ParetoIV}},

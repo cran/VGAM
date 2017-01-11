@@ -92,7 +92,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
 
   }
-% \item{rshape}{ 
+% \item{rshape}{
 % Numeric, of length 2.
 % Range of \eqn{\xi}{xi} if \code{lshape = "extlogit"} is chosen.
 % The default values ensures the algorithm works (\eqn{\xi > -0.5}{xi > -0.5})
@@ -212,7 +212,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   helps handle the problem of straying outside the parameter space.
 
 
-}  
+}
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}}

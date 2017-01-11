@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Reciprocal Inverse Gaussian distribution }
 \description{
-  Estimation of the parameters of a 
+  Estimation of the parameters of a
   reciprocal inverse Gaussian distribution.
 
 }
@@ -46,7 +46,7 @@ London: Chapman & Hall
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   This distribution is potentially useful for dispersion modelling.
 
 

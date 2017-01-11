@@ -52,7 +52,7 @@ bifgmexp(lapar = "rhobit", iapar = NULL, tola0 = 0.01, imethod = 1)
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = e^{-y_1-y_2}
              ( 1 + \alpha [1 - e^{-y_1}] [1 - e^{-y_2}] ) + 1 -
                e^{-y_1} - e^{-y_2} }{%
-        P(Y1 <= y1, Y2 <= y2) = 
+        P(Y1 <= y1, Y2 <= y2) =
         exp(-y1-y2) * ( 1 + alpha * [1 - exp(-y1)] * [1 - exp(-y2)] ) + 1 -
            exp(-y1) - exp(-y2) }
   for \eqn{\alpha}{alpha} between \eqn{-1} and \eqn{1}.

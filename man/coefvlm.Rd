@@ -13,7 +13,7 @@ coefvlm(object, matrix.out = FALSE, label = TRUE, colon = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ An object for which the extraction of 
+  \item{object}{ An object for which the extraction of
     coefficients is meaningful.
     This will usually be a \code{\link{vglm}} object.
 

@@ -124,7 +124,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{negbinomial}},
   \code{\link{negbinomial.size}}.
 

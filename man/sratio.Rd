@@ -15,7 +15,7 @@ sratio(link = "logit", parallel = FALSE, reverse = FALSE,
 
   \item{link}{
     Link function applied to the \eqn{M}
-    stopping ratio probabilities. 
+    stopping ratio probabilities.
     See \code{\link{Links}} for more choices.
 
   }
@@ -57,7 +57,7 @@ sratio(link = "logit", parallel = FALSE, reverse = FALSE,
   There are a number of definitions for the \emph{continuation ratio}
   in the literature. To make life easier, in the \pkg{VGAM} package,
   we use \emph{continuation} ratios (see \code{\link{cratio}})
-  and \emph{stopping} ratios. 
+  and \emph{stopping} ratios.
   Continuation ratios deal with quantities such as
   \code{logit(P[Y>j|Y>=j])}.
 

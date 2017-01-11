@@ -4,24 +4,27 @@
 \title{ Control Function for vgam() }
 \description{
  Algorithmic constants and parameters for running \code{\link{vgam}}
- are set using this function. 
+ are set using this function.
 
 }
 \usage{
-vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30, 
-             checkwz=TRUE, criterion = names(.min.criterion.VGAM),
-             epsilon = 1e-07, maxit = 30, na.action = na.fail,
+vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
+             checkwz=TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
+             criterion = names(.min.criterion.VGAM),
+             epsilon = 1e-07, maxit = 30, Maxit.outer = 20,
+             noWarning = FALSE,
+             na.action = na.fail,
              nk = NULL, save.weights = FALSE, se.fit = TRUE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75,
-             xij = NULL, ...)
+             xij = NULL, gamma.arg = 1, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
-% zz na.action differs from vglm 
+% zz na.action differs from vglm
 
 
   \item{all.knots}{
-  logical indicating if all distinct points of 
+  logical indicating if all distinct points of
   the smoothing variables are to be used as knots.
   By default, \code{all.knots=TRUE} for
   \eqn{n \leq 40}{n <= 40}, and
@@ -52,9 +55,15 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   any values less than \code{wzepsilon} are replaced with this value.
 
   }
+  \item{Check.rank, Check.cm.rank}{
+  See \code{\link{vglm.control}}.
+
+
+  }
+
   \item{criterion}{
   character variable describing what criterion is to
-  be used to test for convergence. 
+  be used to test for convergence.
   The possibilities are listed in \code{.min.criterion.VGAM}, but
   most family functions only implement a few of these.
 
@@ -72,6 +81,22 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
 
   }
+  \item{Maxit.outer}{
+  maximum number of
+  outer iterations allowed when there are
+  \code{\link{sm.os}} or
+  \code{\link{sm.ps}} terms.
+  See \code{\link{vgam}} for a little information about
+  the default \emph{outer iteration}.
+  Note that one can use \emph{performance iteration}
+  by setting \code{Maxit.outer = 1}; then the
+  smoothing parameters will be automatically chosen at each
+  IRLS iteration (some specific programming
+  allows this).
+
+
+
+  }
   \item{na.action}{
   how to handle missing values.
   Unlike the SPLUS \code{gam} function, \code{\link{vgam}} cannot handle
@@ -81,13 +106,14 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   \item{nk}{
   vector of length \eqn{d} containing positive integers.
   where \eqn{d} be the number of \code{\link{s}} terms
-  in the formula. 
-  Recycling is used if necessary. 
+  in the formula.
+  Recycling is used if necessary.
   The \eqn{i}th value is the number of B-spline coefficients to be
-  estimated for each component function of the \eqn{i}th 
+  estimated for each component function of the \eqn{i}th
   \code{s()} term.
   \code{nk} differs from the number of knots by some constant.
   If specified, \code{nk} overrides the automatic knot selection procedure.
+
 
   }
   \item{save.weights}{
@@ -99,7 +125,9 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   \item{se.fit}{
   logical indicating whether approximate
   pointwise standard errors are to be saved on the object.
-  If \code{TRUE}, then these can be plotted with \code{plot(..., se = TRUE)}.
+  If \code{TRUE}, then these can be plotted
+  with \code{plot(..., se = TRUE)}.
+
 
   }
   \item{trace}{
@@ -107,8 +135,9 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 
   }
   \item{wzepsilon}{
-  Small positive number used to test whether the diagonals of the working
-  weight matrices are sufficiently positive.
+  Small positive number used to test whether the diagonals
+  of the working weight matrices are sufficiently positive.
+
 
   }
 
@@ -117,8 +146,25 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 %
 % }
 
+  \item{noWarning}{
+  Same as \code{\link{vglm.control}}.
+
+
+
+  }
   \item{xij}{
   Same as \code{\link{vglm.control}}.
+
+
+
+  }
+  \item{gamma.arg}{
+    Numeric; same as \code{gamma} in \code{\link[mgcv]{magic}}.
+    Inflation factor for optimizing the UBRE/GCV criterion.
+    If given, a suggested value is 1.4 to help avoid overfitting,
+    based on the work of Gu and co-workers
+    (values between 1.2 and 1.4 appeared reasonable, based on simulations).
+    A warning may be given if the value is deemed out-of-range.
 
 
 
@@ -157,7 +203,7 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 
 
 }
-\references{ 
+\references{
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
@@ -165,6 +211,18 @@ Vector generalized additive models.
 
 
 % \url{http://www.stat.auckland.ac.nz/~yee}
+
+
+
+% For gamma=1.4:
+% Kim, Y.-J. and Gu, C. 2004,
+% Smoothing spline Gaussian regression:
+% more scalable computation via efficient approximation.
+%\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+%\bold{66}, 337--356.
+%\bold{66}(2), 337--356.
+
+
 
 
 }
@@ -192,7 +250,7 @@ Vector generalized additive models.
   \code{\link{vgam}},
   \code{\link{vglm.control}},
   \code{\link{vsmooth.spline}},
-  \code{\link{vglm}}. 
+  \code{\link{vglm}}.
 
 
 }

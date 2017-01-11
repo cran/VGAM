@@ -7,7 +7,7 @@
 \description{
   Density, distribution function,
   and random generation
-  for the (one parameter) bivariate 
+  for the (one parameter) bivariate
   Gaussian copula distribution.
 
 

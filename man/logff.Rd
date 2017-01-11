@@ -7,25 +7,19 @@
 
 }
 \usage{
-logff(link = "logit", init.c = NULL, zero = NULL)
+logff(lshape = "logit", gshape = ppoints(8), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
+  \item{lshape}{
   Parameter link function for the parameter \eqn{c},
   which lies between 0 and 1.
   See \code{\link{Links}} for more choices and information.
+  Soon \code{logfflink()} will hopefully be available for event-rate data.
 
 
   }
-  \item{init.c}{
-  Optional initial value for the \eqn{c} parameter.
-  If given, it often pays to start with a larger value, e.g., 0.95.
-  The default is to choose an initial value internally.
-
-
-  }
-  \item{zero}{
+  \item{gshape, zero}{
   Details at \code{\link{CommonVGAMffArguments}}.
 
 
@@ -39,7 +33,8 @@ logff(link = "logit", init.c = NULL, zero = NULL)
   Its probability function is
   \eqn{f(y) = a c^y / y}{f(y) = a * c^y / y}, for
   \eqn{y=1,2,3,\ldots}{y=1,2,3,...},
-  where \eqn{0 < c < 1}, and \eqn{a = -1 / \log(1-c)}{a = -1 / log(1-c)}.
+  where \eqn{0 < c < 1} (called \code{shape}),
+  and \eqn{a = -1 / \log(1-c)}{a = -1 / log(1-c)}.
   The mean is \eqn{a c/(1-c)}{a*c/(1-c)} (returned as the fitted values)
   and variance is \eqn{a c (1-ac) /(1-c)^2}{a*c*(1-a*c)/(1-c)^2}.
 
@@ -52,7 +47,7 @@ logff(link = "logit", init.c = NULL, zero = NULL)
 
 
 }
-\references{ 
+\references{
 
 
 Chapter 7 of
@@ -85,8 +80,11 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{rlog}},
+  \code{\link{oalog}},
+  \code{\link{oilog}},
+  \code{\link{otlog}},
   \code{\link[base:Log]{log}},
   \code{\link{loge}},
   \code{\link{logoff}},
@@ -96,7 +94,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 \examples{
-ldata <- data.frame(y = rlog(n = 1000, prob = logit(0.2, inverse = TRUE)))
+ldata <- data.frame(y = rlog(n = 1000, shape = logit(0.2, inverse = TRUE)))
 fit <- vglm(y ~ 1, logff, data = ldata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
@@ -113,8 +111,8 @@ corbet <- data.frame(nindiv = 1:24,
                                14, 6, 12, 6, 9, 9, 6, 10, 10, 11, 5, 3, 3))
 fit <- vglm(nindiv ~ 1, logff, data = corbet, weights = ofreq)
 coef(fit, matrix = TRUE)
-chat <- Coef(fit)["c"]
-pdf2 <- dlog(x = with(corbet, nindiv), prob = chat)
+shapehat <- Coef(fit)["shape"]
+pdf2 <- dlog(x = with(corbet, nindiv), shape = shapehat)
 print(with(corbet, cbind(nindiv, ofreq, fitted = pdf2 * sum(ofreq))), digits = 1)
 }
 \keyword{models}

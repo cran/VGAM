@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,7 +9,7 @@
 
 
 
- 
+
 logLik.vlm <- function(object,
                        summation = TRUE,
                        ...) {
@@ -27,7 +27,7 @@ logLik.vlm <- function(object,
 
     object@family@loglikelihood(mu = fitted(object),
                                 y = depvar(object),
-                                w = weights(object, type = "prior"),
+                          w = as.vector(weights(object, type = "prior")),
                                 residuals = FALSE,
                                 eta = predict(object),
                                 extra = object@extra,
@@ -37,7 +37,7 @@ logLik.vlm <- function(object,
 
 
 
- 
+
 logLik.qrrvglm <- function(object,
                            summation = TRUE,
                            ...) {

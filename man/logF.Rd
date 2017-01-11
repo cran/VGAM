@@ -80,7 +80,7 @@
 %
 %}
 
-%\note{ 
+%\note{
 %}
 
 \seealso{

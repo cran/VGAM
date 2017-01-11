@@ -9,7 +9,7 @@
 }
 \usage{
 kumar(lshape1 = "loge", lshape2 = "loge",
-      ishape1 = NULL,   ishape2 = NULL, grid.shape1 = c(0.4, 6.0),
+      ishape1 = NULL,   ishape2 = NULL, gshape1 = exp(2*ppoints(5) - 1),
       tol12 = 1.0e-4, zero = NULL)
 
 }
@@ -39,8 +39,14 @@ kumar(lshape1 = "loge", lshape2 = "loge",
   If so then the working weights need to handle these singularities.
 
   }
-  \item{grid.shape1}{
-  Lower and upper limits for a grid search for the first shape parameter.
+  \item{gshape1}{
+  Values for a grid search for the first shape parameter.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+% Lower and upper limits for a grid search for the first shape parameter.
+
+
 
   }
   \item{zero}{
@@ -50,7 +56,7 @@ kumar(lshape1 = "loge", lshape2 = "loge",
 }
 \details{
   The Kumaraswamy distribution has density function
-  \deqn{f(y;a = shape1,b = shape2)  = 
+  \deqn{f(y;a = shape1,b = shape2)  =
   a b y^{a-1} (1-y^{a})^{b-1}}{%
   a*b*y^(a-1)*(1-y^a)^(b-1)}
   where \eqn{0 < y < 1} and the two shape parameters,
@@ -95,7 +101,7 @@ kumar(lshape1 = "loge", lshape2 = "loge",
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{dkumar}},
   \code{\link{betaff}},
   \code{\link{simulate.vlm}}.

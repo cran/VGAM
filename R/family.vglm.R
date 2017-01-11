@@ -1,12 +1,12 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
 if (FALSE)
-family.vglm <- function(object, ...) 
+family.vglm <- function(object, ...)
     object$vfamily
 
 
@@ -20,7 +20,7 @@ print.vfamily <- function(x, ...) {
   if (is.null(nn))
     invisible(return(x))
 
-  cat("Family: ", f[1], "\n") 
+  cat("Family: ", f[1], "\n")
   if (length(f)>1)
     cat("Classes:", paste(f, collapse=", "), "\n")
   cat("\n")

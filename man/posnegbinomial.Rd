@@ -13,38 +13,38 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
                eps.trig = 1e-07, max.support = 4000, max.chunk.MB = 30,
                lmunb = "loge", lsize = "loge", imethod = 1,
                imunb = NULL, iprobs.y = NULL,
-               gprobs.y = (0:9)/10, isize = NULL,
+               gprobs.y = ppoints(8), isize = NULL,
                gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmunb}{ 
+  \item{lmunb}{
   Link function applied to the \code{munb} parameter, which is the mean
   \eqn{\mu_{nb}}{munb} of an ordinary negative binomial distribution.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{lsize}{ 
+  \item{lsize}{
   Parameter link function applied to the dispersion parameter,
   called \code{k}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{isize}{ 
+  \item{isize}{
   Optional initial value for \code{k}, an index parameter.
   The value \code{1/k} is known as a dispersion parameter.
   If failure to converge occurs try different values (and/or use
   \code{imethod}).
   If necessary this vector is recycled to length equal to the number
-  of responses. 
+  of responses.
   A value \code{NULL} means an initial value for each response is
   computed internally using a range of values.
 
 
   }
-  \item{nsimEIM, zero, eps.trig}{ 
+  \item{nsimEIM, zero, eps.trig}{
   See \code{\link{CommonVGAMffArguments}}.
 
 
@@ -107,7 +107,7 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
 \section{Warning}{
   This family function is fragile;
   at least two cases will lead to numerical problems.
-  Firstly, 
+  Firstly,
   the positive-Poisson model corresponds to \code{k} equalling infinity.
   If the data is positive-Poisson or close to positive-Poisson,
   then the estimated \code{k} will diverge to \code{Inf} or some
@@ -119,7 +119,25 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
   In the situation when both cases hold, the result returned
   (which will be untrustworthy) will depend on the initial values.
 
-  
+
+
+The negative binomial distribution (NBD) is a strictly unimodal distribution.
+Any data set that does not exhibit a mode (in the middle) makes the
+estimation problem difficult.
+The positive NBD inherits this feature.
+Set \code{trace = TRUE} to monitor convergence.
+
+
+
+  See the example below of a data set where \code{posbinomial()}
+  fails; the so-called solution is \emph{extremely} poor.
+  This is partly due to a lack of a
+  unimodal shape because the number of counts decreases only.
+  This long tail makes it very difficult to estimate the mean
+  parameter with any certainty. The result too is that the
+  \code{size} parameter is numerically fraught.
+
+
 %  Then trying a \code{\link{loglog}} link might help
 %  handle this problem.
 
@@ -141,7 +159,7 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
 }
 \references{
   Barry, S. C. and Welsh, A. H. (2002)
-  Generalized additive modelling and zero inflated count data. 
+  Generalized additive modelling and zero inflated count data.
   \emph{Ecological Modelling},
   \bold{157},
   179--188.
@@ -167,12 +185,12 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
   \code{max.support} so that the EIMs are positive-definite,
   e.g.,
   \code{eps.trig = 1e-8} and \code{max.support = Inf}.
-  
+
 
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{rposnegbin}},
   \code{\link{pospoisson}},
   \code{\link{negbinomial}},
@@ -224,6 +242,18 @@ matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
         type = "b", ylab = "Number of species", col = c("blue", "orange"),
         main = "blue 1s = observe; orange 2s = fitted"))
 }
+
+\dontrun{
+# This data (courtesy of Maxim Gerashchenko) causes posbinomial() to fail
+pnbd.fail <- data.frame(
+ y1 = c(1:16, 18:21, 23:28, 33:38, 42, 44, 49:51, 55, 56, 58,
+ 59, 61:63, 66, 73, 76, 94, 107, 112, 124, 190, 191, 244),
+ ofreq = c(130, 80, 38, 23, 22, 11, 21, 14, 6, 7, 9, 9, 9, 4, 4, 5, 1,
+           4, 6, 1, 3, 2, 4, 3, 4, 5, 3, 1, 2, 1, 1, 4, 1, 2, 2, 1, 3,
+           1, 1, 2, 2, 2, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1))
+fit.fail <- vglm(y1 ~ 1, weights = ofreq, posnegbinomial,
+               trace = TRUE, data = pnbd.fail)
+}
 }
 \keyword{models}
 \keyword{regression}
@@ -236,7 +266,7 @@ matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
 %posnegbinomial(lmunb = "loge", lsize = "loge", imunb = NULL,
 %               isize = NULL, zero = "size", nsimEIM = 250,
 %               probs.y = 0.75, cutoff.prob = 0.999,
-%               max.support = 2000, max.chunk.MB = 30, 
+%               max.support = 2000, max.chunk.MB = 30,
 %               gsize = exp((-4):4), ishrinkage = 0.95, imethod = 1)
 
 

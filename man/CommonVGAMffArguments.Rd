@@ -5,7 +5,7 @@
 \description{
   Here is a description of some common and typical arguments found
   in many \pkg{VGAM} family functions, e.g.,
-  \code{lsigma}, 
+  \code{lsigma},
   \code{isigma},
   \code{gsigma},
   \code{nsimEI},
@@ -30,7 +30,9 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                           parallel = TRUE,
                           ishrinkage = 0.95,
                           nointercept = NULL, imethod = 1,
-                          type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+                          type.fitted = c("mean", "quantiles",
+                                          "pobs0", "pstr0", "onempstr0"),
+                          percentiles = c(25, 50, 75),
                           probs.x = c(0.15, 0.85),
                           probs.y = c(0.25, 0.50, 0.75),
                           multiple.responses = FALSE, earg.link = FALSE,
@@ -69,7 +71,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   to be inputted more easily.
   One has something like
   \code{link.list = list("(Default)" = "identitylink", x2 = "loge", x3 = "logoff")}
-  and 
+  and
   \code{earg.list = list("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
   Then any unnamed terms will have the default link with its
   corresponding extra argument.
@@ -122,7 +124,8 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 
 
 
-% Then the actual search values will be \code{unique(sort(c(gshape, 1/gshape)))}, etc.
+% Then the actual search values will be
+% \code{unique(sort(c(gshape, 1/gshape)))}, etc.
 
 
   }
@@ -157,7 +160,7 @@ except for \eqn{X_2}.
 
 
   This argument is common in \pkg{VGAM} family functions for categorical
-  responses, e.g., \code{\link{cumulative}},  \code{\link{acat}}, 
+  responses, e.g., \code{\link{cumulative}},  \code{\link{acat}},
   \code{\link{cratio}}, \code{\link{sratio}}.
   For the proportional odds model (\code{\link{cumulative}}) having
   parallel constraints applied to each explanatory variable (except for
@@ -232,6 +235,18 @@ except for \eqn{X_2}.
 
 
   }
+  \item{percentiles}{
+  Numeric vector, with values between 0 and 100
+  (although it is not recommended that exactly 0 or 100 be inputted).
+  Used only if \code{type.fitted = "quantiles"} or
+  \code{type.fitted = "percentiles"}, then
+  this argument specifies the values of these quantiles.
+  The argument name tries to reinforce that the values
+  lie between 0 and 100.
+  See \code{\link{fittedvlm}} for more details.
+
+
+  }
   \item{probs.x, probs.y}{
   Numeric, with values in (0, 1).
   The probabilites that define quantiles with respect to some vector,
@@ -291,7 +306,7 @@ except for \eqn{X_2}.
   Either an integer vector, or a vector of character strings.
 
 
-  If an integer, then it specifies which 
+  If an integer, then it specifies which
   linear/additive predictor is modelled as \emph{intercept-only}.
   That is, the regression coefficients are
   set to zero for all covariates except for the intercept.
@@ -342,7 +357,7 @@ except for \eqn{X_2}.
   \code{fixed = TRUE}, meaning that wildcards \code{"*"} are not useful.
   See the example below---all the variants work;
   those with \code{LOCAT} issue a warning that that value is unmatched.
-Importantly, the parameter names 
+Importantly, the parameter names
 are \code{c("location1", "scale1", "location2", "scale2")}
 because there are 2 responses.
 Yee (2015) described \code{zero} for only numerical input.
@@ -445,7 +460,7 @@ In the future, most \pkg{VGAM} family functions might be converted
   \item{bred}{
   Logical.
   Some \pkg{VGAM} family functions will allow bias-reduction based
-  on the work by Kosmidis and Firth. 
+  on the work by Kosmidis and Firth.
   Sometimes half-stepping is a good idea; set \code{stepsize = 0.5}
   and monitor convergence by setting \code{trace = TRUE}.
 

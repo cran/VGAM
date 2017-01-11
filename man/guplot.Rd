@@ -49,12 +49,12 @@ guplot.vlm(object, ...)
   distribution, respectively. Outliers may also be detected
   using this plot.
 
-  
+
   The function \code{guplot} is generic, and
   \code{guplot.default} and \code{guplot.vlm} are some
   methods functions for Gumbel plots.
 
-  
+
 }
 \value{
   A list is returned invisibly with the following components.
@@ -74,14 +74,14 @@ guplot.vlm(object, ...)
   \emph{Statistics of Extremes}.
   New York, USA: Columbia University Press.
 
-  
+
 }
 \author{ T. W. Yee }
 \note{
   The Gumbel distribution is a special case of the
   GEV distribution with shape parameter equal to zero.
 
-  
+
 }
 \seealso{
   \code{\link{gumbel}},
@@ -89,7 +89,7 @@ guplot.vlm(object, ...)
   \code{\link{gev}},
   \code{\link{venice}}.
 
-  
+
 }
 \examples{\dontrun{guplot(rnorm(500), las = 1) -> ii
 names(ii)

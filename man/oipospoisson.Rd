@@ -8,7 +8,7 @@
 \usage{
 oipospoisson(lpstr1 = "logit", llambda = "loge",
    type.fitted = c("mean", "lambda", "pobs1", "pstr1", "onempstr1"),
-   ilambda = NULL, gpstr1 = (1:19)/20, gprobs.y = (1:19)/20, 
+   ilambda = NULL, gpstr1 = (1:19)/20, gprobs.y = (1:19)/20,
    imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -69,9 +69,11 @@ oipospoisson(lpstr1 = "logit", llambda = "loge",
 \author{ Thomas W. Yee }
 %\note{
 %}
-\seealso{ 
-  \code{\link{roipospois}},
+\seealso{
+  \code{\link{Oipospois}},
   \code{\link{pospoisson}},
+  \code{\link{oapospoisson}},
+  \code{\link{otpospoisson}},
   \code{\link{zipoisson}},
   \code{\link{poissonff}},
   \code{\link{simulate.vlm}}.

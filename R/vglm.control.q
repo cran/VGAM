@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,17 +9,17 @@
 .min.criterion.VGAM <-
   c("deviance"      = TRUE,
     "loglikelihood" = FALSE,
-    "AIC"           = TRUE, 
+    "AIC"           = TRUE,
     "Likelihood"    = FALSE,
     "ResSS"        = TRUE,
     "coefficients"  = TRUE)
 
 
- 
+
 
 vlm.control <- function(save.weights = TRUE,
                         tol = 1e-7,
-                        method = "qr", 
+                        method = "qr",
                         checkwz = TRUE,
                         wzepsilon = .Machine$double.eps^0.75,
                         ...) {
@@ -45,12 +45,12 @@ vlm.control <- function(save.weights = TRUE,
 vglm.control <- function(checkwz = TRUE,
                          Check.rank = TRUE,
                          Check.cm.rank = TRUE,
-                         criterion = names(.min.criterion.VGAM), 
+                         criterion = names(.min.criterion.VGAM),
                          epsilon = 1e-7,
                          half.stepsizing = TRUE,
-                         maxit = 30, 
+                         maxit = 30,
                          noWarning = FALSE,
-                         stepsize = 1, 
+                         stepsize = 1,
                          save.weights = FALSE,
                          trace = FALSE,
                          wzepsilon = .Machine$double.eps^0.75,
@@ -60,62 +60,62 @@ vglm.control <- function(checkwz = TRUE,
 
 
 
-    if (mode(criterion) != "character" && mode(criterion) != "name")
-      criterion <- as.character(substitute(criterion))
-    criterion <- pmatch(criterion[1], names(.min.criterion.VGAM),
+  if (mode(criterion) != "character" && mode(criterion) != "name")
+    criterion <- as.character(substitute(criterion))
+  criterion <- pmatch(criterion[1], names(.min.criterion.VGAM),
                         nomatch = 1)
-    criterion <- names(.min.criterion.VGAM)[criterion]
+  criterion <- names(.min.criterion.VGAM)[criterion]
 
 
 
-    if (!is.logical(checkwz) || length(checkwz) != 1)
-      stop("bad input for argument 'checkwz'")
-    if (!is.Numeric(wzepsilon, length.arg = 1, positive = TRUE))
-      stop("bad input for argument 'wzepsilon'")
+  if (!is.logical(checkwz) || length(checkwz) != 1)
+    stop("bad input for argument 'checkwz'")
+  if (!is.Numeric(wzepsilon, length.arg = 1, positive = TRUE))
+    stop("bad input for argument 'wzepsilon'")
 
-    convergence <- expression({
+  convergence <- expression({
 
 
-      switch(criterion,
-             coefficients = if (iter == 1) iter < maxit else
-                            (iter < maxit &&
-                            max(abs(new.crit - old.crit) / (
-                                abs(old.crit) + epsilon)) > epsilon),
-             iter < maxit &&
-             sqrt(eff.n) *
-             abs(old.crit - new.crit) / (
-             abs(old.crit) + epsilon)  > epsilon)
-    })
+    switch(criterion,
+           coefficients = if (iter == 1) iter < maxit else
+                          (iter < maxit &&
+                          max(abs(new.crit - old.crit) / (
+                              abs(old.crit) + epsilon)) > epsilon),
+           iter < maxit &&
+           sqrt(eff.n) *
+           abs(old.crit - new.crit) / (
+           abs(old.crit) + epsilon)  > epsilon)
+  })
 
-    if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE)) {
-      warning("bad input for argument 'epsilon'; using 0.00001 instead")
-      epsilon <- 0.00001
-    }
-    if (!is.Numeric(maxit, length.arg = 1,
-                    positive = TRUE, integer.valued = TRUE)) {
-      warning("bad input for argument 'maxit'; using 30 instead")
-      maxit <- 30
-    }
-    if (!is.Numeric(stepsize, length.arg = 1, positive = TRUE)) {
-      warning("bad input for argument 'stepsize'; using 1 instead")
-      stepsize <- 1
-    }
+  if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE)) {
+    warning("bad input for argument 'epsilon'; using 0.00001 instead")
+    epsilon <- 0.00001
+  }
+  if (!is.Numeric(maxit, length.arg = 1,
+                  positive = TRUE, integer.valued = TRUE)) {
+    warning("bad input for argument 'maxit'; using 30 instead")
+    maxit <- 30
+  }
+  if (!is.Numeric(stepsize, length.arg = 1, positive = TRUE)) {
+    warning("bad input for argument 'stepsize'; using 1 instead")
+    stepsize <- 1
+  }
 
-    list(checkwz = checkwz,
-         Check.rank = Check.rank, 
-         Check.cm.rank = Check.cm.rank,
-         convergence = convergence, 
-         criterion = criterion,
-         epsilon = epsilon,
-         half.stepsizing = as.logical(half.stepsizing)[1],
-         maxit = maxit,
-         noWarning = as.logical(noWarning)[1],
-         min.criterion = .min.criterion.VGAM,
-         save.weights = as.logical(save.weights)[1],
-         stepsize = stepsize,
-         trace = as.logical(trace)[1],
-         wzepsilon = wzepsilon,
-         xij = if (is(xij, "formula")) list(xij) else xij)
+  list(checkwz = checkwz,
+       Check.rank = Check.rank,
+       Check.cm.rank = Check.cm.rank,
+       convergence = convergence,
+       criterion = criterion,
+       epsilon = epsilon,
+       half.stepsizing = as.logical(half.stepsizing)[1],
+       maxit = maxit,
+       noWarning = as.logical(noWarning)[1],
+       min.criterion = .min.criterion.VGAM,
+       save.weights = as.logical(save.weights)[1],
+       stepsize = stepsize,
+       trace = as.logical(trace)[1],
+       wzepsilon = wzepsilon,
+       xij = if (is(xij, "formula")) list(xij) else xij)
 }
 
 
@@ -164,7 +164,7 @@ vcontrol.expression <- expression({
   for (ii in 1:2) {
     temp <- paste(if (ii == 1) "" else
                   paste(function.name, ".", sep = ""),
-                  family@vfamily[1], 
+                  family@vfamily[1],
                   ".", control$criterion, ".control", sep = "")
     if (exists(temp, inherit = TRUE)) {
       temp <- get(temp)

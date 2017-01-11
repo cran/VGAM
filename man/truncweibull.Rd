@@ -28,9 +28,9 @@ truncweibull(lower.limit = 1e-5,
 
 
   }
-  
+
   \item{lAlpha, lBetaa}{
-  Parameter link functions applied to the 
+  Parameter link functions applied to the
   (positive) parameters \code{Alpha}
   (called \eqn{\alpha} below) and
   (positive) \code{Betaa} (called \eqn{\beta} below).
@@ -67,7 +67,7 @@ truncweibull(lower.limit = 1e-5,
 
 % More details about the Weibull density are \code{\link{weibullR}}.
 
-  
+
   Upon fitting the \code{extra} slot has a component called
   \code{lower.limit} which is of the same dimension as the
   response.
@@ -75,7 +75,7 @@ truncweibull(lower.limit = 1e-5,
   using \code{\link{pgamma.deriv}}
   and \code{\link{pgamma.deriv.unscaled}}.
 
-  
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -90,7 +90,7 @@ truncweibull(lower.limit = 1e-5,
   \emph{Statistical Papers},
   \bold{30}(1), 39--48.
 
-  
+
 }
 
 \author{ T. W. Yee }

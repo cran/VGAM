@@ -82,14 +82,14 @@ citEntry(entry = "Manual",
          author = personList(as.person("Thomas W. Yee")),
          year = year,
          note = note,
-         url = "http://CRAN.R-project.org/package=VGAM",
+         url = "https://CRAN.R-project.org/package=VGAM",
 
          textVersion =
          paste("Thomas W. Yee",
    	       sprintf("(%s).", year),	 
                "VGAM: Vector Generalized Linear and Additive Models.",
 	       paste(note, ".", sep = ""),
-               "URL http://CRAN.R-project.org/package=VGAM"),
+               "URL https://CRAN.R-project.org/package=VGAM"),
 	 header = "and/or"
 )
 

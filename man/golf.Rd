@@ -45,7 +45,7 @@ golf(theta, lambda = 1, cutpoint = NULL,
 
 }
 \details{
-  The gamma-ordinal link function (GOLF) can be applied to a 
+  The gamma-ordinal link function (GOLF) can be applied to a
   parameter lying in the unit interval.
   Its purpose is to link cumulative probabilities associated with
   an ordinal response coming from an underlying 2-parameter gamma
@@ -65,7 +65,7 @@ golf(theta, lambda = 1, cutpoint = NULL,
 }
 \references{
   Yee, T. W. (2012)
-  \emph{Ordinal ordination with normalizing link functions for count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 
 
@@ -89,12 +89,12 @@ golf(theta, lambda = 1, cutpoint = NULL,
 
 }
 \section{Warning }{
-  Prediction may not work on \code{\link{vglm}} or 
+  Prediction may not work on \code{\link{vglm}} or
   \code{\link{vgam}} etc. objects if this link function is used.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{gamma2}},
   \code{\link{polf}},

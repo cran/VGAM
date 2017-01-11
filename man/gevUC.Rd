@@ -121,7 +121,7 @@ plot(x, dgev(x, loc, sigma, xi), type = "l", col = "blue", ylim = c(0,1),
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)
 abline(h = 0, col = "blue", lty = 2)
-lines(qgev(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), 
+lines(qgev(seq(0.05, 0.95, by = 0.05), loc, sigma, xi),
       dgev(qgev(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), loc, sigma, xi),
       col = "purple", lty = 3, type = "h")
 lines(x, pgev(x, loc, sigma, xi), type = "l", col = "orange")

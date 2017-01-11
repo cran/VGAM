@@ -55,7 +55,7 @@ pgamma.deriv.unscaled(q, shape)
 \author{
   T. W. Yee.
 
-  
+
 }
 
 

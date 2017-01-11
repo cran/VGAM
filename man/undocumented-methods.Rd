@@ -4,8 +4,20 @@
 %\alias{ccoef-method}
 %
 %
+% 201607, 201608:
+\alias{psint,pvgam-method}
+\alias{summary,pvgam-method}
+\alias{show,summary.pvgam-method}
+\alias{df.residual,pvgam-method}
+\alias{endf,ANY-method}
+\alias{endf,pvgam-method}
+\alias{endf,summary.pvgam-method}
+\alias{vcov,pvgam-method}
+\alias{show,pvgam,ANY-method}
+\alias{show,pvgam-method}
+\alias{model.matrix,pvgam-method}
 % 201604:
-\alias{plot,psvgam,ANY-method}
+\alias{plot,pvgam,ANY-method}
 % 201602:
 \alias{predictvglmS4VGAM,ANY,binom2.or-method}
 % 201601:

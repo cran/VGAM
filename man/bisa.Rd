@@ -13,7 +13,7 @@ bisa(lscale = "loge", lshape = "loge", iscale = 1,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{nowarning}{ Logical. Suppress a warning? 
+  \item{nowarning}{ Logical. Suppress a warning?
   Ignored for \pkg{VGAM} 0.9-7 and higher.
 
 
@@ -38,8 +38,8 @@ bisa(lscale = "loge", lshape = "loge", iscale = 1,
   \item{imethod}{
   An integer with value \code{1} or \code{2} or \code{3} which
   specifies the initialization method. If failure to converge occurs
-  try the other value, or else specify a value for 
-  \code{ishape} and/or \code{iscale}. 
+  try the other value, or else specify a value for
+  \code{ishape} and/or \code{iscale}.
 
 
   }
@@ -57,11 +57,11 @@ bisa(lscale = "loge", lshape = "loge", iscale = 1,
   }
 }
 \details{
-  The (two-parameter) Birnbaum-Saunders distribution 
+  The (two-parameter) Birnbaum-Saunders distribution
   has a cumulative distribution function that can be written as
   \deqn{F(y;a,b) = \Phi[ \xi(y/b)/a] }{%
         F(y;a,k) = pnorm[xi(y/b)/a] }
-  where \eqn{\Phi(\cdot)}{pnorm()} is the 
+  where \eqn{\Phi(\cdot)}{pnorm()} is the
   cumulative distribution function of a standard normal
   (see \code{\link[stats:Normal]{pnorm}}),
   \eqn{\xi(t) = \sqrt{t} - 1 / \sqrt{t}}{xi(t) = t^(0.5) - t^(-0.5)},

@@ -76,7 +76,7 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
   }
   \item{deriv.arg}{
   Numerical. The order of the derivative.
-  Should be assigned an small 
+  Should be assigned an small
   integer such as 0, 1, 2. Only applying to \code{s()} terms,
   it plots the derivative.
 
@@ -151,7 +151,7 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
   constraint matrix of interest.
 
 
-  Many of \code{plotvgam()}'s options can be found in  
+  Many of \code{plotvgam()}'s options can be found in
   \code{\link{plotvgam.control}}, e.g., line types, line widths,
   colors.
 
@@ -183,18 +183,18 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
 
 \note{
   While \code{plot(fit)} will work if \code{class(fit)}
-  is \code{"vgam"}, it is necessary to use \code{plotvgam(fit)} 
+  is \code{"vgam"}, it is necessary to use \code{plotvgam(fit)}
   explicitly otherwise.
-  
-  
+
+
   \code{plotvgam()} is quite buggy at the moment.
 
-  
+
 % \code{plotvgam()} works in a similar
 % manner to S-PLUS's \code{plot.gam()}, however, there is no
-% options for interactive construction of the plots yet. 
+% options for interactive construction of the plots yet.
 
-  
+
 }
 
 \seealso{
@@ -203,8 +203,8 @@ plotvgam(x, newdata = NULL, y = NULL, residuals = NULL,
   \code{predict.vgam},
   \code{\link{plotvglm}},
   \code{\link{vglm}}.
-  
-  
+
+
 }
 \examples{
 coalminers <- transform(coalminers, Age = (age - 42) / 5)

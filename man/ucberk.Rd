@@ -44,7 +44,7 @@
 
 }
 %\source{
-%  
+%
 %
 %}
 \references{
@@ -65,5 +65,5 @@ summary(ucberk)
 }
 \keyword{datasets}
 % 7 February 1975
-% Bickel, et al., 187 (4175): 398-404 
+% Bickel, et al., 187 (4175): 398-404
 

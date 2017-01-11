@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -10,12 +10,13 @@
 
 
 
-vgam <- function(formula, 
-                 family, data = list(), 
+
+vgam <- function(formula,
+                 family, data = list(),
                  weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
                  control = vgam.control(...),
-                 offset = NULL, 
+                 offset = NULL,
                  method = "vgam.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
                  contrasts = NULL,
@@ -23,7 +24,7 @@ vgam <- function(formula,
                  extra = list(),
                  form2 = NULL,  # Added 20130730
                  qr.arg = FALSE, smart = TRUE, ...) {
-  dataname <- as.character(substitute(data))  # "list" if no data= 
+  dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vgam"
 
   ocall <- match.call()
@@ -34,7 +35,8 @@ vgam <- function(formula,
   if (missing(data))
     data <- environment(formula)
 
-  mtsave <- terms(formula, specials = c("s", "ps"), data = data)
+  mtsave <- terms(formula, specials = c("s", "sm.os", "sm.ps"),
+                  data = data)
 
 
 
@@ -108,11 +110,11 @@ vgam <- function(formula,
 
   mf2 <- mf
   if (!missing(subset)) {
-    mf2$subset <- NULL 
-    mf2 <- eval(mf2, parent.frame())  # mf2 is the full data frame. 
-    spars2 <-  lapply(mf2, attr, "spar") 
-    dfs2   <-  lapply(mf2, attr, "df") 
-    sx2 <-  lapply(mf2, attr, "s.xargument") 
+    mf2$subset <- NULL
+    mf2 <- eval(mf2, parent.frame())  # mf2 is the full data frame.
+    spars2 <-  lapply(mf2, attr, "spar")
+    dfs2   <-  lapply(mf2, attr, "df")
+    sx2 <-  lapply(mf2, attr, "s.xargument")
     for (ii in seq_along(mf)) {
       if (length(sx2[[ii]])) {
         attr(mf[[ii]], "spar") <- spars2[[ii]]
@@ -120,7 +122,7 @@ vgam <- function(formula,
         attr(mf[[ii]], "s.xargument") <- sx2[[ii]]
       }
     }
-    rm(mf2) 
+    rm(mf2)
   }
 
 
@@ -154,12 +156,18 @@ vgam <- function(formula,
   aa <- attributes(mtsave)
   smoothers <- aa$specials
 
-  mgcv.ps <- length(smoothers$ps) > 0
-  mgcv.PS <- length(smoothers$PS) > 0
-  any.ps.terms <- mgcv.ps || mgcv.PS
+  mgcv.sm.os <- length(smoothers$sm.os) > 0
+  mgcv.sm.ps <- length(smoothers$sm.ps) > 0
+  mgcv.sm.PS <- length(smoothers$sm.PS) > 0
+  any.sm.os.terms <- mgcv.sm.os
+  any.sm.ps.terms <- mgcv.sm.ps || mgcv.sm.PS
   mgcv.s <- length(smoothers$s) > 0
-  if (any.ps.terms && mgcv.s)
-    stop("cannot include both s() and ps() (or PS()) terms in the formula")
+  if ((any.sm.os.terms || any.sm.ps.terms) && mgcv.s)
+    stop("cannot include both s() and any of sm.os() or ",
+         "sm.ps() (or sm.PS()) terms in the formula")
+  if (any.sm.os.terms && any.sm.ps.terms)
+    stop("cannot include both sm.os() and ",
+         "sm.ps() (or sm.PS()) terms in the formula")
 
 
 
@@ -173,23 +181,37 @@ vgam <- function(formula,
 
     smooth.labels <- aa$term.labels[unlist(smoothers)]
   } else {
-    function.name <- "vglm"  # This is effectively so 
+    function.name <- "vglm"  # This is effectively so
   }
-  
 
 
 
 
 
 
-  are.ps.terms <- (length(smoothers$ps) + length(smoothers$PS)) > 0
-  if (are.ps.terms) {
+
+  are.sm.os.terms <-  length(smoothers$sm.os) > 0
+  are.sm.ps.terms <- (length(smoothers$sm.ps) +
+                      length(smoothers$sm.PS)) > 0
+  if (are.sm.os.terms || are.sm.ps.terms) {
     control$criterion <- "coefficients"  # Overwrite if necessary
 
-    if (length(smoothers$ps) > 0) {
-      ff.ps <- apply(aa$factors[smoothers[["ps"]],,drop = FALSE], 2, any)
-      smoothers[["ps"]] <-
-        if (any(ff.ps)) seq(along = ff.ps)[aa$order == 1 & ff.ps] else NULL
+
+    if (length(smoothers$sm.os) > 0) {
+      ff.sm.os <- apply(aa$factors[smoothers[["sm.os"]],,drop = FALSE],
+                        2, any)
+      smoothers[["sm.os"]] <-
+        if (any(ff.sm.os))
+          seq(along = ff.sm.os)[aa$order == 1 & ff.sm.os] else NULL
+      smooth.labels <- aa$term.labels[unlist(smoothers)]
+    }
+
+    if (length(smoothers$sm.ps) > 0) {
+      ff.sm.ps <- apply(aa$factors[smoothers[["sm.ps"]],,drop = FALSE],
+                        2, any)
+      smoothers[["sm.ps"]] <-
+        if (any(ff.sm.ps))
+          seq(along = ff.sm.ps)[aa$order == 1 & ff.sm.ps] else NULL
       smooth.labels <- aa$term.labels[unlist(smoothers)]
     }
 
@@ -199,12 +221,15 @@ vgam <- function(formula,
 
 
     assignx <- attr(x, "assign")
-    which.X.ps <- assignx[smooth.labels]
-    data <- mf[, names(which.X.ps), drop = FALSE]
-    attr(data, "class") <- NULL
-    S.arg <- lapply(data, attr, "S.arg")
-    lambdalist <- lapply(data, attr, "lambda")
-    ridge.adj <- lapply(data, attr, "ridge.adj")
+    which.X.sm.osps <- assignx[smooth.labels]
+    Data <- mf[, names(which.X.sm.osps), drop = FALSE]
+    attr(Data, "class") <- NULL
+    S.arg     <- lapply(Data, attr, "S.arg")
+    sparlist  <- lapply(Data, attr, "spar")
+    ridge.adj <- lapply(Data, attr, "ridge.adj")
+    fixspar   <- lapply(Data, attr, "fixspar")
+    ps.int    <- lapply(Data, attr, "ps.int")  # FYI only; for sm.ps()
+    knots     <- lapply(Data, attr, "knots")   # FYI only; for sm.os()
     term.labels <- aa$term.labels
 
 
@@ -212,28 +237,33 @@ vgam <- function(formula,
 
 
 
-  ps.list <- if (any.ps.terms)
-               list(indexterms = ff.ps,
-                    intercept = aa$intercept,
-                    which.X.ps = which.X.ps,
-                    S.arg = S.arg,
-                    lambdalist = lambdalist,
-                    ridge.adj = ridge.adj,
-                    term.labels = term.labels,
-                    assignx = assignx) else
-               NULL
+  sm.osps.list <-
+    if (any.sm.os.terms || any.sm.ps.terms)
+      list(indexterms = if (any.sm.os.terms)
+                        ff.sm.os else ff.sm.ps,
+           intercept = aa$intercept,
+           which.X.sm.osps = which.X.sm.osps,
+           S.arg = S.arg,
+           sparlist = sparlist,
+           ridge.adj = ridge.adj,
+           term.labels = term.labels,
+           fixspar = fixspar,
+           orig.fixspar = fixspar,  # For posterity
+           ps.int = ps.int,  # FYI only
+           knots  = knots,   # FYI only
+           assignx = assignx) else
+      NULL
 
 
   fit <- vgam.fit(x = x, y = y, w = w, mf = mf,
                   Xm2 = Xm2, Ym2 = Ym2,  # Added 20130730
       etastart = etastart, mustart = mustart, coefstart = coefstart,
       offset = offset, family = family, control = control,
-      criterion = control$criterion,
       constraints = constraints, extra = extra, qr.arg = qr.arg,
       Terms = mtsave,
       nonparametric = nonparametric, smooth.labels = smooth.labels,
       function.name = function.name,
-      ps.list = ps.list,
+      sm.osps.list = sm.osps.list,
       ...)
 
 
@@ -251,9 +281,9 @@ vgam <- function(formula,
 
   fit$smomat <- NULL  # Not needed
 
-  fit$call <- ocall 
+  fit$call <- ocall
   if (model)
-    fit$model <- mf 
+    fit$model <- mf
   if (!x.arg)
     fit$x <- NULL
   if (!y.arg)
@@ -276,7 +306,7 @@ vgam <- function(formula,
 
   answer <-
   new(
-    if (any.ps.terms) "psvgam" else "vgam",
+    if (any.sm.os.terms || any.sm.ps.terms) "pvgam" else "vgam",
 
     "assign"       = attr(x, "assign"),
     "call"         = fit$call,
@@ -320,13 +350,15 @@ vgam <- function(formula,
 
 
   if (length(fit$misc$Xvlm.aug)) {
-    slot(answer, "psslot") <-
-      list(Xvlm.aug = fit$misc$Xvlm.aug,
-           ps.list  = fit$misc$ps.list,
-           magicfit = fit$misc$magicfit)
-    fit$misc$Xvlm.aug <- NULL
-    fit$misc$ps.list  <- NULL
-    fit$misc$magicfit <- NULL
+    slot(answer, "ospsslot") <-
+      list(Xvlm.aug     = fit$misc$Xvlm.aug,
+           sm.osps.list = fit$misc$sm.osps.list,
+           magicfit     = fit$misc$magicfit,
+           iter.outer   = fit$misc$iter.outer)
+    fit$misc$Xvlm.aug     <- NULL
+    fit$misc$sm.osps.list <- NULL
+    fit$misc$magicfit     <- NULL
+    fit$misc$iter.outer   <- NULL
   }
 
 
@@ -393,7 +425,7 @@ vgam <- function(formula,
   if (nonparametric && is.buggy.vlm(answer)) {
     warning("some s() terms have constraint matrices that have columns",
             " which are not orthogonal;",
-            " try using ps() instead of s().")
+            " try using sm.os() or sm.ps() instead of s().")
   } else {
   }
 
@@ -402,7 +434,7 @@ vgam <- function(formula,
 
   answer
 }
-attr(vgam, "smart") <- TRUE 
+attr(vgam, "smart") <- TRUE
 
 
 
@@ -410,24 +442,24 @@ attr(vgam, "smart") <- TRUE
 
 shadowvgam <-
         function(formula,
-                 family, data = list(), 
+                 family, data = list(),
                  weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control = vgam.control(...), 
-                 offset = NULL, 
+                 control = vgam.control(...),
+                 offset = NULL,
                  method = "vgam.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL, 
+                 contrasts = NULL,
                  constraints = NULL,
-                 extra = list(), 
+                 extra = list(),
                  qr.arg = FALSE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "shadowvgam"
 
     ocall <- match.call()
 
-    if (missing(data)) 
-        data <- environment(formula)
+    if (missing(data))
+      data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
     m <- match(c("formula", "data", "subset", "weights", "na.action",
@@ -440,7 +472,7 @@ shadowvgam <-
            stop("invalid 'method': ", method))
     mt <- attr(mf, "terms")
 
-    x <- y <- NULL 
+    x <- y <- NULL
 
     xlev <- .getXlevels(mt, mf)
     y <- model.response(mf, "any")  # model.extract(mf, "response")
@@ -449,7 +481,7 @@ shadowvgam <-
     attr(x, "assign") <- attrassigndefault(x, mt)
 
     list(Xm2 = x, Ym2 = y, call = ocall)
-}
+}  # shadowvgam
 
 
 
@@ -461,7 +493,7 @@ shadowvgam <-
 is.buggy.vlm <- function(object, each.term = FALSE, ...) {
 
 
-    
+
   Hk.list <- constraints(object)
   ncl <- names(Hk.list)
   TFvec <- rep_len(FALSE, length(ncl))

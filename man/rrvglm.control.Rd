@@ -11,14 +11,14 @@
 rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Corner = TRUE, Uncorrelated.latvar = FALSE,
     Wmat = NULL, Svd.arg = FALSE,
-    Index.corner = if (length(str0)) 
+    Index.corner = if (length(str0))
     head((1:1000)[-str0], Rank) else 1:Rank,
     Ainit = NULL, Alpha = 0.5, Bestof = 1, Cinit = NULL,
     Etamat.colmax = 10,
     sd.Ainit = 0.02, sd.Cinit = 0.02, str0 = NULL,
     noRRR = ~1, Norrr = NA,
     noWarning = FALSE,
-    trace = FALSE, Use.Init.Poisson.QO = FALSE, 
+    trace = FALSE, Use.Init.Poisson.QO = FALSE,
     checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
     wzepsilon = .Machine$double.eps^0.75, ...)
 }
@@ -26,7 +26,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 \arguments{
   \item{Rank}{
     The numerical rank \eqn{R} of the model.
-    Must be an element from the set \{1,2,\ldots,min(\eqn{M},\emph{p2})\}. 
+    Must be an element from the set \{1,2,\ldots,min(\eqn{M},\emph{p2})\}.
     Here, the vector of explanatory variables \bold{x} is partitioned into
     (\bold{x1},\bold{x2}), which is of dimension \emph{p1}+\emph{p2}.
     The variables making up \bold{x1} are given by the terms in
@@ -77,11 +77,11 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     The exponent in the singular value decomposition that is used in
     the first part: if the SVD is
     \eqn{U D V^T}{ U \%*\% D \%*\% t(V) } then the
-    first and second parts are 
-    \eqn{U D^{\alpha}}{ U \%*\% D^Alpha} 
+    first and second parts are
+    \eqn{U D^{\alpha}}{ U \%*\% D^Alpha}
     and
     \eqn{D^{1-\alpha}  V^T}{D^(1-Alpha) \%*\% t(V)} respectively.
-    A value of 0.5 is `symmetrical'. 
+    A value of 0.5 is `symmetrical'.
     This argument is used only when \code{Svd.arg=TRUE}.
 
 
@@ -131,7 +131,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
   \item{sd.Ainit, sd.Cinit}{
       Standard deviation of the initial values for the elements
       of \bold{A} and \bold{C}.
-      These are normally distributed with mean zero.  
+      These are normally distributed with mean zero.
       This argument is used only if \code{Use.Init.Poisson.QO = FALSE}.
 
 
@@ -190,7 +190,7 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
     Same as \code{\link{vglm.control}}.
     Ignored for \pkg{VGAM} 0.9-7 and higher.
 
-  
+
 
   }
   \item{wzepsilon}{
@@ -209,9 +209,9 @@ rrvglm.control(Rank = 1, Algorithm = c("alternating", "derivative"),
 
 
   }
-  In the above, \eqn{R} is the \code{Rank} and 
+  In the above, \eqn{R} is the \code{Rank} and
   \eqn{M} is the number of linear predictors.
-  
+
 }
 \details{
 %   QRR-VGLMs are an extension of RR-VGLMs and are useful for constrained

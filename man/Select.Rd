@@ -5,14 +5,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Select Variables for a Formula Response or the RHS of a Formula
 
-  
+
 %%  ~~function to do ... ~~
 }
 \description{
   Select variables from a data frame whose names
   begin with a certain character string.
 
-  
+
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -26,7 +26,7 @@ Select(data = list(), prefix = "y",
   \item{data}{
     A data frame or a matrix.
 
-    
+
 %%     ~~Describe \code{data} here~~
 }
 \item{prefix}{
@@ -39,14 +39,14 @@ Select(data = list(), prefix = "y",
   in \code{data} are chosen.
 
 
-  
+
 %%     ~~Describe \code{prefix} here~~
 }
 \item{lhs}{
   A character string.
   The response of a formula.
 
-  
+
 %%     ~~Describe \code{lhs} here~~
 }
 \item{rhs}{
@@ -54,7 +54,7 @@ Select(data = list(), prefix = "y",
   Included as part of the RHS a formula.
   Set \code{rhs = "0"} to suppress the intercept.
 
-  
+
 %%     ~~Describe \code{rhs} here~~
 }
 \item{rhs2, rhs3}{
@@ -66,21 +66,21 @@ Select(data = list(), prefix = "y",
 
 
 
-  
+
 %%     ~~Describe \code{rhs} here~~
 }
 \item{as.character}{
   Logical.
   Return the answer as a character string?
 
-  
+
 %%     ~~Describe \code{as.character} here~~
 }
 \item{as.formula.arg}{
   Logical.
   Is the answer a formula?
 
-  
+
 %%     ~~Describe \code{as.formula.arg} here~~
 }
 \item{tilde}{
@@ -89,20 +89,20 @@ Select(data = list(), prefix = "y",
   are both \code{TRUE}
   then include the tilde in the formula?
 
-  
+
 }
 \item{exclude}{
   Vector of character strings.
   Exclude these variables explicitly.
 
-  
+
 %%     ~~Describe \code{exclude} here~~
 }
 \item{sort.arg}{
   Logical.
   Sort the variables?
 
-  
+
 %%     ~~Describe \code{sort.arg} here~~
 }
 }
@@ -127,7 +127,7 @@ Select(data = list(), prefix = "y",
   as \code{"cbind(y1, y2, y3)"}.
 
 
-  
+
   If \code{as.character = FALSE} and
   \code{as.formula.arg = TRUE} then a \code{\link[stats]{formula}} such
   as \code{lhs ~ y1 + y2 + y3}.
@@ -141,7 +141,7 @@ Select(data = list(), prefix = "y",
 
 
 
-  
+
 %%  ~Describe the value returned
 %%  If it is a LIST, use
 %%  \item{comp1 }{Description of 'comp1'}
@@ -154,7 +154,7 @@ Select(data = list(), prefix = "y",
 \author{
   T. W. Yee.
 
-  
+
 %%  ~~who you are~~
 }
 \note{
@@ -182,7 +182,7 @@ Select(data = list(), prefix = "y",
   One of these functions might be withdrawn in the future.
 
 
-  
+
 %%  ~~further notes~~
 }
 
@@ -197,7 +197,7 @@ Select(data = list(), prefix = "y",
 
 
 
-  
+
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{

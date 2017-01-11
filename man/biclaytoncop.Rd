@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Clayton Copula (Bivariate) Family Function }
 \description{
-  Estimate the correlation parameter of 
+  Estimate the correlation parameter of
   the (bivariate) Clayton copula
   distribution by maximum likelihood estimation.
 

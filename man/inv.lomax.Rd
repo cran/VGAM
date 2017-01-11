@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Inverse Lomax Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 2-parameter 
+  Maximum likelihood estimation of the 2-parameter
   inverse Lomax distribution.
 }
 \usage{
@@ -22,7 +22,7 @@ inv.lomax(lscale = "loge", lshape2.p = "loge", iscale = NULL,
   }
   \item{iscale, ishape2.p, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
-  For \code{imethod = 2} a good initial value for 
+  For \code{imethod = 2} a good initial value for
   \code{ishape2.p} is needed to obtain a good estimate for
   the other parameter.
 

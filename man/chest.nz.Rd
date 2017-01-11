@@ -17,7 +17,7 @@
   }
 }
 \details{
-  Each adult was asked their age and whether they experienced any 
+  Each adult was asked their age and whether they experienced any
   pain or discomfort in their chest over the last six months.
   If yes, they indicated whether it
   was on their LHS and/or RHS of their chest.
@@ -36,7 +36,7 @@
 }
 \examples{
 \dontrun{
-fit <- vgam(cbind(nolnor, nolr, lnor, lr) ~ s(age, c(4, 3)), 
+fit <- vgam(cbind(nolnor, nolr, lnor, lr) ~ s(age, c(4, 3)),
             binom2.or(exchan = TRUE, zero = NULL), data = chest.nz)
 coef(fit, matrix = TRUE)
 }

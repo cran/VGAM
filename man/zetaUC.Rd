@@ -1,37 +1,48 @@
 \name{Zeta}
 \alias{Zeta}
 \alias{dzeta}
+\alias{pzeta}
+\alias{qzeta}
+\alias{rzeta}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{The Zeta Distribution }
 \description{
-  Density for the zeta distribution.
+  Density, distribution function, quantile function and random generation
+  for the zeta distribution.
 
 }
-% zz p is not a good argument name, esp. with qzeta(p, p)
 \usage{
-dzeta(x, p, log = FALSE)
+dzeta(x, shape, log = FALSE)
+pzeta(q, shape, lower.tail = TRUE)
+qzeta(p, shape)
+rzeta(n, shape)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{ Numerical vector/matrix to evaluate the density. }
-  \item{p}{ The parameter \eqn{p}. This must be positive. }
-  \item{log}{
-  Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  \item{x, q, p, n}{Same as \code{\link[stats]{Poisson}}. }
+  \item{shape}{ The positive shape parameter \eqn{p}. }
+  \item{lower.tail, log}{
+  Same meaning as in \code{\link[stats]{Normal}}.
+
 
   }
-
 }
 \details{
   The density function of the zeta distribution is given by
-  \deqn{y^{-p-1} / \zeta(p+1)}{%
-        y^(-p-1) /  zeta(p+1)}
-  where \eqn{p>0}, \eqn{y=1,2,\ldots}, and \eqn{\zeta}{zeta} is
+  \deqn{y^{-s-1} / \zeta(s+1)}{%
+        y^(-s-1) /  zeta(s+1)}
+  where \eqn{s>0}, \eqn{y=1,2,\ldots}, and \eqn{\zeta}{zeta} is
   Riemann's zeta function.
+
+
 
 }
 \value{
-  Returns the density evaluated at \code{x}.
+  \code{dzeta} gives the density,
+  \code{pzeta} gives the distribution function,
+  \code{qzeta} gives the quantile function, and
+  \code{rzeta} generates random deviates.
+
 
 }
 \references{
@@ -41,6 +52,7 @@ Johnson N. L., Kotz S., and Balakrishnan N. (1993)
 \emph{Univariate Discrete Distributions},
 2nd ed.
 New York: Wiley.
+
 
 
 % Lindsey, J. K. (2002zz)
@@ -55,30 +67,42 @@ New York: Wiley.
 }
 \author{ T. W. Yee }
 \note{
+    \code{qzeta()} runs slower and slower as \code{shape} approaches 0
+    and \code{p} approaches 1.
     The \pkg{VGAM} family function \code{\link{zetaff}} estimates the
-    parameter \eqn{p}.
+    shape parameter \eqn{s}.
 
-
-}
-
-\section{Warning}{
-    This function has not been fully tested.
 
 
 }
+
+%\section{Warning}{
+%    These functions have not been fully tested.
+
+
+
+%}
 
 \seealso{
     \code{\link{zeta}},
-    \code{\link{zetaff}}.
+    \code{\link{zetaff}},
+    \code{\link{Oazeta}},
+    \code{\link{Oizeta}},
+    \code{\link{Otzeta}}.
 
 
 }
 
 \examples{
-dzeta(1:20, p = 2)
-\dontrun{ plot(1:6, dzeta(1:6, p = 4), type = "h", las = 1, ylab = "Probability",
-     main = "zeta probability function; black: p = 4; blue: p = 2")
-points(0.10 + 1:6, dzeta(1:6, p = 2), type = "h", col = "blue") }
+dzeta(1:20, shape = 2)
+myshape <- 0.5
+max(abs(pzeta(1:200, myshape) -
+    cumsum(1/(1:200)^(1+myshape)) / zeta(myshape+1)))  # Should be 0
+
+\dontrun{ plot(1:6, dzeta(1:6, 2), type = "h", las = 1,
+               col = "orange", ylab = "Probability",
+     main = "zeta probability function; orange: shape = 2; blue: shape = 1")
+points(0.10 + 1:6, dzeta(1:6, 1), type = "h", col = "blue") }
 }
 \keyword{distribution}
 

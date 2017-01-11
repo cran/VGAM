@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generalized Beta Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 3-parameter 
+  Maximum likelihood estimation of the 3-parameter
   generalized beta distribution as proposed by Libby and Novick (1982).
 
 }
@@ -20,7 +20,7 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
 
   }
   \item{llambda}{
-  Parameter link function applied to the 
+  Parameter link function applied to the
   parameter \eqn{\lambda}{lambda}.
   See \code{\link{Links}} for more choices.
 

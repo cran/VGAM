@@ -20,13 +20,13 @@ zageometricff(lprob = "logit", lonempobs0 = "logit",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lpobs0}{ 
+  \item{lpobs0}{
     Link function for the parameter \eqn{p_0}{pobs0} or \eqn{\phi}{phi},
     called \code{pobs0} or \code{phi} here.
     See \code{\link{Links}} for more choices.
 
   }
-  \item{lprob}{ 
+  \item{lprob}{
     Parameter link function applied to the probability of success,
     called \code{prob}
     or \eqn{p}.
@@ -48,7 +48,7 @@ zageometricff(lprob = "logit", lonempobs0 = "logit",
 %           epobs0 = list(), eprob = list(),
 % }
 
-  \item{ipobs0, iprob}{ 
+  \item{ipobs0, iprob}{
     Optional initial values for the parameters.
     If given, they must be in range.
     For multi-column responses, these are recycled sideways.
@@ -85,7 +85,7 @@ zageometricff(lprob = "logit", lonempobs0 = "logit",
 
   The input can be a matrix (multiple responses).
   By default, the two linear/additive predictors
-  of \code{zageometric} 
+  of \code{zageometric}
   are \eqn{(logit(\phi), logit(p))^T}{(logit(phi), logit(prob))^T}.
 
 
@@ -115,7 +115,7 @@ zageometricff(lprob = "logit", lonempobs0 = "logit",
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted}, returns
-  the mean \eqn{\mu}{mu} (default) which is given by 
+  the mean \eqn{\mu}{mu} (default) which is given by
   \deqn{\mu = (1-\phi) / p.}{%
          mu = (1- phi) / p.}
   If \code{type.fitted = "pobs0"} then \eqn{p_0}{pobs0} is returned.

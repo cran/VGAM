@@ -32,7 +32,7 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
 
   \item{idf.mu, idf.sigma}{
   See \code{\link{lms.bcn}}.
-  
+
   }
   \item{ilambda, isigma}{
   See \code{\link{lms.bcn}}.
@@ -42,7 +42,7 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
 }
 \details{
  Given a value of the covariate, this function applies a Box-Cox
- transformation to the response to best obtain a gamma distribution. 
+ transformation to the response to best obtain a gamma distribution.
  The parameters
  chosen to do this are estimated by maximum likelihood or penalized
  maximum likelihood.

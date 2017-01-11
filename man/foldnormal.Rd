@@ -101,7 +101,7 @@ foldnormal(lmean = "identitylink", lsd = "loge", imean = NULL, isd = NULL,
 
 
   Johnson, N. L. (1962)
-  The folded normal distribution: 
+  The folded normal distribution:
   accuracy of estimation by maximum likelihood.
   \emph{Technometrics},
   \bold{4}, 249--256.
@@ -137,7 +137,7 @@ foldnormal(lmean = "identitylink", lsd = "loge", imean = NULL, isd = NULL,
 
 
 }
-\seealso{ 
+\seealso{
     \code{\link{rfoldnorm}},
     \code{\link{uninormal}},
     \code{\link[stats:Normal]{dnorm}},

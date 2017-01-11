@@ -2,56 +2,48 @@
 \alias{Zipf}
 \alias{dzipf}
 \alias{pzipf}
-%\alias{qzipf}
-%\alias{rzipf}
+\alias{qzipf}
+\alias{rzipf}
 \title{The Zipf Distribution}
 \description{
-  Density, and cumulative distribution function 
+  Density, distribution function, quantile function and random generation
   for the Zipf distribution.
 
 }
 \usage{
-dzipf(x, N, s, log = FALSE)
-pzipf(q, N, s, log.p = FALSE)
+dzipf(x, N, shape, log = FALSE)
+pzipf(q, N, shape, log.p = FALSE)
+qzipf(p, N, shape)
+rzipf(n, N, shape)
 }
 \arguments{
-  \item{x, q}{vector of quantiles.}
-% \item{p}{vector of probabilities.}
-% \item{n}{number of observations.
-%   Must be a positive integer of length 1.}
-  \item{N, s }{
+  \item{x, q, p, n}{Same as \code{\link[stats]{Poisson}}. }
+  \item{N, shape}{
   the number of elements, and the exponent characterizing the
   distribution.
   See \code{\link{zipf}} for more details.
 
   }
-  \item{log}{
-  Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
-
-
-  }
-  \item{log.p}{
-  Same meaning as in \code{\link[stats:Normal]{pnorm}}
-  or \code{\link[stats:Normal]{qnorm}}.
+  \item{log, log.p}{
+  Same meaning as in \code{\link[stats]{Normal}}.
 
 
   }
 }
 \value{
-  \code{dzipf} gives the density, and
-  \code{pzipf} gives the cumulative distribution function.
-
-
-% \code{qzipf} gives the quantile function, and
-% \code{rzipf} generates random deviates.
+  \code{dzipf} gives the density,
+  \code{pzipf} gives the cumulative distribution function,
+  \code{qzipf} gives the quantile function, and
+  \code{rzipf} generates random deviates.
 
 
 }
 \author{ T. W. Yee }
 \details{
   This is a finite version of the zeta distribution.
-  See \code{\link{zipf}} for more details.
+  See \code{\link{zetaff}} for more details.
+  In general, these functions runs slower and slower as \code{N} increases.
+
 
 
 }
@@ -65,13 +57,13 @@ pzipf(q, N, s, log.p = FALSE)
 
 }
 \examples{
-N <- 10; s <- 0.5; y <- 1:N
-proby <- dzipf(y, N = N, s = s)
+N <- 10; shape <- 0.5; y <- 1:N
+proby <- dzipf(y, N = N, shape = shape)
 \dontrun{ plot(proby ~ y, type = "h", col = "blue", ylab = "Probability",
-     ylim = c(0, 0.2), main = paste("Zipf(N = ",N,", s = ",s,")", sep = ""),
+     ylim = c(0, 0.2), main = paste("Zipf(N = ",N,", shape = ",shape,")", sep = ""),
      lwd = 2, las = 1) }
 sum(proby)  # Should be 1
-max(abs(cumsum(proby) - pzipf(y, N = N, s = s)))  # Should be 0
+max(abs(cumsum(proby) - pzipf(y, N = N, shape = shape)))  # Should be 0
 }
 \keyword{distribution}
 

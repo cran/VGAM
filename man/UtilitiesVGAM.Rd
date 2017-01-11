@@ -70,7 +70,7 @@ interleave.VGAM(.M, M1, inverse = FALSE)
   to be stored for each of the working weight matrices.
   They are represented as columns in the matrix \code{wz} in
   e.g., \code{vglm.fit()}.
-  See  the \emph{matrix-band} format described in 
+  See  the \emph{matrix-band} format described in
   Section 18.3.5 of Yee (2015).
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -97,14 +97,14 @@ qhuber <- function (p, k = 0.862, mu = 0, sigma = 1,
                     lower.tail = TRUE, log.p = FALSE ) {
 
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
-    stop("bad input for argument 'lower.tail'") 
+    stop("bad input for argument 'lower.tail'")
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
 
   cnorm <- sqrt(2 * pi) * ((2 * pnorm(k) - 1) + 2 * dnorm(k) / k)
   if (lower.tail) {
     if (log.p) {
-      ln.p <- p 
+      ln.p <- p
       x <- pmin(exp(ln.p), -expm1(ln.p))
     } else {
       x <- pmin(p, 1 - p)
@@ -113,7 +113,7 @@ qhuber <- function (p, k = 0.862, mu = 0, sigma = 1,
     if (log.p) {
       ln.p <- p
       x <- pmin(-expm1(ln.p), exp(ln.p))
-    } else { 
+    } else {
       x <- pmin(1 - p, p)
     }
   }
@@ -129,7 +129,7 @@ qhuber <- function (p, k = 0.862, mu = 0, sigma = 1,
     } } else {
       if (log.p) {
         ifelse(exp(ln.p) > 0.5, mu + q * sigma, mu - q * sigma)
-      } else { 
+      } else {
         ifelse(p > 0.5, mu + q * sigma, mu - q * sigma)
       }
     }
@@ -144,7 +144,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
                    lower.tail = TRUE, log.p = FALSE ) {
 
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
-    stop("bad input for argument 'lower.tail'") 
+    stop("bad input for argument 'lower.tail'")
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
 
@@ -155,7 +155,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
   p <- ifelse(x <= -k ,
               exp(k^2 / 2) / k * exp(k * x) / sqrt(2 * pi),
               dnorm(k) / k + pnorm(x) - pnorm(-k))
-  
+
   if (lower.tail) {
     if (log.p) {
       ans <- ifelse(zedd <= 0, log(p) + log1p(-eps),
@@ -172,7 +172,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
       ans <- ifelse(zedd <= 0, -expm1(log(p) + log1p(-eps)),
                                exp(log(p) + log1p(-eps)))
     }
-  } 
+  }
   ans
 }
 
@@ -308,6 +308,15 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
            .elocat = elocat, .escale = escale,
            .k      = k ))),
   vfamily = c("huber2"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mylocat <- eta2theta(eta[, 1], .llocat ,  earg = .elocat )
+    myscale <- eta2theta(eta[, 2], .lscale ,  earg = .escale )
+    okay1 <- all(is.finite(mylocat)) &&
+             all(is.finite(myscale)) && all(0 < myscale)
+    okay1
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale,
+           .k      = k ))),
   deriv = eval(substitute(expression({
     mylocat <- eta2theta(eta[, 1], .llocat ,  earg = .elocat )
     myscale <- eta2theta(eta[, 2], .lscale ,  earg = .escale )
@@ -456,6 +465,13 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
            .elocat = elocat,
            .k      = k ))),
   vfamily = c("huber1"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mylocat <- eta2theta(eta, .llocat ,  earg = .elocat )
+    okay1 <- all(is.finite(mylocat))
+    okay1
+  }, list( .llocat = llocat,
+           .elocat = elocat,
+           .k      = k ))),
   deriv = eval(substitute(expression({
     mylocat <- eta2theta(eta, .llocat ,  earg = .elocat )
     myk     <- .k

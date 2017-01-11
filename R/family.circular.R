@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,7 +35,7 @@ dcard <- function(x, mu, rho, log = FALSE) {
 
 
 pcard <- function(q, mu, rho, lower.tail = TRUE, log.p = FALSE) {
-  
+
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
   if (!is.logical(log.p) || length(log.p) != 1)
@@ -61,7 +61,7 @@ pcard <- function(q, mu, rho, lower.tail = TRUE, log.p = FALSE) {
       ans[q <= 0] <- 1
       ans[q >= (2*pi)] <- 0
     }
-  } 
+  }
   ans[mu < 0 | mu > 2*pi] <- NaN  # A warning() may be a good idea here
   ans[abs(rho) > 0.5] <- NaN
   ans
@@ -84,7 +84,7 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
     stop("bad input for argument 'lower.tail'")
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
-  
+
   if (lower.tail) {
     if (log.p) {
       ln.p <- p
@@ -139,14 +139,14 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
           warning("did not converge")
           break
         }
-        oldans <- ans 
+        oldans <- ans
        }
-    } else { 
+    } else {
       for (its in 1:maxits) {
         oldans <- 2 * pi - 2 * pi * p
         ans <- oldans - (oldans + 2 * rho * (sin(oldans-mu)+sin(mu)) -
                2*pi + 2*pi*p) / (1 + 2 * rho * cos(oldans - mu))
-        index <- (ans < 0) | (ans > 2*pi)  
+        index <- (ans < 0) | (ans > 2*pi)
         if (any(index)) {
           ans[index] <- runif (sum(index), 0, 2*pi)
         }
@@ -225,7 +225,7 @@ cardioid.control <- function(save.weights = TRUE, ...) {
   new("vglmff",
   blurb = c("Cardioid distribution\n\n",
             "Links:    ",
-            namesof("mu",  lmu,  earg = emu,  tag = FALSE), ", ", 
+            namesof("mu",  lmu,  earg = emu,  tag = FALSE), ", ",
             namesof("rho", lrho, earg = erho, tag = FALSE), "\n",
             "Mean:     ",
             "pi + (rho/pi) *",
@@ -325,6 +325,14 @@ cardioid.control <- function(save.weights = TRUE, ...) {
   }, list( .lmu = lmu, .lrho = lrho,
            .emu = emu, .erho = erho ))),
   vfamily = c("cardioid"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mu  <- eta2theta(eta[, 1], link = .lmu  , earg = .emu  )
+    rho <- eta2theta(eta[, 2], link = .lrho , earg = .erho )
+    okay1 <- all(is.finite(mu )) && all( 0   < mu  & mu  < 2*pi) &&
+             all(is.finite(rho)) && all(-0.5 < rho & rho < 0.5)
+    okay1
+  }, list( .lmu = lmu, .lrho = lrho,
+           .emu = emu, .erho = erho ))),
 
 
 
@@ -481,6 +489,14 @@ cardioid.control <- function(save.weights = TRUE, ...) {
   }, list( .escale = escale, .lscale = lscale,
            .llocat = llocat, .elocat = elocat ))),
   vfamily = c("vonmises"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )
+    okay1 <- all(is.finite(locat)) && all(0 < locat & locat < 2*pi) &&
+             all(is.finite(Scale)) && all(0 < Scale)
+    okay1
+  }, list( .escale = escale, .lscale = lscale,
+           .llocat = llocat, .elocat = elocat ))),
   deriv = eval(substitute(expression({
     locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
     Scale <- eta2theta(eta[, 2], .lscale , earg = .escale )

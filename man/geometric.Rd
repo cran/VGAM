@@ -25,8 +25,8 @@ truncgeometric(upper.limit = Inf,
 
 
   }
-  \item{expected}{ 
-  Logical. 
+  \item{expected}{
+  Logical.
   Fisher scoring is used if \code{expected = TRUE}, else Newton-Raphson.
 
 
@@ -59,9 +59,9 @@ truncgeometric(upper.limit = Inf,
   Thus the response \eqn{Y} should be a non-negative integer.
   The mean of \eqn{Y} is \eqn{E(Y) = (1-p)/p}{E(Y) = (1-prob)/prob}
   and its variance is \eqn{Var(Y) = (1-p)/p^2}{Var(Y) = (1-prob)/prob^2}.
-  The geometric distribution is a special case of the 
+  The geometric distribution is a special case of the
   negative binomial distribution (see \code{\link{negbinomial}}).
-  The geometric distribution is also a special case of the 
+  The geometric distribution is also a special case of the
   Borel distribution, which is a Lagrangian distribution.
   If \eqn{Y} has a geometric distribution with parameter \eqn{p}{prob} then
   \eqn{Y+1} has a positive-geometric distribution with the same parameter.
@@ -107,7 +107,7 @@ Help from Viet Hoang Quoc is gratefully acknowledged.
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{negbinomial}},
   \code{\link[stats]{Geometric}},
   \code{\link{betageometric}},

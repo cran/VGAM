@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Mixture of Two Univariate Normal Distributions }
 \description{
-  Estimates the five parameters of a mixture of two univariate 
+  Estimates the five parameters of a mixture of two univariate
   normal distributions by maximum likelihood estimation.
 
 }
@@ -46,7 +46,7 @@ mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
     Optional initial value for \eqn{\sigma_1}{sd1} and \eqn{\sigma_2}{sd2}.
     The default is to compute initial values internally based on
     the argument \code{qmu}.
-    Currently these are not great, therefore using these arguments 
+    Currently these are not great, therefore using these arguments
     where practical is a good idea.
 
 
@@ -61,7 +61,7 @@ mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
 
   }
   \item{eq.sd}{
-    Logical indicating whether the two standard deviations should be 
+    Logical indicating whether the two standard deviations should be
     constrained to be equal. If \code{TRUE} then the appropriate
     constraint matrices will be used.
 
@@ -76,7 +76,7 @@ mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
   May be an integer vector
   specifying which linear/additive predictors are modelled as
   intercept-only.  If given, the value or values can be from the
-  set \eqn{\{1,2,\ldots,5\}}{1,2,...,5}. 
+  set \eqn{\{1,2,\ldots,5\}}{1,2,...,5}.
   The default is the first one only, meaning \eqn{\phi}{phi}
   is a single parameter even when there are explanatory variables.
   Set \code{zero = NULL} to model all linear/additive predictors as
@@ -87,12 +87,12 @@ mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
 }
 }
 \details{
-  The probability density function can be loosely written as 
+  The probability density function can be loosely written as
   \deqn{f(y) = \phi \, N(\mu_1,\sigma_1) + (1-\phi) \, N(\mu_2, \sigma_2)}{%
         f(y) = phi * N(mu1, sd1) + (1-phi) * N(mu2, sd2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group.
-  The parameters \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2} are the means, and 
+  The parameters \eqn{\mu_1}{mu1} and \eqn{\mu_2}{mu2} are the means, and
   \eqn{\sigma_1}{sd1} and \eqn{\sigma_2}{sd2} are the standard deviations.
   The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is

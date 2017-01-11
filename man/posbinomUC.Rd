@@ -33,7 +33,7 @@ rposbinom(n, size, prob)
 
 
   }
-  \item{prob}{probability of success on each trial. 
+  \item{prob}{probability of success on each trial.
   Should be in \eqn{(0,1)}.
 
 
@@ -79,7 +79,7 @@ rposbinom(n, size, prob)
 
 
 }
-%\references{ 
+%\references{
 %None.
 %}
 
@@ -102,7 +102,7 @@ rposbinom(n, size, prob)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{posbinomial}},
   \code{\link{dposbern}},
   \code{\link{zabinomial}},

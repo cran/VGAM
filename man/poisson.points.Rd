@@ -98,7 +98,7 @@ poisson.points(ostatistic, dimension = 2, link = "loge",
 
 
 }
-%\references{ 
+%\references{
 %}
 \author{ T. W. Yee }
 %\note{

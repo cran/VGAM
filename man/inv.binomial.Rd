@@ -36,7 +36,7 @@ inv.binomial(lrho = extlogit(min = 0.5, max = 1),
   \deqn{f(y;\rho,\lambda) =
   \frac{ \lambda  \,\Gamma(2y+\lambda) }{\Gamma(y+1) \, \Gamma(y+\lambda+1) }
   \{ \rho(1-\rho) \}^y  \rho^{\lambda}}{%
-  f(y;rho,lambda) = 
+  f(y;rho,lambda) =
   (lambda * Gamma(2y+lambda)) * [rho*(1-rho)]^y *
   rho^lambda / (Gamma(y+1) * Gamma(y+lambda+1))}
   where \eqn{y=0,1,2,\ldots}{y=0,1,2,...} and
@@ -100,7 +100,7 @@ results in an EIM that is diagonal.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{negbinomial}},
   \code{\link{poissonff}}.
 

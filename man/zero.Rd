@@ -14,7 +14,7 @@
 \value{
   Nothing is returned.
   It is simply a convenient argument for constraining
-  certain linear/additive predictors to be an intercept only. 
+  certain linear/additive predictors to be an intercept only.
 
 
 
@@ -27,7 +27,7 @@
   In general users
   should not assume any particular order of precedence when
   there is potential conflict of definition.
-  Currently no checking for consistency is made. 
+  Currently no checking for consistency is made.
 
 
   The argument \code{zero} may be renamed in the future to

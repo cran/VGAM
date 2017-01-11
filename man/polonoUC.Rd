@@ -27,7 +27,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
   \item{meanlog, sdlog }{
   the mean and standard deviation of the normal distribution
   (on the log scale).
-  They match the arguments in 
+  They match the arguments in
   \code{\link[stats:Lognormal]{Lognormal}}.
 
 
@@ -42,7 +42,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
   For \code{bigx = 10},
   he showed that the approximation has a relative error less than
   0.001 for values of \code{meanlog} and
-  \code{sdlog} ``likely to be encountered in practice''. 
+  \code{sdlog} ``likely to be encountered in practice''.
   The argument can be assigned \code{Inf} in which case
   the approximation is not used.
 
@@ -55,7 +55,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
 
   }
   \item{...}{
-  Arguments passed into 
+  Arguments passed into
   \code{\link[stats]{integrate}}.
 
 
@@ -96,7 +96,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
 
 
 % See zz code{link{polonozz}}, the \pkg{VGAM} family function
-% for estimating the parameters, 
+% for estimating the parameters,
 % for the formula of the probability density function and other details.
 
 

@@ -35,13 +35,13 @@ cardioid(lmu = extlogit(min = 0, max = 2*pi),
 
 }
 \details{
-  The two-parameter cardioid distribution 
+  The two-parameter cardioid distribution
   has a density that can be written as
   \deqn{f(y;\mu,\rho) = \frac{1}{2\pi}
         \left(1 + 2\, \rho \cos(y - \mu) \right) }{%
         f(y;mu,rho) = (1 + 2*rho*cos(y-mu)) / (2*pi)}
   where \eqn{0 < y < 2\pi}{0 < y < 2*pi},
-  \eqn{0 < \mu < 2\pi}{0 < mu < 2*pi}, and 
+  \eqn{0 < \mu < 2\pi}{0 < mu < 2*pi}, and
   \eqn{-0.5 < \rho < 0.5}{-0.5 < rho < 0.5} is the concentration parameter.
  The default link functions enforce the range constraints
  of the parameters.
@@ -64,7 +64,7 @@ cardioid(lmu = extlogit(min = 0, max = 2*pi),
 
 
 }
-\references{ 
+\references{
 
 Jammalamadaka, S. R. and SenGupta, A. (2001)
 \emph{Topics in Circular Statistics},
@@ -93,7 +93,7 @@ Singapore: World Scientific.
 
 
   \pkg{CircStats} and \pkg{circular} currently have a lot more
-  R functions for circular data than the \pkg{VGAM} package. 
+  R functions for circular data than the \pkg{VGAM} package.
 
 
 }

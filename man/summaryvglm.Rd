@@ -15,7 +15,8 @@ summaryvglm(object, correlation = FALSE,
             nopredictors = FALSE, ...)
 \method{show}{summary.vglm}(x, digits = max(3L, getOption("digits") - 3L),
            quote = TRUE, prefix = "", presid = TRUE,
-           signif.stars = NULL, nopredictors = NULL, ...)
+           signif.stars = NULL, nopredictors = NULL,
+           top.half.only = FALSE, ...)
 }
 \arguments{
   \item{object}{an object of class \code{"vglm"}, usually, a result of a
@@ -37,9 +38,18 @@ summaryvglm(object, correlation = FALSE,
                 of these?  }
   \item{quote}{ Fed into \code{print()}. }
   \item{nopredictors}{ logical;
-                       if \code{TRUE} the names of the linear predictors
-                       are not printed out.
-                       The default is that they are. }
+    if \code{TRUE} the names of the linear predictors
+    are not printed out.
+    The default is that they are.
+
+
+  }
+  \item{top.half.only}{
+  logical; if \code{TRUE} then only print out the top half of the usual output.
+  Used for P-VGAMs.
+
+
+  }
   \item{prefix}{ Not used. }
   \item{\ldots}{ Not used. }
 
@@ -57,12 +67,12 @@ summaryvglm(object, correlation = FALSE,
   \sQuote{significance stars} if \code{signif.stars} is \code{TRUE}.
   The \code{coefficients} component of the result gives the estimated
   coefficients and their estimated standard errors, together with their
-  ratio. 
+  ratio.
   This third column is labelled \code{z value} regardless of
   whether the
   dispersion is estimated or known
   (or fixed by the family).  A fourth column gives the two-tailed
-  p-value corresponding to the z ratio based on a 
+  p-value corresponding to the z ratio based on a
   Normal reference distribution.
 % (It is possible that the dispersion is
 % not known and there are no residual degrees of freedom from which to
@@ -77,7 +87,7 @@ distribution is used.
 % Aliased coefficients are omitted in the returned object but restored
 % by the \code{print} method.
 
-  
+
   Correlations are printed to two decimal places (or symbolically): to
   see the actual correlations print \code{summary(object)@correlation}
   directly.

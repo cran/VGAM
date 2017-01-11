@@ -66,9 +66,9 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 
 \author{ T. W. Yee }
-\note{ 
+\note{
   Suppose \eqn{A = 0}.
-  For a fixed time interval, the number of events is 
+  For a fixed time interval, the number of events is
   Poisson with mean \eqn{\lambda}{rate} if the time
   between events has a
   geometric distribution with mean \eqn{\lambda^{-1}}{1/rate}.

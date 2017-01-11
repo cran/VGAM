@@ -14,7 +14,8 @@ plotvgam.control(which.cf = NULL,
                  lcol = par()$col, rcol = par()$col,
                  scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
                  add.arg = FALSE, one.at.a.time = FALSE,
-                 .include.dots = TRUE, noxmean = FALSE, ...)
+                 .include.dots = TRUE, noxmean = FALSE,
+                 shade = FALSE, shcol = "gray80", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,12 +64,25 @@ plotvgam.control(which.cf = NULL,
   One might use this argument if \code{ylab} is specified.
 
   }
+
+
+
+  \item{shade, shcol}{
+  \code{shade} is logical; if \code{TRUE} then
+  the pointwise SE band is shaded gray by default.
+  The colour can be adjusted by setting \code{shcol}.
+  These arguments are ignored unless
+  \code{se = TRUE} and \code{overlay = FALSE};
+  If \code{shade = TRUE} then \code{scol} is ignored.
+
+
+  }
   \item{\dots}{ Other arguments that may be fed into \code{par()}. }
   In the above, \eqn{M} is the number of linear/additive predictors.
 }
 \details{
   The most obvious features of \code{\link{plotvgam}} can be
-  controlled by the above arguments. 
+  controlled by the above arguments.
 
 
 }

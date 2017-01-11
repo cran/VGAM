@@ -34,7 +34,7 @@ dgenpois(x, lambda = 0, theta, log = FALSE)
   the parameter restrictions, e.g., if \eqn{\lambda > 1}{lambda > 1}.
 
 
-  
+
 % \code{pgenpois} gives the distribution function, and
 % \code{qgenpois} gives the quantile function, and
 % \code{rgenpois} generates random deviates.

@@ -48,7 +48,7 @@ rmaxwell(n, rate)
 }
 \references{
 
-  Balakrishnan, N. and Nevzorov, V. B. (2003) 
+  Balakrishnan, N. and Nevzorov, V. B. (2003)
   \emph{A Primer on Statistical Distributions}.
   Hoboken, New Jersey: Wiley.
 
@@ -76,9 +76,9 @@ rmaxwell(n, rate)
 }
 \examples{
 \dontrun{ rate <- 3; x <- seq(-0.5, 3, length = 100)
-plot(x, dmaxwell(x, rate = rate), type = "l", col = "blue", las = 1, ylab = "",
+plot(x, dmaxwell(x, rate = rate), type = "l", col = "blue", las = 1,
      main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles")
+     sub = "Purple lines are the 10,20,...,90 percentiles", ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(x, pmaxwell(x, rate = rate), type = "l", col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)

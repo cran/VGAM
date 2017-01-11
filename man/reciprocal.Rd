@@ -76,7 +76,7 @@ close to 0.
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{identity}},
     \code{\link{powerlink}}.
 

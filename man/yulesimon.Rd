@@ -3,22 +3,24 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Yule-Simon Family Function }
 \description{
-  Estimating the parameter of the Yule-Simon distribution.
+  Estimating the shape parameter of the Yule-Simon distribution.
 
 }
 \usage{
-yulesimon(link = "loge", irho = NULL, nsimEIM = 200, zero = NULL)
+yulesimon(lshape = "loge", ishape = NULL, nsimEIM = 200, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Link function for the \eqn{\rho}{rho} parameter.
+  \item{lshape}{
+  Link function for the shape parameter,
+  called
+  \eqn{\rho}{rho} below.
   See \code{\link{Links}} for more choices and for general information.
 
 
   }
-  \item{irho}{
-  Optional initial value for the (positive) parameter. 
+  \item{ishape}{
+  Optional initial value for the (positive) parameter.
   See \code{\link{CommonVGAMffArguments}} for more information.
   The default is to obtain an initial value internally. Use this argument
   if the default fails.
@@ -33,7 +35,7 @@ yulesimon(link = "loge", irho = NULL, nsimEIM = 200, zero = NULL)
 }
 \details{
     The probability function is
-    \deqn{f(y;\rho) = rho*beta(y,rho+1),}{%
+    \deqn{f(y;\rho) = \rho*beta(y,\rho+1),}{%
           f(y;rho) = rho*beta(y,rho+1),}
     where the parameter \eqn{\rho>0}{rho>0},
     \eqn{beta} is the \code{\link[base]{beta}} function,
@@ -62,7 +64,7 @@ yulesimon(link = "loge", irho = NULL, nsimEIM = 200, zero = NULL)
 
 
 }
-\references{ 
+\references{
 
     Simon, H. A. (1955)
     On a class of skew distribution functions.
@@ -73,7 +75,7 @@ yulesimon(link = "loge", irho = NULL, nsimEIM = 200, zero = NULL)
 
 }
 \author{ T. W. Yee }
-%\note{ 
+%\note{
 %}
 
 \seealso{
@@ -85,7 +87,7 @@ yulesimon(link = "loge", irho = NULL, nsimEIM = 200, zero = NULL)
 }
 \examples{
 ydata <- data.frame(x2 = runif(nn <- 1000))
-ydata <- transform(ydata, y = ryules(nn, rho = exp(1.5 - x2)))
+ydata <- transform(ydata, y = ryules(nn, shape = exp(1.5 - x2)))
 with(ydata, table(y))
 fit <- vglm(y ~ x2, yulesimon, data = ydata, trace = TRUE)
 coef(fit, matrix = TRUE)
@@ -106,7 +108,7 @@ summary(fit)
 %cs = cumsum(probs)
 %tab = table(cut(runif(nn), brea = c(0,cs,1)))
 %index = (1:length(tab))[tab>0]
-%y = rep(index, times=tab[index]) 
+%y = rep(index, times=tab[index])
 
 
 

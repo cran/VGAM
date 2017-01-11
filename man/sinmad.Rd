@@ -3,12 +3,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Singh-Maddala Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 3-parameter 
+  Maximum likelihood estimation of the 3-parameter
   Singh-Maddala distribution.
 }
 \usage{
-sinmad(lscale = "loge", lshape1.a = "loge", lshape3.q = "loge", 
-       iscale = NULL, ishape1.a = NULL, ishape3.q = NULL, imethod = 1, 
+sinmad(lscale = "loge", lshape1.a = "loge", lshape3.q = "loge",
+       iscale = NULL, ishape1.a = NULL, ishape3.q = NULL, imethod = 1,
        lss = TRUE, gscale = exp(-5:5), gshape1.a = exp(-5:5),
        gshape3.q = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
        zero = "shape")

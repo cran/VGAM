@@ -78,7 +78,7 @@ cauchit(theta, bvalue = .Machine$double.eps,
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{logit}},
     \code{\link{probit}},
     \code{\link{cloglog}},

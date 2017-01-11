@@ -20,7 +20,7 @@ studentt3(llocation = "identitylink", lscale = "loge", ldf = "loglog",
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{llocation, lscale, ldf}{
-  Parameter link functions for each parameter, 
+  Parameter link functions for each parameter,
   e.g., for degrees of freedom \eqn{\nu}{nu}.
   See \code{\link{Links}} for more choices.
   The defaults ensures the parameters are in range.
@@ -68,11 +68,11 @@ studentt3(llocation = "identitylink", lscale = "loge", ldf = "loglog",
   Then \eqn{E(Y)=0} if \eqn{\nu>1}{nu>1} (returned as the fitted values),
   and \eqn{Var(Y)= \nu/(\nu-2)}{Var(Y)= nu/(nu-2)}
   for \eqn{\nu > 2}{nu > 2}.
-  When \eqn{\nu=1}{nu=1} then the Student \eqn{t}-distribution 
+  When \eqn{\nu=1}{nu=1} then the Student \eqn{t}-distribution
   corresponds to the standard Cauchy distribution,
   \code{\link{cauchy1}}.
   When \eqn{\nu=2}{nu=2} with a scale parameter of \code{sqrt(2)} then
-  the Student \eqn{t}-distribution 
+  the Student \eqn{t}-distribution
   corresponds to the standard (Koenker) distribution,
   \code{\link{sc.studentt2}}.
   The degrees of freedom can be treated as a parameter to be estimated,

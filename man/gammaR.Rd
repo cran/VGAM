@@ -63,9 +63,9 @@ gammaR(lrate = "loge", lshape = "loge", irate = NULL,
   for \eqn{shape > 0}, \eqn{rate > 0} and \eqn{y > 0}.
   Here, \eqn{\Gamma(shape)}{gamma(shape)} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
-  The mean of \emph{Y} is \eqn{\mu = shape/rate}{mu = shape/rate} 
+  The mean of \emph{Y} is \eqn{\mu = shape/rate}{mu = shape/rate}
   (returned as the fitted values) with variance
-  \eqn{\sigma^2 = \mu^2 /shape = shape/rate^2}{sigma^2 = 
+  \eqn{\sigma^2 = \mu^2 /shape = shape/rate^2}{sigma^2 =
        mu^2 /shape = shape/rate^2}.
   By default, the two linear/additive predictors are
   \eqn{\eta_1 = \log(shape)}{eta1 = log(shape)} and
@@ -95,7 +95,7 @@ gammaR(lrate = "loge", lshape = "loge", irate = NULL,
 \references{
   Most standard texts on statistical distributions describe
   the 2-parameter gamma distribution, e.g.,
-  
+
 
 Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},

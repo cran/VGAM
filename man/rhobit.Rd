@@ -17,7 +17,7 @@ rhobit(theta, bminvalue = NULL, bmaxvalue = NULL,
   See below for further details.
 
   }
-  \item{bminvalue, bmaxvalue}{ 
+  \item{bminvalue, bmaxvalue}{
   Optional boundary values, e.g.,
   values of \code{theta} which are less than or equal to -1 can be
   replaced by \code{bminvalue}

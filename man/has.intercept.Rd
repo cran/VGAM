@@ -26,7 +26,7 @@ has.interceptvlm(object, form.number = 1, \dots)
 
 
   }
- \item{\dots}{Arguments that are might be passed from 
+ \item{\dots}{Arguments that are might be passed from
   one function to another.
 
  }

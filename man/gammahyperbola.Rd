@@ -67,7 +67,7 @@ gammahyperbola(ltheta = "loge", itheta = NULL, expected = FALSE)
 \references{
 
 Reid, N. (2003)
-Asymptotics and the theory of inference. 
+Asymptotics and the theory of inference.
 \emph{Annals of Statistics},
 \bold{31}, 1695--1731.
 

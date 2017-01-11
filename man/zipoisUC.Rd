@@ -24,7 +24,7 @@ rzipois(n, lambda, pstr0 = 0)
   \item{p}{vector of probabilities. }
   \item{n}{number of observations. Must be a single positive integer. }
   \item{lambda}{ Vector of positive means. }
-  \item{pstr0}{ 
+  \item{pstr0}{
   Probability of a structural zero
   (i.e., ignoring the Poisson distribution),
   called \eqn{\phi}{phi}.
@@ -39,7 +39,7 @@ rzipois(n, lambda, pstr0 = 0)
 \details{
   The probability function of \eqn{Y} is 0 with probability
   \eqn{\phi}{phi}, and \eqn{Poisson(\lambda)}{Poisson(lambda)} with
-  probability \eqn{1-\phi}{1-phi}. Thus 
+  probability \eqn{1-\phi}{1-phi}. Thus
   \deqn{P(Y=0) =\phi + (1-\phi)  P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
   where \eqn{W} is distributed \eqn{Poisson(\lambda)}{Poisson(lambda)}.
@@ -56,7 +56,7 @@ rzipois(n, lambda, pstr0 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The argument \code{pstr0} is recycled to the required length, and
   must have values which lie in the interval \eqn{[0,1]}.
 
@@ -74,7 +74,7 @@ rzipois(n, lambda, pstr0 = 0)
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{zipoisson}},
     \code{\link[stats:Poisson]{dpois}},
     \code{\link{rzinegbin}}.

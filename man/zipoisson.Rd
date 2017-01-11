@@ -54,7 +54,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
   The estimated probability of an observed 0 is an alternative, else
   the estimated probability of a  structural 0,
   or one minus the estimated probability of a  structural 0.
-  See \code{\link{CommonVGAMffArguments}} 
+  See \code{\link{CommonVGAMffArguments}}
   and \code{\link{fittedvlm}} for more information.
 
 
@@ -72,7 +72,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
   }
   \item{ishrinkage}{
   How much shrinkage is used when initializing \eqn{\lambda}{lambda}.
-  The value must be between 0 and 1 inclusive, and 
+  The value must be between 0 and 1 inclusive, and
   a value of 0 means the individual response values are used,
   and a value of 1 means the median or mean is used.
   This argument is used in conjunction with \code{imethod}.
@@ -80,7 +80,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   Specifies which linear/additive predictors are to be modelled as
   intercept-only.  If given, the value can be either 1 or 2, and the
   default is none of them. Setting \code{zero = 1} makes \eqn{\phi}{phi}
@@ -232,7 +232,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
   The default for \code{zipoissonff()} is to model the
   structural zero probability as an intercept-only.
 
-} 
+}
 
 \seealso{
   \code{\link{zapoisson}},

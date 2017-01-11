@@ -42,12 +42,12 @@ dbinom2.rho(mu1,
     The correlation parameter.
     Must be numeric and lie between \eqn{-1} and \eqn{1}.
     The default value of zero means the responses are uncorrelated.
-    
+
   }
   \item{exchangeable}{
    Logical. If \code{TRUE}, the two marginal probabilities are constrained
    to be equal.
-    
+
   }
   \item{twoCols}{
    Logical.
@@ -103,7 +103,7 @@ dbinom2.rho(mu1,
 \examples{
 (myrho <- rhobit(2, inverse = TRUE))  # Example 1
 ymat <- rbinom2.rho(nn <- 2000, mu1 = 0.8, rho = myrho, exch = TRUE)
-(mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))                                     
+(mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))
 fit <- vglm(ymat ~ 1, binom2.rho(exch = TRUE))
 coef(fit, matrix = TRUE)
 

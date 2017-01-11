@@ -33,7 +33,7 @@ identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
   should be available to every parameter
   estimated by the \pkg{VGAM} library. However, it usually results in
   numerical problems because the estimates lie outside the permitted
-  range. Consequently, the result may contain 
+  range. Consequently, the result may contain
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
@@ -70,7 +70,7 @@ identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 \author{ Thomas W. Yee }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{loge}},
   \code{\link{logit}},
@@ -80,10 +80,10 @@ identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 
 }
 \examples{
-identitylink((-5):5) 
+identitylink((-5):5)
 identitylink((-5):5, deriv = 1)
 identitylink((-5):5, deriv = 2)
-negidentity((-5):5) 
+negidentity((-5):5)
 negidentity((-5):5, deriv = 1)
 negidentity((-5):5, deriv = 2)
 }

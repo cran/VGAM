@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,7 +20,7 @@ qeunif <- function(p, min = 0, max = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
   if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
   rm(log.p)   # 20150102 KaiH
-  
+
   if (lower.tail) {
     if (log.arg)
       p <- exp(p)
@@ -72,10 +72,10 @@ peunif <- function(q, min = 0, max = 1,
 
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
-  
+
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
-  
+
   if (any(min >= max))
     stop("argument 'min' has values greater or equal to argument 'max'")
 
@@ -152,7 +152,7 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
 
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
-  
+
   ppp <- p
   if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
       Tol.nr > 0.10)
@@ -160,7 +160,7 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
          "positive value, or is too large")
   nrok <- is.finite(ppp)
 
-  eee <-  qnorm(ppp, sd = 2/3, lower.tail = lower.tail, log.p = log.p) 
+  eee <-  qnorm(ppp, sd = 2/3, lower.tail = lower.tail, log.p = log.p)
 
 
 
@@ -208,7 +208,7 @@ qenorm <- function(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
   } else {
     if (log.p) {
       eee[ln.ppp > 0] <- NaN
-    } else { 
+    } else {
       eee[ppp == 0] <- Inf
       eee[ppp == 1] <- -Inf
       eee[ppp <  0] <- NaN
@@ -224,7 +224,7 @@ penorm <- function(q, mean = 0, sd = 1,
                    lower.tail = TRUE, log.p = FALSE) {
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
-  
+
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
 
@@ -293,13 +293,13 @@ qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
   if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
   rm(log.p)   # 20150102 KaiH
-  
+
   if (lower.tail) {
     if (log.arg) p <- exp(p)
   } else {
     p <- if (log.arg) -expm1(p) else 1 - p
   }
-  
+
   ppp <- p
   vsmallno <- sqrt(.Machine$double.eps)
   if (!is.Numeric( Tol.nr, length.arg = 1, positive = TRUE) ||
@@ -340,7 +340,7 @@ qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
 peexp <- function(q, rate = 1, lower.tail = TRUE, log.p = FALSE) {
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
-  
+
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
 
@@ -427,7 +427,7 @@ psc.t2 <- function(q, location = 0, scale = 1,
                    lower.tail = TRUE, log.p = FALSE) {
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
-  
+
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
 
@@ -438,10 +438,10 @@ psc.t2 <- function(q, location = 0, scale = 1,
     if (log.p) {
       ans <- log(0.5) + log1p(zedd / sqrt(4 + zedd^2))
       ans[q == -Inf] <- log(0)
-      ans[q == Inf] <- log(1) 
+      ans[q == Inf] <- log(1)
       } else {
       ans <- 0.5 * (1 + zedd / sqrt(4 + zedd^2))
-      ans[q == -Inf] <- 0 
+      ans[q == -Inf] <- 0
       ans[q == Inf] <- 1
       }
   } else {
@@ -451,11 +451,11 @@ psc.t2 <- function(q, location = 0, scale = 1,
       ans[q == Inf] <- log(0)
     } else {
       ans <- 0.5 * exp(log1p(-zedd / sqrt(4 + zedd^2)))
-      ans[q == -Inf] <- 1 
-      ans[q == Inf] <- 0 
+      ans[q == -Inf] <- 1
+      ans[q == Inf] <- 0
     }
   }
-  ans 
+  ans
 }
 
 
@@ -468,10 +468,10 @@ qsc.t2 <- function(p, location = 0, scale = 1,
 
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
-  
+
   if (!is.logical(log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
-  
+
   if (lower.tail) {
     if (log.p) {
       ln.p <- p
@@ -493,7 +493,7 @@ qsc.t2 <- function(p, location = 0, scale = 1,
              exp(0.5*(ln.p - log(-expm1(ln.p))))
       ans[ln.p > 0] <- NaN
       ans
-    } else { 
+    } else {
       ans <- exp(0.5*(log1p(-p) - log(p))) -
              exp(0.5*(log(p) - log1p(-p)))
       ans[p < 0] <- NaN
@@ -529,7 +529,7 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
                      imethod = 1,
                      zero = "scale") {
 
- 
+
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -597,8 +597,8 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
 
 
     predictors.names <- c(
-        namesof("location", .llocat, earg = .elocat, tag = FALSE),
-        namesof("scale",    .lscale, earg = .escale, tag = FALSE))
+        namesof("location", .llocat , earg = .elocat , tag = FALSE),
+        namesof("scale",    .lscale , earg = .escale , tag = FALSE))
 
 
     if (!length(etastart)) {
@@ -611,8 +611,8 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
         diff(quantile(y, prob = c(0.25, 0.75))) / (2 * 1.155) + 1.0e-5
       locat.init <- rep_len(locat.init, length(y))
       Scale.init <- rep_len(Scale.init, length(y))
-      etastart <- cbind(theta2eta(locat.init, .llocat, earg = .elocat),
-                        theta2eta(Scale.init, .lscale, earg = .escale))
+      etastart <- cbind(theta2eta(locat.init, .llocat , earg = .elocat ),
+                        theta2eta(Scale.init, .lscale , earg = .escale ))
     }
   }), list( .llocat = llocat, .lscale = lscale,
             .ilocat = ilocat, .iscale = iscale,
@@ -620,8 +620,8 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL){
     Perce <- .percentile
-    locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
-    Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+    locat <- eta2theta(eta[, 1], link = .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], link = .lscale , earg = .escale )
     answer <- matrix(locat, nrow(eta), length(Perce))
     for (ii in seq_along(Perce))
       answer[, ii] <- qsc.t2(Perce[ii] / 100, loc = locat, sc = Scale)
@@ -632,9 +632,9 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
            .elocat = elocat, .escale = escale,
            .percentile = percentile ))),
   last = eval(substitute(expression({
-    misc$link <-    c("location" = .llocat, "scale" = .lscale)
+    misc$link <-    c("location" = .llocat , "scale" = .lscale )
 
-    misc$earg <- list("location" = .elocat, "scale" = .escale)
+    misc$earg <- list("location" = .elocat , "scale" = .escale )
 
     misc$expected <- TRUE
     misc$percentile <- .percentile
@@ -654,8 +654,8 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
-    Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+    locat <- eta2theta(eta[, 1], link = .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], link = .lscale , earg = .escale )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -670,12 +670,20 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
   vfamily = c("sc.studentt2"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    locat <- eta2theta(eta[, 1], link = .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], link = .lscale , earg = .escale )
+    okay1 <- all(is.finite(locat)) &&
+             all(is.finite(Scale)) && all(0 < Scale)
+    okay1
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
   deriv = eval(substitute(expression({
-    locat <- eta2theta(eta[, 1], link = .llocat, earg = .elocat)
-    Scale <- eta2theta(eta[, 2], link = .lscale, earg = .escale)
+    locat <- eta2theta(eta[, 1], link = .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, 2], link = .lscale , earg = .escale )
 
-    dlocat.deta <- dtheta.deta(locat, link = .llocat, earg = .elocat)
-    dscale.deta <- dtheta.deta(Scale, link = .lscale, earg = .escale)
+    dlocat.deta <- dtheta.deta(locat, link = .llocat , earg = .elocat )
+    dscale.deta <- dtheta.deta(Scale, link = .lscale , earg = .escale )
 
     zedd <- (y - locat) / Scale
 

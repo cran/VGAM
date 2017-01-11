@@ -124,7 +124,7 @@ model and \texttt{multinom()}
 \citep[in \pkg{nnet};][]{Venables+Ripley:2002} for the multinomial
 logit model. However, both of these can be considered `one-off'
 modeling functions rather than providing a unified offering for CDA.
-The function \texttt{lrm()} \citep[in \pkg{rms};][]{Harrell:2009}
+The function \texttt{lrm()} \citep[in \pkg{rms};][]{Harrell:2016}
 has greater functionality: it can fit the proportional odds model
 (and the forward continuation ratio model upon preprocessing). Neither
 \texttt{polr()} or \texttt{lrm()} appear able to fit the nonproportional
@@ -248,6 +248,9 @@ background to this article include
 \cite{agre:2010},
 \cite{agre:2013},
 \cite{fahr:tutz:2001},
+\cite{full:xu:2016},
+\cite{harr:2015},
+\cite{hens:rose:gree:2015},
 \cite{leon:2000},
 \cite{lloy:1999},
 \cite{long:1997},
@@ -1003,13 +1006,18 @@ Any $g$ from Table \ref{tab:jsscat.links} appropriate for
 a parameter $\theta \in (0,1)$ will do.
 
 
+
 A toy example where $p=p_A$ and $q=p_B$ is
-<<>>=
+
+
+<<eval=F>>=
 abodat <- data.frame(A = 725, B = 258, AB = 72, O = 1073)
 fit <- vglm(cbind(A, B, AB, O) ~ 1, ABO, data = abodat)
 coef(fit, matrix = TRUE)
 Coef(fit)  # Estimated pA and pB
 @
+
+
 The function \texttt{Coef()}, which applies only to intercept-only models,
 applies to $g_{j}(\theta_{j})=\eta_{j}$
 the inverse link function $g_{j}^{-1}$ to $\widehat{\eta}_{j}$
@@ -1605,7 +1613,8 @@ backPain <- transform(backPain, sx1 = -scale(x1), sx2 = -scale(x2), sx3 = -scale
 displays the six ordered categories.
 Now a rank-1 stereotype model can be fitted with
 <<>>=
-bp.rrmlm1 <- rrvglm(pain ~ sx1 + sx2 + sx3, multinomial, data = backPain)
+bp.rrmlm1 <- rrvglm(factor(pain, ordered = FALSE) ~ sx1 + sx2 + sx3,
+                    multinomial, data = backPain)
 @
 Then
 <<>>=
@@ -1642,7 +1651,8 @@ set.seed(123)
 @
 A rank-2 model fitted \textit{with a different normalization}
 <<>>=
-bp.rrmlm2 <- rrvglm(pain ~ sx1 + sx2 + sx3, multinomial, data = backPain, Rank = 2,
+bp.rrmlm2 <- rrvglm(factor(pain, ordered = FALSE) ~ sx1 + sx2 + sx3,
+                   multinomial, data = backPain, Rank = 2,
                    Corner = FALSE, Uncor = TRUE)
 @
 produces uncorrelated $\widehat{\bnu}_i = \widehat{\bC}^{\top} \bix_{2i}$.

@@ -80,7 +80,7 @@ frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
         f(y) = ((s*b) / (y-a)^2) * exp[-(b/(y-a))^s] * [b/(y-a)]^(s-1)}
   for \eqn{y > a} and scale parameter \eqn{b > 0}.
   The positive shape parameter is \eqn{s}.
-  The cumulative distribution function is 
+  The cumulative distribution function is
   \deqn{F(y) = \exp[-(b/(y-a))^s]. }{%
         F(y) =  exp[-(b/(y-a))^s].}
   The mean of \eqn{Y} is \eqn{a + b \Gamma(1-1/s)}{a + b*gamma(1-1/s)}
@@ -103,7 +103,7 @@ frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
 % Estimating \eqn{a} well requires a lot of data and
 % a good choice of \code{ilocation} will help speed up convergence.
 % For \code{frechet3} the default linear/additive predictors are
-% \eqn{\log(D)}{log(D)}, 
+% \eqn{\log(D)}{log(D)},
 % It would be great if the first linear/additive predictor was a direct
 % function of the location parameter, but this can run the risk that
 % the estimate is out of range (i.e., greater than \code{min(y)}).
@@ -140,7 +140,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 
-%\note{ 
+%\note{
 
 % Family function \code{frechet3} uses
 % the BFGS quasi-Newton update formula for the

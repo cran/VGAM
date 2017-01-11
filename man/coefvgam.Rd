@@ -15,7 +15,7 @@ coefvgam(object, type = c("linear", "nonlinear"), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ A 
+  \item{object}{ A
     \code{\link{vgam}} object.
 
 

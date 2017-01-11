@@ -114,7 +114,7 @@ lines(Q, dhuber(Q, mu = mu), col = "purple", lty = 3, type = "h")
 lines(Q, phuber(Q, mu = mu), col = "purple", lty = 3, type = "h")
 abline(h = probs, col = "purple", lty = 3)
 phuber(Q, mu = mu) - probs  # Should be all 0s
-} 
-} 
+}
+}
 \keyword{distribution}
 

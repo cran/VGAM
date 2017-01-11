@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -21,7 +21,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
     knots <- vector("list", nvar)
     knots[[1]] <- temp$knots
 
-    if (nvar > 1) 
+    if (nvar > 1)
       for (ii in 2:nvar) {
         temp <- vgam.match(x[[ii]], all.knots = all.knots, nk = nk[ii])
         ooo[, ii] <- temp$matcho
@@ -31,7 +31,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
         xmin[ii] <- temp$xmin
         xmax[ii] <- temp$xmax
       }
-    names(nknots) <- names(knots) <- 
+    names(nknots) <- names(knots) <-
     names(neffec) <- names(xmin) <- names(xmax) <- names(x)
     dimnames(ooo) <- list(NULL, names(x))
 
@@ -40,7 +40,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
   }
 
   if (!is.null(attributes(x)$NAs) || anyNA(x))
-    stop("cannot smooth on variables with NAs") 
+    stop("cannot smooth on variables with NAs")
 
   sx <- unique(sort(as.vector(x)))  # "as.vector()" strips off attributes
   ooo <- match(x, sx)  # as.integer(match(x, sx))      # sx[o]==x
@@ -49,7 +49,7 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
   if (neffec < 7)
     stop("smoothing variables must have at least 7 unique values")
 
-  xmin <- sx[1]     # Don't use rounded value 
+  xmin <- sx[1]     # Don't use rounded value
   xmax <- sx[neffec]
   xbar <- (sx - xmin) / (xmax - xmin)
 

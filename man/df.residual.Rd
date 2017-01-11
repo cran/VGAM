@@ -36,10 +36,10 @@ df.residual_vlm(object, type = c("vlm", "lm"), \dots)
   The number of rows is \eqn{M} times the `ordinary' number
   of rows of the LM-type model: \eqn{nM}.
   Here, \eqn{M} is the number of linear/additive predictors.
-  So the formula for the VLM-type residual degrees-of-freedom 
+  So the formula for the VLM-type residual degrees-of-freedom
   is \eqn{nM - p^{*}} where \eqn{p^{*}} is the number of
   columns of the `big' VLM matrix.
-  The formula for the LM-type residual degrees-of-freedom 
+  The formula for the LM-type residual degrees-of-freedom
   is \eqn{n - p_{j}} where \eqn{p_{j}} is the number of
   columns of the `ordinary' LM matrix corresponding
   to the \eqn{j}th linear/additive predictor.

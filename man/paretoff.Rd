@@ -87,7 +87,7 @@ truncpareto(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
         f(y) = k * alpha^k / [y^(k+1) (1-(\alpha/U)^k)]}
   for \eqn{0 < \alpha < y < U < \infty}{0< alpha < y < U < Inf}
   and \eqn{k>0}.
-  Possibly, better names for \eqn{k} are 
+  Possibly, better names for \eqn{k} are
   the \emph{index} and \emph{tail} parameters.
   Here, \eqn{\alpha}{alpha} and \eqn{U} are known.
   The mean of \eqn{Y} is
@@ -104,7 +104,7 @@ truncpareto(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
 
 
 }
-\references{ 
+\references{
 Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
@@ -133,13 +133,13 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   and \eqn{b=\alpha}{b = alpha}.
 
 
-  In some applications the Pareto law is truncated by a 
+  In some applications the Pareto law is truncated by a
   natural upper bound on the probability tail.
   The upper truncated Pareto distribution has three parameters (called
   \eqn{\alpha}{alpha}, \eqn{U} and \eqn{k} here) but the family function
   \code{truncpareto()} estimates only \eqn{k}.
   With known lower and upper limits, the ML estimator of \eqn{k} has
-  the usual properties of MLEs. 
+  the usual properties of MLEs.
   Aban (2006) discusses other inferential details.
 
 

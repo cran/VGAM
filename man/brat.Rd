@@ -27,7 +27,7 @@ brat(refgp = "last", refvalue = 1, ialpha = 1)
 
   }
   \item{ialpha}{
-  Initial values for the \eqn{\alpha}{alpha}s. 
+  Initial values for the \eqn{\alpha}{alpha}s.
   These are recycled to the appropriate length.
 
   }
@@ -73,7 +73,7 @@ brat(refgp = "last", refvalue = 1, ialpha = 1)
 
 
 }
-\references{ 
+\references{
 Agresti, A. (2013)
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
@@ -92,7 +92,7 @@ than this function.
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The function \code{\link{Brat}} is useful for coercing
   a \eqn{M+1} by \eqn{M+1} matrix of counts into a one-row
   matrix suitable for \code{brat}. Diagonal elements are
@@ -148,8 +148,8 @@ summary(fit)
 c(0, coef(fit))  # Log-abilities (in order of "journal")
 c(1, Coef(fit))  # Abilities (in order of "journal")
 fitted(fit)     # Probabilities of winning in awkward form
-(check <- InverseBrat(fitted(fit)))  # Probabilities of winning 
-check + t(check)  # Should be 1's in the off-diagonals 
+(check <- InverseBrat(fitted(fit)))  # Probabilities of winning
+check + t(check)  # Should be 1's in the off-diagonals
 }
 \keyword{models}
 \keyword{regression}

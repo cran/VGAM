@@ -28,18 +28,18 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lpobs0}{ 
+  \item{lpobs0}{
     Link function for the parameter \eqn{p_0}{pobs0}, called \code{pobs0} here.
     See \code{\link{Links}} for more choices.
 
   }
-  \item{lmunb}{ 
+  \item{lmunb}{
     Link function applied to the \code{munb} parameter, which is the mean
     \eqn{\mu_{nb}}{munb} of an ordinary negative binomial distribution.
     See \code{\link{Links}} for more choices.
 
   }
-  \item{lsize}{ 
+  \item{lsize}{
     Parameter link function applied to the reciprocal of the dispersion
     parameter, called \code{k}. That is, as \code{k} increases, the
     variance of the response decreases.
@@ -71,7 +71,7 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
 %             epobs0 = list(),  emunb = list(), esize = list(),
 % }
 
-  \item{ipobs0, imunb, isize}{ 
+  \item{ipobs0, imunb, isize}{
     Optional initial values for \eqn{p_0}{pobs0} and \code{munb}
     and \code{k}.
     If given then it is okay to give one value
@@ -80,7 +80,7 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
 %   Integer valued vector, may be assigned, e.g., \eqn{-3} or \eqn{3} if
 %   the probability of an observed value is to be modelled with the
 %   covariates.
@@ -180,7 +180,7 @@ zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
 
   The \code{fitted.values} slot of the fitted object,
   which should be extracted by the generic function \code{fitted}, returns
-  the mean \eqn{\mu}{mu} (default) which is given by 
+  the mean \eqn{\mu}{mu} (default) which is given by
   \deqn{\mu = (1-p_0) \mu_{nb} / [1 - (k/(k+\mu_{nb}))^k].}{%
          mu = (1-pobs0) * munb / [1 - (k/(k+munb))^k].}
   If \code{type.fitted = "pobs0"} then \eqn{p_0}{pobs0} is returned.

@@ -70,7 +70,7 @@ rtruncpareto(n, lower, upper, shape)
 
 }
 %%\note{
-%%  The truncated Pareto distribution is 
+%%  The truncated Pareto distribution is
 %%}
 \seealso{
   \code{\link{truncpareto}}.

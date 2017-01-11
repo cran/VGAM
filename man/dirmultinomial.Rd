@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fitting a Dirichlet-Multinomial Distribution }
 \description{
-  Fits a Dirichlet-multinomial distribution to a matrix response. 
+  Fits a Dirichlet-multinomial distribution to a matrix response.
 
 }
 \usage{
@@ -12,7 +12,7 @@ dirmultinomial(lphi = "logit", iphi = 0.10, parallel = FALSE, zero = "M")
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lphi}{
-  Link function applied to the \eqn{\phi}{phi} 
+  Link function applied to the \eqn{\phi}{phi}
   parameter, which lies in the open unit interval \eqn{(0,1)}.
   See \code{\link{Links}} for more choices.
 
@@ -56,7 +56,7 @@ dirmultinomial(lphi = "logit", iphi = 0.10, parallel = FALSE, zero = "M")
   multivariate distribution called the Dirichlet distribution.
   The Dirichlet-multinomial distribution has probability function
   \deqn{P(Y_1=y_1,\ldots,Y_M=y_M) =
-     {N_{*} \choose {y_1,\ldots,y_M}} 
+     {N_{*} \choose {y_1,\ldots,y_M}}
         \frac{
         \prod_{j=1}^{M}
         \prod_{r=1}^{y_{j}}
@@ -87,10 +87,10 @@ dirmultinomial(lphi = "logit", iphi = 0.10, parallel = FALSE, zero = "M")
   applied to \eqn{\phi}{phi}.
 
 
-  Note that \eqn{E(Y_j) = N_* \pi_j}{E(Y_j) = N_* pi_j} but 
+  Note that \eqn{E(Y_j) = N_* \pi_j}{E(Y_j) = N_* pi_j} but
   the probabilities (returned as the fitted values)
   \eqn{\pi_j}{pi_j} are bundled together as a \eqn{M}-column matrix.
-  The quantities \eqn{N_*} are returned as the prior weights. 
+  The quantities \eqn{N_*} are returned as the prior weights.
 
 
   The beta-binomial distribution is a special case of
@@ -197,24 +197,25 @@ the Dirichlet-Multinomial Log-Likelihood Function.
 }
 
 \examples{
-nn <- 10; M <- 5
-ydata <- data.frame(round(matrix(runif(nn * M, max = 10), nn, M)))  # Integer counts
+nn <- 5; M <- 4; set.seed(1)
+ydata <- data.frame(round(matrix(runif(nn * M, max = 100), nn, M)))  # Integer counts
 colnames(ydata) <- paste("y", 1:M, sep = "")
 
-fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ 1, dirmultinomial,
+fit <- vglm(cbind(y1, y2, y3, y4) ~ 1, dirmultinomial,
             data = ydata, trace = TRUE)
 head(fitted(fit))
 depvar(fit)  # Sample proportions
 weights(fit, type = "prior", matrix = FALSE)  # Total counts per row
 
+\dontrun{
 ydata <- transform(ydata, x2 = runif(nn))
-fit <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2, dirmultinomial,
+fit <- vglm(cbind(y1, y2, y3, y4) ~ x2, dirmultinomial,
             data = ydata, trace = TRUE)
-\dontrun{ # This does not work:
-Coef(fit) }
+Coef(fit)
 coef(fit, matrix = TRUE)
 (sfit <- summary(fit))
 vcov(sfit)
+}
 }
 \keyword{models}
 \keyword{regression}
@@ -225,3 +226,11 @@ vcov(sfit)
 % for \eqn{j=1,\ldots,M}.
 
 % Currently, initial values can be improved upon.
+
+
+% \dontrun{ # This does not work:
+
+
+
+
+

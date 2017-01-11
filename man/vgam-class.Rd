@@ -5,15 +5,15 @@
 \description{ Vector generalized additive models. }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{vgam(...)}.
-%   ~~ describe objects here ~~ 
+%   ~~ describe objects here ~~
 }
 \section{Slots}{
   \describe{
-    \item{\code{nl.chisq}:}{Object of class \code{"numeric"}. 
+    \item{\code{nl.chisq}:}{Object of class \code{"numeric"}.
 Nonlinear chi-squared values. }
-    \item{\code{nl.df}:}{Object of class \code{"numeric"}. 
+    \item{\code{nl.df}:}{Object of class \code{"numeric"}.
 Nonlinear chi-squared degrees of freedom values. }
-    \item{\code{spar}:}{Object of class \code{"numeric"} 
+    \item{\code{spar}:}{Object of class \code{"numeric"}
 containing the (scaled) smoothing parameters. }
     \item{\code{s.xargument}:}{Object of class \code{"character"}
 holding the variable name of any \code{s()} terms. }
@@ -31,7 +31,7 @@ contains any extra information that might be needed
 The family function.  }
     \item{\code{iter}:}{Object of class \code{"numeric"}.
 The number of IRLS iterations used. }
-    \item{\code{predictors}:}{Object of class \code{"matrix"} 
+    \item{\code{predictors}:}{Object of class \code{"matrix"}
 with \eqn{M} columns which holds the \eqn{M} linear predictors. }
     \item{\code{assign}:}{Object of class \code{"list"},
   from class \code{ "vlm"}.
@@ -113,16 +113,16 @@ used by \code{\link{plotvgam}}; the plotting parameters
         may be put here.
  }
     \item{\code{prior.weights}:}{Object of class
-\code{"matrix"}, from class \code{ "vlm"} 
+\code{"matrix"}, from class \code{ "vlm"}
 holding the initially supplied weights.
  }
     \item{\code{qr}:}{Object of class \code{"list"},
  from class \code{ "vlm"}.
-QR decomposition at the final iteration. 
+QR decomposition at the final iteration.
  }
     \item{\code{R}:}{Object of class \code{"matrix"},
  from class \code{ "vlm"}.
-The \bold{R} matrix in the QR decomposition used in the fitting. 
+The \bold{R} matrix in the QR decomposition used in the fitting.
  }
     \item{\code{rank}:}{Object of class \code{"integer"},
  from class \code{ "vlm"}.
@@ -233,7 +233,7 @@ Vector generalized additive models.
 \note{
   VGAMs have all the slots that \code{\link{vglm}} objects
   have (\code{\link{vglm-class}}), plus the first few slots
-  described in the section above. 
+  described in the section above.
 
 
 }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,17 +7,17 @@
 
 
 vglm <- function(formula,
-                 family, data = list(), 
+                 family, data = list(),
                  weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control = vglm.control(...), 
-                 offset = NULL, 
+                 control = vglm.control(...),
+                 offset = NULL,
                  method = "vglm.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL, 
+                 contrasts = NULL,
                  constraints = NULL,
-                 extra = list(), 
-                 form2 = NULL, 
+                 extra = list(),
+                 form2 = NULL,
                  qr.arg = TRUE, smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vglm"
@@ -25,10 +25,10 @@ vglm <- function(formula,
 
   ocall <- match.call()
 
-  if (smart) 
+  if (smart)
     setup.smart("write")
 
-  if (missing(data)) 
+  if (missing(data))
     data <- environment(formula)
 
   mf <- match.call(expand.dots = FALSE)
@@ -85,7 +85,7 @@ vglm <- function(formula,
 
 
   offset <- model.offset(mf)
-  if (is.null(offset)) 
+  if (is.null(offset))
     offset <- 0 # yyy ???
   w <- model.weights(mf)
   if (!length(w)) {
@@ -112,7 +112,7 @@ vglm <- function(formula,
   fit <- vglm.fitter(x = x, y = y, w = w, offset = offset,
            Xm2 = Xm2, Ym2 = Ym2,
            etastart = etastart, mustart = mustart, coefstart = coefstart,
-           family = family, 
+           family = family,
            control = control,
            constraints = constraints,
            extra = extra,
@@ -127,19 +127,19 @@ vglm <- function(formula,
   }
 
   answer <-
-  new(Class = "vglm", 
+  new(Class = "vglm",
     "assign"       = attr(x, "assign"),
     "call"         = ocall,
     "coefficients" = fit$coefficients,
     "constraints"  = fit$constraints,
     "criterion"    = fit$crit.list,
     "df.residual"  = fit$df.residual,
-    "df.total"     = fit$df.total, 
+    "df.total"     = fit$df.total,
     "dispersion"   = 1,
     "effects"      = fit$effects,
     "family"       = fit$family,
     "misc"         = fit$misc,
-    "model"        = if (model) mf else data.frame(), 
+    "model"        = if (model) mf else data.frame(),
     "R"            = fit$R,
     "rank"         = fit$rank,
     "residuals"    = as.matrix(fit$residuals),
@@ -217,23 +217,23 @@ attr(vglm, "smart") <- TRUE
 
 shadowvglm <-
         function(formula,
-                 family, data = list(), 
+                 family, data = list(),
                  weights = NULL, subset = NULL, na.action = na.fail,
                  etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control = vglm.control(...), 
-                 offset = NULL, 
+                 control = vglm.control(...),
+                 offset = NULL,
                  method = "vglm.fit",
                  model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL, 
+                 contrasts = NULL,
                  constraints = NULL,
-                 extra = list(), 
+                 extra = list(),
                  qr.arg = FALSE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "shadowvglm"
 
     ocall <- match.call()
 
-    if (missing(data)) 
+    if (missing(data))
         data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
@@ -247,7 +247,7 @@ shadowvglm <-
            stop("invalid 'method': ", method))
     mt <- attr(mf, "terms")
 
-    x <- y <- NULL 
+    x <- y <- NULL
 
     xlev <- .getXlevels(mt, mf)
     y <- model.response(mf, "any")  # model.extract(mf, "response")

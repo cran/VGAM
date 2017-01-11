@@ -18,7 +18,7 @@ quasipoissonff(link = "loge", onedpar = FALSE,
 
   }
   \item{onedpar}{
-  One dispersion parameter? If the response is a matrix, 
+  One dispersion parameter? If the response is a matrix,
   then a separate
   dispersion parameter will be computed for each response (column),
   by default.

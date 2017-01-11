@@ -3,15 +3,47 @@
 %
 %
 %
+% 201612
+\alias{label.cols.y}
+\alias{valid.vknotl2}
+% 201611
+\alias{profilevglm}
+\alias{vpairs.profile}
+\alias{vplot.profile}
+% 201609
+\alias{prob.munb.size.VGAM}
+\alias{negbinomial.initialize.yj}
+% 201607, 201608
+\alias{mroot2}
+\alias{psint}
+\alias{psintpvgam}
+\alias{df.residual_pvgam}
+\alias{startstoppvgam}
+\alias{summary.pvgam-class}
+%%%%% \alias{summarypvgam}
+%%%%    % \alias{show.summary.pvgam}
+\alias{endf}
+\alias{endfpvgam}
+\alias{vcov.pvgam}
+\alias{vcov.pvgam-class}
+\alias{vlabel}
+\alias{show.pvgam}
+\alias{model.matrixpvgam}
+% 201606
+\alias{gharmonic}
+\alias{gharmonic2}
+\alias{bisection.basic}
+\alias{Zeta.aux}
+\alias{deflat.limit.oizeta}
 % 201605
 \alias{deflat.limit.oipospois}
 % 20160418 (keyword: mgcvvgam)
 % \alias{ps}
-\alias{Pen.psv}
+\alias{get.X.VLM.aug}
 \alias{psv2magic}
 % \alias{psvglm.fit}
 % \alias{psvlm.wfit}
-\alias{psvgam-class}
+\alias{pvgam-class}
 % \alias{PS}
 %
 \alias{checkwz}
@@ -158,7 +190,7 @@
 %
 %
 %
-% 20120514, 20120528, 
+% 20120514, 20120528,
 \alias{w.wz.merge}
 \alias{w.y.check}
 \alias{vweighted.mean.default}
@@ -213,7 +245,7 @@
 % \alias{show.summary.rc.exponential}
 \alias{show.summary.rrvglm}
 %\alias{show.summary.uqo}
-\alias{show.summary.vgam}
+% \alias{show.summary.vgam}
 % \alias{show.summary.vglm} % 20150831
 \alias{show.summary.vlm}
 %\alias{show.uqo}
@@ -636,7 +668,7 @@
 \alias{summaryrcim}
 \alias{summary.rrvglm}
 %\alias{summary.uqo}
-\alias{summaryvgam}
+% \alias{summaryvgam}
 %\alias{summaryvglm}  % 20150831
 \alias{summaryvlm}
 % \alias{tapplymat1}

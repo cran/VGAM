@@ -30,14 +30,14 @@ loglinb2(exchangeable = FALSE, zero = "u12")
   The model is
   \deqn{P(Y_1=y_1,Y_2=y_2) = \exp(u_0+u_1 y_1+u_2 y_2+u_{12} y_1 y_2)}{%
     P(Y1=y1,Y2=y2) = exp(u0 + u1*y1 + u2*y2 + u12*y1*y2)}
-  where \eqn{y_1}{y1} and \eqn{y_2}{y2} are 0 or 1, and 
+  where \eqn{y_1}{y1} and \eqn{y_2}{y2} are 0 or 1, and
   the parameters are \eqn{u_1}{u1}, \eqn{u_2}{u2},
   \eqn{u_{12}}{u12}.
   The normalizing parameter \eqn{u_0}{u0} can be expressed as a function
   of the other parameters, viz.,
   \deqn{u_0 = -\log[1 + \exp(u_1) + \exp(u_2) + \exp(u_1 + u_2 + u_{12})].}{%
         u0 = -log[1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)].}
-  The linear/additive predictors are 
+  The linear/additive predictors are
   \eqn{(\eta_1,\eta_2,\eta_3)^T = (u_1,u_2,u_{12})^T}{(eta1,eta2,eta3) =
        (u1,u2,u12)}.
 
@@ -93,7 +93,7 @@ McCullagh, P. and Nelder, J. A. (1989)
 \examples{
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
 
-# Get the n x 4 matrix of counts 
+# Get the n x 4 matrix of counts
 fit0 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or, data = coalminers)
 counts <- round(c(weights(fit0, type = "prior")) * depvar(fit0))
 
@@ -109,11 +109,11 @@ newminers <- newminers[with(newminers, wt) > 0,]
 
 fit <- vglm(cbind(bln,wheeze) ~ Age, loglinb2(zero = NULL),
             weight = wt, data = newminers)
-coef(fit, matrix = TRUE)  # Same! (at least for the log odds-ratio) 
+coef(fit, matrix = TRUE)  # Same! (at least for the log odds-ratio)
 summary(fit)
 
-# Try reconcile this with McCullagh and Nelder (1989), p.234 
-(0.166-0.131) / 0.027458   # 1.275 is approximately 1.25 
+# Try reconcile this with McCullagh and Nelder (1989), p.234
+(0.166-0.131) / 0.027458   # 1.275 is approximately 1.25
 }
 \keyword{models}
 \keyword{regression}

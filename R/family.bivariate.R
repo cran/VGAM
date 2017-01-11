@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,7 +20,7 @@ dbiclaytoncop <- function(x1, x2, apar = 0, log = FALSE) {
 
   A <- x1^(-apar) + x2^(-apar) - 1
   logdensity <- log1p(apar) -
-                (1 + apar) * (log(x1) + log(x2)) - 
+                (1 + apar) * (log(x1) + log(x2)) -
                 (2 + 1 / apar) * log(abs(A))  # Avoid warning
 
   out.square <- (x1 < 0) | (x1 > 1) | (x2 < 0) | (x2 > 1)
@@ -71,7 +71,7 @@ rbiclaytoncop <- function(n, apar = 0) {
                           imethod   = 1,
                           parallel  = FALSE,
                           zero = NULL) {
-  
+
   apply.parint <- TRUE
 
 
@@ -86,16 +86,19 @@ rbiclaytoncop <- function(n, apar = 0) {
 
 
   if (!is.Numeric(imethod, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE) || imethod > 3)
+                  integer.valued = TRUE, positive = TRUE) ||
+      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
+
+
   new("vglmff",
-  blurb = c(" bivariate Clayton copula distribution)\n","Links:    ",
-                namesof("apar", lapar, earg = eapar)),
+  blurb = c("Bivariate Clayton copula distribution)\n",
+            "Links:    ", namesof("apar", lapar, earg = eapar)),
 
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel , 
+                           bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
 
@@ -115,7 +118,7 @@ rbiclaytoncop <- function(n, apar = 0) {
          parallel = .parallel ,
          zero = .zero )
     }, list( .zero = zero,
-             .apply.parint = apply.parint, 
+             .apply.parint = apply.parint,
              .lapar = lapar,
              .parallel = parallel ))),
 
@@ -146,14 +149,11 @@ rbiclaytoncop <- function(n, apar = 0) {
     predictors.names <-
       namesof(mynames1, .lapar , earg = .eapar , short = TRUE)
 
+    extra$colnames.y  <- colnames(y)
 
-    extra$dimnamesy1 <- dimnames(y)[[1]]
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
-    
     if (!length(etastart)) {
-      
-      apar.init <- matrix(if (length( .iapar )) .iapar else 0 + NA,
+
+      apar.init <- matrix(if (length( .iapar )) .iapar else NA_real_,
                           n, M / M1, byrow = TRUE)
 
       if (!length( .iapar ))
@@ -178,7 +178,7 @@ rbiclaytoncop <- function(n, apar = 0) {
           if (anyNA(apar.init[, spp.]))
             apar.init[, spp.] <- apar.init0
         }
-          
+
       etastart <- theta2eta(apar.init, .lapar , earg = .eapar )
     }
   }), list( .imethod = imethod,
@@ -186,13 +186,10 @@ rbiclaytoncop <- function(n, apar = 0) {
             .eapar = eapar,
             .iapar = iapar ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta <- as.matrix(eta)
-    fv.matrix <- matrix(0.5, nrow(eta), extra$ncoly)
-
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(extra$dimnamesy1,
-                                  extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(0.5, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }  , list( .lapar = lapar,
              .eapar = eapar ))),
 
@@ -202,7 +199,7 @@ rbiclaytoncop <- function(n, apar = 0) {
     misc$link <- rep_len( .lapar , M)
     temp.names <- mynames1
     names(misc$link) <- temp.names
-    
+
     misc$earg <- vector("list", M)
     names(misc$earg) <- temp.names
     for (ii in 1:M) {
@@ -240,16 +237,19 @@ rbiclaytoncop <- function(n, apar = 0) {
         ll.elts
       }
     }
-  } , list( .lapar = lapar,
-            .eapar = eapar,
-            .imethod = imethod ))),
+  } , list( .lapar = lapar, .eapar = eapar, .imethod = imethod ))),
   vfamily = c("biclaytoncop"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Alpha <- eta2theta(eta, .lapar , earg = .eapar )
+    okay1 <- all(is.finite(Alpha)) && all(0 < Alpha)
+    okay1
+  } , list( .lapar = lapar, .eapar = eapar, .imethod = imethod ))),
 
   simslot = eval(substitute(
   function(object, nsim) {
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     Alpha <- eta2theta(eta, .lapar , earg = .eapar )
@@ -267,13 +267,13 @@ rbiclaytoncop <- function(n, apar = 0) {
 
 
 
-    
+
     AA <- y[, Yindex1]^(-Alpha) + y[, Yindex2]^(-Alpha) - 1
     dAA.dapar <- -y[, Yindex1]^(-Alpha) * log(y[, Yindex1]) -
-                   y[, Yindex2]^(-Alpha) * log(y[, Yindex2])
+                  y[, Yindex2]^(-Alpha) * log(y[, Yindex2])
     dl.dapar <- 1 / (1 + Alpha) - log(y[, Yindex1] * y[, Yindex2]) -
-                 dAA.dapar / AA * (2 + 1 / Alpha ) + log(AA) / Alpha^2
-   
+                dAA.dapar / AA * (2 + 1 / Alpha ) + log(AA) / Alpha^2
+
 
 
     dapar.deta <- dtheta.deta(Alpha, .lapar , earg = .eapar )
@@ -285,7 +285,7 @@ rbiclaytoncop <- function(n, apar = 0) {
             .imethod = imethod ))),
 
   weight = eval(substitute(expression({
-    par <- Alpha + 1  # 20130808
+    par <- Alpha + 1
     denom1 <- (3 * par -2) * (2 * par - 1)
     denom2 <- 2 * (par - 1)
     v1 <- trigamma(1 / denom2)
@@ -293,10 +293,10 @@ rbiclaytoncop <- function(n, apar = 0) {
     v3 <- trigamma((2 * par - 1) / denom2)
     Rho. <- (1 + par  * (v1 - v2) / denom2 +
                         (v2 - v3) / denom2) / denom1
-    
-    out <- 1 / par^2 + 2 / (par * (par - 1) * (2 * par - 1)) +
-           4 * par / (3 * par - 2) - 2 * (2 * par - 1) * Rho. / (par - 1)
-    ned2l.dapar  <- out
+
+    ned2l.dapar  <- 1 / par^2 + 2 / (par * (par - 1) * (2 * par - 1)) +
+                    4 * par / (3 * par - 2) -
+                    2 * (2 * par - 1) * Rho. / (par - 1)
 
     wz <- ned2l.dapar * dapar.deta^2
     c(w) * wz
@@ -348,7 +348,7 @@ dbistudentt <- function(x1, x2, df, rho = 0, log = FALSE) {
 if (FALSE)
 bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
-  
+
   t1 <- qt(u, nu, 1, 0)
   t2 <- qt(v, nu, 1, 0)
   t3 <- -(nu + 2.0) / 2.0
@@ -415,7 +415,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel , 
+                           bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
 
@@ -434,7 +434,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
          parallel = .parallel ,
          zero = .zero )
   }, list( .zero = zero,
-           .apply.parint = apply.parint, 
+           .apply.parint = apply.parint,
            .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
@@ -467,9 +467,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
               interleave.VGAM(M, M1 = M1)]
 
 
-    extra$dimnamesy1 <- dimnames(y)[[1]]
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
 
@@ -518,15 +516,10 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
             .erho = erho, .edof = edof,
             .idof = idof, .irho = irho ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-
-    eta <- as.matrix(eta)
-    fv.matrix <- matrix(0.0, nrow(eta), extra$ncoly)
-
-
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(extra$dimnamesy1,
-                                  extra$dimnamesy2)
-    fv.matrix
+    NOS <- ncol(eta) / c(M1 = 2)
+    Q1 <- 2
+    fv.mat <- matrix(0, nrow(eta), Q1 * NOS)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }  , list( .lrho = lrho, .ldof = ldof,
              .erho = erho, .edof = edof ))),
 
@@ -589,6 +582,17 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
            .erho = erho, .edof = edof,
            .imethod = imethod ))),
   vfamily = c("bistudentt"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Dof <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                     .ldof , earg = .edof )
+    Rho <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+                     .lrho , earg = .erho )
+    okay1 <- all(is.finite(Dof)) && all(0 < Dof) &&
+             all(is.finite(Rho)) && all(abs(Rho) < 1)
+    okay1
+  }, list( .lrho = lrho, .ldof = ldof,
+           .erho = erho, .edof = edof,
+           .imethod = imethod ))),
   deriv = eval(substitute(expression({
     M1 <- Q1 <- 2
     Dof <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
@@ -610,11 +614,11 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     eval.d3 <- eval(dee3)
 
     dl.dthetas <-  attr(eval.d3, "gradient")
-   
+
     dl.ddof <- matrix(dl.dthetas[, "Dof"], n, length(Yindex1))
     dl.drho <- matrix(dl.dthetas[, "Rho"], n, length(Yindex2))
 
-  
+
   if (FALSE) {
     dd <- cbind(y, Rho, Dof)
     pp <- apply(dd, 1, function(x)
@@ -626,16 +630,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
                      BiCopDeriv(x[1], x[2], family = 2,
                                 x[3], x[4], "par")) / pp
 
- print("head(dl.ddof)")
- print( head(dl.ddof) )
- print("head(alt.dl.ddof)")
- print( head(alt.dl.ddof) )
 
- print("max(abs(alt.dl.drho - dl.drho))")
- print( max(abs(alt.dl.drho - dl.drho)) )
- print("max(abs(alt.dl.ddof - dl.ddof))")
- print( max(abs(alt.dl.ddof - dl.ddof)) )
-    
+
   }
 
 
@@ -661,7 +657,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     wz22 <- (1 + Rho^2) / (1 - Rho^2)^2 +
             (Dof^2 + 2 * Dof) * Rho^2 *
              beta(3, Dof / 2) / (4 * (1 - Rho^2)^2)
-    wz22 <- wz22 + (Dof^2 + 2 * Dof) * (2 - 3 * Rho^2 + Rho^6) *   
+    wz22 <- wz22 + (Dof^2 + 2 * Dof) * (2 - 3 * Rho^2 + Rho^6) *
             beta(3, Dof / 2) / (16 * (1 - Rho^2)^4)
     wz22 <- wz22 + (Dof^2 + 2 * Dof) * (1 + Rho^2) *    # Replace - by + ???
             beta(2, Dof / 2) / (4 * (1 - Rho^2)^2)  # denom == 4 or 2 ???
@@ -683,7 +679,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
 
 
-  
+
 
 
 dbinormcop <- function(x1, x2, rho = 0, log = FALSE) {
@@ -771,7 +767,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel , 
+                           bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
 
@@ -790,7 +786,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
          parallel = .parallel ,
          zero = .zero )
   }, list( .zero = zero,
-           .apply.parint = apply.parint, 
+           .apply.parint = apply.parint,
            .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
@@ -821,9 +817,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
       namesof(mynames1, .lrho , earg = .erho , short = TRUE))
 
 
-    extra$dimnamesy1 <- dimnames(y)[[1]]
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
 
@@ -861,20 +855,14 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
             .erho = erho,
             .irho = irho ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-
-    eta <- as.matrix(eta)
-    fv.matrix <- matrix(0.5, nrow(eta), extra$ncoly)
-
-
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(extra$dimnamesy1,
-                                  extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(0.5, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }  , list( .lrho = lrho,
              .erho = erho ))),
 
   last = eval(substitute(expression({
-
     M1 <- extra$M1
     Q1 <- extra$Q1
     misc$link <- rep_len( .lrho , M)
@@ -925,6 +913,11 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
             .erho = erho,
             .imethod = imethod ))),
   vfamily = c("binormalcop"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    Rho <- eta2theta(eta, .lrho , earg = .erho )
+    okay1 <- all(is.finite(Rho)) && all(abs(Rho) < 1)
+    okay1
+  }, list( .lrho = lrho, .erho = erho, .imethod = imethod ))),
 
 
 
@@ -933,7 +926,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     Rho <- eta2theta(eta, .lrho , earg = .erho )
@@ -1042,6 +1035,8 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
     w <- temp5$w
     y <- temp5$y
 
+    extra$colnames.y  <- colnames(y)
+
 
     predictors.names <-
       c(namesof("location1", .llocat, .elocat , tag = FALSE),
@@ -1088,7 +1083,9 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
            .elocat = elocat, .escale = escale,
            .iscale1 = iscale1, .iscale2 = iscale2))),
   linkinv = function(eta, extra = NULL) {
-    cbind(eta[, 1], eta[, 2])
+    NOS <- NCOL(eta) / c(M1 = 4)
+    fv.mat <- eta[, 1:2]
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   },
   last = eval(substitute(expression({
     misc$link <-    c(location1 = .llocat , scale1 = .lscale ,
@@ -1130,6 +1127,18 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
   vfamily = c("bilogistic"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    locat1 <- eta2theta(eta[, 1], .llocat , .elocat )
+    Scale1 <- eta2theta(eta[, 2], .lscale , .escale )
+    locat2 <- eta2theta(eta[, 3], .llocat , .elocat )
+    Scale2 <- eta2theta(eta[, 4], .lscale , .escale )
+    okay1 <- all(is.finite(locat1)) &&
+             all(is.finite(Scale1)) && all(0 < Scale1) &&
+             all(is.finite(locat2)) &&
+             all(is.finite(Scale2)) && all(0 < Scale2)
+    okay1
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
 
 
   simslot = eval(substitute(
@@ -1137,7 +1146,7 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     locat1 <- eta2theta(eta[, 1], .llocat , .elocat )
@@ -1233,7 +1242,7 @@ dbilogis <- function(x1, x2, loc1 = 0, scale1 = 1,
 
 
 
-  logdensity <- log(2) - zedd1 - zedd2 - log(scale1) - 
+  logdensity <- log(2) - zedd1 - zedd2 - log(scale1) -
                 log(scale1) - 3 * log1p(exp(-zedd1) + exp(-zedd2))
 
 
@@ -1352,9 +1361,9 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
     predictors.names <-
-      c(namesof("a",  .la  , earg = .ea  , short = TRUE), 
-        namesof("ap", .lap , earg = .eap , short = TRUE), 
-        namesof("b",  .lb  , earg = .eb  , short = TRUE), 
+      c(namesof("a",  .la  , earg = .ea  , short = TRUE),
+        namesof("ap", .lap , earg = .eap , short = TRUE),
+        namesof("b",  .lb  , earg = .eb  , short = TRUE),
         namesof("bp", .lbp , earg = .ebp , short = TRUE))
     extra$y1.lt.y2 = y[, 1] < y[, 2]
 
@@ -1391,12 +1400,14 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             .ea = ea, .eap = eap, .eb = eb, .ebp = ebp,
             .ia = ia, .iap = iap, .ib = ib, .ibp = ibp))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
+    NOS <- NCOL(eta) / c(M1 = 4)
     alpha  <- eta2theta(eta[, 1], .la,  earg = .ea  )
     alphap <- eta2theta(eta[, 2], .lap, earg = .eap )
     beta   <- eta2theta(eta[, 3], .lb,  earg = .eb  )
     betap  <- eta2theta(eta[, 4], .lbp, earg = .ebp )
-    cbind((alphap + beta) / (alphap * (alpha + beta)),
-          (alpha + betap) / (betap * (alpha + beta)))
+    fv.mat <- cbind((alphap + beta) / (alphap * (alpha + beta)),
+                    (alpha + betap) / (betap * (alpha + beta)))
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   last = eval(substitute(expression({
@@ -1437,6 +1448,18 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   }, list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   vfamily = c("freund61"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    alpha  <- eta2theta(eta[, 1], .la,  earg = .ea  )
+    alphap <- eta2theta(eta[, 2], .lap, earg = .eap )
+    beta   <- eta2theta(eta[, 3], .lb,  earg = .eb  )
+    betap  <- eta2theta(eta[, 4], .lbp, earg = .ebp )
+    okay1 <- all(is.finite(alpha )) && all(0 < alpha ) &&
+             all(is.finite(alphap)) && all(0 < alphap) &&
+             all(is.finite(beta  )) && all(0 < beta  ) &&
+             all(is.finite(betap )) && all(0 < betap )
+    okay1
+  }, list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
+           .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   deriv = eval(substitute(expression({
     tmp88  <- extra$y1.lt.y2
     alpha  <- eta2theta(eta[, 1], .la,  earg = .ea  )
@@ -1571,14 +1594,16 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     y <- temp5$y
 
 
+    extra$colnames.y  <- colnames(y)
+
     if (any(y[, 1] >= y[, 2]))
       stop("the second column minus the first column must be a vector ",
            "of positive values")
 
 
     predictors.names <-
-      c(namesof("scale",  .lscale,  .escale,  short = TRUE), 
-        namesof("shape1", .lshape1, .eshape1, short = TRUE), 
+      c(namesof("scale",  .lscale,  .escale,  short = TRUE),
+        namesof("shape1", .lshape1, .eshape1, short = TRUE),
         namesof("shape2", .lshape2, .eshape2, short = TRUE))
 
     if (!length(etastart)) {
@@ -1623,11 +1648,13 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
             .iscale = iscale, .ishape1 = ishape1, .ishape2 = ishape2,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
+    NOS <- NCOL(eta) / c(M1 = 3)
     a <- eta2theta(eta[, 1], .lscale  ,  .escale )
     p <- eta2theta(eta[, 2], .lshape1 , .eshape1 )
     q <- eta2theta(eta[, 3], .lshape2 , .eshape2 )
-    cbind("y1" = p*a,
-          "y2" = (p+q)*a)
+    fv.mat <-  cbind("y1" = p*a,
+                     "y2" = (p+q)*a)  # Overwrite the colnames:
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
            .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
   last = eval(substitute(expression({
@@ -1672,6 +1699,16 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
            .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
   vfamily = c("bigamma.mckay"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    aparam <- eta2theta(eta[, 1], .lscale  ,  .escale )
+    shape1 <- eta2theta(eta[, 2], .lshape1 , .eshape1 )
+    shape2 <- eta2theta(eta[, 3], .lshape2 , .eshape2 )
+    okay1 <- all(is.finite(aparam)) && all(0 < aparam) &&
+             all(is.finite(shape1)) && all(0 < shape1) &&
+             all(is.finite(shape2)) && all(0 < shape2)
+    okay1
+  }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+           .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
   deriv = eval(substitute(expression({
     aparam <- eta2theta(eta[, 1], .lscale  ,  .escale )
     shape1 <- eta2theta(eta[, 2], .lshape1 , .eshape1 )
@@ -1766,7 +1803,7 @@ pbifrankcop <- function(q1, q2, apar) {
   ans <- as.numeric(index)
   if (any(!index))
   ans[!index] <- logb(1 + ((apar[!index])^(x[!index]) - 1)*
-                 ((apar[!index])^(y[!index]) - 1)/(apar[!index] - 1), 
+                 ((apar[!index])^(y[!index]) - 1)/(apar[!index] - 1),
                  base = apar[!index])
   ind2 <- (abs(apar - 1) < .Machine$double.eps)
   ans[ind2] <- x[ind2] * y[ind2]
@@ -1839,6 +1876,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
 
 
+
  bifrankcop <- function(lapar = "loge", iapar = 2, nsimEIM = 250) {
 
   lapar <- as.list(substitute(lapar))
@@ -1864,7 +1902,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
   initialize = eval(substitute(expression({
 
     if (any(y <= 0) || any(y >= 1))
-      stop("the response must have values between 0 and 1") 
+      stop("the response must have values between 0 and 1")
 
     temp5 <-
     w.y.check(w = w, y = y,
@@ -1882,8 +1920,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     predictors.names <-
       c(namesof("apar", .lapar , earg = .eapar, short = TRUE))
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
       apar.init <- rep_len(.iapar , n)
@@ -1891,11 +1928,10 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     }
   }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    apar <- eta2theta(eta, .lapar , earg = .eapar )
-    fv.matrix <- matrix(0.5, length(apar), 2)
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(names(eta), extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(0.5, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lapar = lapar, .eapar = eapar ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
@@ -1925,6 +1961,11 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .lapar = lapar, .eapar = eapar ))),
   vfamily = c("bifrankcop"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    apar <- eta2theta(eta, .lapar , earg = .eapar )
+    okay1 <- all(is.finite(apar)) && all(0 < apar)
+    okay1
+  }, list( .lapar = lapar, .eapar = eapar ))),
 
 
 
@@ -1933,7 +1974,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     apar <- eta2theta(eta, .lapar , earg = .eapar )
@@ -1953,7 +1994,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
     denom <- apar-1 + (apar^y[, 1]  - 1) * (apar^y[, 2]  - 1)
     tmp700 <- 2*apar^(y[, 1]+y[, 2]) - apar^y[, 1] - apar^y[, 2]
-    numerator <- 1 + y[, 1] * apar^(y[, 1] - 1) * (apar^y[, 2]  - 1) + 
+    numerator <- 1 + y[, 1] * apar^(y[, 1] - 1) * (apar^y[, 2]  - 1) +
                      y[, 2] * apar^(y[, 2] - 1) * (apar^y[, 1]  - 1)
     Dl.dapar <- 1/(apar - 1) + 1/(apar*log(apar)) +
                 (y[, 1]+y[, 2])/apar - 2 * numerator / denom
@@ -1983,8 +2024,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     c(w) * wz
   } else {
       nump <- apar^(y[, 1]+y[, 2]-2) * (2 * y[, 1] * y[, 2] +
-                    y[, 1]*(y[, 1] - 1) + y[, 2]*(y[, 2] - 1)) - 
-                    y[, 1]*(y[, 1] - 1) * apar^(y[, 1]-2) - 
+                    y[, 1]*(y[, 1] - 1) + y[, 2]*(y[, 2] - 1)) -
+                    y[, 1]*(y[, 1] - 1) * apar^(y[, 1]-2) -
                     y[, 2]*(y[, 2] - 1) * apar^(y[, 2]-2)
       D2l.dapar2 <- 1/(apar - 1)^2 + (1+log(apar))/(apar*log(apar))^2 +
                     (y[, 1]+y[, 2])/apar^2 + 2 *
@@ -2028,7 +2069,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
             namesof("theta", ltheta, etheta)),
   initialize = eval(substitute(expression({
     if (any(y[, 1] <= 0) || any(y[, 2] <= 1))
-      stop("the response has values that are out of range") 
+      stop("the response has values that are out of range")
 
     temp5 <-
     w.y.check(w = w, y = y,
@@ -2042,13 +2083,15 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     w <- temp5$w
     y <- temp5$y
 
+    extra$colnames.y  <- colnames(y)
+
 
     predictors.names <-
       c(namesof("theta", .ltheta , .etheta , short = TRUE))
 
     if (!length(etastart)) {
       theta.init <- if (length( .itheta)) {
-        rep_len( .itheta , n) 
+        rep_len( .itheta , n)
       } else {
         1 / (y[, 2] - 1 + 0.01)
       }
@@ -2057,15 +2100,17 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     }
   }), list( .ltheta = ltheta, .etheta = etheta, .itheta = itheta))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
+    NOS <- NCOL(eta) / c(M1 = 1)
     theta <- eta2theta(eta, .ltheta , .etheta )
-    cbind(theta*exp(theta), 1+1/theta)
+    fv.mat <- cbind(theta * exp(theta), 1 + 1 / theta)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .ltheta = ltheta, .etheta = etheta ))),
   last = eval(substitute(expression({
     misc$link <-    c("theta" = .ltheta )
 
     misc$earg <- list("theta" = .etheta )
 
-    misc$expected <- .expected 
+    misc$expected <- .expected
     misc$multipleResponses <- FALSE
   }), list( .ltheta = ltheta,
             .etheta = etheta, .expected = expected ))),
@@ -2087,6 +2132,11 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .ltheta = ltheta, .etheta = etheta ))),
   vfamily = c("gammahyperbola"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    theta <- eta2theta(eta, .ltheta , .etheta )
+    okay1 <- all(is.finite(theta)) && all(0 < theta)
+    okay1
+  }, list( .ltheta = ltheta, .etheta = etheta ))),
   deriv = eval(substitute(expression({
     theta <- eta2theta(eta, .ltheta , .etheta )
     Dl.dtheta <- exp(-theta) * y[, 1] * (1+theta) / theta^2 - y[, 2]
@@ -2137,11 +2187,10 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
   new("vglmff",
   blurb = c("Bivariate Farlie-Gumbel-Morgenstern ",
-            "exponential distribution\n",  # Morgenstern's 
+            "exponential distribution\n",  # Morgenstern's
             "Links:    ",
             namesof("apar", lapar, earg = earg )),
   initialize = eval(substitute(expression({
-
     temp5 <-
     w.y.check(w = w, y = y,
               Is.nonnegative.y = TRUE,
@@ -2159,8 +2208,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     predictors.names <-
       c(namesof("apar", .lapar , earg = .earg , short = TRUE))
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 = dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
       ainit  <- if (length(.iapar))  rep_len( .iapar , n) else {
@@ -2176,11 +2224,10 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
   }), list( .iapar = iapar, .lapar = lapar, .earg = earg,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    alpha <- eta2theta(eta, .lapar , earg = .earg )
-    fv.matrix <- matrix(1, length(alpha), 2)
-    if (length(extra$dimnamesy2))
-        dimnames(fv.matrix) = list(names(eta), extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(1, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lapar = lapar, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
@@ -2211,8 +2258,13 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .lapar = lapar, .earg = earg, .tola0 = tola0 ))),
   vfamily = c("bifgmexp"),  # morgenstern
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
+    okay1 <- all(is.finite(alpha)) && all(abs(alpha) < 1)
+    okay1
+  }, list( .lapar = lapar, .earg = earg, .tola0 = tola0 ))),
   deriv = eval(substitute(expression({
-    alpha  <- eta2theta(eta, .lapar , earg = .earg )
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
     alpha[abs(alpha) < .tola0 ] <- .tola0
     numerator <- 1 - 2*(exp(-y[, 1]) + exp(-y[, 2])) +
                  4*exp(-y[, 1] - y[, 2])
@@ -2377,8 +2429,7 @@ pbifgmcop <- function(q1, q2, apar) {
     predictors.names <-
       namesof("apar", .lapar , earg = .earg , short = TRUE)
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
       ainit  <- if (length( .iapar ))  .iapar else {
@@ -2405,11 +2456,10 @@ pbifgmcop <- function(q1, q2, apar) {
   }), list( .iapar = iapar, .lapar = lapar, .earg = earg,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    alpha <- eta2theta(eta, .lapar , earg = .earg )
-    fv.matrix <- matrix(0.5, length(alpha), 2)
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(names(eta), extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(0.5, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lapar = lapar, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
@@ -2436,6 +2486,11 @@ pbifgmcop <- function(q1, q2, apar) {
     }
   }, list( .lapar = lapar, .earg = earg ))),
   vfamily = c("bifgmcop"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
+    okay1 <- all(is.finite(alpha)) && all(abs(alpha) < 1)
+    okay1
+  }, list( .lapar = lapar, .earg = earg ))),
 
 
   simslot = eval(substitute(
@@ -2443,7 +2498,7 @@ pbifgmcop <- function(q1, q2, apar) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     alpha <- eta2theta(eta, .lapar , earg = .earg )
@@ -2453,7 +2508,7 @@ pbifgmcop <- function(q1, q2, apar) {
 
 
   deriv = eval(substitute(expression({
-    alpha  <- eta2theta(eta, .lapar , earg = .earg )
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
 
     dalpha.deta <- dtheta.deta(alpha, .lapar , earg = .earg )
 
@@ -2517,6 +2572,8 @@ pbifgmcop <- function(q1, q2, apar) {
     w <- temp5$w
     y <- temp5$y
 
+    extra$colnames.y  <- colnames(y)
+
 
 
     predictors.names <-
@@ -2535,9 +2592,11 @@ pbifgmcop <- function(q1, q2, apar) {
   }), list( .iapar = iapar, .lapar = lapar, .earg = earg,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
     alpha <- eta2theta(eta, .lapar , earg = .earg )
-    cbind(rep_len(1, length(alpha)),
-          rep_len(1, length(alpha)))
+    fv.mat <- matrix(1, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lapar = lapar, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
@@ -2568,7 +2627,7 @@ pbifgmcop <- function(q1, q2, apar) {
 
 
       if (summation) {
-      sum(bad) * (-1.0e10) + 
+      sum(bad) * (-1.0e10) +
       sum(w[!bad] * (-y[!bad, 1] - y[!bad, 2] +
           alpha[!bad] * y[!bad, 1] * y[!bad, 2] + log(denom[!bad])))
       } else {
@@ -2577,8 +2636,13 @@ pbifgmcop <- function(q1, q2, apar) {
     }
   }, list( .lapar = lapar, .earg = earg ))),
   vfamily = c("bigumbelIexp"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
+    okay1 <- all(is.finite(alpha))
+    okay1
+  }, list( .lapar = lapar, .earg = earg ))),
   deriv = eval(substitute(expression({
-    alpha  <- eta2theta(eta, .lapar , earg = .earg )
+    alpha <- eta2theta(eta, .lapar , earg = .earg )
     numerator <- (alpha * y[, 1] - 1) * y[, 2] +
                  (alpha * y[, 2] - 1) * y[, 1] + 1
     denom <- (alpha * y[, 1] - 1) * (alpha * y[, 2] - 1) + alpha
@@ -2733,8 +2797,7 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
     predictors.names <-
       namesof("oratio", .link , earg = .earg, short = TRUE)
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
       orinit <- if (length( .ioratio ))  .ioratio else {
@@ -2758,11 +2821,10 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
   }), list( .ioratio = ioratio, .link = link, .earg = earg,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    oratio <- eta2theta(eta, .link , earg = .earg )
-    fv.matrix <- matrix(0.5, length(oratio), 2)
-    if (length(extra$dimnamesy2))
-        dimnames(fv.matrix) <- list(dimnames(eta)[[1]], extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(0.5, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <-    c(oratio = .link)
@@ -2792,6 +2854,11 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .link = link, .earg = earg ))),
   vfamily = c("biplackettcop"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    oratio <- eta2theta(eta, .link , earg = .earg )
+    okay1 <- all(is.finite(oratio)) && all(0 < oratio)
+    okay1
+  }, list( .link = link, .earg = earg ))),
 
 
   simslot = eval(substitute(
@@ -2799,7 +2866,7 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     oratio <- eta2theta(eta, .link , earg = .earg )
@@ -2809,7 +2876,7 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
 
 
   deriv = eval(substitute(expression({
-    oratio  <- eta2theta(eta, .link , earg = .earg )
+    oratio <- eta2theta(eta, .link , earg = .earg )
     doratio.deta <- dtheta.deta(oratio, .link , earg = .earg )
     y1 <- y[, 1]
     y2 <- y[, 2]
@@ -2982,8 +3049,7 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
     predictors.names <-
       c(namesof("apar", .lapar, earg = .eapar, short = TRUE))
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
       ainit  <- if (length( .iapar ))  .iapar else {
@@ -3000,11 +3066,10 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
   }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar,
             .imethod = imethod))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    apar <- eta2theta(eta, .lapar, earg = .eapar )
-    fv.matrix <- matrix(0.5, length(apar), 2)
-    if (length(extra$dimnamesy2))
-        dimnames(fv.matrix) <- list(names(eta), extra$dimnamesy2)
-    fv.matrix
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(0.5, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lapar = lapar, .eapar = eapar ))),
   last = eval(substitute(expression({
     misc$link <-    c("apar" = .lapar )
@@ -3034,6 +3099,11 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .lapar = lapar, .eapar = eapar ))),
   vfamily = c("biamhcop"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    apar <- eta2theta(eta, .lapar, earg = .eapar )
+    okay1 <- all(is.finite(apar)) && all(abs(apar) < 1)
+    okay1
+  }, list( .lapar = lapar, .eapar = eapar ))),
 
 
 
@@ -3042,7 +3112,7 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     apar <- eta2theta(eta, .lapar , earg = .eapar )
@@ -3219,7 +3289,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                      x = x,
                      bool = .eq.mean ,  #
                      constraints = constraints.orig,
-                     apply.int = TRUE, 
+                     apply.int = TRUE,
                      cm.default           = cmk.m,
                      cm.intercept.default = cm1.m)
 
@@ -3288,8 +3358,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
       namesof("sd2",   .lsd2 ,   earg = .esd2 ,   short = TRUE),
       namesof("rho",   .lrho ,   earg = .erho ,   short = TRUE))
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
 
     if (!length(etastart)) {
       imean1 <- rep_len(if (length( .imean1 )) .imean1 else
@@ -3320,12 +3389,11 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
             .isd1   = isd1,   .isd2   = isd2,
             .irho   = irho ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
-    mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
-    fv.matrix <- cbind(mean1, mean2)
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(names(eta), extra$dimnamesy2)
-    fv.matrix
+    NOS <- ncol(eta) / c(M1 = 5)
+    mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
+    mean2 <- eta2theta(eta[, 2], .lmean2 , earg = .emean2 )
+    fv.mat <- cbind(mean1, mean2)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }  , list( .lmean1 = lmean1, .lmean2 = lmean2,
              .emean1 = emean1, .emean2 = emean2,
              .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
@@ -3339,7 +3407,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                       "rho"   = .lrho )
 
     misc$earg <- list("mean1" = .emean1 ,
-                      "mean2" = .emean2 , 
+                      "mean2" = .emean2 ,
                       "sd1"   = .esd1 ,
                       "sd2"   = .esd2 ,
                       "rho"   = .erho )
@@ -3381,6 +3449,23 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod ))),
   vfamily = c("binormal"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
+    mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
+    sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
+    sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
+    Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
+    okay1 <- all(is.finite(mean1)) &&
+             all(is.finite(mean2)) &&
+             all(is.finite(sd1  )) && all(0 < sd1) &&
+             all(is.finite(sd2  )) && all(0 < sd2) &&
+             all(is.finite(Rho  )) && all(abs(Rho) < 1)
+    okay1
+  } , list( .lmean1 = lmean1, .lmean2 = lmean2,
+            .emean1 = emean1, .emean2 = emean2,
+            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+            .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
+            .imethod = imethod ))),
 
 
 
@@ -3389,7 +3474,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
@@ -3432,11 +3517,11 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                 zedd1 * zedd2 / temp5 +
                 Rho / temp5
 
-    dmean1.deta <- dtheta.deta(mean1, .lmean1) 
-    dmean2.deta <- dtheta.deta(mean2, .lmean2) 
-    dsd1.deta   <- dtheta.deta(sd1  , .lsd1  ) 
-    dsd2.deta   <- dtheta.deta(sd2  , .lsd2  ) 
-    drho.deta   <- dtheta.deta(Rho  , .lrho  ) 
+    dmean1.deta <- dtheta.deta(mean1, .lmean1)
+    dmean2.deta <- dtheta.deta(mean2, .lmean2)
+    dsd1.deta   <- dtheta.deta(sd1  , .lsd1  )
+    dsd2.deta   <- dtheta.deta(sd2  , .lsd2  )
+    drho.deta   <- dtheta.deta(Rho  , .lrho  )
     dthetas.detas  <- cbind(dmean1.deta,
                            dmean2.deta,
                            dsd1.deta,
@@ -3510,10 +3595,13 @@ gumbelI <-
           namesof("a", la, earg =  earg )),
   initialize = eval(substitute(expression({
     if (!is.matrix(y) || ncol(y) != 2)
-        stop("the response must be a 2 column matrix") 
+        stop("the response must be a 2 column matrix")
 
     if (any(y < 0))
         stop("the response must have non-negative values only")
+
+
+    extra$colnames.y  <- colnames(y)
 
     predictors.names <-
       c(namesof("a", .la, earg =  .earg , short = TRUE))
@@ -3528,9 +3616,10 @@ gumbelI <-
       }
   }), list( .ia=ia, .la = la, .earg = earg, .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    alpha <- eta2theta(eta, .la , earg =  .earg )
-    cbind(rep_len(1, length(alpha)),
-          rep_len(1, length(alpha)))
+    NOS <- NCOL(eta) / c(M1 = 1)
+    Q1 <- 2
+    fv.mat <- matrix(1, NROW(eta), NOS * Q1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .la = la ))),
   last = eval(substitute(expression({
     misc$link <-    c("a" = .la )
@@ -3564,6 +3653,11 @@ gumbelI <-
     }
   }, list( .la = la, .earg = earg ))),
   vfamily = c("gumbelI"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    alpha  <- eta2theta(eta, .la , earg = .earg )
+    okay1 <- all(is.finite(alpha))
+    okay1
+  } , list( .la = la, .earg = earg ))),
   deriv = eval(substitute(expression({
       alpha  <- eta2theta(eta, .la, earg =  .earg )
       numerator <- (alpha*y[,1] - 1)*y[,2] + (alpha*y[,2] - 1)*y[,1] + 1
@@ -3601,8 +3695,8 @@ kendall.tau <- function(x, y, exact = FALSE, max.n = 3000) {
 
   NN <- if (!exact && N > max.n) {
     cindex <- sample.int(n = N, size = max.n, replace = FALSE)
-    x <- x[cindex] 
-    y <- y[cindex] 
+    x <- x[cindex]
+    y <- y[cindex]
     max.n
   } else {
     N
@@ -3630,13 +3724,13 @@ kendall.tau <- function(x, y, exact = TRUE, max.n = 1000) {
     stop("arguments 'x' and 'y' do not have equal lengths")
   index <- iam(NA, NA, M = N, both = TRUE)
 
-  index$row.index <- index$row.index[-(1:N)] 
-  index$col.index <- index$col.index[-(1:N)] 
+  index$row.index <- index$row.index[-(1:N)]
+  index$col.index <- index$col.index[-(1:N)]
 
   NN <- if (!exact && N > max.n) {
     cindex <- sample.int(n = N, size = max.n, replace = FALSE)
-    index$row.index <- index$row.index[cindex] 
-    index$col.index <- index$col.index[cindex] 
+    index$row.index <- index$row.index[cindex]
+    index$col.index <- index$col.index[cindex]
     max.n
   } else{
     choose(N, 2)

@@ -75,7 +75,7 @@ rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
 \author{ T. W. Yee }
 \details{
   The function \code{betauninormal}, the \pkg{VGAM} family function
-  for estimating the parameters, 
+  for estimating the parameters,
   has not yet been written.
 
 

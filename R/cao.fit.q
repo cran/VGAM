@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -47,8 +47,8 @@ cao.fit <-
   intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
   y.names <- predictors.names <- NULL # May be overwritten in @initialize
 
- 
-  n.save <- n 
+
+  n.save <- n
 
 
   Rank <- control$Rank
@@ -56,7 +56,7 @@ cao.fit <-
 
   if (length(family@initialize))
     eval(family@initialize)   # Initialize mu and M (and optionally w)
-  n <- n.save 
+  n <- n.save
 
   modelno <- switch(family@vfamily[1], "poissonff" = 2,
                     "binomialff" = 1, "quasipoissonff" = 0,
@@ -155,7 +155,7 @@ cao.fit <-
     stop("not nice")
 
   ncolHlist <- unlist(lapply(Hlist, ncol))
-  latvar.mat <- x[, colx2.index, drop = FALSE] %*% Cmat 
+  latvar.mat <- x[, colx2.index, drop = FALSE] %*% Cmat
 
 
   rmfromVGAMenv(c("etamat", "beta"), prefix = ".VGAM.CAO.")
@@ -167,7 +167,7 @@ cao.fit <-
   NOS <- ifelse(modelno %in% c(3, 5), M/2, M)
   p1star. <- if (Nice21) ifelse(modelno %in% c(3, 5), 2, 1) else M
   p2star. <- if (Nice21) Rank else stop("not Nice21")
-  pstar. <- p1star. + p2star. 
+  pstar. <- p1star. + p2star.
   nstar <- if (Nice21) ifelse(modelno %in% c(3, 5), n * 2, n) else n * M
   lenbeta <- pstar. * ifelse(Nice21, NOS, 1)
 
@@ -198,7 +198,7 @@ cao.fit <-
                                   trace = as.integer(control$trace),
                                   maxit = control$Maxit.optim,
                                   REPORT = 10),
-                   etamat = eta, xmat = x, ymat = y,  # as.matrix(y), 
+                   etamat = eta, xmat = x, ymat = y,  # as.matrix(y),
                    wvec = w, modelno = modelno,
                    Control = control,
                    Nice21 = Nice21,
@@ -235,7 +235,7 @@ cao.fit <-
                     Control = control,
                     Nice21 = Nice21,
                     p1star. = p1star. , p2star. = p2star. ,
-                    n = n, M = M, 
+                    n = n, M = M,
                     othint = othint, othdbl = othdbl,
                     alldump = TRUE)
   if (!is.list(extra))
@@ -293,7 +293,7 @@ cao.fit <-
   fit <- list(
               fitted.values = mu,
               Cmatrix = Cmat,
-              terms = Terms)  # terms: This used to be done in vglm() 
+              terms = Terms)  # terms: This used to be done in vglm()
 
 
 
@@ -311,7 +311,7 @@ cao.fit <-
   crit.list$deviance <- temp9$deviance
 
 
-                                    
+
 
 
   if (w[1] != 1 || any(w != w[1]))
@@ -320,7 +320,7 @@ cao.fit <-
   if (length(family@last))
     eval(family@last)
 
-  structure(c(fit, 
+  structure(c(fit,
       temp9,
       list(
       contrasts = attr(x, "contrasts"),
@@ -457,7 +457,7 @@ cao.control <- function(Rank = 1,
     stop("Bad input for argument 'SmallNo'")
   if ((SmallNo < .Machine$double.eps) ||
       (SmallNo > .0001))
-    stop("'SmallNo' is out of range") 
+    stop("'SmallNo' is out of range")
 
     ans <- list(
      Corner = FALSE,  # A constant, not a control parameter; unneeded?
@@ -512,7 +512,7 @@ create.cms <- function(Rank = 1, M, MSratio = 1, which, p1 = 1) {
     Hlist.[[rr]] <- diag(M)
   names(Hlist.) <- if (p1 == 1) c("(Intercept)", names(which)) else stop()
   if (MSratio == 2) {
-    for (r in 1:Rank) 
+    for (r in 1:Rank)
       Hlist.[[p1+r]] <- eijfun(1, M)
   }
   Hlist.
@@ -522,11 +522,11 @@ create.cms <- function(Rank = 1, M, MSratio = 1, which, p1 = 1) {
 
 
 callcaoc <- function(cmatrix,
-                    etamat, xmat, ymat, wvec, modelno, 
+                    etamat, xmat, ymat, wvec, modelno,
                     Control, Nice21 = TRUE,
                     p1star. = if (modelno %in% c(3, 5)) 2 else 1,
                     p2star. = Rank,
-                    n, M, 
+                    n, M,
                     othint, othdbl,
                     alldump = FALSE) {
   flush.console()
@@ -554,7 +554,7 @@ callcaoc <- function(cmatrix,
   cmatrix <- matrix(cmatrix, p2, Rank)  # crow1C() needs a matrix as input
   cmatrix <- crow1C(cmatrix, crow1positive = control$Crow1positive)
   numat <- xmat[, control$colx2.index, drop = FALSE] %*% cmatrix
-  evnu <- eigen(var(numat))
+  evnu <- eigen(var(numat), symmetric = TRUE)
   temp7 <- if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
            evnu$vector %*% evnu$value^(-0.5)
   cmatrix <- cmatrix %*% temp7
@@ -598,7 +598,7 @@ callcaoc <- function(cmatrix,
                  getfromVGAMenv("beta", prefix = ".VGAM.CAO.") else
                  double(lenbeta)
   othint[5] <- inited   # Refine initialization within C
-  pstar <- NOS * pstar. 
+  pstar <- NOS * pstar.
   bnumat <- if (Nice21) matrix(0, nstar, pstar.) else
                         stop("code not written here")
 
@@ -638,7 +638,7 @@ callcaoc <- function(cmatrix,
   ncolb <- max(ncbvec)
 
   qbig. <- NOS * qbig    # == NOS * Rank; holds all the smooths
-  if (!all.equal(as.vector(ncbvec), rep_len(1, queue)))
+  if (!all(as.vector(ncbvec) == rep_len(1, queue)))
     stop("'ncbvec' not right---should be a queue-vector of ones")
   pbig <- pstar. #
 
@@ -680,7 +680,7 @@ callcaoc <- function(cmatrix,
   qr = double(nstar*pstar.), qraux = double(pstar.),
     qpivot = integer(pstar.),
   n = as.integer(n), M = as.integer(M), NOS = as.integer(NOS),
-      nstar = as.integer(nstar), dim1U = as.integer( M ),  # for U, not U. 
+      nstar = as.integer(nstar), dim1U = as.integer( M ),  # for U, not U.
   errcode = integer(1), othint = as.integer(othint),
   deviance = double(1 + NOS),  # NOS more elts added 20100413
   beta = as.double(usethisbeta),
@@ -695,8 +695,8 @@ callcaoc <- function(cmatrix,
       smomat = as.double(matrix(0, n, qbig. )),
       nu1mat = as.double(nu1mat),
   Hlist = as.double(unlist( Hlist. )),
-  as.integer(ncbvec), 
-      smap = as.integer(1:(Rank+1)),  # 
+  as.integer(ncbvec),
+      smap = as.integer(1:(Rank+1)),  #
       trivc = as.integer(trivc),
 
 
@@ -796,11 +796,11 @@ flush.console()
 
 
 calldcaoc <- function(cmatrix,
-                     etamat, xmat, ymat, wvec, modelno, 
+                     etamat, xmat, ymat, wvec, modelno,
                      Control, Nice21 = TRUE,
                      p1star. = if (modelno %in% c(3, 5)) 2 else 1,
                      p2star. = Rank,
-                     n, M, 
+                     n, M,
                      othint, othdbl,
                      alldump = FALSE) {
 
@@ -844,7 +844,7 @@ calldcaoc <- function(cmatrix,
     attr(temp.smooth.frame[,uu+1], "spar") <- 0  # any old value
     attr(temp.smooth.frame[,uu+1], "df") <- 4    # any old value
   }
-  pstar.  <- p1star.  + p2star. 
+  pstar.  <- p1star.  + p2star.
   nstar <- if (Nice21) ifelse(modelno %in% c(3, 5), n * 2, n) else n * M
   NOS <- ifelse(modelno %in% c(3, 5), M / 2, M)
   lenbeta <- pstar. * ifelse(Nice21, NOS, 1)
@@ -864,7 +864,7 @@ calldcaoc <- function(cmatrix,
 
 
 
-  pstar <- NOS * pstar. 
+  pstar <- NOS * pstar.
   bnumat <- if (Nice21)
             matrix(0, nstar, pstar) else stop("need 'Nice21'")
 
@@ -987,13 +987,13 @@ warning("20100405; this is new:")
     as.double(xmat2),
     cmat = as.double(cmatrix),
     p2 = as.integer(p2), deriv = double(p2 * Rank),
-    betasave = double(lenbeta), 
+    betasave = double(lenbeta),
     npetc = as.integer(npetc), M. = as.integer( M. ),
     dofvec = as.double(dofvec + 1.0),
     lamvec = as.double(0 * dofvec),
     smopar = as.double(smopar),
     match = as.integer(smooth.frame$matcho),
-    as.integer(smooth.frame$nef), 
+    as.integer(smooth.frame$nef),
     as.integer(which),
     smomat = as.double(matrix(0, n, qbig. )),
         nu1mat = as.double(nu1mat),
@@ -1073,7 +1073,7 @@ warning("20100405; this is new:")
     ans1$deriv
   }
   flush.console()
-  returnans 
+  returnans
 }
 
 
@@ -1129,7 +1129,7 @@ Coef.rrvgam <- function(object,
 
 
   ocontrol <- object@control
-  if ((Rank <- ocontrol$Rank) > 2) stop("'Rank' must be 1 or 2") 
+  if ((Rank <- ocontrol$Rank) > 2) stop("'Rank' must be 1 or 2")
   gridlen <- rep_len(gridlen, Rank)
   M <- if (any(slotNames(object) == "predictors") &&
            is.matrix(object@predictors))
@@ -1150,7 +1150,7 @@ Coef.rrvgam <- function(object,
     if (!length(ynames)) ynames <- object@misc$ynames
     if (!length(ynames)) ynames <- paste("Y", 1:NOS, sep = "")
     lp.names <- object@misc$predictors.names
-    if (!length(lp.names)) lp.names <- NULL 
+    if (!length(lp.names)) lp.names <- NULL
 
     latvar.names <-
       if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
@@ -1158,7 +1158,7 @@ Coef.rrvgam <- function(object,
     if (ConstrainedO)
       dimnames(Cmat) <- list(names(ocontrol$colx2.index), latvar.names)
     latvar.mat <- if (ConstrainedO) {
-      object@x[, ocontrol$colx2.index, drop = FALSE] %*% Cmat 
+      object@x[, ocontrol$colx2.index, drop = FALSE] %*% Cmat
     } else {
       object@latvar
     }
@@ -1172,6 +1172,7 @@ Coef.rrvgam <- function(object,
     which.species <- 1:NOS  # Do it for all species
     if (Rank == 1) {
       gridd <- cbind(seq(extents[1, 1], extents[2, 1], len = gridlen))
+      eta2matrix <- matrix(0, NOS, 1)  # Added 20160716
     } else {
       gridd <-
         expand.grid(seq(extents[1, 1], extents[2, 1], len = gridlen[1]),
@@ -1180,7 +1181,7 @@ Coef.rrvgam <- function(object,
     }
     gridd.orig <- gridd
     for (sppno in seq_along(which.species)) {
-      gridd <- gridd.orig 
+      gridd <- gridd.orig
       gridres1 <- gridd[2, 1] - gridd[1, 1]
       gridres2 <- if (Rank == 2) gridd[2, 2] - gridd[1, 2] else 0
       griditer <- 1
@@ -1200,7 +1201,8 @@ Coef.rrvgam <- function(object,
                            Rank = Rank, deriv = 0, MSratio = MSratio)
         yvals <- temp$yvals  # gridlen-vector
         xvals <- temp$xvals  # gridlen x Rank; gridd
-        if (length(temp$eta2)) eta2matrix[sppno, 1] <- temp$eta2
+        if (length(temp$eta2))
+          eta2matrix[sppno, 1] <- temp$eta2
 
         nnn <- length(yvals)
         index <- (1:nnn)[yvals == max(yvals)]
@@ -1232,7 +1234,7 @@ Coef.rrvgam <- function(object,
           gridres1 <- gridd[2, 1] - gridd[1, 1]
           griditer <- griditer + 1
         }
-      }  # of while 
+      }  # of while
 
       if (Rank == 2) {
         myfun <- function(x, object, sppno, Rank = 1,
@@ -1254,12 +1256,12 @@ Coef.rrvgam <- function(object,
              maximum[sppno] <- answer$value
           }
         }  # end of Rank = 2
-    }  # end of sppno 
+    }  # end of sppno
     myetamat <- rbind(maximum)
     if (MSratio == 2)
       myetamat <- kronecker(myetamat, matrix(1:0, 1, 2))
     maximum <- object@family@linkinv(eta = myetamat, extra = object@extra)
-    maximum <- c(maximum)  # Convert from matrix to vector 
+    maximum <- c(maximum)  # Convert from matrix to vector
     names(maximum) <- ynames
 
     ans <- new(Class = "Coef.rrvgam",
@@ -1270,9 +1272,9 @@ Coef.rrvgam <- function(object,
                latvar.order = latvar.mat,
                Maximum = maximum,
                M = M,
-               NOS = NOS, 
-               Optimum = optimum, 
-               Optimum.order = optimum, 
+               NOS = NOS,
+               Optimum = optimum,
+               Optimum.order = optimum,
                Rank = Rank,
                spar1 = object@extra$spar1)
     if (ConstrainedO) {
@@ -1284,7 +1286,7 @@ Coef.rrvgam <- function(object,
       dimnames(eta2matrix) <-
         list(object@misc$predictors.names[c(FALSE, TRUE)], " ")
       ans@eta2 <- eta2matrix
-      ans@df2.nl <- object@extra$df2.nl 
+      ans@df2.nl <- object@extra$df2.nl
       ans@spar2  <- object@extra$spar2
     }
 
@@ -1299,10 +1301,10 @@ Coef.rrvgam <- function(object,
     n <- object@misc$n
     M <- object@misc$M
     NOS <- if (length(object@y)) ncol(object@y) else M
-    pstar <- p + length(Cmat)  # Adjustment 
+    pstar <- p + length(Cmat)  # Adjustment
     adjusted.dispersion <- object@misc$dispersion *
                            (n * M - p) / (n * M - pstar)
-    ans@dispersion <- adjusted.dispersion 
+    ans@dispersion <- adjusted.dispersion
   }
   if (MSratio == 2) {
     lcoef <- object@coefficients
@@ -1311,7 +1313,7 @@ Coef.rrvgam <- function(object,
     ans@dispersion <- temp
   }
   dimnames(ans@Optimum) <- list(latvar.names, ynames)
-  ans 
+  ans
 }
 
 
@@ -1368,15 +1370,15 @@ setMethod("Coef", "rrvgam", function(object, ...) Coef.rrvgam(object, ...))
 
 
 lvplot.rrvgam <- function(object,
-          add = FALSE, show.plot = TRUE, rugplot = TRUE, y = FALSE, 
+          add = FALSE, show.plot = TRUE, rugplot = TRUE, y = FALSE,
           type = c("fitted.values", "predictors"),
           xlab = paste("Latent Variable",
                        if (Rank == 1) "" else " 1", sep = ""),
           ylab = if (Rank == 1) switch(type, predictors = "Predictors",
               fitted.values = "Fitted values") else "Latent Variable 2",
-          pcex = par()$cex, pcol = par()$col, pch = par()$pch, 
+          pcex = par()$cex, pcol = par()$col, pch = par()$pch,
           llty = par()$lty, lcol = par()$col, llwd = par()$lwd,
-          label.arg= FALSE, adj.arg=-0.5, 
+          label.arg= FALSE, adj.arg=-0.5,
           sites= FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
           sfont = par()$font,
           which.species = NULL,
@@ -1403,7 +1405,7 @@ lvplot.rrvgam <- function(object,
 
     Coeflist <- Coef(object)
     Cmat <- Coeflist@C
-    latvarmat <- Coeflist@latvar  # n x Rank 
+    latvarmat <- Coeflist@latvar  # n x Rank
 
     if (!show.plot)
       return(latvarmat)
@@ -1445,7 +1447,7 @@ lvplot.rrvgam <- function(object,
            match(which.species[sppno], sppnames) else which.species[sppno]
         if (is.na(indexSpecies))
           stop("mismatch found in 'which.species'")
-        xx <- latvarmat 
+        xx <- latvarmat
         yy <- r.curves[, indexSpecies]
         ooo <- sort.list(xx)
         xx <- xx[ooo]
@@ -1503,7 +1505,7 @@ setMethod("lvplot", "rrvgam",
 
 
 predict.rrvgam <- function (object, newdata = NULL,
-                         type = c("link", "response", "terms"), 
+                         type = c("link", "response", "terms"),
                          deriv = 0, ...) {
   type <- match.arg(type, c("link", "response", "terms"))[1]
   if (type != "link" && deriv != 0)
@@ -1536,7 +1538,7 @@ predict.rrvgam <- function (object, newdata = NULL,
       setup.smart("read", smart.prediction = object@smart.prediction)
     }
 
-    tt <- terms(object)  # 20030811; object@terms$terms 
+    tt <- terms(object)  # 20030811; object@terms$terms
     X <- model.matrix(delete.response(tt), newdata,
                       contrasts = if (length(object@contrasts))
                                   object@contrasts else NULL,
@@ -1546,7 +1548,7 @@ predict.rrvgam <- function (object, newdata = NULL,
       as.save <- attr(X, "assign")
       X <- X[rep_len(1, nrow(newdata)),, drop = FALSE]
       dimnames(X) <- list(dimnames(newdata)[[1]], "(Intercept)")
-      attr(X, "assign") <- as.save  # Restored 
+      attr(X, "assign") <- as.save  # Restored
     }
 
     offset <- if (!is.null(off.num <- attr(tt, "offset"))) {
@@ -1555,7 +1557,7 @@ predict.rrvgam <- function (object, newdata = NULL,
                 eval(object@call$offset, newdata)
 
     if (is.smart(object) && length(object@smart.prediction)) {
-      wrapup.smart() 
+      wrapup.smart()
     }
 
     attr(X, "assign") <- attrassigndefault(X, tt)
@@ -1595,15 +1597,15 @@ predict.rrvgam <- function (object, newdata = NULL,
                   type = ifelse(type == "response", "link", type))
      if (MSratio == 2) {
        if (any(type == c("link", "response"))) {
-         etamat[, 2*sppno-1] <- temp345$yvals 
-         etamat[, 2*sppno  ] <- temp345$eta2 
+         etamat[, 2*sppno-1] <- temp345$yvals
+         etamat[, 2*sppno  ] <- temp345$eta2
        } else {
          terms.mat[, ind8] <- temp345
          interceptvector[sppno] <- attr(temp345, "constant")
        }
      } else {
        if (any(type == c("link", "response"))) {
-         etamat[, sppno] <- temp345$yvals 
+         etamat[, sppno] <- temp345$yvals
        } else {
          terms.mat[, ind8] <- temp345
          interceptvector[sppno] <- attr(temp345, "constant")
@@ -1618,7 +1620,7 @@ predict.rrvgam <- function (object, newdata = NULL,
   if (type == "link") {
     dimnames(etamat) <-
         list(dimnames(X)[[1]],
-             if (deriv == 0) 
+             if (deriv == 0)
                object@misc$predictors.names else NULL)
     return(etamat)
   } else if (type == "response") {
@@ -1641,7 +1643,7 @@ setMethod("predict", "rrvgam", function(object, ...)
 
 
 predictrrvgam <- function(object, grid, sppno, Rank = 1,
-                       deriv = 0, MSratio = 1, type = "link") {
+                          deriv = 0, MSratio = 1, type = "link") {
   if (type != "link" && type != "terms")
     stop("'link' must be \"link\" or \"terms\"")
   if (ncol(grid <- as.matrix(grid)) != Rank)
@@ -1695,7 +1697,7 @@ predictrrvgam <- function(object, grid, sppno, Rank = 1,
   } else {
     list(xvals = grid,
          yvals = c(nlfunvalues),
-         eta2 = if (MSratio == 2) llcoef[MSratio] else NULL)
+         eta2  = if (MSratio == 2) llcoef[MSratio] else NULL)
     }
 }
 
@@ -1705,15 +1707,15 @@ predictrrvgam <- function(object, grid, sppno, Rank = 1,
 
 
 plot.rrvgam <- function(x,
-                     xlab = if (Rank == 1) "Latent Variable" else 
+                     xlab = if (Rank == 1) "Latent Variable" else
                             paste("Latent Variable", 1:Rank),
                      ylab = NULL, residuals.arg = FALSE,
                      pcol = par()$col, pcex = par()$cex, pch = par()$pch,
-                     lcol = par()$col, lwd = par()$lwd, lty = par()$lty, 
-                     add = FALSE, 
+                     lcol = par()$col, lwd = par()$lwd, lty = par()$lty,
+                     add = FALSE,
                      main = NULL,
                      center.cf = Rank > 1,
-                     WhichRank = 1:Rank, 
+                     WhichRank = 1:Rank,
                      which.species = NULL,  # a numeric or character vector
                      rugplot = TRUE, se.arg = FALSE, deriv = 0,
                      scale = 0, ylim = NULL,
@@ -1740,7 +1742,7 @@ plot.rrvgam <- function(x,
   xlab <- rep_len(xlab, Rank)
 
   if (!length(which.species)) which.species <- 1:NOS
-  if (length(ylab)) 
+  if (length(ylab))
     ylab <- rep_len(ylab, length(which.species))  # Too long if overlay
   if (length(main))
     main <- rep_len(main, length(which.species))  # Too long if overlay
@@ -1774,18 +1776,18 @@ plot.rrvgam <- function(x,
         ylim.use <- if (length(ylim)) ylim else
                     ylim.scale(range(yvals), scale)
         matplot(xvals, yvals, type = "n",
-                xlab = xlab[rindex], 
-                ylab = if (length(ylab)) ylab[sppno] else 
+                xlab = xlab[rindex],
+                ylab = if (length(ylab)) ylab[sppno] else
                        ifelse(overlay, "Fitted functions",
                                        "Fitted function"),
-                main = if (length(main)) main[sppno] else 
+                main = if (length(main)) main[sppno] else
                        ifelse(overlay, "", sppnames[thisSpecies]),
                 ylim = ylim.use,
                 ...)
       }
       if (residuals.arg) {
         stop("cannot handle residuals = TRUE yet")
-      } 
+      }
       counter <- counter + 1
       lines(xvals, yvals,
             col = lcol[counter], lwd = lwd[counter], lty = lty[counter])
@@ -1823,8 +1825,8 @@ persp.rrvgam <-
            lwd = par()$lwd,
            rugplot = FALSE,
            ...) {
-  object <- x  # don't like x as the primary argument 
-  coefobj <- Coef(object) 
+  object <- x  # don't like x as the primary argument
+  coefobj <- Coef(object)
   if ((Rank <- coefobj@Rank) > 2)
     stop("object must be a rank-1 or rank-2 model")
   fvmat <- fitted(object)
@@ -1868,7 +1870,7 @@ persp.rrvgam <-
   LP <- matrix(NA_real_, nrow(latvarmat), NOS)
   for (sppno in 1:NOS) {
     temp <- predictrrvgam(object = object, grid = latvarmat, sppno = sppno,
-                       Rank = Rank, deriv = 0, MSratio = MSratio)
+                          Rank = Rank, deriv = 0, MSratio = MSratio)
     LP[, sppno] <- temp$yval
   }
   if (MSratio == 2) {
@@ -1886,10 +1888,10 @@ persp.rrvgam <-
       lwd <- rep_len(lwd, length(which.species.numer))
       matplot(latvar1, fitvals, xlab = xlab, ylab = ylab,
               type = "n", main = main, xlim = xlim, ylim = ylim, ...)
-      if (rugplot) rug(latvar(object)) 
+      if (rugplot) rug(latvar(object))
       for (sppno in seq_along(which.species.numer)) {
         ptr2 <- which.species.numer[sppno]  # points to species column
-        lines(latvar1, fitvals[,ptr2], col = col[sppno], 
+        lines(latvar1, fitvals[,ptr2], col = col[sppno],
               lty = lty[sppno], lwd = lwd [sppno], ...)
         if (labelSpecies) {
           ptr1 <- (1:nrow(fitvals))[max(fitvals[, ptr2]) ==
@@ -1907,7 +1909,7 @@ persp.rrvgam <-
     if (length(which.species) > 1)
       for (sppno in which.species[-1]) {
         max.fitted <- pmax(max.fitted,
-                           matrix(fitvals[, sppno], 
+                           matrix(fitvals[, sppno],
                                   length(latvar1), length(latvar2)))
     }
     if (!length(zlim))
@@ -2083,7 +2085,7 @@ if (!isGeneric("calibrate"))
 setMethod("calibrate", "rrvgam", function(object, ...)
           calibrate.qrrvglm(object, ...))
 
-    
+
 setMethod("calibrate", "qrrvglm", function(object, ...)
           calibrate.qrrvglm(object, ...))
 

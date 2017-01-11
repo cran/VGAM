@@ -7,17 +7,17 @@
   associated with a LMS quantile regression.
 }
 \usage{
-plotdeplot.lmscreg(answer, y.arg, add.arg = FALSE, 
-    xlab = "", ylab = "density", xlim = NULL, ylim = NULL, 
-    llty.arg = par()$lty, col.arg = par()$col, 
+plotdeplot.lmscreg(answer, y.arg, add.arg = FALSE,
+    xlab = "", ylab = "density", xlim = NULL, ylim = NULL,
+    llty.arg = par()$lty, col.arg = par()$col,
     llwd.arg = par()$lwd, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{answer}{
   Output from functions of the form
-  \code{deplot.???} where \code{???} is the name of the 
-  \pkg{VGAM} LMS family function, e.g., \code{lms.yjn}. 
+  \code{deplot.???} where \code{???} is the name of the
+  \pkg{VGAM} LMS family function, e.g., \code{lms.yjn}.
   See below for details.
 
   }
@@ -42,7 +42,7 @@ plotdeplot.lmscreg(answer, y.arg, add.arg = FALSE,
 
   }
   \item{llty.arg}{
-  Line type. 
+  Line type.
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
   \item{col.arg}{
   Line color.

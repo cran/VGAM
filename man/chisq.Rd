@@ -41,7 +41,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 
 \author{ T. W. Yee }
-\note{ 
+\note{
   Multiple responses are permitted.
   There may be convergence problems if the degrees of freedom
   is very large or close to zero.

@@ -30,7 +30,7 @@ latvar(object, ...)
 }
 \details{
   Latent variables occur in reduced-rank regression models,
-  as well as in quadratic and additive ordination models. 
+  as well as in quadratic and additive ordination models.
   For the latter two,
   latent variable values are often called \emph{site scores}
   by ecologists.

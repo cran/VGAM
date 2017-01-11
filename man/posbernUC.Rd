@@ -58,7 +58,7 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
   }
   \item{cap.effect}{
-  Numeric, the capture effect. 
+  Numeric, the capture effect.
   Added to the linear predictor if captured previously.
   A positive or negative value corresponds to
   a trap-happy and trap-shy effect respectively.
@@ -95,18 +95,18 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
   }
 
-  \item{link, earg.link}{ 
+  \item{link, earg.link}{
   The former is used to generate the probabilities for capture
   at each occasion.
   Other details at \code{\link{CommonVGAMffArguments}}.
 
 
   }
-  \item{prob, prob0}{ 
+  \item{prob, prob0}{
     Matrix of probabilities for the numerator and denominators
     respectively.
     The default does \emph{not} correspond to the
-    \eqn{M_b} model since the \eqn{M_b} model has a denominator 
+    \eqn{M_b} model since the \eqn{M_b} model has a denominator
     which involves the capture history.
 
 
@@ -153,7 +153,7 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 }
 %\references{ }
 \author{ Thomas W. Yee. }
-\note{ 
+\note{
   The \code{r}-type function is experimental only and does not follow the
   usual conventions of \code{r}-type R functions.
   It may change a lot in the future.
@@ -163,7 +163,7 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{posbernoulli.tb}},
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.t}}.
@@ -181,8 +181,8 @@ M.bh <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + x3, posbernoulli.b(I2 = FALSE),
 constraints(M.bh)
 summary(M.bh)
 }
-\keyword{distribution} 
-\keyword{datagen} 
+\keyword{distribution}
+\keyword{datagen}
 
 
 %double.ch = FALSE,

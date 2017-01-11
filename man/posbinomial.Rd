@@ -125,7 +125,7 @@ Drapers Company Research Memoirs.
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.t}},
   \code{\link{posbernoulli.tb}},

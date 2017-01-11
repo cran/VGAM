@@ -117,7 +117,7 @@ tikuv(d, lmean = "identitylink", lsigma = "loge", isigma = NULL,
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{dtikuv}},
   \code{\link{uninormal}}.
 

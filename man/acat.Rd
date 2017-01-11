@@ -14,8 +14,8 @@ acat(link = "loge", parallel = FALSE, reverse = FALSE,
 \arguments{
 
   \item{link}{
-  Link function applied to the ratios of the 
-  adjacent categories probabilities. 
+  Link function applied to the ratios of the
+  adjacent categories probabilities.
   See \code{\link{Links}} for more choices.
 
   }

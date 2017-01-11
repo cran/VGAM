@@ -16,7 +16,7 @@ lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = "sdlog")
   \item{lmeanlog, lsdlog}{
   Parameter link functions applied to the mean and (positive)
   \eqn{\sigma}{sigma} (standard deviation) parameter.
-  Both of these are on the log scale. 
+  Both of these are on the log scale.
   See \code{\link{Links}} for more choices.
 
 
@@ -69,7 +69,7 @@ lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = "sdlog")
   A random variable \eqn{Y} has a 2-parameter lognormal distribution
   if \eqn{\log(Y)}{log(Y)}
   is distributed \eqn{N(\mu, \sigma^2)}{N(mu, sigma^2)}.
-  The expected value of \eqn{Y}, which is 
+  The expected value of \eqn{Y}, which is
   \deqn{E(Y) = \exp(\mu + 0.5 \sigma^2)}{%
         E(Y) = exp(mu + 0.5 sigma^2)}
   and not \eqn{\mu}{mu}, make up the fitted values.

@@ -47,7 +47,7 @@ mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
   }
 }
 \details{
-  The probability density function can be loosely written as 
+  The probability density function can be loosely written as
   \deqn{f(y) = \phi\,Exponential(\lambda_1) +
               (1-\phi)\,Exponential(\lambda_2)}{%
         f(y) = phi * Exponential(lambda1) +

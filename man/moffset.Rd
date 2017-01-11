@@ -31,7 +31,7 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
   the row or column names.
   For example, for the \code{\link{alcoff}},
   put \code{roffset = "6"} means that we make an effective day's
-  dataset start from 6:00 am, and this wraps around to 
+  dataset start from 6:00 am, and this wraps around to
   include midnight to 05.59 am on the next day.
 
 
@@ -74,7 +74,7 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
   \code{\link{Rcim}} only reorders the level of the rows and columns
   so that the data is shifted but not moved.
   That is, a value in one row stays in that row,
-  and ditto for column. 
+  and ditto for column.
   But in \code{\link{moffset}}
   values in one column can be moved to a previous column.
   See the examples below.
@@ -107,8 +107,8 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
 
 }
 \seealso{
-  \code{\link{Rcim}}, 
-  \code{\link{rcim}}, 
+  \code{\link{Rcim}},
+  \code{\link{rcim}},
   \code{\link{plotrcim0}},
   \code{\link{alcoff}},
   \code{\link{crashi}}.
@@ -124,7 +124,7 @@ moffset(alcoff, 3, 2, "*") - Rcim(alcoff, 3+1, 2+1)  # Note the differences
 # An 'effective day' data set:
 alcoff.e <- moffset(alcoff, roffset = "6", postfix = "*")
 fit.o <- rcim(alcoff)    # default baselines are first row and col
-fit.e <- rcim(alcoff.e)  # default baselines are first row and col 
+fit.e <- rcim(alcoff.e)  # default baselines are first row and col
 
 \dontrun{ par(mfrow = c(2, 2), mar = c(9, 4, 2, 1))
 plot(fit.o, rsub = "Not very interpretable", csub = "Not very interpretable")

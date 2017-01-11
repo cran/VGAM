@@ -20,7 +20,7 @@ cao(formula, family, data = list(),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
-  \item{formula}{ 
+  \item{formula}{
     a symbolic description of the model to be fit.  The RHS of the
     formula is used to construct the latent variables, upon which the
     smooths are applied.  All the variables in the formula are used
@@ -31,7 +31,7 @@ cao(formula, family, data = list(),
 
 
   }
-  \item{family}{ 
+  \item{family}{
   a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
   describing what statistical model is to be fitted. This is called a
   ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
@@ -49,20 +49,20 @@ cao(formula, family, data = list(),
 
 
   }
-  \item{weights}{ 
+  \item{weights}{
     an optional vector or matrix of (prior) weights to be used in the
     fitting process.  For \code{cao}, this argument currently should
     not be used.
 
 
   }
-  \item{subset}{ 
+  \item{subset}{
     an optional logical vector specifying a subset of observations to
     be used in the fitting process.
 
 
   }
-  \item{na.action}{ 
+  \item{na.action}{
     a function which indicates what should happen when the data contain
     \code{NA}s.  The default is set by the \code{na.action} setting of
     \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
@@ -70,33 +70,33 @@ cao(formula, family, data = list(),
 
 
   }
-  \item{etastart}{ 
+  \item{etastart}{
     starting values for the linear predictors.  It is a \eqn{M}-column
     matrix. If \eqn{M=1} then it may be a vector.  For \code{cao},
     this argument currently should not be used.
 
 
     }
-  \item{mustart}{ 
+  \item{mustart}{
     starting values for the fitted values. It can be a vector or a
     matrix.  Some family functions do not make use of this argument.
     For \code{cao}, this argument currently should not be used.
 
 
   }
-  \item{coefstart}{ 
+  \item{coefstart}{
     starting values for the coefficient vector.  For \code{cao}, this
     argument currently should not be used.
 
 
   }
-  \item{control}{ 
+  \item{control}{
     a list of parameters for controlling the fitting process.
     See \code{\link{cao.control}} for details.
 
 
   }
-  \item{offset}{ 
+  \item{offset}{
     a vector or \eqn{M}-column matrix of offset values.  These are
     \emph{a priori} known and are added to the linear predictors during
     fitting.  For \code{cao}, this argument currently should not be used.
@@ -111,13 +111,13 @@ cao(formula, family, data = list(),
 
 
   }
-  \item{model}{ 
+  \item{model}{
     a logical value indicating whether the \emph{model frame} should be
     assigned in the \code{model} slot.
 
 
   }
-  \item{x.arg, y.arg}{ 
+  \item{x.arg, y.arg}{
     logical values indicating whether the model matrix and response
     vector/matrix used in the fitting process should be assigned in the
     \code{x} and \code{y} slots.  Note the model matrix is the linear
@@ -125,13 +125,13 @@ cao(formula, family, data = list(),
 
 
   }
-  \item{contrasts}{ 
+  \item{contrasts}{
     an optional list. See the \code{contrasts.arg} of
     \code{\link{model.matrix.default}}.
 
 
   }
-  \item{constraints}{ 
+  \item{constraints}{
     an optional list  of constraint matrices.  For \code{cao}, this
     argument currently should not be used.  The components of the list
     must be named with the term it corresponds to (and it must match
@@ -144,25 +144,25 @@ cao(formula, family, data = list(),
 
 
   }
-  \item{extra}{ 
+  \item{extra}{
     an optional list with any extra information that might be needed by
     the family function.  For \code{cao}, this argument currently should
     not be used.
 
 
   }
-  \item{qr.arg}{ 
+  \item{qr.arg}{
     For \code{cao}, this argument currently should not be used.
 
 
   }
-  \item{smart}{ 
+  \item{smart}{
     logical value indicating whether smart prediction
     (\code{\link{smartpred}}) will be used.
 
 
   }
-  \item{\dots}{ 
+  \item{\dots}{
     further arguments passed into \code{\link{cao.control}}.
 
 
@@ -264,7 +264,7 @@ Constrained additive ordination.
 
 
 
-}   
+}
 \author{T. W. Yee}
 \note{
   CAO models are computationally expensive, therefore
@@ -282,7 +282,7 @@ Constrained additive ordination.
 
 }
 \section{Warning }{
-  CAO is very costly to compute. With version 0.7-8 it took 28 minutes on 
+  CAO is very costly to compute. With version 0.7-8 it took 28 minutes on
   a fast machine. I hope to look at ways of speeding things up in the
   future.
 
@@ -332,7 +332,7 @@ Constrained additive ordination.
 \examples{
 \dontrun{
 hspider[, 1:6] <- scale(hspider[, 1:6])  # Standardized environmental vars
-set.seed(149)  # For reproducible results 
+set.seed(149)  # For reproducible results
 ap1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull) ~
            WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
            family = poissonff, data = hspider, Rank = 1,

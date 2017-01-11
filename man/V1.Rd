@@ -9,7 +9,7 @@
   (Pas-de-Calais) and Dutch coasts towards London.
   The number of hits per square grid around London were recorded.
 
-  
+
 
 }
 \usage{
@@ -19,7 +19,7 @@ data(V1)
   A data frame with the following variables.
 
   \describe{
-   
+
     \item{hits}{
       Values between 0 and 4, and 7.
       Actually, the 7 is really imputed from the paper
@@ -60,7 +60,7 @@ data(V1)
 
 }
 \source{
- 
+
   Clarke, R. D. (1946).
   An application of the Poisson distribution.
   \emph{Journal of the Institute of Actuaries},

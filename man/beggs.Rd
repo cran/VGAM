@@ -13,7 +13,7 @@ data(beggs)
   Data frame of a two way table.
 
   \describe{
-   
+
     \item{b0, b1, b2, b3, b4}{
     The \code{b} refers to bacon.
     The number of times bacon was purchased was 0, 1, 2, 3, or 4.
@@ -46,17 +46,17 @@ trips, were counted.
 %    Data from Bell and Latin (1998).
 %    Also see Danaher and Hardie (2005).
 
-     
+
 }
 \source{
- 
+
   Bell, D. R. and Lattin, J. M. (1998)
   Shopping Behavior and Consumer Preference
   for Store Price Format: Why `Large Basket' Shoppers Prefer EDLP.
   \emph{Marketing Science},
   \bold{17}, 66--88.
 
- 
+
 }
 \references{
 

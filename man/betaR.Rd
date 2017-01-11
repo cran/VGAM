@@ -14,7 +14,7 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape1, lshape2, i1, i2}{ 
+  \item{lshape1, lshape2, i1, i2}{
   Details at \code{\link{CommonVGAMffArguments}}.
   See \code{\link{Links}} for more choices.
 
@@ -28,7 +28,7 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 
 
   }
-  \item{A, B}{ 
+  \item{A, B}{
   Lower and upper limits of the distribution.
   The defaults correspond to the \emph{standard beta distribution}
   where the response lies between 0 and 1.
@@ -44,7 +44,7 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 \details{
   The two-parameter beta distribution is given by
   \eqn{f(y) =}
-    \deqn{(y-A)^{shape1-1} \times (B-y)^{shape2-1} / [Beta(shape1,shape2) 
+    \deqn{(y-A)^{shape1-1} \times (B-y)^{shape2-1} / [Beta(shape1,shape2)
                  \times (B-A)^{shape1+shape2-1}]}{%
           (y-A)^(shape1-1) * (B-y)^(shape2-1) / [Beta(shape1,shape2) *
                  (B-A)^(shape1+shape2-1)]}
@@ -86,9 +86,9 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 
 
 }
-\references{ 
-  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995) 
-  Chapter 25 of: 
+\references{
+  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+  Chapter 25 of:
   \emph{Continuous Univariate Distributions},
   2nd edition, Volume 2, New York: Wiley.
 
@@ -118,7 +118,7 @@ betaR(lshape1 = "loge", lshape2 = "loge",
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{betaff}},
 % \code{\link{zoibetaR}},
   \code{\link[stats:Beta]{Beta}},

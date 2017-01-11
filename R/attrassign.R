@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -34,7 +34,7 @@ if (!isGeneric("attrassign"))
   setGeneric("attrassign", function(object, ...)
              standardGeneric("attrassign"))
 
-setMethod("attrassign", "lm", 
+setMethod("attrassign", "lm",
          function(object, ...)
          attrassignlm(object, ...))
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -42,6 +42,7 @@ process.categorical.data.VGAM <- expression({
   } else {
     nn <- nrow(y)
   }
+
 
   nvec <- rowSums(y)
 
@@ -249,10 +250,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
-    delete.zero.colns <- TRUE 
+    delete.zero.colns <- TRUE
     eval(process.categorical.data.VGAM)
     extra$wy.prod <- TRUE
-    M <- ncol(y) - 1 
+    M <- ncol(y) - 1
 
     mynames <- if ( .reverse )
       paste("P[Y", .fillerChar, "=", .fillerChar, 2:(M+1), "|Y",
@@ -266,8 +267,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
                   tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -275,9 +275,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (!is.matrix(eta))
       eta <- as.matrix(eta)
-    fv.matrix <-
-    if ( .reverse ) {
-      M <- ncol(eta)
+    fv.mat <- if ( .reverse ) {
+      M <- NCOL(eta)
       djr <- eta2theta(eta, .link , earg = .earg )
       temp <- tapplymat1(1 - djr[, M:1], "cumprod")[, M:1]
       cbind(1, djr) * cbind(temp, 1)
@@ -286,10 +285,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       temp <- tapplymat1(1 - dj, "cumprod")
       cbind(dj, 1) * cbind(1, temp)
     }
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) = list(dimnames(eta)[[1]],
-                                 extra$dimnamesy2)
-    fv.matrix
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   last = eval(substitute(expression({
     misc$link <- rep_len( .link , M)
@@ -305,7 +301,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     misc$fillerChar <- .fillerChar
     misc$whitespace <- .whitespace
 
-    extra <- list()  # kill what was used 
+    extra <- list()  # kill what was used
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -348,6 +344,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       }
     },
   vfamily = c("sratio", "VGAMordinal", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    djr <- eta2theta(eta, .link , earg = .earg )  # dj or djr
+    okay1 <- all(is.finite(djr)) && all(0 < djr & djr < 1)
+    okay1
+  }, list( .earg = earg, .link = link, .reverse = reverse) )),
   deriv = eval(substitute(expression({
     if (!length(extra$mymat)) {
       extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
@@ -401,7 +402,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
   new("vglmff",
-  blurb = c("Continuation ratio model\n\n", 
+  blurb = c("Continuation ratio model\n\n",
             "Links:    ",
             namesof(if (reverse)
             ifelse(whitespace, "P[Y < j+1|Y <= j+1]",
@@ -452,9 +453,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
-    delete.zero.colns <- TRUE 
+    delete.zero.colns <- TRUE
     eval(process.categorical.data.VGAM)
-    M <- ncol(y) - 1 
+    M <- ncol(y) - 1
 
     mynames <- if ( .reverse )
       paste("P[Y", .fillerChar, "<", .fillerChar, 2:(M+1), "|Y",
@@ -469,8 +470,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                    tapplymat1(y, "cumsum") else
                    tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -478,7 +478,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (!is.matrix(eta))
       eta <- as.matrix(eta)
-    fv.matrix <- if ( .reverse ) {
+    fv.mat <- if ( .reverse ) {
       M <- ncol(eta)
       djrs <- eta2theta(eta, .link , earg = .earg )
       temp <- tapplymat1(djrs[, M:1], "cumprod")[, M:1]
@@ -488,10 +488,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       temp <- tapplymat1(djs, "cumprod")
       cbind(1 - djs, 1) * cbind(1, temp)
     }
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(dimnames(eta)[[1]],
-                                  extra$dimnamesy2)
-    fv.matrix
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   last = eval(substitute(expression({
 
@@ -509,7 +506,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     misc$whitespace <- .whitespace
 
 
-    extra <- list()  # kill what was used 
+    extra <- list()  # kill what was used
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -553,6 +550,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
   },
   vfamily = c("cratio", "VGAMordinal", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    djrs <- eta2theta(eta, .link , earg = .earg )  # djs or djrs
+    okay1 <- all(is.finite(djrs)) && all(0 < djrs & djrs < 1)
+    okay1
+  }, list( .earg = earg, .link = link, .reverse = reverse) )),
 
   deriv = eval(substitute(expression({
     if (!length(extra$mymat)) {
@@ -601,7 +603,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  vglm.multinomial.control <-
-  function(maxit = 21, panic = FALSE, 
+  function(maxit = 21, panic = FALSE,
            criterion = c("aic1", "aic2", names( .min.criterion.VGAM )),
            ...) {
   if (mode(criterion) != "character" && mode(criterion) != "name")
@@ -678,7 +680,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
   new("vglmff",
-  blurb = c("Multinomial logit model\n\n", 
+  blurb = c("Multinomial logit model\n\n",
             "Links:    ",
          if (is.numeric(refLevel)) {
          if (refLevel < 0) {
@@ -746,8 +748,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
-    delete.zero.colns <- TRUE 
+    delete.zero.colns <- TRUE
     eval(process.categorical.data.VGAM)
+
 
     M <- ncol(y)-1
     use.refLevel <- if (is.numeric( .refLevel )) {
@@ -770,6 +773,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             "]", .fillerChar, "/", .fillerChar, "mu[,",
             use.refLevel, "])", sep = "")
 
+    extra$colnames.y  <- colnames(y)
   }), list( .refLevel = refLevel,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -777,14 +781,15 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (anyNA(eta))
       warning("there are NAs in eta in slot inverse")
-    ans <- multilogit(eta, refLevel = extra$use.refLevel, # .refLevel ,
+    ans <- multilogit(eta,
+                      refLevel = extra$use.refLevel,  # .refLevel ,
                       inverse = TRUE)
     if (anyNA(ans))
       warning("there are NAs here in slot linkinv")
     if (min(ans) == 0 || max(ans) == 1)
       warning("fitted probabilities numerically 0 or 1 occurred")
 
-    ans
+    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = 1)
   }), list( .refLevel = refLevel )),
 
   last = eval(substitute(expression({
@@ -811,7 +816,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
-    multilogit(mu, refLevel = extra$use.refLevel)  # .refLevel 
+    multilogit(mu, refLevel = extra$use.refLevel)  # .refLevel
   }), list( .refLevel = refLevel )),
 
   loglikelihood =
@@ -842,12 +847,19 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
   },
   vfamily = c("multinomial", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    probs <- multilogit(eta, refLevel = extra$use.refLevel,
+                        inverse = TRUE)  # .refLevel
+    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
+    okay1
+  }, list( .refLevel = refLevel ))),
+
   deriv = eval(substitute(expression({
     use.refLevel <- extra$use.refLevel  # Restore its value
     c(w) * (y[, -use.refLevel] - mu[, -use.refLevel])
   }), list( .refLevel = refLevel ))),
   weight = eval(substitute(expression({
-    mytiny <- (mu < sqrt(.Machine$double.eps)) | 
+    mytiny <- (mu < sqrt(.Machine$double.eps)) |
               (mu > 1.0 - sqrt(.Machine$double.eps))
 
     if (M == 1) {
@@ -880,7 +892,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
  cumulative <- function(link = "logit",
                         parallel = FALSE,  # Does not apply to the intercept
-                        reverse = FALSE, 
+                        reverse = FALSE,
                         multiple.responses = FALSE,
                         whitespace = FALSE) {
 
@@ -909,7 +921,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   blurb = if ( multiple.responses )
           c(paste("Multivariate cumulative", link, "model\n\n"),
           "Links:   ",
-          namesof(if (reverse) 
+          namesof(if (reverse)
                   ifelse(whitespace, "P[Y1 >= j+1]", "P[Y1>=j+1]") else
                   ifelse(whitespace, "P[Y1 <= j]",   "P[Y1<=j]"),
                   link, earg = earg),
@@ -1003,7 +1015,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       if (any(w != 1) || ncol(cbind(w)) != 1)
           stop("the 'weights' argument must be a vector of all ones")
       Llevels <- max(y)
-      delete.zero.colns <- FALSE 
+      delete.zero.colns <- FALSE
       orig.y <- cbind(y)  # Convert y into a matrix if necessary
       NOS <- ncol(cbind(orig.y))
       use.y <- use.mustart <- NULL
@@ -1033,6 +1045,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       extra$Llevels <- Llevels
   } else {
 
+
       delete.zero.colns <- TRUE
 
       eval(process.categorical.data.VGAM)
@@ -1053,8 +1066,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                 mustart[,iii] <- weighted.mean(y[,iii], w)
       }
 
-      if (length(dimnames(y)))
-        extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
   }
   }), list( .reverse = reverse, .multiple.responses = multiple.responses,
             .link = link, .earg = earg,
@@ -1067,7 +1079,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         if ( .multiple.responses ) {
           NOS <- extra$NOS
           Llevels <- extra$Llevels
-          fv.matrix <- matrix(0, nrow(eta), NOS*Llevels)
+          fv.mat <- matrix(0, nrow(eta), NOS * Llevels)
           for (iii in 1:NOS) {
             cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
             aindex <- (iii-1)*(Llevels) + 1:(Llevels)
@@ -1075,7 +1087,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
               ccump <- cbind(1,
                              eta2theta(eta[, cindex, drop = FALSE],
                                        .link , earg = .earg ))
-              fv.matrix[,aindex] <-
+              fv.mat[, aindex] <-
                   cbind(-tapplymat1(ccump, "diff"),
                         ccump[, ncol(ccump)])
             } else {
@@ -1083,24 +1095,22 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                                       .link ,
                                       earg = .earg ),
                             1)
-              fv.matrix[,aindex] <-
+              fv.mat[, aindex] <-
                   cbind(cump[, 1], tapplymat1(cump, "diff"))
             }
           }
-          fv.matrix
+          label.cols.y(fv.mat, NOS = NOS,
+                       colnames.y = if (is.null(extra$colnames.y)) NULL else
+                         rep_len(extra$colnames.y, ncol(fv.mat)))
         } else {
-          fv.matrix <-
-          if ( .reverse ) {
+          fv.mat <- if ( .reverse ) {
             ccump <- cbind(1, eta2theta(eta, .link , earg = .earg ))
             cbind(-tapplymat1(ccump, "diff"), ccump[, ncol(ccump)])
           } else {
             cump <- cbind(eta2theta(eta, .link , earg = .earg ), 1)
             cbind(cump[, 1], tapplymat1(cump, "diff"))
           }
-          if (length(extra$dimnamesy2))
-            dimnames(fv.matrix) <- list(dimnames(eta)[[1]],
-                                        extra$dimnamesy2)
-          fv.matrix
+          label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
         }
         answer
     }, list( .reverse = reverse,
@@ -1138,7 +1148,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             .whitespace = whitespace ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
-    answer <- 
+    answer <-
     if ( .multiple.responses ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
@@ -1146,7 +1156,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       for (iii in 1:NOS) {
         cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
         aindex <- (iii-1)*(Llevels) + 1:(Llevels)
-        cump <- tapplymat1(as.matrix(mu[,aindex]), "cumsum")
+        cump <- tapplymat1(as.matrix(mu[, aindex]), "cumsum")
         eta.matrix[,cindex] =
             theta2eta(if ( .reverse ) 1-cump[, 1:(Llevels-1)] else
                   cump[, 1:(Llevels-1)], .link , earg = .earg )
@@ -1192,6 +1202,29 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
   },
   vfamily = c("cumulative", "VGAMordinal", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    if ( .multiple.responses ) {
+      return(TRUE)
+    }
+    probs <-
+      if ( .reverse ) {
+        ccump <- cbind(1, eta2theta(eta, .link , earg = .earg ))
+        cbind(-tapplymat1(ccump, "diff"), ccump[, ncol(ccump)])
+      } else {
+        cump <- cbind(eta2theta(eta, .link , earg = .earg ), 1)
+        cbind(cump[, 1], tapplymat1(cump, "diff"))
+      }
+    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
+    if (!okay1)
+      warning("It seems that the nonparallelism assumption has resulted in ",
+              "intersecting linear/additive predictors. Try propodds() or ",
+              "fitting a partial nonproportional odds model or choosing ",
+              "some other link function, etc.")
+    okay1
+  }, list( .link = link, .earg = earg,
+           .reverse = reverse,
+           .multiple.responses = multiple.responses ))),
+
   deriv = eval(substitute(expression({
     mu.use <- pmax(mu, .Machine$double.eps * 1.0e-0)
     deriv.answer <-
@@ -1209,7 +1242,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           (y[,   aindex, drop = FALSE] / mu.use[,   aindex, drop = FALSE] -
            y[, 1+aindex, drop = FALSE] / mu.use[, 1+aindex, drop = FALSE])
       }
-      (if ( .reverse ) -c(w)  else c(w)) * dcump.deta * resmat 
+      (if ( .reverse ) -c(w)  else c(w)) * dcump.deta * resmat
     } else {
       cump <- eta2theta(eta, .link , earg = .earg )
       dcump.deta <- dtheta.deta(cump, .link , earg = .earg )
@@ -1345,7 +1378,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
-    delete.zero.colns <- TRUE 
+    delete.zero.colns <- TRUE
     eval(process.categorical.data.VGAM)
     M <- ncol(y) - 1
     mynames <- if ( .reverse )
@@ -1361,8 +1394,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       namesof(mynames, .link , short = TRUE, earg = .earg )
     y.names <- paste("mu", 1:(M+1), sep = "")
 
-    if (length(dimnames(y)))
-      extra$dimnamesy2 <- dimnames(y)[[2]]
+    extra$colnames.y  <- colnames(y)
   }), list( .earg = earg, .link = link, .reverse = reverse,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
@@ -1371,7 +1403,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (!is.matrix(eta))
       eta <- as.matrix(eta)
     M <- ncol(eta)
-    fv.matrix <- if ( .reverse ) {
+    fv.mat <- if ( .reverse ) {
       zetar <- eta2theta(eta, .link , earg = .earg )
       temp <- tapplymat1(zetar[, M:1], "cumprod")[, M:1, drop = FALSE]
       cbind(temp, 1) / drop(1 + temp %*% rep(1, ncol(temp)))
@@ -1380,10 +1412,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       temp <- tapplymat1(zeta, "cumprod")
       cbind(1, temp) / drop(1 + temp %*% rep(1, ncol(temp)))
     }
-    if (length(extra$dimnamesy2))
-      dimnames(fv.matrix) <- list(dimnames(eta)[[1]],
-                                  extra$dimnamesy2)
-    fv.matrix
+   label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
 
   last = eval(substitute(expression({
@@ -1436,6 +1465,22 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     }
   },
   vfamily = c("acat", "VGAMordinal", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    if (!is.matrix(eta))
+      eta <- as.matrix(eta)
+    M <- ncol(eta)
+    probs <- if ( .reverse ) {
+      zetar <- eta2theta(eta, .link , earg = .earg )
+      temp <- tapplymat1(zetar[, M:1], "cumprod")[, M:1, drop = FALSE]
+      cbind(temp, 1) / drop(1 + temp %*% rep(1, ncol(temp)))
+    } else {
+      zeta <- eta2theta(eta, .link , earg = .earg )
+      temp <- tapplymat1(zeta, "cumprod")
+      cbind(1, temp) / drop(1 + temp %*% rep(1, ncol(temp)))
+    }
+    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
+    okay1
+  }, list( .earg = earg, .link = link, .reverse = reverse) )),
   deriv = eval(substitute(expression({
     zeta <- eta2theta(eta, .link , earg = .earg )  # May be zetar
 
@@ -1457,7 +1502,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     answer
   }), list( .earg = earg, .link = link, .reverse = reverse) )),
   weight = eval(substitute(expression({
-    wz <- matrix(NA_real_, n, dimm(M)) 
+    wz <- matrix(NA_real_, n, dimm(M))
 
     hess <- attr(d1, "hessian") / d1
 
@@ -1486,11 +1531,11 @@ acat.deriv <- function(zeta, reverse, M, n) {
     index <- if (reverse) ii:M else 1:ii
     vars <- paste("zeta", index, sep = "")
     txt <- paste(vars, collapse = "*")
-    alltxt <- c(alltxt, txt) 
+    alltxt <- c(alltxt, txt)
   }
   alltxt <- paste(alltxt, collapse = " + ")
   alltxt <- paste(" ~ 1 +", alltxt)
-  txt <- as.formula(alltxt) 
+  txt <- as.formula(alltxt)
 
   allvars <- paste("zeta", 1:M, sep = "")
   d1 <- deriv3(txt, allvars, hessian = TRUE)
@@ -1523,7 +1568,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
 
   new("vglmff",
-  blurb = c(paste("Bradley-Terry model (without ties)\n\n"), 
+  blurb = c(paste("Bradley-Terry model (without ties)\n\n"),
             "Links:   ",
             namesof("alpha's", "loge")),
   infos = eval(substitute(function(...) {
@@ -1619,6 +1664,22 @@ acat.deriv <- function(zeta, reverse, M, n) {
     }
   },
   vfamily = c("brat", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    probs <- NULL
+    eta <- as.matrix(eta)  # in case M = 1
+    for (ii in 1:nrow(eta)) {
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
+                                     earg = list(theta = NULL)),
+                           .refvalue , .refgp )
+      alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
+      alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
+      probs <- rbind(probs, alpha1 / (alpha1 + alpha2))
+    }
+
+
+    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
+    okay1
+  }, list( .refvalue = refvalue, .refgp = refgp) )),
   deriv = eval(substitute(expression({
     ans <- NULL
     uindex <- if ( .refgp == "last") 1:M else (1:(M+1))[-( .refgp ) ]
@@ -1681,14 +1742,14 @@ acat.deriv <- function(zeta, reverse, M, n) {
   if (!is.Numeric(refvalue, length.arg = 1, positive = TRUE))
     stop("'refvalue' must be a single positive value")
 
-  if (!is.character(refgp) && 
+  if (!is.character(refgp) &&
      !is.Numeric(refgp, length.arg = 1,
                  integer.valued = TRUE, positive = TRUE))
     stop("'refgp' must be a single positive integer")
 
 
   new("vglmff",
-  blurb = c(paste("Bradley-Terry model (with ties)\n\n"), 
+  blurb = c(paste("Bradley-Terry model (with ties)\n\n"),
             "Links:   ",
             namesof("alpha's", "loge"), ", log(alpha0)"),
   infos = eval(substitute(function(...) {
@@ -1797,6 +1858,23 @@ acat.deriv <- function(zeta, reverse, M, n) {
     }
   },
   vfamily = c("bratt", "VGAMcategorical"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    probs <- qprobs <- NULL
+    M <- ncol(eta)
+    for (ii in 1:nrow(eta)) {
+      alpha <- .brat.alpha(eta2theta(eta[ii, -M],
+                                     "loge"),
+                           .refvalue , .refgp )
+      alpha0 <- loge(eta[ii, M], inverse = TRUE)
+      alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
+      alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
+       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))  #
+      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))  #
+    }
+    okay1 <- all(is.finite( probs)) && all(0 <  probs &  probs < 1) &&
+             all(is.finite(qprobs)) && all(0 < qprobs & qprobs < 1)
+    okay1
+  }, list( .refvalue = refvalue, .refgp = refgp) )),
   deriv = eval(substitute(expression({
     ans <- NULL
     ties <- extra$ties
@@ -1819,7 +1897,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
                   tmat[uindex, aa]) / Daj
       }
       deriv0 <- 0 # deriv wrt eta[M]
-      for (aa in 1:(NCo-1)) 
+      for (aa in 1:(NCo-1))
         for (bb in (aa+1):NCo) {
           Dab <- alpha[aa] + alpha[bb] + alpha0
           qab <- alpha0 / Dab
@@ -1872,7 +1950,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
         jay <- uindex[sss]
         naj <- ymat[, jay] + ymat[jay, ] + tmat[, jay]
         Daj <- alpha[jay] + alpha + alpha0
-        wz[ii, iam(sss, NCo, M = NCo, diag = TRUE)] <- 
+        wz[ii, iam(sss, NCo, M = NCo, diag = TRUE)] <-
             -alpha[jay] * alpha0 * sum(naj / Daj^2)
       }
     }
@@ -1924,7 +2002,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   ans <- ans.ties <- NULL
   for (ii in seq_along(allargs)) {
     m <- allargs[[ii]]
-    if (!is.matrix(m) || dim(m)[1] != dim(m)[2]) 
+    if (!is.matrix(m) || dim(m)[1] != dim(m)[2])
       stop("m must be a square matrix")
 
     diag(ties) <- 0
@@ -1949,8 +2027,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
   }
   dimnames(ans) <- list(callit, usethis1)
   dimnames(ans.ties) <- list(callit, usethis2)
-  attr(ans, "ties") <- ans.ties 
-  attr(ans, "are.ties") <- are.ties 
+  attr(ans, "ties") <- ans.ties
+  attr(ans, "are.ties") <- are.ties
   ans
 }
 
@@ -1998,7 +2076,7 @@ InverseBrat <-
     } else {
       dimnames(ans) <- list(cal, cal)
     }
-  } 
+  }
   ans
 }
 
@@ -2041,7 +2119,7 @@ InverseBrat <-
 
 
   new("vglmff",
-  blurb = c(paste("Ordinal Poisson model\n\n"), 
+  blurb = c(paste("Ordinal Poisson model\n\n"),
             "Link:     ", namesof("mu", link, earg = earg)),
 
 
@@ -2087,7 +2165,7 @@ InverseBrat <-
 
     initmu <- if (is.Numeric( .init.mu )) rep_len( .init.mu , NOS) else NULL
     cutpoints <- rep_len( .cutpoints, sum(Levels))
-    delete.zero.colns <- FALSE 
+    delete.zero.colns <- FALSE
     use.y <- if ( .countdata ) y else matrix(0, n, sum(Levels))
     use.etastart <- matrix(0, n, M)
     cptr <- 1
@@ -2190,7 +2268,7 @@ InverseBrat <-
     cptr <- 1
     for (iii in 1:NOS) {
       for (kkk in 1:Levels[iii]) {
-        d2l.dmu2[,iii] <- d2l.dmu2[,iii] + 
+        d2l.dmu2[,iii] <- d2l.dmu2[,iii] +
             dprob.dmu[,cptr]^2 / probs.use[,cptr]
         cptr <- cptr + 1
       }
@@ -2499,8 +2577,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
 
     if (!all(object@misc$link == "loge"))
       stop("currently only the 'loge' link is supported")
- 
- 
+
+
   acat.derivs <- function(jay, tee,
                           M, expcs.etamat, Thetamat,
                           prob1, probMplus1,
@@ -2646,7 +2724,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
 
 
 
-   
+
 
   vfamily <- object@family@vfamily
   c.nots <- any(vfamily == "cratio")
@@ -2709,7 +2787,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
     if (reverse) {
       A[, , M+1, M] <- ifelse(c.nots, -1, 1) * hdot[, M]
     } else {
-      for (jlocal in 1:M) { 
+      for (jlocal in 1:M) {
         for (tlocal in 1:jlocal) {
           A[, , M+1, tlocal] <- if (c.nots) {
             A[, , M+1, tlocal] - A[, , jlocal, tlocal]
@@ -2834,7 +2912,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
     if (reverse) {
       A[, , M+1, M] <- ifelse(c.nots, -1, 1) * hdot[, M]
     } else {
-      for (jlocal in 1:M) { 
+      for (jlocal in 1:M) {
         for (tlocal in 1:jlocal) {
           A[, , M+1, tlocal] <- if (c.nots) {
             A[, , M+1, tlocal] - A[, , jlocal, tlocal]
@@ -3052,8 +3130,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
   if (any(vfamily == "acat")) {
     if (!all(object@misc$link == "loge"))
       stop("currently only the 'loge' link is supported")
- 
- 
+
+
   acat.derivs <- function(jay, tee,
                           M, expcs.etamat, Thetamat,
                           prob1, probMplus1,
@@ -3129,7 +3207,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
 
 
 
-   
+
 
   c.nots <- any(vfamily == "cratio")
 
@@ -3221,7 +3299,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
     if (reverse) {
       A[, , M+1, M] <- ifelse(c.nots, -1, 1) * hdot[, M]
     } else {
-      for (jlocal in 1:M) { 
+      for (jlocal in 1:M) {
         for (tlocal in 1:jlocal) {
           A[, , M+1, tlocal] <- if (c.nots) {
             A[, , M+1, tlocal] - A[, , jlocal, tlocal]
@@ -3284,7 +3362,7 @@ prplot <- function(object,
                             byrow = TRUE)
   for (ii in 1:MM) {
     use.y[, ii] <- eta2theta(use.y[, ii],
-                             link = object@misc$link[[ii]], 
+                             link = object@misc$link[[ii]],
                              earg = object@misc$earg[[ii]])
   }
   if (ncol(use.y) != MM) use.y = use.y[, 1:MM, drop = FALSE]
@@ -3324,7 +3402,7 @@ prplot <- function(object,
                            lwd = par()$lwd,
                            rlwd = par()$lwd,
                            las = par()$las,
-                           rug.arg  = FALSE, 
+                           rug.arg  = FALSE,
                            ...) {
 
     list(xlab = xlab, ylab = ylab,

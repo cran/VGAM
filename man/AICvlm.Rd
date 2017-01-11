@@ -124,7 +124,7 @@ Regression and time series model selection in small samples,
 \section{Warning }{
   This code has not been double-checked.
   The general applicability of \code{AIC} for the VGLM/VGAM classes
-  has not been developed fully. 
+  has not been developed fully.
   In particular, \code{AIC} should not be run on some \pkg{VGAM} family
   functions because of violation of certain regularity conditions, etc.
 

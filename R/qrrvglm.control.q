@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -94,24 +94,24 @@ qrrvglm.control <- function(Rank = 1,
     if (length(isd.latvar) > 1 && any(diff(isd.latvar) > 0))
         stop("successive isd.latvar values must not increase")
     if (!is.Numeric(epsilon, positive = TRUE,
-                    length.arg = 1)) 
+                    length.arg = 1))
         stop("bad input for 'epsilon'")
     if (!is.Numeric(Etamat.colmax, positive = TRUE,
                     length.arg = 1) ||
         Etamat.colmax < Rank)
         stop("bad input for 'Etamat.colmax'")
-    if (!is.Numeric(Hstep, positive = TRUE, 
-                   length.arg = 1)) 
+    if (!is.Numeric(Hstep, positive = TRUE,
+                   length.arg = 1))
         stop("bad input for 'Hstep'")
     if (!is.Numeric(maxitl, positive = TRUE,
-                    length.arg = 1, integer.valued = TRUE)) 
+                    length.arg = 1, integer.valued = TRUE))
         stop("bad input for 'maxitl'")
     if (!is.Numeric(imethod, positive = TRUE,
-                    length.arg = 1, integer.valued = TRUE)) 
+                    length.arg = 1, integer.valued = TRUE))
         stop("bad input for 'imethod'")
     if (!is.Numeric(Maxit.optim, integer.valued = TRUE, positive = TRUE))
         stop("Bad input for 'Maxit.optim'")
-    if (!is.Numeric(MUXfactor, positive = TRUE)) 
+    if (!is.Numeric(MUXfactor, positive = TRUE))
         stop("bad input for 'MUXfactor'")
     if (any(MUXfactor < 1 | MUXfactor > 10))
         stop("MUXfactor values must lie between 1 and 10")
@@ -119,15 +119,15 @@ qrrvglm.control <- function(Rank = 1,
                     integer.valued = TRUE, positive = TRUE))
         stop("Bad input for 'optim.maxit'")
     if (!is.Numeric(Rank, positive = TRUE,
-                    length.arg = 1, integer.valued = TRUE)) 
+                    length.arg = 1, integer.valued = TRUE))
         stop("bad input for 'Rank'")
     if (!is.Numeric(sd.Cinit, positive = TRUE,
-                    length.arg = 1)) 
+                    length.arg = 1))
         stop("bad input for 'sd.Cinit'")
     if (I.tolerances && !eq.tolerances)
         stop("'eq.tolerances' must be TRUE if 'I.tolerances' is TRUE")
     if (!is.Numeric(Bestof, positive = TRUE,
-                    length.arg = 1, integer.valued = TRUE)) 
+                    length.arg = 1, integer.valued = TRUE))
         stop("bad input for 'Bestof'")
 
 
@@ -137,9 +137,9 @@ qrrvglm.control <- function(Rank = 1,
 
     if ((SmallNo < .Machine$double.eps) ||
        (SmallNo > .0001))
-      stop("SmallNo is out of range") 
+      stop("SmallNo is out of range")
     if (any(Parscale <= 0))
-       stop("Parscale must contain positive numbers only") 
+       stop("Parscale must contain positive numbers only")
 
     if (!is.logical(checkwz) ||
         length(checkwz) != 1)
@@ -169,7 +169,7 @@ qrrvglm.control <- function(Rank = 1,
            maxitl = maxitl,
            imethod = imethod,
            Maxit.optim = Maxit.optim,
-           min.criterion = TRUE,  # needed for calibrate 
+           min.criterion = TRUE,  # needed for calibrate
            MUXfactor = rep_len(MUXfactor, Rank),
            noRRR = noRRR,
            optim.maxit = optim.maxit,

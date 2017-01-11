@@ -18,7 +18,7 @@ fff(link = "loge", idf1 = NULL, idf2 = NULL, nsimEIM = 100,
 
   }
   \item{idf1, idf2}{
-  Numeric and positive. 
+  Numeric and positive.
   Initial value for the parameters.
   The default is to choose each value internally.
 
@@ -47,10 +47,10 @@ fff(link = "loge", idf1 = NULL, idf2 = NULL, nsimEIM = 100,
 
 }
 \details{
-  The F distribution is named after Fisher and has a density function 
+  The F distribution is named after Fisher and has a density function
   that has two parameters, called \code{df1} and \code{df2} here.
   This function treats these degrees of freedom as \emph{positive reals}
-  rather than integers. 
+  rather than integers.
   The mean of the distribution is
   \eqn{df2/(df2-2)} provided \eqn{df2>2},
   and its variance is
@@ -88,7 +88,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 
-%\note{ 
+%\note{
 %  This family function uses the BFGS quasi-Newton update formula for the
 %  working weight matrices.  Consequently the estimated variance-covariance
 %  matrix may be inaccurate or simply wrong! The standard errors must be

@@ -1,14 +1,16 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
 
-summaryvgam <- function(object, dispersion = NULL,
-                        digits = options()$digits-2,
-                        presid = TRUE) {
+summaryvgam <-
+  function(object, dispersion = NULL,
+           digits = options()$digits-2,
+           presid = TRUE,
+           nopredictors = FALSE) {
 
 
 
@@ -19,10 +21,10 @@ summaryvgam <- function(object, dispersion = NULL,
          "sum of squares) for computing the dispersion parameter")
   }
 
-  newobject <- object 
+  newobject <- object
   class(newobject) <- "vglm"
   stuff <- summaryvglm(newobject, dispersion = dispersion)
-  rdf <- stuff@df[2] <- object@df.residual  # NA 
+  rdf <- stuff@df[2] <- object@df.residual  # NA
 
   M <- object@misc$M
   nrow.X.vlm <- object@misc$nrow.X.vlm
@@ -34,7 +36,6 @@ summaryvgam <- function(object, dispersion = NULL,
 
 
 
-  # Overwrite some of the stuff with the correct stuff
 
 
   useF <- object@misc$useF
@@ -51,18 +52,18 @@ summaryvgam <- function(object, dispersion = NULL,
       aod <- cbind(aod, NA, NA, NA)
       nl.chisq <- object@nl.chisq / object@dispersion
 
-      special <- abs(nldf) < 0.1  # This was the quick fix in s.vam()  
-      nldf[special] <- 1          # Give it a plausible value for pchisq & pf
+      special <- abs(nldf) < 0.1  # This was the quick fix in s.vam()
+      nldf[special] <- 1  # Give it a plausible value for pchisq & pf
 
       snames <- names(nldf)
       aod[snames, 2] <- round(nldf, 1)
       aod[snames, 3] <- if (useF) nl.chisq/nldf  else nl.chisq
       aod[snames, 4] <- if (useF)
-          pf(nl.chisq / nldf, nldf, rdf, lower.tail = FALSE) else 
+          pf(nl.chisq / nldf, nldf, rdf, lower.tail = FALSE) else
           pchisq(nl.chisq, nldf, lower.tail = FALSE)
 
       if (any(special)) {
-        aod[snames[special], 2:4] <- NA 
+        aod[snames[special], 2:4] <- NA
       }
 
       rnames <- c("Df", "Npar Df", "Npar Chisq", "P(Chi)")
@@ -70,9 +71,9 @@ summaryvgam <- function(object, dispersion = NULL,
           rnames[3:4] <- c("Npar F", "Pr(F)")
       dimnames(aod) <- list(names(df), rnames)
       heading <- if (useF)
-      "\nDF for Terms and Approximate F-values for Nonparametric Effects\n"
+  "\nDF for Terms and Approximate F-values for Nonparametric Effects\n"
       else
-      "\nDF for Terms and Approximate Chi-squares for Nonparametric Effects\n"
+  "\nDF for Terms and Approximate Chi-squares for Nonparametric Effects\n"
     } else {
       heading <- "DF for Terms\n\n"
     }
@@ -102,7 +103,9 @@ summaryvgam <- function(object, dispersion = NULL,
       answer@pearson.resid <- as.matrix(Presid)
   }
 
-  slot(answer, "anova") <- aod 
+  answer@misc$nopredictors <- nopredictors
+
+  slot(answer, "anova") <- aod
 
   answer
 }
@@ -110,14 +113,17 @@ summaryvgam <- function(object, dispersion = NULL,
 
 
 
-show.summary.vgam <- function(x, quote = TRUE, prefix = "",
-                              digits = options()$digits-2) {
+show.summary.vgam <-
+  function(x, quote = TRUE, prefix = "",
+           digits = options()$digits-2,
+           nopredictors = NULL) {
 
   M <- x@misc$M
 
 
-  cat("\nCall:\n")
-  dput(x@call)
+  cat("\nCall:\n", paste(deparse(x@call), sep = "\n", collapse = "\n"),
+      "\n\n", sep = "")
+
 
   Presid <- x@pearson.resid
   rdf <- x@df[2]
@@ -136,21 +142,39 @@ show.summary.vgam <- function(x, quote = TRUE, prefix = "",
     }
   }
 
+
+
+  use.nopredictors <- if (is.logical(nopredictors))
+    nopredictors else x@misc$nopredictors  # 20140728
+  if (!is.logical(use.nopredictors)) {
+    warning("cannot determine 'nopredictors'; choosing FALSE")
+    use.nopredictors <- FALSE
+  }
+
+
+
   cat("\nNumber of linear predictors:   ", M, "\n")
 
-  if (!is.null(x@misc$predictors.names))
-  if (M == 1)
-    cat("\nName of linear predictor:",
-        paste(x@misc$predictors.names, collapse = ", "), "\n") else
-  if (M <= 5)
-    cat("\nNames of linear predictors:",
-        paste(x@misc$predictors.names, collapse = ", "), "\n")
+
+
+
+  if (!is.null(x@misc$predictors.names) && !use.nopredictors) {
+    if (M == 1) {
+      cat("\nName of linear predictor:",
+          paste(x@misc$predictors.names, collapse = ", "), "\n")
+    } else
+    if (M <= 5) {
+      cat("\nNames of linear predictors:",
+        paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
+    }
+  }
+
 
   prose <- ""
   if (length(x@dispersion)) {
     if (is.logical(x@misc$estimated.dispersion) &&
         x@misc$estimated.dispersion) {
-      prose <- "(Estimated) " 
+      prose <- "(Estimated) "
     } else {
       if (is.numeric(x@misc$default.dispersion) &&
           x@dispersion == x@misc$default.dispersion)
@@ -206,10 +230,10 @@ setMethod("show", "summary.vgam",
 
 
 
- 
- 
+
+
 show.vanova <- function(x, digits = .Options$digits, ...) {
-  rrr <- row.names(x) 
+  rrr <- row.names(x)
   heading <- attr(x, "heading")
   if (!is.null(heading))
     cat(heading, sep = "\n")
@@ -231,7 +255,7 @@ show.vanova <- function(x, digits = .Options$digits, ...) {
 as.vanova <- function(x, heading) {
   if (!is.data.frame(x))
     stop("x must be a data frame")
-  rrr <- row.names(x) 
+  rrr <- row.names(x)
   attr(x, "heading") <- heading
   x <- as.data.frame(x, row.names = rrr)
   x

@@ -84,7 +84,7 @@ double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loge",
 \examples{\dontrun{ # Repeat the simulations described in Harter and Moore (1966)
 SIMS <- 100  # Number of simulations (change this to 1000)
 mu.save <- sd.save <- rep(NA, len = SIMS)
-r1 <- 0; r2 <- 4; nn <- 20  
+r1 <- 0; r2 <- 4; nn <- 20
 for (sim in 1:SIMS) {
   y <- sort(rnorm(nn))
   y <- y[(1+r1):(nn-r2)]  # Delete r1 smallest and r2 largest

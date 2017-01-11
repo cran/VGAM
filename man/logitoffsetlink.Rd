@@ -83,7 +83,7 @@ logitoffsetlink(theta, offset = 0, inverse = FALSE, deriv = 0,
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}},
     \code{\link{logit}}.
 

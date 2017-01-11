@@ -50,7 +50,7 @@ depvar(object, ...)
 %}
 
 %\section{Warning }{
-%  This 
+%  This
 
 
 %}

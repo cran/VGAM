@@ -95,7 +95,7 @@ posbernoulli.t(link = "logit", parallel.t = FALSE ~ 1, iprob = NULL,
   It is well-known that some species of animals are affected
   by capture, e.g., trap-shy or trap-happy. This \pkg{VGAM}
   family function does \emph{not} allow any behavioral effect to be
-  modelled (\code{\link{posbernoulli.b}} 
+  modelled (\code{\link{posbernoulli.b}}
   and \code{\link{posbernoulli.tb}} do) because the
   denominator of the likelihood function must be free of
   behavioral effects.
@@ -205,7 +205,7 @@ conditional likelihood.
   \code{\link{posbernoulli.tb}}
   models with a
   \code{\link{posbinomial}}
-  model requires \code{posbinomial(omit.constant = TRUE)} 
+  model requires \code{posbinomial(omit.constant = TRUE)}
   because one needs to remove the normalizing constant from the
   log-likelihood function.
   See \code{\link{posbinomial}} for an example.
@@ -232,7 +232,7 @@ conditional likelihood.
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.tb}},
   \code{\link{Select}},

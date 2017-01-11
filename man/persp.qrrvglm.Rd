@@ -8,7 +8,7 @@ applicable for rank-1 or rank-2 models with argument \code{noRRR = ~ 1}.
 
 }
 \usage{
-perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE, 
+perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE,
              xlim = NULL, ylim = NULL, zlim = NULL,
              gridlength = if (Rank == 1) 301 else c(51,51),
              which.species = NULL,
@@ -23,7 +23,7 @@ perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-  Object of class \code{"qrrvglm"}, i.e., a 
+  Object of class \code{"qrrvglm"}, i.e., a
   constrained quadratic ordination (CQO) object.
 
   }
@@ -47,7 +47,7 @@ perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE,
   See \code{\link[graphics]{par}}.
 
   }
-  \item{gridlength}{ 
+  \item{gridlength}{
   Numeric. The fitted values are evaluated on a grid, and this
   argument regulates the fineness of the grid.  If \code{Rank = 2}
   then the argument is recycled to length 2, and the two numbers
@@ -70,7 +70,7 @@ perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE,
   \item{zlab}{Character caption for the z-axis.
   Used only if \code{Rank = 2}.
   By default, a suitable caption is found.
-  See the \code{xlab} argument in \code{\link[graphics]{plot}} 
+  See the \code{xlab} argument in \code{\link[graphics]{plot}}
   or \code{\link[graphics]{title}}.
 
   }
@@ -87,7 +87,7 @@ perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE,
   }
   \item{main}{
   Character, giving the title of the plot.
-  See the \code{main} argument in \code{\link[graphics]{plot}} 
+  See the \code{main} argument in \code{\link[graphics]{plot}}
   or \code{\link[graphics]{title}}.
 
   }
@@ -95,8 +95,8 @@ perspqrrvglm(x, varI.latvar = FALSE, refResponse = NULL, show.plot = TRUE,
   See \code{\link[graphics]{persp}} for more information.
 
   }
-  \item{col}{ Color. 
-  See \code{\link[graphics]{persp}} for more information. 
+  \item{col}{ Color.
+  See \code{\link[graphics]{persp}} for more information.
 
   }
   \item{llty}{ Line type.
@@ -224,7 +224,7 @@ if (deviance(r2) > 857) stop("suboptimal fit obtained")
 
 persp(r1, xlim = c(-6, 5), col = 1:4, label = TRUE)
 
-# Involves all species 
+# Involves all species
 persp(r2, xlim = c(-6, 5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220))
 # Omit the two dominant species to see what is behind them
 persp(r2, xlim = c(-6, 5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 220),

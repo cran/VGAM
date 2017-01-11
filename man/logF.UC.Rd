@@ -51,14 +51,14 @@ dlogF(x, shape1, shape2, log = FALSE)
 
 }
 
-%\references{ 
+%\references{
 %
 %
 %
 %}
 
 \author{ T. W. Yee }
-%\note{ 
+%\note{
 %
 %}
 

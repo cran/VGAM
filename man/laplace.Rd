@@ -92,7 +92,7 @@ Boston: Birkhauser.
 
 
 }
-\note{ 
+\note{
   This family function uses Fisher scoring.
   Convergence may be slow for non-intercept-only models;
   half-stepping is frequently required.

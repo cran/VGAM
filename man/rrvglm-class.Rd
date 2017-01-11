@@ -2,7 +2,7 @@
 \docType{class}
 \alias{rrvglm-class}
 \title{Class ``rrvglm'' }
-\description{ 
+\description{
 Reduced-rank vector generalized linear models.
 }
 \section{Objects from the Class}{
@@ -24,7 +24,7 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   The number of IRLS iterations used.
   }
   \item{\code{predictors}:}{
-  Object of class \code{"matrix"} 
+  Object of class \code{"matrix"}
   with \eqn{M} columns which holds the \eqn{M} linear predictors.
   }
   \item{\code{assign}:}{
@@ -88,7 +88,7 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   Object of class
   \code{"matrix"}, from class \code{ "vlm"}.
   The fitted values. This is usually the mean but may be
-  quantiles, or the location parameter, e.g., in the Cauchy model. 
+  quantiles, or the location parameter, e.g., in the Cauchy model.
 
   }
   \item{\code{misc}:}{
@@ -124,18 +124,18 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   }
   \item{\code{prior.weights}:}{
   Object of class
-  \code{"matrix"}, from class \code{ "vlm"} 
+  \code{"matrix"}, from class \code{ "vlm"}
   holding the initially supplied weights.
   }
   \item{\code{qr}:}{
   Object of class \code{"list"},
   from class \code{ "vlm"}.
-  QR decomposition at the final iteration. 
+  QR decomposition at the final iteration.
   }
   \item{\code{R}:}{
   Object of class \code{"matrix"},
   from class \code{ "vlm"}.
-  The \bold{R} matrix in the QR decomposition used in the fitting. 
+  The \bold{R} matrix in the QR decomposition used in the fitting.
   }
   \item{\code{rank}:}{
   Object of class \code{"integer"},
@@ -208,7 +208,7 @@ Class \code{"vlm"}, by class "vglm".
   \describe{
     \item{biplot}{\code{signature(x = "rrvglm")}: biplot. }
     \item{Coef}{\code{signature(object = "rrvglm")}: more detailed
-       coefficients giving \bold{A}, 
+       coefficients giving \bold{A},
        \eqn{\bold{B}_1}{\bold{B}1}, \bold{C}, etc.
     }
   \item{biplot}{\code{signature(object = "rrvglm")}:

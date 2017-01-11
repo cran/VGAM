@@ -30,12 +30,12 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
 
   }
-  \item{imean1, imean2, isd1, isd2, irho, imethod, zero}{ 
+  \item{imean1, imean2, isd1, isd2, irho, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
-  \item{eq.mean, eq.sd}{ 
+  \item{eq.mean, eq.sd}{
   Logical or formula.
   Constrains the means or the standard deviations to be equal.
 
@@ -99,10 +99,11 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 \seealso{
   \code{\link{uninormal}},
   \code{\link{gaussianff}},
-  \code{\link{pnorm2}},
+  \code{\link{pbinorm}},
   \code{\link{bistudentt}}.
 
 
+% \code{\link{pnorm2}},
 }
 \examples{
 set.seed(123); nn <- 1000
@@ -119,10 +120,10 @@ summary(fit1)
 var1  <- loge(2 * predict(fit1)[, "loge(sd1)"], inverse = TRUE)
 var2  <- loge(2 * predict(fit1)[, "loge(sd2)"], inverse = TRUE)
 cov12 <- rhobit(predict(fit1)[, "rhobit(rho)"], inverse = TRUE)
-head(with(bdata, pnorm2(y1, y2,
-                        mean1 = predict(fit1)[, "mean1"],
-                        mean2 = predict(fit1)[, "mean2"],
-                        var1 = var1, var2 = var2, cov12 = cov12)))
+head(with(bdata, pbinorm(y1, y2,
+                         mean1 = predict(fit1)[, "mean1"],
+                         mean2 = predict(fit1)[, "mean2"],
+                         var1 = var1, var2 = var2, cov12 = cov12)))
 }
 \keyword{models}
 \keyword{regression}

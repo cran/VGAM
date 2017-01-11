@@ -33,10 +33,10 @@ mccullagh89(ltheta = "rhobit", lnu = logoff(offset = 0.5),
 }
 \details{
 The McCullagh (1989) distribution has density function
- \deqn{f(y;\theta,\nu) = 
+ \deqn{f(y;\theta,\nu) =
 \frac{ \{ 1-y^2 \}^{\nu-\frac12}}
 { (1-2\theta y + \theta^2)^{\nu} \mbox{Beta}(\nu+\frac12, \frac12)}}{%
-f(y;theta,nu) = 
+f(y;theta,nu) =
 (1-y^2)^(nu-0.5) / [ (1 - 2*theta*y+theta^2)^nu * Beta(nu+0.5, 0.5)]}
 where \eqn{-1 < y < 1} and \eqn{-1 < \theta < 1}{-1 < theta < 1}.
 This distribution is equation (1) in that paper.

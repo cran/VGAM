@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -70,6 +70,7 @@ setMethod("deviance", "vglm", function(object, ...)
 
 
 
+
 deviance.qrrvglm <- function(object,
                              summation = TRUE,
                              history = FALSE,
@@ -97,6 +98,8 @@ setMethod("deviance", "rrvgam",  function(object, ...)
 
 
 
+
+
 df.residual_vlm <- function(object, type = c("vlm", "lm"), ...) {
   type <- type[1]
 
@@ -109,9 +112,29 @@ df.residual_vlm <- function(object, type = c("vlm", "lm"), ...) {
 
 
 
-
 setMethod("df.residual", "vlm", function(object, ...)
            df.residual_vlm(object, ...))
+
+
+
+
+
+
+df.residual_pvgam <-
+  function(object,
+           ...) {
+
+
+  nobs(object, type = "lm") * npred(object) -
+  sum(endf(object, diag.all = TRUE))
+}
+
+
+
+setMethod("df.residual", "pvgam", function(object, ...)
+           df.residual_pvgam(object, ...))
+
+
 
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -36,6 +36,8 @@ plotvglm <-
 
 
   presid <- resid(x, type = "pearson")
+  if (!is.matrix(presid) == 1)
+    presid <- as.matrix(presid)
   lapred <- predict(x)
   M <- ncol(lapred)
   for (jay in 1:M) {

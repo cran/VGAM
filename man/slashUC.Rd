@@ -27,10 +27,10 @@ rslash(n, mu = 0, sigma = 1)
 
 
   }
-  \item{mu, sigma}{the mean and standard deviation of 
+  \item{mu, sigma}{the mean and standard deviation of
   the univariate normal distribution.
 
-  
+
   }
   \item{log}{
   Logical.
@@ -92,7 +92,7 @@ rslash(n, mu = 0, sigma = 1)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{slash}}.
 
 

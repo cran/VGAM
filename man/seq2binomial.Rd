@@ -15,14 +15,14 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
 %- maybe also 'usage' for other objects documented here.
 %  apply.parint = TRUE,
 \arguments{
-  \item{lprob1, lprob2}{ 
+  \item{lprob1, lprob2}{
   Parameter link functions applied to the two probabilities,
   called \eqn{p} and \eqn{q} below.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{iprob1, iprob2}{ 
+  \item{iprob1, iprob2}{
   Optional initial value for the first and second probabilities respectively.
   A \code{NULL} means a value is obtained in the \code{initialize} slot.
 
@@ -69,7 +69,7 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
 
 
 }
-\references{ 
+\references{
 
   Crowder, M. and Sweeting, T. (1989).
   Bayesian inference for a bivariate binomial distribution.
@@ -95,7 +95,7 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{binomialff}},
   \code{\link{cfibrosis}}.
 
@@ -120,7 +120,7 @@ head(weights(fit, type = "prior"))  # Same as with(sdata, mvector)
 # Number of first successes:
 head(depvar(fit)[, 1] * c(weights(fit, type = "prior")))
 # Number of second successes:
-head(depvar(fit)[, 2] * c(weights(fit, type = "prior")) * 
+head(depvar(fit)[, 2] * c(weights(fit, type = "prior")) *
                           depvar(fit)[, 1])
 }
 \keyword{models}

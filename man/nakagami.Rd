@@ -29,9 +29,10 @@ nakagami(lscale = "loge", lshape = "loge", iscale = 1, ishape = NULL,
   Optional initial values for the shape and scale parameters.
   For \code{ishape}, a \code{NULL} value means it is obtained in the
   \code{initialize} slot based on the value of \code{iscale}.
-  For \code{iscale}, assigning a \code{NULL} means a value is obtained in the
-  \code{initialize} slot, however, setting another numerical
-  value is recommended if convergence fails or is too slow.
+  For \code{iscale}, assigning a \code{NULL} means a value
+  is obtained in the \code{initialize} slot, however, setting
+  another numerical value is recommended if convergence fails or
+  is too slow.
 
 
   }
@@ -47,8 +48,8 @@ nakagami(lscale = "loge", lshape = "loge", iscale = 1, ishape = NULL,
   for \eqn{y > 0}, \eqn{shape > 0}, \eqn{scale > 0}.
   The mean of \eqn{Y} is
   \eqn{\sqrt{scale/shape}  \times  \Gamma(shape+0.5) /
-       \Gamma(shape)}{sqrt(scale/shape) * gamma(shape+0.5) / gamma(shape)} and
-  these are returned as the fitted values.
+       \Gamma(shape)}{sqrt(scale/shape) * gamma(shape+0.5) / gamma(shape)}
+  and these are returned as the fitted values.
   By default, the linear/additive predictors are
   \eqn{\eta_1=\log(scale)}{eta1=log(scale)} and
   \eqn{\eta_2=\log(shape)}{eta2=log(shape)}.
@@ -83,9 +84,10 @@ nakagami(lscale = "loge", lshape = "loge", iscale = 1, ishape = NULL,
   The second moment is \eqn{E(Y^2)=m}.
 
 
-  If \eqn{Y} has a Nakagami distribution with parameters \emph{shape}
-  and \emph{scale} then \eqn{Y^2} has a gamma distribution with shape
-  parameter \emph{shape} and scale parameter \emph{scale/shape}.
+  If \eqn{Y} has a Nakagami distribution with parameters
+  \emph{shape} and \emph{scale} then \eqn{Y^2} has a gamma
+  distribution with shape parameter \emph{shape} and scale
+  parameter \emph{scale/shape}.
 
 
 }

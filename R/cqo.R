@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,27 +7,27 @@
 
 
 cqo <- function(formula,
-                family, data = list(), 
+                family, data = list(),
                 weights = NULL, subset = NULL, na.action = na.fail,
                 etastart = NULL, mustart = NULL, coefstart = NULL,
-                control = qrrvglm.control(...), 
-                offset = NULL, 
+                control = qrrvglm.control(...),
+                offset = NULL,
                 method = "cqo.fit",
                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                contrasts = NULL, 
+                contrasts = NULL,
                 constraints = NULL,
-                extra = NULL, 
+                extra = NULL,
                 smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data =
   function.name <- "cqo"
 
   ocall <- match.call()
 
-  if (smart) 
+  if (smart)
     setup.smart("write")
 
   mt <- terms(formula, data = data)
-  if (missing(data)) 
+  if (missing(data))
       data <- environment(formula)
 
   mf <- match.call(expand.dots = FALSE)
@@ -35,9 +35,9 @@ cqo <- function(formula,
     mf$control <- mf$contrasts <- mf$constraints <- mf$extra <- NULL
   mf$coefstart <- mf$etastart <- mf$... <- NULL
   mf$smart <- NULL
-  mf$drop.unused.levels <- TRUE 
+  mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
-  mf <- eval(mf, parent.frame()) 
+  mf <- eval(mf, parent.frame())
   if (method == "model.frame")
     return(mf)
   na.act <- attr(mf, "na.action")
@@ -54,7 +54,7 @@ cqo <- function(formula,
   x <- model.matrix(mt, mf, contrasts)
   attr(x, "assign") <- attrassigndefault(x, mt)
   offset <- model.offset(mf)
-  if (is.null(offset)) 
+  if (is.null(offset))
     offset <- 0  # yyy ???
   w <- model.weights(mf)
   if (!length(w)) {
@@ -150,7 +150,7 @@ cqo <- function(formula,
     }
   } else list()  # R-1.5.0
   slot(answer, "iter") <- fit$iter
-  fit$predictors <- as.matrix(fit$predictors)  # Must be a matrix 
+  fit$predictors <- as.matrix(fit$predictors)  # Must be a matrix
   dimnames(fit$predictors) <- list(dimnames(fit$predictors)[[1]],
                                    fit$misc$predictors.names)
   slot(answer, "predictors") <- fit$predictors

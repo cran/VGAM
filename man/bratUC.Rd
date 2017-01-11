@@ -32,7 +32,7 @@ Brat(mat, ties = 0 * mat, string = c(">", "=="), whitespace = FALSE)
 
   }
   \item{string}{
-  Character. 
+  Character.
   The matrices are labelled with the first value of the
   descriptor, e.g., \code{"NZ > Oz"} `means' NZ beats
   Australia in rugby.  Suggested alternatives include
@@ -46,7 +46,7 @@ Brat(mat, ties = 0 * mat, string = c(">", "=="), whitespace = FALSE)
     and after \code{string}; it generally enhances readability.
     See \code{\link{CommonVGAMffArguments}} for some similar-type
     information.
- 
+
 
   }
 }
@@ -88,7 +88,7 @@ Agresti, A. (2013)
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{brat}},
   \code{\link{bratt}},
   \code{InverseBrat}.

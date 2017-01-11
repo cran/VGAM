@@ -198,7 +198,7 @@ posbernoulli.tb(link = "logit", parallel.t = FALSE ~ 1,
 }
 
 
-\seealso{ 
+\seealso{
   \code{\link{posbernoulli.b}} (including \code{N.hat}),
   \code{\link{posbernoulli.t}},
   \code{\link{posbinomial}},

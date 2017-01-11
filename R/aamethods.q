@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -24,9 +24,9 @@ VGAMenv <- new.env()
 
 
 
- 
- 
- 
+
+
+
 
 
 
@@ -80,7 +80,7 @@ valid.vglmff <- function(object) {
 }
 
 
-if (FALSE) 
+if (FALSE)
   setValidity("vglmff", valid.vglmff)
 
 
@@ -199,9 +199,9 @@ setClass("vgam", representation(
     contains = "vglm")
 
 
-setClass("psvgam", representation(
-      "psslot"              = "list"),
-    contains = "vglm")
+setClass("pvgam", representation(
+         "ospsslot"         = "list"),
+         contains = "vglm")
 
 
 
@@ -214,28 +214,47 @@ setClass("summary.vgam", representation(
         df = "numeric",
         pearson.resid = "matrix",
         sigma = "numeric"),
-    prototype(anova=data.frame()),
-    contains = "vgam")
+        prototype(anova = data.frame()),
+        contains = "vgam")
 
 
 setClass("summary.vglm", representation(
-        coef3 = "matrix",
-        cov.unscaled = "matrix",
-        correlation = "matrix",
-        df = "numeric",
-        pearson.resid = "matrix",
-        sigma = "numeric"),
-    contains = "vglm")
+         coef3 = "matrix",
+         cov.unscaled = "matrix",
+         correlation = "matrix",
+         df = "numeric",
+         pearson.resid = "matrix",
+         sigma = "numeric"),
+         contains = "vglm")
 
 
 setClass("summary.vlm", representation(
-        coef3 = "matrix",
-        cov.unscaled = "matrix",
-        correlation = "matrix",
-        df = "numeric",
-        pearson.resid = "matrix",
-        sigma = "numeric"),
-    contains = "vlm")
+         coef3 = "matrix",
+         cov.unscaled = "matrix",
+         correlation = "matrix",
+         df = "numeric",
+         pearson.resid = "matrix",
+         sigma = "numeric"),
+         contains = "vlm")
+
+
+
+
+
+
+setClass("summary.pvgam", representation(
+         anova      = "data.frame",
+         "ospsslot" = "list"),
+         prototype(anova = data.frame()),
+         contains = c("summary.vglm", "pvgam")
+         )
+
+
+
+
+
+
+
 
 
 

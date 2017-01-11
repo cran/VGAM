@@ -21,7 +21,7 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 \arguments{
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
-  \item{n}{number of observations. 
+  \item{n}{number of observations.
   If \code{length(n) > 1} then the length is taken to be the number required. }
   \item{size, prob, munb, log}{
   Parameters from the ordinary negative binomial distribution
@@ -54,14 +54,14 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
     The argument \code{pobs0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
 
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{zanegbinomial}},
     \code{\link{rposnegbin}}.
 
@@ -79,7 +79,7 @@ barplot(rbind(dzanegbin(x, munb = munb, size = size, pobs0 = pobs0),
         beside = TRUE, col = c("blue", "green"), cex.main = 0.7, las = 1,
         ylab = "Probability", names.arg = as.character(x),
         main = paste("ZANB(munb = ", munb, ", size = ", size,",
-                     pobs0 = ", pobs0, 
+                     pobs0 = ", pobs0,
                    ") [blue] vs",  " NB(mu = ", munb, ", size = ", size,
                    ") [green] densities", sep = "")) }
 }

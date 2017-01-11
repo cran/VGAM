@@ -2,7 +2,7 @@
 \alias{Rcim}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  Mark the Baseline of Row and Column on a Matrix data 
+  Mark the Baseline of Row and Column on a Matrix data
 
 }
 \description{
@@ -14,7 +14,7 @@
 
 }
 \usage{
-  Rcim(mat, rbaseline = 1, cbaseline = 1) 
+  Rcim(mat, rbaseline = 1, cbaseline = 1)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,7 +28,7 @@
 \item{rbaseline, cbaseline}{
   Numeric (row number of the matrix \code{mat}) or
   character (matching a row name of \code{mat}) that the user
-  wants as the row baseline or reference level. 
+  wants as the row baseline or reference level.
   Similarly \code{cbaseline} for the column.
 
 
@@ -46,7 +46,7 @@
 
 \value{
   Matrix of the same dimension as the input,
-  with \code{rbaseline} and \code{cbaseline} specifying the 
+  with \code{rbaseline} and \code{cbaseline} specifying the
   first rows and columns.
   The default is no change in \code{mat}.
 
@@ -64,9 +64,9 @@ Alfian F. Hadi and T. W. Yee.
   \code{rbaseline}
   and
   \code{cbaseline}
-  differ from arguments 
-  \code{roffset} 
-  and 
+  differ from arguments
+  \code{roffset}
+  and
   \code{coffset}
   in \code{\link{moffset}}
   by 1 (when elements of the matrix agree).

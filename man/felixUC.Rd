@@ -17,19 +17,19 @@
 
 }
 \usage{
-dfelix(x, a = 0.25, log = FALSE)
+dfelix(x, rate = 0.25, log = FALSE)
 }
 
 
-%pfelix(q, a = 0.25)
-%qfelix(p, a = 0.25)
-%rfelix(n, a = 0.25)
+%pfelix(q, rate = 0.25)
+%qfelix(p, rate = 0.25)
+%rfelix(n, rate = 0.25)
 \arguments{
   \item{x}{vector of quantiles.}
 % \item{p}{vector of probabilities.}
 % \item{n}{number of observations.
 %   Must be a positive integer of length 1.}
-  \item{a}{ See \code{\link{felix}}.
+  \item{rate}{ See \code{\link{felix}}.
     }
   \item{log}{
   Logical.
@@ -58,7 +58,7 @@ dfelix(x, a = 0.25, log = FALSE)
 
 }
 \section{Warning }{
-  The default value of \code{a} is subjective.
+  The default value of \code{rate} is subjective.
 
 
 }
@@ -69,9 +69,9 @@ dfelix(x, a = 0.25, log = FALSE)
 }
 \examples{
 \dontrun{
-a <- 0.25; x <- 1:15
-plot(x, dfelix(x, a), type = "h", las = 1, col = "blue",
-     ylab = paste("dfelix(a=", a, ")"),
+rate <- 0.25; x <- 1:15
+plot(x, dfelix(x, rate), type = "h", las = 1, col = "blue",
+     ylab = paste("dfelix(rate=", rate, ")"),
      main = "Felix density function")
 }
 }

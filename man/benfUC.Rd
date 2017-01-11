@@ -97,7 +97,7 @@ fraud detection in accounting  and the design computers.
 
 
 }
-\references{ 
+\references{
 
 Benford, F. (1938)
 The Law of Anomalous Numbers.
@@ -111,7 +111,7 @@ Note on the Frequency of Use of the Different Digits in Natural Numbers.
 
 }
 \author{ T. W. Yee and Kai Huang }
-%\note{ 
+%\note{
 %  Currently only the leading digit is handled.
 %  The first two leading digits would be the next simple extension.
 %

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,7 +15,7 @@
  SURff <-
   function(mle.normal = FALSE,
            divisor = c("n", "n-max(pj,pk)", "sqrt((n-pj)*(n-pk))"),
-           parallel = FALSE, 
+           parallel = FALSE,
            Varcov = NULL,
            matrix.arg = FALSE) {
 
@@ -59,7 +59,7 @@
   blurb = c("Seemingly unrelated regressions"),
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel , 
+                           bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
   }), list( .parallel = parallel,
@@ -153,9 +153,9 @@
       }  # jay
     }  # !length(etastart)
   }), list(
-            .parallel = parallel 
+            .parallel = parallel
           ))),
-  linkinv = function(eta, extra = NULL) eta, 
+  linkinv = function(eta, extra = NULL) eta,
   last = eval(substitute(expression({
 
     M1 <- extra$M1
@@ -181,6 +181,11 @@
           ))),
 
   vfamily = "SURff",
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mymu <- eta
+    okay1 <- all(is.finite(mymu))
+    okay1
+  }, list( .lmean = lmean, .emean = emean, .divisor = divisor ))),
 
 
   deriv = eval(substitute(expression({
@@ -220,9 +225,7 @@
     dmu.deta <- dtheta.deta(mymu,   .lmean , earg = .emean )
 
     c(w) * dl.dmu * dmu.deta
-  }), list( .lmean = lmean,
-            .emean = emean,
-            .divisor = divisor ))),
+  }), list( .lmean = lmean, .emean = emean, .divisor = divisor ))),
 
 
   weight = eval(substitute(expression({

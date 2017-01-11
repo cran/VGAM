@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -41,7 +41,7 @@ simulate.vlm <- function (object, nsim = 1, seed = NULL, ...) {
     class(val) <- "data.frame"
   }
   names(val) <- paste("sim", seq_len(nsim), sep = "_")
-  if (!is.null(nm)) 
+  if (!is.null(nm))
     row.names(val) <- nm
   attr(val, "seed") <- RNGstate
   val

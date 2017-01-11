@@ -3,7 +3,7 @@
 \docType{data}
 \title{ Hunting Spider Data }
 \description{
-  Abundance of hunting spiders in a Dutch dune area. 
+  Abundance of hunting spiders in a Dutch dune area.
 }
 \usage{data(hspider)}
 \format{
@@ -89,7 +89,7 @@ coef(ahsb1)
 %# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
 %# vvv          fam = poissonff, data = hspider, Crow1posit=FALSE)
 %# vvv nos = ncol(p1@y)
-%# vvv lvplot(p1, y=TRUE, lcol=1:nos, pch=1:nos, pcol=1:nos) 
+%# vvv lvplot(p1, y=TRUE, lcol=1:nos, pch=1:nos, pcol=1:nos)
 %# vvv Coef(p1)
 %# vvv summary(p1)
 

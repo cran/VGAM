@@ -124,12 +124,12 @@ Cambridge.
 }
 \author{T. W. Yee}
 \note{
-  Despite the name of this function, CAO models are handled 
+  Despite the name of this function, CAO models are handled
   as well.
 
 
 
-% Despite the name of this function, UQO and CAO models are handled 
+% Despite the name of this function, UQO and CAO models are handled
 
 
 }

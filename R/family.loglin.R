@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -71,7 +71,7 @@
       mustart[,3] <- weighted.mean(y[,1]*(1-y[,2]), w)
       mustart[,4] <- weighted.mean(y[,1]*y[,2], w)
       if (any(mustart == 0))
-        stop("some combinations of the response not realized") 
+        stop("some combinations of the response not realized")
     }
   }),
   linkinv = function(eta, extra = NULL) {
@@ -94,10 +94,10 @@
     misc$multipleResponses <- TRUE
   }),
   linkfun = function(mu, extra = NULL)  {
-    u0 <-  log(mu[,1]) 
+    u0 <-  log(mu[,1])
     u2 <-  log(mu[,2]) - u0
     u1 <-  log(mu[,3]) - u0
-    u12 <- log(mu[,4]) - u0 - u1 - u2 
+    u12 <- log(mu[,4]) - u0 - u1 - u2
     cbind(u1, u2, u12)
   },
   loglikelihood =
@@ -121,30 +121,39 @@
     }
   },
   vfamily = c("loglinb2"),
+  validparams = function(eta, y, extra = NULL) {
+    u1 <-  eta[, 1]
+    u2 <-  eta[, 2]
+    u12 <- eta[, 3]
+    okay1 <- all(is.finite(u1 )) &&
+             all(is.finite(u2 )) &&
+             all(is.finite(u12))
+    okay1
+  },
   deriv = expression({
-    u1 <-  eta[,1]
-    u2 <-  eta[,2]
-    u12 <- eta[,3]
+    u1 <-  eta[, 1]
+    u2 <-  eta[, 2]
+    u12 <- eta[, 3]
     denom <- 1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)
-    du0.du1 <- -(exp(u1) + exp(u1 + u2 + u12)) / denom 
-    du0.du2 <- -(exp(u2) + exp(u1 + u2 + u12)) / denom 
-    du0.du12 <- -exp(u1 + u2 + u12) / denom 
-    c(w) * cbind(du0.du1  + y[,1], 
+    du0.du1 <- -(exp(u1) + exp(u1 + u2 + u12)) / denom
+    du0.du2 <- -(exp(u2) + exp(u1 + u2 + u12)) / denom
+    du0.du12 <- -exp(u1 + u2 + u12) / denom
+    c(w) * cbind(du0.du1  + y[,1],
                  du0.du2  + y[,2],
-                 du0.du12 + y[,1] * y[,2]) 
+                 du0.du12 + y[,1] * y[,2])
   }),
   weight = expression({
-    d2u0.du1.2 <- -(exp(u1) + exp(u1 + u2 + u12)) * (1+exp(u2)) / denom^2 
-    d2u0.du22 <-  -(exp(u2) + exp(u1 + u2 + u12)) * (1+exp(u1)) / denom^2 
-    d2u0.du122 <- -exp(u1 + u2 + u12) * (1+exp(u1)+exp(u2)) / denom^2 
-    d2u0.du1u2 <- -(exp(u1 + u2 + u12) - exp(u1 + u2)) / denom^2 
-    d2u0.du1u3 <- -(1 + exp(u2)) * exp(u1 + u2 + u12) / denom^2 
-    d2u0.du2u3 <- -(1 + exp(u1)) * exp(u1 + u2 + u12) / denom^2 
+    d2u0.du1.2 <- -(exp(u1) + exp(u1 + u2 + u12)) * (1+exp(u2)) / denom^2
+    d2u0.du22 <-  -(exp(u2) + exp(u1 + u2 + u12)) * (1+exp(u1)) / denom^2
+    d2u0.du122 <- -exp(u1 + u2 + u12) * (1+exp(u1)+exp(u2)) / denom^2
+    d2u0.du1u2 <- -(exp(u1 + u2 + u12) - exp(u1 + u2)) / denom^2
+    d2u0.du1u3 <- -(1 + exp(u2)) * exp(u1 + u2 + u12) / denom^2
+    d2u0.du2u3 <- -(1 + exp(u1)) * exp(u1 + u2 + u12) / denom^2
 
-    wz <- matrix(NA_real_, n, dimm(M)) 
-    wz[,iam(1,1,M)] <- -d2u0.du1.2 
+    wz <- matrix(NA_real_, n, dimm(M))
+    wz[,iam(1,1,M)] <- -d2u0.du1.2
     wz[,iam(2,2,M)] <- -d2u0.du22
-    wz[,iam(3,3,M)] <- -d2u0.du122 
+    wz[,iam(3,3,M)] <- -d2u0.du122
     wz[,iam(1,2,M)] <- -d2u0.du1u2
     wz[,iam(1,3,M)] <- -d2u0.du1u3
     wz[,iam(2,3,M)] <- -d2u0.du2u3
@@ -242,7 +251,7 @@
       mustart[,7] <- weighted.mean(y[,1]*y[,2]*(1-y[,3]), w)
       mustart[,8] <- weighted.mean(y[,1]*y[,2]*y[,3], w)
       if (any(mustart == 0))
-        stop("some combinations of the response not realized") 
+        stop("some combinations of the response not realized")
     }
   }),
   linkinv = function(eta, extra = NULL) {
@@ -316,6 +325,10 @@
     }
   },
   vfamily = c("loglinb3"),
+  validparams = function(eta, y, extra = NULL) {
+    okay1 <- all(is.finite(eta))
+    okay1
+  },
   deriv = expression({
     u1  <- eta[, 1]
     u2  <- eta[, 2]
@@ -341,7 +354,7 @@
     A23 <- exp(u2 + u3 + u23) + allterms
 
 
-    c(w) * cbind(-A1/denom + y[,1], 
+    c(w) * cbind(-A1/denom + y[,1],
                  -A2/denom + y[,2],
                  -A3/denom + y[,3],
                  -A12/denom + y[,1]*y[,2],
@@ -354,7 +367,7 @@
     dA3.du1 <- exp(u1 + u3 + u13) + allterms
     dA3.du2 <- exp(u2 + u3 + u23) + allterms
 
-    wz <- matrix(NA_real_, n, dimm(6)) 
+    wz <- matrix(NA_real_, n, dimm(6))
     expu0 <- exp(u0)
 
     wz[,iam(1,1,M)] <- A1 * (1 - expu0 * A1)
@@ -378,7 +391,7 @@
     wz[,iam(3,4,M)] <- (allterms - expu0 * A3 * A12)
     wz[,iam(3,5,M)] <- A13 * (1 - expu0 * A3)
     wz[,iam(3,6,M)] <- A23 * (1 - expu0 * A3)
-    wz <- expu0 * wz 
+    wz <- expu0 * wz
     c(w) * wz
   }))
 }

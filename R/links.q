@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -58,7 +58,9 @@ if (FALSE) {
            parallel = TRUE,
            ishrinkage = 0.95,
            nointercept = NULL, imethod = 1,
-           type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
+           type.fitted = c("mean", "quantiles",
+                           "pobs0", "pstr0", "onempstr0"),
+           percentiles = c(25, 50, 75),
            probs.x = c(0.15, 0.85),
            probs.y = c(0.25, 0.50, 0.75),
            multiple.responses = FALSE, earg.link = FALSE,
@@ -186,8 +188,8 @@ care.exp <- function(x,
             "+",
             as.char.expression(theta),
             ")", sep = "")
-    if (tag) 
-      string <- paste("Log with offset:", string) 
+    if (tag)
+      string <- paste("Log with offset:", string)
     return(string)
   }
 
@@ -235,8 +237,8 @@ care.exp <- function(x,
   if (is.character(theta)) {
     theta <- as.char.expression(theta)
     string <- paste("-", theta, sep = "")
-    if (tag) 
-      string <- paste("Negative-identity:", string) 
+    if (tag)
+      string <- paste("Negative-identity:", string)
     return(string)
   }
 
@@ -257,7 +259,7 @@ care.exp <- function(x,
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("logit(",
                theta,
               ")", sep = "") else
@@ -266,8 +268,8 @@ care.exp <- function(x,
               "/(1-",
               as.char.expression(theta),
               "))", sep = "")
-    if (tag) 
-      string <- paste("Logit:", string) 
+    if (tag)
+      string <- paste("Logit:", string)
     return(string)
   }
 
@@ -304,11 +306,11 @@ care.exp <- function(x,
                     inverse = FALSE, deriv = 0,
                     short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("loglog(",  theta, ")",  sep = "") else
         paste("log(log(", theta, "))", sep = "")
-    if (tag) 
-      string <- paste("Log-Log:", string) 
+    if (tag)
+      string <- paste("Log-Log:", string)
     return(string)
   }
 
@@ -348,8 +350,8 @@ care.exp <- function(x,
         paste("log(-log(1-",
               as.char.expression(theta),
               "))", sep = "")
-    if (tag) 
-      string <- paste("Complementary log-log:", string) 
+    if (tag)
+      string <- paste("Complementary log-log:", string)
     return(string)
   }
 
@@ -360,8 +362,7 @@ care.exp <- function(x,
 
   if (inverse) {
     switch(deriv+1, {
-           junk <- exp(theta)
-           -expm1(-junk)
+           -expm1(-exp(theta))
            },
            -((1 - theta) * log1p(-theta)),
            {  junk <- log1p(-theta)
@@ -386,11 +387,11 @@ care.exp <- function(x,
                     inverse = FALSE, deriv = 0,
                     short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("probit(", theta, ")", sep = "") else
         paste("qnorm(",  theta, ")", sep = "")
-    if (tag) 
-      string <- paste("Probit:", string) 
+    if (tag)
+      string <- paste("Probit:", string)
     return(string)
   }
 
@@ -468,11 +469,11 @@ care.exp <- function(x,
                      inverse = FALSE, deriv = 0,
                      short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("explink(", theta, ")", sep = "") else
         paste("exp(", theta, ")", sep = "")
-    if (tag) 
-      string <- paste("Exp:", string) 
+    if (tag)
+      string <- paste("Exp:", string)
     return(string)
   }
 
@@ -502,8 +503,8 @@ care.exp <- function(x,
   if (is.character(theta)) {
     theta <- as.char.expression(theta)
     string <- paste("1/", theta, sep = "")
-    if (tag) 
-      string <- paste("Reciprocal:", string) 
+    if (tag)
+      string <- paste("Reciprocal:", string)
     return(string)
   }
 
@@ -532,11 +533,11 @@ care.exp <- function(x,
                    inverse = FALSE, deriv = 0,
                    short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-      string <- if (short) 
+      string <- if (short)
           paste("negloge(", theta, ")", sep = "") else
           paste("-log(",  theta, ")", sep = "")
-      if (tag) 
-        string <- paste("Negative log:", string) 
+      if (tag)
+        string <- paste("Negative log:", string)
       return(string)
   }
 
@@ -567,8 +568,8 @@ care.exp <- function(x,
   if (is.character(theta)) {
     theta <- as.char.expression(theta)
     string <- paste("-1/", theta, sep = "")
-    if (tag) 
-      string <- paste("Negative reciprocal:", string) 
+    if (tag)
+      string <- paste("Negative reciprocal:", string)
     return(string)
   }
 
@@ -600,8 +601,8 @@ care.exp <- function(x,
   if (is.character(theta)) {
     theta <- as.char.expression(theta)
     string <- paste("-1/", theta, sep = "")
-    if (tag) 
-      string <- paste("Negative inverse:", string) 
+    if (tag)
+      string <- paste("Negative inverse:", string)
     return(string)
   }
 
@@ -636,8 +637,8 @@ care.exp <- function(x,
               ")/(1-",
               as.char.expression(theta),
               "))", sep = "")
-    if (tag) 
-      string <- paste("Rhobit:", string) 
+    if (tag)
+      string <- paste("Rhobit:", string)
     return(string)
   }
 
@@ -669,15 +670,15 @@ care.exp <- function(x,
                      inverse = FALSE, deriv = 0,
                      short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("fisherz(", theta, ")", sep = "") else
         paste("(1/2) * log((1+",
               as.char.expression(theta),
               ")/(1-",
               as.char.expression(theta),
               "))", sep = "")
-    if (tag) 
-      string <- paste("Fisher's Z transformation:", string) 
+    if (tag)
+      string <- paste("Fisher's Z transformation:", string)
     return(string)
   }
 
@@ -713,7 +714,7 @@ care.exp <- function(x,
            bvalue = NULL,
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
- 
+
 
   fillerChar <- ifelse(whitespace, " ", "")
 
@@ -868,7 +869,7 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
     stop("'min' >= 'max' is not allowed")
 
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
       paste("foldsqrt(", theta, ")", sep = "") else {
     theta <- as.char.expression(theta)
       if (abs(mux-sqrt(2)) < 1.0e-10)
@@ -879,8 +880,8 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
             max, "-", theta, "))",
             sep = "")
     }
-    if (tag) 
-      string <- paste("Folded square root:", string) 
+    if (tag)
+      string <- paste("Folded square root:", string)
     return(string)
   }
 
@@ -920,13 +921,13 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
       stop("use the 'loge' link")
 
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("powerlink(", theta, ", power = ",
               as.character(exponent), ")",
               sep = "") else
         paste(as.char.expression(theta),
               "^(", as.character(exponent), ")", sep = "")
-    if (tag) 
+    if (tag)
       string <- paste("Power link:", string)
     return(string)
   }
@@ -977,8 +978,8 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
             as.char.expression(theta),
             "))", sep = "")
     }
-    if (tag) 
-      string <- paste("Extended logit:", string) 
+    if (tag)
+      string <- paste("Extended logit:", string)
     return(string)
   }
 
@@ -1006,13 +1007,13 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
                   inverse = FALSE, deriv = 0,
                   short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("logc(", theta, ")", sep = "") else {
         theta <- as.char.expression(theta)
         paste("log(1-", theta, ")", sep = "")
     }
-    if (tag) 
-      string <- paste("Log Complementary:", string) 
+    if (tag)
+      string <- paste("Log Complementary:", string)
     return(string)
   }
 
@@ -1045,13 +1046,13 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
                      inverse = FALSE, deriv = 0,
                      short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("cauchit(", theta, ")", sep = "") else {
         theta <- as.char.expression(theta)
         paste("tan(pi*(", theta, "-0.5))", sep = "")
     }
-    if (tag) 
-      string <- paste("Cauchit:", string) 
+    if (tag)
+      string <- paste("Cauchit:", string)
     return(string)
   }
 
@@ -1127,8 +1128,8 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
               ")/(3*sqrt(lambda)))", sep = "")
       }
     }
-    if (tag) 
-      string <- paste("Gamma-ordinal link function:", string) 
+    if (tag)
+      string <- paste("Gamma-ordinal link function:", string)
     return(string)
   }
 
@@ -1214,14 +1215,14 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
             if (lenc) "c(" else "",
             ToString(cutpoint),
             if (lenc) ")" else "",
-            ")", sep = "") 
+            ")", sep = "")
     } else {
       theta <- as.char.expression(theta)
       paste("2*log(0.5*qnorm(", theta,
             ") + sqrt(cutpoint+7/8))", sep = "")
     }
-    if (tag) 
-      string <- paste("Poisson-ordinal link function:", string) 
+    if (tag)
+      string <- paste("Poisson-ordinal link function:", string)
     return(string)
   }
 
@@ -1242,10 +1243,10 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
   if (inverse) {
       switch(deriv+1, {
  # deriv == 0
-          origans <- 
+          origans <-
           if (any(cp.index <- cutpoint == 0)) {
               tmp <- theta
-              tmp[cp.index] <- 
+              tmp[cp.index] <-
               cloglog(theta = theta[cp.index],
                       inverse = inverse, deriv = deriv)
               tmp[!cp.index] <-
@@ -1264,13 +1265,13 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
              )
 
 
-      
+
   } else {
     if (any(cp.index <- cutpoint == 0)) {
         cloglog(theta = theta,
                 inverse = inverse, deriv = deriv)
 
-        
+
     } else {
       smallno <- 1 * .Machine$double.eps
       SMALLNO <- 1 * .Machine$double.xmin
@@ -1279,7 +1280,7 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
       Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
       Ql <- qnorm(Theta)
 
-      
+
       switch(deriv+1, {
       temp <- 0.5 * Ql + sqrt(cutpoint + 7/8)
       temp <- pmax(temp, SMALLNO)
@@ -1289,7 +1290,7 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
       origans <- (Ql/2 + sqrt(cutpoint + 7/8)) * dnorm(Ql)
       1 / origans
       },
-             
+
       {  stop('cannot currently handle deriv = 2') },
       stop("argument 'deriv' unmatched"))
     }
@@ -1343,7 +1344,7 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
               ")/(2*sqrt(k)) + ",
               "asinh(sqrt(cutpoint/k))))", sep = "")
       }
-      if (tag) 
+      if (tag)
         string <- paste("Negative binomial-ordinal link function:",
                         string)
       return(string)
@@ -1383,7 +1384,7 @@ foldsqrt <- function(theta,  #  = NA  , = NULL,
 
 
 
-      
+
   } else {
     smallno <- 1 * .Machine$double.eps
     SMALLNO <- 1 * .Machine$double.xmin
@@ -1469,7 +1470,7 @@ warning("20150711; this function has not been updated")
     theta <- as.char.expression(theta)
     paste("3*log(<a complicated expression>)", sep = "")
   }
-  if (tag) 
+  if (tag)
     string <- paste("Negative binomial-ordinal link function 2:",
                    string)
   return(string)
@@ -1748,7 +1749,7 @@ setMethod("linkfun", "vglm", function(object, ...)
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    string <- if (short) 
+    string <- if (short)
         paste("logitoffsetlink(",
                theta,
               ", ", offset[1],
@@ -1760,8 +1761,8 @@ setMethod("linkfun", "vglm", function(object, ...)
               ")",
               " - ", offset[1],
               ")", sep = "")
-    if (tag) 
-      string <- paste("Logit-with-offset:", string) 
+    if (tag)
+      string <- paste("Logit-with-offset:", string)
     return(string)
   }
 
@@ -1770,7 +1771,7 @@ setMethod("linkfun", "vglm", function(object, ...)
 
   if (inverse) {
     switch(deriv+1, {
-           exp.eta <- exp(theta) 
+           exp.eta <- exp(theta)
            (exp.eta + offset) / (1 + exp.eta + offset)
            },
            1 / Recall(theta = theta,

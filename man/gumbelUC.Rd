@@ -56,7 +56,7 @@ rgumbel(n, location = 0, scale = 1)
   \emph{generalized extreme value} (GEV) distribution where
   the shape parameter \eqn{\xi}{xi} = 0.
   The latter has 3 parameters, so the Gumbel distribution has two.
-  The Gumbel distribution function is 
+  The Gumbel distribution function is
   \deqn{G(y) = \exp \left( - \exp \left[ - \frac{y-\mu}{\sigma} \right]
                     \right) }{%
         G(y) =  exp( -exp[ - (y-mu)/sigma ] ) }

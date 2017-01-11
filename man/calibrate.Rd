@@ -36,7 +36,7 @@ calibrate(object, ...)
   It can be loosely thought of as the opposite of \code{\link{predict}}
   (which takes an \bold{X} and returns a \bold{Y}.)
 
-  
+
 }
 \value{
   In general, given a new response \bold{Y}, the explanatory
@@ -74,7 +74,7 @@ calibrate(object, ...)
 hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 set.seed(123)
 p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-          WaterCon + BareSand + FallTwig + 
+          WaterCon + BareSand + FallTwig +
           CoveMoss + CoveHerb + ReflLux,
           family = poissonff, data = hspider, Rank = 1,
           df1.nl = c(Zoraspin = 2, 1.9),

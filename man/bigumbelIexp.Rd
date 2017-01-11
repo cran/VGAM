@@ -40,7 +40,7 @@ bigumbelIexp(lapar = "identitylink", iapar = NULL, imethod = 1)
   The cumulative distribution function is
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = e^{-y_1-y_2+\alpha y_1 y_2}
              + 1  - e^{-y_1} - e^{-y_2} }{%
-        P(Y1 <= y1, Y2 <= y2) = 
+        P(Y1 <= y1, Y2 <= y2) =
         exp(-y1-y2+alpha*y1*y2) + 1 - exp(-y1) - exp(-y2) }
   for real \eqn{\alpha}{alpha}.
   The support of the function is for \eqn{y_1>0}{y1>0} and

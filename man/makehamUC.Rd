@@ -63,7 +63,7 @@ rmakeham(n, scale = 1, shape, epsilon = 0)
 }
 \references{
 
-Jodra, P. (2009) 
+Jodra, P. (2009)
 A closed-form expression for the quantile function of the
 Gompertz-Makeham distribution.
 \emph{Mathematics and Computers in Simulation},

@@ -65,7 +65,7 @@ Constrained additive ordination.
 
 
 \note{
-  Tolerances are undefined for `linear' and additive 
+  Tolerances are undefined for `linear' and additive
   ordination models.
   They are well-defined for quadratic ordination models.
 

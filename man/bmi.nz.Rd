@@ -3,7 +3,7 @@
 \docType{data}
 \title{ Body Mass Index of New Zealand Adults Data}
 \description{
-  The body mass indexes and ages from an approximate random 
+  The body mass indexes and ages from an approximate random
   sample of 700 New Zealand adults.
 
 }
@@ -12,17 +12,17 @@
   A data frame with 700 observations on the following 2 variables.
   \describe{
     \item{age}{a numeric vector; their age (years). }
-    \item{BMI}{a numeric vector; their body mass indexes, which is 
+    \item{BMI}{a numeric vector; their body mass indexes, which is
     their weight divided by the square of their height
     (kg / \eqn{m^2}{m^2}).}
   }
 }
 \details{
   They are a random sample from the Fletcher Challenge/Auckland Heart and
-  Health survey conducted in the early 1990s. 
+  Health survey conducted in the early 1990s.
 
 
-  There are some outliers in the data set. 
+  There are some outliers in the data set.
 
 
   A variable \code{gender} would be useful, and may be added later.

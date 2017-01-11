@@ -6,6 +6,59 @@
 
 
 
+                CHANGES IN VGAM VERSION 1.0-3
+
+NEW FEATURES
+
+    o   vgam() with sm.os() and sm.ps() terms allows G2-VGAMs to be fitted.
+    o   plotvgam() has a "shade" argument.
+    o   Almost all family functions have been "validparams"-enabled, for
+        greater reliability.
+    o   confint() implements the profile likelihood method (in addition
+        to the Wald method).
+    o   New family functions: diffzeta(dpqr),
+        oilog(dpqr), oiposbinomial(dpqr), oizeta(dpqr),  oizipf(dpqr),
+        otlog(dpqr), otpospoisson(dpqr), otzeta(dpqr),
+        oalog(dpqr), oapospoisson(dpqr), oazeta(dpqr), topple(dpqr).
+    o   New functions: [pqr]zeta(), [qr]zipf().
+    o   Argument 'zero' now accepts "" or NA and interprets these as NULL,
+        i.e., no linear or additive predictors are intercept-only.
+    o   Significance stars added to summary(rrvglm.object), for very crude
+        inference.
+    o   zeta() can return the Hurwitz zeta function, via the 'shift' argument.
+    o   show.summary.vglm() will only print out any dispersion parameter
+        that is not equal to 1.
+    o   type.fitted = "quantiles" is available for
+        gevff(), negbinomial(), poissonff().
+    o   Tested okay on R 3.3.2.
+
+
+
+BUG FIXES and CHANGES
+
+    o   mills.ratio1() in tobit() did not handle very negative 'x' values
+        correctly. Thanks to Christoph Nolte for detecting this.
+    o   Renamed arguments: zetaff(d) use 'shape', not 'p'.
+    o   betabinomialff()@infos was buggy wrt 'lshape1' and 'lshape2'.
+        Thanks to Xiaodong for detecting this.
+    o   leipnik() uses logoff(offset = -1) as the default link for
+        lambda now, not "loge".
+    o   logff(dpqr) uses 'shape' instead of 'c'     as the parameter name.
+    o   yules(dpqr) uses 'shape' instead of 'rho'   as the parameter name.
+    o   hzeta(dpqr) uses 'shape' instead of 'alpha' as the parameter name.
+    o   felix(dpqr) uses 'rate'  instead of 'a'     as the parameter name.
+    o   dbetabinom.ab() handles large values of shape1 and shape2 better, via
+        the dbinom() limit. Thanks to Micha Schneider for picking up the bug.
+    o   [dpqr]posnegbin() have been improved a little.
+    o   logLik(summation = TRUE): prior weights 'w' have been
+        converted to a vector when passed in; this is likely to make it less
+        likely to give an error.
+    o   Labelling of the colnames of the fitted values have changed for many
+        family functions, including those for multiple responses,
+        e.g., gevff(). Also "mean" had a bug or two in gevff()@linkinv.
+
+
+
                 CHANGES IN VGAM VERSION 1.0-2
 
 NEW FEATURES

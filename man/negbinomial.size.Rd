@@ -96,7 +96,7 @@ Cambridge: Cambridge University Press.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{negbinomial}},
   \code{\link{nbcanlink}} (NB-C model),
   \code{\link{quasipoissonff}},

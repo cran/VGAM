@@ -10,11 +10,11 @@
 
 }
 \usage{
-vglm(formula, family, data = list(), weights = NULL, subset = NULL, 
-     na.action = na.fail, etastart = NULL, mustart = NULL, 
-     coefstart = NULL, control = vglm.control(...), offset = NULL, 
-     method = "vglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE, 
-     contrasts = NULL, constraints = NULL, extra = list(), 
+vglm(formula, family, data = list(), weights = NULL, subset = NULL,
+     na.action = na.fail, etastart = NULL, mustart = NULL,
+     coefstart = NULL, control = vglm.control(...), offset = NULL,
+     method = "vglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,
+     contrasts = NULL, constraints = NULL, extra = list(),
      form2 = NULL, qr.arg = TRUE, smart = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
@@ -57,7 +57,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   \item{weights}{
   an optional vector or matrix of (prior fixed and known) weights
   to be used in the fitting process.
-  If the \pkg{VGAM} family function handles multiple responses 
+  If the \pkg{VGAM} family function handles multiple responses
   (\eqn{Q > 1} of them, say) then
   \code{weights} can be a matrix with \eqn{Q} columns.
   Each column matches the respective response.
@@ -95,7 +95,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{subset}{
   an optional logical vector specifying a subset of
-  observations to 
+  observations to
   be used in the fitting process.
 
 
@@ -103,7 +103,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   }
   \item{na.action}{
   a function which indicates what should happen when
-  the data contain \code{NA}s. 
+  the data contain \code{NA}s.
   The default is set by the \code{na.action} setting
   of \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
   The ``factory-fresh'' default is \code{na.omit}.
@@ -137,7 +137,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
   }
   \item{control}{
-  a list of parameters for controlling the fitting process. 
+  a list of parameters for controlling the fitting process.
   See \code{\link{vglm.control}} for details.
 
 
@@ -169,7 +169,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
   process should be assigned in the \code{x} and \code{y} slots.
   Note the model matrix is the LM model matrix; to get the VGLM
   model matrix type \code{model.matrix(vglmfit)} where
-  \code{vglmfit} is a \code{vglm} object. 
+  \code{vglmfit} is a \code{vglm} object.
 
 
   }
@@ -333,7 +333,7 @@ vglm(formula, family, data = list(), weights = NULL, subset = NULL,
 
 
 }
-\references{ 
+\references{
 
 
 Yee, T. W. (2015)
@@ -433,7 +433,7 @@ The \code{VGAM} Package.
 
 
 
-\seealso{ 
+\seealso{
   \code{\link{vglm.control}},
   \code{\link{vglm-class}},
   \code{\link{vglmff-class}},
@@ -442,7 +442,7 @@ The \code{VGAM} Package.
   \code{\link{fill}},
   \code{\link{rrvglm}},
   \code{\link{vgam}}.
-  Methods functions include 
+  Methods functions include
   \code{\link{coefvlm}},
   \code{\link{constraints.vlm}},
   \code{\link{hatvaluesvlm}},
@@ -474,13 +474,13 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo)
 
 # Example 3. Proportional odds model
 fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo)
-coef(fit3, matrix = TRUE) 
+coef(fit3, matrix = TRUE)
 constraints(fit3)
 model.matrix(fit3, type = "lm")  # LM model matrix
 model.matrix(fit3)               # Larger VGLM (or VLM) model matrix
 
 
-# Example 4. Bivariate logistic model 
+# Example 4. Bivariate logistic model
 fit4 <- vglm(cbind(nBnW, nBW, BnW, BW) ~ age, binom2.or, coalminers)
 coef(fit4, matrix = TRUE)
 depvar(fit4)  # Response are proportions
@@ -507,7 +507,7 @@ fit5 <- vglm(cbind(leye, reye) ~ op,
 coef(fit5)
 coef(fit5, matrix = TRUE)
 constraints(fit5)
-} 
+}
 \keyword{models}
 \keyword{regression}
 

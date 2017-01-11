@@ -73,13 +73,13 @@ rcard(n, mu, rho, ...)
 }
 %\references{ }
 \author{ Thomas W. Yee and Kai Huang }
-\note{ 
+\note{
   Convergence problems might occur with \code{rcard}.
 
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{cardioid}}.
 
 

@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Control Function for rrvglm() Calling optim() }
 \description{
-  Algorithmic constants and parameters for running \code{optim} within 
+  Algorithmic constants and parameters for running \code{optim} within
   \code{rrvglm} are set using this function.
 
 
@@ -20,8 +20,8 @@ rrvglm.optim.control(Fnscale = 1, Maxit = 100,
   \item{Switch.optimizer}{ Iteration number when the "Nelder-Mead" method
   of \code{optim} is switched to the quasi-Newton "BFGS" method.
   Assigning \code{Switch.optimizer} a negative number
-  means always BFGS, while assigning \code{Switch.optimizer} a value 
-  greater than \code{maxits} means always use Nelder-Mead. 
+  means always BFGS, while assigning \code{Switch.optimizer} a value
+  greater than \code{maxits} means always use Nelder-Mead.
   }
   \item{Abstol}{ Passed into \code{optim} as \code{abstol}. }
   \item{Reltol}{ Passed into \code{optim} as \code{reltol}. }
@@ -29,7 +29,7 @@ rrvglm.optim.control(Fnscale = 1, Maxit = 100,
 
 }
 \details{
-  See \code{\link[stats]{optim}} for more details. 
+  See \code{\link[stats]{optim}} for more details.
 
 
 }
@@ -45,7 +45,7 @@ rrvglm.optim.control(Fnscale = 1, Maxit = 100,
   unstable, so users may have to vary the value of
   \code{Switch.optimizer}.
 
- 
+
   Practical experience with \code{Switch.optimizer} shows
   that setting it to too large a value may lead to a local
   solution, whereas setting it to a low value will obtain

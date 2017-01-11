@@ -14,9 +14,9 @@
     \item{\code{N}}{Litter size.}
     \item{\code{R}}{Number of dead fetuses.}
     \item{\code{hb}}{Hemoglobin level.}
-    \item{\code{grp}}{Group number. 
+    \item{\code{grp}}{Group number.
           Group 1 is the untreated (low-iron) group,
-          group 2 received injections on day 7 or day 10 only, 
+          group 2 received injections on day 7 or day 10 only,
           group 3 received injections on days 0 and 7, and
           group 4 received injections weekly.}
   }

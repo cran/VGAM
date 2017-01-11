@@ -18,12 +18,12 @@ and \eqn{n} is the number of observations.
     \item{\code{B1}:}{Of class \code{"matrix"}, \bold{B1}. }
     \item{\code{C}:}{Of class \code{"matrix"}, \bold{C}. }
     \item{\code{Rank}:}{The rank of the RR-VGLM. }
-    \item{\code{colx1.index}:}{Index of the columns of the 
+    \item{\code{colx1.index}:}{Index of the columns of the
           \code{"vlm"}-type model matrix corresponding to the variables
           in \bold{x1}. These correspond to \bold{B1}.
     }
     \item{\code{colx2.index}:}{
-          Index of the columns of the 
+          Index of the columns of the
           \code{"vlm"}-type model matrix corresponding to the variables
           in \bold{x2}. These correspond to the reduced-rank regression.
     }

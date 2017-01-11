@@ -26,7 +26,7 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
 
   }
   \item{Lower, Upper}{vector of lower and upper
-  thresholds. 
+  thresholds.
 
   }
   \item{mean, sd, lower.tail, log, log.p}{
@@ -46,7 +46,7 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
 \author{ T. W. Yee }
 \details{
   See \code{\link{tobit}}, the \pkg{VGAM} family function
-  for estimating the parameters, 
+  for estimating the parameters,
   for details.
   Note that the density at \code{Lower} and \code{Upper} is the
   the area to the left and right of those points.
@@ -54,7 +54,7 @@ rtobit(n, mean = 0, sd = 1, Lower = 0, Upper = Inf)
   Consequently, \code{dtobit(Lower) + dtobit(Upper) + } the area
   in between equals unity.
 
-  
+
 
 
 % 20141223; this is old:
@@ -83,7 +83,7 @@ integrate(dtobit, lower = Lower, upper = Upper,
 dtobit(Lower, mean = mu, Lower = Lower, Upper = Upper) +
 dtobit(Upper, mean = mu, Lower = Lower, Upper = Upper)  # Adds to unity
 
-\dontrun{ 
+\dontrun{
 plot(x, ptobit(x, m = mu, Lower = Lower, Upper = Upper),
      type = "l", ylim = 0:1, las = 1, col = "orange",
      ylab = paste("ptobit(m = ", mu, ", sd = 1, Lower =", Lower,

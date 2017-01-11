@@ -8,26 +8,20 @@
 
 }
 \usage{
-hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
+hzeta(lshape = "loglog", ishape = NULL, nsimEIM = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{
-  Parameter link function for the parameter.
+  \item{lshape}{
+  Parameter link function for the parameter,
+  called \eqn{\alpha}{alpha} below.
   See \code{\link{Links}} for more choices.
   Here, a log-log link keeps the parameter greater than one, meaning
   the mean is finite.
 
 
   }
-  \item{ialpha}{
-  Optional initial value for the (positive) parameter. 
-  The default is to obtain an initial value internally. Use this argument
-  if the default fails.
-
-
-  }
-  \item{nsimEIM}{
+  \item{ishape,nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
@@ -57,7 +51,7 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
 
 
 }
-\references{ 
+\references{
 
     Pages 533--4 of
     Johnson N. L., Kemp, A. W. and Kotz S. (2005)
@@ -67,7 +61,7 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
 
 }
 \author{ T. W. Yee }
-%\note{ 
+%\note{
 %}
 
 
@@ -81,11 +75,11 @@ hzeta(link = "loglog", ialpha = NULL, nsimEIM = 100)
 
 }
 \examples{
-alpha <- exp(exp(-0.1))  # The parameter
-hdata <- data.frame(y = rhzeta(n = 1000, alpha))
+shape <- exp(exp(-0.1))  # The parameter
+hdata <- data.frame(y = rhzeta(n = 1000, shape))
 fit <- vglm(y ~ 1, hzeta, data = hdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
-Coef(fit)  # Useful for intercept-only models; should be same as alpha
+Coef(fit)  # Useful for intercept-only models; should be same as shape
 c(with(hdata, mean(y)), head(fitted(fit), 1))
 summary(fit)
 }
@@ -93,18 +87,20 @@ summary(fit)
 \keyword{regression}
 
 
+
+
 %# Generate some hzeta random variates
 %set.seed(123)
-%nn = 400
-%x = 1:20
-%alpha = 1.1  # The parameter
-%probs = dhzeta(x, alpha)
+%nn <- 400
+%x <- 1:20
+%shape <- 1.1  # The parameter
+%probs <- dhzeta(x, shape)
 %\dontrun{
 %plot(x, probs, type="h", log="y")}
-%cs = cumsum(probs)
-%tab = table(cut(runif(nn), brea = c(0,cs,1)))
-%index = (1:length(tab))[tab>0]
-%y = rep(index, times=tab[index]) 
+%cs <- cumsum(probs)
+%tab <- table(cut(runif(nn), brea = c(0,cs,1)))
+%index <- (1:length(tab))[tab>0]
+%y <- rep(index, times=tab[index])
 
 
 

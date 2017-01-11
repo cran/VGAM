@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -74,7 +74,7 @@ predict.vlm <- function(object,
       as.save <- attr(X, "assign")
       X <- X[rep_len(1, nrow(newdata)), , drop = FALSE]
       dimnames(X) <- list(dimnames(newdata)[[1]], "(Intercept)")
-      attr(X, "assign") <- as.save  # Restored 
+      attr(X, "assign") <- as.save  # Restored
     }
 
     offset <- if (!is.null(off.num <- attr(ttob, "offset"))) {
@@ -83,7 +83,7 @@ predict.vlm <- function(object,
       eval(object@call$offset, newdata)
 
     if (is.smart(object) && length(object@smart.prediction)) {
-      wrapup.smart() 
+      wrapup.smart()
     }
 
     attr(X, "assign") <- attrassigndefault(X, ttob)
@@ -143,7 +143,7 @@ predict.vlm <- function(object,
     coefs <- coefvlm(object)
     vasgn <- attr(X_vlm, "vassign")
 
- 
+
     if (type == "terms") {
       nv <- names(vasgn)
       if (hasintercept)
@@ -164,7 +164,7 @@ predict.vlm <- function(object,
     dname2 <- object@misc$predictors.names
     if (se.fit) {
       object <- as(object, "vlm")  # Coerce
-      fit.summary <- summaryvlm(object, dispersion=dispersion)
+      fit.summary <- summaryvlm(object, dispersion = dispersion)
       sigma <- if (is.numeric(fit.summary@sigma))
         fit.summary@sigma else
         sqrt(deviance(object) / object@df.residual)  # was @ResSS
@@ -223,7 +223,7 @@ predict.vlm <- function(object,
         } else {
           pred <- pred[, cs[-length(cs)], drop = FALSE]
         }
-      
+
         pp <- if (se.fit) ncol(pred$fitted.values) else ncol(pred)
         if (se.fit) {
           dimnames(pred$fitted.values) <- dimnames(pred$se.fit) <- NULL
@@ -240,7 +240,7 @@ predict.vlm <- function(object,
 
       if (raw) {
         kindex <- NULL
-        for (ii in 1:pp) 
+        for (ii in 1:pp)
           kindex <- c(kindex, (ii-1) * M + (1:ncolHlist[ii]))
         if (se.fit) {
           pred$fitted.values <- pred$fitted.values[, kindex, drop = FALSE]
@@ -248,17 +248,19 @@ predict.vlm <- function(object,
         } else {
           pred <- pred[, kindex, drop = FALSE]
         }
-      } 
+      }
 
       temp <- if (raw) ncolHlist else rep_len(M, length(ncolHlist))
       dd <- vlabel(names(ncolHlist), temp, M)
       if (se.fit) {
-        dimnames(pred$fitted.values) <- 
-        dimnames(pred$se.fit) <- list(if (length(newdata))
-                                      dimnames(newdata)[[1]] else dx1, dd)
+        dimnames(pred$fitted.values) <-
+        dimnames(pred$se.fit) <-
+          list(if (length(newdata)) dimnames(newdata)[[1]] else dx1,
+               dd)
       } else {
-        dimnames(pred) <- list(if (length(newdata))
-                               dimnames(newdata)[[1]] else dx1, dd)
+        dimnames(pred) <-
+          list(if (length(newdata)) dimnames(newdata)[[1]] else dx1,
+               dd)
       }
 
       if (!length(newdata) && length(na.act)) {
@@ -293,12 +295,13 @@ predict.vlm <- function(object,
   }
 
   pred
-}
+}  # predict.vlm()
 
 
 
 
-setMethod("predict", "vlm", 
+
+setMethod("predict", "vlm",
           function(object, ...)
           predict.vlm(object, ...))
 
@@ -380,7 +383,7 @@ is.linear.term <- function(ch) {
                    x != "/" & x != "*" & x != "^")
   }
   names(ans) <- ch
-  ans 
+  ans
 }
 
 

@@ -47,7 +47,7 @@
   The Relation Between the Number of Species and
      the Number of Individuals in a Random Sample of an Animal
      Population.
-\emph{Journal of Animal Ecology},   
+\emph{Journal of Animal Ecology},
 \bold{12}, 42--58.
 
 }

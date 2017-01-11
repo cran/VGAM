@@ -21,20 +21,20 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 
 
   }
-  \item{trace}{ 
+  \item{trace}{
     Logical indicating if output should be produced for each iteration. It
     is a good idea to set this argument to be \code{TRUE} since the
     computations are expensive.
 
 
   }
-\item{Method.optim}{ 
+\item{Method.optim}{
   Character. Fed into the \code{method} argument of
   \code{\link[stats]{optim}}.
 
 
   }
-\item{gridSize}{ 
+\item{gridSize}{
   Numeric, recycled to length \code{Rank}.  Controls the resolution
   of the grid used for initial values.  For each latent variable,
   an equally spaced grid of length \code{gridSize} is cast from the
@@ -46,13 +46,13 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 
 
   }
-  \item{varI.latvar}{ 
+  \item{varI.latvar}{
   Logical. For CQO objects only, this argument is fed into
   \code{\link{Coef.qrrvglm}}.
 
 
   }
-  \item{\dots}{ 
+  \item{\dots}{
   Avoids an error message for extraneous arguments.
 
 
@@ -103,7 +103,7 @@ On constrained and unconstrained quadratic ordination.
 \examples{
 \dontrun{ hspider[, 1:6] <- scale(hspider[, 1:6])  # Needed when I.tol = TRUE
 set.seed(123)
-p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr, 
+p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr,
                 Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig +
           CoveMoss + CoveHerb + ReflLux,

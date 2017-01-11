@@ -23,7 +23,7 @@ trplot(object, ...)
 \details{
   Trajectory plots can be defined in different ways for different
   models.
-  Many models have no such notion or definition. 
+  Many models have no such notion or definition.
 
 
   For quadratic and additive ordination models they plot the

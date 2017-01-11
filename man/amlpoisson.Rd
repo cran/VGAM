@@ -132,7 +132,7 @@ amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   all the \code{w.aml} values.
   See Equation (1.6) of Efron (1992).
 
-} 
+}
 \seealso{
   \code{\link{amlnormal}},
   \code{\link{amlbinomial}},

@@ -1,6 +1,14 @@
 Here is a list of known bugs.
 
 
+2016-06
+
+lrtest(zipoissonff.object, poissonff.object) fails.
+
+
+
+
+
 2016-05
 
 rcim() with alaplace2() may fail.

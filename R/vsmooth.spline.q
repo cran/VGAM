@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -112,16 +112,16 @@ vsmooth.spline <-
            x.constraint = diag(M),
            constraints = list("(Intercepts)" = i.constraint,
                               x = x.constraint),
-           all.knots = FALSE, 
+           all.knots = FALSE,
            var.arg = FALSE,
            scale.w = TRUE,
            nk = NULL,
            control.spar = list()) {
 
- 
-    
+
+
   if (var.arg) {
-    warning("@var will be returned, but no use will be made of it") 
+    warning("@var will be returned, but no use will be made of it")
   }
 
 
@@ -169,7 +169,7 @@ vsmooth.spline <-
   xvector <- x
   n_lm <- length(xvector)
   ymat <- as.matrix(y)
-  ny2 <- dimnames(ymat)[[2]]  # NULL if vector 
+  ny2 <- dimnames(ymat)[[2]]  # NULL if vector
   M <- ncol(ymat)
   if (n_lm != nrow(ymat)) {
     stop("lengths of arguments 'x' and 'y' must match")
@@ -197,7 +197,7 @@ vsmooth.spline <-
   }
   dim2wz <- ncol(wzmat)
 
- 
+
   if (missing.constraints) {
     constraints <- list("(Intercepts)" = eval(i.constraint),
                         "x"            = eval(x.constraint))
@@ -210,9 +210,9 @@ vsmooth.spline <-
   if (!is.list(constraints) || length(constraints) != 2) {
     stop("'constraints' must equal a list (of length 2) or a matrix")
   }
-  for (ii in 1:2) 
+  for (ii in 1:2)
     if (!is.numeric(constraints[[ii]]) ||
-        !is.matrix (constraints[[ii]]) || 
+        !is.matrix (constraints[[ii]]) ||
         nrow(constraints[[ii]]) != M   ||
         ncol(constraints[[ii]]) >  M)
       stop("something wrong with argument 'constraints'")
@@ -231,7 +231,7 @@ vsmooth.spline <-
     collaps <- .C("vsuff9",
       as.integer(n_lm), as.integer(neff), as.integer(ooo),
       as.double(xvector), as.double(ymat), as.double(wzmat),
-                    
+
       xbar = double(neff), ybar = double(neff * M),
           wzbar = double(neff * dim2wz),
       uwzbar = double(1), wzybar = double(neff * M), okint = as.integer(0),
@@ -305,10 +305,10 @@ vsmooth.spline <-
           "y"            = lfit@fitted.values,
           "yin"          = yinyin)
 
-    
+
       return(object)
   }
-    
+
 
   xbar <- (usortx - usortx[1]) / (usortx[neff] - usortx[1])
   noround <- TRUE   # Improvement 20020803
@@ -316,7 +316,7 @@ vsmooth.spline <-
   if (all.knots) {
     knot <- if (noround) {
       valid.vknotl2(c(rep_len(xbar[1], 3), xbar, rep_len(xbar[neff], 3)))
-    } else { 
+    } else {
       c(rep_len(xbar[1], 3), xbar, rep_len(xbar[neff], 3))
     }
     if (length(nknots)) {
@@ -347,7 +347,7 @@ vsmooth.spline <-
     stop("not enough distinct knots found")
   }
 
- 
+
   conmat <- (constraints[[2]])[, nonlin, drop = FALSE]
   ncb <- sum(nonlin)
   trivc <- trivial.constraints(conmat)
@@ -364,7 +364,7 @@ vsmooth.spline <-
   collaps <- .C("vsuff9",
       as.integer(neff), as.integer(neff), as.integer(ooo),
       as.double(collaps$xbar), as.double(resmat), as.double(collaps$wzbar),
-                  
+
       xbar = double(neff), ybar = double(neff * ncb),
           wzbar = double(neff * dim2wzbar),
       uwzbar = double(1), wzybar = double(neff * ncb), okint = as.integer(0),
@@ -382,9 +382,9 @@ vsmooth.spline <-
   dim(collaps$wzbar) <- c(neff, dim2wzbar)
 
 
- 
 
- 
+
+
 
 
   wzyb.c <-
@@ -401,14 +401,14 @@ vsmooth.spline <-
     wzyb.c[ii, ] <- one.Wmat.c %*% zedd.c[ii, ]
   }
 
- 
 
 
 
 
 
 
- 
+
+
 
   ldk <- 3 * ncb + 1  # 20020710; Previously 4 * ncb
   varmat <- if (var.arg) matrix(0, neff, ncb) else double(1)
@@ -420,7 +420,7 @@ vsmooth.spline <-
   vsplin <- .C("Yee_spline",
      xs = as.double(xbar),
      yyy = as.double(collaps$wzybar),  # zz
-                 
+
          as.double(collaps$wzbar), xknot = as.double(knot),
      n = as.integer(neff), nknots = as.integer(nknots), as.integer(ldk),
          M = as.integer(ncb), dim2wz = as.integer(dim2wzbar),
@@ -428,7 +428,7 @@ vsmooth.spline <-
      spar.nl = as.double(spar.nl), lamvec = as.double(spar.nl),
 
          iinfo = integer(1), fv = double(neff * ncb),
-     Bcoef = double(nknots * ncb), varmat = as.double(varmat), 
+     Bcoef = double(nknots * ncb), varmat = as.double(varmat),
 
      levmat = double(neff * ncb), as.double(dofr.nl),
 
@@ -445,7 +445,7 @@ vsmooth.spline <-
 
 
 
- 
+
   if (vsplin$ierror != 0) {
     stop("vsplin$ierror == ", vsplin$ierror,
          ". Something gone wrong in 'vsplin'")
@@ -462,11 +462,11 @@ vsmooth.spline <-
       dim(vsplin$varmat) <- c(neff, ncb)
   }
 
-  dofr.nl <- colSums(vsplin$levmat)  # Actual EDF used 
+  dofr.nl <- colSums(vsplin$levmat)  # Actual EDF used
 
 
 
- 
+
   fv <- lfit@fitted.values + vsplin$fv %*% t(conmat)
   if (M > 1) {
     dimnames(fv) <- list(NULL, ny2)
@@ -484,7 +484,7 @@ vsmooth.spline <-
                    "knots"         = knot,
                    "xmax"          = usortx[neff],
                    "xmin"          = usortx[1])
- 
+
   object <-
   new("vsmooth.spline",
       "call"         = my.call,
@@ -514,11 +514,11 @@ show.vsmooth.spline <- function(x, ...) {
   }
 
   ncb <- if (length(x@nlfit)) ncol(x@nlfit@Bcoefficients) else NULL
-  cat("\nSmoothing Parameter (Spar):", 
+  cat("\nSmoothing Parameter (Spar):",
     if (length(ncb) && ncb == 1) format(x@spar) else
         paste(format(x@spar), collapse = ", "), "\n")
 
-  cat("\nEquivalent Degrees of Freedom (Df):", 
+  cat("\nEquivalent Degrees of Freedom (Df):",
     if (length(ncb) && ncb == 1) format(x@df) else
         paste(format(x@df), collapse = ", "), "\n")
 
@@ -532,7 +532,7 @@ show.vsmooth.spline <- function(x, ...) {
 
 
 coefvsmooth.spline.fit <- function(object, ...) {
-  object@Bcoefficients 
+  object@Bcoefficients
 }
 
 
@@ -665,8 +665,8 @@ predictvsmooth.spline.fit <- function(object, x, deriv = 0) {
       }
     } else if (deriv == 1) {
       end.slopes <- Recall(object, xrange, 1)$y * drangex
-      y[bad.left,]  <- rep(end.slopes[1,], rep(sum(bad.left),  ncb)) 
-      y[bad.right,] <- rep(end.slopes[2,], rep(sum(bad.right), ncb)) 
+      y[bad.left,]  <- rep(end.slopes[1,], rep(sum(bad.left),  ncb))
+      y[bad.right,] <- rep(end.slopes[2,], rep(sum(bad.right), ncb))
     } else
       y[!good,] <- 0
   }

@@ -62,7 +62,7 @@ rbetageom(n, shape1, shape2)
 
 
 % See zz code{link{betageomzz}}, the \pkg{VGAM} family function
-% for estimating the parameters, 
+% for estimating the parameters,
 % for the formula of the probability density function and other details.
 
 }

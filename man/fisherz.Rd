@@ -8,7 +8,7 @@
 
 }
 \usage{
-fisherz(theta, bminvalue = NULL, bmaxvalue = NULL, 
+fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -77,7 +77,7 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 \author{ Thomas W. Yee }
 
 \note{
-  Numerical instability may occur when \code{theta} is close to \eqn{-1} or 
+  Numerical instability may occur when \code{theta} is close to \eqn{-1} or
   \eqn{1}.
   One way of overcoming this is to use, e.g., \code{bminvalue}.
 
@@ -89,7 +89,7 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{rhobit}},
   \code{\link{atanh}},

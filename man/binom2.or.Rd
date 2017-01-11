@@ -19,7 +19,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmu}{
-  Link function applied to the two marginal probabilities. 
+  Link function applied to the two marginal probabilities.
   See \code{\link{Links}} for more choices.
   See the note below.
 
@@ -131,7 +131,7 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   generic function.
 
 
-} 
+}
 \references{
   McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
@@ -144,8 +144,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
 
 
   Palmgren, J. (1989)
-  \emph{Regression Models for Bivariate Binary Responses}. 
-  Technical Report no. 101, Department of Biostatistics, 
+  \emph{Regression Models for Bivariate Binary Responses}.
+  Technical Report no. 101, Department of Biostatistics,
   University of Washington, Seattle.
 
 

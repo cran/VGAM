@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,7 +35,7 @@ rrar.Ak1 <- function(MM, coeffs, Ranks., aa) {
 
 
 rrar.Di <- function(i, Ranks.) {
-  if (Ranks.[1] == Ranks.[i]) diag(Ranks.[i]) else 
+  if (Ranks.[1] == Ranks.[i]) diag(Ranks.[i]) else
   rbind(diag(Ranks.[i]),
         matrix(0, Ranks.[1] - Ranks.[i], Ranks.[i]))
 }
@@ -157,7 +157,7 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
       nn <- nrow(x)  # original n
       indices <- 1:plag
 
-      copy.X.vlm <- TRUE  # X.vlm.save matrix changes at each iteration 
+      copy.X.vlm <- TRUE  # X.vlm.save matrix changes at each iteration
 
       dsrank <- -sort(-Ranks.)  # ==rev(sort(Ranks.))
       if (any(dsrank != Ranks.))
@@ -189,7 +189,7 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
                         runif(aa+sum(Ranks.)*MM)
       temp8 <- rrar.Wmat(y.save, Ranks., MM, ki, plag,
                          aa, uu, nn, new.coeffs)
-      X.vlm.save <- temp8$UU %*% temp8$Ht 
+      X.vlm.save <- temp8$UU %*% temp8$Ht
 
       if (!length(etastart)) {
         etastart <- X.vlm.save %*% new.coeffs
@@ -208,7 +208,7 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
       y <- y[-indices, , drop = FALSE]
       w <- w[-indices]
       n.save <- n <- nn - plag
-  }), list( .Ranks = Ranks, .coefstart = coefstart ))), 
+  }), list( .Ranks = Ranks, .coefstart = coefstart ))),
 
   linkinv = function(eta, extra = NULL) {
     aa <- extra$aa
@@ -243,13 +243,17 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
       misc$Phimatrices[[ii]] <- Ak1 %*% Dmatrices[[ii]] %*%
                                 t(Cmatrices[[ii]])
     }
-    misc$Z <- y.save %*% t(solve(Ak1)) 
+    misc$Z <- y.save %*% t(solve(Ak1))
   }),
   vfamily = "rrar",
+  validparams = function(eta, y, extra = NULL) {
+    okay1 <- TRUE
+    okay1
+  },
   deriv = expression({
     temp8 <- rrar.Wmat(y.save, Ranks., MM, ki, plag,
                        aa, uu, nn, new.coeffs)
-    X.vlm.save <- temp8$UU %*% temp8$Ht 
+    X.vlm.save <- temp8$UU %*% temp8$Ht
 
     extra$coeffs <- new.coeffs
 
@@ -322,7 +326,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     tt.index <- (1 + plag):nrow(x)
     p.lm <- ncol(x)
 
-    copy.X.vlm <- TRUE  # x matrix changes at each iteration 
+    copy.X.vlm <- TRUE  # x matrix changes at each iteration
 
     if ( .link == "logit"   || .link == "probit" ||
          .link == "cloglog" || .link == "cauchit") {
@@ -341,7 +345,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     new.coeffs <- .coefstart  # Needed for iter = 1 of @weight
     new.coeffs <- if (length(new.coeffs))
                     rep_len(new.coeffs, p.lm + plag) else
-                    c(rnorm(p.lm, sd = 0.1), rep_len(0, plag)) 
+                    c(rnorm(p.lm, sd = 0.1), rep_len(0, plag))
 
     if (!length(etastart)) {
       etastart <- x[-indices, , drop = FALSE] %*% new.coeffs[1:p.lm]
@@ -349,8 +353,8 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
 
     x <- cbind(x, matrix(NA_real_, n, plag))  # Right size now
     dx <- dimnames(x.save)
-    morenames <- paste("(lag", 1:plag, ")", sep = "") 
-    dimnames(x) <- list(dx[[1]], c(dx[[2]], morenames)) 
+    morenames <- paste("(lag", 1:plag, ")", sep = "")
+    dimnames(x) <- list(dx[[1]], c(dx[[2]], morenames))
 
     x <- x[-indices, , drop = FALSE]
     class(x) <- "matrix"
@@ -364,7 +368,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
       more[[ii]] <- ii + max(unlist(attr(x.save, "assign")))
     attr(x, "assign") <- c(attr(x.save, "assign"), more)
   }), list( .link = link, .p.ar.lag = p.ar.lag,
-            .coefstart = coefstart, .earg = earg ))), 
+            .coefstart = coefstart, .earg = earg ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     eta2theta(eta, link = .link , earg = .earg)
   }, list( .link = link, .earg = earg ))),
@@ -410,10 +414,15 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
          new.coeffs[1:p.lm])  # +
     }
 
-    true.eta <- realfv + offset  
+    true.eta <- realfv + offset
     mu <- family@linkinv(true.eta, extra)  # overwrite mu with correct one
   }), list( .link = link, .earg = earg ))),
   vfamily = c("garma", "vglmgam"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mu <- eta2theta(eta, link = .link , earg = .earg )
+    okay1 <- all(is.finite(mu))
+    okay1
+  }, list( .link = link, .earg = earg ))),
   deriv = eval(substitute(expression({
     dl.dmu <- switch( .link ,
                   identitylink = y-mu,
@@ -429,7 +438,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
             .earg = earg ))),
 
   weight = eval(substitute(expression({
-    x[, 1:p.lm] <- x.save[tt.index, 1:p.lm]  # Reinstate 
+    x[, 1:p.lm] <- x.save[tt.index, 1:p.lm]  # Reinstate
 
     for (ii in 1:plag) {
         temp <- theta2eta(y.save[tt.index-ii], .link , earg = .earg )
@@ -443,7 +452,7 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     class(x) <- "matrix" # Added 20020227; 20040226
 
     if (iter == 1)
-      old.coeffs <- new.coeffs 
+      old.coeffs <- new.coeffs
 
     X.vlm.save <- lm2vlm.model.matrix(x, Hlist, xij = control$xij)
 
@@ -526,12 +535,12 @@ dAR1 <- function(x,
                  var.error = 1, ARcoef1 = 0.0,
                  type.likelihood = c("exact", "conditional"),
                  log = FALSE) {
-  
+
   type.likelihood <- match.arg(type.likelihood,
                                c("exact", "conditional"))[1]
-  
+
   is.vector.x <- is.vector(x)
-  
+
   x <- as.matrix(x)
   drift <- as.matrix(drift)
   var.error <- as.matrix(var.error)
@@ -542,29 +551,29 @@ dAR1 <- function(x,
   drift      <- matrix(drift,     LLL, UUU)
   var.error  <- matrix(var.error, LLL, UUU)
   rho        <- matrix(ARcoef1,   LLL, UUU)
-  
+
   if (any(abs(rho) > 1))
     warning("Values of argument 'ARcoef1' are greater ",
             "than 1 in absolute value")
-  
-  if (!is.logical(log.arg <- log) || length(log) != 1) 
+
+  if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("Bad input for argument 'log'")
   rm(log)
-  
+
   ans <- matrix(0.0, LLL, UUU)
-  
+
   var.noise <- var.error / (1 - rho^2)
-  
+
   ans[ 1, ] <- dnorm(x    = x[1, ],
-                     mean = drift[ 1, ] / (1 - rho[1, ]), 
+                     mean = drift[ 1, ] / (1 - rho[1, ]),
                      sd   = sqrt(var.noise[1, ]), log = log.arg)
   ans[-1, ] <- dnorm(x    = x[-1, ],
                      mean = drift[-1, ] + rho[-1, ] * x[-nrow(x), ],
                      sd   = sqrt(var.error[-1, ]), log = log.arg)
-  
+
   if (type.likelihood == "conditional")
     ans[1, ] <- NA
-  
+
   if (is.vector.x) as.vector(ans) else ans
 }
 
@@ -582,7 +591,7 @@ AR1.control <- function(epsilon  = 1e-6,
 
 
 
-AR1 <-
+ AR1 <-
   function(ldrift = "identitylink",
            lsd  = "loge",
            lvar = "loge",
@@ -600,61 +609,61 @@ AR1 <-
            print.EIM = FALSE,
            zero = c(if (var.arg) "var" else "sd", "rho")  # "ARcoeff1"
            ) {
-    
+
     type.likelihood <- match.arg(type.likelihood,
                                  c("exact", "conditional"))[1]
-    
+
     if (length(isd) && !is.Numeric(isd, positive = TRUE))
       stop("Bad input for argument 'isd'")
-    
+
     if (length(ivar) && !is.Numeric(ivar, positive = TRUE))
       stop("Bad input for argument 'ivar'")
-    
+
     if (length(irho) &&
           (!is.Numeric(irho) || any(abs(irho) > 1.0)))
       stop("Bad input for argument 'irho'")
-    
+
     type.EIM <- match.arg(type.EIM, c("exact", "approximate"))[1]
     poratM   <- (type.EIM == "exact")
-    
+
     if (!is.logical(nodrift) ||
           length(nodrift) != 1)
       stop("argument 'nodrift' must be a single logical")
-    
+
     if (!is.logical(var.arg) ||
           length(var.arg) != 1)
       stop("argument 'var.arg' must be a single logical")
-    
+
     if (!is.logical(print.EIM))
       stop("Invalid 'print.EIM'.")
-    
+
     ismn <- idrift
     lsmn <- as.list(substitute(ldrift))
     esmn <- link2list(lsmn)
-    lsmn <- attr(esmn, "function.name")     
-    
+    lsmn <- attr(esmn, "function.name")
+
     lsdv <- as.list(substitute(lsd))
     esdv <- link2list(lsdv)
     lsdv <- attr(esdv, "function.name")
-    
+
     lvar  <- as.list(substitute(lvar))
     evar  <- link2list(lvar)
     lvar  <- attr(evar, "function.name")
-    
+
     lrho <- as.list(substitute(lrho))
     erho <- link2list(lrho)
-    lrho <- attr(erho, "function.name")     
-    
+    lrho <- attr(erho, "function.name")
+
     n.sc <- if (var.arg) "var" else "sd"
     l.sc <- if (var.arg) lvar else lsdv
     e.sc <- if (var.arg) evar else esdv
-    
-    new("vglmff", 
+
+    new("vglmff",
         blurb = c(ifelse(nodrift, "Two", "Three"),
                   "-parameter autoregressive process of order-1\n\n",
                   "Links:       ",
                   if (nodrift) "" else
-                    paste(namesof("drift", lsmn, earg = esmn), ", ", 
+                    paste(namesof("drift", lsmn, earg = esmn), ", ",
                           sep = ""),
                   namesof(n.sc , l.sc, earg = e.sc), ", ",
                   namesof("rho", lrho, earg = erho), "\n",
@@ -667,24 +676,24 @@ AR1 <-
                   "Mean:        drift / (1 - rho)", "\n",
                   "Correlation: rho = ARcoef1", "\n",
                   "Variance:    sd^2 / (1 - rho^2)"),
-        
+
      constraints = eval(substitute(expression({
-       
+
        M1 <- 3 - .nodrift
        dotzero <- .zero
        # eval(negzero.expression.VGAM)
-       constraints <- 
+       constraints <-
          cm.zero.VGAM(constraints, x = x, zero = .zero , M = M,
                       predictors.names = predictors.names,
                       M1 = M1)
-       
+
         }), list( .zero = zero,
                   .nodrift = nodrift ))),
-     
+
      infos = eval(substitute(function(...) {
-       list(M1 = 3 - .nodrift , 
-            Q1 = 1, 
-            expected = TRUE, 
+       list(M1 = 3 - .nodrift ,
+            Q1 = 1,
+            expected = TRUE,
             multipleResponse = TRUE,
             type.likelihood = .type.likelihood ,
             ldrift = if ( .nodrift ) NULL else .lsmn ,
@@ -700,7 +709,7 @@ AR1 <-
               .esmn = esmn, .evar = evar, .esdv = esdv, .erho = erho,
               .type.likelihood = type.likelihood,
               .nodrift = nodrift, .zero = zero))),
-     
+
      initialize = eval(substitute(expression({
        extra$M1 <- M1 <- 3 - .nodrift
        check <- w.y.check(w = w, y = y,
@@ -708,55 +717,55 @@ AR1 <-
                           ncol.w.max = Inf,
                           ncol.y.max = Inf,
                           out.wy = TRUE,
-                          colsyperw = 1, 
+                          colsyperw = 1,
                           maximize = TRUE)
        w <- check$w
        y <- check$y
        if ( .type.likelihood == "conditional") {
-         w[1, ] <- 1.0e-6 
+         w[1, ] <- 1.0e-6
        } else {
          if (!(.nodrift ))
            w[1, ] <- 1.0e-1
        }
-         
+
        NOS <- ncoly <- ncol(y)
        n <- nrow(y)
        M <- M1*NOS
-       
+
        var.names <- param.names("var", NOS)
        sdv.names <- param.names("sd",  NOS)
        smn.names <- if ( .nodrift ) NULL else
          param.names("drift",   NOS)
        rho.names <- param.names("rho", NOS)
-       
+
        mynames1 <- smn.names
-       mynames2 <- if ( .var.arg ) var.names else sdv.names 
+       mynames2 <- if ( .var.arg ) var.names else sdv.names
        mynames3 <- rho.names
-       
+
        predictors.names <-
          c(if ( .nodrift ) NULL else
            namesof(smn.names, .lsmn , earg = .esmn , tag = FALSE),
-           if ( .var.arg ) 
+           if ( .var.arg )
              namesof(var.names, .lvar , earg = .evar , tag = FALSE) else
                namesof(sdv.names, .lsdv , earg = .esdv , tag = FALSE),
            namesof(rho.names, .lrho , earg = .erho , tag = FALSE))
-       
+
        predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
-       
-       if ( .nodrift ) 
+
+       if ( .nodrift )
         y <- scale(y, scale = FALSE)
-       
+
        if (!length(etastart)) {
          init.smn <- Init.mu(y = y, w = w, imethod = .imethod ,  # x = x,
                              imu = .ismn , ishrinkage = .ishrinkage ,
                              pos.only = FALSE)
-             
-         init.rho <- matrix(if (length( .irho )) .irho else 0.1, 
-                            n, NOS, byrow = TRUE)           
-         init.sdv <- matrix(if (length( .isdv )) .isdv else 1.0,  
-                            n, NOS, byrow = TRUE)          
+
+         init.rho <- matrix(if (length( .irho )) .irho else 0.1,
+                            n, NOS, byrow = TRUE)
+         init.sdv <- matrix(if (length( .isdv )) .isdv else 1.0,
+                            n, NOS, byrow = TRUE)
          init.var <- matrix(if (length( .ivar )) .ivar else 1.0,
-                            n, NOS, byrow = TRUE)           
+                            n, NOS, byrow = TRUE)
          for (jay in 1: NOS) {
            mycor <-  cor(y[-1, jay], y[-n, jay])
            init.smn[ , jay] <- mean(y[, jay]) * (1 - mycor)
@@ -767,27 +776,27 @@ AR1 <-
            if (!length( .isdv ))
              init.sdv[, jay] <- sqrt(init.var[, jay])
          }  # for
-         
+
          etastart <-
            cbind(if ( .nodrift ) NULL else
              theta2eta(init.smn, .lsmn , earg = .esmn ),
-             if ( .var.arg ) 
+             if ( .var.arg )
                theta2eta(init.var, .lvar , earg = .evar ) else
                  theta2eta(init.sdv, .lsdv , earg = .esdv ),
              theta2eta(init.rho, .lrho , earg = .erho ))
-         
+
          etastart <- etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
        }  # end of etastart
-       
+
      }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
                .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
                .ismn = ismn, .irho = irho, .isdv = isd , .ivar = ivar,
-               .type.likelihood = type.likelihood, 
+               .type.likelihood = type.likelihood,
                .ishrinkage = ishrinkage, .poratM  = poratM,
                .var.arg = var.arg,
                .nodrift = nodrift,
                .imethod = imethod ))),
-     
+
      linkinv = eval(substitute(function(eta, extra = NULL) {
        M1  <- 3 - .nodrift
        NOS <- ncol(eta)/M1
@@ -797,22 +806,22 @@ AR1 <-
        ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                            .lrho , earg = .erho )
        ar.smn / (1 - ar.rho)
-       
+
      }, list ( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
                .var.arg = var.arg, .type.likelihood = type.likelihood,
                .nodrift = nodrift,
                .esmn = esmn, .erho = erho , .esdv = esdv, .evar = evar ))),
-     
+
      last = eval(substitute(expression({
-       if (any(abs(ar.rho) > 1)) 
+       if (any(abs(ar.rho) > 1))
          warning("Regularity conditions are violated at the final",
                  "IRLS iteration, since 'abs(rho) > 1")
-       
+
        M1 <- extra$M1
-       
+
        temp.names <- c(mynames1, mynames2, mynames3)
        temp.names <- temp.names[interleave.VGAM(M1 * ncoly, M1 = M1)]
-       
+
        misc$link <- rep_len( .lrho , M1 * ncoly)
        misc$earg <- vector("list", M1 * ncoly)
        names(misc$link) <-
@@ -827,7 +836,7 @@ AR1 <-
          misc$earg[[M1*ii-1]] <- if ( .var.arg ) .evar else .esdv
          misc$earg[[M1*ii  ]] <- .erho
        }
-       
+
        misc$type.likelihood <- .type.likelihood
        misc$var.arg <- .var.arg
        misc$M1 <- M1
@@ -835,20 +844,20 @@ AR1 <-
        misc$imethod <- .imethod
        misc$multipleResponses <- TRUE
        misc$nodrift <- .nodrift
-       
+
      }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
                .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
                .irho = irho, .isdv = isd , .ivar = ivar,
-               .nodrift = nodrift, .poratM = poratM, 
+               .nodrift = nodrift, .poratM = poratM,
                .var.arg = var.arg, .type.likelihood = type.likelihood,
                .imethod = imethod ))),
-     
+
      loglikelihood = eval(substitute(
-       function(mu, y, w, residuals= FALSE, eta, 
+       function(mu, y, w, residuals= FALSE, eta,
                 extra = NULL, summation = TRUE) {
          M1  <- 3 - .nodrift
          NOS <- ncol(eta)/M1
-         
+
          if ( .var.arg ) {
            ar.var <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
                                .lvar , earg = .evar )
@@ -857,25 +866,25 @@ AR1 <-
            ar.sdv <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
                                .lsdv , earg = .esdv )
            ar.var <- ar.sdv^2
-         }  
+         }
          ar.smn <- if ( .nodrift ) 0 else
            eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
                      .lsmn , earg = .esmn )
          ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                              .lrho , earg = .erho )
-         
+
          if (residuals) {
            stop("Loglikelihood not implemented yet to handle",
                 "residuals.")
          } else {
-           loglik.terms <- 
+           loglik.terms <-
              c(w) * dAR1(x = y,
                          drift = ar.smn,
                          var.error = ar.var,
                          type.likelihood = .type.likelihood ,
                          ARcoef1 = ar.rho, log = TRUE)
            loglik.terms <- as.matrix(loglik.terms)
-           
+
            if (summation) {
              sum(if ( .type.likelihood == "exact") loglik.terms else
                loglik.terms[-1, ] )
@@ -883,27 +892,56 @@ AR1 <-
              loglik.terms
            }
          }
-         
+
        }, list( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
                 .var.arg = var.arg, .type.likelihood = type.likelihood,
                 .nodrift = nodrift,
-                .esmn = esmn, .erho = erho , 
+                .esmn = esmn, .erho = erho ,
                 .esdv = esdv, .evar = evar ))),
-     
+
      vfamily = c("AR1"),
-        
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+       M1    <- 3 - .nodrift
+       n     <- nrow(eta)
+       NOS   <- ncol(eta)/M1
+       ncoly <- ncol(as.matrix(y))
+
+       if ( .var.arg ) {
+         ar.var <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                             .lvar , earg = .evar )
+         ar.sdv <- sqrt(ar.var)
+       } else {
+         ar.sdv <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
+                             .lsdv , earg = .esdv )
+         ar.var <- ar.sdv^2
+       }
+       ar.smn <- if ( .nodrift ) matrix(0, n, NOS) else
+         eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
+                   .lsmn , earg = .esmn )
+       ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
+                           .lrho , earg = .erho )
+    okay1 <- all(is.finite(ar.sdv)) && all(0 < ar.sdv) &&
+             all(is.finite(ar.smn)) &&
+             all(is.finite(ar.rho))
+    okay1
+   }, list( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
+            .var.arg = var.arg, .type.likelihood = type.likelihood,
+            .nodrift = nodrift,
+            .esmn = esmn, .erho = erho ,
+            .esdv = esdv, .evar = evar ))),
+
      simslot = eval(substitute(
        function(object, nsim) {
-         
+
          pwts <- if (length(pwts <- object@prior.weights) > 0)
            pwts else weights(object, type = "prior")
          if (any(pwts != 1))
            warning("ignoring prior weights")
          eta <- predict(object)
-         fva <- fitted(object)      
+         fva <- fitted(object)
          M1  <- 3 - .nodrift
          NOS <- ncol(eta)/M1
-         
+
          if ( .var.arg ) {
            ar.var <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
                                .lvar , earg = .evar )
@@ -912,13 +950,13 @@ AR1 <-
            ar.sdv <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
                                .lsdv , earg = .esdv )
            ar.var <- ar.sdv^2
-         }  
+         }
          ar.smn <- if ( .nodrift ) matrix(0, n, NOS) else
            eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
                      .lsmn , earg = .esmn )
          ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                              .lrho , earg = .erho )
-         
+
          ans <- array(0, c(nrow(eta), NOS, nsim))
          for (jay in 1:NOS) {
            ans[1, jay, ] <- rnorm(nsim, m = fva[1, jay],  # zz
@@ -930,19 +968,19 @@ AR1 <-
          }
          ans <- matrix(c(ans), c(nrow(eta) * NOS, nsim))
          ans
-         
+
        }, list( .lsmn = lsmn, .lrho = lrho , .lsdv = lsdv, .lvar = lvar ,
                 .var.arg = var.arg, .type.likelihood = type.likelihood,
                 .nodrift = nodrift,
-                .esmn = esmn, .erho = erho , 
+                .esmn = esmn, .erho = erho ,
                 .esdv = esdv, .evar = evar ))),
-        
-        
+
+
      deriv = eval(substitute(expression({
        M1    <- 3 - .nodrift
        NOS   <- ncol(eta)/M1
        ncoly <- ncol(as.matrix(y))
-       
+
        if ( .var.arg ) {
          ar.var <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
                              .lvar , earg = .evar )
@@ -952,48 +990,48 @@ AR1 <-
                              .lsdv , earg = .esdv )
          ar.var <- ar.sdv^2
        }
-       
+
        ar.smn <- if ( .nodrift ) matrix(0, n, NOS) else
              eta2theta(eta[, M1*(1:NOS) - 2, drop = FALSE],
                        .lsmn , earg = .esmn )
-       
+
        ar.rho <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                            .lrho , earg = .erho )
-       
+
        if (any(abs(ar.rho) < 1e-2))
          warning("Estimated values of 'rho' are too close to zero.")
-       
+
        help2   <- (length(colnames(x)) >= 2)
        myMeans <- matrix(colMeans(y), nrow = n, ncol = NOS, by = TRUE)
        yLag    <- matrix(y, ncol = NOS)
        temp4   <- matrix(0.0, nrow = n, ncol = NOS)
        temp4[-1, ] <- y[-1, , drop = FALSE] - ar.smn[-1, , drop = FALSE]
        yLag[-1, ]  <- y[-n, ]
-       
+
        temp1  <- matrix(0.0, nrow = n, ncol = NOS)
        temp1[-1, ] <- y[-1, , drop = FALSE] - (ar.smn[-1, ,drop = FALSE] +
                       ar.rho[-1, , drop = FALSE] * y[-n, , drop = FALSE])
        temp1[1, ]   <- y[1, ] - ar.smn[1, ]
        dl.dsmn      <- temp1 / ar.var
-       dl.dsmn[1, ] <- ( (y[1, ] - myMeans[1, ]) * 
+       dl.dsmn[1, ] <- ( (y[1, ] - myMeans[1, ]) *
                            (1 + ar.rho[1, ]) ) / ar.var[1, ]
-       
+
        if ( .var.arg ) {
          dl.dvarSD <-  temp1^2 / ( 2 * ar.var^2) - 1 / (2 * ar.var)
-         dl.dvarSD[1, ] <- ( (1 - ar.rho[1, ]^2) * (y[1, ] - 
+         dl.dvarSD[1, ] <- ( (1 - ar.rho[1, ]^2) * (y[1, ] -
             myMeans[1, ])^2 ) /(2 * ar.var[1, ]^2) - 1 / (2 * ar.var[1, ])
        } else {
          dl.dvarSD <- temp1^2 / ar.sdv^3 - 1 / ar.sdv
-         dl.dvarSD[1, ] <- ( (1 - ar.rho[1, ]^2) * 
+         dl.dvarSD[1, ] <- ( (1 - ar.rho[1, ]^2) *
             (y[1, ] - myMeans[1, ])^2 ) / ar.sdv[1, ]^3 - 1/ar.sdv[1, ]
        }
-       
-       dl.drho <- rbind(rep_len(0, 1), 
-                      ( (y[-n, , drop = FALSE] - myMeans[-n, ]) * 
+
+       dl.drho <- rbind(rep_len(0, 1),
+                      ( (y[-n, , drop = FALSE] - myMeans[-n, ]) *
                        temp1[-1, , drop = FALSE ] )/  ar.var[-1, ] )
        dl.drho[1, ] <- (ar.rho[1, ] * (y[1, ] - myMeans[1, ])^2 ) /
-         ar.var[1, ] - ar.rho[1, ] / (1 - ar.rho[1, ]^2) 
-       
+         ar.var[1, ] - ar.rho[1, ] / (1 - ar.rho[1, ]^2)
+
        dsmn.deta <- dtheta.deta(ar.smn, .lsmn , earg = .esmn )
        drho.deta <- dtheta.deta(ar.rho, .lrho , earg = .erho )
        if ( .var.arg ) {
@@ -1001,71 +1039,71 @@ AR1 <-
        } else {
          dvarSD.deta <- dtheta.deta(ar.sdv, .lsdv , earg = .esdv )
        }
-       
+
        myderiv <-
          c(w) * cbind(if ( .nodrift ) NULL else dl.dsmn * dsmn.deta,
-                      dl.dvarSD * dvarSD.deta, 
+                      dl.dvarSD * dvarSD.deta,
                       dl.drho * drho.deta)
        myderiv <- myderiv[, interleave.VGAM(M, M1 = M1)]
        myderiv
-       
+
      }), list( .lsmn = lsmn, .lrho = lrho, .lsdv = lsdv, .lvar = lvar,
                .esmn = esmn, .erho = erho, .esdv = esdv, .evar = evar,
                .nodrift = nodrift ,
-               .var.arg = var.arg, 
+               .var.arg = var.arg,
                .type.likelihood = type.likelihood ))),
-        
+
      weight = eval(substitute(expression({
-       
+
        ned2l.dsmn   <- 1 / ar.var
-       ned2l.dsmn[1, ] <- ( (1 + ar.rho[1, ]) / (1 - ar.rho[1, ]) ) * 
-                                  (1 / ar.var[1, ])   
+       ned2l.dsmn[1, ] <- ( (1 + ar.rho[1, ]) / (1 - ar.rho[1, ]) ) *
+                                  (1 / ar.var[1, ])
        # Here, same results for the first and t > 1 observations.
        ned2l.dvarSD <- if ( .var.arg ) 1 / (2 * ar.var^2) else 2 / ar.var
-       gamma0  <- (1 - help2) * ar.var/(1 - ar.rho^2) + 
-                          help2 * (yLag - myMeans)^2       
+       gamma0  <- (1 - help2) * ar.var/(1 - ar.rho^2) +
+                          help2 * (yLag - myMeans)^2
        ned2l.drho  <- gamma0 / ar.var
-       ned2l.drho[1, ] <- 2 * ar.rho[1, ]^2 / (1 - ar.rho[1, ]^2)^2 
+       ned2l.drho[1, ] <- 2 * ar.rho[1, ]^2 / (1 - ar.rho[1, ]^2)^2
        ned2l.drdv  <- matrix(0.0, nrow = n, ncol = NOS)
-       ned2l.drdv[1, ] <- 2 * temp4[1, ] / 
+       ned2l.drdv[1, ] <- 2 * temp4[1, ] /
                             ((1 - temp4[1, ]^2) * ar.sdv[1, ])
        ncol.wz <- M + (M - 1) + ifelse( .nodrift , 0, M - 2)
        ncol.pf <- 3 * (M + ( .nodrift ) ) - 3
        wz      <- matrix(0, nrow = n, ncol = ncol.wz)
        helpPor <- .poratM
-       
-       pf.mat  <- if (helpPor) 
+
+       pf.mat  <- if (helpPor)
          AR1EIM(x = scale(y, scale = FALSE),
                 var.arg  = .var.arg ,
                 p.drift  = 0,
                 WNsd     = ar.sdv,
-                ARcoeff1 = ar.rho ) else 
+                ARcoeff1 = ar.rho ) else
                   array(0.0, dim= c(n, NOS, ncol.pf))
-       
+
        if (!( .nodrift ))
          wz[, M1*(1:NOS) - 2] <-  ( (helpPor) * pf.mat[, , 1] +
                     (1 - (helpPor)) * ned2l.dsmn) * dsmn.deta^2
-       wz[, M1*(1:NOS) - 1]  <- ( (helpPor) * pf.mat[, , 2 ] + 
+       wz[, M1*(1:NOS) - 1]  <- ( (helpPor) * pf.mat[, , 2 ] +
                       (1 - (helpPor)) * ned2l.dvarSD) * dvarSD.deta^2
-       wz[, M1*(1:NOS)    ]   <- ( (helpPor) * pf.mat[, , 3] + 
+       wz[, M1*(1:NOS)    ]   <- ( (helpPor) * pf.mat[, , 3] +
                       (1 - (helpPor)) * ned2l.drho) * drho.deta^2
-         wz[, M1*(1:NOS) + (M - 1) ] <- ((helpPor) * pf.mat[, , 4] + 
+         wz[, M1*(1:NOS) + (M - 1) ] <- ((helpPor) * pf.mat[, , 4] +
                 (1 - (helpPor)) * ned2l.drdv) * drho.deta * dvarSD.deta
-       
+
        wz <- w.wz.merge(w = w, wz = wz, n = n,
                         M = ncol.wz, ndepy = NOS)
-       
+
        if ( .print.EIM ) {
          wz2 <- matrix(0, nrow = n, ncol = ncol.wz)
          if (!(.nodrift ))
            wz2[, M1*(1:NOS) - 2] <- ned2l.dsmn
-         wz2[, M1*(1:NOS) - 1] <- 
+         wz2[, M1*(1:NOS) - 1] <-
                    if ( .var.arg ) 1 / (2 * ar.var^2) else 2 / ar.var
-         wz2[, M1*(1:NOS)    ] <- ned2l.drho 
-         
+         wz2[, M1*(1:NOS)    ] <- ned2l.drho
+
          wz2 <- wz2[, interleave.VGAM( M1 * NOS, M1)]
          if (NOS > 1) {
-           
+
            matAux1  <- matAux2  <- matrix(NA_real_, nrow = n, ncol = NOS)
            approxMat <- array(wz2[, 1:(M1*NOS)], dim = c(n, M1, NOS))
            for (kk in 1:NOS) {
@@ -1076,25 +1114,25 @@ AR1 <-
            colnames(matAux) <- c(paste("ApproxEIM.R",1:NOS, sep = ""),
                                  if (!(.poratM )) NULL else
                                    paste("ExactEIM.R",1:NOS, sep = ""))
-           
+
            matAux <- matAux[, interleave.VGAM( (1 + .poratM) * NOS,
                                                M1 = 1 + .poratM)]
          } else {
-           
-           matAux <- cbind(rowSums(wz2), 
-                           if (helpPor) 
+
+           matAux <- cbind(rowSums(wz2),
+                           if (helpPor)
                              rowSums(pf.mat[, 1, ][, 1:3]) else NULL)
-           colnames(matAux) <- c("Approximate", 
+           colnames(matAux) <- c("Approximate",
                                  if (helpPor) "Exact" else NULL)
-           
+
          }
          print(matAux[1:10, , drop = FALSE])
-       }   
-       
+       }
+
        wz
-       
+
      }), list( .var.arg = var.arg, .type.likelihood = type.likelihood,
-               .nodrift = nodrift, .poratM  = poratM, 
+               .nodrift = nodrift, .poratM  = poratM,
                .print.EIM = print.EIM )))
     )
   }

@@ -40,8 +40,8 @@ expint.E1(x, deriv = 0)
   The function \eqn{E_1(x)} is the integral of
   \eqn{\exp(-t) / t}{exp(-t) / t}
   from \eqn{x} to infinity, for positive real \eqn{x}.
-  
-  
+
+
 
 
 }
@@ -49,10 +49,10 @@ expint.E1(x, deriv = 0)
   Function \code{expint(x, deriv = n)} returns the
   \eqn{n}th derivative of \eqn{Ei(x)} (up to the 3rd),
   function \code{expexpint(x, deriv = n)} returns the
-  \eqn{n}th derivative of 
+  \eqn{n}th derivative of
   \eqn{\exp(-x) \times Ei(x)}{exp(-x) * Ei(x)} (up to the 3rd),
-  function \code{expint.E1(x, deriv = n)} returns the \eqn{n}th derivative of 
-  \eqn{E_1(x)}(up to the 3rd).
+  function \code{expint.E1(x, deriv = n)} returns the \eqn{n}th
+  derivative of \eqn{E_1(x)} (up to the 3rd).
 
 
 }
@@ -69,7 +69,7 @@ NETLIB FORTRAN code.
 Xiangjie Xue modified the functions to calculate derivatives.
 Higher derivatives can actually be calculated---please let me
 know if you need it.
- 
+
 
 
 }

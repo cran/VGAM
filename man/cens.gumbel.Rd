@@ -24,7 +24,7 @@ cens.gumbel(llocation = "identitylink", lscale = "loge", iscale = NULL,
 
   }
   \item{iscale}{
-  Numeric and positive. 
+  Numeric and positive.
   Initial value for \eqn{scale}. Recycled to the appropriate length.
   In general, a larger value is better than a smaller value.
   The default is to choose the value internally.
@@ -92,7 +92,7 @@ London: Springer-Verlag.
 
 }
 
-\note{ 
+\note{
   See \code{\link{gumbel}} for details about the Gumbel distribution.
   The initial values are based on assuming all uncensored observations,
   therefore could be improved upon.

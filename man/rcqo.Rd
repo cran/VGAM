@@ -24,25 +24,25 @@ rcqo(n, p, S, Rank = 1,
 \arguments{
   \item{n}{
     Number of sites. It is denoted by \eqn{n} below.
-    
+
   }
   \item{p}{
-    Number of environmental variables, including an intercept term. 
+    Number of environmental variables, including an intercept term.
     It is denoted by \eqn{p} below.
     Must be no less than \eqn{1+R} in value.
-    
+
   }
   \item{S}{
     Number of species.
     It is denoted by \eqn{S} below.
-    
+
   }
   \item{Rank}{
     The rank or the number of latent variables or true dimension
     of the data on the reduced space.
     This must be either 1, 2, 3 or 4.
     It is denoted by \eqn{R}.
-    
+
   }
   \item{family}{
     What type of species data is to be returned.
@@ -60,7 +60,7 @@ rcqo(n, p, S, Rank = 1,
 %    and the resulting values are
 %    1,2,\ldots,\code{breaks} if \code{breaks} is a single integer zz
 %    else zz.
-    
+
   }
   \item{eq.maximums}{
     Logical. Does each species have the same maximum?
@@ -86,8 +86,8 @@ rcqo(n, p, S, Rank = 1,
     latent variable space
     in order to place the species' optimums.
     Also see the argument \code{sd.tolerances}.
-    
-    
+
+
   }
   \item{lo.abundance, hi.abundance}{
     Numeric. These are recycled to a vector of length \eqn{S}.
@@ -100,7 +100,7 @@ rcqo(n, p, S, Rank = 1,
     If \code{eq.maximums} is \code{FALSE} then the
     logarithm of the maximums are uniformly distributed between
     \code{log(lo.abundance)} and \code{log(hi.abundance)}.
-    
+
   }
   \item{sd.latvar}{
     Numeric, of length \eqn{R}
@@ -110,7 +110,7 @@ rcqo(n, p, S, Rank = 1,
     ordination axis contains the greatest spread of the species'
     site scores, followed by the second axis, followed by the third
     axis, etc.
-        
+
   }
   \item{sd.optimums}{
     Numeric, of length \eqn{R} (recycled if necessary).
@@ -122,7 +122,7 @@ rcqo(n, p, S, Rank = 1,
     are equally spaced about 0 along every latent variable axis.
     Regardless of the value of \code{es.optimums}, the optimums
     are then scaled to give standard deviation \code{sd.optimums[r]}.
-    
+
   }
   \item{sd.tolerances}{
     Logical. If \code{eq.tolerances = FALSE} then, for the
@@ -183,13 +183,13 @@ rcqo(n, p, S, Rank = 1,
     with mean 0. The standard deviation of each environmental variable
     is chosen so that the site scores have the determined standard
     deviation, as given by argument \code{sd.latvar}.
-    
+
   }
   \item{breaks}{
     If \code{family} is assigned an ordinal value then this argument
     is used to define the cutpoints. It is fed into the
     \code{breaks} argument of \code{\link[base]{cut}}.
-    
+
   }
   \item{seed}{
     If given, it is passed into \code{\link[base:Random]{set.seed}}.
@@ -208,19 +208,19 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{Crow1positive}{
     See \code{\link{qrrvglm.control}} for details.
-    
+
   }
   \item{xmat}{
    The
    \eqn{n} by  \eqn{p-1}
    environmental matrix can be inputted.
-    
+
   }
   \item{scale.latvar}{
    Logical. If \code{FALSE} the argument
    \code{sd.latvar} is ignored and no scaling of the latent variable
-   values is performed. 
-    
+   values is performed.
+
   }
 }
 \details{
@@ -248,7 +248,7 @@ rcqo(n, p, S, Rank = 1,
   variables in \eqn{X_2}.
   This function has \eqn{X_1} only being a matrix of ones,
   i.e., containing an intercept only.
-  
+
 }
 \value{
   A \eqn{n} by \eqn{p-1+S} data frame with
@@ -261,33 +261,33 @@ rcqo(n, p, S, Rank = 1,
     Note that \code{x1} is not present; it is effectively a vector
     of ones since it corresponds to an intercept term when
     \code{\link{cqo}} is applied to the data.
-    
+
   }
   \item{y1, y2, x3, \ldots, yS}{
     The species data. This makes up the
     \eqn{n} by \eqn{S} matrix \eqn{Y}.
     This will be of the form described by the argument
     \code{family}.
-    
+
   }
   \item{"concoefficients"}{
     The \eqn{p-1} by \eqn{R} matrix of
     constrained coefficients
     (or canonical coefficients).
     These are also known as weights or loadings.
-    
+
   }
   \item{"formula"}{
     The formula involving the species and environmental variable names.
     This can be used directly in the \code{formula} argument of
     \code{\link{cqo}}.
-    
+
   }
   \item{"log.maximums"}{
     The \eqn{S}-vector of species' maximums, on a log scale.
     These are uniformly distributed between
     \code{log(lo.abundance)} and \code{log(hi.abundance)}.
-    
+
 
   }
   \item{"latvar"}{
@@ -295,11 +295,11 @@ rcqo(n, p, S, Rank = 1,
     Each successive column (latent variable) has
     sample standard deviation
     equal to successive values of \code{sd.latvar}.
-    
+
   }
   \item{"eta"}{
     The linear/additive predictor value.
-    
+
   }
   \item{"optimums"}{
     The \eqn{S} by \eqn{R} matrix of species' optimums.
@@ -311,7 +311,7 @@ rcqo(n, p, S, Rank = 1,
     square root of the diagonal elements of the tolerance matrices
     (recall that all tolerance matrices are restricted to being
     diagonal in this function).
-    
+
   }
   Other attributes are \code{"break"},
   \code{"family"}, \code{"Rank"},
@@ -371,7 +371,7 @@ n <- 100; p <- 5; S <- 5
 mydata <- rcqo(n, p, S, es.opt = TRUE, eq.max = TRUE)
 names(mydata)
 (myform <- attr(mydata, "formula"))
-fit <- cqo(myform, poissonff, mydata, Bestof = 3)  # eq.tol = TRUE 
+fit <- cqo(myform, poissonff, mydata, Bestof = 3)  # eq.tol = TRUE
 matplot(attr(mydata, "latvar"), mydata[,-(1:(p-1))], col = 1:S)
 persp(fit, col = 1:S, add = TRUE)
 lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)  # The same plot as above

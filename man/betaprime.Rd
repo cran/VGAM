@@ -9,32 +9,34 @@
 
 }
 \usage{
-betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
+betaprime(lshape = "loge", ishape1 = 2, ishape2 = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link}{ 
+  \item{lshape}{
   Parameter link function applied to the two (positive) shape parameters.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{i1, i2}{
-  Initial values for the first and second shape parameters.
-  A \code{NULL} value means it is obtained in the \code{initialize} slot.
-  Note that \code{i2} is obtained using \code{i1}.
+  \item{ishape1, ishape2, zero}{
+  See
+  \code{\link{CommonVGAMffArguments}}.
+
+
+% Initial values for the first and second shape parameters.
+% A \code{NULL} value means it is obtained in the \code{initialize} slot.
+% Note that \code{ishape2} is obtained using \code{ishape1}.
 
 
   }
-  \item{zero}{
-  An integer-valued vector specifying which linear/additive predictors
-  are modelled as intercepts only.  The value must be from the set
-  \{1,2\} corresponding respectively to \code{shape1} and \code{shape2}
-  respectively.  If \code{zero=NULL} then both parameters are modelled
-  with the explanatory variables.
-
-
-  }
+% \item{zero}{
+% An integer-valued vector specifying which linear/additive predictors
+% are modelled as intercepts only.  The value must be from the set
+% \{1,2\} corresponding respectively to \code{shape1} and \code{shape2}
+% respectively.  If \code{zero=NULL} then both parameters are modelled
+% with the explanatory variables.
+% }
 }
 
 %% what is the mean if shape2 < 1?
@@ -50,6 +52,7 @@ betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
   these are returned as the fitted values.
 
 
+
   If \eqn{Y} has a \eqn{Beta(shape1,shape2)} distribution then
   \eqn{Y/(1-Y)} and \eqn{(1-Y)/Y} have a \eqn{Betaprime(shape1,shape2)}
   and \eqn{Betaprime(shape2,shape1)} distribution respectively.
@@ -57,6 +60,7 @@ betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
   and \eqn{Y_2}{Y2} has a \eqn{gamma(shape2)} distribution
   then \eqn{Y_1/Y_2}{Y1/Y2} has a \eqn{Betaprime(shape1,shape2)}
   distribution.
+
 
 
 }
@@ -70,10 +74,10 @@ betaprime(link = "loge", i1 = 2, i2 = NULL, zero = NULL)
 }
 
 %% zz not sure about the JKB reference.
-\references{ 
+\references{
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995) 
-Chapter 25 of: 
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+Chapter 25 of:
 \emph{Continuous Univariate Distributions},
 2nd edition,
 Volume 2,
@@ -98,7 +102,7 @@ New York: Wiley.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{betaff}},
   \code{\link[stats]{Beta}}.
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -132,8 +132,8 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
          zero = .zero )
   }, list( .lmu = lmu, .lrho = lrho,
            .imethod = imethod, .ishrinkage = ishrinkage,
-           .zero = zero,
-           .nsimEIM = nsimEIM ))),
+           .nsimEIM = nsimEIM,
+           .zero = zero ))),
 
 
   initialize = eval(substitute(expression({
@@ -145,7 +145,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
     }
 
     mustart.orig <- mustart
-    eval(binomialff()@initialize)  # Note: n,w,y,mustart is changed 
+    eval(binomialff()@initialize)  # Note: n,w,y,mustart is changed
     if (length(mustart.orig))
       mustart <- mustart.orig  # Retain it if inputted
 
@@ -203,7 +203,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
             .imethod = imethod, .ishrinkage = ishrinkage,
             .nsimEIM = nsimEIM, .irho = irho ))),
   linkinv = eval(substitute(function(eta, extra = NULL)
-    eta2theta(eta[, 1], .lmu , earg = .emu ), 
+    eta2theta(eta[, 1], .lmu , earg = .emu ),
   list( .lmu = lmu, .emu = emu ))),
   last = eval(substitute(expression({
     misc$link <-    c(mu = .lmu , rho = .lrho)
@@ -255,6 +255,14 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
   }, list( .lmu = lmu, .lrho = lrho,
            .emu = emu, .erho = erho  ))),
   vfamily = c("betabinomial"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mymu <- eta2theta(eta[, 1], .lmu  , earg = .emu  )
+    rho  <- eta2theta(eta[, 2], .lrho , earg = .erho )
+    okay1 <- all(is.finite(mymu)) && all(0 < mymu & mymu < 1) &&
+             all(is.finite(rho )) && all(0 < rho  & rho  < 1)
+    okay1
+  }, list( .lmu = lmu, .lrho = lrho,
+           .emu = emu, .erho = erho  ))),
 
 
 
@@ -264,7 +272,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     w <- pwts
     eta <- predict(object)
@@ -291,7 +299,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
               y * w  # Convert proportions to counts
 
     ycounts <- round(ycounts)
-    mymu <- eta2theta(eta[, 1], .lmu ,  earg = .emu )
+    mymu <- eta2theta(eta[, 1], .lmu  , earg = .emu  )
     rho  <- eta2theta(eta[, 2], .lrho , earg = .erho )
     smallno <- 100 * .Machine$double.eps
     rho  <- pmax(rho, smallno)
@@ -356,7 +364,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
                  digamma(shape1) + digamma(shape2))
         dl.drho <- (-1/rho^2) * (mymu * digamma(shape1+ysim) +
                   (1-mymu) * digamma(shape2+nvec-ysim) -
-                  digamma(shape1+shape2+nvec) - 
+                  digamma(shape1+shape2+nvec) -
                   mymu * digamma(shape1) -
                   (1-mymu)*digamma(shape2) + digamma(shape1+shape2))
 
@@ -377,7 +385,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
       wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
     }
   }), list( .lmu = lmu, .lrho = lrho,
-            .emu = emu, .erho = erho, 
+            .emu = emu, .erho = erho,
             .nsimEIM = nsimEIM ))))
 }
 
@@ -397,14 +405,14 @@ dbinom2.or <-
            ErrorCheck = TRUE) {
   if (ErrorCheck) {
     if (!is.Numeric(mu1, positive = TRUE) || max(mu1) >= 1)
-      stop("bad input for argument 'mu1'") 
+      stop("bad input for argument 'mu1'")
     if (!is.Numeric(mu2, positive = TRUE) || max(mu2) >= 1)
-      stop("bad input for argument 'mu2'") 
+      stop("bad input for argument 'mu2'")
     if (!is.Numeric(oratio, positive = TRUE))
-      stop("bad input for argument 'oratio'") 
+      stop("bad input for argument 'oratio'")
     if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
         tol > 0.1)
-      stop("bad input for argument 'tol'") 
+      stop("bad input for argument 'tol'")
     if (exchangeable && max(abs(mu1 - mu2)) > 0.00001)
       stop("argument 'exchangeable' is TRUE but 'mu1' and 'mu2' differ")
   }
@@ -447,14 +455,14 @@ rbinom2.or <-
 
   if (ErrorCheck) {
     if (!is.Numeric(mu1, positive = TRUE) || max(mu1) >= 1)
-      stop("bad input for argument 'mu1'") 
+      stop("bad input for argument 'mu1'")
     if (!is.Numeric(mu2, positive = TRUE) || max(mu2) >= 1)
-      stop("bad input for argument 'mu2'") 
+      stop("bad input for argument 'mu2'")
     if (!is.Numeric(oratio, positive = TRUE))
-      stop("bad input for argument 'oratio'") 
+      stop("bad input for argument 'oratio'")
     if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
         tol > 0.1)
-      stop("bad input for argument 'tol'") 
+      stop("bad input for argument 'tol'")
     if (exchangeable && max(abs(mu1 - mu2)) > 0.00001)
       stop("argument 'exchangeable' is TRUE but 'mu1' and 'mu2' differ")
   }
@@ -515,17 +523,17 @@ rbinom2.or <-
 
 
   if (!is.logical(exchangeable))
-    warning("argument 'exchangeable' should be a single logical") 
+    warning("argument 'exchangeable' should be a single logical")
 
   if (is.logical(exchangeable) && exchangeable &&
-     ((lmu1 != lmu2) || !all.equal(emu1, emu2)))
-    warning("exchangeable = TRUE but marginal links are not equal") 
+     ((lmu1 != lmu2) || !identical(emu1, emu2)))
+    warning("exchangeable = TRUE but marginal links are not equal")
 
 
 
   if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
       tol > 0.1)
-    stop("bad input for argument 'tol'") 
+    stop("bad input for argument 'tol'")
 
 
   new("vglmff",
@@ -574,34 +582,34 @@ rbinom2.or <-
 
 
     predictors.names <-
-       c(namesof("mu1",     .lmu1,    earg = .emu1,    short = TRUE),
-         namesof("mu2",     .lmu2,    earg = .emu2,    short = TRUE),
-         namesof("oratio",  .loratio, earg = .eoratio, short = TRUE))
+       c(namesof("mu1",    .lmu1 ,    earg = .emu1 ,    short = TRUE),
+         namesof("mu2",    .lmu2 ,    earg = .emu2 ,    short = TRUE),
+         namesof("oratio", .loratio , earg = .eoratio , short = TRUE))
 
 
     if (!length(etastart)) {
         pmargin <- cbind(mustart[, 3] + mustart[, 4],
                          mustart[, 2] + mustart[, 4])
-        ioratio <- if (length( .ioratio)) rep_len( .ioratio , n) else
+        ioratio <- if (length( .ioratio )) rep_len( .ioratio , n) else
                    mustart[, 4] * mustart[, 1] / (mustart[, 2] *
                                                   mustart[, 3])
         if (length( .imu1 )) pmargin[, 1] <- .imu1
         if (length( .imu2 )) pmargin[, 2] <- .imu2
-        etastart <- cbind(theta2eta(pmargin[, 1], .lmu1, earg = .emu1),
-                          theta2eta(pmargin[, 2], .lmu2, earg = .emu2),
-                          theta2eta(ioratio, .loratio, earg = .eoratio))
+        etastart <- cbind(theta2eta(pmargin[, 1], .lmu1 , earg = .emu1 ),
+                          theta2eta(pmargin[, 2], .lmu2 , earg = .emu2 ),
+                          theta2eta(ioratio, .loratio , earg = .eoratio ))
     }
   }), list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
             .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio,
             .imu1 = imu1, .imu2 = imu2, .ioratio = ioratio ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    pmargin <- cbind(eta2theta(eta[, 1], .lmu1, earg = .emu1),
-                     eta2theta(eta[, 2], .lmu2, earg = .emu2))
-    oratio <- eta2theta(eta[, 3], .loratio, earg = .eoratio)
-    a.temp <- 1 + (pmargin[, 1]+pmargin[, 2])*(oratio-1)
+    pmargin <- cbind(eta2theta(eta[, 1], .lmu1 , earg = .emu1 ),
+                     eta2theta(eta[, 2], .lmu2 , earg = .emu2 ))
+    oratio <- eta2theta(eta[, 3], .loratio , earg = .eoratio )
+    a.temp <- 1 + (pmargin[, 1] + pmargin[, 2]) * (oratio - 1)
     b.temp <- -4 * oratio * (oratio-1) * pmargin[, 1] * pmargin[, 2]
     temp <- sqrt(a.temp^2 + b.temp)
-    pj4 <- ifelse(abs(oratio-1) < .tol, pmargin[, 1]*pmargin[, 2],
+    pj4 <- ifelse(abs(oratio-1) < .tol , pmargin[, 1] * pmargin[, 2],
                  (a.temp-temp)/(2*(oratio-1)))
     pj2 <- pmargin[, 2] - pj4
     pj3 <- pmargin[, 1] - pj4
@@ -626,7 +634,7 @@ rbinom2.or <-
     pmargin <- cbind(mu[, 3]+mu[, 4], mu[, 2]+mu[, 4])
     oratio <- mu[, 4]*mu[, 1] / (mu[, 2]*mu[, 3])
     cbind(theta2eta(pmargin[, 1], .lmu1 , earg = .emu1),
-          theta2eta(pmargin[, 2], .lmu2 , earg = .emu2), 
+          theta2eta(pmargin[, 2], .lmu2 , earg = .emu2),
           theta2eta(oratio,      .loratio, earg = .eoratio))
   }, list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
            .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))),
@@ -663,6 +671,15 @@ rbinom2.or <-
     }
   }, list( .more.robust = more.robust ))),
   vfamily = c("binom2.or", "binom2"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    pmargin <- cbind(eta2theta(eta[, 1], .lmu1 , earg = .emu1 ),
+                     eta2theta(eta[, 2], .lmu2 , earg = .emu2 ))
+    oratio <- eta2theta(eta[, 3], .loratio , earg = .eoratio )
+    okay1 <- all(is.finite(pmargin)) && all(0 < pmargin & pmargin < 1) &&
+             all(is.finite(oratio )) && all(0 < oratio)
+    okay1
+  }, list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
+           .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))),
 
 
 
@@ -692,7 +709,7 @@ rbinom2.or <-
     coeff12 <- -0.5 + (2*oratio*pmargin - a.temp) / (2*temp9)
     dl.dmu1 <- coeff12[, 2] * (y[, 1]/mu.use[, 1]-y[, 3]/mu.use[, 3]) -
        (1+coeff12[, 2]) * (y[, 2]/mu.use[, 2]-y[, 4]/mu.use[, 4])
-    
+
     dl.dmu2 <- coeff12[, 1] * (y[, 1]/mu.use[, 1]-y[, 2]/mu.use[, 2]) -
        (1+coeff12[, 1]) * (y[, 3]/mu.use[, 3]-y[, 4]/mu.use[, 4])
 
@@ -802,11 +819,11 @@ dbinom2.rho <-
            ErrorCheck = TRUE) {
   if (ErrorCheck) {
     if (!is.Numeric(mu1, positive = TRUE) || max(mu1) >= 1)
-      stop("bad input for argument 'mu1'") 
+      stop("bad input for argument 'mu1'")
     if (!is.Numeric(mu2, positive = TRUE) || max(mu2) >= 1)
-      stop("bad input for argument 'mu2'") 
+      stop("bad input for argument 'mu2'")
     if (!is.Numeric(rho) || min(rho) <= -1 || max(rho) >= 1)
-      stop("bad input for argument 'rho'") 
+      stop("bad input for argument 'rho'")
     if (exchangeable && max(abs(mu1 - mu2)) > 0.00001)
       stop("argument 'exchangeable' is TRUE but 'mu1' and 'mu2' differ")
   }
@@ -845,13 +862,13 @@ rbinom2.rho <-
   if (ErrorCheck) {
     if (!is.Numeric(mu1, positive = TRUE) ||
         max(mu1) >= 1)
-      stop("bad input for argument 'mu1'") 
+      stop("bad input for argument 'mu1'")
     if (!is.Numeric(mu2, positive = TRUE) ||
         max(mu2) >= 1)
-      stop("bad input for argument 'mu2'") 
+      stop("bad input for argument 'mu2'")
     if (!is.Numeric(rho) || min(rho) <= -1 ||
         max(rho) >= 1)
-      stop("bad input for argument 'rho'") 
+      stop("bad input for argument 'rho'")
 
 
     if (exchangeable &&
@@ -1064,7 +1081,7 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
       mustart <- NULL # Since etastart has been computed.
     }
   }), list( .lmu12 = lmu12, .lrho = lrho,
-            .emu12 = emu12, .erho = erho, 
+            .emu12 = emu12, .erho = erho,
                             .grho = grho,
                             .irho = irho,
             .imethod = imethod, .nsimEIM = nsimEIM,
@@ -1126,6 +1143,15 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .erho = erho ))),
   vfamily = c("binom2.rho", "binom2"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
+                     eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
+    rhovec <- eta2theta(eta[, 3], .lrho , earg = .erho )
+    okay1 <- all(is.finite(pmargin)) && all( 0 < pmargin & pmargin < 1) &&
+             all(is.finite(rhovec )) && all(-1 < rhovec  & rhovec  < 1)
+    okay1
+  }, list( .lmu12 = lmu12, .lrho = lrho,
+           .emu12 = emu12, .erho = erho ))),
 
 
 
@@ -1427,7 +1453,7 @@ my.dbinom <- function(x,
     }
   }), list( .prob = prob, .link = link ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    nvec <- eta2theta(eta, .link)
+    nvec <- eta2theta(eta, .link )
     nvec * extra$temp2
   }, list( .link = link ))),
   last = eval(substitute(expression({
@@ -1460,10 +1486,15 @@ my.dbinom <- function(x,
     }
   }, list( .prob = prob ))),
   vfamily = c("size.binomial"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    nvec <- eta2theta(eta, .link )
+    okay1 <- all(is.finite(nvec)) && all( 0 < nvec)
+    okay1
+  }, list( .link = link ))),
   deriv = eval(substitute(expression({
     nvec <- mu/extra$temp2
     dldnvec <- digamma(nvec+1) - digamma(nvec-y+1) + log1p(-extra$temp2)
-    dnvecdeta <- dtheta.deta(nvec, .link)
+    dnvecdeta <- dtheta.deta(nvec, .link )
     c(w) * cbind(dldnvec * dnvecdeta)
   }), list( .link = link ))),
   weight = eval(substitute(expression({
@@ -1477,17 +1508,18 @@ my.dbinom <- function(x,
 
 
 
- dbetabinom.ab <- function(x, size, shape1, shape2, log = FALSE,
-                           Inf.shape = 1e6
-                          ) {
+ dbetabinom.ab <-
+    function(x, size, shape1, shape2, log = FALSE,
+             Inf.shape = exp(20),  # 1e6, originally
+             limit.prob = 0.5  # Strictly should be NaN
+            ) {
 
 
-  Bigg <- Inf.shape
+  Bigg  <- Inf.shape
+  Bigg2 <- Inf.shape  # big.shape  # exp(34)  # Found empirically
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
-
-
 
 
   LLL <- max(length(x), length(size), length(shape1), length(shape2))
@@ -1495,6 +1527,8 @@ my.dbinom <- function(x,
   if (length(size)   != LLL) size   <- rep_len(size,   LLL)
   if (length(shape1) != LLL) shape1 <- rep_len(shape1, LLL)
   if (length(shape2) != LLL) shape2 <- rep_len(shape2, LLL)
+  is.infinite.shape1 <- is.infinite(shape1)  # Includes -Inf !!
+  is.infinite.shape2 <- is.infinite(shape2)
 
   ans <- x
   ans[TRUE] <- log(0)
@@ -1503,50 +1537,49 @@ my.dbinom <- function(x,
 
 
   ok0 <- !is.na(shape1) & !is.na(shape2) & !is.na(x) & !is.na(size)
-  ok <- (round(x) == x) & (x >= 0) & (x <= size) &
-        is.finite(shape1) & is.finite(shape2) & ok0
-  if (any(ok)) {
-    ans[ok] <- lchoose(size[ok], x[ok]) +
-               lbeta(shape1[ok]            + x[ok],
-                     shape2[ok] + size[ok] - x[ok]) -
-               lbeta(shape1[ok], shape2[ok])
+  okk <- (round(x) == x) & (x >= 0) & (x <= size) &
+         !is.infinite.shape1 & !is.infinite.shape2 & ok0
+  if (any(okk)) {
+    ans[okk] <- lchoose(size[okk], x[okk]) +
+                lbeta(shape1[okk]             + x[okk],
+                      shape2[okk] + size[okk] - x[okk]) -
+                lbeta(shape1[okk], shape2[okk])
 
 
-    endpt <- (x == size) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
-    if (any(endpt)) {
-      ans[endpt] <- lgamma(size[endpt] + shape1[endpt]) +
-                    lgamma(shape1[endpt] + shape2[endpt]) -
-                   (lgamma(size[endpt] + shape1[endpt] + shape2[endpt]) +
-                    lgamma(shape1[endpt]))
-    }
-
-
-
-
-    endpt <- (x == 0) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
-    if (any(endpt)) {
-      ans[endpt] <- lgamma(size[endpt] + shape2[endpt]) +
-                    lgamma(shape1[endpt] + shape2[endpt]) -
-                   (lgamma(size[endpt] + shape1[endpt] + shape2[endpt]) +
-                    lgamma(shape2[endpt]))
-    }
+    endpt1 <- (x == size) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
+    if (any(endpt1)) {
+      ans[endpt1] <- lgamma(  size[endpt1] + shape1[endpt1]) +
+                     lgamma(shape1[endpt1] + shape2[endpt1]) -
+                    (lgamma(  size[endpt1] + shape1[endpt1] + shape2[endpt1]) +
+                     lgamma(shape1[endpt1]))
+    }  # endpt1
 
 
 
 
+    endpt2 <- (x == 0) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
+    if (any(endpt2)) {
+      ans[endpt2] <- lgamma(  size[endpt2] + shape2[endpt2]) +
+                     lgamma(shape1[endpt2] + shape2[endpt2]) -
+                    (lgamma(  size[endpt2] + shape1[endpt2] + shape2[endpt2]) +
+                     lgamma(shape2[endpt2]))
+    }  # endpt2
 
-    endpt <- ((shape1 > Bigg) | (shape2 > Bigg)) & ok0
-    if (any(endpt)) {
-      ans[endpt] <- lchoose(size[endpt], x[endpt]) +
-                    lgamma(x[endpt] + shape1[endpt]) +
-                    lgamma(size[endpt] - x[endpt] + shape2[endpt]) +
-                    lgamma(shape1[endpt] + shape2[endpt]) -
-                   (lgamma(size[endpt] + shape1[endpt] + shape2[endpt]) +
-                    lgamma(shape1[endpt]) +
-                    lgamma(shape2[endpt]))
-    }
-  }  # if (any(ok))
 
+
+
+
+    endpt3 <- ((Bigg < shape1) | (Bigg < shape2)) & ok0
+    if (any(endpt3)) {
+
+
+
+      ans[endpt3] <- lchoose(size[endpt3], x[endpt3]) +
+                     lbeta(shape1[endpt3] +                x[endpt3],
+                           shape2[endpt3] + size[endpt3] - x[endpt3]) -
+                     lbeta(shape1[endpt3], shape2[endpt3])
+    }  # endpt3
+  }  # if (any(okk))
 
 
   if (!log.arg) {
@@ -1554,36 +1587,36 @@ my.dbinom <- function(x,
   }
 
 
+  ok1 <- !is.infinite.shape1 &  is.infinite.shape2  # rho==0 & prob==0
+  ok2 <-  is.infinite.shape1 & !is.infinite.shape2  # rho==0 & prob==1
+  ok3 <-  Bigg2 < shape1     &  Bigg2 < shape2
+  ok4 <-  is.infinite.shape1 &  is.infinite.shape2  # prob undefined
 
-  if (FALSE) {
-    ok1 <- is.na(shape1)       & is.infinite(shape2)  # rho==0 & prob==0
-    ok2 <- is.infinite(shape1) & is.na(shape2)        # rho==0 & prob==1
-    ok3 <- is.infinite(shape1) & is.infinite(shape2)  # rho==0 & 0<prob<1
-  } else {
-    ok1 <-   is.finite(shape1) & is.infinite(shape2)  # rho==0 & prob==0
-    ok2 <- is.infinite(shape1) &   is.finite(shape2)  # rho==0 & prob==1
-    ok3 <- is.infinite(shape1) & is.infinite(shape2)  # prob undefined
 
-  }
+
+  if (any(ok3)) {
+    prob1 <- shape1[ok3] / (shape1[ok3] + shape2[ok3])
+    ans[ok3] <- dbinom(x = x[ok3], size = size[ok3],
+                       prob = prob1, log = log.arg)
+
+    if (any(ok4)) {
+      ans[ok4] <- dbinom(x = x[ok4], size = size[ok4],
+                         prob = limit.prob, log = log.arg)
+    }
+  }  # ok3
 
   if (any(ok1))
     ans[ok1] <- dbinom(x = x[ok1], size = size[ok1],
-                       prob = shape1[ok1] / (shape1[ok1]+shape2[ok1]),  # 0,
+                       prob = 0,  # finite / (finite + Inf) == 0
                        log = log.arg)
   if (any(ok2))
     ans[ok2] <- dbinom(x = x[ok2], size = size[ok2],
                        prob = 1,  # Inf / (finite + Inf) == 1
                        log = log.arg)
-  if (any(ok3)) {
-    ans[ok3] <- dbinom(x = x[ok3], size = size[ok3],
-                       prob = shape1[ok3] / (shape1[ok3]+shape2[ok3]),
-                       log = log.arg)
-  }
 
 
   ans[shape1 < 0] <- NaN
   ans[shape2 < 0] <- NaN
-
 
   ans
 }
@@ -1764,13 +1797,13 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
   lshape1 <- as.list(substitute(lshape1))
-  earg1 <- link2list(lshape1)
-  lshape1 <- attr(earg1, "function.name")
+  eshape1 <- link2list(lshape1)
+  lshape1 <- attr(eshape1, "function.name")
 
 
   lshape2 <- as.list(substitute(lshape2))
-  earg2 <- link2list(lshape2)
-  lshape2 <- attr(earg2, "function.name")
+  eshape2 <- link2list(lshape2)
+  lshape2 <- attr(eshape2, "function.name")
 
 
   if (!is.Numeric(ishape1, positive = TRUE))
@@ -1795,8 +1828,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   new("vglmff",
   blurb = c("Beta-binomial model\n",
             "Links:    ",
-            namesof("shape1", lshape1, earg = earg1), ", ",
-            namesof("shape2", lshape2, earg = earg2), "\n",
+            namesof("shape1", lshape1, earg = eshape1), ", ",
+            namesof("shape2", lshape2, earg = eshape2), "\n",
             "Mean:     mu = shape1 / (shape1+shape2)", "\n",
             "Variance: mu * (1-mu) * (1+(w-1)*rho) / w, ",
                        "where rho = 1 / (shape1+shape2+1)"),
@@ -1815,7 +1848,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
          lshape1 = .lshape1 ,
          lshape2 = .lshape2 ,
          zero = .zero )
-  }, list( .zero = zero ))),
+  }, list( .zero = zero,
+           .lshape1 = lshape1,
+           .lshape2 = lshape2 ))),
 
 
   initialize = eval(substitute(expression({
@@ -1827,12 +1862,12 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     }
 
     mustart.orig <- mustart
-    eval(binomialff()@initialize)   # Note: n,w,y,mustart is changed 
+    eval(binomialff()@initialize)   # Note: n,w,y,mustart is changed
     if (length(mustart.orig))
       mustart <- mustart.orig  # Retain it if inputted
     predictors.names <-
-         c(namesof("shape1", .lshape1 , earg = .earg1 , tag = FALSE),
-           namesof("shape2", .lshape2 , earg = .earg2 , tag = FALSE))
+         c(namesof("shape1", .lshape1 , earg = .eshape1 , tag = FALSE),
+           namesof("shape2", .lshape2 , earg = .eshape2 , tag = FALSE))
 
     if (!length(etastart)) {
 
@@ -1859,35 +1894,35 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
          warning("the response (as counts) does not appear to ",
                  "be integer-valued. Am rounding to integer values.")
       ycounts <- round(ycounts)  # Make sure it is an integer
-      etastart <- cbind(theta2eta(shape1, .lshape1 , earg = .earg1 ),
-                        theta2eta(shape2, .lshape2 , earg = .earg2 ))
+      etastart <- cbind(theta2eta(shape1, .lshape1 , earg = .eshape1 ),
+                        theta2eta(shape2, .lshape2 , earg = .eshape2 ))
       mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-            .earg1 = earg1, .earg2 = earg2,
+            .eshape1 = eshape1, .eshape2 = eshape2,
             .ishape1 = ishape1, .ishape2 = ishape2,
             .nsimEIM = nsimEIM,
             .imethod = imethod, .ishrinkage = ishrinkage ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
-    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
     shape1 / (shape1 + shape2)
   }, list( .lshape1 = lshape1, .lshape2 = lshape2,
-           .earg1 = earg1, .earg2 = earg2 ))),
+           .eshape1 = eshape1, .eshape2 = eshape2 ))),
   last = eval(substitute(expression({
     misc$link <-    c("shape1" = .lshape1 , "shape2" = .lshape2 )
 
-    misc$earg <- list("shape1" = .earg1 ,   "shape2" = .earg2   )
+    misc$earg <- list("shape1" = .eshape1 , "shape2" = .eshape2 )
 
-    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
-    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
 
     misc$rho <- 1 / (shape1 + shape2 + 1)
     misc$expected <- TRUE
     misc$nsimEIM <- .nsimEIM
     misc$zero <- .zero
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-            .earg1 = earg1, .earg2 = earg2,
+            .eshape1 = eshape1, .eshape2 = eshape2,
             .nsimEIM = nsimEIM, .zero = zero ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
@@ -1900,8 +1935,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       warning("converting 'ycounts' to integer in @loglikelihood")
     ycounts <- round(ycounts)
 
-    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
-    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
     if (residuals) {
@@ -1918,8 +1953,16 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       }
     }
   }, list( .lshape1 = lshape1, .lshape2 = lshape2,
-           .earg1 = earg1, .earg2 = earg2 ))),
+           .eshape1 = eshape1, .eshape2 = eshape2 ))),
   vfamily = c("betabinomialff"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
+    okay1 <- all(is.finite(shape1)) && all(0 < shape1) &&
+             all(is.finite(shape2)) && all(0 < shape2)
+    okay1
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2,
+           .eshape1 = eshape1, .eshape2 = eshape2 ))),
 
 
 
@@ -1930,20 +1973,20 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     w <- pwts
     eta <- predict(object)
     extra <- object@extra
-    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
-    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
     nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
               round(w)
     rbetabinom.ab(nsim * length(shape1), size = nvec,
                   shape1 = shape1,
                   shape2 = shape2)
-  }, list( .lshape1 = lshape1, .lshape2 = lshape2, 
-           .earg1 = earg1, .earg2 = earg2 ))),
+  }, list( .lshape1 = lshape1, .lshape2 = lshape2,
+           .eshape1 = eshape1, .eshape2 = eshape2 ))),
 
 
 
@@ -1954,11 +1997,11 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
               round(w)
     ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
               y * w # Convert proportions to counts
-    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .earg1 )
-    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .earg2 )
+    shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
+    shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
 
-    dshape1.deta <- dtheta.deta(shape1, .lshape1 , earg = .earg1 )
-    dshape2.deta <- dtheta.deta(shape2, .lshape2 , earg = .earg2 )
+    dshape1.deta <- dtheta.deta(shape1, .lshape1 , earg = .eshape1 )
+    dshape2.deta <- dtheta.deta(shape2, .lshape2 , earg = .eshape2 )
 
     dl.dshape1 <- digamma(shape1+ycounts) -
                   digamma(shape1+shape2+nvec) -
@@ -1971,7 +2014,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     cbind(dl.dshape1 * dshape1.deta,
           dl.dshape2 * dshape2.deta)
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
-            .earg1 = earg1, .earg2 = earg2 ))),
+            .eshape1 = eshape1, .eshape2 = eshape2 ))),
   weight = eval(substitute(expression({
     if (is.null( .nsimEIM)) {
       wz <- matrix(NA_real_, n, dimm(M))  #3=dimm(2)
@@ -2017,8 +2060,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       wz <- wz * dthetas.detas[, ind1$row] * dthetas.detas[, ind1$col]
       wz * (if (is.numeric(extra$orig.w)) extra$orig.w else 1)
     }
-  }), list( .lshape1 = lshape1, .lshape2 = lshape2, 
-            .earg1 = earg1, .earg2 = earg2,
+  }), list( .lshape1 = lshape1, .lshape2 = lshape2,
+            .eshape1 = eshape1, .eshape2 = eshape2,
             .nsimEIM = nsimEIM ))))
 }
 
@@ -2149,6 +2192,14 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   }, list( .lprob = lprob, .lshape = lshape,
            .eprob = eprob, .eshape = eshape ))),
   vfamily = c("betageometric"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    prob  <- eta2theta(eta[, 1], .lprob ,  earg = .eprob )
+    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    okay1 <- all(is.finite(prob )) && all(0 < prob  & prob < 1) &&
+             all(is.finite(shape)) && all(0 < shape)
+    okay1
+  }, list( .lprob = lprob, .lshape = lshape,
+           .eprob = eprob, .eshape = eshape ))),
 
 
 
@@ -2158,7 +2209,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
               pwts else weights(object, type = "prior")
-    if (any(pwts != 1)) 
+    if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     prob  <- eta2theta(eta[, 1], .lprob  , earg = .eprob  )
@@ -2289,7 +2340,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     if (!is.vector(w))
       stop("the 'weights' argument must be a vector")
 
-    if (any(abs(w - round(w)) > 0.000001))
+    if (any(abs(w - round(w)) > 1e-6))
       stop("the 'weights' argument does not seem to be integer-valued")
 
 
@@ -2311,8 +2362,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
               " column two should be integer-valued")
 
     predictors.names <-
-        c(namesof("prob1", .lprob1,earg =  .eprob1, tag = FALSE),
-          namesof("prob2", .lprob2,earg =  .eprob2, tag = FALSE))
+        c(namesof("prob1", .lprob1 , earg =  .eprob1 , tag = FALSE),
+          namesof("prob2", .lprob2 , earg =  .eprob2 , tag = FALSE))
 
     prob1.init <- if (is.Numeric( .iprob1))
                    rep_len( .iprob1 , n) else
@@ -2323,15 +2374,15 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
     if (!length(etastart)) {
       etastart <-
-        cbind(theta2eta(prob1.init, .lprob1, earg = .eprob1),
-              theta2eta(prob2.init, .lprob2, earg = .eprob2))
+        cbind(theta2eta(prob1.init, .lprob1 , earg = .eprob1 ),
+              theta2eta(prob2.init, .lprob2 , earg = .eprob2 ))
     }
   }), list( .iprob1 = iprob1, .iprob2 = iprob2,
             .lprob1 = lprob1, .lprob2 = lprob2,
             .eprob1 = eprob1, .eprob2 = eprob2 ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    prob1 <- eta2theta(eta[, 1], .lprob1, earg = .eprob1)
-    prob2 <- eta2theta(eta[, 2], .lprob2, earg = .eprob2)
+    prob1 <- eta2theta(eta[, 1], .lprob1 , earg = .eprob1 )
+    prob2 <- eta2theta(eta[, 2], .lprob2 , earg = .eprob2 )
     cbind(prob1, prob2)
   }, list( .lprob1 = lprob1, .lprob2 = lprob2,
            .eprob1 = eprob1, .eprob2 = eprob2 ))),
@@ -2352,13 +2403,13 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    prob1 <- eta2theta(eta[, 1], .lprob1, earg = .eprob1)
-    prob2 <- eta2theta(eta[, 2], .lprob2, earg = .eprob2)
+    prob1 <- eta2theta(eta[, 1], .lprob1 , earg = .eprob1 )
+    prob2 <- eta2theta(eta[, 2], .lprob2 , earg = .eprob2 )
 
     smallno <- 100 * .Machine$double.eps
-    prob1 <- pmax(prob1, smallno)
+    prob1 <- pmax(prob1,   smallno)
     prob1 <- pmin(prob1, 1-smallno)
-    prob2 <- pmax(prob2, smallno)
+    prob2 <- pmax(prob2,   smallno)
     prob2 <- pmin(prob2, 1-smallno)
     mvector <- w
     rvector <- w * y[, 1]
@@ -2380,9 +2431,17 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   }, list( .lprob1 = lprob1, .lprob2 = lprob2,
            .eprob1 = eprob1, .eprob2 = eprob2 ))),
   vfamily = c("seq2binomial"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    prob1 <- eta2theta(eta[, 1], .lprob1 , earg = .eprob1 )
+    prob2 <- eta2theta(eta[, 2], .lprob2 , earg = .eprob2 )
+    okay1 <- all(is.finite(prob1)) && all(0 < prob1 & prob1 < 1) &&
+             all(is.finite(prob2)) && all(0 < prob2 & prob2 < 1)
+    okay1
+  }, list( .lprob1 = lprob1, .lprob2 = lprob2,
+           .eprob1 = eprob1, .eprob2 = eprob2 ))),
   deriv = eval(substitute(expression({
-    prob1 <- eta2theta(eta[, 1], .lprob1, earg = .eprob1)
-    prob2 <- eta2theta(eta[, 2], .lprob2, earg = .eprob2)
+    prob1 <- eta2theta(eta[, 1], .lprob1 , earg = .eprob1 )
+    prob2 <- eta2theta(eta[, 2], .lprob2 , earg = .eprob2 )
     smallno <- 100 * .Machine$double.eps
     prob1 <- pmax(prob1, smallno)
     prob1 <- pmin(prob1, 1-smallno)
@@ -2438,10 +2497,10 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
   if (!is.Numeric(tol, positive = TRUE, length.arg = 1) ||
       tol > 0.1)
-      stop("bad input for argument 'tol'") 
+      stop("bad input for argument 'tol'")
   if (!is.Numeric(addRidge, length.arg = 1, positive = TRUE) ||
       addRidge > 0.5)
-    stop("bad input for argument 'addRidge'") 
+    stop("bad input for argument 'addRidge'")
 
   if (lmu12 != "cloglog")
     warning("argument 'lmu12' should be 'cloglog'")
@@ -2506,15 +2565,16 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             theta2eta(mu12.init,   .lmu12 ,   earg = .emu12 ),
             theta2eta(phi.init,    .lphi12,  earg = .ephi12),
             theta2eta(oratio.init, .loratio, earg = .eoratio))
+        mustart <- NULL
       }
   }), list( .lmu12 = lmu12, .lphi12 = lphi12, .loratio = loratio,
             .emu12 = emu12, .ephi12 = ephi12, .eoratio = eoratio,
             .imu12 = imu12, .iphi12 = iphi12, .ioratio = ioratio ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    A1vec  <- eta2theta(eta[, 1], .lmu12 ,  earg = .emu12 )
-    phivec <- eta2theta(eta[, 2], .lphi12, earg = .ephi12)
+    A1vec  <- eta2theta(eta[, 1], .lmu12  , earg = .emu12  )
+    phivec <- eta2theta(eta[, 2], .lphi12 , earg = .ephi12 )
     pmargin <- matrix((1 - phivec) * A1vec, nrow(eta), 2)
-    oratio <- eta2theta(eta[, 3], .loratio, earg = .eoratio)
+    oratio <- eta2theta(eta[, 3], .loratio , earg = .eoratio )
     a.temp <- 1 + (pmargin[, 1]+pmargin[, 2])*(oratio-1)
     b.temp <- -4 * oratio * (oratio-1) * pmargin[, 1] * pmargin[, 2]
     temp <- sqrt(a.temp^2 + b.temp)
@@ -2527,13 +2587,13 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
            .lmu12 = lmu12, .lphi12 = lphi12, .loratio = loratio,
            .emu12 = emu12, .ephi12 = ephi12, .eoratio = eoratio ))),
   last = eval(substitute(expression({
-    misc$link <-    c("mu12"= .lmu12 ,
-                      "phi12" = .lphi12,
-                      "oratio" = .loratio)
+    misc$link <-    c("mu12"   = .lmu12 ,
+                      "phi12"  = .lphi12 ,
+                      "oratio" = .loratio )
 
-    misc$earg <- list("mu12"= .emu12 ,
-                      "phi12" = .ephi12,
-                      "oratio" = .eoratio)
+    misc$earg <- list("mu12"   = .emu12 ,
+                      "phi12"  = .ephi12 ,
+                      "oratio" = .eoratio )
 
     misc$tol <- .tol
     misc$expected <- TRUE
@@ -2570,6 +2630,19 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     }
   },
   vfamily = c("zipebcom"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    A1vec  <- eta2theta(eta[, 1], .lmu12 ,  earg = .emu12 )
+    smallno <- .Machine$double.eps^(2/4)
+    A1vec[A1vec > 1.0 - smallno] <- 1.0 - smallno
+
+    phivec <- eta2theta(eta[, 2], .lphi12 , earg = .ephi12 )
+    oratio <- eta2theta(eta[, 3], .loratio , earg = .eoratio )
+    okay1 <- all(is.finite(A1vec )) && all(0 < A1vec  & A1vec  < 1) &&
+             all(is.finite(phivec)) && all(0 < phivec & phivec < 1) &&
+             all(is.finite(oratio)) && all(0 < oratio)
+    okay1
+  }, list( .lmu12 = lmu12, .lphi12 = lphi12, .loratio = loratio,
+           .emu12 = emu12, .ephi12 = ephi12, .eoratio = eoratio ))),
   deriv = eval(substitute(expression({
     A1vec  <- eta2theta(eta[, 1], .lmu12 ,  earg = .emu12 )
     smallno <- .Machine$double.eps^(2/4)
@@ -2585,7 +2658,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     temp1 <- oratio * mu[, 2] + mu[, 4]
     dp11star.dp1unstar <- 2*(1-phivec)*Vab * Vabc
     dp11star.dphi1 <- -2 * A1vec * Vab * Vabc
-    dp11star.doratio <- Vab / oratio 
+    dp11star.doratio <- Vab / oratio
     yandmu <- (y[, 1]/mu[, 1] - y[, 2]/mu[, 2] - y[, 3]/mu[, 3] +
                y[, 4]/mu[, 4])
     dp11.doratio <- Vab / oratio
@@ -2633,7 +2706,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
- binom2.Rho <- function(rho = 0, imu1 = NULL, imu2 = NULL, 
+ binom2.Rho <- function(rho = 0, imu1 = NULL, imu2 = NULL,
                         exchangeable = FALSE, nsimEIM = NULL) {
   lmu12 <- "probit"
   emu12 <- list()
@@ -2645,6 +2718,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     if (nsimEIM <= 100)
       warning("'nsimEIM' should be an integer greater than 100")
   }
+  if (min(rho) <= -1 || 1 <= max(rho))
+    stop("argument 'rho' should lie in (-1, 1)")
+
 
   new("vglmff",
   blurb = c("Bivariate probit model with rho = ", format(rho), "\n",
@@ -2658,6 +2734,15 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                            apply.int = TRUE)
   }), list( .exchangeable = exchangeable ))),
   deviance = Deviance.categorical.data.vgam,
+  infos = eval(substitute(function(...) {
+    list(M1 = 3,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu1", "mu2"),
+         lmu12   = .lmu12 )
+  }, list( .lmu12 = lmu12 ))),
+
+
   initialize = eval(substitute(expression({
     eval(process.binomial2.data.VGAM)
     predictors.names <- c(
@@ -2665,18 +2750,19 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                   namesof("mu2", .lmu12 , earg = .emu12 , short = TRUE))
 
     if (is.null( .nsimEIM )) {
-         save.weights <- control$save.weights <- FALSE
+      save.weights <- control$save.weights <- FALSE
     }
     if (is.null(etastart)) {
-      mu1.init= if (is.Numeric( .imu1 ))
-                rep_len( .imu1 , n) else
-                mu[, 3] + mu[, 4]
-      mu2.init= if (is.Numeric( .imu2 ))
-                rep_len( .imu2 , n) else
-                mu[, 2] + mu[, 4]
+      mu1.init <- if (is.Numeric( .imu1 ))
+                    rep_len( .imu1 , n) else
+                    mu[, 3] + mu[, 4]
+      mu2.init <- if (is.Numeric( .imu2 ))
+                    rep_len( .imu2 , n) else
+                    mu[, 2] + mu[, 4]
       etastart <-
         cbind(theta2eta(mu1.init, .lmu12 , earg = .emu12 ),
               theta2eta(mu2.init, .lmu12 , earg = .emu12 ))
+      mustart <- NULL
     }
   }), list( .lmu12 = lmu12, .emu12 = emu12, .nsimEIM = nsimEIM,
             .imu1 = imu1, .imu2 = imu2 ))),
@@ -2731,6 +2817,12 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .rho = rho ))),
   vfamily = c("binom2.Rho", "binom2"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
+                     eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
+    okay1 <- all(is.finite(pmargin)) && all(0 < pmargin & pmargin < 1)
+    okay1
+  }, list( .lmu12 = lmu12, .emu12 = emu12, .rho = rho ))),
   deriv = eval(substitute(expression({
     pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
                      eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
@@ -2786,7 +2878,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                              onemPhiB * (ysim[, 3]/p10-ysim[, 1]/p00)
         dl.dprob2 <- PhiA * (ysim[, 4]/p11-ysim[, 3]/p10) +
                              onemPhiA * (ysim[, 2]/p01-ysim[, 1]/p00)
-  
+
         rm(ysim)
         temp3 <- cbind(dl.dprob1, dl.dprob2)
         run.varcov <- ((ii-1) * run.varcov +
@@ -2992,7 +3084,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     }
     mustart <- NULL  # Since etastart has been computed and/or no @linkfun.
   }), list( .lmu12 = lmu12, .l.rho = l.rho,
-            .emu12 = emu12, .e.rho = e.rho, 
+            .emu12 = emu12, .e.rho = e.rho,
                             .grho = grho,
                             .irho = irho,
             .imethod = imethod,
@@ -3058,6 +3150,15 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     }
   }, list( .l.rho = l.rho, .e.rho = e.rho ))),
   vfamily = c("binom2.rho.ss", "binom2"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
+                     eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
+    rhovec <-        eta2theta(eta[, 3], .l.rho , earg = .e.rho )
+    okay1 <- all(is.finite(pmargin)) && all( 0 < pmargin & pmargin < 1) &&
+             all(is.finite(rhovec )) && all(-1 < rhovec  & rhovec  < 1)
+    okay1
+  }, list( .lmu12 = lmu12, .l.rho = l.rho,
+           .emu12 = emu12, .e.rho = e.rho ))),
 
   deriv = eval(substitute(expression({
     nvec <- 1

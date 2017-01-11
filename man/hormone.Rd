@@ -14,7 +14,7 @@
 \usage{data(hormone)}
 \format{
   A data frame with 85 observations on the following 2 variables.
-  
+
   \describe{
     \item{\code{X}}{a numeric vector, suitable as the x-axis in
     a scatter plot.
@@ -59,7 +59,7 @@ Thus calibration might be of interest for the data.
 
 \references{
 
-  Carroll, R. J. and Ruppert, D. (1988) 
+  Carroll, R. J. and Ruppert, D. (1988)
   \emph{Transformation and Weighting in Regression}.
   New York, USA: Chapman & Hall.
 

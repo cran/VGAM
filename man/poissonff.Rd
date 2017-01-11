@@ -12,7 +12,8 @@
 \usage{
 poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
           imethod = 1, parallel = FALSE, zero = NULL, bred = FALSE,
-          earg.link = FALSE)
+          earg.link = FALSE, type.fitted = c("mean", "quantiles"),
+                       percentiles = c(25, 50, 75))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -69,6 +70,10 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   \code{\link{loge}},
   \code{\link{identity}} but further testing is required.
 
+
+  }
+  \item{type.fitted, percentiles}{
+  Details at \code{\link{CommonVGAMffArguments}}.
 
   }
 }
@@ -148,6 +153,9 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
     \code{\link{quasipoissonff}},
     \code{\link{genpoisson}},
     \code{\link{zipoisson}},
+    \code{\link{pospoisson}},
+    \code{\link{oipospoisson}},
+    \code{\link{otpospoisson}},
     \code{\link{skellam}},
     \code{\link{mix2poisson}},
     \code{\link{cens.poisson}},

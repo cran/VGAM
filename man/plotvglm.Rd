@@ -18,8 +18,8 @@ plotvglm(x, which = "(All)", ...)
   \item{x}{
     An object of class \code{"vglm"} (see \code{\link{vglm-class}})
     or inherits from that class.
-  
-  
+
+
 % Same as \code{\link{plotvgam}}.
 
 
@@ -66,20 +66,20 @@ plotvglm(x, which = "(All)", ...)
 %\note{
 % \code{plotvglm()} is quite buggy at the moment.
 
-  
+
 % \code{plotvglm()} works in a similar
 % manner to S-PLUS's \code{plot.gam()}, however, there is no
-% options for interactive construction of the plots yet. 
+% options for interactive construction of the plots yet.
 
-  
+
 %}
 
 \seealso{
   \code{\link{plotvgam}},
   \code{\link{plotvgam.control}},
   \code{\link{vglm}}.
-  
-  
+
+
 }
 \examples{
 \dontrun{

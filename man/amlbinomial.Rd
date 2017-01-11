@@ -107,7 +107,7 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
   all the \code{w.aml} values.
   See Equation (1.6) of Efron (1992).
 
-} 
+}
 \seealso{
   \code{\link{amlpoisson}},
   \code{\link{amlexponential}},
@@ -139,7 +139,7 @@ with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
 
 
 # Compare the fitted expectiles with the quantiles
-with(mydat, plot(x, jitter(y), col = "blue", las = 1, main = 
+with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
      paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
            "percentile curves are red")))
 with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))

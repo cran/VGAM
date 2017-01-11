@@ -44,7 +44,7 @@ The likelihood has similarities with \code{\link{seq2binomial}}.
   The data is originally from Crow (1965) and
   appears as Table 2.3 of Lange (2002).
 
-  
+
 Crow, J. F. (1965)
 Problems of ascertainment in the analysis of family data.
 Epidemiology and Genetics of Chronic Disease.

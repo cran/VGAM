@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The A1A2A3 Blood Group System }
 \description{
-  Estimates the three independent parameters of the 
+  Estimates the three independent parameters of the
   the A1A2A3 blood group system.
 
 }
@@ -57,16 +57,16 @@ Lange, K. (2002)
 
 }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The input can be a 6-column matrix of counts,
-  with columns corresponding to   
+  with columns corresponding to
   \code{A1A1},
   \code{A1A2},
   \code{A1A3},
   \code{A2A2},
   \code{A2A3},
-  \code{A3A3} (in order). 
-  Alternatively, the input can be a 6-column matrix of 
+  \code{A3A3} (in order).
+  Alternatively, the input can be a 6-column matrix of
   proportions (so each row adds to 1) and the \code{weights}
   argument is used to specify the total number of counts for each row.
 
@@ -90,7 +90,7 @@ ymat <- cbind(108, 196, 429, 143, 513, 559)
 fit <- vglm(ymat ~ 1, A1A2A3(link = probit), trace = TRUE, crit = "coef")
 fit <- vglm(ymat ~ 1, A1A2A3(link = logit, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
             trace = TRUE, crit = "coef")
-Coef(fit)  # Estimated p1 and p2 
+Coef(fit)  # Estimated p1 and p2
 rbind(ymat, sum(ymat) * fitted(fit))
 sqrt(diag(vcov(fit)))
 }

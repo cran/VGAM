@@ -11,21 +11,21 @@ y-axis are the first and second ordination axes respectively.
 }
 \usage{
 lvplot.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL,
-    add = FALSE, show.plot = TRUE, 
-    rug = TRUE, y = FALSE, type = c("fitted.values", "predictors"), 
-    xlab = paste("Latent Variable", if (Rank == 1) "" else " 1", sep = ""), 
-    ylab = if (Rank == 1) switch(type, predictors = "Predictors", 
-    fitted.values = "Fitted values") else "Latent Variable 2", 
-    pcex = par()$cex, pcol = par()$col, pch = par()$pch, 
-    llty = par()$lty, lcol = par()$col, llwd = par()$lwd, 
-    label.arg = FALSE, adj.arg = -0.1, 
-    ellipse = 0.95, Absolute = FALSE, 
-    elty = par()$lty, ecol = par()$col, elwd = par()$lwd, egrid = 200, 
-    chull.arg = FALSE, clty = 2, ccol = par()$col, clwd = par()$lwd, 
+    add = FALSE, show.plot = TRUE,
+    rug = TRUE, y = FALSE, type = c("fitted.values", "predictors"),
+    xlab = paste("Latent Variable", if (Rank == 1) "" else " 1", sep = ""),
+    ylab = if (Rank == 1) switch(type, predictors = "Predictors",
+    fitted.values = "Fitted values") else "Latent Variable 2",
+    pcex = par()$cex, pcol = par()$col, pch = par()$pch,
+    llty = par()$lty, lcol = par()$col, llwd = par()$lwd,
+    label.arg = FALSE, adj.arg = -0.1,
+    ellipse = 0.95, Absolute = FALSE,
+    elty = par()$lty, ecol = par()$col, elwd = par()$lwd, egrid = 200,
+    chull.arg = FALSE, clty = 2, ccol = par()$col, clwd = par()$lwd,
     cpch = "   ",
     C = FALSE, OriginC = c("origin", "mean"),
-    Clty = par()$lty, Ccol = par()$col, Clwd = par()$lwd, 
-    Ccex = par()$cex, Cadj.arg = -0.1, stretchC = 1, 
+    Clty = par()$lty, Ccol = par()$col, Clwd = par()$lwd,
+    Ccex = par()$cex, Cadj.arg = -0.1, stretchC = 1,
     sites = FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
     sfont = par()$font, check.ok = TRUE, ...)
 }
@@ -40,7 +40,7 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL,
 
   }
   \item{varI.latvar}{
-  Logical that is fed into \code{\link{Coef.qrrvglm}}. 
+  Logical that is fed into \code{\link{Coef.qrrvglm}}.
 
 
   }
@@ -84,12 +84,12 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL,
 
  }
   \item{pcex}{ Character expansion of the points.
-Here, for rank-1 models, points are the response \emph{y} data. 
+Here, for rank-1 models, points are the response \emph{y} data.
 For rank-2 models, points are the optimums.
   See the \code{cex} argument in \code{\link[graphics]{par}}.
 
  }
-  \item{pcol}{ Color of the points. 
+  \item{pcol}{ Color of the points.
   See the \code{col} argument in \code{\link[graphics]{par}}.
 
  }
@@ -116,17 +116,17 @@ For rank-2 models, points are the optimums.
   See the \code{lwd} argument of \code{\link[graphics]{par}}.
 
  }
-  \item{label.arg}{ Logical. Label the optimums and \bold{C}? 
+  \item{label.arg}{ Logical. Label the optimums and \bold{C}?
   (applies only to rank-2 models only).
 
  }
   \item{adj.arg}{ Justification of text strings for labelling the optimums
-  (applies only to rank-2 models only). 
+  (applies only to rank-2 models only).
   See the \code{adj} argument of \code{\link[graphics]{par}}.
 
  }
 
-  \item{ellipse}{ 
+  \item{ellipse}{
       Numerical, of length 0 or 1 (applies only to rank-2 models only).
       If \code{Absolute} is \code{TRUE} then \code{ellipse} should be
       assigned a value that is used for the elliptical contouring.
@@ -145,12 +145,12 @@ For rank-2 models, points are the optimums.
 
   }
   \item{Absolute}{ Logical.
-  If \code{TRUE}, the contours corresponding to \code{ellipse} 
+  If \code{TRUE}, the contours corresponding to \code{ellipse}
   are on an absolute scale.
-  If \code{FALSE}, the contours corresponding to \code{ellipse} 
-  are on a relative scale. 
+  If \code{FALSE}, the contours corresponding to \code{ellipse}
+  are on a relative scale.
   }
-  \item{elty}{ Line type of the ellipses. 
+  \item{elty}{ Line type of the ellipses.
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
   \item{ecol}{ Line color of the ellipses.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
@@ -158,34 +158,34 @@ For rank-2 models, points are the optimums.
   See the \code{lwd} argument of \code{\link[graphics]{par}}. }
   \item{egrid}{ Numerical. Line resolution of the ellipses.
   Choosing a larger value will result in smoother ellipses.
-  Useful when ellipses are large. 
+  Useful when ellipses are large.
   }
 
   \item{chull.arg}{ Logical. Add a convex hull around the
    site scores? }
-  \item{clty}{ Line type of the convex hull. 
+  \item{clty}{ Line type of the convex hull.
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
   \item{ccol}{ Line color of the convex hull.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
   \item{clwd}{ Line width of the convex hull.
   See the \code{lwd} argument of \code{\link[graphics]{par}}. }
-  \item{cpch}{ Character to be plotted at the intersection points of 
+  \item{cpch}{ Character to be plotted at the intersection points of
                the convex hull. Having white spaces means that site
-               labels are not obscured there. 
+               labels are not obscured there.
   See the \code{pch} argument of \code{\link[graphics]{par}}. }
 
   \item{C}{ Logical. Add \bold{C} (represented by arrows emanating
   from \code{OriginC}) to the plot? }
   \item{OriginC}{ Character or numeric.
-    Where the arrows representing \bold{C} emanate from. 
+    Where the arrows representing \bold{C} emanate from.
     If character, it must be one of the choices given. By default the
     first is chosen.
     The value \code{"origin"} means \code{c(0,0)}.
-    The value \code{"mean"} means 
-    the sample mean of the latent variables (centroid). 
+    The value \code{"mean"} means
+    the sample mean of the latent variables (centroid).
     Alternatively, the user may specify a numerical vector of length 2.
   }
-  \item{Clty}{ Line type of the arrows representing \bold{C}. 
+  \item{Clty}{ Line type of the arrows representing \bold{C}.
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
   \item{Ccol}{ Line color of the arrows representing \bold{C}.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
@@ -208,7 +208,7 @@ For rank-2 models, points are the optimums.
   data frame are used. They often are the site numbers.
   See the \code{pch} argument of \code{\link[graphics]{par}}.
   }
-  \item{scol}{ Color of the site scores. 
+  \item{scol}{ Color of the site scores.
   See the \code{col} argument of \code{\link[graphics]{par}}.
   }
   \item{scex}{ Character expansion of the site scores.
@@ -223,22 +223,22 @@ For rank-2 models, points are the optimums.
 % A value from the set \{1,2,\ldots,\eqn{M}\} indicating
 % which species (quadratic predictor) is to be chosen so that
 % its major and semi-minor axes are parallel to the latent variable
-% axes, i.e., that species' Tolerance matrix will be diagonal. 
+% axes, i.e., that species' Tolerance matrix will be diagonal.
 % If \code{Rotate} is \code{TRUE}, the first species is selected for rotation.
 
 % By default a rotation is performed only if the tolerance matrices are equal,
 % and \code{Rotation} only applies when the rank is greater than one.
 
-% See \code{\link{Coef.qrrvglm}} for details. 
+% See \code{\link{Coef.qrrvglm}} for details.
 % }
 
 % \item{I.tolerances}{
 % Logical.
 % If \code{TRUE}, the tolerances matrices are transformed so that they are
-% the order-\code{Rank} identity matrix. This means that a rank-2 
+% the order-\code{Rank} identity matrix. This means that a rank-2
 % latent variable plot
 % can be interpreted naturally in terms of distances and directions.
-% See \code{\link{Coef.qrrvglm}} for details. 
+% See \code{\link{Coef.qrrvglm}} for details.
 % }
 
   \item{check.ok}{ Logical. Whether a check is performed to see
@@ -276,7 +276,7 @@ For rank-2 models, points are the optimums.
 
 
 }
-\references{ 
+\references{
 
 Yee, T. W. (2004)
 A new technique for maximum-likelihood

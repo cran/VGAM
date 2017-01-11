@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -17,17 +17,17 @@ summaryvlm <-
   function(object, correlation = FALSE, dispersion = NULL,
            Colnames = c("Estimate", "Std. Error", "z value", "Pr(>|z|)"),
            presid = TRUE) {
-                         
+
 
 
   if (is.logical(object@misc$BFGS) && object@misc$BFGS)
-      warning(paste("the estimated variance-covariance matrix is",
-         "usually inaccurate as the working weight matrices are a",
-         "crude BFGS quasi-Newton approximation"))
+    warning("the estimated variance-covariance matrix is ",
+            "usually inaccurate because the working weight matrices are ",
+            "obtained by a crude BFGS quasi-Newton approximation")
 
   M <- object@misc$M
   n <- object@misc$n
-  nrow.X.vlm <- object@misc$nrow.X.vlm 
+  nrow.X.vlm <- object@misc$nrow.X.vlm
   ncol.X.vlm <- object@misc$ncol.X.vlm  # May be NULL for CQO objects
 
   Coefs <- object@coefficients
@@ -41,11 +41,11 @@ summaryvlm <-
   }
 
   if (anyNA(Coefs)) {
-    warning(paste("Some NAs in the coefficients---no summary",
-                  " provided; returning object\n"))
+    warning("Some NAs in the coefficients---no summary is ",
+            " provided; returning 'object'")
     return(object)
   }
-  rdf <- object@df.residual   
+  rdf <- object@df.residual
 
   if (!length(dispersion)) {
     if (is.numeric(object@misc$dispersion)) {
@@ -70,7 +70,7 @@ summaryvlm <-
       warning("overriding the value of object@misc$dispersion")
     object@misc$estimated.dispersion <- FALSE
   }
-  sigma <- sqrt(dispersion)  # Can be a vector 
+  sigma <- sqrt(dispersion)  # Can be a vector
 
   if (is.Numeric(ncol.X.vlm)) {
     R <- object@R
@@ -90,7 +90,7 @@ summaryvlm <-
   dimnames(coef3) <- list(cnames, Colnames)
   SEs <- sqrt(diag(covun))
   if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
-    coef3[, 2] <- SEs %o% sigma  # Fails here when sigma is a vector 
+    coef3[, 2] <- SEs %o% sigma  # Fails here when sigma is a vector
     coef3[, 3] <- coef3[, 1] / coef3[, 2]
     pvalue <- 2 * pnorm(-abs(coef3[, 3]))
     coef3[, 4] <- pvalue
@@ -126,7 +126,7 @@ summaryvlm <-
 
   if (is.Numeric(ncol.X.vlm))
     answer@cov.unscaled <- covun
-  answer@dispersion <- dispersion  # Overwrite this 
+  answer@dispersion <- dispersion  # Overwrite this
 
   if (length(Presid))
     answer@pearson.resid <- as.matrix(Presid)
@@ -143,7 +143,7 @@ show.summary.vlm <- function(x, digits = NULL, quote = TRUE,
                              prefix = "") {
 
 
-  M <- x@misc$M 
+  M <- x@misc$M
   coef3 <- x@coef3 # ficients
   correl <- x@correlation
 
@@ -184,11 +184,11 @@ show.summary.vlm <- function(x, digits = NULL, quote = TRUE,
   if (length(x@misc$predictors.names))
   if (M == 1) {
     cat("\nName of response:",
-        paste(x@misc$predictors.names, collapse = ", "), "\n") 
+        paste(x@misc$predictors.names, collapse = ", "), "\n")
   } else {
     UUU <- paste(x@misc$predictors.names, collapse = ", ")
     UUU <- x@misc$predictors.names
-    cat("\nNames of responses:\n") 
+    cat("\nNames of responses:\n")
     cat(UUU, fill = TRUE, sep = ", ")
   }
 

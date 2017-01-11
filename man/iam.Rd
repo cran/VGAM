@@ -4,7 +4,7 @@
 \title{ Index from Array to Matrix }
 \description{
   Maps the elements of an array containing symmetric positive-definite
-  matrices to a matrix with sufficient columns to hold them 
+  matrices to a matrix with sufficient columns to hold them
   (called matrix-band format.)
 
 }
@@ -14,12 +14,12 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{j}{
-  An integer from the set \{\code{1:M}\} giving the row number 
+  An integer from the set \{\code{1:M}\} giving the row number
   of an element.
 
   }
   \item{k}{
-  An integer from the set \{\code{1:M}\} giving the column number 
+  An integer from the set \{\code{1:M}\} giving the column number
   of an element.
 
   }
@@ -29,32 +29,32 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 
   }
   \item{both}{
-  Logical. Return both the row and column indices? 
+  Logical. Return both the row and column indices?
   See below for more details.
 
   }
   \item{diag}{
-  Logical. Return the indices for the diagonal elements? 
-  If \code{FALSE} then only the strictly upper triangular part of the matrix 
+  Logical. Return the indices for the diagonal elements?
+  If \code{FALSE} then only the strictly upper triangular part of the matrix
   elements are used.
 
   }
 }
 \details{
   Suppose we have \eqn{n} symmetric positive-definite square matrices,
-  each \eqn{M} by \eqn{M}, and 
+  each \eqn{M} by \eqn{M}, and
   these are stored in an \code{array} of dimension \code{c(n,M,M)}.
-  Then these can be more compactly represented by a 
+  Then these can be more compactly represented by a
   \code{matrix} of dimension \code{c(n,K)} where \code{K} is an integer
-  between \code{M} and \code{M*(M+1)/2} inclusive. 
+  between \code{M} and \code{M*(M+1)/2} inclusive.
   The mapping between these two representations is given by this function.
   It firstly enumerates by the diagonal elements, followed by the band
-  immediately above the diagonal, then the band above that one, etc. 
+  immediately above the diagonal, then the band above that one, etc.
   The last element is \code{(1,M)}.
   This function performs the mapping from elements \code{(j,k)}
   of symmetric positive-definite square matrices to the columns of
   another matrix representing such.
-  This is called the \emph{matrix-band} format and is used by 
+  This is called the \emph{matrix-band} format and is used by
   the \pkg{VGAM} package.
 
 
@@ -77,12 +77,12 @@ iam(j, k, M, both = FALSE, diag = TRUE)
   \item{col.index}{
   The column indices of the upper triangular part of the
   matrix (This may or may not include the diagonal elements, depending
-  on the argument \code{diagonal}). 
+  on the argument \code{diagonal}).
 
 
   }
 }
-%\references{ 
+%\references{
 %  The website \url{http://www.stat.auckland.ac.nz/~yee} contains
 %  some additional information.
 %
@@ -98,7 +98,7 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{vglmff-class}}.
 
 

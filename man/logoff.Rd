@@ -38,7 +38,7 @@ logoff(theta, offset = 0, inverse = FALSE, deriv = 0,
   \code{offset} is the offset value. For example,
   if \code{offset = 0.5} then the value of \code{theta} is restricted
   to be greater than \eqn{-0.5}.
-  
+
 
   Numerical values of \code{theta} close to \code{-offset} or out of range
   result in
@@ -82,7 +82,7 @@ logoff(theta, offset = 0, inverse = FALSE, deriv = 0,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{loge}}.
 

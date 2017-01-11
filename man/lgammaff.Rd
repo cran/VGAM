@@ -25,15 +25,15 @@ lgamma3(llocation = "identitylink", lscale = "loge", lshape = "loge",
 
   }
   \item{lshape}{
-  Parameter link function applied to 
-  the positive shape parameter \eqn{k}. 
+  Parameter link function applied to
+  the positive shape parameter \eqn{k}.
   See \code{\link{Links}} for more choices.
 
 
   }
   \item{ishape}{
   Initial value for \eqn{k}.
-  If given, it must be positive. 
+  If given, it must be positive.
   If failure to converge occurs, try some other value.
   The default means an initial value is determined internally.
 
@@ -67,7 +67,7 @@ lgamma3(llocation = "identitylink", lscale = "loge", lshape = "loge",
   For the non-standard log-gamma distribution, one replaces \eqn{y}
   by \eqn{(y-a)/b}, where \eqn{a} is the location parameter
   and \eqn{b} is the positive scale parameter.
-  Then the density function is 
+  Then the density function is
     \deqn{f(y)=\exp[k(y-a)/b - \exp((y-a)/b)] / (b \, \Gamma(k)).}{%
           f(y) = exp[k(y-a)/b - exp((y-a)/b)]/(b*gamma(k)).}
   The mean and variance of \eqn{Y} are \code{a + b*digamma(k)} (returned as
@@ -100,7 +100,7 @@ New York: Wiley.
 }
 
 \author{ T. W. Yee }
-\note{ 
+\note{
   The standard log-gamma distribution can be viewed as a
   generalization of the standard type 1 extreme value density:
   when \eqn{k = 1} the distribution of \eqn{-Y} is the standard

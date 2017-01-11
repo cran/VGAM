@@ -23,7 +23,7 @@ expexpff(lrate = "loge", lshape = "loge",
 
   }
   \item{ishape}{
-  Initial value for the \eqn{\alpha}{shape} 
+  Initial value for the \eqn{\alpha}{shape}
   parameter. If convergence fails try setting a different
   value for this argument.
 

@@ -164,7 +164,7 @@ viz. \code{zero = c(1, 3)}.
 Cole, T. J. and Green, P. J. (1992)
 Smoothing Reference Centile Curves: The LMS Method and
 Penalized Likelihood.
-\emph{Statistics in Medicine}, 
+\emph{Statistics in Medicine},
 \bold{11}, 1305--1319.
 
 
@@ -223,7 +223,7 @@ Quantile regression via vector generalized additive models.
   Also, the estimate may diverge quickly near the solution,
   in which case try prematurely
   stopping the iterations by assigning \code{maxits} to be the iteration
-  number corresponding to the highest likelihood value. 
+  number corresponding to the highest likelihood value.
 
 
   One trick is to fit a simple model and use it to provide
@@ -231,7 +231,7 @@ Quantile regression via vector generalized additive models.
   examples below.
 
 
-} 
+}
 \seealso{
   \code{\link{lms.bcg}},
   \code{\link{lms.yjn}},

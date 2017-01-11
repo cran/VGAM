@@ -16,14 +16,14 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape1, lshape2}{ 
+  \item{lshape1, lshape2}{
   Link functions for the two (positive) shape parameters
   of the beta distribution.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{ishape1, ishape2}{ 
+  \item{ishape1, ishape2}{
   Initial value for the shape parameters.
   The first must be positive, and is recyled to the necessary length.
   The second is optional.
@@ -32,7 +32,7 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   Can be
   an integer specifying which linear/additive predictor is to be modelled
   as an intercept only. If assigned, the single value should be either
@@ -56,7 +56,7 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
   There are several parameterizations of the beta-binomial distribution.
   This family function directly models the two shape parameters of the
   associated beta distribution rather than the probability of
-  success (however, see \bold{Note} below). 
+  success (however, see \bold{Note} below).
   The model can be written
   \eqn{T|P=p \sim Binomial(N,p)}{T|P=p ~ Binomial(N,p)}
   where \eqn{P} has a beta distribution with shape parameters
@@ -67,7 +67,7 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
   That is, \eqn{Y} is the \emph{proportion} of successes. Like
   \code{\link{binomialff}}, the fitted values are the
   estimated probability
-  of success (i.e., \eqn{E[Y]} and not \eqn{E[T]}) 
+  of success (i.e., \eqn{E[Y]} and not \eqn{E[T]})
   and the prior weights \eqn{N} are attached separately on the
   object in a slot.
 
@@ -80,13 +80,13 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
    with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
    Recall \eqn{Y = T/N} is the real response being modelled.
 
-   
+
   The default model is \eqn{\eta_1 = \log(\alpha)}{eta1 = log(alpha)}
   and \eqn{\eta_2 = \log(\beta)}{eta2 = log(beta)} because both
   parameters are positive.
-  The mean (of \eqn{Y}) is 
+  The mean (of \eqn{Y}) is
   \eqn{p = \mu = \alpha / (\alpha + \beta)}{p = mu = alpha / (alpha + beta)}
-  and the variance (of \eqn{Y}) is 
+  and the variance (of \eqn{Y}) is
   \eqn{\mu(1-\mu)(1+(N-1)\rho)/N}{mu(1-mu)(1+(N-1)rho)/N}.
   Here, the correlation \eqn{\rho}{rho} is given by
   \eqn{1/(1 + \alpha + \beta)}{1/(1 + alpha + beta)}
@@ -98,9 +98,9 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
 
   This family function uses Fisher scoring. The two diagonal
   elements of the second-order expected
-  derivatives with respect to \eqn{\alpha}{alpha} and 
-  \eqn{\beta}{beta} are computed numerically, which may 
-  fail for large \eqn{\alpha}{alpha}, \eqn{\beta}{beta}, 
+  derivatives with respect to \eqn{\alpha}{alpha} and
+  \eqn{\beta}{beta} are computed numerically, which may
+  fail for large \eqn{\alpha}{alpha}, \eqn{\beta}{beta},
   \eqn{N} or else take a long time.
 
 
@@ -140,10 +140,10 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
 \author{ T. W. Yee }
 \note{
   This function processes the input in the same way
-  as \code{\link{binomialff}}. But it does not handle 
+  as \code{\link{binomialff}}. But it does not handle
   the case \eqn{N=1} very well because there are two
   parameters to estimate, not one, for each row of the input.
-  Cases where \eqn{N=1} can be omitted via the 
+  Cases where \eqn{N=1} can be omitted via the
   \code{subset} argument of \code{\link{vglm}}.
 
 
@@ -161,7 +161,7 @@ betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
   is currently not implemented in the \pkg{VGAM} package as it has
   range-restrictions for the correlation parameter that are currently
   too difficult to handle in this package.
-  
+
 
 }
 \section{Warning }{

@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Poisson Distribution (Yip (1988) algorithm) }
 \description{
-  Fits a zero-inflated Poisson distribution based on Yip (1988). 
+  Fits a zero-inflated Poisson distribution based on Yip (1988).
 
 }
 \usage{
@@ -16,13 +16,13 @@ yip88(link = "loge", n.arg = NULL, imethod = 1)
   See \code{\link{Links}} for more choices.
 
   }
-  \item{n.arg}{ 
+  \item{n.arg}{
    The total number of observations in the data set. Needed when the
    response variable has all the zeros deleted from it, so that the
    number of zeros can be determined.
 
   }
-  \item{imethod}{ 
+  \item{imethod}{
    Details at \code{\link{CommonVGAMffArguments}}.
 
 
@@ -37,7 +37,7 @@ yip88(link = "loge", n.arg = NULL, imethod = 1)
 
   The probability function of \eqn{Y} is 0 with probability
   \eqn{\phi}{phi}, and
-  Poisson(\eqn{\lambda}{lambda}) with probability \eqn{1-\phi}{1-phi}. 
+  Poisson(\eqn{\lambda}{lambda}) with probability \eqn{1-\phi}{1-phi}.
   Thus
   \deqn{P(Y=0) =\phi + (1-\phi) P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
@@ -59,7 +59,7 @@ yip88(link = "loge", n.arg = NULL, imethod = 1)
 
 
 }
-\references{ 
+\references{
 
 
 Yip, P. (1988)
@@ -108,7 +108,7 @@ model.
 
 
 }
-\seealso{ 
+\seealso{
   \code{\link{zipoisson}},
   \code{\link{Zipois}},
   \code{\link{zapoisson}},
@@ -128,16 +128,16 @@ table(y)
 fit1 <- vglm(y ~ 1, yip88(n = length(y)), subset = y > 0)
 fit2 <- vglm(y ~ 1, yip88, trace = TRUE, crit = "coef")
 (true.mean <- (1-phi) * lambda)
-mean(y) 
+mean(y)
 head(fitted(fit1))
 fit1@misc$pstr0  # The estimate of phi
 
-# Compare the ZIP with the positive Poisson distribution 
+# Compare the ZIP with the positive Poisson distribution
 pp <- vglm(y ~ 1, pospoisson, subset = y > 0, crit = "c")
 coef(pp)
 Coef(pp)
-coef(fit1) - coef(pp)            # Same 
-head(fitted(fit1) - fitted(pp))  # Different 
+coef(fit1) - coef(pp)            # Same
+head(fitted(fit1) - fitted(pp))  # Different
 
 # Another example (Angers and Biswas, 2003) ---------------------
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))

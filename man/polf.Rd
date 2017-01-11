@@ -32,10 +32,10 @@ polf(theta, cutpoint = NULL,
   }
 }
 \details{
-  The Poisson-ordinal link function (POLF) can be applied to a 
+  The Poisson-ordinal link function (POLF) can be applied to a
   parameter lying in the unit interval.
   Its purpose is to link cumulative probabilities associated with
-  an ordinal response coming from an underlying Poisson distribution. 
+  an ordinal response coming from an underlying Poisson distribution.
   If the cutpoint is zero then a complementary log-log link is used.
 
 
@@ -53,7 +53,7 @@ polf(theta, cutpoint = NULL,
 }
 \references{
   Yee, T. W. (2012)
-  \emph{Ordinal ordination with normalizing link functions for count data}, 
+  \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 
 
@@ -83,7 +83,7 @@ polf(theta, cutpoint = NULL,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{ordpoisson}},
   \code{\link{poissonff}},

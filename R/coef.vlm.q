@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -24,11 +24,11 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
       stop("cannot have 'matrix.out = TRUE' and 'colon = TRUE'")
     if (!label)
       stop("cannot have 'label = FALSE' and 'colon = TRUE'")
-    
+
     d1 <- object@misc$colnames.x
     Hlist <- object@constraints
     M <- object@misc$M
-    ncolHlist <- unlist(lapply(Hlist, ncol)) 
+    ncolHlist <- unlist(lapply(Hlist, ncol))
     new.labs <- vlabel(xn = d1, ncolHlist, M = M, colon = colon)
     names(ans) <- new.labs
     return(ans)
@@ -41,7 +41,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
     return(ans)
 
 
-  
+
   ncolx <- object@misc$p  # = length(object@constraints)
   M <- object@misc$M
 
@@ -52,9 +52,9 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
     Bmat <- matrix(NA_real_, nrow = ncolx, ncol = M)
 
     if (!matrix.out)
-      return(ans) 
+      return(ans)
 
-    ncolHlist <- unlist(lapply(Hlist, ncol)) 
+    ncolHlist <- unlist(lapply(Hlist, ncol))
     nasgn <- names(Hlist)
     temp <- c(0, cumsum(ncolHlist))
     for (ii in seq_along(nasgn)) {
@@ -89,7 +89,7 @@ setMethod("coef", "vglm", function(object, ...)
 
 
 
-  
+
 setMethod("coefficients", "summary.vglm", function(object, ...)
           object@coef3)
 setMethod("coef",         "summary.vglm", function(object, ...)
@@ -128,7 +128,7 @@ Coef.vlm <- function(object, ...) {
 
     if (!is.list(use.earg <- object@misc$earg))
       use.earg <- list()
-    
+
     answer <-
       eta2theta(rbind(coefvlm(object)),
                 link = object@misc$link,

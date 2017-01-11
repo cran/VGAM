@@ -36,7 +36,7 @@ levy(location = 0, lscale = "loge", iscale = NULL)
 }
 \details{
   The Levy distribution is one of three stable distributions
-  whose density function has a tractable form. 
+  whose density function has a tractable form.
   The formula for the density is
  \deqn{f(y;b) = \sqrt{\frac{b}{2\pi}}
        \exp \left( \frac{-b}{2(y - a)}
@@ -44,7 +44,7 @@ levy(location = 0, lscale = "loge", iscale = NULL)
   f(y;b) = sqrt(b / (2 pi))
        exp( -b / (2(y - a))) / (y - a)^{3/2} }
   where \eqn{a<y<\infty}{a<y<Inf} and \eqn{b>0}.
-  Note that if \eqn{a} is very close to \code{min(y)} 
+  Note that if \eqn{a} is very close to \code{min(y)}
   (where \code{y} is the response), then numerical problem will occur.
   The mean does not exist.
   The median is returned as the fitted values.
@@ -58,7 +58,7 @@ levy(location = 0, lscale = "loge", iscale = NULL)
 
 
 }
-\references{ 
+\references{
   Nolan, J. P. (2005)
   \emph{Stable Distributions: Models for Heavy Tailed Data}.
 
@@ -80,7 +80,7 @@ levy(location = 0, lscale = "loge", iscale = NULL)
 %}
 
 
-\seealso{ 
+\seealso{
   The Nolan article was at
   \code{http://academic2.american.edu/~jpnolan/stable/chap1.pdf}.
 
@@ -116,7 +116,7 @@ c(median = with(ldata, median(y2)), fitted.median = head(fitted(fit2), 1))
 
 
 %%\eqn{\delta + \gamma \Gamma(-0.5) / (2\sqrt{\pi})}{delta +
-%%               gamma * gamma(-0.5) / (2*sqrt(pi))} 
+%%               gamma * gamma(-0.5) / (2*sqrt(pi))}
 %%where \code{gamma} is a parameter but \code{gamma()} is the gamma function.
 
 %%mygamma = exp(1)    # log link ==> 1 is the answer

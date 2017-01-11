@@ -44,7 +44,7 @@ Class \code{"\linkS4class{vector}"}, by class "matrix", distance 4, with explici
 
 \section{Warning }{
   This code has not been thoroughly tested.
-  
+
 }
 
 \seealso{

@@ -20,7 +20,7 @@ cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = "sd")
   Parameter link functions
   applied to the mean and standard deviation parameters.
   See \code{\link{Links}} for more choices.
-  The standard deviation is a positive quantity, therefore a log link 
+  The standard deviation is a positive quantity, therefore a log link
   is the default.
 
 
@@ -69,7 +69,7 @@ cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = "sd")
 %}
 
 \author{ T. W. Yee }
-\note{ 
+\note{
   This function, which is an alternative to \code{\link{tobit}},
   cannot handle a matrix response
   and uses different working weights.

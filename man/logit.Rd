@@ -39,8 +39,8 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 
   \item{min, max}{
   For \code{extlogit},
-  \code{min} gives \eqn{A}, 
-  \code{max} gives \eqn{B}, and for out of range values, 
+  \code{min} gives \eqn{A},
+  \code{max} gives \eqn{B}, and for out of range values,
   \code{bminvalue} and \code{bmaxvalue}.
 
   }
@@ -54,7 +54,7 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 }
 \details{
   The logit link function is very commonly used for parameters that
-  lie in the unit interval. 
+  lie in the unit interval.
   Numerical values of \code{theta} close to 0 or 1 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
@@ -69,7 +69,7 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
   logit function.
   Numerical values of \code{theta} close to \eqn{A} or \eqn{B} or out of range
   result in
-  \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}. 
+  \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
   However these can be replaced by values \eqn{bminvalue} and
   \eqn{bmaxvalue} first before computing the link function.
 
@@ -115,7 +115,7 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}},
     \code{\link{logitoffsetlink}},
     \code{\link{probit}},

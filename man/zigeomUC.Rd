@@ -24,7 +24,7 @@ rzigeom(n, prob, pstr0 = 0)
   \item{p}{vector of probabilities.}
   \item{prob}{see \code{\link[stats]{dgeom}}.}
   \item{n}{ Same as in \code{\link[stats]{runif}}.  }
-  \item{pstr0}{ 
+  \item{pstr0}{
   Probability of structural zero (ignoring the geometric distribution),
   called \eqn{\phi}{phi}. The default value corresponds
   to the response having an ordinary geometric distribution.
@@ -35,7 +35,7 @@ rzigeom(n, prob, pstr0 = 0)
 \details{
   The probability function of \eqn{Y} is 0 with probability
   \eqn{\phi}{phi}, and \eqn{geometric(prob)} with
-  probability \eqn{1-\phi}{1-phi}. Thus 
+  probability \eqn{1-\phi}{1-phi}. Thus
   \deqn{P(Y=0) =\phi + (1-\phi) P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
   where \eqn{W} is distributed \eqn{geometric(prob)}.
@@ -52,20 +52,20 @@ rzigeom(n, prob, pstr0 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
     The argument \code{pstr0} is recycled to the required length, and
     must have values which lie in the interval \eqn{[0,1]}.
 
   These functions actually allow for \emph{zero-deflation}.
   That is, the resulting probability of a zero count
   is \emph{less than} the nominal value of the parent
-  distribution. 
+  distribution.
   See \code{\link{Zipois}} for more information.
 
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{zigeometric}},
     \code{\link[stats]{dgeom}}.
 

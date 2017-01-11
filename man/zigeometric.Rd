@@ -20,7 +20,7 @@ zigeometricff(lprob = "logit", lonempstr0 = "logit",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lpstr0, lprob}{ 
+  \item{lpstr0, lprob}{
   Link functions for the parameters
   \eqn{\phi}{phi}
   and
@@ -62,7 +62,7 @@ zigeometricff(lprob = "logit", lonempstr0 = "logit",
 
 
   }
-  \item{zero, imethod}{ 
+  \item{zero, imethod}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -72,7 +72,7 @@ zigeometricff(lprob = "logit", lonempstr0 = "logit",
   Function \code{zigeometric()} is based on
   \deqn{P(Y=0) =  \phi + (1-\phi) p,}{%
         P(Y=0) =  phi + (1-phi) * prob,}
-  for \eqn{y=0}, and 
+  for \eqn{y=0}, and
   \deqn{P(Y=y) = (1-\phi) p (1 - p)^{y}.}{%
         P(Y=y) = (1-phi) * prob * (1 - prob)^y.}
   for \eqn{y=1,2,\ldots}.
@@ -140,7 +140,7 @@ zigeometricff(lprob = "logit", lonempstr0 = "logit",
 %  Half-stepping is not uncommon.
 %  If failure to converge occurs, make use of the argument \code{ipstr0}.
 %
-%} 
+%}
 
 \seealso{
   \code{\link{rzigeom}},

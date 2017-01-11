@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -29,7 +29,7 @@ rrvglm.control <-
            Norrr = NA,
 
            noWarning = FALSE,
- 
+
            trace = FALSE,
            Use.Init.Poisson.QO = FALSE,
            checkwz = TRUE,
@@ -55,7 +55,7 @@ rrvglm.control <-
   Algorithm <- match.arg(Algorithm, c("alternating", "derivative"))[1]
 
   if (Svd.arg)
-    Corner <- FALSE 
+    Corner <- FALSE
 
   if (!is.Numeric(Rank, positive = TRUE,
                   length.arg = 1, integer.valued = TRUE))
@@ -159,7 +159,7 @@ rrvglm.control <-
   }
 
 
-  ans$half.stepsizing <- FALSE  # Turn it off 
+  ans$half.stepsizing <- FALSE  # Turn it off
   ans
 }
 
@@ -185,8 +185,9 @@ setMethod("summary", "rrvglm",
 
 
 
-show.summary.rrvglm <- function(x, digits = NULL,
-                                quote = TRUE, prefix = "") {
+show.summary.rrvglm <-
+  function(x, digits = NULL, quote = TRUE, prefix = "",
+           signif.stars = NULL) {
 
 
   show.summary.vglm(x, digits = digits, quote = quote, prefix = prefix)

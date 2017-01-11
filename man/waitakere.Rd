@@ -4,7 +4,7 @@
 \title{Waitakere Ranges Data}
 \description{
   The \code{waitakere} data frame has 579 rows and 18 columns.
-  Altitude is explanatory, and there are binary responses 
+  Altitude is explanatory, and there are binary responses
   (presence/absence = 1/0 respectively) for 17 plant species.
 
 }
@@ -35,17 +35,17 @@
 \details{
   These were collected from the Waitakere Ranges, a small forest in northern
   Auckland, New Zealand. At 579 sites in the forest, the presence/absence
-  of 17 plant species was recorded, as well as the altitude. 
+  of 17 plant species was recorded, as well as the altitude.
   Each site was of area size 200\eqn{m^2}{m^2}.
 
 
 }
 \source{
-  Dr Neil Mitchell, University of Auckland. 
+  Dr Neil Mitchell, University of Auckland.
 
 }
 %\references{
-%None. 
+%None.
 %}
 \seealso{
     \code{\link{hunua}}.

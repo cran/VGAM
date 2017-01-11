@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,7 +35,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     osparv <- lapply(data, attr, "spar")  # "o" for original
     odfvec <- lapply(data, attr, "df")
     s.xargument <- lapply(data, attr, "s.xargument")
-    
+
     for (kk in seq_along(nwhich)) {
       ii <- nwhich[kk]
 
@@ -48,7 +48,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
                 "'spar' are used for variable '", s.xargument, "'")
       }
       osparv[[ii]] <- rep_len(temp, ncolHlist[ii])  # Recycle
-    
+
       temp <- odfvec[[ii]]
       if (!is.numeric(temp) || any(temp < 1)) {
         stop("argument 'df' is non-numeric or less than 1")
@@ -73,12 +73,12 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     odfvec <- unlist(odfvec)
     smooth.frame$osparv <- osparv  # Original
     smooth.frame$odfvec <- odfvec  # Original
-    
+
     if (sum(smooth.frame$dfvec[smooth.frame$osparv == 0]) + pbig >
       smooth.frame$n.lm * sum(ncolHlist[nwhich])) {
       stop("too many parameters/dof for data on hand")
     }
-    
+
     xnrow.X.vlm <- labels(X.vlm.save)[[2]]
     asgn <- attr(X.vlm.save, "assign")
     aa <- NULL
@@ -185,7 +185,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
   if (exists("flush.console"))
     flush.console()
- 
+
 
 
 
@@ -269,8 +269,8 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
     nl.df = nl.df,
     qr = list(qr = fit$qr, rank = qrank,
               qraux = fit$qraux, pivot = fit$qpivot),
-    R = R, 
-    rank = qrank, 
+    R = R,
+    rank = qrank,
     residuals = fit$y - fit$etamat,
     ResSS = fit$doubvec[2],
     smomat = fit$smomat,

@@ -11,7 +11,8 @@
 
 }
 \usage{
-fittedvlm(object, drop = FALSE, type.fitted = NULL, ...)
+fittedvlm(object, drop = FALSE, type.fitted = NULL,
+          percentiles = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +41,13 @@ fittedvlm(object, drop = FALSE, type.fitted = NULL, ...)
   It is recomputed from the model after convergence.
   Note: this is an experimental feature and not all
   \pkg{VGAM} family functions have this implemented yet.
+  See \code{\link{CommonVGAMffArguments}} for more details.
+
+
+
+  }
+  \item{percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for details.
 
 
 
@@ -83,10 +91,10 @@ Chambers, J. M. and T. J. Hastie (eds) (1992)
 \note{
   This function is one of several extractor functions for
   the \pkg{VGAM} package. Others include \code{coef},
-  \code{deviance}, \code{weights} and \code{constraints} etc. 
+  \code{deviance}, \code{weights} and \code{constraints} etc.
   This function is equivalent to the methods function for the
   generic function \code{fitted.values}.
-  
+
 
   If \code{fit} is a VLM or VGLM then \code{fitted(fit)} and
   \code{predict(fit, type = "response")} should be equivalent
@@ -112,7 +120,7 @@ pneumo <- transform(pneumo, let = log(exposure.time))
 fitted(fit1)
 
 # LMS quantile regression example 2
-fit2 <- vgam(BMI ~ s(age, df = c(4, 2)), 
+fit2 <- vgam(BMI ~ s(age, df = c(4, 2)),
              lms.bcn(zero = 1), data = bmi.nz, trace = TRUE)
 head(predict(fit2, type = "response"))  # Equal to the the following two:
 head(fitted(fit2))

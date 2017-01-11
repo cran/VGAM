@@ -32,7 +32,7 @@ gamma1(link = "loge", zero = NULL)
   Here, \eqn{\Gamma(shape)}{gamma(shape)} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
   The mean of \eqn{Y} (returned as the fitted values)
-  is \eqn{\mu=shape}{mu=shape}, and the variance is 
+  is \eqn{\mu=shape}{mu=shape}, and the variance is
   \eqn{\sigma^2 = shape}{sigma^2 = shape}.
 
 
@@ -48,7 +48,7 @@ gamma1(link = "loge", zero = NULL)
   Most standard texts on statistical distributions describe
   the 1-parameter gamma distribution, e.g.,
 
-  
+
 Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
@@ -57,7 +57,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 \author{ T. W. Yee }
 \note{
-  This \pkg{VGAM} family function can handle a multiple 
+  This \pkg{VGAM} family function can handle a multiple
   responses, which is inputted as a matrix.
 
 

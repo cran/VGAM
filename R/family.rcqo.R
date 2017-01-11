@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -398,7 +398,7 @@ getInitVals <- function(gvals, llfun, ...) {
   ff <- function(myx, ...) LLFUN(myx, ...)
   objFun <- gvals
   for (ii in seq_along(gvals))
-    objFun[ii] <- ff(myx = gvals[ii], ...) 
+    objFun[ii] <- ff(myx = gvals[ii], ...)
   try.this <- gvals[objFun == max(objFun)]  # Usually scalar, maybe vector
   try.this
 }

@@ -13,7 +13,7 @@ betageometric(lprob = "logit", lshape = "loge",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lprob, lshape}{ 
+  \item{lprob, lshape}{
   Parameter link functions applied to the
   parameters \eqn{p}{prob} and \eqn{\phi}{phi}
   (called \code{prob} and \code{shape} below).
@@ -22,15 +22,15 @@ betageometric(lprob = "logit", lshape = "loge",
 
 
   }
-  \item{iprob, ishape}{ 
-  Numeric. 
+  \item{iprob, ishape}{
+  Numeric.
   Initial values for the two parameters.
   A \code{NULL} means a value is computed internally.
 
 
   }
-  \item{moreSummation}{ 
-  Integer, of length 2. 
+  \item{moreSummation}{
+  Integer, of length 2.
   When computing the expected information matrix a series summation from
   0 to \code{moreSummation[1]*max(y)+moreSummation[2]} is made, in which the
   upper limit is an approximation to infinity.
@@ -38,8 +38,8 @@ betageometric(lprob = "logit", lshape = "loge",
 
 
   }
-  \item{tolerance}{ 
-  Positive numeric. 
+  \item{tolerance}{
+  Positive numeric.
   When all terms are less than this then the series is deemed to have
   converged.
 
@@ -60,13 +60,13 @@ betageometric(lprob = "logit", lshape = "loge",
   \eqn{p}{prob} are generated from a standard beta distribution with
   shape parameters \code{shape1} and \code{shape2}.
   The parameterization here is to focus on the parameters
-  \eqn{p}{prob} and 
+  \eqn{p}{prob} and
   \eqn{\phi = 1/(shape1+shape2)}{phi = 1/(shape1+shape2)},
   where \eqn{\phi}{phi} is \code{shape}.
   The default link functions for these ensure that the appropriate range
   of the parameters is maintained.
   The mean of \eqn{Y} is
-  \eqn{E(Y) = shape2 / (shape1-1) = (1-p) / (p-\phi)}{E(Y) = 
+  \eqn{E(Y) = shape2 / (shape1-1) = (1-p) / (p-\phi)}{E(Y) =
        shape2 / (shape1-1) = (1-prob) / (prob-phi)}
   if \code{shape1 > 1}, and if so, then this is returned as
   the fitted values.
@@ -113,7 +113,7 @@ betageometric(lprob = "logit", lshape = "loge",
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{geometric}},
   \code{\link{betaff}},
   \code{\link{rbetageom}}.

@@ -74,7 +74,7 @@ logc(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}},
     \code{\link{loge}},
     \code{\link{cloglog}},

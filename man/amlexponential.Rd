@@ -117,7 +117,7 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   See Equation (1.6) of Efron (1992).
 
 
-} 
+}
 \seealso{
   \code{\link{exponential}},
   \code{\link{amlbinomial}},

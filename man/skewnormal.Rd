@@ -91,7 +91,7 @@ skewnormal(lshape = "identitylink", ishape = NULL, nsimEIM = NULL)
   and thus produces influential problems.
 
 
-}  
+}
 \seealso{
   \code{\link{skewnorm}},
   \code{\link{uninormal}},

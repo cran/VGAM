@@ -63,7 +63,7 @@ rpospois(n, lambda)
 
 
 }
-%\references{ 
+%\references{
 %None.
 %}
 
@@ -82,7 +82,7 @@ rpospois(n, lambda)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{pospoisson}},
   \code{\link{zapoisson}},
   \code{\link{zipoisson}},

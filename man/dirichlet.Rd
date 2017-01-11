@@ -62,7 +62,7 @@ dirichlet(link = "loge", parallel = FALSE, zero = NULL, imethod = 1)
 
   The Dirichlet distribution can be motivated by considering the random variables
   \eqn{(G_1,\ldots,G_{M})^T}{(G_1,\ldots,G_M)^T} which are each independent
-  and identically distributed as a gamma distribution with density 
+  and identically distributed as a gamma distribution with density
   \eqn{f(g_j)=g_j^{\alpha_j - 1} e^{-g_j} / \Gamma(\alpha_j)}{f(g_j)=
               g_j^(alpha_j - 1) e^(-g_j) / gamma(alpha_j)}.
   Then the Dirichlet distribution arises when
@@ -78,7 +78,7 @@ dirichlet(link = "loge", parallel = FALSE, zero = NULL, imethod = 1)
 
 
   When fitted, the \code{fitted.values} slot of the object contains the
-  \eqn{M}-column matrix of means. 
+  \eqn{M}-column matrix of means.
 
 
 }

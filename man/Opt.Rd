@@ -35,7 +35,7 @@ Opt(object, ...)
   For quadratic ordination models there is a formula
   for the optimum but for additive ordination models the
   optimum must be searched for numerically. If it occurs
-  on the boundary, then the optimum is undefined. 
+  on the boundary, then the optimum is undefined.
   At an optimum, the fitted value of the response is
   called the \emph{maximum}.
 

@@ -11,7 +11,7 @@ cdf.lmscreg(object, newdata = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ A \pkg{VGAM} quantile regression model, i.e., 
+  \item{object}{ A \pkg{VGAM} quantile regression model, i.e.,
   an object produced by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}} with a family function beginning with
   \code{"lms."}.
@@ -24,14 +24,14 @@ cdf.lmscreg(object, newdata = NULL, ...)
 
   }
   \item{\dots}{ Parameters which are passed into functions such as
-  \code{cdf.lms.yjn}. 
+  \code{cdf.lms.yjn}.
 
 
   }
 }
 \details{
   The CDFs returned here are values lying in [0,1] giving the relative
-  probabilities associated with the quantiles \code{newdata}. 
+  probabilities associated with the quantiles \code{newdata}.
   For example, a value near 0.75 means it is close to the upper quartile
   of the distribution.
 
@@ -42,7 +42,7 @@ cdf.lmscreg(object, newdata = NULL, ...)
 
 
 }
-\references{ 
+\references{
 
 
 Yee, T. W. (2004)
@@ -59,19 +59,19 @@ Quantile regression via vector generalized additive models.
 
 }
 \author{ Thomas W. Yee }
-\note{ 
+\note{
  The data are treated like quantiles, and the percentiles
 are returned. The opposite is performed by
 \code{\link{qtplot.lmscreg}}.
 
 
 The CDF values of the model have been placed in
-\code{@post$cdf} when the model was fitted. 
+\code{@post$cdf} when the model was fitted.
 
 
 }
 
-\seealso{ 
+\seealso{
 \code{\link{deplot.lmscreg}},
 \code{\link{qtplot.lmscreg}},
 \code{\link{lms.bcn}},
@@ -83,7 +83,7 @@ The CDF values of the model have been placed in
 \examples{
 fit <- vgam(BMI ~ s(age, df=c(4, 2)), lms.bcn(zero = 1), data = bmi.nz)
 head(fit@post$cdf)
-head(cdf(fit))  # Same 
+head(cdf(fit))  # Same
 head(depvar(fit))
 head(fitted(fit))
 

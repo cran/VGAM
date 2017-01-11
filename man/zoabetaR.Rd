@@ -15,18 +15,18 @@ zoabetaR(lshape1 = "loge", lshape2 = "loge", lpobs0 = "logit",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape1, lshape2, lpobs0, lpobs1}{ 
+  \item{lshape1, lshape2, lpobs0, lpobs1}{
   Details at \code{\link{CommonVGAMffArguments}}.
   See \code{\link{Links}} for more choices.
 
 
   }
-  \item{ishape1, ishape2}{ 
+  \item{ishape1, ishape2}{
   Details at \code{\link{CommonVGAMffArguments}}.
 
 
   }
-  \item{trim, zero}{ 
+  \item{trim, zero}{
   Same as \code{\link{betaR}}.
 
 
@@ -65,7 +65,7 @@ zoabetaR(lshape1 = "loge", lshape2 = "loge", lpobs0 = "logit",
 
 
 }
-%\references{ 
+%\references{
 
 
 %}
@@ -74,7 +74,7 @@ zoabetaR(lshape1 = "loge", lshape2 = "loge", lpobs0 = "logit",
 %}
 
 
-\seealso{ 
+\seealso{
   \code{\link{Zoabeta}},
   \code{\link{betaR}},
   \code{\link{betaff}},

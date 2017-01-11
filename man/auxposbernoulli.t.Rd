@@ -25,7 +25,7 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
 
   }
   \item{rename, name}{
-  If \code{rename = TRUE} then the behavioural effects indicator 
+  If \code{rename = TRUE} then the behavioural effects indicator
   are named using the value of \code{name} as the prefix.
   If \code{FALSE} then use the same column names as \code{y}.
 
@@ -49,12 +49,12 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
       In any particular row there are 0s up to
       the first capture. Then there are 1s thereafter.
 
-      
+
     }
     \item{cap1}{
       A vector specifying which time occasion the animal
       was first captured.
-      
+
 
     }
     \item{y0i}{
@@ -63,12 +63,12 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
     }
     \item{yr0i}{
       Number of noncaptures after the first capture.
-      
+
 
     }
     \item{yr1i}{
       Number of recaptures after the first capture.
-      
+
 
     }
   }
@@ -94,7 +94,7 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{posbernoulli.t}},
   \code{\link{deermice}}.
 

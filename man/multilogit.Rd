@@ -84,7 +84,7 @@ multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{Links}},
     \code{\link{multinomial}},
     \code{\link{logit}},

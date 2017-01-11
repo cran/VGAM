@@ -16,22 +16,22 @@ double.expbinomial(lmean = "logit", ldispersion = "logit",
 %                  idispersion = 0.25, zero = 2
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lmean, ldispersion}{ 
+  \item{lmean, ldispersion}{
   Link functions applied to the two parameters, called
   \eqn{\mu}{mu} and \eqn{\theta}{theta} respectively below.
   See \code{\link{Links}} for more choices.
-  The defaults cause the parameters to be restricted to \eqn{(0,1)}. 
+  The defaults cause the parameters to be restricted to \eqn{(0,1)}.
 
 
   }
-  \item{idispersion}{ 
+  \item{idispersion}{
   Initial value for the dispersion parameter.
   If given, it must be in range, and is recyled to the necessary length.
   Use this argument if convergence failure occurs.
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   A vector specifying which
   linear/additive predictor is to be modelled as intercept-only.
   If assigned, the single value can be either \code{1} or \code{2}.

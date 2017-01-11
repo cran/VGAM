@@ -13,7 +13,8 @@
 }
 \usage{
 dposnegbin(x, size, prob = NULL, munb = NULL, log = FALSE)
-pposnegbin(q, size, prob = NULL, munb = NULL)
+pposnegbin(q, size, prob = NULL, munb = NULL,
+           lower.tail = TRUE, log.p = FALSE)
 qposnegbin(p, size, prob = NULL, munb = NULL)
 rposnegbin(n, size, prob = NULL, munb = NULL)
 }
@@ -49,6 +50,12 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
 
 
   }
+  \item{log.p, lower.tail}{
+  Same arguments as that of an ordinary negative binomial distribution
+  (see \code{\link[stats:NegBinomial]{pnbinom}}).
+
+
+  }
 }
 \details{
   The positive-negative binomial distribution is a negative binomial
@@ -80,7 +87,7 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
 
 
 }
-\references{ 
+\references{
 
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and Lindenmayer,
 D. B. (1996)
@@ -102,7 +109,7 @@ for counts with extra zeros.
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{posnegbinomial}},
   \code{\link{zanegbinomial}},
   \code{\link{zinegbinomial}},

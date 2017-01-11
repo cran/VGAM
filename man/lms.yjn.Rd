@@ -4,7 +4,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ LMS Quantile Regression with a Yeo-Johnson Transformation to Normality }
 \description{
-  LMS quantile regression with the Yeo-Johnson transformation 
+  LMS quantile regression with the Yeo-Johnson transformation
   to normality.
 }
 \usage{
@@ -22,14 +22,14 @@ lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
 \arguments{
 
   \item{percentiles}{
-  A numerical vector containing values between 0 and 100, 
+  A numerical vector containing values between 0 and 100,
   which are the quantiles. They will be returned as `fitted values'.
 
   }
   \item{zero}{
   See \code{\link{lms.bcn}}.
 
-  } 
+  }
   \item{llambda, lmu, lsigma}{
   See \code{\link{lms.bcn}}.
 
@@ -48,7 +48,7 @@ lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
   Number of abscissae used in the Gaussian integration
   scheme to work out elements of the weight matrices.
   The values given are the possible choices, with the first value
-  being the default. 
+  being the default.
   The larger the value, the more accurate the approximation is likely
   to be but involving more computational expense.
 
@@ -57,8 +57,8 @@ lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
   A value to be added to the response y, for the purpose
   of centering the response before fitting the model to the data.
   The default value, \code{NULL}, means \code{-median(y)} is used, so that
-  the response actually used has median zero. The \code{yoffset} is 
-  saved on the object and used during prediction. 
+  the response actually used has median zero. The \code{yoffset} is
+  saved on the object and used during prediction.
 
   }
   \item{diagW}{
@@ -67,7 +67,7 @@ lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
   be positive-definite. Using the diagonal elements of this matrix results
   in a higher chance of it being positive-definite, however convergence will
   be very slow.
-  If \code{TRUE}, then the first \code{iters.diagW} iterations will 
+  If \code{TRUE}, then the first \code{iters.diagW} iterations will
   use the diagonal of the expected information matrix.
   The default is \code{FALSE}, meaning faster convergence.
 
@@ -102,7 +102,7 @@ lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
 
 
 }
-\references{ 
+\references{
 Yeo, I.-K. and Johnson, R. A. (2000)
 A new family of power transformations to improve normality or symmetry.
 \emph{Biometrika},
@@ -127,7 +127,7 @@ Heidelberg: Physica-Verlag.
 
 }
 \author{ Thomas W. Yee }
-\note{ 
+\note{
 The response may contain both positive and negative values.
 In contrast, the LMS-Box-Cox-normal and LMS-Box-Cox-gamma
 methods only handle a positive response because the
@@ -145,12 +145,12 @@ In that case, try different starting values.
 
 
 The generic function \code{predict}, when applied to a
-\code{lms.yjn} fit, does not add back the \code{yoffset} value. 
+\code{lms.yjn} fit, does not add back the \code{yoffset} value.
 
 
-} 
-\seealso{ 
-  \code{\link{lms.bcn}}, 
+}
+\seealso{
+  \code{\link{lms.bcn}},
   \code{\link{lms.bcg}},
   \code{\link{qtplot.lmscreg}},
   \code{\link{deplot.lmscreg}},

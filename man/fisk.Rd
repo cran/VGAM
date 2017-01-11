@@ -3,21 +3,21 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Fisk Distribution family function }
 \description{
-  Maximum likelihood estimation of the 2-parameter 
+  Maximum likelihood estimation of the 2-parameter
   Fisk distribution.
 
 }
 \usage{
-fisk(lscale = "loge", lshape1.a = "loge", iscale = NULL, 
-    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), 
+fisk(lscale = "loge", lshape1.a = "loge", iscale = NULL,
+    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5),
     gshape1.a = seq(0.75, 4, by = 0.25), probs.y = c(0.25, 0.5, 0.75),
     zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
-  
-  
+
+
   }
 
   \item{lshape1.a, lscale}{
@@ -28,7 +28,7 @@ fisk(lscale = "loge", lshape1.a = "loge", iscale = NULL,
   }
   \item{iscale, ishape1.a, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
-  For \code{imethod = 2} a good initial value for 
+  For \code{imethod = 2} a good initial value for
   \code{iscale} is needed to obtain a good estimate for
   the other parameter.
 
@@ -50,7 +50,7 @@ fisk(lscale = "loge", lshape1.a = "loge", iscale = NULL,
   The 2-parameter Fisk (aka log-logistic) distribution is the 4-parameter
   generalized beta II distribution with shape parameter \eqn{q=p=1}.
   It is also the 3-parameter Singh-Maddala distribution
-  with shape parameter \eqn{q=1}, as well as the 
+  with shape parameter \eqn{q=1}, as well as the
   Dagum distribution with \eqn{p=1}.
   More details can be found in Kleiber and Kotz (2003).
 

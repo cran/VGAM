@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fitting a Dirichlet-Multinomial Distribution }
 \description{
-  Fits a Dirichlet-multinomial distribution to a matrix of 
+  Fits a Dirichlet-multinomial distribution to a matrix of
   non-negative integers.
 }
 \usage{
@@ -13,13 +13,13 @@ dirmul.old(link = "loge", ialpha = 0.01, parallel = FALSE, zero = NULL)
 \arguments{
   \item{link}{
   Link function applied to each of the \eqn{M} (positive)
-  shape parameters \eqn{\alpha_j}{alpha_j} for \eqn{j=1,\ldots,M}. 
+  shape parameters \eqn{\alpha_j}{alpha_j} for \eqn{j=1,\ldots,M}.
   See \code{\link{Links}} for more choices.
   Here, \eqn{M} is the number of columns of the response matrix.
 
   }
   \item{ialpha}{
-  Numeric vector. Initial values for the 
+  Numeric vector. Initial values for the
   \code{alpha} vector. Must be positive.
   Recycled to length \eqn{M}.
 
@@ -41,7 +41,7 @@ dirmul.old(link = "loge", ialpha = 0.01, parallel = FALSE, zero = NULL)
   The Dirichlet-multinomial distribution, which is somewhat similar to a
   Dirichlet distribution, has probability function
   \deqn{P(Y_1=y_1,\ldots,Y_M=y_M) =
-     {2y_{*} \choose {y_1,\ldots,y_M}} 
+     {2y_{*} \choose {y_1,\ldots,y_M}}
         \frac{\Gamma(\alpha_{+})}{\Gamma(2y_{*}+\alpha_{+})}
         \prod_{j=1}^M \frac{\Gamma(y_j+\alpha_{j})}{\Gamma(\alpha_{j})}}{%
         P(Y_1=y_1,\ldots,Y_M=y_M) = C_{y_1,\ldots,y_M}^{2y_{*}}

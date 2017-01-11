@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Bivariate Student-t Family Function }
 \description{
-  Estimate the degrees of freedom and correlation parameters of 
+  Estimate the degrees of freedom and correlation parameters of
   the (bivariate) Student-t
   distribution by maximum likelihood estimation.
 

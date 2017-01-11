@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Scaled Student t Distribution with 2 df Family Function }
 \description{
-  Estimates the location and scale parameters of 
+  Estimates the location and scale parameters of
   a scaled Student t distribution with 2 degrees of freedom,
   by maximum likelihood estimation.
 
@@ -28,7 +28,7 @@ sc.studentt2(percentile = 50, llocation = "identitylink", lscale = "loge",
 
 
   }
-  \item{ilocation, iscale, imethod, zero}{ 
+  \item{ilocation, iscale, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for details.
 
 
@@ -82,7 +82,7 @@ sc.studentt2(percentile = 50, llocation = "identitylink", lscale = "loge",
 
 
 }
-\references{ 
+\references{
 
 Koenker, R. (1993)
 When are expectiles percentiles? (solution)
@@ -96,7 +96,7 @@ When are expectiles percentiles? (solution)
 %
 %}
 
-\seealso{ 
+\seealso{
   \code{\link{dsc.t2}},
   \code{\link{studentt2}}.
 

@@ -42,7 +42,7 @@ dbistudentt(x1, x2, df, rho = 0, log = FALSE)
 
 % \item{rho}{
 % See \code{\link{bistudenttal}}.
-% } 
+% }
 
 
 

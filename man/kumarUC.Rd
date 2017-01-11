@@ -46,7 +46,7 @@ rkumar(n, shape1, shape2)
 \author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{kumar}}, the \pkg{VGAM} family function
-  for estimating the parameters, 
+  for estimating the parameters,
   for the formula of the probability density function and other details.
 
 

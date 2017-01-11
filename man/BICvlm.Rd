@@ -69,7 +69,7 @@ BICvlm(object, \dots, k = log(nobs(object)))
 \section{Warning }{
   Like \code{\link{AICvlm}}, this code has not been double-checked.
   The general applicability of \code{BIC} for the VGLM/VGAM classes
-  has not been developed fully. 
+  has not been developed fully.
   In particular, \code{BIC} should not be run on some \pkg{VGAM} family
   functions because of violation of certain regularity conditions, etc.
 

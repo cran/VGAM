@@ -17,7 +17,7 @@ quasibinomialff(link = "logit", multiple.responses = FALSE,
   \item{link}{ Link function. See \code{\link{Links}} for more choices.
 
   }
-  \item{multiple.responses}{ 
+  \item{multiple.responses}{
    Multiple responses? If \code{TRUE}, then the response is interpreted
    as \eqn{M} binary responses, where \eqn{M} is the number of columns
    of the response matrix. In this case, the response matrix should have
@@ -30,7 +30,7 @@ quasibinomialff(link = "logit", multiple.responses = FALSE,
 
 
   }
-  \item{onedpar}{ 
+  \item{onedpar}{
   One dispersion parameter? If \code{multiple.responses}, then
   a separate dispersion
   parameter will be computed for each response (column), by default.
@@ -39,7 +39,7 @@ quasibinomialff(link = "logit", multiple.responses = FALSE,
 
 
   }
-  \item{parallel}{ 
+  \item{parallel}{
   A logical or formula. Used only if \code{multiple.responses}
   is \code{TRUE}.  This
   argument allows for the parallelism assumption whereby the regression
@@ -48,7 +48,7 @@ quasibinomialff(link = "logit", multiple.responses = FALSE,
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   Can be an integer-valued vector specifying which linear/additive predictors
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of
@@ -89,7 +89,7 @@ quasibinomialff(link = "logit", multiple.responses = FALSE,
 
 }
 \references{
-  McCullagh, P. and Nelder, J. A. (1989) 
+  McCullagh, P. and Nelder, J. A. (1989)
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
@@ -124,7 +124,7 @@ quasibinomialff(link = "logit", multiple.responses = FALSE,
 
 
 % With the introduction of name spaces for the \pkg{VGAM} package,
-% \code{"ff"} can be dropped for this family function. 
+% \code{"ff"} can be dropped for this family function.
 
 
 }

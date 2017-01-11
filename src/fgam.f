@@ -64,7 +64,8 @@ c     higher order on top of it.
          jp1mid = 1
          do 11 j=ideriv,k
             dbiatx(j,ideriv) = dbiatx(jp1mid,1)
-   11       jp1mid = jp1mid + 1
+            jp1mid = jp1mid + 1
+   11    continue
          ideriv = ideriv - 1
          call bsplvb(t,kp1-ideriv,2,x,left,dbiatx)
    15    continue
@@ -78,13 +79,19 @@ c
       jlow = 1
       do 20 i=1,k
          do 19 j=jlow,k
-   19       a(j,i) = 0d0
+            a(j,i) = 0d0
+   19    continue
          jlow = i
-   20    a(i,i) = 1d0
+         a(i,i) = 1d0
+   20 continue
 c     at this point, a(.,j) contains the b-coeffs for the j-th of the
 c     k  b-splines of interest here.
 c
-      do 40 m=2,mhigh
+c
+c
+c 20161111: was originally
+c     do 40 m=2,mhigh
+      do 400 m=2,mhigh
          kp1mm = kp1 - m
          fkp1mm = dble(kp1mm)
          il = left
@@ -99,9 +106,11 @@ c        i .lt. j  is used.sed.
 c           the assumption that t(left).lt.t(left+1) makes denominator
 c           in  factor  nonzero.
             do 24 j=1,i
-   24          a(i,j) = (a(i,j) - a(i-1,j))*factor
+               a(i,j) = (a(i,j) - a(i-1,j))*factor
+   24       continue
             il = il - 1
-   25       i = i - 1
+            i = i - 1
+   25    continue
 c
 c        for i=1,...,k, combine b-coeffs a(.,i) with b-spline values
 c        stored in dbiatx(.,m) to get value of  (m-1)st  derivative of
@@ -119,8 +128,12 @@ c  30    do 40 i=1,k
             sum = 0.
             jlow = max0(i,m)
             do 35 j=jlow,k
-   35          sum = a(j,i)*dbiatx(j,m) + sum
-   40       dbiatx(i,m) = sum
+               sum = a(j,i)*dbiatx(j,m) + sum
+   35       continue
+            dbiatx(i,m) = sum
+   40    continue
+c 20161111: twyee added this line (expanded 40  to two lines).
+  400 continue
    99                                   return
       end
       subroutine bsplvb ( t, jhigh, index, x, left, biatx )
@@ -195,7 +208,20 @@ c  superfluous additional arguments.
       data j/1/
 c     save j,deltal,deltar (valid in fortran 77)
 c
-                                        go to (10,20), index
+c
+c
+c 20161111; originally: 
+c                                       go to (10,20), index
+c See https://www.obliquity.com/computer/fortran/control.html
+      if (index .eq. 1) then
+        go to 10
+      else if (index .eq. 2) then
+        go to 20
+      end if
+c
+c
+c
+c
    10 j = 1
       biatx(1) = 1d0
       if (j .ge. jhigh)                 go to 99
@@ -207,7 +233,8 @@ c
          do 26 i=1,j
             term = biatx(i)/(deltar(i) + deltal(jp1-i))
             biatx(i) = saved + deltar(i)*term
-   26       saved = deltal(jp1-i)*term
+            saved = deltal(jp1-i)*term
+   26    continue
          biatx(jp1) = saved
          j = jp1
          if (j .lt. jhigh)              go to 20
@@ -312,50 +339,65 @@ c     to t(n+k) appropriately.
       if (imk .ge. 0)                   go to 8
       jcmin = 1 - imk
       do 5 j=1,i
-    5    dm(j) = x - t(i+1-j)
+         dm(j) = x - t(i+1-j)
+    5 continue
       do 6 j=i,km1
          aj(k-j) = 0.
-    6    dm(j) = dm(i)
+         dm(j) = dm(i)
+    6 continue
                                         go to 10
     8 do 9 j=1,km1
-    9    dm(j) = x - t(i+1-j)
+         dm(j) = x - t(i+1-j)
+    9 continue
 c
    10 jcmax = k
       nmi = n - i
       if (nmi .ge. 0)                   go to 18
       jcmax = k + nmi
       do 15 j=1,jcmax
-   15    dp(j) = t(i+j) - x
+         dp(j) = t(i+j) - x
+   15 continue
       do 16 j=jcmax,km1
          aj(j+1) = 0.
-   16    dp(j) = dp(jcmax)
+         dp(j) = dp(jcmax)
+   16 continue
                                         go to 20
    18 do 19 j=1,km1
-   19    dp(j) = t(i+j) - x
+         dp(j) = t(i+j) - x
+   19 continue
 c
    20 do 21 jc=jcmin,jcmax
-   21    aj(jc) = bcoef(imk + jc)
+         aj(jc) = bcoef(imk + jc)
+   21 continue
 c
 c               *** difference the coefficients  jderiv  times.
       if (jderiv .eq. 0)                go to 30
-      do 23 j=1,jderiv
+c 20161111; was:
+c     do 23 j=1,jderiv
+      do 233 j=1,jderiv
          kmj = k-j
          fkmj = dble(kmj)
          ilo = kmj
          do 23 jj=1,kmj
             aj(jj) = ((aj(jj+1) - aj(jj))/(dm(ilo) + dp(jj)))*fkmj
-   23       ilo = ilo - 1
+            ilo = ilo - 1
+   23    continue
+  233 continue
 c
 c  *** compute value at  x  in (t(i),t(i+1)) of jderiv-th derivative,
 c     given its relevant b-spline coeffs in aj(1),...,aj(k-jderiv).
    30 if (jderiv .eq. km1)              go to 39
       jdrvp1 = jderiv + 1
-      do 33 j=jdrvp1,km1
+c 20161111: was:
+c     do 33 j=jdrvp1,km1
+      do 34 j=jdrvp1,km1
          kmj = k-j
          ilo = kmj
          do 33 jj=1,kmj
             aj(jj) = (aj(jj+1)*dm(ilo) + aj(jj)*dp(jj))/(dm(ilo)+dp(jj))
-   33       ilo = ilo - 1
+            ilo = ilo - 1
+   33    continue
+   34 continue
    39 bvalue = aj(1)
 c
    99                                   return

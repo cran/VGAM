@@ -48,7 +48,7 @@ genpoisson(llambda = "rhobit", ltheta = "loge",
   \item{ishrinkage, zero}{
     See \code{\link{CommonVGAMffArguments}} for information.
 
-    
+
   }
 % \item{zero}{
 % An integer vector, containing the value 1 or 2.
@@ -89,7 +89,7 @@ probability when \eqn{\lambda} is negative.
 
 An ordinary Poisson distribution corresponds
 to \eqn{\lambda = 0}{lambda = 0}.
-The mean (returned as the fitted values) is 
+The mean (returned as the fitted values) is
 \eqn{E(Y) = \theta / (1 - \lambda)}
 and the variance is \eqn{\theta / (1 - \lambda)^3}.
 
@@ -132,7 +132,7 @@ New York, USA: Marcel Dekker.
   matches more closely with \code{lambda} of
   \code{\link[stats:Poisson]{dpois}}.
 
-  
+
 }
 
 \author{ T. W. Yee }

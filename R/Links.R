@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -47,7 +47,7 @@
 
 
 
- d2theta.deta2 <- 
+ d2theta.deta2 <-
   function(theta,
            link = "identitylink",
            earg = list(theta = theta,  # Needed

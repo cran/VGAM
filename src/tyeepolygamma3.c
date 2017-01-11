@@ -22,7 +22,7 @@ void eimpnbinomspecialp(int *interceptonly, double *nrows,
 void tyee_C_vdgam1(double *xval, double *lfu2qhid, int *dvhw1ulq) {
 
 
-  double wval, series, obr6tcex, tmp1;
+  double wval, series, obr6tcex = 0.0, tmp1;
 
   *dvhw1ulq = 1;
   if (*xval <= 0.0e0) {
@@ -55,7 +55,7 @@ void tyee_C_vdgam1(double *xval, double *lfu2qhid, int *dvhw1ulq) {
 void tyee_C_vtgam1(double *xval, double *lfu2qhid, int *dvhw1ulq) {
 
 
-  double wval, series, obr6tcex, tmp1;
+  double wval, series, obr6tcex = 0.0, tmp1;
   *dvhw1ulq = 1;
 
   if (*xval <= 0.0e0) {

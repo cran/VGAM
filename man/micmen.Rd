@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Michaelis-Menten Model }
 \description{
-  Fits a Michaelis-Menten nonlinear regression model. 
+  Fits a Michaelis-Menten nonlinear regression model.
 
 }
 \usage{

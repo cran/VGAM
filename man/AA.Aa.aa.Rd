@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The AA-Aa-aa Blood Group System }
 \description{
-   Estimates the parameter of the 
+   Estimates the parameter of the
    AA-Aa-aa blood group system,
    with or without Hardy Weinberg equilibrium.
 
@@ -64,7 +64,7 @@ AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = FALSE,
 
 
 }
-\references{ 
+\references{
 
 
 Weir, B. S. (1996)
@@ -75,11 +75,11 @@ Sunderland, MA: Sinauer Associates, Inc.
 
 }
 \author{ T. W. Yee }
-\note{ 
-  The input can be a 3-column matrix of counts, where the columns 
+\note{
+  The input can be a 3-column matrix of counts, where the columns
   are AA, Ab and aa
   (in order).
-  Alternatively, the input can be a 3-column matrix of 
+  Alternatively, the input can be a 3-column matrix of
   proportions (so each row adds to 1) and the \code{weights}
   argument is used to specify the total number of counts for each row.
 

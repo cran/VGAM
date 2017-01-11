@@ -24,12 +24,15 @@ roiposbinom(n, size, prob, pstr1 = 0)
 \arguments{
   \item{x, p, q, n}{Same as \code{\link{Posbinom}}. }
   \item{size, prob}{Same as \code{\link{Posbinom}}. }
-  \item{pstr1}{ 
+  \item{pstr1}{
   Probability of a structural one
   (i.e., ignoring the positive binomial distribution),
   called \eqn{\phi}{phi}.
   The default value of \eqn{\phi = 0}{phi = 0} corresponds
   to the response having a positive binomial distribution.
+  However, \code{pstr1} can also be negative, in which case it
+  ceases its interpretation as a probability, and this is known
+  as \emph{one-deflation}.
 
 
   }
@@ -37,12 +40,13 @@ roiposbinom(n, size, prob, pstr1 = 0)
 }
 \details{
   The probability function of \eqn{Y} is 1 with probability
-  \eqn{\phi}{phi}, and \eqn{PosBinomial(size, prob)}{PosBinomial(size, prob)} with
-  probability \eqn{1-\phi}{1-phi}. Thus 
+  \eqn{\phi}{phi}, and \eqn{PosBinomial(size, prob)}{PosBinomial(size, prob)}
+  with probability \eqn{1-\phi}{1-phi}. Thus
   \deqn{P(Y=1) =\phi + (1-\phi)  P(W=1)}{%
         P(Y=1) = phi + (1-phi) * P(W=1)}
       where \eqn{W} is distributed as a
-      positive \eqn{binomial(size, prob)}{binomial(size, prob)} random variate.
+      positive \eqn{binomial(size, prob)}{binomial(size, prob)}
+      random variable.
 
 
 }
@@ -56,7 +60,7 @@ roiposbinom(n, size, prob, pstr1 = 0)
 }
 %\references{ }
 \author{ T. W. Yee }
-\note{ 
+\note{
   The argument \code{pstr1} is recycled to the required length, and
   usually has values which lie in the interval \eqn{[0,1]}.
 %
@@ -79,7 +83,7 @@ roiposbinom(n, size, prob, pstr1 = 0)
 
 }
 
-\seealso{ 
+\seealso{
     \code{\link{posbinomial}},
     \code{\link[stats:binomial]{dbinom}},
     \code{\link{binomialff}}.

@@ -61,7 +61,7 @@ cratio(link = "logit", parallel = FALSE, reverse = FALSE, zero = NULL,
   There are a number of definitions for the \emph{continuation ratio}
   in the literature. To make life easier, in the \pkg{VGAM} package,
   we use \emph{continuation} ratios and \emph{stopping} ratios
-  (see \code{\link{sratio}}). 
+  (see \code{\link{sratio}}).
   Stopping ratios deal with quantities such as
   \code{logit(P[Y=j|Y>=j])}.
 

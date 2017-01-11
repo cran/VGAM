@@ -9,19 +9,12 @@ by maximum likelihood estimation.
 
 }
 \usage{
-waldff(link.lambda = "loge", init.lambda = NULL)
+waldff(llambda = "loge", ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link.lambda}{
-  Parameter link function for the \eqn{\lambda}{lambda} parameter. 
-  See \code{\link{Links}} for more choices and general information.
-
-
-  }
-  \item{init.lambda}{
-  Initial value for the \eqn{\lambda}{lambda} parameter.
-  The default means an initial value is chosen internally.
+  \item{llambda,ilambda}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }
@@ -50,7 +43,7 @@ waldff(link.lambda = "loge", init.lambda = NULL)
 
 
 }
-\references{ 
+\references{
 
 Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
 \emph{Continuous Univariate Distributions},
@@ -69,7 +62,7 @@ New York: Wiley.
 }
 
 
-\seealso{ 
+\seealso{
   \code{\link{inv.gaussianff}},
   \code{\link{rinv.gaussian}}.
 
@@ -77,10 +70,10 @@ New York: Wiley.
 }
 \examples{
 wdata <- data.frame(y = rinv.gaussian(n = 1000, mu =  1, lambda = exp(1)))
-fit <- vglm(y ~ 1, waldff(init = 0.2), data = wdata, trace = TRUE)
-coef(fit, matrix = TRUE)
-Coef(fit)
-summary(fit)
+wfit <- vglm(y ~ 1, waldff(ilambda = 0.2), data = wdata, trace = TRUE)
+coef(wfit, matrix = TRUE)
+Coef(wfit)
+summary(wfit)
 }
 \keyword{models}
 \keyword{regression}

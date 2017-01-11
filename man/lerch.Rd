@@ -30,7 +30,7 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
   }
 }
 \details{
-  The Lerch transcendental function is defined by 
+  The Lerch transcendental function is defined by
   \deqn{\Phi(x,s,v) = \sum_{n=0}^{\infty}  \frac{x^n}{(n+v)^s}}{%
     Phi(x,s,v) = sum_{n=0}^{infty} x^n / (n+v)^s}
   where \eqn{|x|<1} and
@@ -44,7 +44,7 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
   See the URL below for more information.
   This function is a wrapper function for the C code described below.
 
-  
+
 }
 \value{
   Returns the value of the function evaluated at the values of
@@ -97,7 +97,7 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
 
 \seealso{
     \code{\link{zeta}}.
-  
+
 
 }
 \examples{

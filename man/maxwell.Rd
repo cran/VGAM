@@ -28,7 +28,7 @@ maxwell(link = "loge", zero = NULL)
   has a probability density function that can be written
   \deqn{f(y;a) = \sqrt{2/\pi} a^{3/2} y^2 \exp(-0.5 a y^2)}{%
     f(y;a) = sqrt(2/pi) * a^(3/2) * y^2 * exp(-0.5*a*y^2)}
-  for \eqn{y>0} and \eqn{a>0}. 
+  for \eqn{y>0} and \eqn{a>0}.
   The mean of \eqn{Y} is
   \eqn{\sqrt{8 / (a \pi)}}{sqrt(8 / (a * pi))}
   (returned as the fitted values), and its variance is
@@ -44,7 +44,7 @@ maxwell(link = "loge", zero = NULL)
 
 
 }
-\references{ 
+\references{
 
   von Seggern, D. H. (1993)
   \emph{CRC Standard Curves and Surfaces},
@@ -63,7 +63,7 @@ maxwell(link = "loge", zero = NULL)
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Maxwell}},
   \code{\link{rayleigh}},
   \code{\link{poisson.points}}.

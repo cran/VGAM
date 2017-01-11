@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The ABO Blood Group System }
 \description{
-  Estimates the two independent parameters of the 
+  Estimates the two independent parameters of the
   the ABO blood group system.
 
 }
@@ -28,7 +28,7 @@ ABO(link.pA = "logit", link.pB = "logit", ipA = NULL, ipB = NULL,
   \item{zero}{
   Details at \code{\link{CommonVGAMffArguments}}.
 
-  
+
   }
 
 }
@@ -61,10 +61,10 @@ ABO(link.pA = "logit", link.pB = "logit", ipA = NULL, ipB = NULL,
 
 }
 \author{ T. W. Yee }
-\note{ 
-  The input can be a 4-column matrix of counts, where the columns 
+\note{
+  The input can be a 4-column matrix of counts, where the columns
   are A, B, AB, O (in order).
-  Alternatively, the input can be a 4-column matrix of 
+  Alternatively, the input can be a 4-column matrix of
   proportions (so each row adds to 1) and the \code{weights}
   argument is used to specify the total number of counts for each row.
 

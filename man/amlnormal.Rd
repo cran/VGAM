@@ -126,7 +126,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 % loss (2.5).
 % If \code{w} has more than one value then the value returned by
 % \code{loglikelihood} is the sum taken over all the \code{w} values.
-%} 
+%}
 
 \seealso{
   \code{\link{amlpoisson}},

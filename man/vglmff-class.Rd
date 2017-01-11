@@ -5,12 +5,12 @@
 \description{  Family functions for the \pkg{VGAM} package }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("vglmff", ...)}.
-  
+
 }
 \section{Slots}{
   In the following, \eqn{M} is the number of linear/additive
   predictors.
-  
+
 \describe{
   \item{\code{blurb}:}{
   Object of class \code{"character"} giving
@@ -63,7 +63,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   and obtain starting values for the model.
   In general, \code{etastart} or
   \code{mustart} are assigned values based on the variables \code{y},
-  \code{x} and \code{w}. 
+  \code{x} and \code{w}.
 
   }
   \item{\code{linkinv}:}{
@@ -168,21 +168,21 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   \eqn{\bold{W}_i}{\bold{W}i} matrix. Thus each row of the
   matrix returned by this slot is such a matrix.
   Like the \code{weights} slot of \code{vglm}/\code{vgam}, it is
-  stored in 
-  \emph{matrix-band} form, whereby the first \eqn{M} 
+  stored in
+  \emph{matrix-band} form, whereby the first \eqn{M}
   columns of the matrix are the
   diagonals, followed by the upper-diagonal band, followed by the
   band above that, etc. In this case, there can be up to \eqn{M(M+1)}
   columns, with the last column corresponding to the (1,\eqn{M}) elements
   of the weight matrices.
-   
+
   }
 
   \item{\code{validfitted, validparams}:}{
   Functions that test that the fitted values and
   all parameters are within range.
   These functions can issue a warning if violations are detected.
-   
+
 
   }
 
@@ -193,7 +193,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
 \section{Methods}{
   \describe{
     \item{print}{\code{signature(x = "vglmff")}:
-      short summary of the family function. 
+      short summary of the family function.
     }
   }
 }
@@ -225,14 +225,14 @@ Vector generalized additive models.
 % A unified method of handling arguments is to use
 % \code{match.arg}. This allows, for example,
 % \code{vglm(..., family = cratio(link = logit))}
-% and 
+% and
 % \code{vglm(..., family = cratio(link = "logi"))}
 % to be equivalent (Nb. there is a \code{logit} function).
 
 
   The \code{extra} argument in
   \code{linkinv}, \code{linkfun}, \code{deviance},
-  \code{loglikelihood}, etc. 
+  \code{loglikelihood}, etc.
   matches with the argument \code{extra}
   in \code{\link{vglm}}, \code{\link{vgam}} and \code{\link{rrvglm}}.
   This allows input to be fed into all slots of a \pkg{VGAM}
@@ -260,7 +260,7 @@ Vector generalized additive models.
   expected information are positive-definite over a larger
   parameter space.
 
-  
+
   }
 
 \section{Warning }{
@@ -269,7 +269,7 @@ Vector generalized additive models.
   \pkg{gam} or \pkg{mgcv} packages).
 
 
-} 
+}
 
 \seealso{
   \code{\link{vglm}},

@@ -36,7 +36,7 @@ vonmises(llocation = extlogit(min = 0, max = 2 * pi), lscale = "loge",
   \item{imethod}{
   An integer with value \code{1} or \code{2} which
   specifies the initialization method. If failure to converge occurs
-  try the other value, or else specify a value for 
+  try the other value, or else specify a value for
   \code{ilocation} and \code{iscale}.
 
   }
@@ -67,7 +67,7 @@ vonmises(llocation = extlogit(min = 0, max = 2 * pi), lscale = "loge",
         f(y;a,k) = exp[k*cos(y-a)] / (2*pi*I0(k))}
  where \eqn{0 \leq y < 2\pi}{0 <= y < 2*pi},
  \eqn{k>0} is the scale parameter,
- \eqn{a} is the location parameter, and 
+ \eqn{a} is the location parameter, and
  \eqn{I_0(k)}{I0(k)} is the modified Bessel
  function of order 0 evaluated at \eqn{k}.
  The mean of \eqn{Y} (which is the fitted value) is \eqn{a}
@@ -90,7 +90,7 @@ vonmises(llocation = extlogit(min = 0, max = 2 * pi), lscale = "loge",
 
 
 }
-\references{ 
+\references{
 
 Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
 \emph{Statistical Distributions},
@@ -100,7 +100,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 \author{ T. W. Yee }
 \note{
- The response and the fitted values are scaled so that 
+ The response and the fitted values are scaled so that
  \eqn{0\leq y< 2\pi}{0<=y<2*pi}.
  The linear/additive predictors are left alone.
  Fisher scoring is used.
@@ -122,7 +122,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
   \pkg{CircStats} and \pkg{circular} currently have a lot more
-  R functions for circular data than the \pkg{VGAM} package. 
+  R functions for circular data than the \pkg{VGAM} package.
 
 
 }

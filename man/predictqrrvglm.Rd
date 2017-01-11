@@ -52,7 +52,7 @@ predictqrrvglm(object, newdata=NULL,
 
 
 }
-\references{ 
+\references{
 Yee, T. W. (2004)
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
@@ -69,7 +69,7 @@ canonical Gaussian ordination.
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{cqo}}.
 
 

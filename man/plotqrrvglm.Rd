@@ -7,9 +7,9 @@
 }
 \usage{
 plotqrrvglm(object, rtype = c("response", "pearson", "deviance", "working"),
-            ask = FALSE, 
-            main = paste(Rtype, "residuals vs latent variable(s)"), 
-            xlab = "Latent Variable", 
+            ask = FALSE,
+            main = paste(Rtype, "residuals vs latent variable(s)"),
+            xlab = "Latent Variable",
             I.tolerances = object@control$eq.tolerances, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,12 +28,12 @@ plotqrrvglm(object, rtype = c("response", "pearson", "deviance", "working"),
 }
 \details{
   Plotting the residuals can be potentially very useful for checking
-  that the model fit is adequate.  
+  that the model fit is adequate.
 
 
 }
 \value{
-  The original object. 
+  The original object.
 
 
 }
@@ -52,7 +52,7 @@ canonical Gaussian ordination.
 
 \note{
   An ordination plot of a QRR-VGLM can be obtained
-  by \code{\link{lvplot.qrrvglm}}. 
+  by \code{\link{lvplot.qrrvglm}}.
 
 }
 
@@ -73,7 +73,7 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           quasipoissonff, data = hspider, Crow1positive = FALSE)
-par(mfrow = c(3, 4)) 
+par(mfrow = c(3, 4))
 plot(p1, rtype = "response", col = "blue", pch = 4, las = 1, main = "")
 }
 }

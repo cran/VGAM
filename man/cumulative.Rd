@@ -5,7 +5,7 @@
 \title{ Ordinal Regression with Cumulative Probabilities }
 \description{
   Fits a cumulative link
-  regression model to a (preferably ordered) factor response. 
+  regression model to a (preferably ordered) factor response.
 
 }
 \usage{
@@ -20,7 +20,7 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 \arguments{
 
   \item{link}{
-  Link function applied to the \eqn{J} cumulative probabilities. 
+  Link function applied to the \eqn{J} cumulative probabilities.
   See \code{\link{Links}} for more choices,
   e.g., for the cumulative
   \code{\link{probit}}/\code{\link{cloglog}}/\code{\link{cauchit}}/\ldots
@@ -61,7 +61,7 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   By default, the cumulative probabilities used are
   \eqn{P(Y\leq 1)}{P(Y<=1)}, \eqn{P(Y\leq 2)}{P(Y<=2)},
   \dots, \eqn{P(Y\leq J)}{P(Y<=J)}.
-  If \code{reverse} is \code{TRUE} then 
+  If \code{reverse} is \code{TRUE} then
   \eqn{P(Y\geq 2)}{P(Y>=2)}, \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
   \eqn{P(Y\geq J+1)}{P(Y>=J+1)} are used.
 
@@ -119,6 +119,7 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 % and for \code{scumulative()} \eqn{M=2J}.
 
 
+
   This \pkg{VGAM} family function fits the class of
   \emph{cumulative link models} to (hopefully) an ordinal response.
   By default, the \emph{non-parallel} cumulative logit model is fitted, i.e.,
@@ -127,9 +128,10 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   where \eqn{j=1,2,\dots,M} and
   the \eqn{\eta_j}{eta_j} are not constrained to be parallel.
   This is also known as the \emph{non-proportional odds model}.
-  If the logit link is replaced by a complementary log-log link 
+  If the logit link is replaced by a complementary log-log link
   (\code{\link{cloglog}}) then
   this is known as the \emph{proportional-hazards model}.
+
 
 
   In almost all the literature, the constraint matrices associated
@@ -144,11 +146,13 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   (RR-VGAMs) have not been implemented here.
 
 
+
 % The scaled version of \code{cumulative()}, called \code{scumulative()},
 % has \eqn{J} positive scaling factors.
 % They are described in pages 154 and 177 of McCullagh and Nelder (1989);
 % see their equation (5.4) in particular,
 % which they call the \emph{generalized rational model}.
+
 
 
 }
@@ -222,7 +226,7 @@ Vector generalized additive models.
 
   With the logit link, setting \code{parallel = TRUE} will fit a
   proportional odds model. Note that the \code{TRUE} here does
-  not apply to the intercept term. 
+  not apply to the intercept term.
   In practice, the validity of the proportional odds assumption
   needs to be checked, e.g., by a likelihood ratio test (LRT).
   If acceptable on the data,
@@ -246,14 +250,14 @@ Vector generalized additive models.
   and the self-starting initial values are not good enough then
   try using
   \code{mustart},
-  \code{coefstart} and/or 
+  \code{coefstart} and/or
   \code{etatstart}.
   See the example below.
 
 
   To fit the proportional odds model one can use the
   \pkg{VGAM} family function \code{\link{propodds}}.
-  Note that \code{propodds(reverse)} is equivalent to 
+  Note that \code{propodds(reverse)} is equivalent to
   \code{cumulative(parallel = TRUE, reverse = reverse)} (which is
   equivalent to
   \code{cumulative(parallel = TRUE, reverse = reverse, link = "logit")}).

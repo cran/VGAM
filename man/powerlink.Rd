@@ -70,7 +70,7 @@ powerlink(theta, power = 1, inverse = FALSE, deriv = 0,
 
 }
 
-\seealso{ 
+\seealso{
   \code{\link{Links}},
   \code{\link{loge}}.
 

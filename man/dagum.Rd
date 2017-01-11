@@ -3,12 +3,12 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Dagum Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 3-parameter 
+  Maximum likelihood estimation of the 3-parameter
   Dagum distribution.
 }
 \usage{
-dagum(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge", 
-      iscale = NULL, ishape1.a = NULL, ishape2.p = NULL, imethod = 1, 
+dagum(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
+      iscale = NULL, ishape1.a = NULL, ishape2.p = NULL, imethod = 1,
       lss = TRUE, gscale = exp(-5:5), gshape1.a = seq(0.75, 4, by = 0.25),
       gshape2.p = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = "shape")
 }
@@ -16,8 +16,8 @@ dagum(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
 %     zero = ifelse(lss, -(2:3), -c(1, 3))
 \arguments{
   \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
-  
-  
+
+
   }
 
  \item{lshape1.a, lscale, lshape2.p}{
@@ -28,7 +28,7 @@ dagum(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
   }
   \item{iscale, ishape1.a, ishape2.p, imethod, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
-  For \code{imethod = 2} a good initial value for 
+  For \code{imethod = 2} a good initial value for
   \code{ishape2.p} is needed to obtain a good estimate for
   the other parameter.
 

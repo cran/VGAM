@@ -82,7 +82,7 @@ a warning or an error will result.
   \emph{Zellner's two-stage Aitken estimator})
   can be obtained by setting
   \code{maxit = 1}
-  (and possibly \code{divisor = "sqrt"} or 
+  (and possibly \code{divisor = "sqrt"} or
   \code{divisor = "n-max"}).
 
 

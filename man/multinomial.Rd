@@ -115,7 +115,7 @@ The \pkg{VGAM} package for categorical data analysis.
 
 Yee, T. W. and Hastie, T. J. (2003)
 Reduced-rank vector generalized linear models.
-\emph{Statistical Modelling}, 
+\emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
@@ -142,7 +142,7 @@ New York, USA: Springer-Verlag.
 
 
 Anderson, J. A. (1984)
-Regression and ordered categorical variables. 
+Regression and ordered categorical variables.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{46}, 1--30.
 
@@ -254,7 +254,7 @@ data(iris)
 \dontrun{ fit <- vglm(Species ~ ., multinomial, iris)
 coef(fit, matrix = TRUE) }
 
-# Example 2a: a simple example 
+# Example 2a: a simple example
 ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))  # Counts
 fit <- vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
@@ -263,7 +263,7 @@ weights(fit, type = "prior", matrix = FALSE)  # The better method
 depvar(fit)         # Sample proportions; same as fit@y
 constraints(fit)    # Constraint matrices
 
-# Example 2b: Different reference level used as the baseline 
+# Example 2b: Different reference level used as the baseline
 fit2 <- vglm(ycounts ~ 1, multinomial(refLevel = 2))
 coef(fit2, matrix = TRUE)
 coef(fit , matrix = TRUE)  # Easy to reconcile this output with fit2
@@ -279,15 +279,15 @@ coef(fit3a, matrix = TRUE)  # "Treatment1" is the reference level
 coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
 margeff(fit3b)
 
-# Example 4: Fit a rank-1 stereotype model 
+# Example 4: Fit a rank-1 stereotype model
 fit4 <- rrvglm(Country ~ Width + Height + HP, multinomial, data = car.all)
 coef(fit4)  # Contains the C matrix
-constraints(fit4)$HP       # The A matrix 
+constraints(fit4)$HP       # The A matrix
 coef(fit4, matrix = TRUE)  # The B matrix
-Coef(fit4)@C               # The C matrix 
+Coef(fit4)@C               # The C matrix
 concoef(fit4)              # Better to get the C matrix this way
-Coef(fit4)@A               # The A matrix 
-svd(coef(fit4, matrix = TRUE)[-1, ])$d  # This has rank 1; = C %*% t(A) 
+Coef(fit4)@A               # The A matrix
+svd(coef(fit4, matrix = TRUE)[-1, ])$d  # This has rank 1; = C %*% t(A)
 # Classification (but watch out for NAs in some of the variables):
 apply(fitted(fit4), 1, which.max)  # Classification
 colnames(fitted(fit4))[apply(fitted(fit4), 1, which.max)]  # Classification
@@ -301,7 +301,7 @@ M <- 3  # There are M+1 models of transport to go to work
 ycounts <- matrix(0, nn, M+1)
 ycounts[cbind(1:nn, sample(x = M+1, size = nn, replace = TRUE))] = 1
 dimnames(ycounts) <- list(NULL, c("bus","train","car","walk"))
-gotowork <- data.frame(cost.bus  = runif(nn), time.bus  = runif(nn), 
+gotowork <- data.frame(cost.bus  = runif(nn), time.bus  = runif(nn),
                        cost.train= runif(nn), time.train= runif(nn),
                        cost.car  = runif(nn), time.car  = runif(nn),
                        cost.walk = runif(nn), time.walk = runif(nn))

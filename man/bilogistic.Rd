@@ -29,7 +29,7 @@ bilogistic(llocation = "identitylink", lscale = "loge",
   \item{lscale}{
   Parameter link function applied to both
   (positive) scale parameters \eqn{s_1}{s1} and \eqn{s_2}{s2}.
-  See \code{\link{Links}} for more choices. 
+  See \code{\link{Links}} for more choices.
 
 
   }
@@ -60,7 +60,7 @@ bilogistic(llocation = "identitylink", lscale = "loge",
   }
 }
 \details{
-  The four-parameter bivariate logistic distribution 
+  The four-parameter bivariate logistic distribution
   has a density that can be written as
   \deqn{f(y_1,y_2;l_1,s_1,l_2,s_2) = 2 \frac{\exp[-(y_1-l_1)/s_1 -
       (y_2-l_2)/s_2]}{
@@ -69,20 +69,20 @@ bilogistic(llocation = "identitylink", lscale = "loge",
         f(y1,y2;l1,s1,l2,s2) = 2 * exp[-(y1-l1)/s1 - (y1-l1)/s1] /
       [s1 * s2 * ( 1 + exp[-(y1-l1)/s1] + exp[-(y2-l2)/s2] )^3]
  }
- where \eqn{s_1>0}{s1>0} \eqn{s_2>0}{s2>0} are the scale parameters,
+ where \eqn{s_1>0}{s1>0} and \eqn{s_2>0}{s2>0} are the scale parameters,
  and \eqn{l_1}{l1} and \eqn{l_2}{l2} are the location parameters.
  Each of the two responses are unbounded, i.e.,
  \eqn{-\infty<y_j<\infty}{-Inf<y_j<Inf}.
  The mean of \eqn{Y_1}{Y1} is \eqn{l_1}{l1} etc.
  The fitted values are returned in a 2-column matrix.
  The cumulative distribution function is
-  \deqn{F(y_1,y_2;l_1,s_1,l_2,s_2) = 
+  \deqn{F(y_1,y_2;l_1,s_1,l_2,s_2) =
       \left( 1 + \exp[-(y_1-l_1)/s_1] + \exp[-(y_2-l_2)/s_2]
       \right)^{-1}}{%
         F(y1,y2;l1,s1,l2,s2) = 1 / (1 + exp[-(y1-l1)/s1] + exp[-(y2-l2)/s2])
  }
  The marginal distribution of \eqn{Y_1}{Y1} is
-  \deqn{P(Y_1 \leq y_1) = F(y_1;l_1,s_1) = 
+  \deqn{P(Y_1 \leq y_1) = F(y_1;l_1,s_1) =
       \left( 1 + \exp[-(y_1-l_1)/s_1] \right)^{-1} .}{%
         P(Y1 <= y1) = F(y1;l1,s1) = 1 / (1 + exp[-(y1-l1)/s1]).
  }
@@ -93,7 +93,7 @@ bilogistic(llocation = "identitylink", lscale = "loge",
  \eqn{\eta_3=l_2}{eta3=l2},
  \eqn{\eta_4=\log(s_2)}{eta4=log(s2)} are the linear/additive predictors.
 
- 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).

@@ -15,7 +15,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 %- maybe also 'usage' for other objects documented here.
 %            ishrinkage = 0.95, nsimEIM = NULL, zero = 2
 \arguments{
-  \item{lmu, lrho}{ 
+  \item{lmu, lrho}{
   Link functions applied to the two parameters.
   See \code{\link{Links}} for more choices.
   The defaults ensure the parameters remain in \eqn{(0,1)},
@@ -23,7 +23,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
 
   }
-  \item{irho}{ 
+  \item{irho}{
   Optional initial value for the correlation parameter.
   If given, it must be in \eqn{(0,1)}, and is recyled to the necessary
   length. Assign this argument a value if a convergence failure occurs.
@@ -40,7 +40,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
 
   }
-  \item{zero}{ 
+  \item{zero}{
   Specifyies which
   linear/additive predictor is to be modelled as an intercept only.
   If assigned, the single value can be either \code{1} or \code{2}.
@@ -52,7 +52,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
 
   }
-  \item{ishrinkage, nsimEIM}{ 
+  \item{ishrinkage, nsimEIM}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   The argument \code{ishrinkage} is used only if \code{imethod = 2}.
   Using the argument \code{nsimEIM} may offer large advantages for large
@@ -65,7 +65,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
   There are several parameterizations of the beta-binomial distribution.
   This family function directly models the mean and correlation
   parameter, i.e.,
-  the probability of success. 
+  the probability of success.
   The model can be written
   \eqn{T|P=p \sim Binomial(N,p)}{T|P=p ~ Binomial(N,p)}
   where \eqn{P} has a beta distribution with shape parameters
@@ -76,7 +76,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
   That is, \eqn{Y} is the \emph{proportion} of successes. Like
   \code{\link{binomialff}}, the fitted values are the
   estimated probability
-  of success (i.e., \eqn{E[Y]} and not \eqn{E[T]}) 
+  of success (i.e., \eqn{E[Y]} and not \eqn{E[T]})
   and the prior weights \eqn{N} are attached separately on the
   object in a slot.
 
@@ -94,9 +94,9 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
   The default model is \eqn{\eta_1 = logit(\mu)}{eta1 =logit(mu)}
   and \eqn{\eta_2 = logit(\rho)}{eta2 = logit(rho)} because both
   parameters lie between 0 and 1.
-  The mean (of \eqn{Y}) is 
+  The mean (of \eqn{Y}) is
   \eqn{p = \mu = \alpha / (\alpha + \beta)}{p = mu = alpha / (alpha + beta)}
-  and the variance (of \eqn{Y}) is 
+  and the variance (of \eqn{Y}) is
   \eqn{\mu(1-\mu)(1+(N-1)\rho)/N}{mu(1-mu)(1+(N-1)rho)/N}.
   Here, the correlation \eqn{\rho}{rho} is given by
   \eqn{1/(1 + \alpha + \beta)}{1/(1 + alpha + beta)}
@@ -108,9 +108,9 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
   This family function uses Fisher scoring.
   Elements of the second-order expected
-  derivatives with respect to \eqn{\alpha}{alpha} and 
-  \eqn{\beta}{beta} are computed numerically, which may 
-  fail for large \eqn{\alpha}{alpha}, \eqn{\beta}{beta}, 
+  derivatives with respect to \eqn{\alpha}{alpha} and
+  \eqn{\beta}{beta} are computed numerically, which may
+  fail for large \eqn{\alpha}{alpha}, \eqn{\beta}{beta},
   \eqn{N} or else take a long time.
 
 
@@ -150,10 +150,10 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 \author{ T. W. Yee }
 \note{
   This function processes the input in the same way
-  as \code{\link{binomialff}}. But it does not handle 
+  as \code{\link{binomialff}}. But it does not handle
   the case \eqn{N=1} very well because there are two
   parameters to estimate, not one, for each row of the input.
-  Cases where \eqn{N=1} can be omitted via the 
+  Cases where \eqn{N=1} can be omitted via the
   \code{subset} argument of \code{\link{vglm}}.
 
 

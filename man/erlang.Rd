@@ -9,7 +9,7 @@
 
 }
 \usage{
-erlang(shape.arg, link = "loge", imethod = 1, zero = NULL)
+erlang(shape.arg, lscale = "loge", imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +20,7 @@ erlang(shape.arg, link = "loge", imethod = 1, zero = NULL)
 
 
   }
-  \item{link}{
+  \item{lscale}{
   Link function applied to the (positive) \eqn{scale} parameter.
   See \code{\link{Links}} for more choices.
 
@@ -48,7 +48,7 @@ erlang(shape.arg, link = "loge", imethod = 1, zero = NULL)
         f(y) =  exp(-y/scale) y^(shape-1) scale^(-shape) / gamma(shape)}
   for known positive integer \eqn{shape},
   unknown \eqn{scale > 0}  and \eqn{y > 0}.
-  Here, 
+  Here,
   \eqn{\Gamma(shape)}{gamma(shape)} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
   The mean of \emph{Y}
@@ -99,7 +99,7 @@ rate <- exp(2); myshape <- 3
 edata <- data.frame(y = rep(0, nn <- 1000))
 for (ii in 1:myshape)
   edata <- transform(edata, y = y + rexp(nn, rate = rate))
-fit <- vglm(y ~ 1, erlang(shape = myshape), data = edata, trace = TRUE) 
+fit <- vglm(y ~ 1, erlang(shape = myshape), data = edata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)  # Answer = 1/rate
 1/rate

@@ -19,7 +19,7 @@
   A data frame with 15 observations on the following 5 variables.
   \describe{
     \item{\code{year}}{a numeric vector,
-  the season began on 1 October of the year and ended 12 months later. 
+  the season began on 1 October of the year and ended 12 months later.
 % Hence the fishing ended around October 1989.
 
 

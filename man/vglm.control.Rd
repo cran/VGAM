@@ -13,7 +13,7 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
              epsilon = 1e-07, half.stepsizing = TRUE,
              maxit = 30, noWarning = FALSE,
              stepsize = 1, save.weights = FALSE,
-             trace = FALSE, wzepsilon = .Machine$double.eps^0.75, 
+             trace = FALSE, wzepsilon = .Machine$double.eps^0.75,
              xij = NULL, ...)
 }
 %- maybe also `usage' for other objects documented here.
@@ -76,8 +76,8 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
   }
   \item{maxit}{
-  maximum number of (usually Fisher-scoring) iterations allowed.
-  Sometimes Newton-Raphson is used.
+  maximum number of (usually Fisher-scoring) iterations
+  allowed.  Sometimes Newton-Raphson is used.
 
 
   }
@@ -137,10 +137,10 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   e.g., the ocular pressure of each eye.
   The \eqn{M} terms must be unique;
   use \code{\link{fill1}}, \code{fill2}, \code{fill3}, etc. if necessary.
-  Each formula should have a response which is taken as the name of
-  that variable, and the \eqn{M} terms are enumerated in sequential order.
-  Each of the \eqn{M} terms multiply each successive row of the constraint
-  matrix.
+  Each formula should have a response which is taken as the
+  name of that variable, and the \eqn{M} terms are enumerated
+  in sequential order.  Each of the \eqn{M} terms multiply
+  each successive row of the constraint matrix.
   When \code{xij} is used, the use of \code{form2} is also required
   to give \emph{every} term used by the model.
 
@@ -162,7 +162,8 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 % This argument is made use of by \code{plotvgam()}.
 % Each formula has a RHS giving \eqn{r_k} unique terms,
 % one for each column of the constraint matrix.
-% Each formula should have a response that matches the \code{formula} argument.
+% Each formula should have a response that matches the
+% \code{formula} argument.
 % The argument \code{jix} is a reversal of \code{xij} to emphasize
 % the same framework for handling terms involving covariates that have
 % different values for each linear/additive predictor.
@@ -182,11 +183,12 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   understand the full details.
 
 
-  Setting \code{save.weights = FALSE} is useful for some models because
-  the \code{weights} slot of the object is the largest and so less
-  memory is used to store the object. However, for some \pkg{VGAM}
-  family function, it is necessary to set \code{save.weights = TRUE}
-  because the \code{weights} slot cannot be reconstructed later.
+  Setting \code{save.weights = FALSE} is useful for some
+  models because the \code{weights} slot of the object
+  is the largest and so less memory is used to store the
+  object. However, for some \pkg{VGAM} family function,
+  it is necessary to set \code{save.weights = TRUE} because
+  the \code{weights} slot cannot be reconstructed later.
 
 
   }
@@ -208,14 +210,14 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
 }
 \author{ Thomas W. Yee}
-\note{ 
+\note{
   Reiterating from above,
   setting \code{trace = TRUE} is recommended in general.
 
 
-  In Example 2 below there are two covariates that have linear/additive
-  predictor specific values.
-  These are handled using the \code{xij} argument.
+  In Example 2 below there are two covariates that have
+  linear/additive predictor specific values.  These are
+  handled using the \code{xij} argument.
 
 
 }
@@ -254,8 +256,10 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo,
 
 # Example 2. The use of the xij argument (simple case).
 ymat <- rdiric(n <- 1000, shape = rep(exp(2), len = 4))
-mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n), x4 = runif(n),
-                    z1 = runif(n), z2 = runif(n), z3 = runif(n), z4 = runif(n))
+mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n),
+                    x4 = runif(n),
+                    z1 = runif(n), z2 = runif(n), z3 = runif(n),
+                    z4 = runif(n))
 mydat <- transform(mydat, X = x1, Z = z1)
 mydat <- round(mydat, digits = 2)
 fit2 <- vglm(ymat ~ X + Z,
@@ -286,8 +290,10 @@ coalminers <- transform(coalminers,
                         dum2 = round(runif(nrow(coalminers)), digits = 2),
                         dum3 = round(runif(nrow(coalminers)), digits = 2),
                         dumm = round(runif(nrow(coalminers)), digits = 2))
-BS <- function(x, ..., df = 3) sm.bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
-NS <- function(x, ..., df = 3) sm.ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
+BS <- function(x, ..., df = 3)
+  sm.bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
+NS <- function(x, ..., df = 3)
+  sm.ns(c(x,...), df = df)[1:length(x),,drop = FALSE]
 
 # Equivalently...
 BS <- function(x, ..., df = 3)
@@ -307,7 +313,9 @@ head(model.matrix(fit3, type = "lm"))   # LM model matrix
 head(model.matrix(fit3, type = "vlm"))  # Big VLM model matrix
 coef(fit3)
 coef(fit3, matrix = TRUE)
-\dontrun{ plotvgam(fit3, se = TRUE, lcol = "red", scol = "blue", xlab = "dum1") }
+\dontrun{
+plotvgam(fit3, se = TRUE, lcol = "red", scol = "blue", xlab = "dum1")
+}
 }
 \keyword{models}
 \keyword{regression}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2016 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,7 +35,7 @@
             ifelse(inbreeding, "without", "with"),
             " the Hardy-Weinberg equilibrium assumption)\n\n",
             "Links:    ",
-            namesof("p1", link, earg = earg, tag = FALSE), ", ", 
+            namesof("p1", link, earg = earg, tag = FALSE), ", ",
             namesof("p2", link, earg = earg, tag = FALSE),
             if (inbreeding) paste(",",
             namesof("f",  link, earg = earg, tag = FALSE)) else
@@ -148,6 +148,20 @@
                        log = TRUE, dochecking = FALSE))
       },
   vfamily = c("A1A2A3", "vgenetic"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
+    p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
+    p3 <- 1-p1-p2
+    okay1 <- all(is.finite(p1)) && all(0 < p1 & p1 < 1) &&
+             all(is.finite(p2)) && all(0 < p2 & p2 < 1) &&
+             all(is.finite(p3)) && all(0 < p3 & p3 < 1)
+    okay2 <- TRUE
+    if ( .inbreeding ) {
+      f <- eta2theta(eta[, 3], link = .link , earg = .earg )
+      okay2 <- all(is.finite(f)) && all(0 <= f)  # && all(f < 1)
+    }
+    okay1 && okay2
+  }, list( .link = link, .earg = earg, .inbreeding = inbreeding) )),
   deriv = eval(substitute(expression({
     p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
     p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
@@ -159,7 +173,7 @@
                   0, -2*(1-f)*p2, -f - 2*p3*(1-f))
       dP2 <- cbind(0, 2*p1*(1-f), -2*(1-f)*p1, f+2*p2*(1-f),
                    2*(1-f)*(1-p1-2*p2), -f - 2*p3*(1-f))
-      dP3 <- cbind(p1*(1-p1), -2*p1*p2, -2*p1*p3, p2*(1-p2), -2*p2*p3, 
+      dP3 <- cbind(p1*(1-p1), -2*p1*p2, -2*p1*p3, p2*(1-p2), -2*p2*p3,
                    p3*(1-p3))
       dl1 <- rowSums(y * dP1 / mu)
       dl2 <- rowSums(y * dP2 / mu)
@@ -167,7 +181,7 @@
       dPP.deta <- dtheta.deta(cbind(p1, p2, f),
                               link = .link , earg = .earg )
       c(w) * cbind(dPP.deta[, 1] * dl1,
-                   dPP.deta[, 2] * dl2, 
+                   dPP.deta[, 2] * dl2,
                    dPP.deta[, 3] * dl3)
     } else {
       dl.dp1 <- (2*y[, 1]+y[, 2]+y[, 4])/p1 -
@@ -225,8 +239,8 @@
   new("vglmff",
   blurb = c("MNSs Blood Group System (MS-Ms-MNS-MNs-NS-Ns phenotype)\n\n",
             "Links:    ",
-            namesof("mS", link, earg = earg), ", ", 
-            namesof("ms", link, earg = earg), ", ", 
+            namesof("mS", link, earg = earg), ", ",
+            namesof("ms", link, earg = earg), ", ",
             namesof("nS", link, earg = earg, tag = FALSE)),
   deviance = Deviance.categorical.data.vgam,
   initialize = eval(substitute(expression({
@@ -295,6 +309,17 @@
                        log = TRUE, dochecking = FALSE))
     },
   vfamily = c("MNSs", "vgenetic"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    mS <- eta2theta(eta[, 1], link = .link , earg = .earg )
+    ms <- eta2theta(eta[, 2], link = .link , earg = .earg )
+    nS <- eta2theta(eta[, 3], link = .link , earg = .earg )
+    ns <- 1-mS-ms-nS
+    okay1 <- all(is.finite(mS)) && all(0 < mS & mS < 1) &&
+             all(is.finite(ms)) && all(0 < ms & ms < 1) &&
+             all(is.finite(nS)) && all(0 < nS & nS < 1) &&
+             all(is.finite(ns)) && all(0 < ns & ns < 1)
+    okay1
+  }, list( .link = link, .earg = earg) )),
   deriv = eval(substitute(expression({
     mS <- eta2theta(eta[, 1], link = .link , earg = .earg )
     ms <- eta2theta(eta[, 2], link = .link , earg = .earg )
@@ -343,7 +368,7 @@
   new("vglmff",
   blurb = c("ABO Blood Group System (A-B-AB-O phenotype)\n\n",
             "Links:    ",
-            namesof("pA", link.pA, earg = earg.pA, tag = FALSE), ", ", 
+            namesof("pA", link.pA, earg = earg.pA, tag = FALSE), ", ",
             namesof("pB", link.pB, earg = earg.pB, tag = FALSE)),
   deviance = Deviance.categorical.data.vgam,
 
@@ -381,7 +406,7 @@
         setequal(ok.col.ny, col.ny)) {
       if (!all(ok.col.ny == col.ny))
         stop("the columns of the response matrix should have names ",
-             "(output of colnames()) ordered as c('A','B','AB','O')")
+             "(output of colnames()) ordered as c('A', 'B', 'AB', 'O')")
     }
 
 
@@ -413,7 +438,7 @@
       cbind(A  = pA*(pA+2*pO),
             B  = pB*(pB+2*pO),
             AB = 2*pA*pB,
-            O  = pO*pO) 
+            O  = pO*pO)
   }, list( .link.pA = link.pA, .link.pB = link.pB,
            .earg.pA = earg.pA, .earg.pB = earg.pB ))),
 
@@ -434,11 +459,21 @@
     },
 
   vfamily = c("ABO", "vgenetic"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    ppp <- eta2theta(eta[, 1], link = .link.pA , earg = .earg.pA )
+    qqq <- eta2theta(eta[, 2], link = .link.pB , earg = .earg.pB )
+    rrr <- 1 - ppp - qqq  # abs(1 - ppp - qqq) prior to 20160624
+    okay1 <- all(is.finite(ppp)) && all(0 < ppp & ppp < 1) &&
+             all(is.finite(qqq)) && all(0 < qqq & qqq < 1) &&
+             all(is.finite(rrr)) && all(0 < rrr & rrr < 1)
+    okay1
+  }, list( .link.pA = link.pA, .link.pB = link.pB,
+           .earg.pA = earg.pA, .earg.pB = earg.pB ))),
 
   deriv = eval(substitute(expression({
     ppp <- eta2theta(eta[, 1], link = .link.pA , earg = .earg.pA )
     qqq <- eta2theta(eta[, 2], link = .link.pB , earg = .earg.pB )
-    rrr <- abs(1 - ppp - qqq)
+    rrr <- 1 - ppp - qqq  # abs(1 - ppp - qqq)
 
 
     pbar <- 2*rrr + ppp
@@ -523,7 +558,7 @@
     cbind(AB = 0.5 + pp4,
           Ab = 0.25 - pp4,
           aB = 0.25 - pp4,
-          ab = pp4) 
+          ab = pp4)
   }, list( .link = link, .earg = earg))),
 
   last = eval(substitute(expression({
@@ -542,6 +577,11 @@
                        log = TRUE, dochecking = FALSE))
     },
   vfamily = c("AB.Ab.aB.ab", "vgenetic"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    pp <- eta2theta(eta, link = .link , earg = .earg )
+    okay1 <- all(is.finite(pp)) && all(0 < pp & pp < 1)
+    okay1
+  }, list( .link = link, .earg = earg ))),
   deriv = eval(substitute(expression({
     pp <- eta2theta(eta, link = .link , earg = .earg )
 
@@ -583,7 +623,7 @@
            ipA = NULL,
            ifp = NULL,
            zero = NULL) {
-    
+
   linkp <- as.list(substitute(linkp))
   eargp <- link2list(linkp)
   linkp <- attr(eargp, "function.name")
@@ -595,7 +635,7 @@
   if (!is.logical(inbreeding) || length(inbreeding) > 1)
     stop("argument 'inbreeding' must be a single logical")
 
-  
+
 
   new("vglmff",
   blurb = c("AA-Aa-aa phenotype (",
@@ -644,7 +684,7 @@
         if ( .inbreeding )
         namesof("f",  .linkf , earg = .eargf , tag = FALSE) else NULL)
     mustart <- (y + mustart) / 2
-        
+
 
     if (is.null(etastart)) {
       pA <- if (is.numeric( .ipA )) rep_len( .ipA , n) else
@@ -694,6 +734,19 @@
                          log = TRUE, dochecking = FALSE))
     },
   vfamily = c("AA.Aa.aa", "vgenetic"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    eta <- as.matrix(eta)
+    pA <- eta2theta(eta[, 1], link = .linkp , earg = .eargp )
+    okay1 <- all(is.finite(pA)) && all(0 < pA & pA < 1)
+    okay2 <- TRUE
+    if ( .inbreeding ) {
+      fp <- eta2theta(eta[, 2], link = .linkf , earg = .eargf )
+      okay2 <- all(is.finite(fp)) && all(0 <= fp)  # && all(fp < 1)
+    }
+    okay1 && okay2
+  }, list( .linkp = linkp, .linkf = linkf,
+           .eargp = eargp, .eargf = eargf,
+           .inbreeding = inbreeding ))),
   deriv = eval(substitute(expression({
     eta <- as.matrix(eta)
     pA <- eta2theta(eta[, 1], link = .linkp , earg = .eargp )
@@ -714,7 +767,7 @@
       dfp.deta <- dtheta.deta(fp, link = .linkf , earg = .eargf )
 
       c(w) * cbind(dPP.deta * dl1,
-                   dfp.deta * dl2)      
+                   dfp.deta * dl2)
     } else {
       nAA <- c(w) * y[, 1]
       nAa <- c(w) * y[, 2]
@@ -722,7 +775,7 @@
       dl.dpA <- (2*nAA+nAa)/pA - (nAa+2*naa)/(1-pA)
       dpA.deta <- dtheta.deta(pA, link = .linkp , earg = .eargp )
       dl.dpA * dpA.deta
-    }  
+    }
   }), list( .linkp = linkp, .linkf = linkf,
             .eargp = eargp, .eargf = eargf,
             .inbreeding = inbreeding ))),
