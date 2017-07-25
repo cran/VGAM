@@ -15,7 +15,7 @@
 VGAM.weights.function <- function(w, M, n) {
 
 
-  ncolw <- ncol(as.matrix(w))
+  ncolw <- NCOL(w)
   if (ncolw == 1) {
     wz <- matrix(w, nrow = n, ncol = M)  # w_i * diag(M)
   } else if (ncolw == M) {
@@ -1267,7 +1267,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
 
 
  if (FALSE) {
-      if ((ncol(cbind(w)) != 1) || any(w != round(w)))
+      if ((NCOL(w) != 1) || any(w != round(w)))
         stop("'weights' must be a vector or a one-column matrix ",
              "with integer values")
       m1d <- meany <- weighted.mean(y, w)
@@ -2310,6 +2310,7 @@ moment.millsratio2 <- function(zedd) {
     list(M1 = 2,
          Q1 = 1,
          expected = TRUE,
+         hadof = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("mean", if ( .var.arg ) "var" else "sd"),
          var.arg = .var.arg ,
@@ -2519,6 +2520,83 @@ moment.millsratio2 <- function(zedd) {
            .smallno = smallno,
            .var.arg = var.arg ))),
   vfamily = c("uninormal"),
+
+  hadof = eval(substitute(
+  function(eta, extra = list(),
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           deriv = 1, ...) {
+    M1 <- 2
+    n <- NROW(eta)
+    M <- NCOL(eta)
+    mymu <- eta2theta(eta[, c(TRUE, FALSE)], .lmean , earg = .emean )
+    if ( .var.arg ) {
+      Varm <- eta2theta(eta[, c(FALSE, TRUE)], .lvare , earg = .evare )
+      sdev <- sqrt(Varm)
+    } else {
+      sdev <- eta2theta(eta[, c(FALSE, TRUE)], .lsdev , earg = .esdev )
+      Varm <- sdev^2  # Not needed really
+    }
+    which.param <- ifelse(linpred.index %% M1 == 1, "mean",
+                          if ( .var.arg ) "var" else "sd")
+    which.y <- ceiling(linpred.index / M1)
+
+
+    if (deriv == 0) {
+      ned2l.dmu2 <- 1 / sdev^2
+      ned2l.dsd2 <- 2 / sdev^2
+      ned2l.dva2 <- 0.5 / Varm^2
+
+      wz <- array(c(c(w) * ned2l.dmu2,
+                    c(w) * (if ( .var.arg ) ned2l.dva2 else ned2l.dsd2),
+                    c(w) * ned2l.dmu2 * 0),  # diagonal
+                  dim = c(n, M / M1, 3))
+      return(arwz2wz(wz, M = M, M1 = M1, full.arg = TRUE))
+    }
+
+
+    if (deriv == 1) {
+      if (which.param == "mean") {
+        NED2l.dmu2 <-
+        NED2l.dsd2 <- matrix(0, n, M)
+      } else {
+        NED2l.dmu2 <- if ( .var.arg ) (-1 / Varm^2) else
+          1 * (-2 / sdev^3)
+        NED2l.dsd2 <- if ( .var.arg ) (-1 / Varm^3) else
+          2 * (-2 / sdev^3)
+      }
+    }
+
+    if (deriv == 2) {
+      if (which.param == "mean") {
+        NED2l.dmu2 <-
+        NED2l.dsd2 <- matrix(0, n, M)
+      } else {
+        NED2l.dmu2 <- if ( .var.arg ) (2 / Varm^3) else
+          1 * (6 / sdev^4)
+        NED2l.dsd2 <- if ( .var.arg ) (3 / Varm^4) else
+          2 * (6 / sdev^4)
+      }
+    }    
+
+    WZ <- switch(as.character(deriv),
+      "1" =
+      array(c(c(w) * retain.col(NED2l.dmu2, which.y),
+              c(w) * retain.col(NED2l.dsd2, which.y),
+              c(w) * retain.col(NED2l.dmu2 * 0, which.y)),
+            dim = c(n, M / M1, 3)),
+      "2" =
+      array(c(c(w) * retain.col(NED2l.dmu2, which.y),
+              c(w) * retain.col(NED2l.dsd2, which.y),
+              c(w) * retain.col(NED2l.dmu2 * 0, which.y)),
+            dim = c(n, M / M1, 3)),
+                 stop("argument 'deriv' must be 0 or 1 or 2"))
+    return(arwz2wz(WZ, M = M, M1 = M1, full.arg = TRUE))
+  }, list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+           .emean = emean, .esdev = esdev, .evare = evare,
+           .var.arg = var.arg ))),
+
+
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     M1 <- 2
     ncoly <- NCOL(y)

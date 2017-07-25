@@ -123,7 +123,7 @@ case.namesvlm <- function(object, full = FALSE, ...) {
   if (!length(use.this))
     stop("argument 'object' has empty 'x' and 'y' slots.")
   dn <- dimnames(use.this)[[1]]
-  if (full || is.null(w) || ncol(cbind(w)) != 1)
+  if (full || is.null(w) || NCOL(w) != 1)
     dn else dn[w != 0]
 }
 

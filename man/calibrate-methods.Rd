@@ -4,7 +4,9 @@
 \alias{calibrate,Coef.qrrvglm-method}
 \title{ Calibration for Constrained Regression Models }
 \description{
-  \code{calibrate} is a generic function applied to QRR-VGLMs and
+  \code{calibrate} is a generic function applied to
+  RR-VGLMs,
+  QRR-VGLMs and
   RR-VGAMs etc.
 
 }

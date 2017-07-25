@@ -10,7 +10,8 @@
 
 }
 \usage{
-vglm(formula, family, data = list(), weights = NULL, subset = NULL,
+vglm(formula, family = stop("argument 'family' needs to be assigned"),
+     data = list(), weights = NULL, subset = NULL,
      na.action = na.fail, etastart = NULL, mustart = NULL,
      coefstart = NULL, control = vglm.control(...), offset = NULL,
      method = "vglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,
@@ -390,6 +391,7 @@ The \code{VGAM} Package.
   \code{coefstart} and \code{mustart}.
 
 
+
   Some \pkg{VGAM} family functions end in \code{"ff"} to avoid
   interference with other functions, e.g., \code{\link{binomialff}},
   \code{\link{poissonff}}, \code{\link{gaussianff}},
@@ -399,13 +401,16 @@ The \code{VGAM} Package.
   \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
 
 
+
   The smart prediction (\code{\link{smartpred}}) library is incorporated
   within the \pkg{VGAM} library.
+
 
 
   The theory behind the scaling parameter is currently being made more
   rigorous, but it it should give the same value as the scale parameter
   for GLMs.
+
 
 
   In Example 5 below, the \code{xij} argument to illustrate covariates
@@ -443,14 +448,20 @@ The \code{VGAM} Package.
   \code{\link{rrvglm}},
   \code{\link{vgam}}.
   Methods functions include
+  \code{\link{AICvlm}},
   \code{\link{coefvlm}},
+  \code{\link{confintvglm}},
   \code{\link{constraints.vlm}},
+  \code{\link{fittedvlm}},
   \code{\link{hatvaluesvlm}},
+  \code{\link{hdeff.vglm}},
   \code{\link{linkfun.vglm}},
+  \code{\link{lrp.vglm}},
+  \code{\link{nobs.vlm}},
+  \code{\link{npred.vlm}},
   \code{\link{plotvglm}},
   \code{\link{predictvglm}},
-  \code{summary.vglm},
-  \code{AIC.vglm},
+  \code{\link{summaryvglm}},
   \code{\link{lrtest_vglm}},
   etc.
 

@@ -58,7 +58,8 @@ confintvglm(object, parm, level = 0.95, method = c("wald", "profile"),
 
 
 
-  When \code{method = "profile"} the function \code{profilevglm()}
+  When \code{method = "profile"} the function 
+  \code{\link{profilevglm}}
   is called to do the profiling. The code is very heavily
   based on \code{\link[MASS]{profile.glm}}
   which was originally written by
@@ -143,6 +144,7 @@ confintvglm(object, parm, level = 0.95, method = c("wald", "profile"),
 \seealso{
   \code{\link{vcovvlm}},
   \code{\link{summaryvglm}},
+  \code{\link{lrp.vglm}},
   \code{\link[stats]{confint}},
   \code{\link[MASS]{profile.glm}},
   \code{plot.profile.glm},

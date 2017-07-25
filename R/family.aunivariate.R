@@ -3097,7 +3097,7 @@ if (FALSE) {
     if (min(y) <= .A || max(y) >= .B)
       stop("data not within (A, B)")
 
-    if (ncol(cbind(y)) != 1)
+    if (NCOL(y) != 1)
       stop("response must be a vector or a one-column matrix")
 
 
@@ -3929,6 +3929,7 @@ rtopple <- function(n, shape) {
     list(M1 = 1,
          Q1 = 1,
          expected = TRUE,
+         hadof = TRUE,
          multipleResponses = TRUE,
          parameters.names = "shape",
          zero = .zero )
@@ -4015,6 +4016,27 @@ rtopple <- function(n, shape) {
     okay1 <- all(is.finite(shape)) && all(0 < shape & shape < 1)
     okay1
   }, list( .lshape = lshape, .eshape = eshape ))),
+
+
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(), deriv = 1,
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2),
+           ...) {
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    ans <- c(w) *
+    switch(as.character(deriv),
+           "0" =   1 / shape^2,
+           "1" =  -2 / shape^3,
+           "2" =   6 / shape^4,
+           "3" = -24 / shape^5,
+           stop("argument 'deriv' must be 0, 1, 2 or 3"))
+    if (deriv == 0) ans else retain.col(ans, linpred.index)  # Since M1 = 1
+  }, list( .lshape = lshape, .eshape = eshape ))),
+
+
 
 
   simslot = eval(substitute(
@@ -4266,6 +4288,7 @@ rzeta <- function(n, shape) {
   }, list( .lshape = lshape, .eshape = eshape ))),
   deriv = eval(substitute(expression({
     shape <- eta2theta(eta, .lshape , earg = .eshape )
+
 
     fred0 <- zeta(shape+1)
     fred1 <- zeta(shape+1, deriv = 1)

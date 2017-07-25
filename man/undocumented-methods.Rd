@@ -4,6 +4,10 @@
 %\alias{ccoef-method}
 %
 %
+% 201707
+\alias{lrp,vglm-method}
+% 201704
+\alias{hdeff,vglm-method}
 % 201607, 201608:
 \alias{psint,pvgam-method}
 \alias{summary,pvgam-method}

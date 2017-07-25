@@ -1674,7 +1674,7 @@ rposbinom <- function(n, size, prob) {
 
 
 
-    nvec <- if (ncol(as.matrix(y)) > 1) {
+    nvec <- if (NCOL(y) > 1) {
               NULL
             } else {
               if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
@@ -2644,7 +2644,7 @@ rposbinom <- function(n, size, prob) {
     M1 <- 2  # Not quite true
 
 
-    if (ncol(cbind(w)) > 1)
+    if (NCOL(w) > 1)
       stop("variable 'w' should be a vector or one-column matrix")
     w <- c(w)  # Make it a vector
 

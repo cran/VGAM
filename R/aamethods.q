@@ -63,6 +63,7 @@ setClass("vglmff", representation(
       "validparams"   = "function",  # Added 20160305
       "validfitted"   = "function",  # Added 20160305
       "simslot"       = "function",
+      "hadof"         = "function",
       "deriv"         = "expression",
       "weight"        = "expression"),  #  "call"
          prototype = .VGAM.prototype.list )

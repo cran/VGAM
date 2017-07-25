@@ -64,6 +64,7 @@ calibrate(object, ...)
 
 \seealso{
   \code{\link{predict}},
+  \code{\link{calibrate.rrvglm}},
   \code{\link{calibrate.qrrvglm}}.
 
 
@@ -71,7 +72,7 @@ calibrate(object, ...)
 
 \examples{
 \dontrun{
-hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Stdzed environmental vars
 set.seed(123)
 p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           WaterCon + BareSand + FallTwig +
@@ -81,7 +82,8 @@ p1 <- cao(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           Bestof = 3, Crow1positive = TRUE)
 
 siteNos <- 1:2  # Calibrate these sites
-cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
+cp1 <- calibrate(p1, trace = TRUE,
+  new = data.frame(depvar(p1)[siteNos, ], model.matrix(p1)[siteNos, ]))
 
 # Graphically compare the actual site scores with their calibrated values
 persp(p1, main = "Solid=actual, dashed=calibrated site scores",

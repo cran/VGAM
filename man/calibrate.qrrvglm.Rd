@@ -106,7 +106,7 @@ calibrate.qrrvglm(object, newdata = NULL,
   }
 } \references{
 
-Yee, T. W. (2012)
+Yee, T. W. (2017)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
@@ -142,6 +142,7 @@ Cambridge.
 
 \seealso{
   \code{\link{calibrate.qrrvglm.control}},
+  \code{\link{calibrate.rrvglm}},
   \code{\link{calibrate}},
   \code{\link{cqo}},
   \code{\link{cao}}.
@@ -151,7 +152,7 @@ Cambridge.
 }
 \examples{
 \dontrun{
-hspider[,1:6] <- scale(hspider[, 1:6])  # Standardize the environmental variables
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Stdze the environmental variables
 set.seed(123)
 p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           WaterCon + BareSand + FallTwig +
@@ -159,8 +160,9 @@ p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
           family = poissonff, data = hspider, Rank = 1,
           I.toler = TRUE, Crow1positive = TRUE)
 
-siteNos <- 3:4  # Calibrate these sites
-cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
+siteNos <- 1:2  # Calibrate these sites
+cp1 <- calibrate(p1, trace = TRUE,
+                 new = data.frame(depvar(p1)[siteNos, ]))
 }
 
 \dontrun{

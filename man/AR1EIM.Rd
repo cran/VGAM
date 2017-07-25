@@ -104,6 +104,19 @@ AR1EIM(x = NULL, var.arg = NULL, p.drift = NULL,
   and \eqn{mu^{*}}{mu^*} is the drift parameter
   (See \code{\link[VGAM:AR1]{AR1}} for further details on this).
 
+
+
+%Compared to \code{\link[stats]{arima}}, this family function differs
+%in the following ways.
+%1.
+%2.
+%3.
+%The following quote from \code{\link[stats]{arima}} reveals a weakness:
+%"jsdjfksf".
+%This is a well-known weakness in \code{\link[stats]{arima}}, however,
+%some simulations suggest that the VGAM se is more accurate.
+
+
   Consequently, for each observation \eqn{n = 1, \ldots, N}, the EIM,
   \eqn{J_{n}(\boldsymbol{\theta})}{Jn[\theta]}, has dimension
   \eqn{3 \times 3}{3 x 3}, where the diagonal elements are:

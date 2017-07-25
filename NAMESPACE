@@ -4,7 +4,14 @@
 
 
 
-useDynLib(VGAM)
+useDynLib(VGAM, .registration = TRUE)
+
+
+export(lrp, lrp.vglm)
+export(retain.col, d3theta.deta3)
+export(ghn100, ghw100)
+export(hdeff, hdeff.vglm)
+export(calibrate.rrvglm.control, calibrate.rrvglm)
 
 
 importFrom("utils", "tail")
@@ -166,7 +173,6 @@ exportMethods(is.buggy)
 
 
 
-importMethodsFrom("splines")
 importFrom("splines", splineDesign, bs, ns)
 
 
@@ -207,7 +213,6 @@ export(logLik.qrrvglm)
 
 
 
-importMethodsFrom("methods")
 
 
 
@@ -261,7 +266,6 @@ exportMethods(nobs)
 
 
 
-importMethodsFrom("stats4")
 
 
 
@@ -322,12 +326,21 @@ export(
 Build.terms.vlm,
 interleave.VGAM, interleave.cmat,
 procVec,
+eijfun,
 ResSS.vgam,
 valt.control,
-vforsub, vbacksub, vchol,
+trivial.constraints,
 vcontrol.expression,
 vplot, vplot.default, vplot.factor, vplot.list,
 vplot.matrix, vplot.numeric, vvplot.factor)
+
+
+export(
+m2a,a2m,vforsub,
+vbacksub,
+vchol)
+
+
 
 export(
 case.namesvlm,
@@ -425,7 +438,7 @@ expexpff1, expexpff)
 
 
 
-export(a2m,
+export(
 AICvlm, AICvgam, AICrrvglm, AICqrrvglm, # AICvglm,
 anova.vgam,
 anova.vglm,
@@ -493,7 +506,7 @@ export(poisson.points, dpois.points)
 
 
 
-export(m2a,
+export(
 erlang,
 dfelix, felix,
 fittedvlm, fittedvsmooth.spline, foldsqrt,
@@ -720,7 +733,7 @@ dlino, plino, qlino, rlino, lino,
 grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta,
 negidentity, identitylink,
-prentice74,
+dprentice74, prentice74,
 amlnormal, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
 dkumar, pkumar, qkumar, rkumar, kumar,
 dyules, pyules, qyules, ryules, yulesimon,

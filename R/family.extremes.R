@@ -3297,7 +3297,7 @@ dpois.points <- function(x, lambda, ostatistic,
 
 
   initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
+    if (NCOL(y) != 1)
       stop("response must be a vector or a one-column matrix")
     if (any(y <= 0))
       stop("response must contain positive values only")

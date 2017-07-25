@@ -606,7 +606,7 @@ rrvglm.fit <-
         colnames.X.vlm = xnrow.X.vlm,
         criterion = criterion,
         function.name = function.name,
-        intercept.only=intercept.only,
+        intercept.only = intercept.only,
         predictors.names = predictors.names,
         M = M,
         n = n,

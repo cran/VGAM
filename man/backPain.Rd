@@ -22,7 +22,10 @@
   }
 }
 \source{
-  \url{http://ideas.repec.org/c/boc/bocode/s419001.html}
+  \code{http://ideas.repec.org/c/boc/bocode/s419001.html}
+
+
+% \url{http://ideas.repec.org/c/boc/bocode/s419001.html}
 
 
   The data set and this help file was copied from \pkg{gnm}

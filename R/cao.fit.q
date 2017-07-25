@@ -300,6 +300,7 @@ cao.fit <-
 
   misc <- list(
       criterion = criterion,
+      intercept.only = intercept.only,
       predictors.names = predictors.names,
       M = M,
       n = n,
@@ -1456,7 +1457,7 @@ lvplot.rrvgam <- function(object,
               lwd = llwd[sppno], lty = llty[sppno])
         if (y && type == "fitted.values") {
           ypts <- object@y
-          if (ncol(as.matrix(ypts)) == ncol(r.curves))
+          if (NCOL(ypts) == ncol(r.curves))
             points(xx, ypts[ooo, sppno], col = pcol[sppno],
                    cex = pcex[sppno], pch = pch[sppno])
         }
@@ -2088,6 +2089,16 @@ setMethod("calibrate", "rrvgam", function(object, ...)
 
 setMethod("calibrate", "qrrvglm", function(object, ...)
           calibrate.qrrvglm(object, ...))
+
+
+
+setMethod("calibrate", "rrvglm", function(object, ...)
+          calibrate.rrvglm(object, ...))
+
+
+
+
+
 
 
 Tol.rrvgam <- function(object, ...) {

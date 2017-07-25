@@ -8,8 +8,11 @@
 
 }
 \usage{
-prentice74(llocation = "identitylink", lscale = "loge", lshape = "identitylink",
-           ilocation = NULL, iscale = NULL, ishape = NULL,
+prentice74(llocation = "identitylink", lscale = "loge",
+           lshape = "identitylink", ilocation = NULL, iscale = NULL,
+           ishape = NULL, imethod = 1,
+           glocation.mux = exp((-4:4)/2), gscale.mux = exp((-4:4)/2),
+           gshape = qt(ppoints(6), df = 1), probs.y = 0.3,
            zero = c("scale", "shape"))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,14 +39,22 @@ prentice74(llocation = "identitylink", lscale = "loge", lshape = "identitylink",
 
 
   }
-  \item{zero}{
-  Can be an integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts-only.
-  Then the values must be from the set \{1,2,3\}.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{imethod, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+
+% Can be an integer-valued vector specifying which
+% linear/additive predictors are modelled as intercepts-only.
+% Then the values must be from the set \{1,2,3\}.
 
 
   }
+  \item{glocation.mux, gscale.mux, gshape, probs.y}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+            
+           
+}
 }
 \details{
   The probability density function is given by

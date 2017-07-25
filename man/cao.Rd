@@ -9,7 +9,8 @@
 
 }
 \usage{
-cao(formula, family, data = list(),
+cao(formula, family = stop("argument 'family' needs to be assigned"),
+    data = list(),
     weights = NULL, subset = NULL, na.action = na.fail,
     etastart = NULL, mustart = NULL, coefstart = NULL,
     control = cao.control(...), offset = NULL,

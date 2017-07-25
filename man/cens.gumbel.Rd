@@ -121,7 +121,7 @@ y <- pmax(L, ystar)  # Left  censored
 y <- pmin(U, y)      # Right censored
 extra <- list(leftcensored = ystar < L, rightcensored = ystar > U)
 fit <- vglm(y ~ scale(year), data = venice, trace = TRUE, extra = extra,
-            cens.gumbel(mean = FALSE, perc = c(5, 25, 50, 75, 95)))
+            fam = cens.gumbel(mean = FALSE, perc = c(5, 25, 50, 75, 95)))
 coef(fit, matrix = TRUE)
 head(fitted(fit))
 fit@extra
@@ -135,7 +135,7 @@ y <- pmax(L, ystar)  # Left  censored
 y <- pmin(U, y)      # Right censored
 \dontrun{par(mfrow = c(1, 2)); hist(ystar); hist(y);}
 extra <- list(leftcensored = ystar < L, rightcensored = ystar > U)
-fit <- vglm(y ~ 1, trace = TRUE, extra = extra, cens.gumbel)
+fit <- vglm(y ~ 1, trace = TRUE, extra = extra, fam = cens.gumbel)
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

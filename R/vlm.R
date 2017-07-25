@@ -5,17 +5,18 @@
 
 
 
-vlm <- function(formula,
-                data = list(),
-                weights = NULL, subset = NULL, na.action = na.fail,
-                prior.weights = NULL,
-                control = vlm.control(...),
-                method = "qr",
-                model = FALSE, x.arg = FALSE, y.arg = TRUE, qr.arg = TRUE,
-                contrasts = NULL,
-                constraints = NULL,
-                extra = NULL, offset = NULL,
-                smart = TRUE, ...) {
+vlm <-
+  function(formula,
+           data = list(),
+           weights = NULL, subset = NULL, na.action = na.fail,
+           prior.weights = NULL,
+           control = vlm.control(...),
+           method = "qr",
+           model = FALSE, x.arg = FALSE, y.arg = TRUE, qr.arg = TRUE,
+           contrasts = NULL,
+           constraints = NULL,
+           extra = NULL, offset = NULL,
+           smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vlm"
 
@@ -64,7 +65,7 @@ vlm <- function(formula,
   wz <- model.weights(mf)
 
   y <- as.matrix(y)
-  M <- ncol(as.matrix(y))
+  M <- NCOL(y)
   n <- nrow(x)
   dy <- dimnames(y)
   dy1 <- if (length(dy[[1]])) dy[[1]] else dimnames(mf)[[1]]
@@ -83,7 +84,7 @@ vlm <- function(formula,
     identity.wts <- TRUE
   } else {
     identity.wts <- FALSE
-    temp <- ncol(as.matrix(wz))
+    temp <- NCOL(wz)
     if (temp < M || temp > M*(M+1)/2)
       stop("input 'w' must have between ", M, " and ", M*(M+1)/2,
            " columns")

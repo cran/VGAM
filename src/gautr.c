@@ -291,7 +291,7 @@ singler == 1 if r is a scalar; otherwise r is same size as x & y
 
 /* This is called by S */
 
-void pnorm2(double *x, double *y, double *r, 
+void pnorm2ccc(double *x, double *y, double *r, 
             int *size, int *singler, double *ans)
 {
     int i;

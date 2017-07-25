@@ -46,14 +46,15 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 
 
-  If \code{FALSE} and the response is a (2-column) matrix, then the number
-  of successes is given in the first column, and the second column is
-  the number of failures.
+  If \code{FALSE} and the response is a (2-column) matrix, then the
+  number of successes is given in the first column, and the second
+  column is the number of failures.
 
 
   }
   \item{onedpar}{
-  One dispersion parameter? If \code{multiple.responses}, then a separate dispersion
+  One dispersion parameter? If \code{multiple.responses},
+  then a separate dispersion
   parameter will be computed for each response (column), by default.
   Setting \code{onedpar = TRUE} will pool them so that there is only one
   dispersion parameter to be estimated.
@@ -61,7 +62,8 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
   }
   \item{parallel}{
-  A logical or formula. Used only if \code{multiple.responses} is \code{TRUE}.  This
+  A logical or formula. Used only if \code{multiple.responses}
+  is \code{TRUE}.  This
   argument allows for the parallelism assumption whereby the regression
   coefficients for a variable is constrained to be equal over the \eqn{M}
   linear/additive predictors.
@@ -96,6 +98,8 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
   One result from fitting bias reduced binary regression
   is that finite regression coefficients occur when
   the data is separable (see example below).
+  Currently \code{\link{hdeff.vglm}} does not work when
+  \code{bred = TRUE}.
 
 
   }
@@ -115,7 +119,8 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
   is more common in practice.
 
 
-  Setting \code{multiple.responses = TRUE} is necessary when fitting a Quadratic RR-VGLM
+  Setting \code{multiple.responses = TRUE} is necessary
+  when fitting a Quadratic RR-VGLM
   (see \code{\link{cqo}}) because the response is a matrix of \eqn{M}
   columns (e.g., one column per species). Then there will be \eqn{M}
   dispersion parameters (one per column of the response matrix).
@@ -213,6 +218,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
     \code{\link{simplex}},
     \code{\link[stats:Binomial]{binomial}},
     \code{\link{simulate.vlm}},
+    \code{\link{hdeff.vglm}},
     \pkg{safeBinaryRegression}.
 
 
@@ -250,8 +256,8 @@ shunua <- hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
 fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog),
             data = shunua)
 \dontrun{
-plot(agaaus ~ jitter(altitude), shunua, col = "blue", ylab = "P(Agaaus = 1)",
-     main = "Presence/absence of Agathis australis", las = 1)
+plot(agaaus ~ jitter(altitude), shunua, ylab = "P(Agaaus = 1)",
+     main = "Presence/absence of Agathis australis", col = "blue", las = 1)
 with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
 
 

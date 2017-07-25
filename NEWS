@@ -6,6 +6,43 @@
 
 
 
+                CHANGES IN VGAM VERSION 1.0-4
+
+NEW FEATURES
+
+    o   This package is now Renjin compatible.
+    o   gengamma.stacy() handles multiple responses, and some
+        of its arguments have had their default values changed.
+    o   calibrate() has a methods function for "rrvglm" objects.
+    o   "vglm" objects have a new "hadof" slot.
+    o   "vglm" objects will soon have a new "charfun" slot.
+    o   constraints(vglmfit, matrix = TRUE) is now embellished by
+        rownames, by default.
+    o   New generic and methods function: hdeff(), lrp().
+    o   Many link functions accommodate 'deriv = 3' and sometimes a bit
+        higher. More safety when 'deriv' is assigned out-of-range values.
+    o   fitted() and predict() with lms.???() fits, such as lms.bcn(),
+        now handles inputting new 'percentiles' values. Thanks to
+        Sven Garbade for picking up this obvious deficiency.
+    o   New function(s): d3theta.deta3().
+    o   Tested okay on R 3.4.1. This package now requires R 3.4.0 or higher
+        (not R 3.1.0 as before).
+
+
+
+BUG FIXES and CHANGES
+
+    o   [dqpr]gengamma.stacy() have no default value for 'd' and 'k' args.
+    o   negbinomial(lmu = "nbcanlink") now works properly;
+        thanks to Victor Miranda for much help and picking up 3 bugs.
+    o   perspqrrvglm() called @linkinv() without passing in @extra.
+    o   fisherz(theta, inverse = TRUE, deriv = 1) was out by a factor of 2.
+    o   multilogit() did not handle 1-row arguments correctly when
+        'inverse = TRUE' and 'refLevel' was neither 1 or M+1.
+    o   Several C and Fortran functions renamed, for R 3.4.0.
+
+
+
                 CHANGES IN VGAM VERSION 1.0-3
 
 NEW FEATURES

@@ -8,20 +8,23 @@
 
 
 
-predict.vlm <- function(object,
-                        newdata = NULL,
-                        type = c("response", "terms"),
-                        se.fit = FALSE, scale = NULL,
-                        terms.arg = NULL,
-                        raw = FALSE,
-                        dispersion = NULL, ...) {
+predict.vlm <-
+  function(object,
+           newdata = NULL,
+           type = c("response", "terms",
+                    "Xlm", "Xm2", "Xvlm"),  # 20170418 this line added
+           se.fit = FALSE, scale = NULL,
+           terms.arg = NULL,
+           raw = FALSE,
+           dispersion = NULL, ...) {
   Xm2 <- NULL
   xij.used <- length(form2 <- object@misc$form2) ||
               length(object@control$xij)
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-  type <- match.arg(type, c("response", "terms"))[1]
+  type <- match.arg(type, c("response", "terms",
+                            "Xlm", "Xm2", "Xvlm"))[1]
 
   na.act <- object@na.action
   object@na.action <- list()
@@ -30,7 +33,7 @@ predict.vlm <- function(object,
     stop("sorry, 'raw=TRUE' only works when 'type=\"terms\"'")
 
   if (!length(newdata) && type == "response" && !se.fit &&
-    length(object@fitted.values)) {
+      length(object@fitted.values)) {
     if (length(na.act)) {
       return(napredict(na.act[[1]], object@fitted.values))
     } else {
@@ -89,7 +92,20 @@ predict.vlm <- function(object,
     attr(X, "assign") <- attrassigndefault(X, ttob)
     if (length(Xm2))
       attr(Xm2, "assign") <- attrassigndefault(Xm2, ttXm2)
-  }
+  }  # newdata is given
+
+
+
+
+
+
+  if (type == "Xlm")
+    return(X)
+  if (type == "Xm2")
+    return(Xm2)
+
+
+
 
 
   hasintercept <- attr(ttob, "intercept")
@@ -104,10 +120,10 @@ predict.vlm <- function(object,
   xbar <- x2bar <- NULL
   if (type == "terms" && hasintercept) {
     if (length(object@control$xij)) {
-      x2bar <- colMeans(Xm2)
+      x2bar <- colMeans(Xm2) * ifelse(type == "Xvlm", 0, 1)
       Xm2 <- sweep(Xm2, 2, x2bar)
     }
-    xbar <- colMeans(X)
+    xbar <- colMeans(X) * ifelse(type == "Xvlm", 0, 1)
     X <- sweep(X, 2, xbar)
     nac <- is.na(object@coefficients)
     if (any(nac)) {
@@ -117,10 +133,10 @@ predict.vlm <- function(object,
       X <- X[, !nac, drop = FALSE]
       xbar <- xbar[!nac]
     }
-  }
+  }  # if (type == "terms" && hasintercept)
 
     if (!is.null(newdata) && !is.data.frame(newdata))
-        newdata <- as.data.frame(newdata)
+      newdata <- as.data.frame(newdata)
 
     nn <- if (!is.null(newdata)) nrow(newdata) else object@misc$n
     if (raw) {
@@ -136,6 +152,17 @@ predict.vlm <- function(object,
 
     attr(X_vlm, "constant")  <- xbar
     attr(X_vlm, "constant2") <- x2bar
+
+
+
+
+
+
+  if (type == "Xvlm")
+    return(X_vlm)
+
+
+
 
 
 
@@ -156,7 +183,7 @@ predict.vlm <- function(object,
         index <- seq_along(nv)
       }
       vasgn <- vasgn[nv[index]]
-    }
+    }  # if (type == "terms")
 
     if (anyNA(object@coefficients))
       stop("cannot handle NAs in 'object@coefficients'")
@@ -178,12 +205,12 @@ predict.vlm <- function(object,
       pred$sigma <- sigma
     } else {
       pred <- Build.terms.vlm(x = X_vlm, coefs = coefs,
-                              cov = NULL,
+                              cov = NULL,  # Only this line differs from above
                               assign = vasgn,
                               collapse = type != "terms", M = M,
                               dimname = list(dx1, dname2),
                               coefmat = coefvlm(object, matrix.out = TRUE))
-    }
+    }  # !se.fit
 
     constant  <- attr(pred, "constant")
 

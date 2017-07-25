@@ -176,7 +176,7 @@ It's a good idea to set a smaller value that will result in more accuracy,
 but it will require a greater computing time (when \eqn{k} is close to 0).
 And adjustment to \code{max.support} may be needed.
 In particular, the quantity computed by special means
-is \eqn{\psi(k) - E[\psi(Y+k)]}{trigamma(k) - E[trigamma(Y+k)]},
+is \eqn{\psi'(k) - E[\psi'(Y+k)]}{trigamma(k) - E[trigamma(Y+k)]},
 which is the difference between two
 \code{\link[base]{trigamma}}.
 functions. It is part of the calculation of the EIM with
@@ -192,7 +192,8 @@ respect to the \code{size} parameter.
   That is, it is on a relative scale rather than on an
   absolute scale.
   If the counts are very large in value then convergence fail might
-  occur; if so, then try a smaller value such as \code{gsize.mux = exp(-40)}.
+  occur; if so, then try a smaller value such as
+  \code{gsize.mux = exp(-40)}.
 
 
 }
@@ -312,11 +313,11 @@ respect to the \code{size} parameter.
   }
 }
 \details{
-  The negative binomial distribution can be motivated in several ways,
+  The negative binomial distribution (NBD)
+  can be motivated in several ways,
   e.g., as a Poisson distribution with a mean that is gamma
   distributed.
-  There are several common parametrizations of the negative binomial
-  distribution.
+  There are several common parametrizations of the NBD.
   The one used by \code{negbinomial()} uses the
   mean \eqn{\mu}{mu} and an \emph{index} parameter
   \eqn{k}, both which are positive.
@@ -329,8 +330,8 @@ respect to the \code{size} parameter.
   where \eqn{y=0,1,2,\ldots},
   and \eqn{\mu > 0}{mu > 0} and \eqn{k > 0}.
   Note that the \emph{dispersion} parameter is
-  \eqn{1/k}, so that as \eqn{k} approaches infinity the negative
-  binomial distribution approaches a Poisson distribution.
+  \eqn{1/k}, so that as \eqn{k} approaches infinity the
+  NBD approaches a Poisson distribution.
   The response has variance \eqn{Var(Y)=\mu+\mu^2/k}{Var(Y)=mu*(1+mu/k)}.
   When fitted, the \code{fitted.values} slot of the object contains
   the estimated value of the \eqn{\mu}{mu} parameter, i.e., of the mean
@@ -364,7 +365,7 @@ respect to the \code{size} parameter.
 
 
 
-  The negative binomial distribution can be coerced into the
+  The NBD can be coerced into the
   classical GLM framework with one of the parameters being
   of interest and the other treated as a nuisance/scale
   parameter (this is implemented in the \pkg{MASS} library). The
@@ -382,6 +383,7 @@ respect to the \code{size} parameter.
   is extremely skewed so that its standard error is often
   of no practical use. The parameter \eqn{1/k} has been
   used as a measure of aggregation.
+  For the NB-C the EIM is not diagonal.
 
 
   These \pkg{VGAM} family functions handle
@@ -426,7 +428,7 @@ respect to the \code{size} parameter.
 
 
 
-The negative binomial distribution (NBD) is a strictly unimodal
+The NBD is a strictly unimodal
 distribution. Any data set that does not exhibit a mode (somewhere
 in the middle) makes the estimation problem difficult.
 Set \code{trace = TRUE} to monitor convergence.
@@ -496,15 +498,20 @@ Fitting the negative binomial distribution to biological data.
 \bold{9}, 174--200.
 
 
-  Yee, T. W. (2014)
-  Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis},
-  \bold{71}, 889--902.
+Yee, T. W. (2014)
+Reduced-rank vector generalized linear models with two linear predictors.
+\emph{Computational Statistics and Data Analysis},
+\bold{71}, 889--902.
 
 
 
 }
-\author{ Thomas W. Yee }
+\author{ Thomas W. Yee,
+  and with a lot of help by Victor Miranda
+  to get it going with \code{\link{nbcanlink}} (NB-C).
+
+
+}
 \note{
 % The \pkg{VGAM} package has a few other family functions for the
 % negative binomial distribution. Currently, none of these others work
@@ -681,7 +688,7 @@ mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
 mydata <- transform(mydata, y3 = rnbinom(nn, mu = mu, size = delta0 * mu))
 \dontrun{
-plot(y3 ~ x2, data = mydata, pch = "+", col = 'blue',
+plot(y3 ~ x2, data = mydata, pch = "+", col = "blue",
      main = paste("Var(Y) = ", phi0, " * mu", sep = ""), las = 1) }
 nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
             data = mydata, trace = TRUE)

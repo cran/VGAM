@@ -6,19 +6,21 @@
 
 
 
-vglm <- function(formula,
-                 family, data = list(),
-                 weights = NULL, subset = NULL, na.action = na.fail,
-                 etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control = vglm.control(...),
-                 offset = NULL,
-                 method = "vglm.fit",
-                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL,
-                 constraints = NULL,
-                 extra = list(),
-                 form2 = NULL,
-                 qr.arg = TRUE, smart = TRUE, ...) {
+vglm <-
+  function(formula,
+           family = stop("argument 'family' needs to be assigned"),
+           data = list(),
+           weights = NULL, subset = NULL, na.action = na.fail,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
+           control = vglm.control(...),
+           offset = NULL,
+           method = "vglm.fit",
+           model = FALSE, x.arg = TRUE, y.arg = TRUE,
+           contrasts = NULL,
+           constraints = NULL,
+           extra = list(),
+           form2 = NULL,
+           qr.arg = TRUE, smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "vglm"
 
@@ -72,11 +74,11 @@ vglm <- function(formula,
     Xm2 <- retlist$Xm2
 
     if (length(Ym2)) {
-      if (nrow(as.matrix(Ym2)) != nrow(as.matrix(y)))
+      if (NROW(Ym2) != NROW(y))
         stop("number of rows of 'y' and 'Ym2' are unequal")
     }
     if (length(Xm2)) {
-      if (nrow(as.matrix(Xm2)) != nrow(as.matrix(x)))
+      if (NROW(Xm2) != NROW(x))
         stop("number of rows of 'x' and 'Xm2' are unequal")
     }
   } else {
@@ -90,7 +92,7 @@ vglm <- function(formula,
   w <- model.weights(mf)
   if (!length(w)) {
     w <- rep_len(1, nrow(mf))
-  } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
+  } else if (NCOL(w) == 1 && any(w < 0))
     stop("negative weights not allowed")
 
   if (is.character(family))

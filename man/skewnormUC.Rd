@@ -78,7 +78,10 @@ rskewnorm(n, location = 0, scale = 1, shape = 0)
 
 }
 \references{
-    \url{http://tango.stat.unipd.it/SN}.
+  \code{http://tango.stat.unipd.it/SN}.
+
+
+%   \url{http://tango.stat.unipd.it/SN}.
 
 
 }

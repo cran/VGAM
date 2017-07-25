@@ -173,7 +173,7 @@ micmen.control <- function(save.weights = TRUE, ...) {
 
     if (!length(Xm2))
       stop("regressor not found")
-    if (ncol(as.matrix(Xm2)) != 1)
+    if (NCOL(Xm2) != 1)
       stop("regressor not found or is not a vector. Use the ",
            "'form2' argument without an intercept")
     Xm2 <- as.vector(Xm2)  # Make sure
@@ -480,7 +480,7 @@ skira.control <- function(save.weights = TRUE, ...) {
 
 
     if (!length(Xm2)) stop("regressor not found")
-    if (ncol(as.matrix(Xm2)) != 1)
+    if (NCOL(Xm2) != 1)
       stop("regressor not found or is not a vector. ",
          "Use the 'form2' argument without an intercept")
     Xm2 <- as.vector(Xm2)

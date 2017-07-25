@@ -27,6 +27,8 @@ summaryvglm <-
   function(object, correlation = FALSE,
            dispersion = NULL, digits = NULL,
            presid = TRUE,
+           hde.NA = TRUE,
+           threshold.hde = 0.001,
            signif.stars = getOption("show.signif.stars"),
            nopredictors = FALSE,
            ...  # Added 20151211
@@ -115,6 +117,12 @@ summaryvglm <-
     answer@post <- new.postslot
   } else {
   }
+
+
+  answer@post$hdeff <- hdeff(object, derivative = 2)
+  answer@post$hde.NA <- hde.NA
+  answer@post$threshold.hde <- threshold.hde
+           
 
 
 
@@ -231,6 +239,8 @@ show.summary.vglm <-
            quote = TRUE,
            prefix = "",
            presid = TRUE,
+           hde.NA = TRUE,
+           threshold.hde = 0.001,
            signif.stars = NULL,   # Use this if logical; 20140728
            nopredictors = NULL,   # Use this if logical; 20150831
            top.half.only = FALSE,  # Added 20160803
@@ -240,13 +250,28 @@ show.summary.vglm <-
 
 
   M <- x@misc$M
-  coef <- x@coef3  # icients
+  coef3 <- x@coef3  # icients
   correl <- x@correlation
 
   digits <- if (is.null(digits)) options()$digits - 2 else digits
 
   cat("\nCall:\n", paste(deparse(x@call), sep = "\n", collapse = "\n"),
       "\n\n", sep = "")
+
+
+
+
+  if (is.logical(x@post$hde.NA) && x@post$hde.NA) {
+    if (length(hado <- x@post$hdeff)) {
+      HDE <- is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
+             hado[, "deriv1"] < 0
+      if (any(HDE) && ncol(coef3) == 4) {
+        HDE <- HDE & (x@post$threshold.hde < coef3[, 4])
+        coef3[HDE, 3:4] <- NA  # 3:4 means WaldStat and p-value
+      }
+    }
+  }
+
 
 
 
@@ -286,10 +311,10 @@ show.summary.vglm <-
 
 
 
-  if (length(coef)) {
+  if (length(coef3)) {
     cat(if (top.half.only) "\nParametric coefficients:" else
         "\nCoefficients:", "\n")
-    printCoefmat(coef, digits = digits,
+    printCoefmat(coef3, digits = digits,
                  signif.stars = use.signif.stars,
                  na.print = "NA")
   }
@@ -374,6 +399,22 @@ show.summary.vglm <-
     }
   }
 
+
+
+
+
+  if (length(hado <- x@post$hdeff)) {
+    if (is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
+        all(hado[, "deriv1"] > 0))
+      cat("\nNo Hauck-Donner effect found in any of the estimates\n")
+    if (is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
+        any(hado[, "deriv1"] < 0)) {
+      cat("\nWarning: Hauck-Donner effect detected in the following estimate(s):\n")
+      cat(paste("'", rownames(hado)[hado[, "deriv1"] < 0],
+                "'", collapse = ", ", sep = ""))
+      cat("\n")
+    }
+  }
 
 
 

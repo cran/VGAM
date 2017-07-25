@@ -134,7 +134,8 @@
 
 \seealso{
   \pkg{lmtest},
-  \code{\link{vglm}}.
+  \code{\link{vglm}},
+  \code{\link{lrp.vglm}}.
 
 
 % \code{\link{waldtest}}

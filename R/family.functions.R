@@ -240,7 +240,7 @@ veigen <- function(x, M) {
   index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
   dimm.value <- nrow(x)  # usually M or M(M+1)/2
 
-  z <- .Fortran("veigen",
+  z <- .Fortran("veigenf",
       as.integer(M),
       as.integer(n),
       as.double(x),

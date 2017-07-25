@@ -7,17 +7,17 @@
 #include<Rmath.h>
 
 
-void vdec(int *hqipzx3n, int *exz2jrhq, int *dimm);
-void m2a(double *m, double *a, int *dimm, int *hqipzx3n,
+void vdecccc(int *hqipzx3n, int *exz2jrhq, int *dimm);
+void m2accc(double *m, double *a, int *dimm, int *hqipzx3n,
        int *exz2jrhq, int *n, int *M, int *rb1onzwu);
-void a2m(double *a, double *m, int *dimm, int *hqipzx3n,
+void a2mccc(double *a, double *m, int *dimm, int *hqipzx3n,
        int *exz2jrhq, int *n, int *M);
-void mux2(double *cc, double *tlgduey8,
+void mux2ccc(double *cc, double *tlgduey8,
           double *bzmd6ftv, int *p, int *n, int *M);
-void mux22(double *cc, double *tlgduey8, double *bzmd6ftv, int *dimm,
+void mux22ccc(double *cc, double *tlgduey8, double *bzmd6ftv, int *dimm,
        int *hqipzx3n, int *exz2jrhq, 
        int *n, int *M, double *wk, int *rb1onzwu);
-void mux5(double *cc, double *x,
+void mux5ccc(double *cc, double *x,
           double *bzmd6ftv, int *M, int *n, int *r,
           int *dimm,
           int *dimr,
@@ -25,22 +25,22 @@ void mux5(double *cc, double *x,
           double *wk, double *wk2,
           int *hqipzx3n_M, int *exz2jrhq_M,
           int *hqipzx3n_r, int *exz2jrhq_r);
-void mux55(double *evects, double *evals, double *bzmd6ftv, double *wk, 
+void mux55ccc(double *evects, double *evals, double *bzmd6ftv, double *wk, 
            double *wk2, int *hqipzx3n, int *exz2jrhq,
            int *M, int *n);
-void mux7(double *cc, double *x,
+void mux7ccc(double *cc, double *x,
           double *bzmd6ftv, int *M, int *q, int *n, int *r);
-void mux111(double *cc, double *the7mqnvy, int *M, int *R, int *n,
-        double *wk, double *wk2, int *hqipzx3n, int *exz2jrhq,
+void mux111ccc(double *cc, double *the7mqnvy, int *M, int *R, int *n,
+        double *wkcc, double *wk2, int *hqipzx3n, int *exz2jrhq,
 	    int *dimm, int *rb1onzwu);
-void mux15(double *cc, double *x,
+void mux15ccc(double *cc, double *x,
            double *bzmd6ftv, int *M, int *n);
-void vchol(double *cc, int *M, int *n, int *ok, double *wk,
+void vcholccc(double *cc, int *M, int *n, int *ok, double *wk,
            int *hqipzx3n, int *exz2jrhq, int *dimm);
-void vforsub(double *cc, double *b, int *M, int *n,
+void vforsubccc(double *cc, double *b, int *M, int *n,
              double *wk, int *hqipzx3n,
              int *exz2jrhq, int *dimm);
-void vbacksub(double *cc, double *b, int *M, int *n,
+void vbacksubccc(double *cc, double *b, int *M, int *n,
               double *wk, int *hqipzx3n,
               int *exz2jrhq, int *dimm);
 void tapply_mat1(double *mat, int *nr, int *nc, int *type);
@@ -60,7 +60,7 @@ void tapply_mat1(double *mat, int *nr, int *nc, int *type);
 
 
 
-void vdec(int *hqipzx3n, int *exz2jrhq, int *dimm) {
+void vdecccc(int *hqipzx3n, int *exz2jrhq, int *dimm) {
   int ayfnwr1v;
 
   for(ayfnwr1v = 0; ayfnwr1v < *dimm; ayfnwr1v++) {
@@ -70,7 +70,7 @@ void vdec(int *hqipzx3n, int *exz2jrhq, int *dimm) {
 }
 
 
-void m2a(double *m, double *a, int *dimm, int *hqipzx3n,
+void m2accc(double *m, double *a, int *dimm, int *hqipzx3n,
          int *exz2jrhq, int *n, int *M, int *rb1onzwu) {
   int ayfnwr1v, gp1jxzuh, MM = *M * *M, MMn = *M * *M * *n;
 
@@ -90,7 +90,7 @@ void m2a(double *m, double *a, int *dimm, int *hqipzx3n,
 }
 
 
-void a2m(double *a, double *m, int *dimm, int *hqipzx3n,
+void a2mccc(double *a, double *m, int *dimm, int *hqipzx3n,
          int *exz2jrhq, int *n, int *M) {
   int ayfnwr1v, gp1jxzuh, MM= *M * *M;
 
@@ -105,7 +105,7 @@ void a2m(double *a, double *m, int *dimm, int *hqipzx3n,
 
 
 
-void mux2(double *cc, double *tlgduey8,
+void mux2ccc(double *cc, double *tlgduey8,
           double *bzmd6ftv, int *p, int *n, int *M) {
   double urohxe6t;
   int ayfnwr1v, yq6lorbx, bpvaqm5z, Mp = *M * *p;
@@ -124,15 +124,15 @@ void mux2(double *cc, double *tlgduey8,
 
 
 
-void mux22(double *cc, double *tlgduey8, double *bzmd6ftv, int *dimm,
+void mux22ccc(double *cc, double *tlgduey8, double *bzmd6ftv, int *dimm,
        int *hqipzx3n, int *exz2jrhq, 
        int *n, int *M, double *wk, int *rb1onzwu) {
   double urohxe6t;
   int yq6lorbx, bpvaqm5z, gp1jxzuh, one = 1, nzqklc9x;
 
-  vdec(hqipzx3n, exz2jrhq, dimm);
+  vdecccc(hqipzx3n, exz2jrhq, dimm);
   for(gp1jxzuh = 0; gp1jxzuh < *n; gp1jxzuh++) {
-    m2a(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, rb1onzwu);
+    m2accc(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, rb1onzwu);
 
     for(yq6lorbx = 0; yq6lorbx < *M; yq6lorbx++) {
       urohxe6t = 0.0;
@@ -147,7 +147,7 @@ void mux22(double *cc, double *tlgduey8, double *bzmd6ftv, int *dimm,
 }
 
 
-void mux5(double *cc, double *x,
+void mux5ccc(double *cc, double *x,
           double *bzmd6ftv, int *M, int *n, int *r,
           int *dimm,
           int *dimr,
@@ -161,8 +161,8 @@ void mux5(double *cc, double *x,
       jM, jr, kM, kr, one=1, rb1onzwu=0;
 
   if(*matrix == 1) {
-    vdec(hqipzx3n_M, exz2jrhq_M, dimm);
-    vdec(hqipzx3n_r, exz2jrhq_r, dimr);
+    vdecccc(hqipzx3n_M, exz2jrhq_M, dimm);
+    vdecccc(hqipzx3n_r, exz2jrhq_r, dimr);
     pd = wk;
     pd2 = wk2;
   } else {
@@ -173,7 +173,7 @@ void mux5(double *cc, double *x,
 
   for(ayfnwr1v = 0; ayfnwr1v < *n; ayfnwr1v++) {
     if(*matrix == 1)
-      m2a(cc, pd, dimm, hqipzx3n_M, exz2jrhq_M, &one, M, &rb1onzwu);
+      m2accc(cc, pd, dimm, hqipzx3n_M, exz2jrhq_M, &one, M, &rb1onzwu);
     else {
       pd = cc;
       pd2 = bzmd6ftv;
@@ -196,7 +196,7 @@ void mux5(double *cc, double *x,
     }
 
     if(*matrix == 1)
-      a2m(pd2, bzmd6ftv, dimr, hqipzx3n_r, exz2jrhq_r, &one, r);
+      a2mccc(pd2, bzmd6ftv, dimr, hqipzx3n_r, exz2jrhq_r, &one, r);
 
     cc += (*matrix == 1 ? *dimm : MM);
     x += Mr;
@@ -206,14 +206,14 @@ void mux5(double *cc, double *x,
 
 
 
-void mux55(double *evects, double *evals, double *bzmd6ftv, double *wk, 
+void mux55ccc(double *evects, double *evals, double *bzmd6ftv, double *wk, 
            double *wk2, int *hqipzx3n, int *exz2jrhq,
            int *M, int *n) {
   double *pd, *pd2, bpvaqm5z;
   int ayfnwr1v, yq6lorbx, gp1jxzuh, urohxe6t, MM = *M * *M, one = 1,
       imk5wjxg = *M * (*M + 1)/2;
 
-  vdec(hqipzx3n, exz2jrhq, &imk5wjxg);
+  vdecccc(hqipzx3n, exz2jrhq, &imk5wjxg);
 
   for(ayfnwr1v = 0; ayfnwr1v < *n; ayfnwr1v++) {
     pd = evects;
@@ -232,7 +232,7 @@ void mux55(double *evects, double *evals, double *bzmd6ftv, double *wk,
         wk[gp1jxzuh + yq6lorbx * *M] = bpvaqm5z;
       }
 
-    a2m(wk, bzmd6ftv, &imk5wjxg, hqipzx3n, exz2jrhq, &one, M);
+    a2mccc(wk, bzmd6ftv, &imk5wjxg, hqipzx3n, exz2jrhq, &one, M);
 
     bzmd6ftv += imk5wjxg;
     evals += *M;
@@ -244,7 +244,7 @@ void mux55(double *evects, double *evals, double *bzmd6ftv, double *wk,
 
 
 
-void mux7(double *cc, double *x,
+void mux7ccc(double *cc, double *x,
           double *bzmd6ftv, int *M, int *q, int *n, int *r) {
   double urohxe6t;
   int ayfnwr1v, yq6lorbx, gp1jxzuh, bpvaqm5z,
@@ -270,48 +270,59 @@ void mux7(double *cc, double *x,
 
 
 
-void mux111(double *cc, double *the7mqnvy, int *M, int *R, int *n,
-            double *wk, double *wk2, int *hqipzx3n, int *exz2jrhq,
-            int *dimm, int *rb1onzwu) {
-  double urohxe6t, *pd2;
-  int ayfnwr1v, yq6lorbx, gp1jxzuh, bpvaqm5z,
-      MM = *M * *M, MR = *M * *R, nzqklc9x;
 
-  vdec(hqipzx3n, exz2jrhq, dimm);
+
+
+
+void mux111ccc(double *cc, double *the7mqnvy,
+            int *M, int *R, int *n,
+            double *wkcc, double *wk2,
+            int *hqipzx3n, int *exz2jrhq,
+            int *dimm, int *rb1onzwu) {
+  double urohxe6t, *pd2, obr6tcexdouble;
+  int ayfnwr1v, yq6lorbx, gp1jxzuh, bpvaqm5z,
+      MM = *M * *M, MR = *M * *R,
+      lowlim;
+
+  vdecccc(hqipzx3n, exz2jrhq, dimm);
 
   for(ayfnwr1v = 0; ayfnwr1v < MM; ayfnwr1v++)
-    wk[ayfnwr1v] = 0.0;
+    wkcc[ayfnwr1v] = 0.0;
 
   for(bpvaqm5z = 0; bpvaqm5z < *n; bpvaqm5z++) {
     for(ayfnwr1v = 0; ayfnwr1v < *dimm; ayfnwr1v++) {
-      if(*rb1onzwu == 0)
-        wk[hqipzx3n[ayfnwr1v] + exz2jrhq[ayfnwr1v] * *M] =
-        wk[exz2jrhq[ayfnwr1v] + hqipzx3n[ayfnwr1v] * *M] = *cc++;
-      else
-        wk[hqipzx3n[ayfnwr1v] + exz2jrhq[ayfnwr1v] * *M] = *cc++;
-    }
+      if(*rb1onzwu == 0) {
+        obr6tcexdouble = *cc++;
+        wkcc[hqipzx3n[ayfnwr1v] + exz2jrhq[ayfnwr1v] * *M] =
+        wkcc[exz2jrhq[ayfnwr1v] + hqipzx3n[ayfnwr1v] * *M] = obr6tcexdouble;
+      } else {
+        wkcc[hqipzx3n[ayfnwr1v] + exz2jrhq[ayfnwr1v] * *M] = *cc++;
+      }
+    }  /* ayfnwr1v */
 
     pd2 = the7mqnvy;
     for(ayfnwr1v = 0; ayfnwr1v < *M; ayfnwr1v++)
       for(yq6lorbx = 0; yq6lorbx < *R; yq6lorbx++)
         wk2[ayfnwr1v + yq6lorbx * *M] = *pd2++;
 
-    for(ayfnwr1v = 0; ayfnwr1v < *M; ayfnwr1v++)
+    for(ayfnwr1v = 0; ayfnwr1v < *M; ayfnwr1v++) {
+      lowlim = *rb1onzwu == 0 ? 0 : ayfnwr1v;
       for(yq6lorbx = 0; yq6lorbx < *R; yq6lorbx++) {
         urohxe6t = 0.0;
-        nzqklc9x = *rb1onzwu == 0 ? 0 : ayfnwr1v;
-        for(gp1jxzuh = nzqklc9x; gp1jxzuh < *M; gp1jxzuh++)
-          urohxe6t += wk[ayfnwr1v + gp1jxzuh * *M] * wk2[gp1jxzuh + yq6lorbx * *M];
+        for(gp1jxzuh = lowlim; gp1jxzuh < *M; gp1jxzuh++)
+          urohxe6t +=  wk2[gp1jxzuh + yq6lorbx * *M] *
+                    wkcc[ayfnwr1v + gp1jxzuh * *M];
         the7mqnvy[yq6lorbx + ayfnwr1v * *R] = urohxe6t;
-      }
+      } /* yq6lorbx */
+    } /* ayfnwr1v */
     the7mqnvy += MR;
-  }
+  }  /* bpvaqm5z */
 }
 
 
 
 
-void mux15(double *cc, double *x,
+void mux15ccc(double *cc, double *x,
            double *bzmd6ftv, int *M, int *n) {
   double *pd, *pd2;
   int ayfnwr1v, yq6lorbx, gp1jxzuh, MM = *M * *M;
@@ -338,18 +349,18 @@ void mux15(double *cc, double *x,
 
 
 
-void vchol(double *cc, int *M, int *n, int *ok, double *wk,
+void vcholccc(double *cc, int *M, int *n, int *ok, double *wk,
            int *hqipzx3n, int *exz2jrhq, int *dimm) {
   double urohxe6t, *pd;
   int bpvaqm5z, ayfnwr1v, yq6lorbx, gp1jxzuh, iM, iiM, rb1onzwu = 0, one = 1;
 
-  vdec(hqipzx3n, exz2jrhq, dimm);
+  vdecccc(hqipzx3n, exz2jrhq, dimm);
   pd = wk;
 
   for(bpvaqm5z = 0; bpvaqm5z < *n; bpvaqm5z++) {
     *ok = 1; 
 
-    m2a(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, &rb1onzwu);
+    m2accc(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, &rb1onzwu);
 
     for(ayfnwr1v = 0; ayfnwr1v < *M; ayfnwr1v++) {
       urohxe6t = 0.0;
@@ -374,7 +385,7 @@ void vchol(double *cc, int *M, int *n, int *ok, double *wk,
       }
     }
 
-    a2m(wk, cc, dimm, hqipzx3n, exz2jrhq, &one, M);
+    a2mccc(wk, cc, dimm, hqipzx3n, exz2jrhq, &one, M);
 
     cc += *dimm;
     ok++;
@@ -383,17 +394,17 @@ void vchol(double *cc, int *M, int *n, int *ok, double *wk,
 
 
 
-void vforsub(double *cc, double *b, int *M, int *n,
+void vforsubccc(double *cc, double *b, int *M, int *n,
              double *wk, int *hqipzx3n,
              int *exz2jrhq, int *dimm) {
   double urohxe6t, *pd;
   int yq6lorbx, gp1jxzuh, bpvaqm5z, rb1onzwu = 1, one = 1;
 
   pd = wk;
-  vdec(hqipzx3n, exz2jrhq, dimm);
+  vdecccc(hqipzx3n, exz2jrhq, dimm);
 
   for(bpvaqm5z = 0; bpvaqm5z < *n; bpvaqm5z++) {
-    m2a(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, &rb1onzwu);
+    m2accc(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, &rb1onzwu);
 
     for(yq6lorbx = 0; yq6lorbx < *M; yq6lorbx++) {
       urohxe6t = b[yq6lorbx];
@@ -409,17 +420,17 @@ void vforsub(double *cc, double *b, int *M, int *n,
 
 
 
-void vbacksub(double *cc, double *b, int *M, int *n,
+void vbacksubccc(double *cc, double *b, int *M, int *n,
               double *wk, int *hqipzx3n,
               int *exz2jrhq, int *dimm) {
   double urohxe6t, *pd;
   int yq6lorbx, gp1jxzuh, bpvaqm5z, rb1onzwu = 1, one = 1;
 
   pd = wk;
-  vdec(hqipzx3n, exz2jrhq, dimm);
+  vdecccc(hqipzx3n, exz2jrhq, dimm);
 
   for(bpvaqm5z = 0; bpvaqm5z < *n; bpvaqm5z++) {
-    m2a(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, &rb1onzwu);
+    m2accc(cc, wk, dimm, hqipzx3n, exz2jrhq, &one, M, &rb1onzwu);
 
     for(yq6lorbx = *M - 1; yq6lorbx >= 0; yq6lorbx--) {
       urohxe6t = b[yq6lorbx];

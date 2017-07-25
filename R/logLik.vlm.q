@@ -127,6 +127,7 @@ constraints.vlm <-
            all = TRUE, which,
            matrix.out = FALSE,
            colnames.arg = TRUE,  # 20130827
+           rownames.arg = TRUE,  # 20170606
            ...) {
 
 
@@ -164,12 +165,14 @@ constraints.vlm <-
         colnames(mat.ans) <- object@misc$colnames.X_vlm
 
 
-      if (colnames.arg)
-        dimnames(mat.ans) <-
-          list(NULL,
-               colnames(model.matrix(object, type = "vlm")))
-
-
+      if (colnames.arg || rownames.arg) {
+        rownames.cm <- colnames(predict(object))
+        if (!rownames.arg || nrow(mat.ans) != length(rownames.cm))
+          rownames.cm <- NULL
+        colnames.cm <- if (colnames.arg)
+          colnames(model.matrix(object, type = "vlm")) else NULL
+        dimnames(mat.ans) <- list(rownames.cm, colnames.cm)
+      }
       mat.ans
     } else {
       ans[[which]]

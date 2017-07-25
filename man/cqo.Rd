@@ -10,7 +10,8 @@
 
 }
 \usage{
-cqo(formula, family, data = list(), weights = NULL, subset = NULL,
+cqo(formula, family = stop("argument 'family' needs to be assigned"),
+    data = list(), weights = NULL, subset = NULL,
     na.action = na.fail, etastart = NULL, mustart = NULL,
     coefstart = NULL, control = qrrvglm.control(...), offset = NULL,
     method = "cqo.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,

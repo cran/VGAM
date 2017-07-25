@@ -9,7 +9,7 @@
 }
 \usage{
 calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
-    gridSize = if (Rank == 1) 9 else 5, varI.latvar = FALSE, ...)
+    gridSize = ifelse(Rank == 1, 9, 5), varI.latvar = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -111,7 +111,8 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr,
 sort(deviance(p1, history = TRUE))  # A history of all the iterations
 
 siteNos <- 3:4  # Calibrate these sites
-cp1 <- calibrate(p1, new = data.frame(depvar(p1)[siteNos, ]), trace = TRUE)
+cp1 <- calibrate(p1, trace = TRUE,
+                 new = data.frame(depvar(p1)[siteNos, ]))
 }
 
 \dontrun{

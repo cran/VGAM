@@ -102,13 +102,13 @@ nakagami(lscale = "loge", lshape = "loge", iscale = 1, ishape = NULL,
 \examples{
 nn <- 1000; shape <- exp(0); Scale <- exp(1)
 ndata <- data.frame(y1 = sqrt(rgamma(nn, shape = shape, scale = Scale/shape)))
-fit <- vglm(y1 ~ 1, nakagami, data = ndata, trace = TRUE, crit = "coef")
+nfit <- vglm(y1 ~ 1, nakagami, data = ndata, trace = TRUE, crit = "coef")
 ndata <- transform(ndata, y2 = rnaka(nn, scale = Scale, shape = shape))
-fit <- vglm(y2 ~ 1, nakagami(iscale = 3), data = ndata, trace = TRUE)
-head(fitted(fit))
+nfit <- vglm(y2 ~ 1, nakagami(iscale = 3), data = ndata, trace = TRUE)
+head(fitted(nfit))
 with(ndata, mean(y2))
-coef(fit, matrix = TRUE)
-(Cfit <- Coef(fit))
+coef(nfit, matrix = TRUE)
+(Cfit <- Coef(nfit))
 \dontrun{ sy <- with(ndata, sort(y2))
 hist(with(ndata, y2), prob = TRUE, main = "", xlab = "y", ylim = c(0, 0.6),
      col = "lightblue")

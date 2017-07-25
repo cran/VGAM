@@ -1,10 +1,10 @@
 Package: VGAM
-Version: 1.0-3
-Date: 2017-01-11
+Version: 1.0-4
+Date: 2017-07-24
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
-Depends: R (>= 3.1.0), methods, stats, stats4, splines
+Depends: R (>= 3.4.0), methods, stats, stats4, splines
 Suggests: VGAMdata, MASS, mgcv
 Description: An implementation of about 6 major classes of
     statistical regression models. At the heart of it are the
@@ -25,12 +25,12 @@ Description: An implementation of about 6 major classes of
     models in ecology, as well as constrained additive ordination
     (CAO). Note that these functions are subject to change;
     see the NEWS and ChangeLog files for latest changes.
-License: GPL-2 | GPL-3
+License: GPL-3
 URL: https://www.stat.auckland.ac.nz/~yee/VGAM
 NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2017-01-11 02:07:28 UTC; tyee001
+Packaged: 2017-07-24 04:56:17 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2017-01-11 08:59:31
+Date/Publication: 2017-07-25 21:01:44 UTC

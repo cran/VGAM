@@ -15,7 +15,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 \arguments{
   \item{theta}{
   Numeric or character.
-  Typically the mean of a negative binomial (NB) distribution.
+  Typically the mean of a negative binomial distribution (NBD).
   See below for further details.
 
 
@@ -45,11 +45,11 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 
 }
 \details{
-  The negative binomial (NB) canonical link is
+  The NBD canonical link is
   \eqn{\log(\theta/ (\theta + k))}{log(theta/(theta + k))}
-  where \eqn{\theta}{theta} is the mean of a NB
-  distribution. The canonical link is used for theoretically
-  relating the NB to GLM class.
+  where \eqn{\theta}{theta} is the NBD mean.
+  The canonical link is used for theoretically
+  relating the NBD to GLM class.
 
 
   This link function was specifically written for
@@ -64,7 +64,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 \value{
   For \code{deriv = 0}, the above equation
   when \code{inverse = FALSE}, and if \code{inverse = TRUE} then
-  \code{kmatrix / expm1(-theta)}.
+  \code{kmatrix / expm1(-theta)} where \code{theta} ie really \code{eta}.
   For \code{deriv = 1}, then the function returns
   \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
   if \code{inverse = FALSE},
@@ -73,6 +73,13 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 
 }
 \references{
+
+  Miranda, V. S. and Yee, T. W. (2017)
+  On mean function modelling for several one-parameter
+  discrete distributions.
+  \emph{Manuscript in preparation}.
+
+
 
   Yee, T. W. (2014)
   Reduced-rank vector generalized linear models with two linear predictors.
@@ -87,21 +94,30 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 
 
 }
-\author{ Thomas W. Yee }
+\author{ Thomas W. Yee and with a lot of help by Victor Miranda
+  to get it going with \code{\link{negbinomial}}.
+
+
+}
 
 \section{Warning}{
-  This function currently does not work very well with \code{\link{negbinomial}}!
-  The NB-C model is sensitive to the initial values and may converge to a
-  local solution.
+  This function works with \code{\link{negbinomial}} but care
+  is needed because it is numerically fraught.
+  In particular, the first linear/additive predictor must have
+  negative values, and finding good initial values may be
+  difficult, leading to it crashing at the start.
+  Hence the NB-C model is sensitive to the initial values and may
+  converge to a local solution.
   Pages 210 and 309 of Hilbe (2011) notes convergence difficulties (of
-  Newton-Raphson type algorithms), and this applies here.
-  This function should work okay with \code{\link{negbinomial.size}}.
-  Currently trying something like \code{imethod = 3} or \code{imu},
-  \code{stepsize = 0.5}, \code{maxit = 100}, \code{zero = -2} should help;
-  see the example below.
+  Newton-Raphson type algorithms), and some of that
+  this applies here.
+  Setting \code{trace = TRUE} is a good idea, as is
+  trying various values of \code{imethod}
+  in \code{\link{negbinomial}}.
 
 
-  Standard errors may be unreliable.
+% This function should work okay with \code{\link{negbinomial.size}}.
+% Standard errors may be unreliable.
 
 
 }
@@ -134,39 +150,35 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 nbcanlink("mu", short = FALSE)
 
 mymu <- 1:10  # Test some basic operations:
-kmatrix <- matrix(runif(length(mymu)), length(mymu), 1)
+kmatrix <- cbind(runif(length(mymu)))
 eta1 <- nbcanlink(mymu, size = kmatrix)
 ans2 <- nbcanlink(eta1, size = kmatrix, inverse = TRUE)
 max(abs(ans2 - mymu))  # Should be 0
 
-\dontrun{ mymu <- c(seq(0.5, 10, length = 101))
+\dontrun{ mymu <- seq(0.5, 10, length = 101)
 kmatrix <- matrix(10, length(mymu), 1)
 plot(nbcanlink(mymu, size = kmatrix) ~ mymu, las = 1,
-     type = "l", col = "blue", lwd = 1.5, xlab = expression({mu}))
+     type = "l", col = "blue", xlab = expression({mu}))
+}
 
-# Estimate the parameters from some simulated data (see Warning section)
-set.seed(123)
-ndata <- data.frame(x2 = runif(nn <- 1000 ))
-size1 <- exp(1); size2 <- exp(2)
+# Estimate the parameters from some simulated data
+ndata <- data.frame(x2 = runif(nn <- 1000))
 ndata <- transform(ndata, eta1 = -1 - 1 * x2,  # eta1 < 0
-                          size1 = size1,
-                          size2 = size2)
+                          size1 = exp(1),
+                          size2 = exp(2))
 ndata <- transform(ndata,
-            mu1 = nbcanlink(eta1, size = size1, inv = TRUE),
-            mu2 = nbcanlink(eta1, size = size2, inv = TRUE))
+            mu1 = nbcanlink(eta1, size = size1, inverse = TRUE),
+            mu2 = nbcanlink(eta1, size = size2, inverse = TRUE))
 ndata <- transform(ndata, y1 = rnbinom(nn, mu = mu1, size = size1),
                           y2 = rnbinom(nn, mu = mu2, size = size2))
-head(ndata)
 summary(ndata)
 
-fit <- vglm(cbind(y1, y2) ~ x2,
-#           negbinomial("nbcanlink", imethod = 1, max.chunk.MB = 9),
-            negbinomial("nbcanlink", imethod = 2),
-            stepsize = 0.25, data = ndata,  # Deliberately slow the convergence rate
-            maxit = 100, trace = TRUE)  # Warning: may converge to a local soln
-coef(fit, matrix = TRUE)
-summary(fit)
-}
+nbcfit <- vglm(cbind(y1, y2) ~ x2,
+#           negbinomial(lmu = "nbcanlink", imethod = 1),  # Try this
+            negbinomial(lmu = "nbcanlink", imethod = 2),  # Try this
+            data = ndata, trace = TRUE)
+coef(nbcfit, matrix = TRUE)
+summary(nbcfit)
 }
 \keyword{math}
 \keyword{models}

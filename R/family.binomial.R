@@ -189,7 +189,7 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
                               extraargs = list(
                               ycounts = ycounts,
                               nvec = if (is.numeric(extra$orig.w))
-                                     round(w / extra$orig.w) else round(w),
+                                  round(w / extra$orig.w) else round(w),
                               mustart = mustart.use))
       init.rho <- if (is.Numeric( .irho )) rep_len( .irho , n) else
                   rep_len(try.this, n)
@@ -1297,8 +1297,8 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   if (anyNA(q1)    || anyNA(q2)    ||
       anyNA(sd1)   || anyNA(sd2)   ||
       anyNA(mean1) || anyNA(mean2) || anyNA(rho))
-    stop("no NAs allowed in arguments or variables 'q1', 'q2', 'mean1', ",
-         "'mean2', 'sd1', 'sd2', 'cov12'")
+    stop("no NAs allowed in arguments or variables 'q1', 'q2',",
+         " 'mean1', 'mean2', 'sd1', 'sd2', 'cov12'")
   if (min(rho) < -1 || max(rho) > +1)
     stop("correlation 'rho' is out of range")
 
@@ -1334,9 +1334,10 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
 
   ans <- Zedd1
   singler <- ifelse(length(rho) == 1, 1, 0)
-  answer <- .C("pnorm2",
-       ah = as.double(-Zedd1), ak = as.double(-Zedd2), r = as.double(rho),
-       size = as.integer(LLL), singler = as.integer(singler),
+  answer <- .C("pnorm2ccc",
+       ah = as.double(-Zedd1), ak = as.double(-Zedd2),
+       r = as.double(rho), size = as.integer(LLL),
+       singler = as.integer(singler),
        ans = as.double(ans))$ans
   if (any(answer < 0.0))
     warning("some negative values returned")
@@ -1369,8 +1370,8 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
   if (anyNA(x1)    || anyNA(x2)    ||
       anyNA(sd1)   || anyNA(sd2)   ||
       anyNA(mean1) || anyNA(mean2) || anyNA(rho))
-    stop("no NAs allowed in arguments or variables 'x1', 'x2', 'mean1', ",
-         "'mean2', 'sd1', 'sd2', 'cov12'")
+    stop("no NAs allowed in arguments or variables 'x1', 'x2',",
+         " 'mean1', 'mean2', 'sd1', 'sd2', 'cov12'")
   if (min(rho) < -1 || max(rho) > +1)
     stop("correlation 'rho' is out of range")
 
@@ -1397,7 +1398,7 @@ dnorm2 <- function(x, y, rho = 0, log = FALSE) {
 
   ans <- Z1
   singler <- ifelse(length(rho) == 1, 1, 0)
-  answer <- .C("pnorm2",
+  answer <- .C("pnorm2ccc",
        ah = as.double(-Z1), ak = as.double(-Z2), r = as.double(rho),
        size = as.integer(LLL), singler = as.integer(singler),
        ans = as.double(ans))$ans
@@ -1548,10 +1549,11 @@ my.dbinom <- function(x,
 
     endpt1 <- (x == size) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
     if (any(endpt1)) {
-      ans[endpt1] <- lgamma(  size[endpt1] + shape1[endpt1]) +
-                     lgamma(shape1[endpt1] + shape2[endpt1]) -
-                    (lgamma(  size[endpt1] + shape1[endpt1] + shape2[endpt1]) +
-                     lgamma(shape1[endpt1]))
+      ans[endpt1] <-
+        lgamma(  size[endpt1] + shape1[endpt1]) +
+        lgamma(shape1[endpt1] + shape2[endpt1]) -
+       (lgamma(  size[endpt1] + shape1[endpt1] + shape2[endpt1]) +
+        lgamma(shape1[endpt1]))
     }  # endpt1
 
 
@@ -1559,10 +1561,11 @@ my.dbinom <- function(x,
 
     endpt2 <- (x == 0) & ((shape1 < 1/Bigg) | (shape2 < 1/Bigg)) & ok0
     if (any(endpt2)) {
-      ans[endpt2] <- lgamma(  size[endpt2] + shape2[endpt2]) +
-                     lgamma(shape1[endpt2] + shape2[endpt2]) -
-                    (lgamma(  size[endpt2] + shape1[endpt2] + shape2[endpt2]) +
-                     lgamma(shape2[endpt2]))
+      ans[endpt2] <-
+        lgamma(  size[endpt2] + shape2[endpt2]) +
+        lgamma(shape1[endpt2] + shape2[endpt2]) -
+       (lgamma(  size[endpt2] + shape1[endpt2] + shape2[endpt2]) +
+        lgamma(shape2[endpt2]))
     }  # endpt2
 
 
@@ -1704,9 +1707,9 @@ my.dbinom <- function(x,
                          prob = rbeta(n = smalln, shape1 = shape1[okay0],
                                                   shape2 = shape2[okay0]))
 
-  okay1 <- is.na(shape1)       & is.infinite(shape2)  # rho = 0 and prob == 0
-  okay2 <- is.infinite(shape1) & is.na(shape2)       # rho = 0 and prob == 1
-  okay3 <- is.infinite(shape1) & is.infinite(shape2)  # rho = 0 and 0 < prob < 1
+  okay1 <- is.na(shape1)       & is.infinite(shape2)  # rho=0 & prob==0
+  okay2 <- is.infinite(shape1) & is.na(shape2)   # rho = 0 & prob == 1
+  okay3 <- is.infinite(shape1) & is.infinite(shape2)  # rho=0 & 0<prob<1
 
   if (sum.okay1 <- sum(okay1))
     ans[okay1] <- rbinom(n = sum.okay1, size = size[okay1],
@@ -2128,7 +2131,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       prob.init <- rep_len( .iprob , n)
 
     if (!length(etastart) ||
-      ncol(cbind(etastart)) != 2) {
+      NCOL(etastart) != 2) {
       shape.init <- rep_len( .ishape , n)
       etastart <-
         cbind(theta2eta(prob.init,  .lprob ,  earg = .eprob ),
@@ -2257,7 +2260,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       denom2 <- (1+(ii-2)*shape)^2
       wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] + temp7 / denom1
       wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] - (ii-2) * temp7 / denom1
-      wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] + (ii-2)^2 * temp7 / denom1 -
+      wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] +
+                        (ii-2)^2 * temp7 / denom1 -
                         (ii-1)^2 * temp7 / denom2
       if (max(temp7) < .tolerance ) break
     }
@@ -2608,10 +2612,10 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       stop("loglikelihood residuals not implemented yet")
     } else {
 
-        ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                  y * w # Convert proportions to counts
-        nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                  round(w)
+      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+                y * w # Convert proportions to counts
+      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+                round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -2859,8 +2863,10 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   }), list( .lmu12 = lmu12, .emu12 = emu12, .rho = rho ))),
   weight = eval(substitute(expression({
     if (is.null( .nsimEIM)) {
-      ned2l.dprob1prob1 <- PhiB^2 *(1/p11+1/p01) + onemPhiB^2 *(1/p10+1/p00)
-      ned2l.dprob2prob2 <- PhiA^2 *(1/p11+1/p10) + onemPhiA^2 *(1/p01+1/p00)
+      ned2l.dprob1prob1 <- PhiB^2 *(1/p11+1/p01) +
+                           onemPhiB^2 *(1/p10+1/p00)
+      ned2l.dprob2prob2 <- PhiA^2 *(1/p11+1/p10) +
+                           onemPhiA^2 *(1/p01+1/p00)
       ned2l.dprob1prob2 <- PhiA * (PhiB/p11 - onemPhiB/p10) +
                        onemPhiA * (onemPhiB/p00 - PhiB/p01)
       wz <- matrix(0, n, dimm(M))  # 6=dimm(M)
@@ -3060,12 +3066,13 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
           retval <-
           sum(c(w) *
-              dmultinomial(x = ycounts, size = nvec, prob = use.mu,  # mumat,
+              dmultinomial(x = ycounts,
+                           size = nvec, prob = use.mu,  # mumat,
                            log = TRUE, dochecking = FALSE))
           retval
         }
         rho.grid <- .grho  # seq(-0.95, 0.95, len = 31)
-        try.this <- grid.search(rho.grid, objfun = binom2.rho.ss.Loglikfun,
+      try.this <- grid.search(rho.grid, objfun = binom2.rho.ss.Loglikfun,
                                 y = y, x = x, w = w, extraargs = list(
                                 ymat2col = extra$ymat2col,
                                 initmu1  = mu1.init,
@@ -3082,7 +3089,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                         theta2eta(mu2.init, .lmu12 , earg = .emu12 ),
                         theta2eta(rho.init, .l.rho , earg = .e.rho ))
     }
-    mustart <- NULL  # Since etastart has been computed and/or no @linkfun.
+    mustart <- NULL  # Coz etastart has been computed and/or no @linkfun.
   }), list( .lmu12 = lmu12, .l.rho = l.rho,
             .emu12 = emu12, .e.rho = e.rho,
                             .grho = grho,
@@ -3140,7 +3147,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
       ll.elts <-
-        c(w) * dmultinomial(x = ycounts, size = nvec, prob = mu,  # use.mu,
+        c(w) * dmultinomial(x = ycounts, size = nvec,
+                            prob = mu,  # use.mu,
                             log = TRUE, dochecking = FALSE)
       if (summation) {
         sum(ll.elts)
@@ -3154,8 +3162,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
                      eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
     rhovec <-        eta2theta(eta[, 3], .l.rho , earg = .e.rho )
-    okay1 <- all(is.finite(pmargin)) && all( 0 < pmargin & pmargin < 1) &&
-             all(is.finite(rhovec )) && all(-1 < rhovec  & rhovec  < 1)
+    okay1 <- all(is.finite(pmargin)) && all( 0<pmargin & pmargin < 1) &&
+             all(is.finite(rhovec )) && all(-1<rhovec  & rhovec  < 1)
     okay1
   }, list( .lmu12 = lmu12, .l.rho = l.rho,
            .emu12 = emu12, .e.rho = e.rho ))),
@@ -3180,8 +3188,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
     BAmat <- (eta[, 1:2] -
-              rhovec * eta[, 2:1]) /  sqrt(pmax(1e5 * .Machine$double.eps,
-                                                1.0 - rhovec^2))
+           rhovec * eta[, 2:1]) /  sqrt(pmax(1e5 * .Machine$double.eps,
+                                             1.0 - rhovec^2))
 
 
     PhiA     <- pnorm(BAmat[, 2])
@@ -3194,14 +3202,14 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   mycode <- TRUE   # zz
 
  if (mycode) {
-    dprob00 <- dibinorm(eta[, 1], eta[, 2], cov12 = rhovec)
-    dl.dprob1 <-     PhiA *      ycounts[, 1] *      ycounts[, 2]  / p11 +
-                 onemPhiA *      ycounts[, 1] * (1 - ycounts[, 2]) / p10 -
-                            (1 - ycounts[, 1]) / p0
-    dl.dprob2 <-     PhiB * (    ycounts[, 1] *      ycounts[, 2]  / p11 -
-                                 ycounts[, 1] * (1 - ycounts[, 2]) / p10)
-    dl.drho   <-  dprob00 * (    ycounts[, 1] *      ycounts[, 2]  / p11 -
-                                 ycounts[, 1] * (1 - ycounts[, 2]) / p10)
+   dprob00 <- dibinorm(eta[, 1], eta[, 2], cov12 = rhovec)
+   dl.dprob1 <-     PhiA *      ycounts[, 1] *      ycounts[, 2]  / p11 +
+                onemPhiA *      ycounts[, 1] * (1 - ycounts[, 2]) / p10 -
+                           (1 - ycounts[, 1]) / p0
+   dl.dprob2 <-     PhiB * (    ycounts[, 1] *      ycounts[, 2]  / p11 -
+                                ycounts[, 1] * (1 - ycounts[, 2]) / p10)
+   dl.drho   <-  dprob00 * (    ycounts[, 1] *      ycounts[, 2]  / p11 -
+                                ycounts[, 1] * (1 - ycounts[, 2]) / p10)
 
     dprob1.deta <- dtheta.deta(pmargin[, 1], .lmu12 , earg = .emu12 )
     dprob2.deta <- dtheta.deta(pmargin[, 2], .lmu12 , earg = .emu12 )
@@ -3226,7 +3234,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     A <- pnorm((eta2 - corr * eta1) * d.r)
     A.c <- 1 - A
     B <- pnorm((eta1 - corr * eta2) * d.r)
-    p11 <- pmax(pbinorm(eta1, eta2, cov12 = corr), 1000 * .Machine$double.eps)
+    p11 <- pmax(pbinorm(eta1, eta2, cov12 = corr),
+                1000 * .Machine$double.eps)
     p10 <- pmax(pnorm( eta1) - p11, 1000 * .Machine$double.eps)
     p0  <- pmax(pnorm(-eta1), 1000 * .Machine$double.eps)
     d.n1 <- dnorm(eta1)
@@ -3283,8 +3292,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     ned2l.rho.rho <- (  1/p11 +     1/p10) * d.n1n2^2  * drh.drh.st^2
 
     ned2l.be1.be2 <- (A *  B/p11  - A.c *  B/p10)  * d.n1   * d.n2
-    ned2l.be1.rho <- (A * (1/p11) - A.c * (1/p10)) * d.n1n2 * d.n1 * drh.drh.st
-    ned2l.be2.rho <-  B * (1/p11  +        1/p10)  * d.n1n2 * d.n2 * drh.drh.st
+ned2l.be1.rho <-(A *(1/p11) - A.c * (1/p10)) * d.n1n2 * d.n1 * drh.drh.st
+ned2l.be2.rho <- B *(1/p11  +        1/p10)  * d.n1n2 * d.n2 * drh.drh.st
 
 
 

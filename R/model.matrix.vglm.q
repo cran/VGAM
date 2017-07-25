@@ -536,8 +536,8 @@ npred.vlm <- function(object,
   MM <-
     if (length(object@misc$M))
       object@misc$M else
-    if (ncol(as.matrix(predict(object))) > 0)
-      ncol(as.matrix(predict(object))) else
+    if (NCOL(predict(object)) > 0)
+      NCOL(predict(object)) else
     stop("cannot seem to obtain 'M'")
 
 

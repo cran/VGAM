@@ -570,7 +570,7 @@ if (FALSE)
             namesof("scale", lscale, earg = escale ), "\n", "\n",
             "Mean:    scale * sqrt(pi / 2)"),
   initialize = eval(substitute(expression({
-    if (ncol(cbind(y)) != 1)
+    if (NCOL(y) != 1)
       stop("response must be a vector or a one-column matrix")
 
     if (length(extra$leftcensored))

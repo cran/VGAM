@@ -37,7 +37,8 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   \item{onedpar}{
   One dispersion parameter? If the response is a matrix,
   then a separate
-  dispersion parameter will be computed for each response (column), by default.
+  dispersion parameter will be computed for each response (column),
+  by default.
   Setting \code{onedpar=TRUE} will pool them so that there is only
   one dispersion parameter to be estimated.
 
@@ -54,7 +55,8 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 
   }
   \item{zero}{
-  Can be an integer-valued vector specifying which linear/additive predictors
+  Can be an integer-valued vector specifying which linear/additive
+  predictors
   are modelled as intercepts only.  The values must be from the set
   \{1,2,\ldots,\eqn{M}\}, where \eqn{M} is the number of columns of the
   matrix response.
@@ -151,6 +153,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 \seealso{
     \code{\link{Links}},
     \code{\link{quasipoissonff}},
+    \code{\link{hdeff.vglm}},
     \code{\link{genpoisson}},
     \code{\link{zipoisson}},
     \code{\link{pospoisson}},

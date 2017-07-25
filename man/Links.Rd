@@ -80,7 +80,9 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
   }
   \item{deriv}{
-  Integer. Either 0, 1, or 2, specifying the order of the derivative.
+  Integer.
+  Either 0, 1, or 2, specifying the order of the derivative.
+  Some link functions handle values up to 3 or 4.
 
 
   }
@@ -300,8 +302,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   a character string, or just the name itself.  See the examples below.
 
 
-  From August 2012 onwards, a major change in link functions
-  occurred.
+  From August 2012 onwards, a major change in link functions occurred.
   Argument \code{esigma} (and the like such as \code{earg})
   used to be in \pkg{VGAM} prior to version 0.9-0 (released
   during the 2nd half of 2012).
@@ -313,8 +314,12 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   \code{gev(lshape = logoff(offset = 0.5))}.
   The \code{@misc} slot no longer
   has \code{link} and \code{earg} components, but two other
-  components replace these. Functions such as \code{dtheta.deta()},
-  \code{d2theta.deta2()}, \code{eta2theta()}, \code{theta2eta()}
+  components replace these. Functions such as
+  \code{dtheta.deta()},
+  \code{d2theta.deta2()},
+  \code{d3theta.deta3()},
+  \code{eta2theta()},
+  \code{theta2eta()}
   are modified.
 
 

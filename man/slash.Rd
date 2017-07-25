@@ -94,6 +94,12 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
   \bold{77}, 416--424.
 
 
+
+% multivariate skew-slash distribution.
+% jspi, 2006, 136: 209--220., by Wang, J. and Genton, M. G.
+
+
+
 }
 
 \author{ T. W. Yee and C. S. Chee }

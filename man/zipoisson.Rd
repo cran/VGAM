@@ -241,7 +241,8 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
   \code{\link{rrvglm}},
   \code{\link{zipebcom}},
   \code{\link[stats:Poisson]{rpois}},
-  \code{\link{simulate.vlm}}.
+  \code{\link{simulate.vlm}},
+  \code{\link{hdeff.vglm}}.
 
 
 }

@@ -2379,7 +2379,7 @@ biplot.qrrvglm <- function(x, ...) {
         lines(xx, yy, col = lcol[i], lwd = llwd[i], lty = llty[i])
         if ( y && type == "fitted.values") {
           ypts <- object@y
-          if (ncol(as.matrix(ypts)) == ncol(r.curves))
+          if (NCOL(ypts) == ncol(r.curves))
             points(xx, ypts[o,i], col = pcol[i],
                    cex = pcex[i], pch = pch[i])
         }
@@ -3152,7 +3152,7 @@ perspqrrvglm <-
     stop("object must be a rank-1 or rank-2 model")
   fv <- fitted(object)
   NOS <- ncol(fv)  # Number of species
-  M <- object@misc$M #
+  M <- object@misc$M
 
   xlim <- rep_len(if (length(xlim)) xlim else range(coef.obj@latvar[, 1]), 2)
   if (!length(oylim)) {
@@ -3187,7 +3187,7 @@ perspqrrvglm <-
   LP <- t(LP)  # n by M
 
 
-    fitvals <- object@family@linkinv(LP)  # n by NOS
+    fitvals <- object@family@linkinv(LP, extra = object@extra)  # n by NOS
     dimnames(fitvals) <- list(NULL, dimnames(fv)[[2]])
     sppNames <- dimnames(object@y)[[2]]
     if (!length(which.species)) {

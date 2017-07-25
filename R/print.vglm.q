@@ -30,6 +30,15 @@ endfpvgam <- function(object,
                  model.matrix(object, type = "penalty"))
 
 
+
+  if (!object@ospsslot$magicfit$gcv.info$fully.converged)
+    warning("fitted object has a GCV criterion that has not ",
+            "fully converged")
+
+
+
+
+
   poststuff <-
     mgcv::magic.post.proc(X.vlm.aug,
                           object = object@ospsslot$magicfit, w = NULL)
@@ -49,11 +58,22 @@ endfpvgam <- function(object,
   use.index <- NULL
 
 
+  endf.all0 <-  diag(solve(crossprod(X.vlm.aug), crossprod(X.vlm)))
 
 
+  if (FALSE) {
   qr1 <- qr(X.vlm.aug)
   qr2 <- qr(X.vlm)
   endf.all <-  diag(solve(crossprod(qr.R(qr1)), crossprod(qr.R(qr2))))
+  }
+
+
+
+  endf.all <- endf.all0
+
+
+
+
   if (diag.all)
     return(endf.all)
 

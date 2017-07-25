@@ -14,7 +14,7 @@ s <- function(x, df = 4, spar = 0, ...) {
 
   call <- deparse(sys.call())
 
-  if (ncol(as.matrix(x)) > 1)
+  if (NCOL(x) > 1)
     stop("argument 'x' must be a vector")
   if (!is.null(levels(x))) {
     x <- if (is.ordered(x)) {

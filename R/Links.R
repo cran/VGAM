@@ -15,6 +15,8 @@
 
 
 
+
+
  dtheta.deta <-
   function(theta,
            link = "identitylink",
@@ -47,6 +49,7 @@
 
 
 
+
  d2theta.deta2 <-
   function(theta,
            link = "identitylink",
@@ -74,6 +77,33 @@
 
   do.call(what = function.name, args = earg)
 }
+
+
+
+
+
+ d3theta.deta3 <-
+  function(theta,
+           link = "identitylink",
+           earg = list(theta = theta,
+                       inverse = TRUE,
+                       deriv = 3,
+                       short = TRUE,
+                       tag = FALSE)) {
+
+  function.name  <- link
+  earg[["theta"]] <- theta  # New data
+
+  if (length(earg$inverse))
+    earg[["inverse"]] <- TRUE else
+    earg$inverse <- TRUE
+
+  earg[["deriv"]] <- 3  # New
+  do.call(what = function.name, args = earg)
+}
+
+
+
 
 
 

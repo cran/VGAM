@@ -26,23 +26,6 @@ mux34 <- function(xmat, cc, symmetric = FALSE) {
 
 
 
-if (FALSE)
-mux34 <- function(xmat, cc, symmetric = FALSE) {
-
-  if (!is.matrix(xmat))
-    xmat <- as.matrix(xmat)
-  d <- dim(xmat)
-  n <- d[1]
-  R <- d[2]
-  if (length(cc) == 1)
-    cc <- matrix(cc, 1, 1)
-  if (!is.matrix(cc))
-    stop("'cc' is not a matrix")
-  c( .Fortran("vgamf90mux34", as.double(xmat), as.double(cc),
-               as.integer(n), as.integer(R),
-               as.integer(symmetric), ans = as.double(rep_len(0.0, n)),
-               NAOK = TRUE)$ans)
-}
 
 
 
@@ -63,7 +46,7 @@ mux2 <- function(cc, xmat) {
   if (d[2] != p || d[3] != n)
     stop("dimension size inconformable")
   ans <- rep_len(NA_real_, n*M)
-  fred <- .C("mux2", as.double(cc), as.double(t(xmat)),
+  fred <- .C("mux2ccc", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(p), as.integer(n),
                as.integer(M), NAOK = TRUE)
   matrix(fred$ans, n, M, byrow = TRUE)
@@ -82,7 +65,7 @@ mux22 <- function(cc, xmat, M, upper = FALSE, as.matrix = FALSE) {
   dimm.value <- nrow(cc)  # Usually M or M(M+1)/2
 
   ans <- rep_len(NA_real_, n*M)
-  fred <- .C("mux22", as.double(cc), as.double(t(xmat)),
+  fred <- .C("mux22ccc", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(dimm.value),
                as.integer(index$row), as.integer(index$col),
                as.integer(n), as.integer(M), wk = double(M*M),
@@ -124,7 +107,7 @@ mux5 <- function(cc, x, M, matrix.arg = FALSE) {
   index.r <- iam(NA, NA, r, both = TRUE, diag = TRUE)
 
   size <- if (matrix.arg) dimm(r)*n else r*r*n
-  fred <- .C("mux5", as.double(cc), as.double(x),
+  fred <- .C("mux5ccc", as.double(cc), as.double(x),
                ans = double(size),
                as.integer(M), as.integer(n), as.integer(r),
                as.integer(neltscci),
@@ -160,7 +143,7 @@ mux55 <- function(evects, evals, M) {
   MMp1d2 <- M*(M+1)/2  # The answer is a full-matrix
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
 
-  fred <- .C("mux55", as.double(evects), as.double(evals),
+  fred <- .C("mux55ccc", as.double(evects), as.double(evals),
              ans = double(MMp1d2 * n),
              double(M*M), double(M*M),
              as.integer(index$row), as.integer(index$col),
@@ -187,7 +170,7 @@ mux7 <- function(cc, x) {
     x <- array(x, c(qq, r, n))
 
   ans <- array(NA, c(M, r, n))
-  fred <- .C("mux7", as.double(cc), as.double(x),
+  fred <- .C("mux7ccc", as.double(cc), as.double(x),
                ans = as.double(ans),
                as.integer(M), as.integer(qq), as.integer(n),
                as.integer(r), NAOK = TRUE)
@@ -198,26 +181,6 @@ mux7 <- function(cc, x) {
 
 
 
-mux9 <- function(cc, xmat) {
-
-  if (is.vector(xmat))
-    xmat <- cbind(xmat)
-  dimxmat <- dim(xmat)
-  dimcc <- dim(cc)
-
-  if (dimcc[1]   != dimcc[2] ||
-      dimxmat[1] != dimcc[3] ||
-      dimxmat[2] != dimcc[1])
-    stop('input nonconformable')
-  M <- dimcc[1]
-  n <- dimcc[3]
-
-  ans <-  matrix(NA_real_, n, M)
-  fred <- .C("mux9", as.double(cc), as.double(xmat),
-               ans = as.double(ans),
-               as.integer(M), as.integer(n), NAOK = TRUE)
-  matrix(fred$ans, n, M)
-}
 
 
 
@@ -246,21 +209,25 @@ mux11 <- function(cc, xmat) {
 mux111 <- function(cc, xmat, M, upper = TRUE) {
 
 
+  if (!is.matrix(xmat))
+    xmat <- as.matrix(xmat)
+  if (!is.matrix(cc))
+    cc <- t(as.matrix(cc))
   R <- ncol(xmat)
   n <- nrow(xmat) / M
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
-  dimm.value <- nrow(cc)  # M or M(M+1)/2
+  dimm.value <- nrow(cc)  # Usually M or M(M+1)/2
 
-  fred <- .C("mux111", as.double(cc),
-               b = as.double(t(xmat)),
-               as.integer(M),
-               as.integer(R), as.integer(n), wk = double(M * M),
-               wk2 = double(M * R), as.integer(index$row),
-               as.integer(index$col), as.integer(dimm.value),
-               as.integer(as.numeric(upper)), NAOK = TRUE)
+  fred <- .C("mux111ccc",
+             as.double(cc), b = as.double(t(xmat)),
+             as.integer(M), as.integer(R), as.integer(n),
+             wkcc = double(M * M), wk2 = double(M * R),
+             as.integer(index$row), as.integer(index$col),
+             as.integer(dimm.value),
+             as.integer(upper), NAOK = TRUE)
 
   ans <- fred$b
-  dim(ans) <- c(R, nrow(xmat))
+  dim(ans) <- c(R, n * M)
   d <- dimnames(xmat)
   dimnames(ans) <- list(d[[2]], d[[1]])
   t(ans)
@@ -281,7 +248,7 @@ mux15 <- function(cc, xmat) {
     stop("argument 'cc' is not symmetric")
 
   ans <- rep_len(NA_real_, n*M*M)
-  fred <- .C("mux15", as.double(cc), as.double(t(xmat)),
+  fred <- .C("mux15ccc", as.double(cc), as.double(t(xmat)),
                ans = as.double(ans), as.integer(M),
                as.integer(n), NAOK = TRUE)
   array(fred$ans, c(M, M, n))
@@ -299,7 +266,7 @@ vforsub <- function(cc, b, M, n) {
     dimm.value <- nrow(cc)  # M or M(M+1)/2
 
 
-  fred <- .C("vforsub", as.double(cc), b = as.double(t(b)),
+  fred <- .C("vforsubccc", as.double(cc), b = as.double(t(b)),
                as.integer(M), as.integer(n), wk = double(M*M),
                as.integer(index$row), as.integer(index$col),
                as.integer(dimm.value), NAOK = TRUE)
@@ -317,7 +284,7 @@ vbacksub <- function(cc, b, M, n) {
   if (nrow(b) != M || ncol(b) != n)
     stop("dimension size inconformable")
 
-  fred <- .C("vbacksub", as.double(cc), b = as.double(b),
+  fred <- .C("vbacksubccc", as.double(cc), b = as.double(b),
                as.integer(M), as.integer(n), wk = double(M*M),
                as.integer(index$row), as.integer(index$col),
                as.integer(dimm.value), NAOK = TRUE)
@@ -342,7 +309,7 @@ vchol <- function(cc, M, n, silent = FALSE, callno = 0) {
   cc <- t(cc)
   MM <- nrow(cc)    # cc is big enough to hold its Cholesky decom.
 
-  fred <- .C("vchol", cc = as.double(cc), as.integer(M),
+  fred <- .C("vcholccc", cc = as.double(cc), as.integer(M),
                as.integer(n), ok = integer(n),
                wk = double(M*M), as.integer(index$row),
                as.integer(index$col),
@@ -446,13 +413,6 @@ vchol.greenstadt <- function(cc, M, silent = FALSE,
 
 
 
-if (FALSE)
-myf <- function(x) {
-    .Fortran("VGAM_F90_fill9",
-               x = as.double(x), lenx = as.integer(length(x)),
-               answer = as.double(x),
-               NAOK = TRUE)$answer
-}
 
 
 

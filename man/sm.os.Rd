@@ -311,7 +311,20 @@ sm.os(x, ..., niknots = 6, spar = -1, o.order = 2,
   the order of the O-spline \eqn{m}:
   \eqn{K+2m-1}.
   In code, this is
-  \code{niknots + 2 * o.order - 1}.
+  \code{niknots + 2 * o.order - 1},
+  or using \code{\link{sm.ps}}-like arguments,
+  \code{ps.int + degree - 1}
+ (where \code{ps.int} should be more generally
+  interpreted as the number of intervals. The formula is
+  the same as \code{\link{sm.ps}}.).
+  It transpires then that \code{\link{sm.os}} and \code{\link{sm.ps}}
+  are very similar.
+
+
+% are very similar wrt return value, and
+% the the number of the knots;
+% but not wrt the location of the knots.
+
 
 
 % The \eqn{-1} is because of the centring.

@@ -9,7 +9,7 @@
 }
 \usage{
 multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
-           bvalue = NULL, inverse = FALSE, deriv = 0,
+           bvalue = NULL, inverse = FALSE, deriv = 0, all.derivs = FALSE,
            short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -30,6 +30,22 @@ multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 
   }
 
+  \item{all.derivs}{
+  Logical.
+  This is currently experimental only.
+
+
+
+% If \code{TRUE} then more partial derivatives are returned;
+% these is needed by, e.g.,
+% \code{\link{hdeff.vglm}} for \code{\link{multinomial}} fits.
+% This argument might work for only some combinations of
+% the arguments, e.g., it should work at least for
+% \code{inverse = TRUE} and \code{deriv = 1}.
+
+
+
+  }
   \item{inverse, deriv, short, tag}{
   Details at \code{\link{Links}}.
 

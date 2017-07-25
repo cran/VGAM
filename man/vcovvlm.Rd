@@ -9,7 +9,7 @@
         Object
 }
 \description{
-  Returns the variance-covariance matrix of the %main
+  Returns the variance-covariance matrix of the
   parameters of
   a fitted \code{\link[VGAM]{vlm-class}} object or
   a fitted \code{\link[VGAM]{rrvglm-class}} object.
@@ -76,15 +76,28 @@ vcovvlm(object, dispersion = NULL, untransform = FALSE)
 %}
 \author{ Thomas W. Yee }
 
-%\note{
-%}
+\note{
+  For some models inflated standard errors can occur, such as
+  parameter estimates near the boundary of the parameter space.
+  Detection for this is available for some models using
+  \code{\link{hdeff.vglm}}, which tests for an
+  Hauck-Donner effect (HDE) for each regression coefficient.
+  If the HDE is present, using
+  \code{\link{lrp.vglm}} should return more accurate p-values.
+
+
+
+
+}
 %\section{Warning }{
 %}
 
 \seealso{
   \code{\link{confintvglm}},
   \code{\link{summaryvglm}},
-  \code{\link[stats]{vcov}}.
+  \code{\link[stats]{vcov}},
+  \code{\link{hdeff.vglm}},
+  \code{\link{lrp.vglm}}.
 
 
 }

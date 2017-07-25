@@ -8,18 +8,20 @@
 
 
 
-rrvglm <- function(formula,
-                 family, data=list(),
-                 weights = NULL, subset = NULL, na.action=na.fail,
-                 etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control=rrvglm.control(...),
-                 offset = NULL,
-                 method="rrvglm.fit",
-                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL,
-                 constraints = NULL,
-                 extra = NULL,
-                 qr.arg = FALSE, smart = TRUE, ...) {
+rrvglm <-
+  function(formula,
+           family = stop("argument 'family' needs to be assigned"),
+           data = list(),
+           weights = NULL, subset = NULL, na.action = na.fail,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
+           control = rrvglm.control(...),
+           offset = NULL,
+           method="rrvglm.fit",
+           model = FALSE, x.arg = TRUE, y.arg = TRUE,
+           contrasts = NULL,
+           constraints = NULL,
+           extra = NULL,
+           qr.arg = FALSE, smart = TRUE, ...) {
     dataname <- as.character(substitute(data))  # "list" if no data=
     function.name <- "rrvglm"
 
@@ -65,7 +67,7 @@ rrvglm <- function(formula,
     w <- model.weights(mf)
     if (!length(w)) {
       w <- rep_len(1, nrow(mf))
-    } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
+    } else if (NCOL(w) == 1 && any(w < 0))
         stop("negative weights not allowed")
 
     if (is.character(family))

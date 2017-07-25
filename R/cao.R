@@ -9,18 +9,20 @@
 
 
 
-cao  <- function(formula,
-                 family, data = list(),
-                 weights = NULL, subset = NULL, na.action = na.fail,
-                 etastart = NULL, mustart = NULL, coefstart = NULL,
-                 control = cao.control(...),
-                 offset = NULL,
-                 method = "cao.fit",
-                 model = FALSE, x.arg = TRUE, y.arg = TRUE,
-                 contrasts = NULL,
-                 constraints = NULL,
-                 extra = NULL,
-                 qr.arg = FALSE, smart = TRUE, ...) {
+cao  <-
+  function(formula,
+           family = stop("argument 'family' needs to be assigned"),
+           data = list(),
+           weights = NULL, subset = NULL, na.action = na.fail,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
+           control = cao.control(...),
+           offset = NULL,
+           method = "cao.fit",
+           model = FALSE, x.arg = TRUE, y.arg = TRUE,
+           contrasts = NULL,
+           constraints = NULL,
+           extra = NULL,
+           qr.arg = FALSE, smart = TRUE, ...) {
   dataname <- as.character(substitute(data))  # "list" if no data=
   function.name <- "cao"
 
@@ -63,7 +65,7 @@ cao  <- function(formula,
   w <- model.weights(mf)
   if (!length(w)) {
     w <- rep_len(1, nrow(mf))
-  } else if (ncol(as.matrix(w)) == 1 && any(w < 0))
+  } else if (NCOL(w) == 1 && any(w < 0))
     stop("negative weights not allowed")
 
   if (is.character(family))

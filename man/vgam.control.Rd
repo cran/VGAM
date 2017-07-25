@@ -11,7 +11,7 @@
 vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
              checkwz=TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
              criterion = names(.min.criterion.VGAM),
-             epsilon = 1e-07, maxit = 30, Maxit.outer = 20,
+             epsilon = 1e-07, maxit = 30, Maxit.outer = 10,
              noWarning = FALSE,
              na.action = na.fail,
              nk = NULL, save.weights = FALSE, se.fit = TRUE,
@@ -93,6 +93,9 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   smoothing parameters will be automatically chosen at each
   IRLS iteration (some specific programming
   allows this).
+
+
+% Was Maxit.outer = 20
 
 
 

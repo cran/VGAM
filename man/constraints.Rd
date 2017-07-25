@@ -11,7 +11,8 @@
 \usage{
 constraints(object, ...)
 constraints.vlm(object, type = c("lm", "term"), all = TRUE, which,
-                matrix.out = FALSE, colnames.arg = TRUE, ...)
+                matrix.out = FALSE, colnames.arg = TRUE,
+                rownames.arg = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,9 +44,9 @@ constraints.vlm(object, type = c("lm", "term"), all = TRUE, which,
 
 
   }
-  \item{colnames.arg}{
-  Logical. If \code{TRUE} then column names are assigned
-  corresponding to the variables.
+  \item{colnames.arg, rownames.arg}{
+  Logical. If \code{TRUE} then column and row names
+  are assigned corresponding to the variables.
 
 
   }

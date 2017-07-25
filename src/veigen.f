@@ -1,4 +1,4 @@
-      subroutine veigen(M, n, x, vals, ov, vec, junk1, junk2,
+      subroutine veigenf(M, n, x, vals, ov, vec, junk1, junk2,
      *                  wk, rowi, coli, dimmv, ec) 
       implicit logical (a-z)
       integer          M, n, ov, ec, i, k, dimmv, MM2,

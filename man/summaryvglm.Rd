@@ -9,12 +9,14 @@
 \alias{show.summary.vglm}
 \title{Summarizing Vector Generalized Linear Model Fits}
 \usage{
-summaryvglm(object, correlation = FALSE,
-            dispersion = NULL, digits = NULL, presid = TRUE,
+summaryvglm(object, correlation = FALSE, dispersion = NULL,
+            digits = NULL, presid = TRUE,
+            hde.NA = TRUE, threshold.hde = 0.001,
             signif.stars = getOption("show.signif.stars"),
             nopredictors = FALSE, ...)
 \method{show}{summary.vglm}(x, digits = max(3L, getOption("digits") - 3L),
            quote = TRUE, prefix = "", presid = TRUE,
+           hde.NA = TRUE, threshold.hde = 0.001,
            signif.stars = NULL, nopredictors = NULL,
            top.half.only = FALSE, ...)
 }
@@ -35,7 +37,28 @@ summaryvglm(object, correlation = FALSE,
     are printed for each coefficient. }
 % \item{\dots}{further arguments passed to or from other methods.}
   \item{presid}{Pearson residuals; print out some summary statistics
-                of these?  }
+                of these? 
+  }
+  \item{hde.NA}{logical;
+    if a test for the Hauck-Donner effect is done
+    (for each coefficient)
+    and it is affirmative should that Wald test p-value be replaced by
+    an \code{NA}? 
+    The default is to do so.
+    Setting \code{hde.NA = FALSE} will print the p-value even though
+    it will be biassed upwards.
+
+
+  }
+  \item{threshold.hde}{numeric;
+    used if \code{hde.NA = TRUE} and is present for some coefficients.
+    Only p-values greater than this argument will be replaced by
+    an \code{NA},
+    the reason being that small p-values will already be
+    statistically significant.
+
+
+  }
   \item{quote}{ Fed into \code{print()}. }
   \item{nopredictors}{ logical;
     if \code{TRUE} the names of the linear predictors
@@ -110,6 +133,18 @@ distribution is used.
 
 
 
+  The Hauck-Donner effect (HDE) is tested for some models;
+  see \code{\link{hdeff.vglm}} for details.
+  Arguments \code{hde.NA} and \code{threshold.hde} here are meant
+  to give some control for the output for this aberration of the
+  Wald statistic (so that the p-value is biassed upwards).
+  If the HDE is present, using \code{\link{lrp.vglm}} is a good
+  alternative as p-values based on the likelihood ratio test
+  tend to be more accurate than Wald tests and do not suffer
+  from the HDE.
+
+
+
 
 % 20151215
   It is possible for programmers to write a methods function to
@@ -137,7 +172,9 @@ distribution is used.
   \code{\link{vcovvlm}},
   \code{\link[stats]{summary.glm}},
   \code{\link[stats]{summary.lm}},
-  \code{\link[base]{summary}}.
+  \code{\link[base]{summary}},
+  \code{\link{hdeff.vglm}},
+  \code{\link{lrp.vglm}}.
 
 
 }

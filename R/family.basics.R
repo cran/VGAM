@@ -882,7 +882,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     stop("bad value for 'M'; it is too big")
   }
 
-  fred <- .C("m2a", as.double(t(m)), ans=double(M*M*n),
+  fred <- .C("m2accc", as.double(t(m)), ans=double(M*M*n),
       as.integer(dimm),
       as.integer(index$row-1),
       as.integer(index$col-1),
@@ -914,7 +914,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
 
 
-  fred <- .C("a2m",
+  fred <- .C("a2mccc",
              as.double(a), m = double(dimm.value * n),
       as.integer(dimm.value),
       as.integer(index$row-1),  as.integer(index$col-1),
@@ -1500,7 +1500,7 @@ w.wz.merge <- function(w, wz, n, M, ndepy,
   if (intercept.only)
     warning("yettodo: support intercept.only == TRUE")
 
-  if (ncol(as.matrix(w)) > ndepy)
+  if (NCOL(w) > ndepy)
     stop("number of columns of 'w' exceeds number of responses")
 
   w  <- matrix(w, n, ndepy)
@@ -1632,7 +1632,8 @@ w.y.check <- function(w, y,
 
 
 
-arwz2wz <- function(arwz, M = 1, M1 = 1) {
+arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
+                    full.arg = FALSE) {
 
 
 
@@ -1647,7 +1648,7 @@ arwz2wz <- function(arwz, M = 1, M1 = 1) {
     return(arwz)
   }
 
-  wz <- matrix(0.0, nrow = n, ncol = sum(M:(M-M1+1)))
+  wz <- matrix(0.0, n, if (full.arg) M*(M+1)/2 else sum(M:(M-M1+1)))
   ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
   len.ind1 <- dim.val # length(ind1$col.index)
 
@@ -1659,12 +1660,13 @@ arwz2wz <- function(arwz, M = 1, M1 = 1) {
     }
   }
 
-  colind <- ncol(wz)
-  while (all(wz[, colind] == 0))
-    colind <- colind - 1
-
-  if (colind < ncol(wz))
-    wz <- wz[, 1:colind, drop = FALSE]
+  if (rm.trailing.cols && !full.arg) {
+    colind <- ncol(wz)
+    while (all(wz[, colind] == 0))
+      colind <- colind - 1
+    if (colind < ncol(wz))
+      wz <- wz[, 1:colind, drop = FALSE]
+  }
 
   wz
 }
@@ -1770,5 +1772,14 @@ bisection.basic <- function(f, a, b, tol = 1e-9, nmax = 500, ...) {
 }
 
 
+
+
+
+retain.col <- function(mat, coln
+                      ) {
+  if (is.matrix(mat))  # && exclude
+    mat[, -coln] <- 0
+  mat
+}
 
 

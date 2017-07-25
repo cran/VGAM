@@ -3,13 +3,23 @@
 %
 %
 %
+% 201706 and 201707
+% \alias{lrp.vglm}
+\alias{retain.col}
+\alias{d3theta.deta3}
+% 201704
+\alias{ghn100}
+\alias{ghw100}
+%\alias{hdeff}
+%\alias{hdeff.vglm}
+\alias{dprentice74}
 % 201612
 \alias{label.cols.y}
 \alias{valid.vknotl2}
 % 201611
-\alias{profilevglm}
-\alias{vpairs.profile}
-\alias{vplot.profile}
+%\alias{profilevglm}
+%\alias{vpairs.profile}
+%\alias{vplot.profile}
 % 201609
 \alias{prob.munb.size.VGAM}
 \alias{negbinomial.initialize.yj}
@@ -180,12 +190,12 @@
 \alias{arwz2wz}
 %
 % 20120813 New links (no earg)
-\alias{Dtheta.deta}
-\alias{D2theta.deta2}
-\alias{Eta2theta}
-\alias{Theta2eta}
+%\alias{Dtheta.deta}    % Commented out 20170701
+%\alias{D2theta.deta2}  % Commented out 20170701
+%\alias{Eta2theta}      % Commented out 20170701
+%\alias{Theta2eta}      % Commented out 20170701
 \alias{link2list}
-\alias{Namesof}
+%\alias{Namesof}        % Commented out 20170701
 %
 %
 %
@@ -462,7 +472,7 @@
 % \alias{effects.vgam}
 % \alias{effects.vlm}
 % \alias{eifun}
-% \alias{eijfun}
+\alias{eijfun}
 \alias{eta2theta}
 %\alias{explink}
 % \alias{extract.arg}
@@ -675,7 +685,7 @@
 \alias{terms.vlm}
 \alias{termsvlm}
 \alias{theta2eta}
-% \alias{trivial.constraints}
+\alias{trivial.constraints}
 % \alias{update.vgam}
 % \alias{update.vglm}
 % \alias{uqo.fit}

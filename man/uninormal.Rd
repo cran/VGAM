@@ -119,7 +119,8 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
     \code{\link{studentt}},
     \code{\link{binormal}},
     \code{\link[stats:Normal]{dnorm}},
-    \code{\link{simulate.vlm}}.
+    \code{\link{simulate.vlm}},
+    \code{\link{hdeff.vglm}}.
 
 
 }

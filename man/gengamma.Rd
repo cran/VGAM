@@ -9,9 +9,9 @@
 }
 \usage{
 gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
-               iscale = NULL, id = NULL, ik = NULL,
-               gscale    = exp(-5:5), gshape1.d = exp(-5:5),
-               gshape2.k = exp(-5:5), zero = NULL)
+               iscale = NULL, id = NULL, ik = NULL, imethod = 1,
+               gscale.mux = exp((-4:4)/2), gshape1.d = exp((-5:5)/2),
+               gshape2.k = exp((-5:5)/2), probs.y = 0.3, zero = c("d", "k"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,13 +28,13 @@ gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
 
 
   }
-  \item{gscale, gshape1.d, gshape2.k}{
+  \item{gscale.mux, gshape1.d, gshape2.k}{
     See \code{\link{CommonVGAMffArguments}} for information.
     Replaced by \code{iscale}, \code{id} etc. if given.
 
 
   }
-  \item{zero}{
+  \item{imethod, probs.y, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -50,7 +50,9 @@ gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
   The probability density function can be written
   \deqn{f(y;b,d,k) = d   b^{-d k}   y^{d k-1}  \exp[-(y/b)^d] / \Gamma(k)}{%
         f(y;b,d,k) = d * b^(-d*k) * y^(d*k-1) * exp(-(y/b)^d) /  gamma(k)}
-  for scale parameter \eqn{b > 0}, and \eqn{d > 0}, \eqn{k > 0},
+  for scale parameter \eqn{b > 0},
+  and Weibull-type shape parameter \eqn{d > 0},
+  gamma-type shape parameter \eqn{k > 0},
   and \eqn{y > 0}.
   The mean of \eqn{Y}
   is \eqn{b \times \Gamma(k+1/d) / \Gamma(k)}{b*gamma(k+1/d)/gamma(k)}
@@ -70,6 +72,8 @@ Half-normal       \eqn{f(y;\sqrt{2},2,1/2)}{f(y;sqrt(2),2,1/2)},
 Circular normal   \eqn{f(y;\sqrt{2},2,1)}{f(y;sqrt(2),2,1)},
 Spherical normal  \eqn{f(y;\sqrt{2},2,3/2)}{f(y;sqrt(2),2,3/2)},
 Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
+Also the log-normal distribution corresponds to when \code{k = Inf}.
+
 
 
 }
@@ -104,7 +108,8 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   algorithm does not work very well and that the existence of solutions
   to the log-likelihood equations is sometimes in doubt.
   Although Fisher scoring is used here, it is likely that the same
-  problems will be encountered. It appears that large samples
+  problems will be encountered.
+  It appears that large samples
   are required, for example, the estimator of \eqn{k} became asymptotically
   normal only with 400 or more observations.
   It is not uncommon for maximum likelihood estimates to fail to converge
@@ -112,7 +117,14 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   With covariates, even more observations are needed to increase the
   chances of convergence.
   Using covariates is not advised unless the sample size is at least
-  a few thousand.
+  a few thousand, and even if so,
+  modelling 1 or 2 parameters as intercept-only is a very good idea
+  (e.g., \code{zero = 2:3}).
+  Monitoring convergence is also a very good idea
+  (e.g., set \code{trace = TRUE}).
+  Half-stepping is not uncommon, and if this occurs, then the
+  results should be viewed with more suspicion.
+
 
 
 }
@@ -121,8 +133,10 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   The notation used here differs from Stacy (1962) and Prentice (1974).
   Poor initial values may result in failure to converge so
   if there are covariates and there are convergence problems,
-  try using the \code{zero} argument (e.g., \code{zero = 2:3})
-  or the \code{ik} argument.
+  try using or checking the \code{zero} argument (e.g., \code{zero = 2:3})
+  or the \code{ik} argument
+  or the \code{imethod} argument, etc.
+
 
 
 }
@@ -131,15 +145,19 @@ Rayleigh          \eqn{f(y;c\sqrt{2},2,1)}{f(y;c sqrt(2),2,1)} where \eqn{c>0}.
   \code{\link{gamma1}},
   \code{\link{gamma2}},
   \code{\link{prentice74}},
-  \code{\link{simulate.vlm}}.
+  \code{\link{simulate.vlm}},
+  \code{\link{chisq}},
+  \code{\link{lognormal}},
+  \code{\link{rayleigh}},
+  \code{\link{weibullR}}.
 
 
 }
 \examples{
-k <- exp(-1); Scale = exp(1)
-gdata <- data.frame(y = rgamma(1000, shape = k, scale = Scale))
-fit <- vglm(y ~ 1, gengamma.stacy, data = gdata, trace = TRUE)
-coef(fit, matrix = TRUE)
+k <- exp(-1); Scale <- exp(1); dd <- exp(0.5); set.seed(1)
+gdata <- data.frame(y = rgamma(2000, shape = k, scale = Scale))
+gfit <- vglm(y ~ 1, gengamma.stacy, data = gdata, trace = TRUE)
+coef(gfit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

@@ -14,12 +14,12 @@
 
 }
 \usage{
-dgengamma.stacy(x, scale = 1, d = 1, k = 1, log = FALSE)
-pgengamma.stacy(q, scale = 1, d = 1, k = 1,
+dgengamma.stacy(x, scale = 1, d, k, log = FALSE)
+pgengamma.stacy(q, scale = 1, d, k,
                 lower.tail = TRUE, log.p = FALSE)
-qgengamma.stacy(p, scale = 1, d = 1, k = 1,
+qgengamma.stacy(p, scale = 1, d, k,
                 lower.tail = TRUE, log.p = FALSE)
-rgengamma.stacy(n, scale = 1, d = 1, k = 1)
+rgengamma.stacy(n, scale = 1, d, k)
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -30,7 +30,13 @@ rgengamma.stacy(n, scale = 1, d = 1, k = 1)
 
   }
   \item{scale}{the (positive) scale parameter \eqn{b}.}
-  \item{d, k}{the (positive) parameters \eqn{d} and \eqn{k}.}
+  \item{d, k}{the (positive) parameters \eqn{d} and \eqn{k}.
+  Both can be thought of as shape parameters, where
+  \eqn{d} is of the Weibull-type and
+  \eqn{k} is of the gamma-type.
+
+
+  }
   \item{log}{
   Logical.
   If \code{log = TRUE} then the logarithm of the density is returned.
@@ -81,14 +87,16 @@ Parameter estimation for a generalized gamma distribution.
 }
 \examples{
 \dontrun{ x <- seq(0, 14, by = 0.01); d <- 1.5; Scale <- 2; k <- 6
-plot(x, dgengamma.stacy(x, Scale, d = d, k = k), type = "l", col = "blue", ylim = 0:1,
+plot(x, dgengamma.stacy(x, Scale, d = d, k = k), type = "l",
+     col = "blue", ylim = 0:1,
      main = "Blue is density, orange is cumulative distribution function",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qgengamma.stacy(seq(0.05, 0.95, by = 0.05), Scale, d = d, k = k),
-      dgengamma.stacy(qgengamma.stacy(seq(0.05,0.95,by = 0.05), Scale, d = d, k = k),
-                      Scale, d = d, k = k), col = "purple", lty = 3, type = "h")
-lines(x, pgengamma.stacy(x, Scale, d = d, k = k), type = "l", col = "orange")
+      dgengamma.stacy(qgengamma.stacy(seq(0.05, 0.95, by = 0.05),
+                                      Scale, d = d, k = k),
+            Scale, d = d, k = k), col = "purple", lty = 3, type = "h")
+lines(x, pgengamma.stacy(x, Scale, d = d, k = k), col = "orange")
 abline(h = 0, lty = 2) }
 }
 \keyword{distribution}

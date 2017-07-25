@@ -904,7 +904,7 @@ AR1.control <- function(epsilon  = 1e-6,
        M1    <- 3 - .nodrift
        n     <- nrow(eta)
        NOS   <- ncol(eta)/M1
-       ncoly <- ncol(as.matrix(y))
+       ncoly <- NCOL(y)
 
        if ( .var.arg ) {
          ar.var <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],
@@ -979,7 +979,7 @@ AR1.control <- function(epsilon  = 1e-6,
      deriv = eval(substitute(expression({
        M1    <- 3 - .nodrift
        NOS   <- ncol(eta)/M1
-       ncoly <- ncol(as.matrix(y))
+       ncoly <- NCOL(y)
 
        if ( .var.arg ) {
          ar.var <- eta2theta(eta[, M1*(1:NOS) - 1, drop = FALSE],

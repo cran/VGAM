@@ -292,6 +292,7 @@ Vector generalized additive models.
   \code{\link{multinomial}},
   \code{\link{pneumo}},
   \code{\link{Links}},
+  \code{\link{hdeff.vglm}},
   \code{\link{logit}},
   \code{\link{probit}},
   \code{\link{cloglog}},

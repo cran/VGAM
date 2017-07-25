@@ -70,6 +70,7 @@
          Q1 = 1,
          bred = .bred ,
          expected = TRUE,
+         hadof = TRUE,
          parameters.names = c("prob"),  # new.name
          zero = .zero )
   }, list( .zero = zero,
@@ -289,12 +290,37 @@
     }
   }, list( .multiple.responses = multiple.responses ))),
 
-  vfamily = c("binomialff", "VGAMcategorical"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     mymu <- eta2theta(eta, .link , earg = .earg )
     okay1 <- all(is.finite(mymu)) && all(0 < mymu & mymu < 1)
     okay1
   }, list( .link = link, .earg = earg, .bred = bred))),
+  vfamily = c("binomialff", "VGAMcategorical"),
+
+
+
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(), deriv = 1,
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2),
+           ...) {
+    fvs <- eta2theta(eta, link = .link , earg = .earg )
+    if ( .bred ) {
+      fvs <- fvs + NA_real_  # Correct dimension for below too
+    }
+
+    ans <- c(w) *
+    switch(as.character(deriv),
+           "0" = 1 / (fvs * (1 - fvs)),
+           "1" = -(1 - 2*fvs) / (fvs * (1 - fvs))^2,
+           "2" = 2 * (1 - 3*fvs*(1-fvs)) / (fvs * (1 - fvs))^3,
+           stop("argument 'deriv' must be 0 or 1 or 2"))
+    if (deriv == 0) ans else retain.col(ans, linpred.index)  # Coz M1 = 1
+  }, list( .link = link, .earg = earg, .bred = bred) )),
+
+
 
 
 
@@ -544,7 +570,7 @@
   }, list( .link = link, .earg = earg ))),
   deriv = eval(substitute(expression({
     M1 <- 1
-    ncoly <- ncol(as.matrix(y))
+    ncoly <- NCOL(y)
 
     dl.dmu <- (y-mu) / mu^2
     dmu.deta <- dtheta.deta(theta = mu, link = .link , earg = .earg )
@@ -669,7 +695,7 @@
   }, list( .link = link, .earg = earg ))),
   deriv = eval(substitute(expression({
     M1 <- 1
-    ncoly <- ncol(as.matrix(y))
+    ncoly <- NCOL(y)
 
     dl.dmu <- (y - mu) / mu^3
     dmu.deta <- dtheta.deta(theta = mu, link = .link , earg = .earg )
@@ -1036,6 +1062,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     list(M1 = 1,
          Q1 = 1,
          expected = TRUE,
+         hadof = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("lambda"),
          type.fitted = .type.fitted ,
@@ -1229,6 +1256,26 @@ rinv.gaussian <- function(n, mu, lambda) {
     okay1 <- all(is.finite(mupo)) && all(0 < mupo)
     okay1
   }, list( .link = link, .earg = earg ))),
+
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(), deriv = 1,
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2),
+           ...) {
+    mupo <- eta2theta(eta, link = .link , earg = .earg )
+
+    ans <- c(w) *
+    switch(as.character(deriv),
+           "0" =  1 / mupo,
+           "1" = -1 / mupo^2,
+           "2" =  2 / mupo^3,
+           "3" = -6 / mupo^4,
+           stop("argument 'deriv' must be 0, 1, 2 or 3"))
+    if (deriv == 0) ans else retain.col(ans, linpred.index)  # Coz M1 = 1
+  }, list( .link = link, .earg = earg ))),
+
 
 
 
@@ -1554,7 +1601,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       extra$orig.w <- w
 
 
-    if (ncol(cbind(w)) != 1)
+    if (NCOL(w) != 1)
       stop("'weights' must be a vector or a one-column matrix")
 
         NCOL <- function (x)

@@ -124,6 +124,13 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
 
 
   }
+  \item{\code{hadof}:}{
+  Object of class \code{"function"};
+  experimental.
+
+
+
+  }
   \item{\code{summary.dispersion}:}{
   Object of class \code{"logical"}
   indicating whether the general VGLM formula (based on a residual

@@ -29,17 +29,12 @@ negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
 
 
   }
-  \item{iprobs.y}{
+  \item{iprobs.y, imethod}{
   Same as \code{\link{negbinomial}}.
 
 
   }
-  \item{imethod, zero}{
-  Same as \code{\link{negbinomial}}.
-
-
-  }
-  \item{ishrinkage}{
+  \item{zero, ishrinkage}{
   Same as \code{\link{negbinomial}}.
 
 
@@ -50,7 +45,8 @@ negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
   This \pkg{VGAM} family function estimates only the mean parameter of
   the negative binomial distribution.
   See \code{\link{negbinomial}} for general information.
-  Setting \code{size = 1} gives what I call the NB-G (geometric model;
+  Setting \code{size = 1} gives what might
+  be called the NB-G (geometric model;
   see Hilbe (2011)).
   The default, \code{size = Inf}, corresponds to the Poisson distribution.
 
@@ -76,9 +72,10 @@ Hilbe, J. M. (2011)
 Cambridge: Cambridge University Press.
 
 
-  Yee, T. W. (2014)
-  Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis}.
+Yee, T. W. (2014)
+Reduced-rank vector generalized linear models with two linear predictors.
+\emph{Computational Statistics and Data Analysis},
+\bold{71}, 889--902.
 
 
 
@@ -86,7 +83,8 @@ Cambridge: Cambridge University Press.
 \author{ Thomas W. Yee }
 \note{
   If \code{lmu = "nbcanlink"} in \code{negbinomial.size()} then
-  the \code{size} argument here should be assigned.
+  the \code{size} argument here should be assigned and
+  these values are recycled.
 
 
 
@@ -118,20 +116,19 @@ ndata <- transform(ndata, eta1  = -1 - 2 * x2,  # eta1 must be negative
 ndata <- transform(ndata,
                    mu1  = nbcanlink(eta1, size = size1, inv = TRUE))
 ndata <- transform(ndata,
-                   y1 = rnbinom(nn, mu = mu1,         size = size1),  # NB-C
-                   y2 = rnbinom(nn, mu = exp(2 - x2), size = size2),
-                   y3 = rnbinom(nn, mu = exp(3 + x2), size = size3),  # NB-G
-                   y4 = rpois  (nn, la = exp(1 + x2)))
+              y1 = rnbinom(nn, mu = mu1,         size = size1),  # NB-C
+              y2 = rnbinom(nn, mu = exp(2 - x2), size = size2),
+              y3 = rnbinom(nn, mu = exp(3 + x2), size = size3),  # NB-G
+              y4 =   rpois(nn, lambda = exp(1 + x2)))
 
 # Also known as NB-C with size known (Hilbe, 2011)
 fit1 <- vglm(y1 ~ x2, negbinomial.size(size = size1, lmu = "nbcanlink"),
-             data = ndata, trace = TRUE, crit = "coef")
+             data = ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 head(fit1@misc$size)  # size saved here
 
-fit2 <- vglm(cbind(y2, y3, y4) ~ x2,
-             negbinomial.size(size = c(size2, size3, size4)),
-             data = ndata, trace = TRUE)
+fit2 <- vglm(cbind(y2, y3, y4) ~ x2, data = ndata, trace = TRUE,
+             negbinomial.size(size = c(size2, size3, size4)))
 coef(fit2, matrix = TRUE)
 head(fit2@misc$size)  # size saved here
 }

@@ -9,7 +9,8 @@
 
 }
 \usage{
-rrvglm(formula, family, data = list(), weights = NULL, subset = NULL,
+rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
+       data = list(), weights = NULL, subset = NULL,
        na.action = na.fail, etastart = NULL, mustart = NULL,
        coefstart = NULL, control = rrvglm.control(...), offset = NULL,
        method = "rrvglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,
@@ -223,6 +224,7 @@ Regression and ordered categorical variables.
     (see Yee (2014) and \pkg{COZIGAM}).
     Methods functions include
     \code{\link{Coef.rrvglm}},
+    \code{\link{calibrate.rrvglm}},
     \code{summary.rrvglm},
     etc.
     Data include

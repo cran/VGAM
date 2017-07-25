@@ -17,7 +17,7 @@
 
 
  Init.mu <-
-  function(y, x = cbind("(Intercept)" = rep_len(1, nrow(as.matrix(y)))),
+  function(y, x = cbind("(Intercept)" = rep_len(1, NROW(y))),
            w = x, imethod = 1, imu = NULL,
            ishrinkage = 0.95,
            pos.only = FALSE,
@@ -97,7 +97,8 @@ EIM.NB.specialp <-
 
   if (!is.numeric(y.max)) {
     eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
-    y.max <- max(round(qnbinom(p = eff.p[2], mu = mu, size = size) * 1.1)) + 30
+    y.max <- max(round(qnbinom(p = eff.p[2],
+                               mu = mu, size = size) * 1.1)) + 30
   }
 
   Y.mat <- if (intercept.only) y.min:y.max else
@@ -161,7 +162,8 @@ EIM.NB.speciald <-
 
   if (!is.numeric(y.max)) {
     eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
-    y.max <- max(round(qnbinom(p = eff.p[2], mu = mu, size = size) * 1.1)) + 30
+    y.max <- max(round(qnbinom(p = eff.p[2],
+                               mu = mu, size = size) * 1.1)) + 30
   }
 
   Y.mat <- if (intercept.only) y.min:y.max else
@@ -212,6 +214,8 @@ negbinomial.initialize.yj <-
 negbinomial.control <- function(save.weights = TRUE, ...) {
     list(save.weights = save.weights)
 }
+
+
 
 
 
@@ -277,8 +281,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     stop("bad input for argument 'isize'")
 
   if (!is.Numeric(cutoff.prob, length.arg = 1) ||
-    cutoff.prob < 0.95 ||
-    cutoff.prob >= 1)
+    cutoff.prob < 0.95 || cutoff.prob >= 1)
     stop("range error in the argument 'cutoff.prob'; ",
          "a value in [0.95, 1) is needed")
 
@@ -373,8 +376,8 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$percentiles <- .percentiles
     extra$colnames.y  <- colnames(y)
-    M <- M1 * ncol(y)
     NOS <- ncoly <- ncol(y)  # Number of species
+    M <- M1 * NOS
     predictors.names <-
      c(namesof(param.names("mu",   NOS),
                 .lmunb , earg = .emunb , tag = FALSE),
@@ -428,14 +431,21 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
       newemu <- .emunb
       if ( .lmunb == "nbcanlink") {
         newemu$size <- size.init
-        testing1 <- log(munb.init / (munb.init + size.init))
-        testing2 <- theta2eta(munb.init, link = .lmunb , earg = newemu )
       }
-
 
       etastart <-
         cbind(theta2eta(munb.init, link = .lmunb , earg = newemu ),
               theta2eta(size.init, link = .lsize , earg = .esize ))
+
+
+      if ( .lmunb == "nbcanlink") {
+        if (any(cond1 <- is.na(etastart[, c(TRUE, FALSE)])) ||
+            any(cond2 <- etastart[, c(TRUE, FALSE)] >= 0))
+          etastart[c(cond1) || c(cond2), c(TRUE, FALSE)] <- -0.1
+      }
+
+
+      if (M > M1)
       etastart <-
         etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
     }
@@ -449,6 +459,8 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
             .zero = zero, .imethod = imethod,
             .type.fitted = type.fitted,
             .percentiles = percentiles ))),
+
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- ncol(eta) / c(M1 = 2)
     kmat <- NULL
@@ -458,12 +470,10 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
       newemu <- .emunb
       kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                         .lsize , earg = .esize )
-      newemu$size <- kmat
-      check.munb <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
-                .lmunb , earg = newemu )
 
 
       munb <- kmat / expm1(-eta[, c(TRUE, FALSE), drop = FALSE])
+      munb
     } else {
       eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
                 .lmunb , earg = .emunb )
@@ -502,6 +512,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize))),
 
+
   last = eval(substitute(expression({
     if (exists("CQO.FastAlgorithm", envir = VGAMenv))
         rm("CQO.FastAlgorithm", envir = VGAMenv)
@@ -523,22 +534,18 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:NOS) {
-      misc$earg[[M1*ii-1]] <- newemu
+      misc$earg[[M1*ii-1]] <-
+        if ( .lmunb == "nbcanlink") newemu else .emunb 
       misc$earg[[M1*ii  ]] <- .esize
     }
   }), list( .lmunb = lmunb, .lsize = lsize,
             .emunb = emunb, .esize = esize ))),
 
+
   linkfun = eval(substitute(function(mu, extra = NULL) {
     M1 <- 2
 
     newemu <- .emunb
-
-    eta.temp <- theta2eta(mu, .lmunb , earg = newemu)
-    eta.size <- theta2eta(if (is.numeric( .isize )) .isize else 1.0,
-                          .lsize , earg = .esize )
-    eta.size <- 0 * eta.temp + eta.size  # Right dimension now.
-
 
 
     if ( .lmunb == "nbcanlink") {
@@ -547,7 +554,13 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-    eta.temp <- cbind(eta.temp, eta.size)
+    eta.munb <- theta2eta(mu, .lmunb , earg = newemu)
+    eta.size <- theta2eta(if (is.numeric( .isize )) .isize else 1.0,
+                          .lsize , earg = .esize )
+    eta.size <- 0 * eta.munb + eta.size  # Right dimension now.
+
+
+    eta.temp <- cbind(eta.munb, eta.size)
     eta.temp[, interleave.VGAM(ncol(eta.temp), M1 = M1), drop = FALSE]
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize,
@@ -556,22 +569,35 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE,  eta,
              extra = NULL, summation = TRUE) {
-    munb <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
-                      .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
-                      .lsize , earg = .esize )
+    vecTF <-  c(TRUE, FALSE)
+    kmat <- eta2theta(eta[, !vecTF, drop=FALSE], .lsize , earg = .esize )
+
+
+    munb <- if ( .lmunb == "nbcanlink") {
 
 
 
-    newemu <- .emunb
-    if ( .lmunb == "nbcanlink") {
-      newemu$size <- kmat
+      munb <- kmat / expm1(-eta[, vecTF, drop = FALSE])
+
+
+
+      if (min(munb) <= 0) {
+        munb[munb <= 0] <- median(munb[munb > 0])  # 0.1
+        warning("'munb' has some negative values. ",
+                "Using a temporary fix.")
+      }
+
+      munb
+    } else {
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , earg = .emunb )
     }
+
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dnbinom(x = y, mu = munb, size = kmat, log = TRUE)
+      ll.elts <- c(w) * dnbinom(x = y, mu = munb, size = kmat,
+                                log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -602,17 +628,31 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
   validparams = eval(substitute(function(eta, y, extra = NULL) {
-    munb <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
-                      .lmunb , earg = .emunb )
     size <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                       .lsize , earg = .esize )
+
+
+
+    munb <- if ( .lmunb == "nbcanlink") {
+
+
+
+      munb <- size / expm1(-eta[, c(TRUE, FALSE), drop = FALSE])
+      munb
+    } else {
+      eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                .lmunb , earg = .emunb )
+    }
+
+
 
     smallval <- .mds.min  # .munb.div.size
     okay1 <- all(is.finite(munb)) && all(0 < munb) &&
              all(is.finite(size)) && all(0 < size)
 
 
-    okay0 <- if ( .lmunb == "nbcanlink") all(eta < 0) else TRUE
+    okay0 <- if ( .lmunb == "nbcanlink")
+               all(eta[, c(TRUE, FALSE)] < 0) else TRUE
 
 
     overdispersion <- if (okay1) all(smallval < munb / size) else FALSE
@@ -633,16 +673,11 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-  odd.iter <- 1   # iter %% 2
-  even.iter <- 1  # 1 - odd.iter
-
-  if ( iter == 1 && .deviance.arg ) {
+  if (iter == 1 && .deviance.arg ) {
     if (control$criterion != "coefficients" &&
         control$half.step)
-      warning("Argument 'criterion' should be 'coefficients' ",
-               "or 'half.step' should be 'FALSE' when ",
-              "'deviance.arg = TRUE'")
-
+      warning("Argument 'criterion' should be 'coefficients' or ",
+               "'half.step' should be 'FALSE' when 'deviance.arg = TRUE'")
 
 
     low.index <- ifelse(names(constraints)[1] == "(Intercept)", 2, 1)
@@ -653,20 +688,42 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
         stop("argument 'deviance.arg' should only be TRUE for NB-2 ",
              "models; ",
              "non-zero elements detected for the 'size' parameter." )
-    }
-  }
+    }  # for iii
+  }  # (iter == 1 && .deviance.arg )
 
 
 
-
-
-
+    vecTF <- c(TRUE, FALSE)
     M1 <- 2
     NOS <- ncol(eta) / M1
-    munb <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
-                      .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+    kmat <- eta2theta(eta[, !vecTF, drop = FALSE],
                       .lsize , earg = .esize )
+
+
+
+
+    munb <- if ( .lmunb == "nbcanlink") {
+
+
+      munb <- kmat / expm1(-eta[, vecTF, drop = FALSE])
+
+
+
+      if (iter <= 2 && min(munb) <= 0) {
+        munb[munb <= 0] <- median(munb[munb > 0])
+        warning("'munb' has some negative values. ",
+                "Using a temporary fix.")
+      }
+
+      munb
+    } else {
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , earg = .emunb )
+    }
+
+
+
+
+
 
 
     smallval <- .mds.min  # Something like this is needed
@@ -675,45 +732,37 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     }
 
 
-    newemu <- .emunb
-    if ( .lmunb == "nbcanlink") {
-      newemu$size <- kmat
-    }
-
-
     dl.dmunb <- y / munb - (1 + y/kmat) / (1 + munb/kmat)
-    dl.dsize <- digamma(y + kmat) - digamma(kmat) -
-                (y - munb) / (munb + kmat) + log1p(-munb / (kmat + munb))
+    dl.dsize <- digamma(y + kmat) - digamma(kmat) +
+                log1p(-munb / (kmat + munb)) - (y - munb) / (munb + kmat)
     if (any(big.size)) {
       dl.dsize[big.size] <- 1e-8  # A small number
     }
 
 
-    dsize.deta <- dtheta.deta(kmat, .lsize , earg = .esize )
+    dsize.deta2 <- dtheta.deta(kmat, .lsize , earg = .esize )
 
 
-    myderiv <- if ( .lmunb == "nbcanlink") {
-      dmunb.deta1 <- 1 / nbcanlink(munb, size = kmat, wrt.param = 1,
-                                   deriv = 1)
+    dmunb.deta1 <- if ( .lmunb == "nbcanlink") {
 
-      dsize.deta1 <- 1 / nbcanlink(munb, size = kmat, wrt.param = 2,
-                                   deriv = 1)
-      c(w) * cbind(dl.dmunb * dmunb.deta1 *  odd.iter +
-                   dl.dsize * dsize.deta1 * 1 * even.iter,
-                   dl.dsize * dsize.deta  * even.iter)
+      dl.dsize <- digamma(y + kmat) - digamma(kmat) +
+          log1p(-munb / (kmat + munb))
+
+      dmunb.deta1 <- nbcanlink(munb, size = kmat, wrt.param = 1,
+                               inverse = TRUE, deriv = 1)
+      dmunb.deta1
     } else {
-      dmunb.deta <- dtheta.deta(munb, .lmunb , earg = .emunb )
-      c(w) * cbind(dl.dmunb * dmunb.deta,
-                   dl.dsize * dsize.deta)
+      dtheta.deta(munb, .lmunb , earg = .emunb )
     }
 
-
-    myderiv <- myderiv[, interleave.VGAM(M, M1 = M1)]
+    myderiv <- c(w) * cbind(dl.dmunb * dmunb.deta1,
+                            dl.dsize * dsize.deta2)
+    if (M > M1)
+      myderiv <- myderiv[, interleave.VGAM(M, M1 = M1)]
     myderiv
   }), list( .lmunb = lmunb, .lsize = lsize,
             .emunb = emunb, .esize = esize,
-            .deviance.arg = deviance.arg,
-            .mds.min = mds.min ))),
+            .deviance.arg = deviance.arg, .mds.min = mds.min ))),
 
 
 
@@ -758,7 +807,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
           upr.ptr <- min(upr.ptr + chunk.rows, NN)
           sind2 <- wind2[lwr.ptr:upr.ptr]
           wz[sind2, M1*jay] <-
-            EIM.NB.specialp(mu          =   munb[sind2, jay],
+            EIM.NB.specialp(mu          = munb[sind2, jay],
                             size        = kmat[sind2, jay],
                             y.max = max(Q.maxs[sind2]),
                             cutoff.prob = .cutoff.prob ,
@@ -795,15 +844,15 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
                       (ysim - muvec) / (muvec + kkvec) +
                       log1p( -muvec / (kkvec + muvec))
           run.varcov <- run.varcov + dl.dsize^2
-        }  # end of for loop
+        }  # for ii
 
         run.varcov <- c(run.varcov / .nsimEIM )
         ned2l.dsize2 <- if (intercept.only)
           mean(run.varcov) else run.varcov
 
         wz[ii.TF, M1*jay] <- ned2l.dsize2
-      }
-    }
+      }  # any ii.TF
+    }  # for jay
 
 
 
@@ -812,27 +861,30 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
     ned2l.dmunb2 <- 1 / munb - 1 / (munb + kmat)
-    ned2l.dsize2 <- wz[, M1*(1:NOS), drop = FALSE]
+    wz[, c(TRUE, FALSE)] <- ned2l.dmunb2 * dmunb.deta1^2
+
 
 
     if ( .lmunb == "nbcanlink") {
-      wz <- cbind(wz, matrix(0, n, M-1))  # Make it tridiagonal
-
-      wz[,     M1*(1:NOS) - 1] <-
-        (ned2l.dmunb2 * (munb/kmat)^2 * odd.iter +
-         ned2l.dsize2 * even.iter * 1) *
-          (munb + kmat)^2
+      wz[, !vecTF] <- wz[, !vecTF] + 1 / kmat - 1 / (kmat + munb)
+    }
+    wz[, !vecTF] <- wz[, !vecTF] * dsize.deta2^2
 
 
+    if ( .lmunb == "nbcanlink") {
 
-      wz[, M + M1*(1:NOS) - 1] <-
-        -(munb + kmat) * ned2l.dsize2 * dsize.deta * even.iter
-    } else {
-      wz[, c(TRUE, FALSE)] <- ned2l.dmunb2 * dmunb.deta^2
+
+      ned2l.dmunb.dsize <- 1 / (munb + kmat)
+      wzoffdiag <- ned2l.dmunb.dsize * dmunb.deta1 * dsize.deta2
+      wz <- if (M > M1) {
+        wzoffdiag <- kronecker(wzoffdiag, cbind(1, 0))
+        cbind(wz, wzoffdiag[, -ncol(wzoffdiag)])
+      } else {
+        cbind(wz, wzoffdiag)
+      }
     }
 
 
-    wz[, M1*(1:NOS)] <- wz[, M1*(1:NOS)] * dsize.deta^2
 
 
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = NOS)
@@ -842,6 +894,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
             .lmunb = lmunb, .lsize = lsize,
             .eps.trig = eps.trig,
             .nsimEIM = nsimEIM ))))
+
 
 
 
@@ -1339,7 +1392,7 @@ polya.control <- function(save.weights = TRUE, ...) {
     temp300 <-  eta[, c(FALSE, TRUE), drop = FALSE]
 
 
-    if (ncol(as.matrix(y)) > 1 && ncol(as.matrix(w)) > 1)
+    if (NCOL(y) > 1 && NCOL(w) > 1)
       stop("cannot handle matrix 'w' yet")
 
 
@@ -1827,7 +1880,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     temp300 <-  eta[, c(FALSE, TRUE), drop = FALSE]
 
 
-    if (ncol(as.matrix(y)) > 1 && ncol(as.matrix(w)) > 1)
+    if (NCOL(y) > 1 && NCOL(w) > 1)
       stop("cannot handle matrix 'w' yet")
 
 
@@ -1860,6 +1913,274 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
 
+
+
+
+ negbinomial.size <- function(size = Inf,
+                              lmu = "loge",
+                              imu = NULL,
+                              iprobs.y = 0.35,
+                              imethod = 1,
+                              ishrinkage = 0.95, zero = NULL) {
+
+
+
+
+  if (any(size <= 0))
+    stop("bad input for argument 'size'")
+  if (anyNA(size))
+    stop("bad input for argument 'size'")
+
+
+  lmu <- as.list(substitute(lmu))
+  emu <- link2list(lmu)
+  lmu <- attr(emu, "function.name")
+
+  if (length(imu) && !is.Numeric(imu, positive = TRUE))
+    stop("bad input for argument 'imu'")
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
+     imethod > 3)
+    stop("argument 'imethod' must be 1 or 2 or 3")
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 || 1 < ishrinkage)
+    stop("bad input for argument 'ishrinkage'")
+
+
+  ans <-
+  new("vglmff",
+
+  blurb = c("Negative-binomial distribution with size known\n\n",
+            "Links:    ",
+            namesof("mu",   lmu, earg = emu), "\n",
+            "Mean:     mu\n",
+            "Variance: mu * (1 + mu / size) for NB-2"),
+
+  constraints = eval(substitute(expression({
+
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
+
+  }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         expected = TRUE,
+         imethod = .imethod ,
+         ishrinkage = .ishrinkage ,
+         multipleResponses = TRUE,
+         parameters.names = c("mu"),
+         zero = .zero )
+  }, list( .imethod = imethod,
+           .ishrinkage = ishrinkage,
+           .zero = zero ))),
+
+  initialize = eval(substitute(expression({
+    M1 <- 1
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.nonnegative.y = TRUE,
+              Is.integer.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+    M <- M1 * ncol(y)
+    NOS <- ncoly <- ncol(y)  # Number of species
+    mynames1 <- param.names("mu", NOS)
+    predictors.names <- namesof(mynames1, .lmu , earg = .emu , tag = FALSE)
+
+
+    if (is.numeric( .mu.init ))
+      MU.INIT <- matrix( .mu.init, nrow(y), ncol(y), byrow = TRUE)
+
+
+    if (!length(etastart)) {
+      mu.init <- y
+      for (iii in 1:ncol(y)) {
+        use.this <- if ( .imethod == 1) {
+          weighted.mean(y[, iii], w[, iii]) + 1/16
+        } else if ( .imethod == 3) {
+          c(quantile(y[, iii], probs = .iprobs.y ) + 1/16)
+        } else {
+          median(y[, iii]) + 1/16
+        }
+
+        if (is.numeric( .mu.init )) {
+          mu.init[, iii] <- MU.INIT[, iii]
+        } else {
+          medabsres <- median(abs(y[, iii] - use.this)) + 1/32
+          allowfun <- function(z, maxtol = 1)
+            sign(z) * pmin(abs(z), maxtol)
+          mu.init[, iii] <- use.this + (1 - .ishrinkage ) *
+                            allowfun(y[, iii] - use.this,
+                                     maxtol = medabsres)
+
+          mu.init[, iii] <- abs(mu.init[, iii]) + 1 / 1024
+        }
+      }  # of for (iii)
+
+
+    kmat <- matrix( .size , n, NOS, byrow = TRUE)
+
+
+
+
+    newemu <- .emu
+    if ( .lmu == "nbcanlink") {
+      newemu$size <- kmat
+    }
+
+
+
+    etastart <-
+      cbind(theta2eta(mu.init , link = .lmu , earg = newemu ))
+      }
+  }), list( .lmu = lmu,
+            .emu = emu,
+            .mu.init = imu, .size = size, .iprobs.y = iprobs.y,
+            .ishrinkage = ishrinkage,
+            .zero = zero, .imethod = imethod ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    M1 <- 1
+    eta <- cbind(eta)
+    NOS <- ncol(eta) / M1
+    n <- nrow(eta)
+    kmat <- matrix( .size , n, NOS, byrow = TRUE)
+
+
+
+
+    newemu <- .emu
+    if ( .lmu == "nbcanlink") {
+      newemu$size <- kmat
+    }
+
+
+    eta2theta(eta, .lmu , earg = newemu)
+  }, list( .lmu = lmu,
+           .emu = emu, .size = size ))),
+
+  last = eval(substitute(expression({
+    misc$link <- rep_len( .lmu , NOS)
+    names(misc$link) <- mynames1
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- mynames1
+    for (ii in 1:NOS) {
+      misc$earg[[ii]] <- newemu
+    }
+
+    misc$size <- kmat  # Conformable size, i.e., is a matrix
+  }), list( .lmu = lmu, .emu = emu ))),
+
+
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL, summation = TRUE) {
+    mu <- cbind(mu)
+    y <- cbind(y)
+    w <- cbind(w)
+    eta <- cbind(eta)
+    kmat <- matrix( .size , nrow(eta), ncol(eta), byrow = TRUE)
+
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ind1 <- is.finite(kmat)
+      NOS <- ncol(y)
+      ans1 <- ans2 <- 0
+      for (kk in 1:NOS) {
+        ind1 <- is.finite(kmat[, kk])
+        ans1 <- ans1 +
+                sum(w[ind1] * dnbinom(x = y[ind1, kk], mu = mu[ind1, kk],
+                                      size = kmat[ind1, kk], log = TRUE))
+        ans2 <- ans2 +
+                sum(w[!ind1] * dpois(x = y[!ind1, kk],
+                                     lambda  = mu[!ind1, kk], log = TRUE))
+      }
+
+      ans <- ans1 + ans2
+      ll.elts <- ans
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .size = size ))),
+
+  vfamily = c("negbinomial.size"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    eta <- as.matrix(eta)
+    kmat <- matrix( .size , nrow(eta), ncol(eta), byrow = TRUE)
+    newemu <- .emu
+    if ( .lmu == "nbcanlink") {
+      newemu$size <- kmat
+    }
+    munb <- eta2theta(eta, .lmu , earg = newemu )
+    okay1 <- all(is.finite(munb)) && all(0 < munb) &&
+                                     all(0 < kmat )
+    okay1
+  }, list( .lmu = lmu, .emu = emu, .size = size ))),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1))
+      warning("ignoring prior weights")
+    muuu <- fitted(object)
+    n   <- NROW(muuu)
+    NOS <- NCOL(muuu)
+    kmat <- matrix( .size , n, NOS, byrow = TRUE)
+    rnbinom(nsim * length(muuu), mu = muuu, size = kmat)
+  }, list( .size = size ))),
+
+
+
+
+  deriv = eval(substitute(expression({
+    eta <- cbind(eta)
+    M <- ncol(eta)
+    kmat <- matrix( .size , n, M, byrow = TRUE)
+
+
+    newemu <- .emu
+    if ( .lmu == "nbcanlink") {
+      newemu$size <- kmat
+      newemu$wrt.param <- 1
+    }
+
+    dl.dmu <- y / mu - (y + kmat) / (kmat + mu)
+    if (any(fix.up <- !is.finite(dl.dmu)))
+      dl.dmu[fix.up] <-  (y/mu)[fix.up] - 1
+
+    dmu.deta <- dtheta.deta(mu, .lmu , earg = newemu)  # eta1
+    c(w) * dl.dmu * dmu.deta
+  }), list( .lmu = lmu,
+            .emu = emu, .size = size ))),
+
+  weight = eval(substitute(expression({
+    ned2l.dmunb2 <- 1 / mu - 1 / (mu + kmat)
+    wz <- ned2l.dmunb2 * dmu.deta^2
+    c(w) * wz
+  }), list( .lmu = lmu ))))
+
+  ans
+}
 
 
 

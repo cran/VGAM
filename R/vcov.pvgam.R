@@ -269,6 +269,10 @@ summarypvgam <-
 
 
   pinv <- function(V, M, rank.tol = 1e-6) {
+
+
+
+
     D <- eigen(V, symmetric = TRUE)
     M1 <- length(D$values[D$values > rank.tol * D$values[1]])
     if (M > M1)
@@ -323,7 +327,7 @@ summarypvgam <-
       M <- min(M1,
                ceiling(2*sum(endf[(startstop[[i]])]))
                )
-      V <- pinv(V, M)
+      V <- pinv(V, M)  # , rank.tol = 1e-5
       chi.sq[i] <- t(p) %*% V %*% p
       df[i] <- attr(V, "rank")
     }

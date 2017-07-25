@@ -6,6 +6,11 @@
 \description{
   LMS quantile regression with the Yeo-Johnson transformation
   to normality.
+  This family function is experimental and the LMS-BCN family function
+  is recommended instead.
+
+
+
 }
 \usage{
 lms.yjn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
@@ -13,7 +18,7 @@ lms.yjn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
         idf.mu = 4, idf.sigma = 2,
         ilambda = 1, isigma = NULL, rule = c(10, 5),
         yoffset = NULL, diagW = FALSE, iters.diagW = 6)
-lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
+lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
          llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
          idf.mu = 4, idf.sigma = 2, ilambda = 1.0,
          isigma = NULL, yoffset = NULL, nsimEIM = 250)
@@ -93,6 +98,7 @@ lms.yjn2(percentiles=c(25,50,75), zero = c("lambda", "sigma"),
  \code{lms.yjn()} uses numerical integration.
   Try the other if one function fails.
 
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
@@ -146,6 +152,12 @@ In that case, try different starting values.
 
 The generic function \code{predict}, when applied to a
 \code{lms.yjn} fit, does not add back the \code{yoffset} value.
+
+
+As described above,
+  this family function is experimental and the LMS-BCN family function
+  is recommended instead.
+
 
 
 }
