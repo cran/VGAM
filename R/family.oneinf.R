@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -194,7 +194,7 @@ rlog <- function(n, shape) {
     M <- M1 * ncoly
 
 
-    mynames1  <- param.names("shape", ncoly)
+    mynames1  <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .lshape , earg = .eshape ,
                                 tag = FALSE)
 
@@ -478,8 +478,8 @@ roilog <- function(n, shape, pstr1 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pstr1", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("pstr1", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpstr1 , earg = .epstr1 , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[
@@ -784,7 +784,7 @@ rotlog <- function(n, shape) {
     M <- M1 * ncoly
 
 
-    mynames1  <- param.names("shape", ncoly)
+    mynames1  <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .lshape , earg = .eshape ,
                                 tag = FALSE)
 
@@ -998,7 +998,7 @@ rotpospois <- function(n, lambda) {
     extra$colnames.y  <- colnames(y)
 
 
-    mynames1 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .llambda , earg = .elambda ,
                                 tag = FALSE)
 
@@ -1247,8 +1247,8 @@ roalog <- function(n, shape, pobs1 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pobs1", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("pobs1", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpobs1 , earg = .epobs1 , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[
@@ -1616,8 +1616,8 @@ roapospois <- function(n, lambda, pobs1 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pobs1",  ncoly)
-    mynames2 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("pobs1",  ncoly, skip1 = TRUE)
+    mynames2 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpobs1 , earg = .epobs1 , tag = FALSE),
           namesof(mynames2, .llambd , earg = .elambd , tag = FALSE))[
@@ -1963,8 +1963,8 @@ roazeta <- function(n, shape, pobs1 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pobs1", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("pobs1", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpobs1 , earg = .epobs1 , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[

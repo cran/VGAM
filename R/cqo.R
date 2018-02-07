@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -87,10 +87,11 @@ cqo <-
     if (control$trace && (control$Bestof>1))
     cat(paste("\n========================= Fitting model", tries,
                 "=========================\n"))
-    onefit <- cqo.fitter(x = x, y = y, w = w, offset = offset,
-              etastart = etastart, mustart = mustart, coefstart = coefstart,
-              family = family, control = control, constraints = constraints,
-              extra = extra, Terms = mt, function.name = function.name, ...)
+    onefit <-
+      cqo.fitter(x = x, y = y, w = w, offset = offset,
+          etastart = etastart, mustart = mustart, coefstart = coefstart,
+          family = family, control = control, constraints = constraints,
+          extra = extra, Terms = mt, function.name = function.name, ...)
     deviance.Bestof[tries] <- if (length(onefit$crit.list$deviance))
       onefit$crit.list$deviance else onefit$crit.list$loglikelihood
     if (tries == 1 ||
@@ -113,7 +114,7 @@ cqo <-
     "call"         = ocall,
     "coefficients" = fit$coefficients,
     "constraints"  = fit$constraints,
-    "criterion"    = fit$crit.list,  # list("deviance" = min(deviance.Bestof)),
+    "criterion" = fit$crit.list,  # list("deviance"=min(deviance.Bestof)),
     "dispersion"   = 1,
     "family"       = fit$family,
     "misc"         = fit$misc,

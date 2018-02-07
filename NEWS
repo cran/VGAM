@@ -6,6 +6,57 @@
 
 
 
+                CHANGES IN VGAM VERSION 1.0-5
+
+NEW FEATURES
+
+    o   extlogit() now handles 'deriv = 3'.
+    o   Generic function hdeff() implements an analytic solution
+        for the following families: borel.tanner(), felix(), lindley().
+        For almost all other families, finite-difference approximations
+        to derivatives means that first and second derivatives can be
+        computed, even with models with 'xij' terms.
+    o   Generic function wald.stat() implements Wald tests with SEs evaluated
+        at the null values, not at the original MLE, so do not suffer from the
+        Hauck-Donner effect.
+    o   "vglm" objects have a new "charfun" slot, for the
+        characteristic function.
+    o   "summary.vglm" and "summary.vlm" objects have new
+        "coef4lrt0", "coef4score0", "coef4wald0" slots, for
+        storing the 'Wald table' equivalent of LRTs, score tests and
+        modified Wald tests.
+        The latter has its SEs computed at the null values with the
+        other coefficients obtained by further IRLS iterations, etc.
+        Function summaryvglm() has arguments 'lrt0.arg', 'score0.arg',
+        'wald0.arg'.
+    o   TIC() is new, for the Takeuchi's Information Criterion.
+        Thanks to Khedhaouiria Dikra for suggesting this.
+    o   mills.ratio() and mills.ratio2() are exported.
+    o   New functions: lrt.stat(), score.stat(), wald.stat(),
+        which.etas(), which.xij().
+    o   cauchy1() and cauchy() handle multiple responses and have
+        been modernized a bit.
+    o   Tested okay on R 3.4.3.
+
+
+
+BUG FIXES and CHANGES
+
+    o   Setting 'deriv.arg' a positive value in plotvgam() when there
+        are no s() terms results in a warning.
+        Thanks to Barry Goodwin for detecting this.
+    o   cens.poisson() can better handle large lambda values, at least for
+        left and right censored data (but not for interval-censored data yet).
+        Thanks to Eugenie Hunsicker for picking up deficiencies in the code.
+    o   In multinomial.Rd, it was stated that setting parallel = TRUE
+        did not make the intercepts the same. It does make them the same.
+        Thanks to Stuart Coles for picking this up.
+    o   binomialff(multiple.responses = TRUE) returned an incorrect deviance.
+    o   bilogistic() uses SFS rather than BFGS as its algorithm.
+    o   Deprecated: lrp(), normal1() [use uninormal() instead].
+
+
+
                 CHANGES IN VGAM VERSION 1.0-4
 
 NEW FEATURES

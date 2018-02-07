@@ -144,11 +144,15 @@ confintvglm(object, parm, level = 0.95, method = c("wald", "profile"),
 \seealso{
   \code{\link{vcovvlm}},
   \code{\link{summaryvglm}},
-  \code{\link{lrp.vglm}},
   \code{\link[stats]{confint}},
   \code{\link[MASS]{profile.glm}},
+  \code{\link{lrt.stat.vlm}},
+  \code{\link{wald.stat}},
   \code{plot.profile.glm},
   \code{pairs.profile.glm}.
+
+
+% \code{\link{lrp.vglm}},
 
 
 

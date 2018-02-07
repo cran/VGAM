@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -539,8 +541,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pobs0",  ncoly)
-    mynames2 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("pobs0",  ncoly, skip1 = TRUE)
+    mynames2 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpobs.0 , earg = .epobs.0 , tag = FALSE),
           namesof(mynames2, .llambda , earg = .elambda , tag = FALSE))[
@@ -822,8 +824,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("lambda",    ncoly)
-    mynames2 <- param.names("onempobs0", ncoly)
+    mynames1 <- param.names("lambda",    ncoly, skip1 = TRUE)
+    mynames2 <- param.names("onempobs0", ncoly, skip1 = TRUE)
     predictors.names <-
   c(namesof(mynames1, .llambda,     earg = .elambda    , tag = FALSE),
     namesof(mynames2, .lonempobs0 , earg = .eonempobs0 , tag = FALSE))[
@@ -1163,9 +1165,9 @@ zanegbinomial.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pobs0", NOS)
-    mynames2 <- param.names("munb",  NOS)
-    mynames3 <- param.names("size",  NOS)
+    mynames1 <- param.names("pobs0", NOS, skip1 = TRUE)
+    mynames2 <- param.names("munb",  NOS, skip1 = TRUE)
+    mynames3 <- param.names("size",  NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpobs0 , earg = .epobs0 , tag = FALSE),
           namesof(mynames2, .lmunb  , earg = .emunb  , tag = FALSE),
@@ -1789,9 +1791,9 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("munb",      NOS)
-    mynames2 <- param.names("size",      NOS)
-    mynames3 <- param.names("onempobs0", NOS)
+    mynames1 <- param.names("munb",      NOS, skip1 = TRUE)
+    mynames2 <- param.names("size",      NOS, skip1 = TRUE)
+    mynames3 <- param.names("onempobs0", NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lmunb  , earg = .emunb  , tag = FALSE),
           namesof(mynames2, .lsize  , earg = .esize  , tag = FALSE),
@@ -2319,6 +2321,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
            gpstr0 = NULL,  # (1:9) / 10,
            imethod = 1,
            ishrinkage = 0.95, probs.y = 0.35,
+           parallel = FALSE,  # Added 20171223
            zero = NULL) {
   ipstr00 <- ipstr0
   gpstr00 <- gpstr0
@@ -2356,10 +2359,14 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
             "Mean:     (1 - pstr0) * lambda"),
 
   constraints = eval(substitute(expression({
+   constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints = constraints)
+
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
                                 predictors.names = predictors.names,
                                 M1 = 2)
-  }), list( .zero = zero ))),
+  }), list( .parallel = parallel, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -2367,11 +2374,13 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = TRUE,
+         parallel = .parallel ,
          parameters.names = c("pstr0", "lambda"),
          type.fitted  = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
-           .type.fitted = type.fitted
+           .type.fitted = type.fitted,
+           .parallel = parallel
          ))),
   initialize = eval(substitute(expression({
     M1 <- 2
@@ -2397,8 +2406,8 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pstr0",  ncoly)
-    mynames2 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("pstr0",  ncoly, skip1 = TRUE)
+    mynames2 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpstr00 , earg = .epstr00 , tag = FALSE),
           namesof(mynames2, .llambda , earg = .elambda , tag = FALSE))[
@@ -2793,8 +2802,8 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("lambda",    ncoly)
-    mynames2 <- param.names("onempstr0", ncoly)
+    mynames1 <- param.names("lambda",    ncoly, skip1 = TRUE)
+    mynames2 <- param.names("onempstr0", ncoly, skip1 = TRUE)
     predictors.names <-
     c(namesof(mynames1, .llambda    , earg = .elambda    , tag = FALSE),
       namesof(mynames2, .lonempstr0 , earg = .eonempstr0 , tag = FALSE))[
@@ -3590,11 +3599,11 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
                      c("mean", "prob", "pobs0", "pstr0", "onempstr0"))[1]
 
     ans <- switch(type.fitted,
-                  "mean"      = (onempstr0) * mubin,
-                  "prob"      = mubin,
-                  "pobs0"     = 1 - onempstr0 + (onempstr0)*(1-mubin)^nvec,  # P(Y=0)
-                  "pstr0"     = 1 - onempstr0,
-                  "onempstr0" =     onempstr0)
+      "mean"      = (onempstr0) * mubin,
+      "prob"      = mubin,
+      "pobs0"     = 1 - onempstr0 + (onempstr0)*(1-mubin)^nvec,  # P(Y=0)
+      "pstr0"     = 1 - onempstr0,
+      "onempstr0" =     onempstr0)
     label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lonempstr0 = lonempstr0, .lprob = lprob,
            .eonempstr0 = eonempstr0, .eprob = eprob ))),
@@ -4091,9 +4100,9 @@ zinegbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-    mynames1 <- param.names("pstr0", NOS)
-    mynames2 <- param.names("munb",  NOS)
-    mynames3 <- param.names("size",  NOS)
+    mynames1 <- param.names("pstr0", NOS, skip1 = TRUE)
+    mynames2 <- param.names("munb",  NOS, skip1 = TRUE)
+    mynames3 <- param.names("size",  NOS, skip1 = TRUE)
     predictors.names <-
       c(namesof(mynames1, .lpstr0 , earg = .epstr0 , tag = FALSE),
         namesof(mynames2, .lmunb  , earg = .emunb  , tag = FALSE),
@@ -4776,9 +4785,9 @@ zinegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
-    mynames1 <- param.names("munb",       NOS)
-    mynames2 <- param.names("size",       NOS)
-    mynames3 <- param.names("onempstr0",  NOS)
+    mynames1 <- param.names("munb",       NOS, skip1 = TRUE)
+    mynames2 <- param.names("size",       NOS, skip1 = TRUE)
+    mynames3 <- param.names("onempstr0",  NOS, skip1 = TRUE)
     predictors.names <-
       c(namesof(mynames1, .lmunb  , earg = .emunb  , tag = FALSE),
         namesof(mynames2, .lsize  , earg = .esize  , tag = FALSE),
@@ -5513,8 +5522,8 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     extra$colnames.y  <- colnames(y)
 
 
-    mynames1 <- param.names("pstr0", ncoly)
-    mynames2 <- param.names("prob",  ncoly)
+    mynames1 <- param.names("pstr0", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("prob",  ncoly, skip1 = TRUE)
     predictors.names <-
             c(namesof(mynames1, .lpstr0,  earg = .epstr0, tag = FALSE),
               namesof(mynames2, .lprob,   earg = .eprob,  tag = FALSE))[
@@ -5849,8 +5858,8 @@ rzigeom <- function(n, prob, pstr0 = 0) {
     extra$colnames.y  <- colnames(y)
 
 
-    mynames1 <- param.names("prob",      ncoly)
-    mynames2 <- param.names("onempstr0", ncoly)
+    mynames1 <- param.names("prob",      ncoly, skip1 = TRUE)
+    mynames2 <- param.names("onempstr0", ncoly, skip1 = TRUE)
     predictors.names <-
       c(namesof(mynames1, .lprob      , earg = .eprob      , tag = FALSE),
         namesof(mynames2, .lonempstr0 , earg = .eonempstr0 , tag = FALSE))[
@@ -7028,8 +7037,8 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     extra$colnames.y  <- colnames(y)
 
 
-    mynames1 <- param.names("pobs0", ncoly)
-    mynames2 <- param.names("prob",  ncoly)
+    mynames1 <- param.names("pobs0", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("prob",  ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpobs0 , earg = .epobs0 , tag = FALSE),
           namesof(mynames2, .lprob  , earg = .eprob  , tag = FALSE))[
@@ -7336,8 +7345,8 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     extra$colnames.y  <- colnames(y)
 
 
-    mynames1 <- param.names("prob",       ncoly)
-    mynames2 <- param.names("onempobs0",  ncoly)
+    mynames1 <- param.names("prob",       ncoly, skip1 = TRUE)
+    mynames2 <- param.names("onempobs0",  ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lprob      , earg = .eprob      ,
                   tag = FALSE),
@@ -7766,8 +7775,8 @@ roipospois <- function(n, lambda, pstr1 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pstr1",  ncoly)
-    mynames2 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("pstr1",  ncoly, skip1 = TRUE)
+    mynames2 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpstr10 , earg = .epstr10 , tag = FALSE),
           namesof(mynames2, .llambda , earg = .elambda , tag = FALSE))[
@@ -7844,11 +7853,11 @@ roipospois <- function(n, lambda, pstr1 = 0) {
 
     ans <-
       switch(type.fitted,
-             "mean"      = phimat - (1 - phimat) * lambda / expm1(-lambda),
-             "lambda"    = lambda,
-             "pobs1"     = doipospois(1, lambda = lambda, pstr1 = phimat), # Pr(Y=1)
-             "pstr1"     =     phimat,
-             "onempstr1" = 1 - phimat)
+      "mean"      = phimat - (1 - phimat) * lambda / expm1(-lambda),
+      "lambda"    = lambda,
+      "pobs1"     = doipospois(1, lambda = lambda, pstr1 = phimat), # Pr(Y=1)
+      "pstr1"     =     phimat,
+      "onempstr1" = 1 - phimat)
     label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lpstr10 = lpstr10, .llambda = llambda,
            .epstr10 = epstr10, .elambda = elambda
@@ -8195,8 +8204,8 @@ roiposbinom <- function(n, size, prob, pstr1 = 0) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("pstr1", ncoly)
-    mynames2 <- param.names("prob",  ncoly)
+    mynames1 <- param.names("pstr1", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("prob",  ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lpstr1 , earg = .epstr1 , tag = FALSE),
           namesof(mynames2, .lprobb , earg = .eprobb , tag = FALSE))[

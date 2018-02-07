@@ -85,10 +85,15 @@ McCullagh, P. and Nelder, J. A. (1989)
 }
 \author{ Thomas W. Yee }
 \note{
-  The response must be a three-column matrix of ones and zeros
-  only. Note that each of the 8 combinations of the multivariate
+  The response must be a 3-column matrix of ones and zeros only.
+  Note that each of the 8 combinations of the multivariate
   response need to appear in the data set, therefore data sets
   will need to be large in order for this family function to work.
+  After estimation, the response attached to the object is also a
+  3-column matrix; possibly in the future it might change into a
+  8-column matrix.
+
+
 
 
 }
@@ -100,10 +105,11 @@ McCullagh, P. and Nelder, J. A. (1989)
 
 }
 \examples{
-fit <- vglm(cbind(cyadea, beitaw, kniexc) ~ altitude, loglinb3, data = hunua)
-coef(fit, matrix = TRUE)
-head(fitted(fit))
-summary(fit)
+lfit <- vglm(cbind(cyadea, beitaw, kniexc) ~ altitude, loglinb3,
+             data = hunua, trace = TRUE)
+coef(lfit, matrix = TRUE)
+head(fitted(lfit))
+summary(lfit)
 }
 \keyword{models}
 \keyword{regression}

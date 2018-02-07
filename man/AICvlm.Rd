@@ -23,7 +23,7 @@ AICqrrvglm(object, \dots, k = 2)
 \arguments{
   \item{object}{
   Some \pkg{VGAM} object, for example, having
-  class \code{\link{vglmff-class}}.
+  class \code{\link{vglm-class}}.
 
 
   }
@@ -48,7 +48,8 @@ AICqrrvglm(object, \dots, k = 2)
 \details{
   The following formula is used for VGLMs:
   \eqn{-2 \mbox{log-likelihood} + k n_{par}}{-2*log-likelihood
-  + k*npar}, where \eqn{n_{par}}{npar} represents the number of parameters
+    + k*npar}, where \eqn{n_{par}}{npar} represents the number of
+  parameters
   in the fitted model, and \eqn{k = 2} for the usual AIC.
   One could assign \eqn{k = \log(n)} (\eqn{n} the number of observations)
   for the so-called BIC or SBC (Schwarz's Bayesian criterion).
@@ -88,7 +89,7 @@ AICqrrvglm(object, \dots, k = 2)
 }
 \author{T. W. Yee. }
 \note{
-  AIC has not been defined for QRR-VGLMs yet.
+  AIC has not been defined for QRR-VGLMs, yet.
 
 
   Using AIC to compare \code{\link{posbinomial}} models
@@ -136,7 +137,8 @@ Regression and time series model selection in small samples,
   VGAMs are described in \code{\link{vgam-class}};
   RR-VGLMs are described in \code{\link{rrvglm-class}};
   \code{\link[stats]{AIC}},
-  \code{\link{BICvlm}}.
+  \code{\link{BICvlm}},
+  \code{\link{TICvlm}}.
 
 
 }

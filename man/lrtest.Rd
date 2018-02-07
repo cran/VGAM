@@ -135,7 +135,10 @@
 \seealso{
   \pkg{lmtest},
   \code{\link{vglm}},
-  \code{\link{lrp.vglm}}.
+  \code{\link{lrt.stat.vlm}},
+  \code{\link{score.stat.vlm}},
+  \code{\link{wald.stat.vlm}}.
+
 
 
 % \code{\link{waldtest}}

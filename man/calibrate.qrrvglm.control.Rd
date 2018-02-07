@@ -9,7 +9,7 @@
 }
 \usage{
 calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
-    gridSize = ifelse(Rank == 1, 9, 5), varI.latvar = FALSE, ...)
+    gridSize = ifelse(Rank == 1, 21, 9), varI.latvar = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

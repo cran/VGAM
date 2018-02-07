@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -2917,8 +2917,8 @@ alaplace2.control <- function(maxit = 100, ...) {
     extra$individual <- FALSE
 
 
-    mynames1 <- param.names("location", Mdiv2)
-    mynames2 <- param.names("scale",    Mdiv2)
+    mynames1 <- param.names("location", Mdiv2, skip1 = TRUE)
+    mynames2 <- param.names("scale",    Mdiv2, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .llocat , earg = .elocat , tag = FALSE),
           namesof(mynames2, .lscale , earg = .escale , tag = FALSE))
@@ -3005,11 +3005,13 @@ alaplace2.control <- function(maxit = 100, ...) {
     M1 <- 2  # extra$M1
     Mdiv2 <- ncol(eta) / M1  # extra$Mdiv2
 
-    tmp34 <- c(rep_len( .llocat , Mdiv2),
-               rep_len( .lscale , Mdiv2))
-    names(tmp34) <- c(mynames1, mynames2)
-    tmp34 <- tmp34[interleave.VGAM(M, M1 = M1)]
-    misc$link <- tmp34  # Already named
+
+
+    misc$link <- setNames(c(rep_len( .llocat , Mdiv2),
+                            rep_len( .lscale , Mdiv2)),
+                          c(mynames1, mynames2))[interleave.VGAM(M, M1 = M1)]
+
+
 
     misc$earg <- vector("list", M)
     for (ii in 1:Mdiv2) {
@@ -3315,7 +3317,7 @@ alaplace1.control <- function(maxit = 100, ...) {
 
     extra$individual <- FALSE
 
-    mynames1 <- param.names("location", M)
+    mynames1 <- param.names("location", M, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .llocat , earg = .elocat , tag = FALSE))
 
@@ -3376,9 +3378,15 @@ alaplace1.control <- function(maxit = 100, ...) {
     misc$M1 <- M1
     misc$multipleResponses <- TRUE
 
-    tmp34 <- c(rep_len( .llocat , M))
-    names(tmp34) <- mynames1
-    misc$link <- tmp34 # Already named
+
+
+    misc$link <- setNames(rep_len( .llocat , M), mynames1)
+
+
+
+
+
+
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)

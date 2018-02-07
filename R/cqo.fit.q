@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -72,7 +74,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
               p1star = p1star, p2star = p2star, nice31 = nice31,
               lenbeta = lenbeta, I.tol = I.tol, control$trace,
               p1 = p1, p2 = p2, control$imethod)
-  bnumat <- if (nice31) matrix(0,nstar,pstar) else
+  bnumat <- if (nice31) matrix(0, nstar, pstar) else
             cbind(matrix(0, nstar, p2star), X.vlm.1save)
 
 
@@ -126,7 +128,7 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
     assign(".VGAM.CQO.cmatrix",   cmatrix, envir = VGAMenv)
     assign(".VGAM.CQO.ocmatrix", ocmatrix, envir = VGAMenv)
   } else {
-        warning("error code in callcqoc = ", ans1$errcode[1])
+    warning("error code in callcqoc = ", ans1$errcode[1])
     if (nice31) {
     }
     rmfromVGAMenv(c("etamat", "z", "U", "beta", "deviance",
@@ -137,7 +139,8 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
   if (allofit) list(deviance     = ans1$deviance[1],
                     alldeviance  = ans1$deviance[-1],
                     coefficients = ans1$beta) else ans1$deviance[1]
-}
+}  # callcqoc
+
 
 
 
@@ -155,7 +158,7 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
   pstar <- p1star + p2star
   maxMr <- max(M, Rank)
   nstar <- if (nice31)
-           ifelse(modelno == 3 || modelno == 5,n*2,n) else n*M
+           ifelse(modelno == 3 || modelno == 5, n*2, n) else n*M
   NOS <- ifelse(modelno == 3 || modelno == 5, M/2, M)
   lenbeta <- pstar * ifelse(nice31, NOS, 1)
 
@@ -209,8 +212,8 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
                 nice31 = nice31, lenbeta,
                 I.tol = I.tol, control$trace,
                 p1, p2, control$imethod)  # other ints
-    bnumat <- if (nice31) matrix(0,nstar,pstar) else
-             cbind(matrix(0,nstar,p2star), X.vlm.1save)
+    bnumat <- if (nice31) matrix(0, nstar, pstar) else
+             cbind(matrix(0, nstar, p2star), X.vlm.1save)
     flush.console()
 
     ans1 <-
@@ -242,7 +245,10 @@ calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
 
     flush.console()
     ans1$deriv
-}
+}  # calldcqo 
+
+
+
 
 
 
@@ -286,7 +292,7 @@ checkCMCO <- function(Hlist, control, modelno) {
   nice31 <- if (control$Quadratic)
               (!control$eq.tol || control$I.tolerances) else TRUE
   as.numeric(nice31)
-}
+}  # checkCMCO
 
 
 
@@ -602,8 +608,7 @@ ny <- names(y)
     if (trace && length(X2)) {
       cat("\nUsing initial values\n")
       dimnames(ans) <- list(dimnames(X2)[[2]],
-                       if (Rank == 1) "latvar" else
-                       paste("latvar", 1:Rank, sep = ""))
+                            param.names("latvar", Rank, skip1 = TRUE))
       print(if (p2 > 5) ans else t(ans), dig = 3)
     }
     flush.console()
@@ -708,9 +713,7 @@ ny <- names(y)
     }
     ans <- crow1C(ans, rep_len(Crow1positive, Rank))
     dimnames(ans) <- list(dimnames(X1)[[1]],
-                          if (Rank == 1) "latvar" else
-                                         paste("latvar", 1:Rank,
-                                               sep = ""))
+                          param.names("latvar", Rank, skip1 = TRUE))
     if (trace) {
       print(if (nrow(ans) > 10) t(ans) else ans, dig = 3)
     }
@@ -856,11 +859,13 @@ cqo.end.expression <- expression({
     wz <- checkwz(wz, M = M, trace = trace, wzeps = control$wzepsilon)
   U <- vchol(wz, M = M, n = n, silent = !trace)
   tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-  z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset  # Contains \bI \bnu
+  z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset  # Contains \bI\bnu
 
 
 
 })
+
+
 
 
 

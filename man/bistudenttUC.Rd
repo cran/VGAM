@@ -2,7 +2,7 @@
 \alias{Bistudentt}
 \alias{dbistudentt}
 %\alias{rbistudentt}
-\title{Bivariate Student-t distribution cumulative distribution function}
+\title{Bivariate Student-t Distribution Cumulative Distribution Function}
 \description{
   Density
   for the bivariate Student-t distribution distribution.

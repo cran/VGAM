@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -564,7 +564,7 @@ callcaoc <- function(cmatrix,
 
 
   dim(numat) <- c(n, Rank)
-  mynames5 <- if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
+  mynames5 <- param.names("latvar", Rank, skip1 = TRUE)
   nu1mat <- cbind("(Intercept)" = 1, latvar = numat)
   dimnames(nu1mat) <- list(dimnames(xmat)[[1]],
                            c("(Intercept)", mynames5))
@@ -825,7 +825,7 @@ calldcaoc <- function(cmatrix,
   p2 <- length(control$colx2.index)
   yn <- dimnames(ymat)[[2]]
   if (!length( yn ))
-    yn <- paste("Y", 1:ncol(ymat), sep = "")
+    yn <- param.names("Y", ncol(ymat))
 
 
   cmatrix <- scale(cmatrix)
@@ -834,7 +834,7 @@ calldcaoc <- function(cmatrix,
   numat <- xmat2 %*% matrix(cmatrix, p2, Rank)
   dim(numat) <- c(nrow(xmat), Rank)
   temp.smooth.frame <- vector("list", 1+Rank)  # Temporary makeshift frame
-  mynames5 <- if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
+  mynames5 <- param.names("latvar", Rank, skip1 = TRUE)
   names(temp.smooth.frame) <- c("(Intercept)", mynames5)
   temp.smooth.frame[[1]] <- rep_len(1, n)
   for (uu in 1:Rank) {
@@ -1149,12 +1149,11 @@ Coef.rrvgam <- function(object,
     ynames <- object@misc$ynames
     if (!length(ynames)) ynames <- object@misc$predictors.names
     if (!length(ynames)) ynames <- object@misc$ynames
-    if (!length(ynames)) ynames <- paste("Y", 1:NOS, sep = "")
+    if (!length(ynames)) ynames <- param.names("Y", NOS)
     lp.names <- object@misc$predictors.names
     if (!length(lp.names)) lp.names <- NULL
 
-    latvar.names <-
-      if (Rank == 1) "latvar" else paste("latvar", 1:Rank, sep = "")
+    latvar.names <- param.names("latvar", Rank, skip1 = TRUE)
     Cmat <- object@extra$Cmat  # p2 x Rank (provided maxitl > 1)
     if (ConstrainedO)
       dimnames(Cmat) <- list(names(ocontrol$colx2.index), latvar.names)
@@ -1707,20 +1706,20 @@ predictrrvgam <- function(object, grid, sppno, Rank = 1,
 
 
 
-plot.rrvgam <- function(x,
-                     xlab = if (Rank == 1) "Latent Variable" else
-                            paste("Latent Variable", 1:Rank),
-                     ylab = NULL, residuals.arg = FALSE,
-                     pcol = par()$col, pcex = par()$cex, pch = par()$pch,
-                     lcol = par()$col, lwd = par()$lwd, lty = par()$lty,
-                     add = FALSE,
-                     main = NULL,
-                     center.cf = Rank > 1,
-                     WhichRank = 1:Rank,
-                     which.species = NULL,  # a numeric or character vector
-                     rugplot = TRUE, se.arg = FALSE, deriv = 0,
-                     scale = 0, ylim = NULL,
-                     overlay = FALSE, ...) {
+plot.rrvgam <-
+  function(x,
+           xlab = param.names("Latent Variable", Rank, skip1 = TRUE),
+           ylab = NULL, residuals.arg = FALSE,
+           pcol = par()$col, pcex = par()$cex, pch = par()$pch,
+           lcol = par()$col, lwd = par()$lwd, lty = par()$lty,
+           add = FALSE,
+           main = NULL,
+           center.cf = Rank > 1,
+           WhichRank = 1:Rank,
+           which.species = NULL,  # a numeric or character vector
+           rugplot = TRUE, se.arg = FALSE, deriv = 0,
+           scale = 0, ylim = NULL,
+           overlay = FALSE, ...) {
   Rank <- x@control$Rank
   if (!is.logical(center.cf) || length(center.cf) != 1)
     stop("bad input for argument 'center.cf'")

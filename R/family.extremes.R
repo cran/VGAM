@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -172,7 +172,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   } else {
     if (log.p) {
       ln.p <- p
-      ans <- location + scale * ((-log1p(-exp(ln.p)))^(-shape) - 1) / shape
+      ans <- location + scale*((-log1p(-exp(ln.p)))^(-shape) - 1) / shape
       ans[ln.p > 0] <- NaN
     } else {
       ans <- location + scale * ((-log1p(-p))^(-shape) - 1) / shape
@@ -275,10 +275,12 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
          llocation = .llocat ,
          lscale    = .lscale ,
          lshape    = .lshape ,
+         tolshape0 = .tolshape0,
          type.fitted = .type.fitted ,
          zero = .zero )
   }, list( .zero = zero,
            .llocat = llocation, .lscale = lscale, .lshape = lshape,
+           .tolshape0 = tolshape0,
            .type.fitted = type.fitted ))),
 
 
@@ -356,7 +358,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
       for (jay in 1:NOS.proxy) {  # For each response 'y_jay'... do:
 
 
-        scale.init.jay <- sd(y[, 1]) * sqrt(6) / pi  # Based on the Gumbel
+        scale.init.jay <- sd(y[, 1]) * sqrt(6) / pi  # Based on Gumbel
         scale.init.jay <- gscale.mux * scale.init.jay
         if (length( .iscale ))
           scale.init.jay <- .iscale  # iscale is on an absolute scale
@@ -412,7 +414,6 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
 
             .gshape = gshape, .type.fitted = type.fitted,
             .percentiles = percentiles,
-            .tolshape0 = tolshape0,
             .imethod = imethod ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -470,13 +471,9 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     misc$link <-       c( .llocat , .lscale , .lshape )
     names(misc$link) <- c(mynames1, mynames2, mynames3)
 
-    misc$M1 <- M1
-    misc$multipleResponses <- FALSE
-
 
     misc$true.mu <- !length( .percentiles )  # @fitted is not a true mu
     misc$percentiles <- .percentiles
-    misc$tolshape0 <- .tolshape0
     if (ncol(y) == 1)
       y <- as.vector(y)
     if (any(shape < -0.5))
@@ -484,7 +481,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   }), list(
             .llocat = llocat, .lscale = lscale, .lshape = lshape,
             .elocat = elocat, .escale = escale, .eshape = eshape,
-            .tolshape0 = tolshape0, .percentiles = percentiles ))),
+            .percentiles = percentiles ))),
 
   loglikelihood = eval(substitute(
   function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -582,9 +579,11 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
       dl.dxi[is.zero] <-  zorro * (ezm1 * zorro / 2 - 1)
     }
 
+    ansmat <-
     c(w) * cbind(dl.dmu * dmu.deta,
                  dl.dsi * dsi.deta,
                  dl.dxi * dxi.deta)
+    ansmat
   }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
             .elocat = elocat, .escale = escale, .eshape = eshape,
             .tolshape0 = tolshape0 ))),
@@ -593,7 +592,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   weight = eval(substitute(expression({
     kay <- -shape
     dd <- digamma(r.vec - kay + 1)
-    ddd <- digamma(r.vec + 1)  # Unnecessarily evaluated at each iteration
+    ddd <- digamma(r.vec + 1)  # Unnecessarily evaluated @ each iteration
     temp13 <- -kay * dd + (kay^2 - kay + 1) / (1 - kay)
     temp33 <- 1 - 2 * kay * ddd +
               kay^2 * (1 + trigamma(r.vec + 1) + ddd^2)
@@ -622,7 +621,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
         stop("cannot handle shape == 0 with a multivariate response")
 
       EulerM <- -digamma(1)
-      wz[is.zero, iam(2, 2, M)] <- (pi^2/6 +(1-EulerM)^2)/sigma[is.zero]^2
+      wz[is.zero, iam(2, 2, M)] <-
+        (pi^2 / 6 + (1 - EulerM)^2) / sigma[is.zero]^2
       wz[is.zero, iam(3, 3, M)] <- 2.4236
       wz[is.zero, iam(1, 2, M)] <-
         (digamma(2) + 2 * (EulerM - 1)) / sigma[is.zero]^2
@@ -635,8 +635,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
 
       if (FALSE ) {
         wz[, iam(1, 2, M)] <- 2 * r.vec / sigma^2
-        wz[, iam(2, 2, M)] <- -4 * r.vec * digamma(r.vec + 1) + 2 * r.vec +
-                              (4 * dgammadx(r.vec + 1, deriv.arg = 1) -
+        wz[, iam(2, 2, M)] <- -4 * r.vec * digamma(r.vec + 1) +
+          2 * r.vec + (4 * dgammadx(r.vec + 1, deriv.arg = 1) -
           3 * dgammadx(r.vec + 1,
                        deriv.arg = 2)) / gamma(r.vec)  # Not checked
       }
@@ -652,6 +652,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
             .elocat = elocat, .escale = escale, .eshape = eshape ))))
 }
+
 
 
 
@@ -677,6 +678,7 @@ dgammadx <- function(x, deriv.arg = 1) {
     stop("cannot handle 'deriv' > 4")
   }
 }
+
 
 
 
@@ -794,9 +796,9 @@ dgammadx <- function(x, deriv.arg = 1) {
     M <- M1 * ncoly  # Is now true!
 
 
-    mynames1  <- param.names("location", NOS)
-    mynames2  <- param.names("scale",    NOS)
-    mynames3  <- param.names("shape",    NOS)
+    mynames1  <- param.names("location", NOS, skip1 = TRUE)
+    mynames2  <- param.names("scale",    NOS, skip1 = TRUE)
+    mynames3  <- param.names("shape",    NOS, skip1 = TRUE)
     predictors.names <- c(
       namesof(mynames1, .llocat , earg = .elocat , short = TRUE),
       namesof(mynames2, .lscale , earg = .escale , short = TRUE),
@@ -1109,7 +1111,8 @@ dgammadx <- function(x, deriv.arg = 1) {
     ned2l.dlocsha <- -(qq - pp/shape) / (Scale * shape)
 
     if (any(is.zero)) {
-      ned2l.dscale2[is.zero] <- (pi^2/6 + (1-EulerM)^2) / Scale[is.zero]^2
+      ned2l.dscale2[is.zero] <-
+        (pi^2 / 6 + (1 - EulerM)^2) / Scale[is.zero]^2
       ned2l.dshape2[is.zero] <- 2.4236
       ned2l.dlocsca[is.zero] <- (digamma(2) +
                                  2*(EulerM - 1)) / Scale[is.zero]^2
@@ -1398,7 +1401,7 @@ pgumbel <- function(q, location = 0, scale = 1,
     max.r.vec <- max(r.vec)
     for (jay in 1:max.r.vec) {
       index <- (jay <= r.vec)
-      ans[index] <- ans[index] - (y[index,jay] - loc[index])/sigma[index]
+      ans[index] <- ans[index] - (y[index,jay] - loc[index]) / sigma[index]
     }
 
 
@@ -1746,8 +1749,8 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
     extra$threshold <- Threshold
 
 
-    mynames1 <- param.names("scale", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("scale", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))[
@@ -1855,7 +1858,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
         fv[!is.zero, ii] <- threshold[!is.zero] +
                            (temp^(-shape[!is.zero]) - 1) *
                            scale[!is.zero] / shape[!is.zero]
-        fv[ is.zero, ii] <- threshold[is.zero] - scale[is.zero] * log(temp)
+        fv[ is.zero, ii] <- threshold[is.zero]-scale[is.zero] * log(temp)
       }
 
       post.name <- paste(as.character(percentiles), "%", sep = "")
@@ -2231,8 +2234,8 @@ setMethod("guplot", "vlm",
     M <- M1 * ncoly  # Is now true!
 
 
-    mynames1  <- param.names("location", NOS)
-    mynames2  <- param.names("scale",    NOS)
+    mynames1  <- param.names("location", NOS, skip1 = TRUE)
+    mynames2  <- param.names("scale",    NOS, skip1 = TRUE)
     predictors.names <- c(
       namesof(mynames1, .llocat , earg = .elocat , short = TRUE),
       namesof(mynames2, .lscale , earg = .escale , short = TRUE))[
@@ -2588,7 +2591,7 @@ setMethod("guplot", "vlm",
     d2l.dloc2 <- -ezedd / sc^2
     d2l.dsc2 <- (2 - zedd) * zedd * ezedd / sc^2
     d2l.dlocsc <- (1 - zedd) * ezedd / sc^2
-    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)]-A1^2 * d2l.dloc2 * dloc.deta^2
+  wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)]-A1^2 * d2l.dloc2 * dloc.deta^2
     wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)]-A1^2 * d2l.dsc2 * dsc.deta^2
     wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)]-A1^2 * d2l.dlocsc *
                         dloc.deta * dsc.deta
@@ -2597,8 +2600,8 @@ setMethod("guplot", "vlm",
     d2Fy.dlocsc <- dFy.dsc * dl.dloc + Fy * d2l.dlocsc
     d2l.dloc2 <- -((1-Fy) * d2Fy.dloc2 - dFy.dloc^2) / (1-Fy)^2
     d2l.dsc2 <- -((1-Fy) * d2Fy.dsc2 - dFy.dsc^2) / (1-Fy)^2
-    d2l.dlocsc  <- -((1-Fy) * d2Fy.dlocsc - dFy.dloc * dFy.dsc) / (1-Fy)^2
-    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)]-A3^2 * d2l.dloc2 * dloc.deta^2
+  d2l.dlocsc  <- -((1-Fy) * d2Fy.dlocsc - dFy.dloc * dFy.dsc) / (1-Fy)^2
+  wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)]-A3^2 * d2l.dloc2 * dloc.deta^2
     wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)]-A3^2 * d2l.dsc2 * dsc.deta^2
     wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)]-A3^2 * d2l.dlocsc *
                           dloc.deta * dsc.deta
@@ -2912,7 +2915,7 @@ frechet.control <- function(save.weights = TRUE, ...) {
 
     if (length( .nsimEIM )) {
       for (ii in 1:( .nsimEIM )) {
-        ysim <- rfrechet(n, location = loctn, scale = Scale, shape = shape)
+        ysim <- rfrechet(n, loc = loctn, scale = Scale, shape = shape)
 
           rzedd <- Scale / (ysim - loctn)  # reciprocial of zedd
           dl.dloctn <- (shape + 1) / (ysim - loctn) -
@@ -2976,7 +2979,8 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
 
 
   new("vglmff",
-  blurb = c("Upper record values from a univariate normal distribution\n\n",
+  blurb = c("Upper record values from a univariate normal ",
+            "distribution\n\n",
             "Links:    ",
             namesof("mean", lmean, earg = emean, tag = TRUE), "; ",
             namesof("sd",   lsdev, earg = esdev, tag = TRUE), "\n",
@@ -2992,6 +2996,7 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
     list(M1 = 2,
          Q1 = 1,
          expected = FALSE,
+         hadof = FALSE,  # BFGS ==> hdeff() does not work.
          multipleResponses = FALSE,
          parameters.names = c("mean", "sd"),
          lmean  = .lmean ,
@@ -3067,8 +3072,8 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
   vfamily = c("rec.normal"),
   deriv = eval(substitute(expression({
     NN <- nrow(eta)
-    mymu <- eta2theta(eta[, 1], .lmean)
-    sdev <- eta2theta(eta[, 2], .lsdev)
+    mymu <- eta2theta(eta[, 1], .lmean )
+    sdev <- eta2theta(eta[, 2], .lsdev )
     zedd <- (y - mymu) / sdev
     temp200 <- dnorm(zedd) / (1-pnorm(zedd))
     dl.dmu <- (zedd - temp200) / sdev
@@ -3283,8 +3288,8 @@ dpois.points <- function(x, lambda, ostatistic,
           "Link:    ",
           namesof("density", link, earg = earg), "\n\n",
           if (dimension == 2)
-            "Mean:    gamma(s+0.5) / (gamma(s) * sqrt(density * pi))" else
-            "Mean:    gamma(s+1/3) / (gamma(s) * (4*density*pi/3)^(1/3))"),
+          "Mean:    gamma(s+0.5) / (gamma(s) * sqrt(density * pi))" else
+          "Mean:    gamma(s+1/3) / (gamma(s) * (4*density*pi/3)^(1/3))"),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
@@ -3397,6 +3402,8 @@ dpois.points <- function(x, lambda, ostatistic,
             .ostatistic = ostatistic,
             .dimension = dimension ))))
 }
+
+
 
 
 

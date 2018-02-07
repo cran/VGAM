@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -22,7 +22,7 @@ print.vfamily <- function(x, ...) {
 
   cat("Family: ", f[1], "\n")
   if (length(f)>1)
-    cat("Classes:", paste(f, collapse=", "), "\n")
+    cat("Classes:", paste(f, collapse = ", "), "\n")
   cat("\n")
 
   for (ii in seq_along(nn))

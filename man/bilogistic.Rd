@@ -10,7 +10,7 @@
 \usage{
 bilogistic(llocation = "identitylink", lscale = "loge",
            iloc1 = NULL, iscale1 = NULL, iloc2 = NULL, iscale2 = NULL,
-           imethod = 1, zero = NULL)
+           imethod = 1, nsimEIM = 250, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,14 +50,19 @@ bilogistic(llocation = "identitylink", lscale = "loge",
     try the other value.
 
   }
-  \item{zero}{ An integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
-  The default is none of them.
-  If used, one can choose values from the set \{1,2,3,4\}.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  \item{nsimEIM, zero}{
+  See \code{\link{CommonVGAMffArguments}} for details.
 
 
   }
+% \item{zero}{ An integer-valued vector specifying which
+% linear/additive predictors are modelled as intercepts only.
+% The default is none of them.
+% If used, one can choose values from the set \{1,2,3,4\}.
+% See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+% }
 }
 \details{
   The four-parameter bivariate logistic distribution
@@ -118,15 +123,15 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \author{ T. W. Yee }
-\note{
-  This family function uses the BFGS quasi-Newton update formula for the
-  working weight matrices. Consequently the estimated variance-covariance
-  matrix may be inaccurate or simply wrong! The standard errors must be
-  therefore treated with caution; these are computed in functions such
-  as \code{vcov()} and \code{summary()}.
-
-
-}
+%\note{
+%  This family function uses the BFGS quasi-Newton update formula for the
+%  working weight matrices. Consequently the estimated variance-covariance
+%  matrix may be inaccurate or simply wrong! The standard errors must be
+%  therefore treated with caution; these are computed in functions such
+%  as \code{vcov()} and \code{summary()}.
+%
+%
+%}
 %\section{Warning }{
 %}
 
@@ -137,15 +142,17 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-ymat <- rbilogis(n <- 1000, loc1 = 5, loc2 = 7, scale2 = exp(1))
-\dontrun{plot(ymat)}
-fit <- vglm(ymat ~ 1, fam = bilogistic, trace = TRUE)
-coef(fit, matrix = TRUE)
-Coef(fit)
-head(fitted(fit))
-vcov(fit)
-head(weights(fit, type = "work"))
-summary(fit)
+\dontrun{
+ymat <- rbilogis(n <- 50, loc1 = 5, loc2 = 7, scale2 = exp(1))
+plot(ymat)
+bfit <- vglm(ymat ~ 1, family = bilogistic, trace = TRUE)
+coef(bfit, matrix = TRUE)
+Coef(bfit)
+head(fitted(bfit))
+vcov(bfit)
+head(weights(bfit, type = "work"))
+summary(bfit)
+}
 }
 \keyword{models}
 \keyword{regression}

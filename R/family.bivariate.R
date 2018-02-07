@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -145,7 +145,7 @@ rbiclaytoncop <- function(n, apar = 0) {
     extra$M1 <- M1
     extra$Q1 <- Q1
     M <- M1 * (ncoly / Q1)
-    mynames1 <- param.names("apar", M / M1)
+    mynames1 <- param.names("apar", M / M1, skip1 = TRUE)
     predictors.names <-
       namesof(mynames1, .lapar , earg = .eapar , short = TRUE)
 
@@ -459,8 +459,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     extra$M1 <- M1
     extra$Q1 <- Q1
     M <- M1 * (ncoly / Q1)
-    mynames1 <- param.names("df",  M / M1)
-    mynames2 <- param.names("rho", M / M1)
+    mynames1 <- param.names("df",  M / M1, skip1 = TRUE)
+    mynames2 <- param.names("rho", M / M1, skip1 = TRUE)
     predictors.names <- c(
       namesof(mynames1, .ldof , earg = .edof , short = TRUE),
       namesof(mynames2, .lrho , earg = .erho , short = TRUE))[
@@ -812,7 +812,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
     extra$M1 <- M1
     extra$Q1 <- Q1
     M <- M1 * (ncoly / Q1)
-    mynames1 <- param.names("rho", M / M1)
+    mynames1 <- param.names("rho", M / M1, skip1 = TRUE)
     predictors.names <- c(
       namesof(mynames1, .lrho , earg = .erho , short = TRUE))
 
@@ -972,6 +972,9 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
 
 
+
+
+
 bilogistic.control <- function(save.weights = TRUE, ...) {
   list(save.weights = save.weights)
 }
@@ -981,7 +984,9 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
                          lscale = "loge",
                          iloc1 = NULL, iscale1 = NULL,
                          iloc2 = NULL, iscale2 = NULL,
-                         imethod = 1, zero = NULL) {
+                         imethod = 1,
+                         nsimEIM = 250,
+                         zero = NULL) {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -991,6 +996,12 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+
+
+  if (!is.Numeric(nsimEIM, length.arg = 1,
+                  integer.valued = TRUE) ||
+      nsimEIM <= 50)
+    warning("'nsimEIM' should be an integer greater than 50")
 
 
 
@@ -1016,7 +1027,10 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 4,
          Q1 = 2,
-         parameters.names = c("location1", "scale1", "location2", "scale2"),
+         expected = FALSE,
+         parameters.names =
+             c("location1", "scale1", "location2", "scale2"),
+         multipleResponses = FALSE,
          zero = .zero )
   }, list( .zero = zero
          ))),
@@ -1094,9 +1108,6 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
     misc$earg <- list(location1 = .elocat , scale1 = .escale ,
                       location2 = .elocat , scale2 = .escale )
 
-    misc$expected <- FALSE
-    misc$BFGS <- TRUE
-    misc$multipleResponses <- FALSE
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))),
   loglikelihood = eval(substitute(
@@ -1168,8 +1179,8 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
     locat2 <- eta2theta(eta[, 3], .llocat , .elocat )
     Scale2 <- eta2theta(eta[, 4], .lscale , .escale )
 
-    zedd1 <- (y[, 1]-locat1) / Scale1
-    zedd2 <- (y[, 2]-locat2) / Scale2
+    zedd1 <- (y[, 1] - locat1) / Scale1
+    zedd2 <- (y[, 2] - locat2) / Scale2
     ezedd1 <- exp(-zedd1)
     ezedd2 <- exp(-zedd2)
     denom <- 1 + ezedd1 + ezedd2
@@ -1184,13 +1195,6 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
     dscale1.deta <- dtheta.deta(Scale1, .lscale , .escale )
     dscale2.deta <- dtheta.deta(Scale2, .lscale , .escale )
 
-    if (iter == 1) {
-      etanew <- eta
-    } else {
-      derivold <- derivnew
-      etaold <- etanew
-      etanew <- eta
-    }
     derivnew <- c(w) * cbind(dl.dlocat1 * dlocat1.deta,
                              dl.dscale1 * dscale1.deta,
                              dl.dlocat2 * dlocat2.deta,
@@ -1199,18 +1203,46 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))),
   weight = eval(substitute(expression({
-    if (iter == 1) {
-      wznew <- cbind(matrix(w, n, M), matrix(0, n, dimm(M)-M))
-    } else {
-      wzold <- wznew
-      wznew <- qnupdate(w = w, wzold=wzold, dderiv=(derivold - derivnew),
-                       deta=etanew-etaold, M = M,
-                       trace=trace)  # weights incorporated in args
-    }
-    wznew
+    run.varcov <- 0
+    ind1 <- iam(NA_real_, NA_real_, M = M, both = TRUE, diag = TRUE)
+    for (ii in 1:( .nsimEIM )) {
+      ysim <- rbilogis( .nsimEIM * length(locat1),
+                       loc1 = locat1, scale1 = Scale1,
+                       loc2 = locat2, scale2 = Scale2)
+
+    zedd1 <- (ysim[, 1] - locat1) / Scale1
+    zedd2 <- (ysim[, 2] - locat2) / Scale2
+    ezedd1 <- exp(-zedd1)
+    ezedd2 <- exp(-zedd2)
+    denom <- 1 + ezedd1 + ezedd2
+
+    dl.dlocat1 <- (1 - 3 * ezedd1 / denom) / Scale1
+    dl.dlocat2 <- (1 - 3 * ezedd2 / denom) / Scale2
+    dl.dscale1 <- (zedd1 - 1 - 3 * ezedd1 * zedd1 / denom) / Scale1
+    dl.dscale2 <- (zedd2 - 1 - 3 * ezedd2 * zedd2 / denom) / Scale2
+
+
+      rm(ysim)
+      temp3 <- cbind(dl.dlocat1,
+                     dl.dscale1,
+                     dl.dlocat2,
+                     dl.dscale2)
+      run.varcov <- run.varcov + temp3[, ind1$row] * temp3[, ind1$col]
+    }  # ii
+    run.varcov <- run.varcov / .nsimEIM
+    wz <- if (intercept.only)
+        matrix(colMeans(run.varcov, na.rm = FALSE),
+               n, ncol(run.varcov), byrow = TRUE) else run.varcov
+    dthetas.detas <- cbind(dlocat1.deta,
+                           dscale1.deta,
+                           dlocat2.deta,
+                           dscale2.deta)
+    wz <- wz * dthetas.detas[, ind1$row] * dthetas.detas[, ind1$col]
+    c(w) * wz
   }), list( .lscale = lscale,
             .escale = escale,
-            .llocat = llocat))))
+            .llocat = llocat,
+            .nsimEIM = nsimEIM ))))
 }
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -52,13 +52,14 @@ vglm.fit <-
   old.coeffs <- coefstart  # May be a NULL
 
   intercept.only <- ncol(x) == 1 && colnames(x) == "(Intercept)"
-  y.names <- predictors.names <- NULL  # May be overwritten in @initialize
+  y.names <-
+  predictors.names <- NULL  # May be overwritten in @initialize
 
   n.save <- n
 
 
   if (length(slot(family, "initialize")))
-    eval(slot(family, "initialize"))  # Initialize mu & M (& optionally w)
+    eval(slot(family, "initialize"))  # Initialize mu, M (& optionally w)
 
 
 
@@ -87,7 +88,7 @@ vglm.fit <-
 
   validparams <- validfitted <- TRUE
   if (length(body(slot(family, "validparams"))))
-    validparams <- slot(family, "validparams")(eta, y = y, extra = extra)
+  validparams <- slot(family, "validparams")(eta, y = y, extra = extra)
   if (length(body(slot(family, "validfitted"))))
     validfitted <- slot(family, "validfitted")(mu, y = y, extra = extra)
   if (!(validparams && validfitted))
@@ -128,10 +129,10 @@ vglm.fit <-
 
   if (length(coefstart)) {
     eta <- if (ncol(X.vlm.save) > 1) {
-             matrix(X.vlm.save %*% coefstart, n, M, byrow = TRUE) + offset
-           } else {
-             matrix(X.vlm.save  *  coefstart, n, M, byrow = TRUE) + offset
-           }
+        matrix(X.vlm.save %*% coefstart, n, M, byrow = TRUE) + offset
+      } else {
+        matrix(X.vlm.save  *  coefstart, n, M, byrow = TRUE) + offset
+      }
     if (M == 1)
       eta <- c(eta)
     mu <- slot(family, "linkinv")(eta, extra = extra)
@@ -151,7 +152,7 @@ vglm.fit <-
   deriv.mu <- eval(slot(family, "deriv"))
   wz <- eval(slot(family, "weight"))
   if (control$checkwz)
-    wz <- checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon)
+    wz <- checkwz(wz, M, trace = trace, wzepsilon = control$wzepsilon)
 
   U <- vchol(wz, M = M, n = n, silent = !trace)
   tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
@@ -224,9 +225,9 @@ vglm.fit <-
                        length(old.coeffs)) &&
                        ((orig.stepsize != 1) ||
                         (!is.finite(new.crit)) ||  # 20160321
-                        (criterion != "coefficients" &&
-                        (if (minimize.criterion) new.crit > old.crit else
-                                                 new.crit < old.crit)))
+                      (criterion != "coefficients" &&
+                      (if (minimize.criterion) new.crit > old.crit else
+                                               new.crit < old.crit)))
     if (!is.logical(take.half.step))
       take.half.step <- TRUE
 
@@ -234,9 +235,11 @@ vglm.fit <-
     if (!take.half.step && length(old.coeffs))  {
       validparams <- validfitted <- TRUE
       if (length(body(slot(family, "validparams"))))
-        validparams <- slot(family, "validparams")(eta, y = y, extra = extra)
+        validparams <- slot(family, "validparams")(eta, y = y,
+                                                   extra = extra)
       if (length(body(slot(family, "validfitted"))))
-        validfitted <- slot(family, "validfitted")(mu, y = y, extra = extra)
+        validfitted <- slot(family, "validfitted")(mu, y = y,
+                                                   extra = extra)
       take.half.step <- !(validparams && validfitted)
 
 
@@ -285,9 +288,9 @@ vglm.fit <-
 
         validparams <- validfitted <- TRUE
         if (length(body(slot(family, "validparams"))))
-          validparams <- slot(family, "validparams")(eta, y, extra = extra)
+        validparams <- slot(family, "validparams")(eta, y, extra = extra)
         if (length(body(slot(family, "validfitted"))))
-          validfitted <- slot(family, "validfitted")(mu, y, extra = extra)
+        validfitted <- slot(family, "validfitted")(mu, y, extra = extra)
 
         if (validparams && validfitted &&
            (is.finite(new.crit)) &&  # 20160321
@@ -315,8 +318,8 @@ vglm.fit <-
                                   digits = round(1 - log10(epsilon))),
                            format(new.crit,
                                   digits = max(4,
-                                               round(-0 - log10(epsilon) +
-                                                     log10(sqrt(eff.n))))))
+                                           round(-0 - log10(epsilon) +
+                                                 log10(sqrt(eff.n))))))
 
           switch(criterion,
                  coefficients = {
@@ -340,7 +343,8 @@ vglm.fit <-
       deriv.mu <- eval(slot(family, "deriv"))
       wz <- eval(slot(family, "weight"))
       if (control$checkwz)
-        wz <- checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon)
+        wz <- checkwz(wz, M = M, trace = trace,
+                      wzepsilon = control$wzepsilon)
 
       U <- vchol(wz, M = M, n = n, silent = !trace)
       tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)

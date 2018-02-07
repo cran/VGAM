@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -569,7 +569,7 @@ dirmul.old <- function(link = "loge", ialpha = 0.01,
       if (any(y != round(y )))
         stop("all y values must be integer-valued")
 
-      predictors.names <- namesof(paste("shape", 1:M, sep = ""),
+      predictors.names <- namesof(param.names("shape", M, skip1 = TRUE),
                                   .link , earg = .earg , short = TRUE)
 
       extra$n2 <- rowSums(y)  # Nb. don't multiply by 2
@@ -590,7 +590,7 @@ dirmul.old <- function(link = "loge", ialpha = 0.01,
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <- rep_len( .link , M)
-    names(misc$link) <- paste("shape", 1:M, sep = "")
+    names(misc$link) <- param.names("shape", M, skip1 = TRUE)
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
@@ -765,7 +765,7 @@ rdiric <- function(n, shape, dimension = NULL,
     if (any(y <= 0) || any(y >= 1))
       stop("all y values must be > 0 and < 1")
 
-    mynames1 <- paste("shape", 1:M, sep = "")
+    mynames1 <- param.names("shape", M, skip1 = TRUE)
     predictors.names <-
       namesof(mynames1, .link , earg = .earg , short = TRUE)
     if (!length(etastart)) {
@@ -866,16 +866,13 @@ rdiric <- function(n, shape, dimension = NULL,
 
 
 
-cauchy.control <- function(save.weights = TRUE, ...) {
-    list(save.weights = save.weights)
-}
-
-
- cauchy <- function(llocation = "identitylink", lscale = "loge",
-                    ilocation = NULL, iscale = NULL,
-                    iprobs = seq(0.2, 0.8, by = 0.2),
-                    imethod = 1, nsimEIM = NULL,
-                    zero = "scale") {
+ cauchy <-
+  function(llocation = "identitylink", lscale = "loge",
+           imethod = 1,
+           ilocation = NULL, iscale = NULL,
+           gprobs.y = ppoints(19),  # seq(0.2, 0.8, by = 0.2),
+           gscale.mux = exp(-3:3),
+           zero = "scale") {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -892,26 +889,33 @@ cauchy.control <- function(save.weights = TRUE, ...) {
      imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
-
-  if (length(nsimEIM) &&
-     (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE) ||
-      nsimEIM <= 50))
-    stop("argument 'nsimEIM' should be an integer greater than 50")
   if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("bad input for argument 'iscale'")
-  if (!is.Numeric(iprobs, positive = TRUE) || max(iprobs) >= 1)
-    stop("bad input for argument 'iprobs'")
+  if (!is.Numeric(gprobs.y, positive = TRUE) || max(gprobs.y) >= 1)
+    stop("bad input for argument 'gprobs.y'")
 
 
 
   new("vglmff",
   blurb = c("Two-parameter Cauchy distribution ",
-            "(location & scale unknown)\n\n",
+            "(location & scale to be estimated)\n\n",
             "Link:    ",
-            namesof("location", llocat, earg = elocat), "\n",
-            namesof("scale",    lscale,    earg = escale), "\n\n",
+            namesof("location", llocat, earg = elocat), ", ",
+            namesof("scale",    lscale, earg = escale), "\n\n",
             "Mean:     NA\n",
             "Variance: NA"),
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    Locat <- eta2theta(eta[, c(TRUE, FALSE)], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    if (varfun) {
+      Locat * Inf
+    } else {
+      exp(1i * x * Locat - Scale * abs(x))
+    }
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
+
  constraints = eval(substitute(expression({
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
                                 predictors.names = predictors.names,
@@ -921,112 +925,155 @@ cauchy.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         charfun = TRUE,
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("location", "scale"),
          llocation = .llocat ,
          lscale    = .lscale ,
          zero = .zero )
-  }, list( .zero = zero,
+  }, list( .zero   = zero,
            .llocat = llocat,
            .lscale = lscale ))),
 
   initialize = eval(substitute(expression({
-    predictors.names <- c(
-      namesof("location", .llocat , earg = .elocat , tag = FALSE),
-      namesof("scale",    .lscale , earg = .escale , tag = FALSE))
+    M1 <- 2
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+    M <- M1 * ncol(y)
+    NOS <- ncoly <- ncol(y)  # Number of species
+
+    mynames1 <- param.names("location",   NOS, skip1 = TRUE)
+    mynames2 <- param.names("scale",      NOS, skip1 = TRUE)
+    predictors.names <-
+        c(namesof(mynames1, .llocat , earg = .elocat , tag = FALSE),
+          namesof(mynames2, .lscale , earg = .escale , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
 
 
-    w.y.check(w = w, y = y)
 
+    gprobs.y   <- .gprobs.y
+    gscale.mux <- .gscale.mux
 
+    ilocation <- .ilocat     # Default is NULL
+    iscale <- .iscale  # Default is NULL
 
     if (!length(etastart)) {
-      loc.init <- if (length( .ilocat)) .ilocat else {
-        if ( .imethod == 2) median(rep(y, w)) else
-        if ( .imethod == 3) y else {
-            cauchy2.Loglikfun <- function(loc, y, x, w, extraargs) {
-                 iprobs <- .iprobs
-                 qy <- quantile(rep(y, w), probs = iprobs)
-                 ztry <- tan(pi*(iprobs-0.5))
-                 btry <- (qy - loc) / ztry
-                 scal <- median(btry, na.rm = TRUE)
-                 if (scal <= 0)
-                   scal <- 0.1
-                 sum(c(w) * dcauchy(x = y, loc = loc, scale = scal,
-                                    log = TRUE))
-             }
-             loc.grid <- c(quantile(y, probs = seq(0.1, 0.9, by = 0.05)))
-             try.this <- grid.search(loc.grid, objfun = cauchy2.Loglikfun,
-                                     y = y,  x = x, w = w)
-                try.this <- rep_len(c(try.this), n)
-                try.this
-            }
+      locat.init <-
+      scale.init <- matrix(NA_real_, n, NOS)
+
+
+      for (jay in 1:NOS) {  # For each response 'y_jay'... do:
+        locat.init.jay <- if ( .imethod == 1) {
+          unique(quantile(y[, jay], probs = .gprobs.y ))
+        } else if ( .imethod == 2) {
+          median(y[, jay])
+        } else {
+          weighted.mean(y[, jay], w = w[, jay])
         }
-        loc.init <- rep_len(c(loc.init), n)
+        if (length(ilocation))
+          locat.init.jay <- ilocation  # [, jay]
+
+         mad.est <- mad(y[, jay]) + 0.001
+         scale.init.jay <- gscale.mux * mad.est
+        if (length(iscale))
+          scale.init.jay <- iscale  # [, jay]
 
 
-            sca.init <- if (length( .iscale )) .iscale else {
-                iprobs <- .iprobs
-                qy <- quantile(rep(y, w), probs = iprobs)
-                ztry <- tan(pi*(iprobs-0.5))
-                btry <- (qy - loc.init[1]) / ztry
-                sca.init <- median(btry, na.rm = TRUE)
-                if (sca.init <= 0) sca.init <- 0.01
-                sca.init
-            }
-
-            sca.init <- rep_len(c(sca.init), n)
-            if ( .llocat == "loge") loc.init <- abs(loc.init) + 0.01
-            etastart <-
-              cbind(theta2eta(loc.init, .llocat , earg = .elocat ),
-                    theta2eta(sca.init, .lscale ,    earg = .escale ))
+        cauchy2.Loglikfun <- function(Locat, Scaleval,
+                                      y, x = NULL, w, extraargs) {
+          sum(c(w) * dcauchy(x = y, Locat, Scaleval, log = TRUE))
         }
-  }), list( .ilocat = ilocat,
-            .elocat = elocat, .llocat = llocat,
-            .iscale = iscale, .escale = escale, .lscale = lscale,
-            .iprobs = iprobs, .imethod = imethod ))),
+
+        try.this <-
+          grid.search2(locat.init.jay, scale.init.jay,
+                       objfun = cauchy2.Loglikfun,
+                       y = y[, jay], w = w[, jay],
+                       ret.objfun = TRUE)  # Last value is the loglik
+
+        locat.init[, jay] <- try.this["Value1"]
+        scale.init[, jay] <- try.this["Value2"]
+
+      }  # for (jay ...)
+
+
+
+      etastart <-
+        cbind(theta2eta(locat.init, link = .llocat , earg = .elocat ),
+              theta2eta(scale.init, link = .lscale , earg = .escale ))
+
+
+      if (M > M1)
+      etastart <-
+        etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
+    }  # !length(etastart)
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
+            .ilocat = ilocat, .iscale = iscale,
+            .gprobs.y = gprobs.y, .gscale.mux = gscale.mux,
+            .imethod  = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .llocat , earg = .elocat )
+    eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+              .llocat , earg = .elocat )
   }, list( .llocat = llocat,
            .elocat = elocat ))),
   last = eval(substitute(expression({
-    misc$expected <- TRUE
-    misc$link <-    c("location" = .llocat , "scale" =.lscale)
-    misc$earg <- list("location" = .elocat , "scale" = .escale )
+    misc$link <- c(rep_len( .llocat , NOS),
+                   rep_len( .lscale , NOS))
+    misc$link <- misc$link[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)
+    temp.names <- temp.names[interleave.VGAM(M, M1 = M1)]
+    names(misc$link) <- temp.names
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- temp.names
+    for (ii in 1:ncoly) {
+      misc$earg[[M1*ii-1]] <- .elocat
+      misc$earg[[M1*ii  ]] <- .escale
+    }
+
     misc$imethod <- .imethod
-  }), list( .escale = escale, .elocat = elocat,
-            .imethod = imethod,
-            .llocat = llocat, .lscale = lscale ))),
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale,
+            .imethod = imethod ))),
   loglikelihood = eval(substitute(
-  function(mu, y, w, residuals = FALSE, eta,
+    function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    locat    <- eta2theta(eta[, 1], .llocat , earg = .elocat )
-    myscale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
+    Locat <- eta2theta(eta[, c(TRUE, FALSE)], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <-
-        c(w) * dcauchy(x = y, loc = locat, sc = myscale, log = TRUE)
+        c(w) * dcauchy(y, Locat, scale = Scale, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
         ll.elts
       }
     }
-  }, list( .escale = escale, .lscale = lscale,
-           .elocat = elocat, .llocat = llocat ))),
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
   vfamily = c("cauchy"),
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    location <- eta2theta(eta[, 1], .llocat , earg = .elocat )
-    myscale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    okay1 <- all(is.finite(location)) &&
-             all(is.finite(myscale )) && all(0 < myscale)
+  validparams = eval(substitute(function(eta, y, extra = NULL) {#
+    Locat <- eta2theta(eta[, c(TRUE, FALSE)], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    okay1 <- all(is.finite(Locat)) &&
+             all(is.finite(Scale )) && all(0 < Scale)
     okay1
-  }, list( .escale = escale, .lscale = lscale,
-           .elocat = elocat, .llocat = llocat ))),
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
 
 
 
@@ -1041,63 +1088,34 @@ cauchy.control <- function(save.weights = TRUE, ...) {
     if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
-    locat   <- eta2theta(eta[, 1], .llocat , earg = .elocat )
-    myscale <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    rcauchy(nsim * length(myscale), loc = locat, sc = myscale)
-  }, list( .escale = escale, .lscale = lscale,
-           .elocat = elocat, .llocat = llocat ))),
-
-
-
-
-
+    Locat <- eta2theta(eta[, c(TRUE, FALSE)], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    rcauchy(nsim * length(Scale), location = Locat, scale = Scale)
+  }, list( .llocat = llocat, .lscale = lscale,
+           .elocat = elocat, .escale = escale ))),
 
 
 
   deriv = eval(substitute(expression({
-    location <- eta2theta(eta[, 1], .llocat , earg = .elocat )
-    myscale  <- eta2theta(eta[, 2], .lscale , earg = .escale )
-    dlocation.deta <- dtheta.deta(location, .llocat , earg = .elocat )
-    dscale.deta    <- dtheta.deta(myscale, .lscale , earg = .escale )
-    Z <- (y-location) / myscale
-    dl.dlocation <- 2 * Z / ((1 + Z^2) * myscale)
-    dl.dscale <- (Z^2 - 1) / ((1 + Z^2) * myscale)
-    c(w) * cbind(dl.dlocation * dlocation.deta,
-                 dl.dscale * dscale.deta)
+    Locat <- eta2theta(eta[, c(TRUE, FALSE)], .llocat , earg = .elocat )
+    Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , earg = .escale )
+    dlocat.deta <- dtheta.deta(Locat, .llocat , earg = .elocat )
+    dscale.deta <- dtheta.deta(Scale, .lscale , earg = .escale )
+    Z <- (y - Locat) / Scale
+    dl.dlocat <- 2 * Z / ((1 + Z^2) * Scale)
+    dl.dscale <- (Z^2 - 1) / ((1 + Z^2) * Scale)
+    myderiv <- c(w) * cbind(dl.dlocat * dlocat.deta,
+                            dl.dscale * dscale.deta)
+    myderiv[, interleave.VGAM(M, M1 = M1)]
   }), list( .escale = escale, .lscale = lscale,
             .elocat = elocat, .llocat = llocat ))),
   weight = eval(substitute(expression({
-    run.varcov <- 0
-    ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-    dthetas.detas = cbind(dlocation.deta, dscale.deta)
-    if (length( .nsimEIM )) {
-      for (ii in 1:( .nsimEIM )) {
-        ysim <- rcauchy(n, loc = location, scale = myscale)
-        Z <- (ysim-location) / myscale
-        dl.dlocation <- 2 * Z / ((1 + Z^2) * myscale)
-        dl.dscale <- (Z^2 - 1) / ((1 + Z^2) * myscale)
-        rm(ysim)
-        temp3 <- matrix(c(dl.dlocation, dl.dscale), n, 2)
-        run.varcov <- ((ii-1) * run.varcov +
-                   temp3[, ind1$row.index] *
-                   temp3[, ind1$col.index]) / ii
-      }
-      wz <- if (intercept.only)
-          matrix(colMeans(run.varcov),
-                 n, ncol(run.varcov), byrow = TRUE) else run.varcov
-
-      wz <- wz * dthetas.detas[, ind1$row] *
-                dthetas.detas[, ind1$col]
-      wz <- c(w) * matrix(wz, n, dimm(M))
-    } else {
-      wz <- cbind(matrix(0.5 / myscale^2, n, 2), matrix(0, n, 1)) *
-           dthetas.detas[, ind1$row] * dthetas.detas[, ind1$col]
-      wz <- c(w) * wz[, 1:M]  # diagonal wz
-    }
-
+    wz <- cbind((0.5 / Scale^2) * dlocat.deta^2,
+                (0.5 / Scale^2) * dscale.deta^2) * c(w)
+    wz <- wz[, interleave.VGAM(M, M1 = M1)]
     wz
-  }), list( .escale = escale, .lscale = lscale, .nsimEIM = nsimEIM,
-            .elocat = elocat, .llocat = llocat ))))
+  }), list( .llocat = llocat, .lscale = lscale,
+            .elocat = elocat, .escale = escale ))))
 }
 
 
@@ -1106,8 +1124,12 @@ cauchy.control <- function(save.weights = TRUE, ...) {
 
 
 
+
+
  cauchy1 <- function(scale.arg = 1, llocation = "identitylink",
-                     ilocation = NULL, imethod = 1) {
+                     ilocation = NULL, imethod = 1,
+                     gprobs.y = ppoints(19),
+                     zero = NULL) {
 
 
   llocat <- as.list(substitute(llocation))
@@ -1133,65 +1155,105 @@ cauchy.control <- function(save.weights = TRUE, ...) {
             namesof("location", llocat, earg = elocat), "\n\n",
             "Mean:     NA\n",
             "Variance: NA"),
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    locat <- eta2theta(eta, .llocat , earg = .elocat )
+    if (varfun) {
+      locat * Inf
+    } else {
+      exp(1i * x * locat - .scale.arg * abs(x))
+    }
+  }, list( .elocat = elocat, .scale.arg = scale.arg,
+           .llocat = llocat ))),
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
+  }), list( .zero = zero ))),
+
+
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         charfun = TRUE,
          expected = TRUE,
-         multipleResponses = FALSE,
+         multipleResponses = FALSE,  # zz
          parameters.names = c("location"),
          llocation = .llocat ,
-         imethod = .imethod )
-  }, list( .llocat = llocat,
-           .imethod = imethod ))),
+         imethod = .imethod ,
+         zero = .zero ,
+         scale.arg = .scale.arg )
+  }, list( .llocat = llocat, .scale.arg = scale.arg,
+           .imethod = imethod,
+           .zero = zero ))),
 
   initialize = eval(substitute(expression({
-    predictors.names <- namesof("location", .llocat ,
-                                earg = .elocat , tag = FALSE)
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.positive.y = FALSE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
 
 
-    w.y.check(w = w, y = y)
+    ncoly <- ncol(y)
+    M1 <- 1
+    extra$ncoly <- ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
+
+    mynames1  <- param.names("location", ncoly, skip1 = TRUE)
+    predictors.names <-
+      namesof(mynames1, .llocat , earg = .elocat , tag = FALSE)
 
 
+    if (!length(etastart)) {
+      loc.init <- matrix(0, nrow(x), ncoly)
+      cauchy1.Loglikfun <- function(loc, y, x = NULL,
+                                    w, extraargs = NULL) {
+        scal <- extraargs
+        sum(c(w) * dcauchy(x = y, loc = loc, scale = scal, log = TRUE))
+      }
 
-        if (!length(etastart)) {
-          loc.init <- if (length( .ilocat)) .ilocat else {
-            if ( .imethod == 2) median(rep(y, w)) else
-            if ( .imethod == 3) y else {
-              cauchy1.Loglikfun <- function(loc, y, x, w, extraargs) {
-                 scal <- extraargs
-                 sum(c(w) * dcauchy(x = y, loc = loc, scale = scal,
-                                    log = TRUE))
-               }
-               loc.grid <- quantile(y, probs = seq(0.1, 0.9,
-                                                  by = 0.05))
-                 try.this <- grid.search(loc.grid,
-                                         objfun = cauchy1.Loglikfun,
-                                         y = y,  x = x, w = w,
-                                         extraargs = .scale.arg )
-              try.this <- rep_len(try.this, n)
-              try.this
-            }
-          }
-          loc.init <- rep_len(loc.init, n)
-          if ( .llocat == "loge") loc.init = abs(loc.init)+0.01
-          etastart <-
-            theta2eta(loc.init, .llocat , earg = .elocat )
+      for (jay in 1:ncoly) {
+        loc.init[, jay] <-
+          if ( .imethod == 2) median(y[, jay]) else
+          if ( .imethod == 3) y[, jay] else {
+          gloc <- unique(quantile(y[, jay], probs = .gprobs.y ))
+          tmp1 <- grid.search(gloc,
+                              objfun = cauchy1.Loglikfun,
+                              y = y[, jay], w = w[, jay],
+                              extraargs = .scale.arg )
+          tmp1
         }
+        if ( .llocat == "loge")
+          loc.init[, jay] <- pmax(min(abs(y[, jay])) + mad(y[, jay])/100,
+                                  loc.init[, jay])
+      }
+      etastart <- theta2eta(loc.init, .llocat , earg = .elocat )
+    }
     }), list( .scale.arg = scale.arg, .ilocat = ilocat,
               .elocat = elocat, .llocat = llocat,
-              .imethod = imethod ))),
+              .imethod = imethod, .gprobs.y = gprobs.y ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     eta2theta(eta, .llocat , earg = .elocat )
   }, list( .llocat = llocat,
            .elocat = elocat ))),
   last = eval(substitute(expression({
-    misc$link <-    c("location" = .llocat )
-    misc$earg <- list("location" = .elocat )
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- mynames1
+    for (ilocal in 1:ncoly) {
+      misc$earg[[ilocal]] <- .elocat
+    }
 
-    misc$expected <- TRUE
+    misc$link <- rep_len( .llocat , ncoly)
+    names(misc$link) <- mynames1
+
     misc$scale.arg <- .scale.arg
-  }), list( .scale.arg = scale.arg, .elocat = elocat,
-           .llocat = llocat ))),
+  }), list( .elocat = elocat, .scale.arg = scale.arg, 
+            .llocat = llocat ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -1233,15 +1295,15 @@ cauchy.control <- function(save.weights = TRUE, ...) {
       warning("ignoring prior weights")
     eta <- predict(object)
     locat <- eta2theta(eta, .llocat , earg = .elocat )
-    rcauchy(nsim * length(locat), loc = locat, sc = .scale.arg )
+    rcauchy(nsim * length(locat), location = locat, scale = .scale.arg )
   }, list( .elocat = elocat, .scale.arg = scale.arg,
            .llocat = llocat ))),
 
 
   deriv = eval(substitute(expression({
     locat <- eta2theta(eta, .llocat , earg = .elocat )
-    temp <- (y-locat)/.scale.arg
-    dl.dlocat <- 2 * temp / ((1 + temp^2) * .scale.arg)
+    temp <- (y - locat) / .scale.arg
+    dl.dlocat <- 2 * temp / ((1 + temp^2) * .scale.arg )
 
     dlocation.deta <- dtheta.deta(locat, .llocat , earg = .elocat )
 
@@ -1303,7 +1365,7 @@ cauchy.control <- function(save.weights = TRUE, ...) {
 
 
     if (!length(etastart)) {
-      locat.init <- if ( .imethod == 1) y else median(rep(y, w))
+      locat.init <- if ( .imethod == 1) y else median(y)
       locat.init <- rep_len(locat.init, n)
       if ( .llocat == "loge")
         locat.init <- abs(locat.init) + 0.001
@@ -1458,7 +1520,7 @@ cauchy.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncoly
 
 
-    parameters.names <- param.names("scale", ncoly)
+    parameters.names <- param.names("scale", ncoly, skip1 = TRUE)
     predictors.names <-
       namesof(parameters.names, .lscale , earg = .escale , tag = FALSE)
 
@@ -1574,7 +1636,8 @@ cauchy.control <- function(save.weights = TRUE, ...) {
     dl.dsc <- (y / sc - shape.mat) / sc
     dsc.deta <- dtheta.deta(sc, .lscale , earg = .escale )
     c(w) * dl.dsc * dsc.deta
-  }), list( .lscale = lscale, .escale = escale, .shape.arg = shape.arg ))),
+  }), list( .lscale = lscale,
+            .escale = escale, .shape.arg = shape.arg ))),
   weight = eval(substitute(expression({
     ned2l.dsc2 <- shape.mat / sc^2
     wz <- c(w) * dsc.deta^2 * ned2l.dsc2
@@ -1679,6 +1742,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
     list(M1 = 1,
          Q1 = 1,
          Qsize = .Qsize ,
+         hadof = TRUE,
          link = .link ,
          multipleResponses = FALSE )
   }, list( .Qsize  = Qsize,
@@ -1736,6 +1800,25 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
     }
   }, list( .link = link, .earg = earg, .Qsize = Qsize ))),
   vfamily = c("borel.tanner"),
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(), deriv = 1,
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2),
+           ...) {
+    aa <- eta2theta(eta, .link , earg = .earg )
+    ans <- c(w) *
+    switch(as.character(deriv),
+           "0" =   .Qsize / (aa * (1 - aa)),
+           "1" =  -( .Qsize ) * (1 - 2 * aa) / (aa * (1 - aa))^2,
+           "2" = NA * aa,
+           "3" = NA * aa,
+           stop("argument 'deriv' must be 0, 1, 2 or 3"))
+    if (deriv == 0) ans else
+      retain.col(ans, linpred.index)  # Since M1 = 1
+  }, list( .link = link, .earg = earg, .Qsize = Qsize ))),
+
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     aa <- eta2theta(eta, .link , earg = .earg )
     okay1 <- all(is.finite(aa)) && all(0 < aa)
@@ -1828,6 +1911,7 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
     list(M1 = 1,
          Q1 = 1,
          expected = TRUE,
+         hadof = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("rate"),
          lrate    = .lrate ,
@@ -1850,10 +1934,10 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
       if (!length(etastart)) {
           wymean <- weighted.mean(y, w)
           a.init <- switch(as.character( .imethod ),
-              "1" = (y - 1 + 1/8) / (2 * (y + 1/8) + 1/8),
-              "2" = rep_len((wymean-1+1/8) / (2*(wymean+1/8)+1/8), n),
-              "3" = rep_len((median(y)-1+1/8) / (2*(median(y)+1/8)+1/8), n),
-              "4" = rep_len(0.25, n))
+            "1" = (y - 1 + 1/8) / (2 * (y + 1/8) + 1/8),
+            "2" = rep_len((wymean-1+1/8) / (2*(wymean+1/8)+1/8), n),
+            "3" = rep_len((median(y)-1+1/8) / (2*(median(y)+1/8)+1/8), n),
+            "4" = rep_len(0.25, n))
           etastart <-
             theta2eta(a.init, .lrate , earg = .erate )
       }
@@ -1864,7 +1948,7 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
     1 / (1 - 2 * rate)
   }, list( .lrate = lrate, .erate = erate ))),
   last = eval(substitute(expression({
-    misc$link <-    c(rate = .lrate)
+    misc$link <-    c(rate = .lrate )
     misc$earg <- list(rate = .erate )
   }), list( .lrate = lrate, .erate = erate ))),
   loglikelihood = eval(substitute(
@@ -1884,6 +1968,26 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
     }
   }, list( .lrate = lrate, .erate = erate ))),
   vfamily = c("felix"),
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(), deriv = 1,
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2),
+           ...) {
+    rate <- eta2theta(eta, .lrate , earg = .erate )
+    ans <- c(w) *
+    switch(as.character(deriv),
+           "0" = 1 / (rate * (1 - 2 * rate)),
+           "1" =  -(1 - 4 * rate) / (rate * (1 - 2 * rate))^2,
+           "2" = NA * rate,
+           "3" = NA * rate,
+           stop("argument 'deriv' must be 0, 1, 2 or 3"))
+    if (deriv == 0) ans else
+      retain.col(ans, linpred.index)  # Since M1 = 1
+  }, list( .lrate = lrate, .erate = erate ))),
+
+
   deriv = eval(substitute(expression({
     rate <- eta2theta(eta, .lrate , earg = .erate )
     dl.da <- (y - 1) / (2 * rate) - y
@@ -1975,7 +2079,10 @@ simple.exponential <- function() {
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(M1 = 1, Q1 = 1, multipleResponses = TRUE, zero = .zero )
+    list(M1 = 1,
+         Q1 = 1,
+         multipleResponses = TRUE,
+         zero = .zero )
   }, list( .zero = zero ))),
   deviance = function(mu, y, w, residuals = FALSE, eta,
                       extra = NULL, summation = TRUE) {
@@ -2003,7 +2110,7 @@ simple.exponential <- function() {
     if (any(y <= extra$location))
       stop("all responses must be greater than argument 'location'")
 
-    mynames1 <- param.names("rate", M)
+    mynames1 <- param.names("rate", M, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .link , earg = .earg ,
                                 short = TRUE)
 
@@ -2070,6 +2177,7 @@ simple.exponential <- function() {
 
 
 
+
  exponential <-
   function(link = "loge", location = 0, expected = TRUE,
            ishrinkage = 0.95, parallel = FALSE, zero = NULL) {
@@ -2095,6 +2203,18 @@ simple.exponential <- function() {
             if (length(unique(location)) == 1)
             paste(location[1], "+ 1 / rate") else
             "location + 1 / rate"),
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    if (length(extra$location) && !all(extra$location == 0))
+      stop("need the location to be 0 for this slot to work")
+    rate <- eta2theta(eta, .link , earg = .earg )
+    if (varfun) {
+      1 / rate^2
+    } else {
+      1 / (1 - 1i * x / rate)
+    }
+  }, list( .link = link, .earg = earg  ))),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x, bool = .parallel ,
                            constraints = constraints, apply.int = TRUE)
@@ -2103,6 +2223,8 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         charfun = TRUE,
+         multipleResponses = TRUE,
          zero = .zero )
   }, list( .zero = zero ))),
   deviance = function(mu, y, w, residuals = FALSE, eta,
@@ -2139,13 +2261,15 @@ simple.exponential <- function() {
     extra$M1 <- M1
     M <- M1 * ncoly
 
-    extra$location <- matrix( .location , n, ncoly, byrow = TRUE)  # By row!
+    extra$location <- matrix( .location , n, ncoly,
+                             byrow = TRUE)  # By row!
 
     if (any(y <= extra$location))
       stop("all responses must be greater than ", extra$location)
 
-    mynames1 <- param.names("rate", M)
-    predictors.names <- namesof(mynames1, .link , earg = .earg , short = TRUE)
+    mynames1 <- param.names("rate", M, skip1 = TRUE)
+    predictors.names <- namesof(mynames1, .link , earg = .earg ,
+                                short = TRUE)
 
     if (length(mustart) + length(etastart) == 0)
       mustart <- matrix(colSums(y * w) / colSums(w), n, M, byrow = TRUE) *
@@ -2168,8 +2292,6 @@ simple.exponential <- function() {
       misc$earg[[ii]] <- .earg
     misc$location <- .location
     misc$expected <- .expected
-    misc$multipleResponses <- TRUE
-    misc$M1 <- M1
   }), list( .link = link, .earg = earg,
             .expected = expected, .location = location ))),
   linkfun = eval(substitute(function(mu, extra = NULL)
@@ -2281,7 +2403,7 @@ simple.exponential <- function() {
     M <- if (is.matrix(y)) ncol(y) else 1
     M1 <- 1
 
-    mynames1 <- param.names("shape", M)
+    mynames1 <- param.names("shape", M, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .link , earg = .earg ,
                                 short = TRUE)
 
@@ -2411,6 +2533,19 @@ simple.exponential <- function() {
             blurb.vec[2], "\n",
             "Mean:     mu = shape/rate\n",
             "Variance: (mu^2)/shape = shape/rate^2"),
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    Ratee <- eta2theta(eta[,    .ratee.TF  ], .lratee , earg = .eratee )
+    Shape <- eta2theta(eta[, !( .ratee.TF )], .lshape , earg = .eshape )
+    if (varfun) {
+      Shape / Ratee^2
+    } else {
+      (1 - 1i * x / Ratee)^(-Shape)
+    }
+  }, list( .lratee = lratee, .lshape = lshape,
+           .eratee = eratee, .eshape = eshape,
+           .scale.12 = scale.12, .ratee.TF = ratee.TF, .lss = lss ))),
+
   constraints = eval(substitute(expression({
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
                                 predictors.names = predictors.names,
@@ -2420,6 +2555,7 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         charfun = TRUE,
          expected = .expected ,
          multipleResponses = TRUE,
          zero = .zero )
@@ -2448,15 +2584,15 @@ simple.exponential <- function() {
 
 
     if ( .lss ) {
-      mynames1 <- param.names("rate",  ncoly)
-      mynames2 <- param.names("shape", ncoly)
+      mynames1 <- param.names("rate",  ncoly, skip1 = TRUE)
+      mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
       predictors.names <-
           c(namesof(mynames1, .lratee , earg = .eratee , tag = FALSE),
             namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
 
     } else {
-      mynames1 <- param.names("shape", ncoly)
-      mynames2 <- param.names("rate",  ncoly)
+      mynames1 <- param.names("shape", ncoly, skip1 = TRUE)
+      mynames2 <- param.names("rate",  ncoly, skip1 = TRUE)
       predictors.names <-
           c(namesof(mynames1, .lshape , earg = .eshape , tag = FALSE),
             namesof(mynames2, .lratee , earg = .eratee , tag = FALSE))
@@ -2489,7 +2625,7 @@ simple.exponential <- function() {
       }
 
       if ( .lshape == "loglog")
-        Shape.init[Shape.init <= 1] <- 3.1  # Hopefully value is big enough
+        Shape.init[Shape.init <= 1] <- 3.1  # Hope the value is big enough
       etastart <- if ( .lss )
         cbind(theta2eta(Ratee.init, .lratee , earg = .eratee ),
               theta2eta(Shape.init, .lshape , earg = .eshape ))[,
@@ -2731,8 +2867,8 @@ simple.exponential <- function() {
     NOS <- ncoly <- ncol(y)  # Number of species
 
 
-    temp1.names <- param.names("mu",    NOS)
-    temp2.names <- param.names("shape", NOS)
+    temp1.names <- param.names("mu",    NOS, skip1 = TRUE)
+    temp2.names <- param.names("shape", NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(temp1.names, .lmu ,    earg = .emu ,    tag = FALSE),
           namesof(temp2.names, .lshape , earg = .eshape , tag = FALSE))
@@ -2780,12 +2916,15 @@ simple.exponential <- function() {
     if (exists("CQO.FastAlgorithm", envir = VGAMenv))
         rm("CQO.FastAlgorithm", envir = VGAMenv)
 
-    tmp34 <- c(rep_len( .lmu ,    NOS),
-               rep_len( .lshape , NOS))
-    names(tmp34) <- c(param.names("mu",    NOS),
-                      param.names("shape", NOS))
-    tmp34 <- tmp34[interleave.VGAM(M, M1 = M1)]
-    misc$link <- tmp34  # Already named
+
+
+    misc$link <- setNames(c(rep_len( .lmu    , NOS),
+                            rep_len( .lshape , NOS)),
+    c(param.names("mu",    NOS, skip1 = TRUE),
+      param.names("shape", NOS, skip1 = TRUE)))[interleave.VGAM(M, M1 = M1)]
+
+
+
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
@@ -2935,6 +3074,16 @@ simple.exponential <- function() {
             namesof("prob", link, earg = earg), "\n",
             "Mean:     mu = (1 - prob) / prob\n",
             "Variance: mu * (1 + mu) = (1 - prob) / prob^2"),
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    prob <- eta2theta(eta, .link , earg = .earg )
+    if (varfun) {
+      (1 - prob) / prob^2
+    } else {
+      prob / (1 - (1 - prob) * exp(1i * x))
+    }
+  }, list( .link = link, .earg = earg  ))),
+
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 1
@@ -2944,6 +3093,8 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -2971,7 +3122,7 @@ simple.exponential <- function() {
     M <- M1 * ncoly
 
 
-    mynames1  <- param.names("prob", ncoly)
+    mynames1  <- param.names("prob", ncoly, skip1 = TRUE)
     predictors.names <-
       namesof(mynames1, .link , earg = .earg , tag = FALSE)
 
@@ -3011,9 +3162,6 @@ simple.exponential <- function() {
       misc$earg[[ii]] <- .earg
     }
 
-    misc$M1 <- M1
-    misc$expected <- TRUE
-    misc$multipleResponses <- TRUE
     misc$expected <- .expected
     misc$imethod <- .imethod
     misc$iprob <- .iprob
@@ -3471,9 +3619,9 @@ rbetageom <- function(n, shape1, shape2) {
     extra$M1 <- M1
     M <- M1 * ncoly #
 
-    mynames1 <- param.names("location", NOS)
-    mynames2 <- param.names("scale",    NOS)
-    mynames3 <- param.names("df",       NOS)
+    mynames1 <- param.names("location", NOS, skip1 = TRUE)
+    mynames2 <- param.names("scale",    NOS, skip1 = TRUE)
+    mynames3 <- param.names("df",       NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lloc , earg = .eloc , tag = FALSE),
           namesof(mynames2, .lsca , earg = .esca , tag = FALSE),
@@ -3786,8 +3934,8 @@ rbetageom <- function(n, shape1, shape2) {
     extra$M1 <- M1
     M <- M1 * ncoly #
 
-    mynames1 <- param.names("location", NOS)
-    mynames2 <- param.names("scale",    NOS)
+    mynames1 <- param.names("location", NOS, skip1 = TRUE)
+    mynames2 <- param.names("scale",    NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lloc , earg = .eloc , tag = FALSE),
           namesof(mynames2, .lsca , earg = .esca , tag = FALSE))
@@ -3982,6 +4130,16 @@ rbetageom <- function(n, shape1, shape2) {
   blurb = c("Chi-squared distribution\n\n",
             "Link:     ",
             namesof("df", link, earg = earg, tag = FALSE)),
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    mydf <- eta2theta(eta, .link , earg = .earg )
+    if (varfun) {
+      2 * mydf
+    } else {
+      (1 - 2 * 1i * x)^(-0.5 * mydf)
+    }
+  }, list( .link = link, .earg = earg  ))),
+
   constraints = eval(substitute(expression({
     dotzero <- .zero
     M1 <- 1
@@ -3991,6 +4149,9 @@ rbetageom <- function(n, shape1, shape2) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         charfun = TRUE,
+         expected = TRUE,
+         multipleResponses = TRUE,
          zero = .zero )
   }, list( .zero = zero ))),
 
@@ -4009,16 +4170,14 @@ rbetageom <- function(n, shape1, shape2) {
     y <- temp5$y
 
 
-
     ncoly <- ncol(y)
     M1 <- 1
     extra$ncoly <- ncoly
     extra$M1 <- M1
     M <- M1 * ncoly
 
-
     extra$ncoly <- NOS <- ncoly # Number of species
-    mynames1 <- param.names("df", NOS)
+    mynames1 <- param.names("df", NOS, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .link , earg = .earg ,
                                 tag = FALSE)
 
@@ -4030,7 +4189,6 @@ rbetageom <- function(n, shape1, shape2) {
   }, list( .link = link, .earg = earg ))),
 
   last = eval(substitute(expression({
-    M1 <- extra$M1
     misc$link <- c(rep_len( .link , ncoly))
     names(misc$link) <- mynames1
 
@@ -4039,10 +4197,6 @@ rbetageom <- function(n, shape1, shape2) {
     for (ii in 1:ncoly) {
       misc$earg[[ii]] <- .earg
     }
-
-    misc$M1 <- M1
-    misc$expected <- TRUE
-    misc$multipleResponses <- TRUE
   }), list( .link = link, .earg = earg ))),
 
   linkfun = eval(substitute(function(mu, extra = NULL) {
@@ -5100,8 +5254,8 @@ dgenpois <- function(x, lambda = 0, theta, log = FALSE) {
     extra$ncoly <- ncoly <- NOS <- ncol(y)
     extra$M1 <- M1 <- 2
     M <- M1 * ncoly
-    mynames1 <- param.names("lambda", NOS)
-    mynames2 <- param.names("theta",  NOS)
+    mynames1 <- param.names("lambda", NOS, skip1 = TRUE)
+    mynames2 <- param.names("theta",  NOS, skip1 = TRUE)
 
     predictors.names <-
        c(namesof(mynames1, .llambda , earg = .elambda , tag = FALSE),
@@ -5745,9 +5899,9 @@ dprentice74 <-
     M <- M1 * ncoly
 
 
-    temp1.names <- param.names("location", NOS)
-    temp2.names <- param.names("scale",    NOS)
-    temp3.names <- param.names("shape",    NOS)
+    temp1.names <- param.names("location", NOS, skip1 = TRUE)
+    temp2.names <- param.names("scale",    NOS, skip1 = TRUE)
+    temp3.names <- param.names("shape",    NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(temp1.names, .llocat , earg = .elocat , tag = FALSE),
           namesof(temp2.names, .lscale , earg = .escale , tag = FALSE),
@@ -6122,14 +6276,19 @@ rgengamma.stacy <- function(n, scale = 1, d, k) {
     M <- M1 * ncoly
 
 
-    temp1.names <- param.names("scale", NOS)
-    temp2.names <- param.names("d",     NOS)
-    temp3.names <- param.names("k",     NOS)
+    temp1.names <- param.names("scale", NOS, skip1 = TRUE)
+    temp2.names <- param.names("d",     NOS, skip1 = TRUE)
+    temp3.names <- param.names("k",     NOS, skip1 = TRUE)
     predictors.names <-
         c(namesof(temp1.names, .lscale , earg = .escale , tag = FALSE),
           namesof(temp2.names, .ld     , earg = .ed     , tag = FALSE),
           namesof(temp3.names, .lk     , earg = .ek     , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
+
+
+
+
+
 
 
 
@@ -6883,7 +7042,7 @@ rmaxwell <- function(n, rate) {
     M <- M1 * ncoly
 
 
-    mynames1  <- param.names("rate", ncoly)
+    mynames1  <- param.names("rate", ncoly, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .link , earg = .earg ,
                                 tag = FALSE)
 
@@ -7374,7 +7533,7 @@ rrayleigh <- function(n, scale = 1) {
     M <- M1 * ncoly
 
 
-    mynames1  <- param.names("scale", ncoly)
+    mynames1  <- param.names("scale", ncoly, skip1 = TRUE)
     predictors.names <-
       namesof(mynames1, .lscale , earg = .escale , tag = FALSE)
 
@@ -8997,7 +9156,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     rate <- eta2theta(eta, .lrate , earg = .erate )
 
     temp6 <- exp(-rate*y)
-    temp7 <- 1-temp6
+    temp7 <- 1-temp6  # Could use -expm1(-rate*y)
     shape <- -extra$sumw / sum(w*log(temp7))  # \gamma(\theta)
     d1 <- 1/rate + (shape-1)*y*temp6/temp7 - y
 
@@ -9109,8 +9268,8 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
 
-    mynames1 <- param.names("location", ncoly)
-    mynames2 <- param.names("scale",    ncoly)
+    mynames1 <- param.names("location", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("scale",    ncoly, skip1 = TRUE)
     parameters.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
     predictors.names <-
         c(namesof(mynames1, .llocat , earg = .elocat , tag = FALSE),

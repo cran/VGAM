@@ -64,6 +64,17 @@ weightsvglm(object, type = c("prior", "working"),
   correspond to the diagonals, etc.
 
 
+% 20171226:
+
+
+  If one wants to perturb the linear predictors then the
+  \code{fitted.values} slots should be assigned to the object
+  before calling this function. The reason is that,
+  for some family functions,
+  the variable \code{mu} is used directly as one of the parameter
+  estimates, without recomputing it from \code{eta}.
+
+
 }
 \value{
   If \code{type = "working"} and \code{deriv = TRUE} then a
@@ -85,19 +96,19 @@ weightsvglm(object, type = c("prior", "working"),
 
   }
 }
-\references{
-  Yee, T. W. and Hastie, T. J. (2003)
-  Reduced-rank vector generalized linear models.
-  \emph{Statistical Modelling},
-  \bold{3}, 15--41.
+%\references{
+% Yee, T. W. and Hastie, T. J. (2003)
+% Reduced-rank vector generalized linear models.
+% \emph{Statistical Modelling},
+% \bold{3}, 15--41.
 
 
-  Chambers, J. M. and T. J. Hastie (eds) (1992)
-  \emph{Statistical Models in S}.
-  Wadsworth & Brooks/Cole.
+% Chambers, J. M. and T. J. Hastie (eds) (1992)
+% \emph{Statistical Models in S}.
+% Wadsworth & Brooks/Cole.
 
 
-}
+%}
 
 \author{ Thomas W. Yee }
 

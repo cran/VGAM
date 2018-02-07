@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -64,6 +64,7 @@ setClass("vglmff", representation(
       "validfitted"   = "function",  # Added 20160305
       "simslot"       = "function",
       "hadof"         = "function",
+      "charfun"       = "function",
       "deriv"         = "expression",
       "weight"        = "expression"),  #  "call"
          prototype = .VGAM.prototype.list )
@@ -191,7 +192,7 @@ setClass("vglm", representation(
 
 
 setClass("vgam", representation(
-      "Bspline"             = "list",  # each [[i]] is a "vsmooth.spline.fit"
+      "Bspline"             = "list",
       "nl.chisq"            = "numeric",
       "nl.df"               = "numeric",
       "spar"                = "numeric",
@@ -220,6 +221,9 @@ setClass("summary.vgam", representation(
 
 
 setClass("summary.vglm", representation(
+         coef4lrt0 = "matrix",
+         coef4score0 = "matrix",
+         coef4wald0 = "matrix",
          coef3 = "matrix",
          cov.unscaled = "matrix",
          correlation = "matrix",
@@ -230,6 +234,9 @@ setClass("summary.vglm", representation(
 
 
 setClass("summary.vlm", representation(
+         coef4lrt0 = "matrix",
+         coef4score0 = "matrix",
+         coef4wald0 = "matrix",
          coef3 = "matrix",
          cov.unscaled = "matrix",
          correlation = "matrix",

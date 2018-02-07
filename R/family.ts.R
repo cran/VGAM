@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -732,11 +732,11 @@ AR1.control <- function(epsilon  = 1e-6,
        n <- nrow(y)
        M <- M1*NOS
 
-       var.names <- param.names("var", NOS)
-       sdv.names <- param.names("sd",  NOS)
+       var.names <- param.names("var", NOS, skip1 = TRUE)
+       sdv.names <- param.names("sd",  NOS, skip1 = TRUE)
        smn.names <- if ( .nodrift ) NULL else
-         param.names("drift",   NOS)
-       rho.names <- param.names("rho", NOS)
+         param.names("drift",   NOS, skip1 = TRUE)
+       rho.names <- param.names("rho", NOS, skip1 = TRUE)
 
        mynames1 <- smn.names
        mynames2 <- if ( .var.arg ) var.names else sdv.names
@@ -1111,9 +1111,9 @@ AR1.control <- function(epsilon  = 1e-6,
              matAux2[, kk] <- rowSums(pf.mat[, kk , ])
            }
            matAux <- cbind(matAux1, if (.poratM ) matAux2 else NULL)
-           colnames(matAux) <- c(paste("ApproxEIM.R",1:NOS, sep = ""),
+           colnames(matAux) <- c(param.names("ApproxEIM.R", NOS),
                                  if (!(.poratM )) NULL else
-                                   paste("ExactEIM.R",1:NOS, sep = ""))
+                                 param.names("ExactEIM.R", NOS))
 
            matAux <- matAux[, interleave.VGAM( (1 + .poratM) * NOS,
                                                M1 = 1 + .poratM)]

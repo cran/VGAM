@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -308,6 +308,31 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
             "Mean:     mu\n",
             "Variance: mu * (1 + mu / size) for NB-2"),
 
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    vecTF <- c(TRUE, FALSE)
+    kmat <- eta2theta(eta[, !vecTF, drop = FALSE],
+                      .lsize , earg = .esize )
+    munb <- if ( .lmunb == "nbcanlink") {
+      munb <- kmat / expm1(-eta[, vecTF, drop = FALSE])
+      if (min(munb) <= 0) {
+        munb[munb <= 0] <- median(munb[munb > 0])  # 0.1
+        warning("'munb' has some negative values. ",
+                "Using a temporary fix.")
+      }
+      munb
+    } else {
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , earg = .emunb )
+    }
+
+    if (varfun) {
+      munb * (1 + munb / kmat)
+    } else {
+      (kmat / (kmat + munb - munb * exp(x * 1i)))^kmat
+    }
+  }, list( .lmunb = lmunb, .lsize = lsize,
+           .emunb = emunb, .esize = esize ))),
+
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
@@ -323,6 +348,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1    = 2,
          Q1    = 1,
+         charfun = TRUE,
          expected = TRUE,
          imethod = .imethod ,
          mds.min = .mds.min ,
@@ -379,9 +405,9 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     NOS <- ncoly <- ncol(y)  # Number of species
     M <- M1 * NOS
     predictors.names <-
-     c(namesof(param.names("mu",   NOS),
+     c(namesof(param.names("mu",   NOS, skip1 = TRUE),
                 .lmunb , earg = .emunb , tag = FALSE),
-       namesof(param.names("size", NOS),
+       namesof(param.names("size", NOS, skip1 = TRUE),
                 .lsize , earg = .esize , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
@@ -527,13 +553,20 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
     temp0303 <- c(rep_len( .lmunb , NOS),
                   rep_len( .lsize , NOS))
-    names(temp0303) <- c(param.names("mu",   NOS),
-                         param.names("size", NOS))
-    misc$link <- temp0303[interleave.VGAM(M, M1 = M1)] # Already named
+    names(temp0303) <- c(param.names("mu",   NOS, skip1 = TRUE),
+                         param.names("size", NOS, skip1 = TRUE))
+    misc$link <- temp0303[interleave.VGAM(M, M1 = M1)]  # Already named
+
 
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:NOS) {
+
+      if ( .lmunb == "nbcanlink") {
+          newemu$size  <- kmat[, ii]  # At the final iteration
+          newemu$wrt.param <- 1
+      }
+
       misc$earg[[M1*ii-1]] <-
         if ( .lmunb == "nbcanlink") newemu else .emunb 
       misc$earg[[M1*ii  ]] <- .esize
@@ -1064,10 +1097,10 @@ polya.control <- function(save.weights = TRUE, ...) {
     extra$colnames.y  <- colnames(y)
 
     predictors.names <-
-      c(namesof(param.names("prob", NOS), .lprob , earg = .eprob ,
-                tag = FALSE),
-        namesof(param.names("size", NOS), .lsize , earg = .esize ,
-                tag = FALSE))
+      c(namesof(param.names("prob", NOS, skip1 = TRUE),
+                .lprob , earg = .eprob , tag = FALSE),
+        namesof(param.names("size", NOS, skip1 = TRUE),
+                .lsize , earg = .esize , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     if (is.null( .nsimEIM )) {
@@ -1168,8 +1201,8 @@ polya.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
     temp0303 <- c(rep_len( .lprob , NOS),
                   rep_len( .lsize , NOS))
-    names(temp0303) <- c(param.names("prob", NOS),
-                         param.names("size", NOS))
+    names(temp0303) <- c(param.names("prob", NOS, skip1 = TRUE),
+                         param.names("size", NOS, skip1 = TRUE))
     temp0303 <- temp0303[interleave.VGAM(M, M1 = M1)]
     misc$link <- temp0303  # Already named
 
@@ -1551,9 +1584,9 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     extra$colnames.y  <- colnames(y)
 
     predictors.names <-
-      c(namesof(param.names("size", NOS),
+      c(namesof(param.names("size", NOS, skip1 = TRUE),
                 .lsize , earg = .esize , tag = FALSE),
-        namesof(param.names("prob", NOS),
+        namesof(param.names("prob", NOS, skip1 = TRUE),
                 .lprob , earg = .eprob , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
@@ -1655,8 +1688,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
     temp0303 <- c(rep_len( .lprob , NOS),
                   rep_len( .lsize , NOS))
-    names(temp0303) <- c(param.names("size", NOS),
-                         param.names("prob", NOS))
+    names(temp0303) <- c(param.names("size", NOS, skip1 = TRUE),
+                         param.names("prob", NOS, skip1 = TRUE))
     temp0303 <- temp0303[interleave.VGAM(M, M1 = M1)]
     misc$link <- temp0303  # Already named
 
@@ -1995,7 +2028,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
     M <- M1 * ncol(y)
     NOS <- ncoly <- ncol(y)  # Number of species
-    mynames1 <- param.names("mu", NOS)
+    mynames1 <- param.names("mu", NOS, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .lmu , earg = .emu , tag = FALSE)
 
 

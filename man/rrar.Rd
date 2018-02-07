@@ -1,8 +1,8 @@
 \name{rrar}
 \alias{rrar}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Nested reduced-rank autoregressive models for multiple
-time series }
+\title{ Nested Reduced-rank Autoregressive Models for Multiple
+Time Series }
 \description{
   Estimates the parameters of a
   nested reduced-rank autoregressive model for multiple

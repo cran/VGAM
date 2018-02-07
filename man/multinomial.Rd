@@ -82,10 +82,14 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
 
   In almost all the literature, the constraint matrices
-  associated with this family of models are known. For
-  example, setting \code{parallel = TRUE} will make all
-  constraint matrices (except for the intercept) equal to
-  a vector of \eqn{M} 1's. If the constraint matrices are
+  associated with this family of models are known.
+  For example, setting \code{parallel = TRUE} will make all
+  constraint matrices
+  (including the intercept)
+  equal to a vector of \eqn{M} 1's;
+  to suppress the intercepts from being parallel then
+  set \code{parallel = FALSE ~ 1}.
+  If the constraint matrices are
   unknown and to be estimated, then this can be achieved by
   fitting the model as a reduced-rank vector generalized
   linear model (RR-VGLM; see \code{\link{rrvglm}}).
@@ -93,6 +97,15 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   constraint matrices is known as a \emph{stereotype}
   model (Anderson, 1984), and can be fitted with
   \code{\link{rrvglm}}.
+
+
+
+% Pre 20170816; Stuart Coles picked up an error:
+% For example, setting \code{parallel = TRUE} will make all
+% constraint matrices
+% (except for the intercept)
+% equal to a vector of \eqn{M} 1's.
+
 
 
 }
@@ -270,13 +283,13 @@ coef(fit , matrix = TRUE)  # Easy to reconcile this output with fit2
 
 # Example 3: The response is a factor.
 nn <- 10
-dframe3 <- data.frame(yfactor = gl(3, nn, labels = c("Control", "Trt1", "Trt2")),
-                      x2 = runif(3 * nn))
-myrefLevel <- with(dframe3, yfactor[12])
-fit3a <- vglm(yfactor ~ x2, multinomial(refLevel = myrefLevel), dframe3)
-fit3b <- vglm(yfactor ~ x2, multinomial(refLevel = 2), dframe3)
-coef(fit3a, matrix = TRUE)  # "Treatment1" is the reference level
-coef(fit3b, matrix = TRUE)  # "Treatment1" is the reference level
+dframe3 <- data.frame(yfac = gl(3, nn, labels = c("Ctrl", "Trt1", "Trt2")),
+                      x2   = runif(3 * nn))
+myrefLevel <- with(dframe3, yfac[12])
+fit3a <- vglm(yfac ~ x2, multinomial(refLevel = myrefLevel), dframe3)
+fit3b <- vglm(yfac ~ x2, multinomial(refLevel = 2), dframe3)
+coef(fit3a, matrix = TRUE)  # "Trt1" is the reference level
+coef(fit3b, matrix = TRUE)  # "Trt1" is the reference level
 margeff(fit3b)
 
 # Example 4: Fit a rank-1 stereotype model

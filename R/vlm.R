@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -69,7 +69,7 @@ vlm <-
   n <- nrow(x)
   dy <- dimnames(y)
   dy1 <- if (length(dy[[1]])) dy[[1]] else dimnames(mf)[[1]]
-  dy2 <- if (length(dy[[2]])) dy[[2]] else paste("Y", 1:M, sep = "")
+  dy2 <- if (length(dy[[2]])) dy[[2]] else param.names("Y", M)
   dimnames(y) <- list(dy1, dy2)
   predictors.names <- dy2
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1142,7 +1142,8 @@ foldsqrt <-
            "2" = (A + B - 2 * theta) * (theta - A) *
                  (B - theta) / (B-A)^2,
       "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
+           (theta - A) * (B - theta) * ((2 * theta - A - B)^2 -
+       2 * (theta - A) * (B - theta)) / (B - A)^3
       },
            stop("argument 'deriv' unmatched"))
   } else {
@@ -1153,7 +1154,8 @@ foldsqrt <-
            "2" = ((2 * theta - A - B) * (B-A)) / ((theta - A) *
                  (B - theta))^2,
       "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
+           (B - A) * (2 / ((theta - A) * (B - theta))^2) *
+           (1 + (2 * theta - A - B)^2 / ((theta - A) * (B - theta)))
       },
            stop("argument 'deriv' unmatched"))
   }

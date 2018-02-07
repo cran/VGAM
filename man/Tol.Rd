@@ -41,6 +41,16 @@ Tol(object, ...)
 \value{
   The value returned depends specifically on the methods
   function invoked.
+  For a \code{\link{cqo}} binomial or Poisson fit, this
+  function returns a
+  \eqn{R \times R \times S} array, where \eqn{R} is the rank
+  and \eqn{S} is the number of species.
+  Each tolerance matrix ought to be positive-definite, and
+  for a rank-1 fit, taking the square root of each tolerance
+  matrix results in each species' tolerance (like a standard
+  deviation).
+
+
 
 
 }

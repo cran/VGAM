@@ -17,7 +17,7 @@ lvplot.rrvglm(object,
               scaleA = 1,
               xlab = "Latent Variable 1", ylab = "Latent Variable 2",
               Alabels = if (length(object@misc$predictors.names))
-              object@misc$predictors.names else paste("LP", 1:M, sep = ""),
+              object@misc$predictors.names else param.names("LP", M),
               Aadj = par()$adj, Acex = par()$cex, Acol = par()$col,
               Apch = NULL,
               Clabels = rownames(Cmat), Cadj = par()$adj,

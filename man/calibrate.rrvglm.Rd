@@ -12,6 +12,7 @@
 \usage{
 calibrate.rrvglm(object, newdata = NULL,
         type = c("latvar", "predictors", "response", "vcov", "all3or4"),
+        se.type = c("asbefore", "wald"),
         initial.vals = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,6 +33,11 @@ calibrate.rrvglm(object, newdata = NULL,
     The \code{"all3or4"} is for all of them, i.e., all \code{type}s.
     For CLO models,
     \code{"vcov"} is unavailable, so all 3 are returned.
+
+
+  }
+  \item{se.type}{
+    Same as \code{\link{calibrate.qrrvglm}}.
 
 
   }

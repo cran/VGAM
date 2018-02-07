@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -144,7 +144,7 @@ N.hat.posbernoulli <-
   zeddij <- cbind(0, t(apply(y, 1, cumsum)))  # tau + 1 columns
   zij <- (0 + (zeddij > 0))[, 1:tau]  # 0 or 1.
   if (rename) {
-    colnames(zij) <- paste(name, 1:ncol(y), sep = "")
+    colnames(zij) <- param.names(name, ncol(y))
   } else {
     if (length(colnames(y)))
       colnames(zij) <- colnames(y)
@@ -219,12 +219,11 @@ rposbern <-
 
   Ymatrix <- matrix(0, use.n, nTimePts,
                     dimnames = list(as.character(1:use.n),
-                                    paste("y", 1:nTimePts, sep = "")))
+                                    param.names("y", nTimePts)))
 
   CHmatrix <- matrix(0, use.n, nTimePts,
                      dimnames = list(as.character(1:use.n),
-                                     paste("ch", 1:(nTimePts  ),
-                                           sep = "")))
+                                     param.names("ch", nTimePts)))
 
 
   if (is.null(Xmatrix)) {
@@ -234,7 +233,7 @@ rposbern <-
                        matrix(runif(n = use.n * (pvars-1)),
                               use.n, pvars - 1,
                               dimnames = list(as.character(1:use.n),
-                                         paste("x", 2:pvars, sep = ""))))
+                                         param.names("x", pvars)[-1])))
   }
 
 
@@ -754,9 +753,10 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    predictors.names <- c(
-    namesof(param.names("munb", NOS), .lmunb , earg = .emunb , tag=FALSE),
-    namesof(param.names("size", NOS), .lsize , earg = .esize , tag=FALSE))
+    predictors.names <- c(namesof(param.names("munb", NOS, skip1 = TRUE),
+                                  .lmunb , earg = .emunb , tag = FALSE),
+                          namesof(param.names("size", NOS, skip1 = TRUE),
+                                  .lsize , earg = .esize , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     gprobs.y <- .gprobs.y
@@ -866,8 +866,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
   last = eval(substitute(expression({
     temp0303 <- c(rep_len( .lmunb , NOS),
                   rep_len( .lsize , NOS))
-    names(temp0303) <- c(param.names("munb", NOS),
-                         param.names("size", NOS))
+    names(temp0303) <- c(param.names("munb", NOS, skip1 = TRUE),
+                         param.names("size", NOS, skip1 = TRUE))
     temp0303  <- temp0303[interleave.VGAM(M, M1 = M1)]
     misc$link <- temp0303  # Already named
 
@@ -1357,7 +1357,7 @@ rpospois <- function(n, lambda) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    mynames1 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <- namesof(mynames1, .link , earg = .earg,
                                 tag = FALSE)
 
@@ -1651,7 +1651,7 @@ rposbinom <- function(n, size, prob) {
       dn2 <- if (length(dn2)) {
         paste("E[", dn2, "]", sep = "")
       } else {
-        paste("prob", 1:M, sep = "")
+        param.names("prob", M)
       }
       predictors.names <-
         namesof(if (M > 1) dn2 else "prob",
@@ -1702,7 +1702,6 @@ rposbinom <- function(n, size, prob) {
   list( .link = link, .earg = earg,
         .multiple.responses = multiple.responses ))),
   last = eval(substitute(expression({
-    extra$w <- NULL  # Kill it off
 
 
     misc$link <- rep_len( .link , M)
@@ -1976,7 +1975,7 @@ rposbinom <- function(n, size, prob) {
     dn2 <- if (length(dn2)) {
       paste("E[", dn2, "]", sep = "")
     } else {
-      paste("prob", 1:M, sep = "")
+      param.names("prob", M)
     }
 
 
@@ -2684,8 +2683,8 @@ rposbinom <- function(n, size, prob) {
     cap.hist1  <- extra$cap.hist1  <- tmp3$cap.hist1
 
 
-    dn2.cap   <- paste("pcapture.",   1:ncoly, sep = "")
-    dn2.recap <- paste("precapture.", 2:ncoly, sep = "")
+    dn2.cap   <- param.names("pcapture.",   ncoly)
+    dn2.recap <- param.names("precapture.", ncoly)[-1]
 
     predictors.names <- c(
       namesof(dn2.cap,   .link , earg = .earg, short = TRUE),

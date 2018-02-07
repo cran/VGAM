@@ -1,7 +1,7 @@
 \name{vsmooth.spline}
 \alias{vsmooth.spline}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Vector cubic smoothing spline }
+\title{ Vector Cubic Smoothing Spline }
 \description{
   Fits a vector cubic smoothing spline.
 }

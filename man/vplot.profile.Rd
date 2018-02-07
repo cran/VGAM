@@ -43,6 +43,7 @@ vpairs.profile(x, colours = 2:3, ...)
 \seealso{
   \code{\link{profilevglm}},
   \code{\link{confintvglm}},
+  \code{\link{lrt.stat}},
   \code{\link[MASS]{profile.glm}},
   \code{\link[stats]{profile.nls}}.
 

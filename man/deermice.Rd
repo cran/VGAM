@@ -3,7 +3,7 @@
 \alias{deermice}
 \docType{data}
 \title{
-  Captures of Peromyscus maniculatus, also known as deer mice.
+  Captures of Peromyscus maniculatus (Also Known as Deer Mice).
 
 
 %%   ~~ data name/kind ... ~~

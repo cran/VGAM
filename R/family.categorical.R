@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -104,8 +104,6 @@ Deviance.categorical.data.vgam <-
 
 
   double.eps <- sqrt( .Machine$double.xmin )
-
-
   devy <- y
   nonz <- (y != 0)
   devy[nonz] <- y[nonz] * log(y[nonz])
@@ -116,8 +114,6 @@ Deviance.categorical.data.vgam <-
     smu <- mu[smallmu]
     smy <-  y[smallmu]
     smu <- ifelse(smu < double.eps, double.eps, smu)
-
-
     devmu[smallmu] <- smy * log(smu)
   }
   devmu[!smallmu] <- y[!smallmu] * log(mu[!smallmu])
@@ -263,7 +259,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
              .fillerChar, ">=", .fillerChar, 1:M,     "]", sep = "")
     predictors.names <-
       namesof(mynames, .link , short = TRUE, earg = .earg )
-    y.names <- paste("mu", 1:(M+1), sep = "")
+    y.names <- param.names("mu", M+1)
 
     extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
                   tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
@@ -465,7 +461,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
             .fillerChar, ">=", .fillerChar, 1:M,     "]", sep = "")
     predictors.names <-
       namesof(mynames, .link , earg = .earg , short = TRUE)
-    y.names <- paste("mu", 1:(M+1), sep = "")
+    y.names <-  param.names("mu", M+1)
 
     extra$mymat <- if ( .reverse )
                    tapplymat1(y, "cumsum") else
@@ -735,7 +731,6 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
          link = "multilogit",
          link1parameter = FALSE,  # The link is multiparameter
          expected = TRUE,
-         hadof = FALSE,
          multipleResponses = FALSE,
          parameters.names = as.character(NA),
          zero = .zero )
@@ -1149,7 +1144,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         mynames <- c(mynames, if ( .reverse )
           paste("P[", Y.names, ">=", 2:Llevels,     "]", sep = "") else
           paste("P[", Y.names, "<=", 1:(Llevels-1), "]", sep = ""))
-        y.names <- c(y.names, paste(mu.names, 1:Llevels, sep = ""))
+        y.names <- c(y.names, param.names(mu.names, Llevels))
       }
 
       predictors.names <-
@@ -1172,7 +1167,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
       predictors.names <-
         namesof(mynames, .link , short = TRUE, earg = .earg )
-      y.names <- paste("mu", 1:(M+1), sep = "")
+      y.names <- param.names("mu", M+1)
 
       if (NCOL(w) == 1) {
           if (length(mustart) && all(c(y) %in% c(0, 1)))
@@ -1587,7 +1582,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
     predictors.names <-
       namesof(mynames, .link , short = TRUE, earg = .earg )
-    y.names <- paste("mu", 1:(M+1), sep = "")
+    y.names <- param.names("mu", M+1)
 
     extra$colnames.y  <- colnames(y)
   }), list( .earg = earg, .link = link, .reverse = reverse,
@@ -1732,7 +1727,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   alltxt <- paste(" ~ 1 +", alltxt)
   txt <- as.formula(alltxt)
 
-  allvars <- paste("zeta", 1:M, sep = "")
+  allvars <- param.names("zeta", M)
   d1 <- deriv3(txt, allvars, hessian = TRUE)
 
   zeta <- as.matrix(zeta)
@@ -1805,7 +1800,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     probs <- NULL
-    eta <- as.matrix(eta)  # in case M = 1
+    eta <- as.matrix(eta)  # in case M = 1; prior to 20171227
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
                                      earg = list(theta = NULL)),
@@ -1814,7 +1809,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
       probs <- rbind(probs, alpha1 / (alpha1 + alpha2))
     }
-    dimnames(probs) <- dimnames(eta)
+    if (NROW(probs) == NROW(eta) &&
+        NCOL(probs) == NCOL(eta))
+      dimnames(probs) <- dimnames(eta)
     probs
   }, list( .refgp = refgp, .refvalue = refvalue) )),
 
@@ -2393,7 +2390,7 @@ InverseBrat <-
     extra$cutpoints <- cp.vector
     extra$n <- n
 
-    mynames <- param.names("mu", M)
+    mynames <- param.names("mu", M, skip1 = TRUE)
     predictors.names <-
       namesof(mynames, .link , earg = .earg , tag = FALSE)
   }), list( .link = link, .countdata = countdata, .earg = earg,
@@ -2629,7 +2626,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff ="multinomial"),
     pvec1 <- fitted(object)[1, ]
     rownames(Bmat) <- rownames(cfit)
     colnames(Bmat) <- if (length(names(pvec1))) names(pvec1) else
-                      paste("mu", 1:(M+1), sep = "")
+                      param.names("mu", M+1)
 
 
     BB <- array(Bmat, c(ppp, M+1, nnn))
@@ -3191,7 +3188,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
     ppp   <- nrow(B)
     pvec1 <- fitted(object)[1, ]
     colnames(B) <- if (length(names(pvec1))) names(pvec1) else
-                   paste("mu", 1:(M+1), sep = "")
+                   param.names("mu", M+1)
 
     if (is.null(ii)) {
       BB <- array(B, c(ppp, M+1, nnn))

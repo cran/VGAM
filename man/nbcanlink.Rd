@@ -74,7 +74,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 }
 \references{
 
-  Miranda, V. S. and Yee, T. W. (2017)
+  Miranda, V. S. and Yee, T. W. (2018)
   On mean function modelling for several one-parameter
   discrete distributions.
   \emph{Manuscript in preparation}.
@@ -162,7 +162,7 @@ plot(nbcanlink(mymu, size = kmatrix) ~ mymu, las = 1,
 }
 
 # Estimate the parameters from some simulated data
-ndata <- data.frame(x2 = runif(nn <- 1000))
+ndata <- data.frame(x2 = runif(nn <- 100))
 ndata <- transform(ndata, eta1 = -1 - 1 * x2,  # eta1 < 0
                           size1 = exp(1),
                           size2 = exp(2))
@@ -192,4 +192,18 @@ summary(nbcfit)
 
 % 20150714; yettodo: fix up this and getting it going.
 % Hint: the working weights are treated as diagonal, whereas it isn't!
+
+
+
+
+%aa=nbcfit@misc$earg
+%aa[[1]] -> bb
+%(bb$theta)
+%head(bb$size)
+%dim(bb$size)
+
+
+
+
+
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -90,7 +90,7 @@ attrassignlm <- function(object, ...)
   X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index, vecTF,
                     drop = FALSE]
   X.lm.jay
-}
+}  # vlm2lm.model.matrix
 
 
 
@@ -160,7 +160,7 @@ attrassignlm <- function(object, ...)
       attr(X.vlm, "assign") <- nasgn
 
 
-      fred <- unlist(lapply(nasgn, length)) / unlist(lapply(oasgn, length))
+      fred <- unlist(lapply(nasgn, length))/unlist(lapply(oasgn, length))
       vasgn <- vector("list", sum(fred))
       kk <- 0
       for (ii in seq_along(oasgn)) {
@@ -197,7 +197,7 @@ attrassignlm <- function(object, ...)
     if (length(form.xij) != 3)
       stop("xij[[", ii, "]] is not a formula with a response")
     tform.xij <- terms(form.xij)
-    aterm.form <- attr(tform.xij, "term.labels")  # Does not include response
+    aterm.form <- attr(tform.xij, "term.labels")
     if (length(aterm.form) != M)
       stop("xij[[", ii, "]] does not contain ", M, " terms")
 
@@ -215,7 +215,7 @@ attrassignlm <- function(object, ...)
       } # End of sss
 
       allXk <- Xm2[, use.cols.Xm2, drop = FALSE]
-      cmat.no <- (at.x[[name.term.y]])[1]  # 1st one will do (all the same).
+      cmat.no <- (at.x[[name.term.y]])[1]  # 1st 1 will do (all the same).
       cmat <- Hlist[[cmat.no]]
       Rsum.k <- ncol(cmat)
       tmp44 <- kronecker(matrix(1, nrow.X.lm, 1), t(cmat)) *
@@ -279,7 +279,8 @@ model.matrix.vlm <- function(object, ...)
          numeric(0)
 
 
-  form2 <- if (any(slotNames(object) == "misc")) object@misc$form2 else NULL
+ form2 <- if (any(slotNames(object) == "misc"))
+          object@misc$form2 else NULL
   if (type == "lm2" && !length(form2))
     return(Xm2)
 
@@ -336,8 +337,8 @@ model.matrix.vlm <- function(object, ...)
   if (type == "vlm") {
     return(X.vlm)
   } else if (type == "lm" && length(linpred.index)) {
-    if (!is.Numeric(linpred.index, integer.valued = TRUE, positive = TRUE,
-                    length.arg = 1))
+    if (!is.Numeric(linpred.index, integer.valued = TRUE,
+                    positive = TRUE, length.arg = 1))
       stop("bad input for argument 'linpred.index'")
     if (!length(intersect(linpred.index, 1:M)))
       stop("argument 'linpred.index' should have ",
@@ -354,7 +355,7 @@ model.matrix.vlm <- function(object, ...)
   } else {
     stop("am confused. Do not know what to return")
   }
-}
+}  # model.matrixvlm
 
 
 
@@ -409,7 +410,7 @@ setMethod("model.matrix",  "vgam", function(object, ...)
     }
     ans
   } else object@model
-}
+}  # model.framevlm
 
 
 if (!isGeneric("model.frame"))
@@ -481,7 +482,7 @@ setMethod("model.frame",  "vlm", function(formula, ...)
     lapply(data[isF], function(x) attr(x, "contrasts")) else NULL
   attr(ans, "contrasts") <- cons
   ans
-}
+}  # vmodel.matrix.default
 
 
 
@@ -563,7 +564,7 @@ npred.vlm <- function(object,
   } else {  # One response is assumed, by default
     MM
   }
-}
+}  # npred.vlm
 
 
 if (!isGeneric("npred"))
@@ -608,7 +609,7 @@ hatvaluesvlm <-
   if (is.empty.list(qrSlot)) {
 
     wzedd <- weights(model, type = "working")
-    UU <- vchol(wzedd, M = M, n = nn, silent = TRUE)  # Few rows, many cols
+  UU <- vchol(wzedd, M = M, n = nn, silent = TRUE)  # Few rows, many cols
     X.vlm <- model.matrix(model, type = "vlm")
     UU.X.vlm <- mux111(cc = UU, xmat = X.vlm, M = M)
     qrSlot <- qr(UU.X.vlm)
@@ -647,8 +648,8 @@ hatvaluesvlm <-
   } else {
     ind1 <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
     MMp1d2 <- M * (M + 1) / 2
-    all.rows.index <- rep((0:(nn-1)) * M, rep(MMp1d2, nn)) + ind1$row.index
-    all.cols.index <- rep((0:(nn-1)) * M, rep(MMp1d2, nn)) + ind1$col.index
+    all.rows.index <- rep((0:(nn-1)) * M, rep(MMp1d2, nn))+ind1$row.index
+    all.cols.index <- rep((0:(nn-1)) * M, rep(MMp1d2, nn))+ind1$col.index
 
     H.ss <- rowSums(Q.S3[all.rows.index, ] *
                     Q.S3[all.cols.index, ])
@@ -702,7 +703,7 @@ hatplot.vlm <-
   M <- attr(hatval, "M")
   predictors.names <- attr(hatval, "predictors.names")
   if (!length(predictors.names)) {
-    predictors.names <- paste("Linear/additive predictor", 1:M)
+    predictors.names <- param.names("Linear/additive predictor ", M)
   }
 
   if (length(M)) {
@@ -722,7 +723,7 @@ hatplot.vlm <-
     points(1:N, hatval[, jay], ...)
     abline(h = multiplier * ncol.X.vlm / (N * M), lty = lty, ...)
   }
-}
+}  # hatplot.vlm
 
 
 
@@ -828,7 +829,7 @@ dfbetavlm <-
 
   dimnames(dfbeta) <- list(rownames(X.lm), names(coef.model))
   dfbeta
-}
+}  # dfbetavlm
 
 
 
@@ -891,7 +892,7 @@ hatvaluesbasic <- function(X.vlm,
     rowSums(diagWm * mymat^2)
   }
   Diag.Hat
-}
+}  # hatvaluesbasic
 
 
 
@@ -915,9 +916,10 @@ hatvaluesbasic <- function(X.vlm,
           get.X.VLM.aug(constraints  = constraints(object, type = "term"),
                         sm.osps.list = object@ospsslot$sm.osps.list))
   } else {
-    model.matrixvlm(object, type = type, linpred.index = linpred.index, ...)
+    model.matrixvlm(object, type = type,
+                    linpred.index = linpred.index, ...)
   }
-}
+}  # model.matrixpvgam
 
 
 

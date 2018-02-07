@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -114,7 +114,7 @@
 
 
     predictors.names <- if (!length(ddd <- dimnames(y)[[2]]))
-        paste("Y", 1:M, sep = "") else ddd
+        param.names("Y", M) else ddd
 
 
 

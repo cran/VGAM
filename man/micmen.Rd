@@ -142,20 +142,36 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 
 }
 \examples{
-fit <- vglm(velocity ~ 1, micmen, enzyme, trace = TRUE, crit = "coef",
-           form2 = ~ conc - 1)
-summary(fit)
+mfit <- vglm(velocity ~ 1, micmen, data = enzyme, trace = TRUE,
+             crit = "coef", form2 = ~ conc - 1)
+summary(mfit)
 
 \dontrun{ plot(velocity ~ conc, enzyme, xlab = "concentration", las = 1,
      col = "blue", main = "Michaelis-Menten equation for the enzyme data",
      ylim = c(0, max(velocity)), xlim = c(0, max(conc)))
-points(fitted(fit) ~ conc, enzyme, col = "red", pch = "+", cex = 1.5)
+points(fitted(mfit) ~ conc, enzyme, col = "red", pch = "+", cex = 1.5)
 
 # This predicts the response at a finer grid:
 newenzyme <- data.frame(conc = seq(0, max(with(enzyme, conc)), len = 200))
-fit@extra$Xm2 <- newenzyme$conc # This assignment is needed for prediction
-lines(predict(fit, newenzyme, "response") ~ conc, newenzyme, col = "red") }
+mfit@extra$Xm2 <- newenzyme$conc # This assignment is needed for prediction
+lines(predict(mfit, newenzyme, "response") ~ conc, newenzyme, col = "red") }
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+%coef(mfit, matrix = TRUE)
+%plot(velocity ~ I(1 / conc), data = enzyme)
+%mfit2 <- vglm(velocity ~ I(1 / conc),
+%              uninormal(lmean = "reciprocal"),  # zero = "",
+%              data = enzyme, trace = TRUE, maxit = 44)
+%coef(mfit2, matrix = TRUE)
+%1 / coef(mfit2)[1]  # theta1
+%coef(mfit2)[1] / coef(mfit2)[3]  # theta2
+
+
+
+
+
 

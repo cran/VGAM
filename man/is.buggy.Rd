@@ -3,7 +3,7 @@
 \alias{is.buggy.vlm}
 % 20150326
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Does the fitted object suffer from a known bug? }
+\title{ Does the Fitted Object Suffer from a Known Bug? }
 \description{
   Checks to see if a fitted object suffers from some known bug.
 

@@ -10,7 +10,7 @@
 
 }
 \usage{
-param.names(string, S)
+param.names(string, S = 1, skip1 = FALSE, sep = "")
 dimm(M, hbw = M)
 interleave.VGAM(.M, M1, inverse = FALSE)
 }
@@ -49,6 +49,13 @@ interleave.VGAM(.M, M1, inverse = FALSE)
   }
   \item{S}{
   Numeric. The number of responses.
+
+
+  }
+  \item{skip1, sep}{
+  The former is logical;
+  should one skip (or omit) \code{"1"} when \code{S = 1}?
+  The latter is the same argument as \code{\link[base]{paste}}.
 
 
   }

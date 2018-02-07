@@ -4,6 +4,7 @@
 \docType{package}
 \title{
 Vector Generalized Linear and Additive Models
+and Associated Models
 }
 \description{
   \pkg{VGAM} provides functions for fitting vector generalized
@@ -17,7 +18,8 @@ Vector Generalized Linear and Additive Models
 
 }
 \details{
-This package centers on the \emph{iteratively reweighted least squares} (IRLS)
+  This package centers on the
+  \emph{iteratively reweighted least squares} (IRLS)
 algorithm.
 Other key words include Fisher scoring, additive models, penalized
 likelihood, reduced-rank regression and constrained ordination.
@@ -37,7 +39,29 @@ data sets which were shifted from \pkg{VGAM}.
 
 
 
-The classes of GLMs and GAMs are special cases of VGLMs and VGAMs.
+This package is the first to check for the \emph{Hauck-Donner effect}
+(HDE) in regression models; see \code{\link{hdeff}}.  This is an
+aberration of the Wald statistics when the parameter estimates are too
+close to the boundary of the parameter space.  When present the p-value
+of a regression coefficient is biased upwards so that a highly
+significant variable might be deemed nonsignificant.  Thus the HDE can
+create havoc for variable selection!
+
+
+
+Somewhat related to the previous paragraph, hypothesis testing
+using the likelihood ratio test,
+Rao's score test (Lagrange multiplier test) and
+(modified) Wald's test are all available; see \code{\link{summaryvglm}}.
+For all regression coefficients of a model, taken one at a time,
+all three methods require further IRLS iterations to obtain
+new values of the other regression coefficients after one
+of the coefficients has had its value set (usually to 0).
+Hence the computation load is overall significant.
+
+
+
+The GLM and GAM classes are special cases of VGLMs and VGAMs.
 The VGLM/VGAM framework is intended to be very general
 so that it encompasses as many distributions and models as
 possible. VGLMs are limited only by the assumption that the
@@ -68,7 +92,7 @@ do not use the backfitting algorithm,
 and have automatic smoothing parameter selection.
 The former is older and is based on Yee and Wild (1996).
 The latter is more modern
-(Yee, Somchit and Wild, 2017)
+(Yee, Somchit and Wild, 2018)
 but it requires a reasonably large number of observations
 to work well.
 
@@ -88,7 +112,7 @@ to work well.
 For a complete list of this package, use \code{library(help = "VGAM")}.
 New \pkg{VGAM} family functions are continually being written and
 added to the package.
-A monograph about VGLM and VGAMs etc. appeared in October 2015.
+% A monograph about VGLM and VGAMs etc. appeared in October 2015.
 
 
 
@@ -192,8 +216,13 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
+Yee, T. W. (2018)
+Detecting the Hauck-Donner effect in Wald tests
+(\emph{in preparation}).
 
-Yee, T. W. and Somchit, C. and Wild, C. J. (2017)
+
+
+Yee, T. W. and Somchit, C. and Wild, C. J. (2018)
 Penalized vector generalized additive models.
 Manuscript in preparation.
 
@@ -229,6 +258,7 @@ especially as relating to my book.
   \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{Links}},
+  \code{\link{hdeff}},
   \url{https://CRAN.R-project.org/package=VGAM}.
 
 
@@ -244,8 +274,9 @@ depvar(fit1)  # Better than using fit1@y; dependent variable (response)
 weights(fit1, type = "prior")  # Number of observations
 coef(fit1, matrix = TRUE)      # p.179, in McCullagh and Nelder (1989)
 constraints(fit1)              # Constraint matrices
-summary(fit1)
-
+summary(fit1)  # HDE could affect these results
+summary(fit1, lrt0 = TRUE, score0 = TRUE, wald0 = TRUE)  # No HDE
+hdeff(fit1)  # Check for any Hauck-Donner effect
 
 # Example 2; zero-inflated Poisson model
 zdata <- data.frame(x2 = runif(nn <- 2000))
@@ -279,14 +310,14 @@ head(fitted(fit4))
 head(bmi.nz)  # Person 1 is near the lower quartile among people his age
 head(cdf(fit4))
 
-\dontrun{ par(mfrow = c(1, 1), bty = "l", mar = c(5,4,4,3)+0.1, xpd = TRUE)
+\dontrun{ par(mfrow = c(1,1), bty = "l", mar = c(5,4,4,3)+0.1, xpd=TRUE)
 qtplot(fit4, percentiles = c(5,50,90,99), main = "Quantiles", las = 1,
-       xlim = c(15, 90), ylab = "BMI", lwd = 2, lcol = 4)  # Quantile plot
+       xlim = c(15, 90), ylab = "BMI", lwd=2, lcol=4)  # Quantile plot
 
 ygrid <- seq(15, 43, len = 100)  # BMI ranges
 par(mfrow = c(1, 1), lwd = 2)  # Density plot
 aa <- deplot(fit4, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
-    main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)")
+    main = "Density functions at Age=20 (black), 42 (red) and 55 (blue)")
 aa
 aa <- deplot(fit4, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
 aa <- deplot(fit4, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",

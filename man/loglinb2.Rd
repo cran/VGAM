@@ -79,6 +79,9 @@ McCullagh, P. and Nelder, J. A. (1989)
   which can handle more types of input formats.
   Note that each of the 4 combinations of the multivariate response
   need to appear in the data set.
+  After estimation, the response attached to the object is also a
+  two-column matrix; possibly in the future it might change into a
+  four-column matrix.
 
 
 }
@@ -92,11 +95,9 @@ McCullagh, P. and Nelder, J. A. (1989)
 }
 \examples{
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
-
 # Get the n x 4 matrix of counts
 fit0 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or, data = coalminers)
 counts <- round(c(weights(fit0, type = "prior")) * depvar(fit0))
-
 # Create a n x 2 matrix response for loglinb2()
 # bwmat <- matrix(c(0,0, 0,1, 1,0, 1,1), 4, 2, byrow = TRUE)
 bwmat <- cbind(bln = c(0,0,1,1), wheeze = c(0,1,0,1))

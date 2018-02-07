@@ -456,7 +456,9 @@ The \code{VGAM} Package.
   \code{\link{hatvaluesvlm}},
   \code{\link{hdeff.vglm}},
   \code{\link{linkfun.vglm}},
-  \code{\link{lrp.vglm}},
+  \code{\link{lrt.stat.vlm}},
+  \code{\link{score.stat.vlm}},
+  \code{\link{wald.stat.vlm}},
   \code{\link{nobs.vlm}},
   \code{\link{npred.vlm}},
   \code{\link{plotvglm}},
@@ -518,6 +520,8 @@ fit5 <- vglm(cbind(leye, reye) ~ op,
 coef(fit5)
 coef(fit5, matrix = TRUE)
 constraints(fit5)
+fit5@control$xij
+head(model.matrix(fit5))
 }
 \keyword{models}
 \keyword{regression}

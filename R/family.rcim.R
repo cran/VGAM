@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -137,11 +137,11 @@
 
 
   yn1 <- if (length(dimnames(y)[[1]])) dimnames(y)[[1]] else
-             paste(iprefix, 1:nrow(y), sep = "")
+             param.names(iprefix, nrow(y))
   warn.save <- options()$warn
   options(warn = -3)  # Suppress the warnings (hopefully, temporarily)
   if (any(!is.na(as.numeric(substring(yn1, 1, 1)))))
-    yn1 <- paste(iprefix, 1:nrow(y), sep = "")
+    yn1 <- param.names(iprefix, nrow(y))
   options(warn = warn.save)
 
 
@@ -387,13 +387,13 @@ setMethod("summary", "rcim",
   CCC <- dim(mat)[2]
 
   rnames <- if (is.null(rownames(mat))) {
-    paste("X", 1:RRR, sep = "")
+    param.names("X", RRR)
   } else {
     rownames(mat)
   }
 
   cnames <- if (is.null(colnames(mat))) {
-    paste("Y", 1:CCC, sep = "")
+    param.names("Y", CCC)
   } else {
     colnames(mat)
   }
@@ -633,11 +633,11 @@ setMethod("plot", "rcim",
 
   rownames.mat <- rownames(mat)
   if (length(rownames.mat) != nrow(mat))
-    rownames.mat <- paste(rprefix, 1:nrow(mat), sep = "")
+    rownames.mat <- param.names(rprefix, nrow(mat))
 
   colnames.mat <- colnames(mat)
   if (length(colnames.mat) != ncol(mat))
-    colnames.mat <- paste(cprefix, 1:ncol(mat), sep = "")
+    colnames.mat <- param.names(cprefix, ncol(mat))
 
 
   newrn <- if (roffset > 0)
@@ -1155,7 +1155,7 @@ summary.qvar <- function(object, ...) {
       is.matrix(object@extra$attributes.y$estimates))
     names( estimates) <- rownames(object@extra$attributes.y$estimates)
   if (!length(names(estimates)))
-    names( estimates) <- paste("Level", seq_along(estimates), sep = "")
+    names( estimates) <- param.names("Level", length(estimates))
 
 
   regularVar <- c(object@extra$attributes.y$regularVar)
@@ -1285,8 +1285,7 @@ qvplot   <-  function(object,
   if (length(level.names) == length(estimates)) {
     names(estimates) <- level.names
   } else if (!length(names(estimates)))
-    names(estimates) <- paste("Level", seq_along(estimates),
-                              sep = "")
+    names(estimates) <- param.names("Level", length(estimates))
 
 
 

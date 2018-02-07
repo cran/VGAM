@@ -14,6 +14,14 @@ gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
                gshape2.k = exp((-5:5)/2), probs.y = 0.3, zero = c("d", "k"))
 }
 %- maybe also 'usage' for other objects documented here.
+
+
+
+% yettodo: 20171221; use \cite{ye:chen:2017} to get very good init values.
+
+
+
+
 \arguments{
   \item{lscale, ld, lk}{
   Parameter link function applied to each of the positive parameters

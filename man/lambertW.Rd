@@ -2,7 +2,7 @@
 \alias{lambertW}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-The Lambert W function
+The Lambert W Function
 }
 \description{
 Computes the Lambert \emph{W} function for real values.
@@ -78,6 +78,7 @@ this would give \eqn{W(z) \leq -1}{W(z) <= -1}.
 \seealso{
   \code{\link[base:log]{log}},
   \code{\link[base:log]{exp}}.
+  There is also a package called \pkg{LambertW}.
 
 
 }

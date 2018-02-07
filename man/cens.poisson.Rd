@@ -9,7 +9,8 @@
 
 }
 \usage{
-cens.poisson(link = "loge", imu = NULL)
+cens.poisson(link = "loge", imu = NULL,
+             biglambda = 10, smallno = 1e-10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,13 @@ cens.poisson(link = "loge", imu = NULL)
   \item{imu}{
     Optional initial value;
     see \code{\link{CommonVGAMffArguments}} for more information.
+
+  }
+  \item{biglambda, smallno}{
+    Used to help robustify the code when \code{lambda} is very large
+    and the \code{\link{ppois}} value is so close to 0 that
+    the first derivative is computed to be a \code{NA} or \code{NaN}.
+    When this occurs  \code{\link{mills.ratio}} is called.
 
   }
 }
@@ -66,17 +74,26 @@ cens.poisson(link = "loge", imu = NULL)
   \code{y < L} as left censored and
   \code{y >= U} (formatted as \code{U+}) as right censored observations,
   therefore
-  \code{L <= y <  U} is for uncensored and/or interval censored observations.
+  \code{L <= y <  U} is for uncensored and/or interval censored
+  observations.
   Consequently the input must be tweaked to conform to the
   \code{(start, end]} format.
 
 
+  A bit of attention has been directed to try robustify the code
+  when \code{lambda} is very large, however this currently works
+  for left and right censored data only, not interval
+  censored data. Sometime the fix involves an approximation,
+  hence it is a good idea to set \code{trace = TRUE}.
+
+  
 }
 
 \seealso{
     \code{\link{SurvS4}},
     \code{\link{poissonff}},
-    \code{\link{Links}}.
+    \code{\link{Links}},
+    \code{\link{mills.ratio}}.
 
 
 }
@@ -89,8 +106,9 @@ cdata <- transform(cdata, cy = pmin(U, y),
 cdata <- transform(cdata, status = ifelse(rcensored, 0, 1))
 with(cdata, table(cy))
 with(cdata, table(rcensored))
-with(cdata, table(ii <- print(SurvS4(cy, status))))  # Check; U+ means >= U
-fit <- vglm(SurvS4(cy, status) ~ 1, cens.poisson, data = cdata, trace = TRUE)
+with(cdata, table(print(SurvS4(cy, status))))  # Check; U+ means >= U
+fit <- vglm(SurvS4(cy, status) ~ 1, cens.poisson, data = cdata,
+            trace = TRUE)
 coef(fit, matrix = TRUE)
 table(print(depvar(fit)))  # Another check; U+ means >= U
 
@@ -98,12 +116,12 @@ table(print(depvar(fit)))  # Another check; U+ means >= U
 # Example 2: left censored data
 L <- 15
 cdata <- transform(cdata,
-                   cY = pmax(L, y),
-                   lcensored = y <  L)  # Note y < L, not cY == L or y <= L
+               cY = pmax(L, y),
+               lcensored = y <  L)  # Note y < L, not cY == L or y <= L
 cdata <- transform(cdata, status = ifelse(lcensored, 0, 1))
 with(cdata, table(cY))
 with(cdata, table(lcensored))
-with(cdata, table(ii <- print(SurvS4(cY, status, type = "left"))))  # Check
+with(cdata, table(print(SurvS4(cY, status, type = "left"))))  # Check
 fit <- vglm(SurvS4(cY, status, type = "left") ~ 1, cens.poisson,
             data = cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
@@ -114,23 +132,21 @@ cdata <- transform(cdata, Lvec = rep(L, len = N),
                           Uvec = rep(U, len = N))
 cdata <-
   transform(cdata,
-            icensored = Lvec <= y & y < Uvec)  # Not lcensored or rcensored
+        icensored = Lvec <= y & y < Uvec)  # Not lcensored or rcensored
 with(cdata, table(icensored))
-cdata <- transform(cdata, status = rep(3, N))  # 3 means interval censored
-cdata <-
-  transform(cdata,
-            status = ifelse(rcensored, 0, status))  # 0 means right censored
-cdata <-
-  transform(cdata,
-            status = ifelse(lcensored, 2, status))  # 2 means left  censored
+cdata <- transform(cdata, status = rep(3, N))  # 3 == interval censored
+cdata <- transform(cdata,
+         status = ifelse(rcensored, 0, status))  # 0 means right censored
+cdata <- transform(cdata,
+         status = ifelse(lcensored, 2, status))  # 2 means left  censored
 # Have to adjust Lvec and Uvec because of the (start, end] format:
-cdata$Lvec[with(cdata, icensored)] <- cdata$Lvec[with(cdata, icensored)] - 1
-cdata$Uvec[with(cdata, icensored)] <- cdata$Uvec[with(cdata, icensored)] - 1
+cdata$Lvec[with(cdata,icensored)] <- cdata$Lvec[with(cdata,icensored)]-1
+cdata$Uvec[with(cdata,icensored)] <- cdata$Uvec[with(cdata,icensored)]-1
 # Unchanged:
 cdata$Lvec[with(cdata, lcensored)] <- cdata$Lvec[with(cdata, lcensored)]
 cdata$Lvec[with(cdata, rcensored)] <- cdata$Uvec[with(cdata, rcensored)]
-with(cdata,
-     table(ii <- print(SurvS4(Lvec, Uvec, status, type = "interval"))))  # Check
+with(cdata,  # Check
+ table(ii <- print(SurvS4(Lvec, Uvec, status, type = "interval"))))
 
 fit <- vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
             cens.poisson, data = cdata, trace = TRUE)

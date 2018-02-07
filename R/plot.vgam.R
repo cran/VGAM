@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -308,6 +308,21 @@ preplotvgam <-
     TT <- names(x)
     if (is.null(which.term))
       which.term <- TT  # Plot them all
+
+
+  if (deriv.arg > 0 && is.character(which.term)) {
+    if (length(index.fun.call <- grep("[(]", which.term))) {
+      terms2check <- which.term[index.fun.call]
+      if (!any(substr(terms2check, 1, 2) == "s(")) {
+        warning("there appears to be no s() term, so setting ",
+                "argument 'deriv.arg' a positive value has ",
+                "no effect. Setting its value to 0.")
+        deriv.arg <- 0  # Replacing its value
+      }
+    }
+  }
+
+
     plot.no <- 0
     for (ii in TT) {
       plot.no <- plot.no + 1
@@ -657,7 +672,7 @@ vplot.matrix <-
            residuals = NULL, rugplot = FALSE, scale = 0, se = FALSE,
            offset.arg = 0, deriv.arg = 0, overlay = FALSE,
            which.cf = NULL, ...) {
-  stop("You shouldn't ever call this function!")
+  stop("You should not ever call this function!")
 }
 
 

@@ -139,14 +139,17 @@ qrrvglm.control(Rank = 1,
     In general, the larger the value, the better the initial value.
     Used only if \code{Use.Init.Poisson.QO = TRUE}.
 
-  }
 
+
+  }
   \item{FastAlgorithm}{
    Logical. Whether a new fast algorithm is to be used. The fast
    algorithm results in a large speed increases compared to Yee
    (2004).
    Some details of the fast algorithm are found in Appendix A of Yee (2006).
    Setting \code{FastAlgorithm = FALSE} will give an error.
+
+
 
   }
   \item{GradientFunction}{
@@ -155,12 +158,18 @@ qrrvglm.control(Rank = 1,
    \code{FastAlgorithm} is \code{TRUE}. The default value is usually
    faster on most problems.
 
+
+
   }
   \item{Hstep}{
    Positive value. Used as the step size in the finite difference
    approximation to the derivatives by \code{\link[stats]{optim}}.
 
+
+
 %  Used only if \code{FastAlgorithm} is \code{TRUE}.
+
+
   }
   \item{isd.latvar}{
    Initial standard deviations for the latent variables (site scores).

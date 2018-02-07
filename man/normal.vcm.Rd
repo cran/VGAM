@@ -207,7 +207,8 @@ ndata <- transform(ndata,
            coeff1 = 0.25,  # "multilogit" link
            coeff2 = 0.25,  # "multilogit" link
            coeff3 = exp(-0.5),  # "loge" link
-           coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE),  # "logoff" link
+# "logoff" link:
+           coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE),
            coeff5 = 0.50,  # "multilogit" link
            coeff6 = 1.00,  # "identitylink" link
            v2 = runif(nn),

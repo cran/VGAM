@@ -84,7 +84,8 @@ cauchit(theta, bvalue = .Machine$double.eps,
     \code{\link{cloglog}},
     \code{\link{loge}},
     \code{\link{cauchy}},
-    \code{\link{cauchy1}}.
+    \code{\link{cauchy1}},
+    \code{\link[stats]{Cauchy}}.
 
 
  }

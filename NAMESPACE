@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,7 +7,15 @@
 useDynLib(VGAM, .registration = TRUE)
 
 
-export(lrp, lrp.vglm)
+export( wald.stat,  wald.stat.vlm)
+export(score.stat, score.stat.vlm)
+export(  lrt.stat,   lrt.stat.vlm)
+export(mills.ratio, mills.ratio2)
+export(which.etas)
+export(which.xij)
+exportMethods(TIC)
+export(TIC)
+export(TICvlm)
 export(retain.col, d3theta.deta3)
 export(ghn100, ghw100)
 export(hdeff, hdeff.vglm)

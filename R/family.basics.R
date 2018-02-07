@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -93,7 +93,7 @@ Select <-
                           if (ltcn.positive)
                             paste(temp.col.names, collapse = " + ") else
                             "",
-                          ifelse(ltcn.positive && length(rhs ), " + ", ""),
+                      ifelse(ltcn.positive && length(rhs ), " + ", ""),
                           ifelse(length(rhs ), rhs, ""),
                           ifelse(length(rhs2), paste(" +", rhs2), ""),
                           ifelse(length(rhs3), paste(" +", rhs3), ""))
@@ -332,7 +332,7 @@ subsetc <-
   }
 
   ans <- vector("list", M+1)
-  names(ans) <- c(paste("eta", 1:M, sep = ""), "ncolX.vlm")
+  names(ans) <- c(param.names("eta", M), "ncolX.vlm")
 
   temp2 <- matrix(unlist(constraints), nrow = M)
   for (kk in 1:M) {
@@ -520,7 +520,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
       if (length(which.ones)) {
         which.numeric.all <- c(which.numeric.all, which.ones)
       } else {
-        warning("some values of argument 'zero' are unmatched. Ignoring them")
+        warning("some values of argument 'zero' are unmatched. ",
+                "Ignoring them")
       }
     }  # for ii
     which.numeric <- unique(sort(which.numeric.all))
@@ -744,7 +745,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     if (trivc[ii] == 0) next
   }
   trivc
-}
+}  # trivial.constraints
 
 
 
@@ -792,7 +793,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   }
 
   constraints
-}
+}  # add.constraints
 
 
 
@@ -962,8 +963,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- wweights <- function(object, matrix.arg = TRUE, deriv.arg = FALSE,
-                      ignore.slot = FALSE, checkwz = TRUE) {
+ wweights <-
+  function(object, matrix.arg = TRUE, deriv.arg = FALSE,
+           ignore.slot = FALSE, checkwz = TRUE) {
 
 
 
@@ -988,7 +990,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (any(slotNames(object) == "predictors"))
     eta <- object@predictors
   mt <- terms(object)  # object@terms$terms; 20030811
-  Hlist <- constraints <- object@constraints
+  Hlist <- object@constraints
   new.coeffs <- object@coefficients
   if (any(slotNames(object) == "iter"))
     iter <- object@iter
@@ -1007,6 +1009,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (!length(y))
     y <- depvar(object)
 
+
+  X.vlm.save <- model.matrixvlm(object, type = "vlm")
 
 
   if (length(object@misc$form2)) {
@@ -1039,6 +1043,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
       assign(ii, object@misc[[ii]])
     }
 
+
+
+
   if (any(slotNames(object) == "family")) {
     expr <- object@family@deriv
     deriv.mu <- eval(expr)
@@ -1055,7 +1062,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   } else {
     NULL
   }
-}
+}  # wweights
 
 
 
@@ -1072,7 +1079,7 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     names(ans) <- dimnames(temp)[[1]]
     ans
   }
-}
+}  # pweights
 
 
 
@@ -1131,9 +1138,10 @@ if (FALSE) {
 
 
 
- weightsvglm <- function(object, type = c("prior", "working"),
-                        matrix.arg = TRUE, ignore.slot = FALSE,
-                        deriv.arg = FALSE, ...) {
+ weightsvglm <-
+  function(object, type = c("prior", "working"),
+           matrix.arg = TRUE, ignore.slot = FALSE,
+           deriv.arg = FALSE, ...) {
   weightsvlm(object, type = type, matrix.arg = matrix.arg,
               ignore.slot = ignore.slot,
               deriv.arg = deriv.arg, ...)
@@ -1141,9 +1149,10 @@ if (FALSE) {
 
 
 
- weightsvlm <- function(object, type = c("prior", "working"),
-                       matrix.arg = TRUE, ignore.slot = FALSE,
-                       deriv.arg = FALSE, ...) {
+ weightsvlm <-
+  function(object, type = c("prior", "working"),
+           matrix.arg = TRUE, ignore.slot = FALSE,
+           deriv.arg = FALSE, ...) {
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type, c("prior", "working"))[1]
@@ -1198,7 +1207,7 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
   }
   Bs <- mux22(t(wzold), deta, M = M,
               upper = FALSE, as.matrix = TRUE)  # n x M
-  sBs <- c( (deta * Bs) %*% rep_len(1, M) )  # should have positive values
+  sBs <- c( (deta * Bs) %*% rep_len(1, M) )  # should have positive vals
   sy <- c( (dderiv * deta) %*% rep_len(1, M) )
   wznew <- wzold
   index <- iam(NA, NA, M = M, both = TRUE)
@@ -1379,11 +1388,12 @@ negzero.expression.VGAM <- expression({
   which.numeric.all <- NULL
   for (ii in seq_along(dotzero)) {
     which.ones <-
-        grep(dotzero[ii], predictors.names, fixed = TRUE)
+      grep(dotzero[ii], predictors.names, fixed = TRUE)
     if (length(which.ones)) {
       which.numeric.all <- c(which.numeric.all, which.ones)
     } else {
-      warning("some values of argument 'zero' are unmatched. Ignoring them")
+      warning("some values of argument 'zero' are unmatched. ",
+              "Ignoring them")
     }
   }
   which.numeric <- unique(sort(which.numeric.all))
@@ -1470,7 +1480,8 @@ interleave.cmat <- function(cmat1, cmat2) {
       return(cbind(cmat1[, 1], cmat2, cmat1[, -1]))
     } else
     if (ncol1 != ncol2) {
-      warning("this function is confused. Returning cbind(cmat1, cmat2)")
+      warning("this function is confused. ",
+              "Returning cbind(cmat1, cmat2)")
       return(cbind(cmat1[, 1], cmat2, cmat1[, -1]))
     } else {  # ncol1 == ncol2 and both are > 1.
       kronecker(cmat1, cbind(1, 0)) +
@@ -1608,7 +1619,7 @@ w.y.check <- function(w, y,
   if (out.wy && ncol(w) < Ncol.max.w) {
     nblanks <- sum(cn.w == "")
     if (nblanks > 0)
-      cn.w[cn.w == ""] <- paste(prefix.w, 1:nblanks, sep = "")
+      cn.w[cn.w == ""] <- param.names(prefix.w, nblanks)
     if (length(cn.w) < Ncol.max.w)
       cn.w <- c(cn.w, paste(prefix.w, (length(cn.w)+1):Ncol.max.w,
                             sep = ""))
@@ -1617,7 +1628,7 @@ w.y.check <- function(w, y,
   if (out.wy && ncol(y) < Ncol.max.y) {
     nblanks <- sum(cn.y == "")
     if (nblanks > 0)
-      cn.y[cn.y == ""] <- paste(prefix.y, 1:nblanks, sep = "")
+      cn.y[cn.y == ""] <- param.names(prefix.y, nblanks)
     if (length(cn.y) < Ncol.max.y)
       cn.y <- c(cn.y, paste(prefix.y, (length(cn.y)+1):Ncol.max.y,
                             sep = ""))
@@ -1678,8 +1689,12 @@ arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
 
 
 
-param.names <- function(string, S) {
-  if (S == 1) string else paste(string, 1:S, sep = "")
+param.names <- function(string, S = 1, skip1 = FALSE, sep = "") {
+  if (skip1) {
+    if (S == 1) string else paste(string, 1:S, sep = sep)
+  } else {
+    paste(string, 1:S, sep = sep)
+  }
 }
 
 
@@ -1781,5 +1796,39 @@ retain.col <- function(mat, coln
     mat[, -coln] <- 0
   mat
 }
+
+
+
+
+which.etas <-
+  function(object, kay = 1) {
+
+  cmat <- constraints(object, matrix = TRUE)
+  if (ncol(cmat) < kay)
+    stop("value of argument 'kay' is too large")
+  which(cmat[, kay] != 0)
+}
+
+
+
+
+
+which.xij <-
+  function(object, ...) {
+
+  cmat <- constraints(object, matrix = TRUE)
+  ans <- rep(FALSE, NCOL(cmat))
+  names(ans) <- colnames(cmat)
+  xij <- object@control$xij
+  if (!is.null(xij)) {
+    for (ii in 1:length(xij)) {
+      responsevar <- all.vars(xij[[ii]])[1]
+      ans[responsevar] <- TRUE  # Assumes NCOL(cmat) == 1
+    }
+  }
+  ans
+}
+
+
 
 

@@ -50,7 +50,8 @@ vonmises(llocation = extlogit(min = 0, max = 2 * pi), lscale = "loge",
 
 
   }
-%  \item{hstep}{ Positive numeric. The \eqn{h} used for the finite difference
+%  \item{hstep}{ Positive numeric.
+%   The \eqn{h} used for the finite difference
 %   approximation, e.g., in \eqn{(f(x+h)-f(x))/h} for the first
 %   derivative estimate of the modified Bessel function values.
 %   If too small, some half stepsizing may occur;

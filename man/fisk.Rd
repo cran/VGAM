@@ -81,9 +81,20 @@ This family function handles multiple responses.
 }
 \references{
 Kleiber, C. and Kotz, S. (2003)
-\emph{Statistical Size Distributions in Economics and
-             Actuarial Sciences},
+\emph{Statistical Size Distributions in Economics and Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
+
+
+
+% The following paper simplifies the EIM:
+
+%Reath, J. and Dong, J. and Wang, M. (2018)
+%Improved parameter estimation of the log-logistic distribution
+%with applications.
+%\emph{Computational Statistics}, \bold{33}: 339--356.
+%\ref{reat:dong:wang:2018}
+
+
 
 }
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -238,7 +238,8 @@ micmen.control <- function(save.weights = TRUE, ...) {
     fit$df.residual <- n - rank   # Not nrow.X.vlm - rank
     fit$df.total <- n             # Not nrow.X.vlm
 
-    extra$Xm2 <- NULL             # Regressor is in control$regressor
+
+
     dpar <- .dispersion
     if (!dpar) {
       dpar <- sum(c(w) * (y - mu)^2) / (n - ncol.X.vlm)
@@ -313,13 +314,19 @@ micmen.control <- function(save.weights = TRUE, ...) {
           temp200809[, 2:M] <- temp200809[, 2:M] + sqrt(rpar)
         c(w) * (y - mu) * temp200809
       } else {
-        c(w) * (y - mu) *
+        c(w) * c(y - mu) *
           cbind(dmus.dthetas[, 1] * dthetas.detas[, 1],
                 dmus.dthetas[, 2] * dthetas.detas[, 2] + sqrt(rpar))
       }
     } else {
       temp20101111 <- dmus.dthetas * dthetas.detas
-      c(w) * (y - mu) * temp20101111
+ print("head(temp20101111) in @deriv")
+ print( head(temp20101111) )
+ print("head(y) in @deriv")
+ print( head(y) )
+ print("head(mu) in @deriv")
+ print( head(mu) )
+      c(w) * c(y - mu) * temp20101111
     }
 
     myderiv
@@ -375,7 +382,7 @@ micmen.control <- function(save.weights = TRUE, ...) {
   }), list( .link1 = link1, .link2 = link2,
             .firstDeriv = firstDeriv,
             .nsimEIM = nsimEIM, .oim = oim ))))
-}
+}  # micmen
 
 
 
@@ -556,7 +563,7 @@ skira.control <- function(save.weights = TRUE, ...) {
  points(Xm2, 1 / (init1 + init2 * Xm2), col = "green")
  } else {
  with(mysubset,
- points(c(x1bar, x2bar), c(y1bar, y2bar), col = "red", pch = "+", cex = 2))
+ points(c(x1bar, x2bar), c(y1bar, y2bar), col = 2, pch = "+", cex = 2))
  }
 
 
@@ -685,7 +692,7 @@ skira.control <- function(save.weights = TRUE, ...) {
         ysim <- 1 / (theta1 + theta2 * Xm2) + rnorm(n, sd = mysigma)
         temp3 <- (ysim - mu) * dmus.dthetas * dthetas.detas
         run.varcov <- run.varcov +
-                      temp3[, index0$row.index] * temp3[, index0$col.index]
+                  temp3[, index0$row.index] * temp3[, index0$col.index]
       }
       run.varcov <- run.varcov / .nsimEIM
 
@@ -699,7 +706,7 @@ skira.control <- function(save.weights = TRUE, ...) {
   }), list( .link1 = link1, .link2 = link2,
             .firstDeriv = firstDeriv,
             .nsimEIM = nsimEIM, .oim = oim ))))
-}
+}  # skira
 
 
 

@@ -10,11 +10,10 @@
 }
 \usage{
 cauchy(llocation = "identitylink", lscale = "loge",
-       ilocation = NULL, iscale = NULL,
-       iprobs = seq(0.2, 0.8, by = 0.2),
-       imethod = 1, nsimEIM = NULL, zero = "scale")
-cauchy1(scale.arg = 1, llocation = "identitylink",
-        ilocation = NULL, imethod = 1)
+       imethod = 1, ilocation = NULL, iscale = NULL,
+       gprobs.y = ppoints(19), gscale.mux = exp(-3:3), zero = "scale")
+cauchy1(scale.arg = 1, llocation = "identitylink", ilocation = NULL,
+        imethod = 1, gprobs.y = ppoints(19), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,13 +40,7 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
 
 
   }
-  \item{iprobs}{
-  Probabilities used to find the respective sample quantiles;
-  used to compute \code{iscale}.
-
-
-  }
-  \item{zero, nsimEIM}{
+  \item{gprobs.y, gscale.mux, zero}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 
@@ -67,8 +60,12 @@ cauchy1(scale.arg = 1, llocation = "identitylink",
   The distribution is symmetric about \eqn{a} and has a heavy tail.
   Its median and mode are \eqn{a}, but the mean does not exist.
   The fitted values are the estimates of \eqn{a}.
-  Fisher scoring is the default but if \code{nsimEIM} is specified then
-  Fisher scoring with simulation is used.
+  Fisher scoring is used.
+
+
+
+% Fisher scoring is the default but if \code{nsimEIM} is specified then
+% Fisher scoring with simulation is used.
 
 
   If the scale parameter is known (\code{cauchy1}) then there
@@ -127,9 +124,12 @@ Observed versus expected Fisher information.
 \author{ T. W. Yee }
 \note{
   Good initial values are needed.
-  By default these \pkg{VGAM} family functions search for a starting
-  value for \eqn{a}{a} on a grid.
-  It also pays to select a wide range
+  By default \code{cauchy} searches for a starting
+  value for \eqn{a}{a} and \eqn{b}{b} on a 2-D grid.
+  Likewise, by default, \code{cauchy1} searches for a starting
+  value for \eqn{a}{a} on a 1-D grid.
+  If convergence to the global maximum is not acheieved then
+  it also pays to select a wide range
   of initial values via the \code{ilocation} and/or \code{iscale}
   and/or \code{imethod} arguments.
 

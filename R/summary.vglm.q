@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -13,24 +13,21 @@
 
 
 
-
-yformat <- function(x, digits = options()$digits) {
-  format(ifelse(abs(x) < 0.001, signif(x, digits), round(x, digits)))
-}
-
-
-
-
-
-
 summaryvglm <-
   function(object, correlation = FALSE,
            dispersion = NULL, digits = NULL,
            presid = TRUE,
+           HDEtest = TRUE,  # Added 20180203
            hde.NA = TRUE,
            threshold.hde = 0.001,
            signif.stars = getOption("show.signif.stars"),
            nopredictors = FALSE,
+           lrt0.arg = FALSE,
+           score0.arg = FALSE,
+           wald0.arg = FALSE,
+           values0 = 0,
+           subset = NULL,
+           omit1s = TRUE,
            ...  # Added 20151211
           ) {
 
@@ -56,7 +53,14 @@ summaryvglm <-
                       presid = FALSE,
 
                       correlation = correlation,
-                      dispersion = dispersion)
+                      dispersion = dispersion,
+
+                      lrt0.arg   = lrt0.arg,
+                      score0.arg = score0.arg,
+                      wald0.arg  = wald0.arg,
+                      values0 = values0,
+                      subset = subset,
+                      omit1s = omit1s)
 
 
 
@@ -81,6 +85,9 @@ summaryvglm <-
   new("summary.vglm",
       object,
       coef3 = stuff@coef3,
+      coef4lrt0 = stuff@coef4lrt0,  # Might be an empty "matrix"
+      coef4score0 = stuff@coef4score0,  # Might be an empty "matrix"
+      coef4wald0 = stuff@coef4wald0,  # Might be an empty "matrix"
       cov.unscaled = stuff@cov.unscaled,
       correlation = stuff@correlation,
       df = stuff@df,
@@ -119,15 +126,16 @@ summaryvglm <-
   }
 
 
-  answer@post$hdeff <- hdeff(object, derivative = 2)
-  answer@post$hde.NA <- hde.NA
-  answer@post$threshold.hde <- threshold.hde
-           
+  if (HDEtest) {
+    answer@post$hdeff <- hdeff(object, derivative = 1, se.arg = TRUE)
+    answer@post$hde.NA <- hde.NA
+    answer@post$threshold.hde <- threshold.hde
+  }
 
 
 
   answer
-}
+}  # summary.vglm
 
 
 
@@ -214,7 +222,7 @@ setMethod("summaryvglmS4VGAM",  signature(VGAMff = "VGAMcategorical"),
 })
 
 
-setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "VGAMcategorical"),
+setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "VGAMcategorical"),
   function(object,
            VGAMff,
            ...) {
@@ -239,6 +247,7 @@ show.summary.vglm <-
            quote = TRUE,
            prefix = "",
            presid = TRUE,
+           HDEtest = TRUE,
            hde.NA = TRUE,
            threshold.hde = 0.001,
            signif.stars = NULL,   # Use this if logical; 20140728
@@ -261,6 +270,7 @@ show.summary.vglm <-
 
 
 
+  if (HDEtest)
   if (is.logical(x@post$hde.NA) && x@post$hde.NA) {
     if (length(hado <- x@post$hdeff)) {
       HDE <- is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
@@ -270,7 +280,7 @@ show.summary.vglm <-
         coef3[HDE, 3:4] <- NA  # 3:4 means WaldStat and p-value
       }
     }
-  }
+  }  # is.logical(x@post$hde.NA) && x@post$hde.NA
 
 
 
@@ -310,14 +320,58 @@ show.summary.vglm <-
   }
 
 
+  Situation <- -1
+  how.many <- c(length(x@coef4lrt0),
+                length(x@coef4score0),
+                length(x@coef4wald0))
 
-  if (length(coef3)) {
+  if (length(x@coef4lrt0)) {  # && wald0.arg
+    cat(if (top.half.only) "\nParametric coefficients:" else
+        "\nLikelihood ratio test coefficients:", "\n")
+    printCoefmat(x@coef4lrt0, digits = digits,
+                 signif.stars = use.signif.stars,
+                 na.print = "NA",
+                 P.values = TRUE, has.Pvalue = TRUE,
+                 signif.legend = sum(how.many[-1]) == 0)  # Last one
+    Situation <- 3
+  }
+
+
+
+  if (length(x@coef4score0)) {  # && wald0.arg
+    cat(if (top.half.only) "\nParametric coefficients:" else
+        "\nRao score test coefficients:", "\n")
+    printCoefmat(x@coef4score0, digits = digits,
+                 signif.stars = use.signif.stars,
+                 na.print = "NA",
+                 signif.legend = sum(how.many[3]) == 0)  # Last one
+    Situation <- 4
+  }
+
+
+
+  if (length(x@coef4wald0)) {  # && wald0.arg
+    cat(if (top.half.only) "\nParametric coefficients:" else
+        "\nWald (modified by IRLS iterations) coefficients:", "\n")
+    printCoefmat(x@coef4wald0, digits = digits,
+                 signif.stars = use.signif.stars,
+                 na.print = "NA")
+    Situation <- 1
+  } else
+  if (length(coef3) && Situation < 0) {
     cat(if (top.half.only) "\nParametric coefficients:" else
         "\nCoefficients:", "\n")
     printCoefmat(coef3, digits = digits,
                  signif.stars = use.signif.stars,
                  na.print = "NA")
-  }
+    Situation <- 2
+  }  # length(coef3)
+
+
+
+
+
+
 
   if (top.half.only)
     return(invisible(NULL))
@@ -403,18 +457,21 @@ show.summary.vglm <-
 
 
 
-  if (length(hado <- x@post$hdeff)) {
+    if (HDEtest)
+    if (Situation == 2 &&
+        length(hado <- x@post$hdeff)) {
     if (is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
         all(hado[, "deriv1"] > 0))
       cat("\nNo Hauck-Donner effect found in any of the estimates\n")
     if (is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
         any(hado[, "deriv1"] < 0)) {
-      cat("\nWarning: Hauck-Donner effect detected in the following estimate(s):\n")
+      cat("\nWarning: Hauck-Donner effect detected in the",
+            "following estimate(s):\n")
       cat(paste("'", rownames(hado)[hado[, "deriv1"] < 0],
                 "'", collapse = ", ", sep = ""))
       cat("\n")
     }
-  }
+  }  # Situation == 2 && length(hado)
 
 
 
@@ -430,7 +487,7 @@ show.summary.vglm <-
 
 
   invisible(NULL)
-}
+}  # show.summary.vglm
 
 
 
@@ -500,7 +557,8 @@ vcovdefault <- function(object, ...) {
 vcov.vlm <- function(object, ...) {
 
   vcovvlm(object, ...)
-}
+}  # vcov.vlm
+
 
 
  vcovvlm <-
@@ -615,7 +673,7 @@ function(object, dispersion = NULL, untransform = FALSE) {
   if (length(dmn2 <- names(object@misc$link)) == M)
     dimnames(answer) <- list(dmn2, dmn2)
   answer
-}
+}  # vcovvlm
 
 
 
@@ -631,6 +689,19 @@ setMethod("vcov", "vlm",
 setMethod("vcov", "vglm",
          function(object, ...)
          vcovvlm(object, ...))
+
+
+
+
+
+
+
+
+yformat <- function(x, digits = options()$digits) {
+  format(ifelse(abs(x) < 0.001, signif(x, digits), round(x, digits)))
+}
+
+
 
 
 

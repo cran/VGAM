@@ -84,6 +84,7 @@ These functions have not been tested thoroughly.
 \seealso{
   \code{\link[base:log]{log}},
   \code{\link[base:log]{exp}}.
+  There is also a package called \pkg{expint}.
 
 
 }

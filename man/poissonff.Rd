@@ -174,6 +174,7 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
     \code{\link{binomialff}},
     \code{\link{quasibinomialff}},
     \code{\link[stats]{poisson}},
+    \code{\link[stats]{Poisson}},
     \code{\link{poisson.points}},
     \code{\link{ruge}},
     \code{\link{V1}}.

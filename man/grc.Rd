@@ -132,8 +132,8 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
 
   }
   \item{M1}{
-  The number of linear predictors of the \pkg{VGAM} \code{family} function
-  for an ordinary (univariate) response.
+  The number of linear predictors of the \pkg{VGAM} \code{family}
+  function for an ordinary (univariate) response.
   Then the number of linear predictors of the \code{rcim()} fit is
   usually the number of columns of \code{y} multiplied by \code{M1}.
   The default is to evaluate the \code{infos} slot of the
@@ -156,7 +156,8 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
 
   }
   \item{M, cindex}{
-  \eqn{M}  is the usual \pkg{VGAM} \eqn{M}, viz. the number of linear/additive
+    \eqn{M}  is the usual \pkg{VGAM} \eqn{M},
+    viz. the number of linear/additive
   predictors in total.
   Also, \code{cindex} means column index, and these point to the columns
   of \code{y} which are part of the vector of linear/additive predictor
@@ -168,13 +169,14 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
   \code{cindex = 2:(ncol(y)-1)}.
 
 
-% except for the possibly the first one (due to identifiability constraints).
+% except for the possibly the 1st 1 (due to identifiability constraints).
 
 
   }
   \item{rindex, iindex}{
   \code{rindex} means row index, and these are similar to \code{cindex}.
-  \code{iindex} means interaction index, and these are similar to \code{cindex}.
+  \code{iindex} means interaction index, and these are similar to
+  \code{cindex}.
 
 
   }
@@ -331,12 +333,14 @@ assistance from Alfian F. Hadi.
   interpretion thereof. For example, the constraint
   matrices applies the reduced-rank regression to the first
   (see \code{which.linpred})
-  linear predictor and the other linear predictors are intercept-only and
-  have a common value throughout the entire data set.
-  This means that, by default, \code{family =} \code{\link{zipoissonff}} is
+  linear predictor and the other linear predictors are intercept-only
+  and have a common value throughout the entire data set.
+  This means that, by default,
+  \code{family =} \code{\link{zipoissonff}} is
   appropriate but not
   \code{family =} \code{\link{zipoisson}}.
-  Else set \code{family =} \code{\link{zipoisson}} and \code{which.linpred = 2}.
+  Else set \code{family =} \code{\link{zipoisson}} and
+  \code{which.linpred = 2}.
   To understand what is going on, do examine the constraint
   matrices of the fitted object, and reconcile this with
   Equations (4.3) to (4.5) of Yee and Hastie (2003).
@@ -392,7 +396,7 @@ summary(model3)
 
 # Median polish but not 100 percent reliable. Maybe call alaplace2()...
 \dontrun{
-rcim0 <- rcim(auuc, fam = alaplace1(tau = 0.5), trace = FALSE, maxit = 500)
+rcim0 <- rcim(auuc, fam = alaplace1(tau = 0.5), trace=FALSE, maxit = 500)
 round(fitted(rcim0), digits = 0)
 round(100 * (fitted(rcim0) - auuc) / auuc, digits = 0)  # Discrepancy
 depvar(rcim0)
@@ -412,13 +416,13 @@ round(100 * (fitted(rcim0) - fv) / fv)  # Hopefully should be all 0s
 \dontrun{ top10 <- head(olym12, 10)
 grc1.oly12 <- with(top10, grc(cbind(gold, silver, bronze)))
 round(fitted(grc1.oly12))
-round(resid(grc1.oly12, type = "response"), digits = 1)  # Response residuals
+round(resid(grc1.oly12, type = "response"), digits = 1)  # Resp. resids
 summary(grc1.oly12)
 Coef(grc1.oly12)
 }
 
 
-# Example 3: Unconstrained quadratic ordination (UQO); see Yee and Hadi (2014)
+# Example 3: UQO; see Yee and Hadi (2014)
 \dontrun{
 n <- 100; p <- 5; S <- 10
 pdata <- rcqo(n, p, S, es.opt = FALSE, eq.max = FALSE,
@@ -453,7 +457,7 @@ myform <- attr(pdata, "formula")
 p1ut <- cqo(myform, family = poissonff,
             eq.tol = FALSE, trace = FALSE, data = pdata)
 c1ut <- cqo(Select(pdata, "y", sort = FALSE) ~ scale(latvar(uqo.rcim1)),
-            family = poissonff, eq.tol = FALSE, trace = FALSE, data = pdata)
+        family = poissonff, eq.tol = FALSE, trace = FALSE, data = pdata)
 lvplot(p1ut, lcol = 1:S, y = TRUE, pcol = 1:S, pch = 1:S, pcex = 0.5,
        main = "(c) CQO fitted to the original data",
        xlab = "Estimated (CQO) site scores")
@@ -465,7 +469,8 @@ lvplot(c1ut, lcol = 1:S, y = TRUE, pcol = 1:S, pch = 1:S, pcex = 0.5,
 \keyword{models}
 \keyword{regression}
 % plot(grc.oly1)
-% oly2 <- with(top10, grc(cbind(gold,silver,bronze), Rank = 2))  # Saturated model
+% # Saturated model:
+% oly2 <- with(top10, grc(cbind(gold,silver,bronze), Rank = 2))
 % round(fitted(oly2))
 % round(fitted(oly2)) - with(top10, cbind(gold,silver,bronze))
 % summary(oly2)  # Saturated model

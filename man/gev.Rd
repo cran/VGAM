@@ -178,10 +178,13 @@ gevff(llocation = "identitylink", lscale = "loge",
   \eqn{\xi>0}{xi>0},
   \eqn{\xi<0}{xi<0},
   \eqn{\xi = 0}{xi = 0}
-  correspond to the Frechet, Weibull, and Gumbel types respectively.
+  correspond to the Frechet,
+  reverse
+  Weibull, and Gumbel types respectively.
   It can be noted that the Gumbel (or Type I) distribution accommodates
   many commonly-used distributions such as the normal, lognormal,
   logistic, gamma, exponential and Weibull.
+
 
 
   For the GEV distribution, the \eqn{k}th moment about the mean exists
@@ -193,6 +196,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   \{ Gamma(1-2 xi) - Gamma^2 (1- xi) \} / xi^2}
   respectively,
   where \eqn{\Gamma}{Gamma} is the gamma function.
+
 
 
   Smith (1985) established that when \eqn{\xi > -0.5}{xi > -0.5},
@@ -208,11 +212,13 @@ gevff(llocation = "identitylink", lscale = "loge",
 % sets \eqn{\xi > -1}{xi > -1} so maximum likelihood works fine.
 
 
+
 }
 \section{Warning }{
   Currently, if an estimate of \eqn{\xi}{xi} is too close to 0 then
   an error may occur for \code{gev()} with multivariate responses.
   In general, \code{gevff()} is more reliable than \code{gev()}.
+
 
 
   Fitting the GEV by maximum likelihood estimation can be numerically
@@ -272,6 +278,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   \code{gevff} implements Prescott and Walden (1980).
 
 
+
   Function \code{egev()} has been replaced by the
   new family function \code{gevff()}. It now
   conforms to the usual \pkg{VGAM} philosophy of
@@ -285,6 +292,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   \pkg{VGAM} family function.
 
 
+
   The shape parameter \eqn{\xi}{xi} is difficult to estimate
   accurately unless there is a lot of data.
   Convergence is slow when \eqn{\xi}{xi} is near \eqn{-0.5}.
@@ -292,6 +300,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   to make sure \code{zero = 3}.
   The range restrictions of the parameter \eqn{\xi}{xi} are not
   enforced; thus it is possible for a violation to occur.
+
 
 
   Successful convergence often depends on having a reasonably good initial

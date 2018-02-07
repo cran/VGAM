@@ -11,6 +11,7 @@
 \usage{
 calibrate.qrrvglm(object, newdata = NULL,
         type = c("latvar", "predictors", "response", "vcov", "all3or4"),
+        se.type = c("asbefore", "wald"),
         initial.vals = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -45,6 +46,12 @@ calibrate.qrrvglm(object, newdata = NULL,
 
 
   }
+  \item{se.type}{ What type of standard errors are to be returned.
+  The choice \code{"asbefore"} comes from a long time ago.
+  The choice \code{"wald"} is based on work by David Zucker.
+
+
+  }
   \item{initial.vals}{ Initial values for the search.
     For rank-1 models, this should be a vector of length
     \code{nrow(newdata)}, and for rank 2 models
@@ -67,7 +74,8 @@ calibrate.qrrvglm(object, newdata = NULL,
   maximum likelihood calibration is theoretically easy and elegant.
   However, the method assumes that all species are
   independent, which is not really true in practice.
-  More details and references are given in Yee (2012).
+  More details and references are given in Yee (2018) and
+  ch.6 of Yee (2015).
 
 
   The function \code{\link[stats]{optim}} is used to search for
@@ -106,7 +114,7 @@ calibrate.qrrvglm(object, newdata = NULL,
   }
 } \references{
 
-Yee, T. W. (2017)
+Yee, T. W. (2018)
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.
@@ -122,7 +130,15 @@ Cambridge.
 
 
 }
-\author{T. W. Yee}
+\author{T. W. Yee.
+Recent work on the standard errors by
+David Zucker and
+Sam Oman at HUJI
+is gratefully acknowledged.
+
+
+
+}
 \note{
   Despite the name of this function, CAO models are handled
   as well.
@@ -152,26 +168,26 @@ Cambridge.
 }
 \examples{
 \dontrun{
-hspider[, 1:6] <- scale(hspider[, 1:6])  # Stdze the environmental variables
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Stdze environmental variables
 set.seed(123)
-p1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
-          WaterCon + BareSand + FallTwig +
-          CoveMoss + CoveHerb + ReflLux,
-          family = poissonff, data = hspider, Rank = 1,
-          I.toler = TRUE, Crow1positive = TRUE)
-
-siteNos <- 1:2  # Calibrate these sites
-cp1 <- calibrate(p1, trace = TRUE,
-                 new = data.frame(depvar(p1)[siteNos, ]))
+siteNos <- c(1, 5)  # Calibrate these sites
+pet1 <- cqo(cbind(Pardlugu, Pardmont, Pardnigr, Pardpull, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          data = hspider[-siteNos, ],  # Sites not in fitted model
+          family = poissonff, I.toler = TRUE, Crow1positive = TRUE)
+y0 <- hspider[siteNos, colnames(depvar(pet1))]  # Species counts
+cpet1 <- calibrate(pet1, trace = TRUE, newdata = data.frame(y0))
 }
 
 \dontrun{
 # Graphically compare the actual site scores with their calibrated values
-persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
+persp(pet1, main = "Site scores: solid=actual, dashed=calibrated",
       label = TRUE, col = "blue", las = 1)
 # Actual site scores:
-abline(v = latvar(p1)[siteNos], lty = 1, col = 1:length(siteNos))
-abline(v = cp1, lty = 2, col = 1:length(siteNos))  # Calibrated values
+xvars <- rownames(concoef(pet1))  # Variables comprising the latvar
+est.latvar <- as.matrix(hspider[siteNos, xvars]) %*% concoef(pet1)
+abline(v = est.latvar, lty = 1, col = 1:length(siteNos))
+abline(v = cpet1, lty = 2, col = 1:length(siteNos))  # Calibrated values
 }
 }
 \keyword{models}

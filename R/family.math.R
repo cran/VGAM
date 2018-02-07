@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -444,6 +444,34 @@ expint.E1 <- function(x) {
 
 
 
+
+mills.ratio <- function(x) {
+  ans <- exp(dnorm(x, log = TRUE) - pnorm(x, log.p = TRUE))
+  if (any(vecTF <- (x < -1e2))) {
+    xvneg <- x[vecTF]
+    ans[vecTF] <- -xvneg / (1 - 1/xvneg^2 + 3 / xvneg^4)
+  }
+  ans
+}  # mills.ratio()
+
+
+
+mills.ratio2 <- function(x) {
+  ans <- exp(2 * dnorm(x, log = TRUE) - pnorm(x, log.p = TRUE))
+  ans[x < -40] <- 0
+  ans
+}  # mills.ratio2()
+
+
+
+
+
+
+
+
+
+
+
 ghn100 <-
 c(-13.4064873381449, -12.8237997494878, -12.3429642228597, -11.9150619431142, 
 -11.521415400787, -11.1524043855851, -10.8022607536847, -10.4671854213428, 
@@ -471,6 +499,9 @@ c(-13.4064873381449, -12.8237997494878, -12.3429642228597, -11.9150619431142,
 10.4671854213428, 10.8022607536847, 11.1524043855851, 11.521415400787, 
 11.9150619431142, 12.3429642228597, 12.8237997494878, 13.4064873381449
 )
+
+
+
 ghw100 <-
 c(5.90806786503149e-79, 1.97286057487953e-72, 3.08302899000321e-67, 
 9.01922230369242e-63, 8.51888308176111e-59, 3.45947793647603e-55, 

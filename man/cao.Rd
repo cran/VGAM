@@ -306,7 +306,7 @@ Constrained additive ordination.
 
   Currently the dispersion parameter for a
   \code{\link{gaussianff}} CAO model is estimated slightly differently
-  and may be slightly biassed downwards (usually a little too small).
+  and may be slightly biased downwards (usually a little too small).
 
 
 }

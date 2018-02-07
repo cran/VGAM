@@ -12,7 +12,7 @@
 zipoisson(lpstr0 = "logit", llambda = "loge", type.fitted =
           c("mean", "lambda", "pobs0", "pstr0", "onempstr0"), ipstr0 =
           NULL, ilambda = NULL, gpstr0 = NULL, imethod = 1,
-          ishrinkage = 0.95, probs.y = 0.35, zero = NULL)
+          ishrinkage = 0.95, probs.y = 0.35, parallel = FALSE, zero = NULL)
 zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
             c("mean", "lambda", "pobs0", "pstr0", "onempstr0"),
             ilambda = NULL, ionempstr0 = NULL, gonempstr0 = NULL,
@@ -91,6 +91,12 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
   }
   \item{gpstr0, gonempstr0, probs.y}{
    Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{parallel}{
+   Details at \code{\link{CommonVGAMffArguments}},
+   but unlikely to be practically used actually.
 
 
   }

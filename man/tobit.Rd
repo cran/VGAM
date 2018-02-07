@@ -194,6 +194,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   \code{\link{double.cens.normal}},
   \code{\link{posnormal}},
   \code{\link{CommonVGAMffArguments}},
+  \code{\link{mills.ratio}},
   \code{\link[stats:Normal]{rnorm}}.
 
 

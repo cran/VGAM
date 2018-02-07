@@ -3,6 +3,14 @@
 %
 %
 %
+%\alias{mills.ratio}
+%\alias{mills.ratio2}
+% 201801
+% 201712
+\alias{which.etas}
+\alias{which.xij}
+% 201709
+% \alias{TIC}
 % 201706 and 201707
 % \alias{lrp.vglm}
 \alias{retain.col}
@@ -144,9 +152,9 @@
 % 201312;
 % \alias{simulate.vlm}
 % 201311;             20150316: modified to familyname
-\alias{familyname}
-\alias{familyname.vlm}
-\alias{familyname.vglmff}
+%\alias{familyname}
+%\alias{familyname.vlm}
+%\alias{familyname.vglmff}
 % 201309;
 \alias{I.col}
 \alias{BIC}

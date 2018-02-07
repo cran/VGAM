@@ -18,6 +18,26 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   parameter link functions can be expressed here.
 
   }
+  \item{\code{charfun}:}{
+  Object of class \code{"function"} which
+  returns the characteristic function
+  or variance function (usually for some GLMs only).
+  The former uses a dummy variable x.
+  Both use the linear/additive predictors.
+  The function must have arguments
+  \code{function(x, eta, extra = NULL, varfun = FALSE)}.
+  The \code{eta} and \code{extra} arguments are used to obtain
+  the parameter values.
+  If \code{varfun = TRUE} then the function returns the
+  variance function, else the characteristic function (default).
+  Note that
+  one should check that the \code{infos} slot has a list component
+  called \code{charfun} which is \code{TRUE} before attempting to
+  use this slot.
+  This is an easier way to test that this slot is operable.
+
+
+  }
   \item{\code{constraints}:}{
   Object of class \code{"expression"}
   which sets up any constraint matrices defined by arguments in the

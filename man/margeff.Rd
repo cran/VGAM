@@ -1,7 +1,7 @@
 \name{margeff}
 \alias{margeff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Marginal effects for several categorical response models }
+\title{ Marginal Effects for Several Categorical Response Models }
 \description{
   Marginal effects for the multinomial logit model and
   cumulative logit/probit/... models and

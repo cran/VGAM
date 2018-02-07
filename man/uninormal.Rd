@@ -1,6 +1,6 @@
 \name{uninormal}
 \alias{uninormal}
-\alias{normal1}
+%\alias{normal1}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Univariate Normal Distribution }
 \description{
@@ -89,16 +89,20 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 
 \author{ T. W. Yee }
-\section{Warning}{
-  \code{uninormal()} is the new name;
-  \code{normal1()} is old and will be decommissioned soon.
 
 
-}
+%\section{Warning}{
+  %\code{uninormal()} is the new name;
+  %\code{normal1()} is old and will be decommissioned soon.
+%
+%
+%}
 
 \note{
   Yet to do: allow an argument such as \code{eq.sd} that enables
   the standard devations to be the same.
+  Also, this function used to be called \code{normal1()} too,
+  but it has been decommissioned.
 
 
 }

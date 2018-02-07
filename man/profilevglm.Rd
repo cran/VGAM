@@ -81,6 +81,7 @@ profilevglm(object, which = 1:p.vlm, alpha = 0.01,
 \seealso{
   \code{\link{vglm}},
   \code{\link{confintvglm}},
+  \code{\link{lrt.stat}},
   \code{\link[stats]{profile}},
   \code{\link[MASS]{profile.glm}},
   \code{\link[MASS]{plot.profile}}.

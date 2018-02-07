@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -122,7 +122,7 @@ nparam.qrrvglm <- function(object, dpar = TRUE, ...) {
 
 
   NOS <- if (length(object@y)) ncol(object@y) else MMM
-  MSratio <- MMM / NOS  # First value is g(mean) = quadratic form in l
+  MSratio <- MMM / NOS  # 1st value is g(mean)=quadratic form in l
   if (round(MSratio) != MSratio)
     stop("variable 'MSratio' is not an integer")
   elts.D <- ifelse(I.tolerances || eq.tolerances, 1, NOS) *
@@ -161,7 +161,7 @@ nparam.rrvgam <- function(object, dpar = TRUE, ...) {
 
 
   NOS <- if (length(object@y)) ncol(object@y) else MMM
-  MSratio <- MMM / NOS  # First value is g(mean) = quadratic form in l
+  MSratio <- MMM / NOS  # 1st value is g(mean) = quadratic form in l
   if (round(MSratio) != MSratio)
     stop("variable 'MSratio' is not an integer")
 
@@ -423,6 +423,69 @@ setMethod("BIC", "qrrvglm",
 setMethod("BIC", "rrvgam",
           function(object, ..., k = log(nobs(object)))
             AICrrvgam(object, ..., k = k))
+
+
+
+
+
+
+
+
+if (!isGeneric("TIC"))
+  setGeneric("TIC", function(object, ...)
+             standardGeneric("TIC"),
+             package = "VGAM")
+
+
+TICvlm <- function(object, ...) {
+
+
+
+
+  estdisp <- object@misc$estimated.dispersion
+  if (is.Numeric(estdisp))
+    warning("the model has dispersion parameter(s); ",
+            "ignoring them by treating them as unity")
+
+
+  M  <- npred(object)
+  M1 <- npred(object, type = "one.response")
+  NOS <- M / M1  # Number of responses, really
+  pwts <- weights(object, type = "prior")
+  special.trt <- (any(pwts != 1) || NOS != 1)
+
+
+  eim.inv <- vcov(object)
+  p.VLM <- nrow(eim.inv)
+  X.vlm <- model.matrix(object, type = "vlm")
+  derivmat <- wweights(object, deriv.arg = TRUE)
+  deriv1 <- derivmat$deriv  # n x M matrix
+  if (special.trt) {    
+    if (ncol(pwts) != NOS && any(pwts != 1))
+      stop("prior weights should be a ", NOS, "-column matrix")
+    if (ncol(pwts) != NOS)
+      pwts <- matrix(c(pwts), nrow(deriv1), NOS)
+    pwts <- kronecker(sqrt(pwts), matrix(1, 1, M1))
+    deriv1 <- deriv1 / pwts
+  }
+  derivmat <- X.vlm *  c(t(deriv1))  # Multiply by an nM-vector
+  derivmat <- t(derivmat) %*% derivmat
+  Penalty <- 0
+  for (ii in 1:p.VLM)
+    Penalty <- Penalty + sum(derivmat[ii, ] * eim.inv[, ii])
+
+  ans <- (-2) * logLik.vlm(object, ...) + 2 * Penalty
+  ans
+}
+
+
+
+
+setMethod("TIC", "vlm",
+          function(object, ...)
+            TICvlm(object, ...))
+
+
 
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,14 +16,20 @@
 summaryvlm <-
   function(object, correlation = FALSE, dispersion = NULL,
            Colnames = c("Estimate", "Std. Error", "z value", "Pr(>|z|)"),
-           presid = TRUE) {
+           presid = TRUE,
+           lrt0.arg = FALSE,
+           score0.arg = FALSE,
+           wald0.arg = FALSE,
+           values0 = 0,
+           subset = NULL,
+           omit1s = TRUE) {
 
 
 
   if (is.logical(object@misc$BFGS) && object@misc$BFGS)
     warning("the estimated variance-covariance matrix is ",
-            "usually inaccurate because the working weight matrices are ",
-            "obtained by a crude BFGS quasi-Newton approximation")
+            "usually inaccurate because the working weight matrices ",
+            "are obtained by a crude BFGS quasi-Newton approximation")
 
   M <- object@misc$M
   n <- object@misc$n
@@ -34,7 +40,7 @@ summaryvlm <-
   cnames <- names(Coefs)
 
   Presid <- if (presid) {
-    Presid <- residualsvlm(object, type = "pearson")  # NULL if pooled.weight
+    Presid <- residualsvlm(object, type = "pearson")
     Presid
   } else {
     NULL
@@ -76,7 +82,7 @@ summaryvlm <-
     R <- object@R
 
     if (ncol.X.vlm < max(dim(R)))
-      stop("R is rank deficient")
+      stop("'R' is rank deficient")
 
 
 
@@ -103,6 +109,116 @@ summaryvlm <-
     coef3 <- coef3[, -4]  # Delete the pvalues column
   }
 
+
+
+
+
+
+  if (lrt0.arg) {
+    coef4lrt0 <- coef3[, -2, drop = FALSE]  # Omit SEs
+    lrt.list <- lrt.stat(object, all.out = TRUE,
+                    values0 = values0, subset = subset,
+                    trace = FALSE,
+                    omit1s = omit1s)  # Intercept-only model: NULL
+    lrt.list.values0 <- lrt.list$values0
+    SEs <- NA  # For correlation = TRUE
+
+
+    if (length(lrt.list)) {  # Usually omit intercepts:
+      coef4lrt0 <- coef4lrt0[names(lrt.list.values0), , drop = FALSE]
+
+
+      if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
+        coef4lrt0[, 'z value'] <- lrt.list$lrt.stat
+        coef4lrt0[, 'Pr(>|z|)'] <- lrt.list$pvalues
+
+        if (is.logical(object@misc$estimated.dispersion) &&
+            object@misc$estimated.dispersion)
+          coef4lrt0 <- coef4lrt0[, -3]  # Delete the pvalues column
+      } else {
+        coef4lrt0[, 1] <- coef4lrt0[, 2] <-
+        coef4lrt0[, 3] <- NA
+        coef4lrt0 <- coef4lrt0[, -3]  # Delete the pvalues column
+      }
+    } else {
+      coef4lrt0 <- new("matrix")  # Empty matrix, of length 0
+    }
+  } else {
+    coef4lrt0 <- new("matrix")  # Empty matrix, of length 0
+  }
+
+
+
+
+ 
+
+  if (score0.arg) {
+    coef4score0 <- coef3  # Overwrite some columns
+    score.list <- score.stat(object, all.out = TRUE,
+                             values0 = values0, subset = subset,
+                             trace = FALSE,
+                           omit1s = omit1s)  # Intercept-only model: NULL
+    SEs <- score.list$SE0
+    if (length(score.list)) {  # Usually omit intercepts:
+      coef4score0 <- coef4score0[names(SEs), , drop = FALSE]
+      if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
+        coef4score0[, 2] <- SEs %o% sigma  # Fails if sigma is a vector
+        coef4score0[, 3] <- score.list$score.stat
+        pvalue <- 2 * pnorm(-abs(coef4score0[, 3]))
+        coef4score0[, 4] <- pvalue
+
+        if (is.logical(object@misc$estimated.dispersion) &&
+            object@misc$estimated.dispersion)
+          coef4score0 <- coef4score0[, -4]  # Delete the pvalues column
+      } else {
+        coef4score0[, 1] <- coef4score0[, 2] <-
+        coef4score0[, 3] <- coef4score0[, 4] <- NA
+        coef4score0 <- coef4score0[, -4]  # Delete the pvalues column
+      }
+    } else {
+      coef4score0 <- new("matrix")  # Empty matrix, of length 0
+    }
+  } else {
+    coef4score0 <- new("matrix")  # Empty matrix, of length 0
+  }
+
+
+
+
+
+
+
+  if (wald0.arg) {
+    coef4wald0 <- coef3  # Overwrite some columns
+    SEs <- wald.stat(object, all.out = TRUE,
+                     values0 = values0, subset = subset,
+                     trace = FALSE,
+                     omit1s = omit1s)$SE0  # Intercept-only model: NULL
+    if (length(SEs)) {  # Usually omit intercepts:
+      coef4wald0 <- coef4wald0[names(SEs), , drop = FALSE]
+      if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
+        coef4wald0[, 2] <- SEs %o% sigma  # Fails if sigma is a vector
+        coef4wald0[, 3] <- coef4wald0[, 1] / coef4wald0[, 2]
+        pvalue <- 2 * pnorm(-abs(coef4wald0[, 3]))
+        coef4wald0[, 4] <- pvalue
+
+        if (is.logical(object@misc$estimated.dispersion) &&
+            object@misc$estimated.dispersion)
+          coef4wald0 <- coef4wald0[, -4]  # Delete the pvalues column
+      } else {
+        coef4wald0[, 1] <- coef4wald0[, 2] <-
+        coef4wald0[, 3] <- coef4wald0[, 4] <- NA
+        coef4wald0 <- coef4wald0[, -4]  # Delete the pvalues column
+      }
+    } else {
+      coef4wald0 <- new("matrix")  # Empty matrix, of length 0
+    }
+  } else {
+    coef4wald0 <- new("matrix")  # Empty matrix, of length 0
+  }
+
+
+
   if (correlation) {
     correl <- covun * outer(1 / SEs, 1 / SEs)
 
@@ -120,6 +236,9 @@ summaryvlm <-
   new("summary.vlm",
       object,
       coef3       = coef3,
+      coef4lrt0   = coef4lrt0,
+      coef4score0 = coef4score0,
+      coef4wald0  = coef4wald0,
       correlation = correl,
       df          = c(ncol.X.vlm, rdf),
       sigma       = sigma)
@@ -134,6 +253,9 @@ summaryvlm <-
 
   answer
 }
+
+
+
 
 
 

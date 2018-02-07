@@ -7,6 +7,7 @@
 \title{ Calculate Variance-Covariance Matrix for a Fitted
         VLM or RR-VGLM
         Object
+
 }
 \description{
   Returns the variance-covariance matrix of the
@@ -83,7 +84,7 @@ vcovvlm(object, dispersion = NULL, untransform = FALSE)
   \code{\link{hdeff.vglm}}, which tests for an
   Hauck-Donner effect (HDE) for each regression coefficient.
   If the HDE is present, using
-  \code{\link{lrp.vglm}} should return more accurate p-values.
+  \code{\link{lrt.stat.vlm}} should return more accurate p-values.
 
 
 
@@ -97,7 +98,7 @@ vcovvlm(object, dispersion = NULL, untransform = FALSE)
   \code{\link{summaryvglm}},
   \code{\link[stats]{vcov}},
   \code{\link{hdeff.vglm}},
-  \code{\link{lrp.vglm}}.
+  \code{\link{lrt.stat.vlm}}.
 
 
 }

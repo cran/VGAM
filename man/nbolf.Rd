@@ -51,12 +51,12 @@ nbolf(theta, cutpoint = NULL, k = NULL,
 
 }
 \value{
-  See Yee (2017) for details.
+  See Yee (2018) for details.
 
 
 }
 \references{
-  Yee, T. W. (2017)
+  Yee, T. W. (2018)
   \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 

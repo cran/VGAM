@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -111,7 +111,7 @@ VGAM.weights.function <- function(w, M, n) {
     dy <- dimnames(y)
 
     predictors.names <- if (!is.null(dy[[2]])) dy[[2]] else
-                       paste("Y", 1:M, sep = "")
+                       param.names("Y", M)
 
     if (!length(etastart))
       etastart <- 0 * y
@@ -436,8 +436,8 @@ if (FALSE)
     NOS <- ncol(y)
     M <- NOS * M1
 
-    mean.names  <- param.names("mean",     NOS)
-    sdev.names  <- param.names("sd",       NOS)
+    mean.names  <- param.names("mean",     NOS, skip1 = TRUE)
+    sdev.names  <- param.names("sd",       NOS, skip1 = TRUE)
 
     predictors.names <-
       c(namesof(mean.names , .lmean     , earg = .emean     , tag = FALSE),
@@ -1468,7 +1468,7 @@ lqnorm <- function(qpower = 2,
 
 
     predictors.names <- if (!is.null(dy[[2]])) dy[[2]] else
-                        paste("mu", 1:M, sep = "")
+                        param.names("mu", M, skip1 = TRUE)
     predictors.names <- namesof(predictors.names, link = .link,
                                 earg = .earg, short = TRUE)
 
@@ -1788,8 +1788,8 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
       y[matTF] <- Uppmat[matTF]
     }
 
-    temp1.names <- param.names("mu", ncoly)
-    temp2.names <- param.names("sd", ncoly)
+    temp1.names <- param.names("mu", ncoly, skip1 = TRUE)
+    temp2.names <- param.names("sd", ncoly, skip1 = TRUE)
     predictors.names <-
       c(namesof(temp1.names, .lmu , earg = .emu , tag = FALSE),
         namesof(temp2.names, .lsd , earg = .esd , tag = FALSE))
@@ -1904,8 +1904,8 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
 
     temp0303 <- c(rep_len( .lmu , ncoly),
                   rep_len( .lsd , ncoly))
-    names(temp0303) <- c(param.names("mu", ncoly),
-                         param.names("sd", ncoly))
+    names(temp0303) <- c(param.names("mu", ncoly, skip1 = TRUE),
+                         param.names("sd", ncoly, skip1 = TRUE))
     temp0303 <- temp0303[interleave.VGAM(M, M1 = M1)]
     misc$link <- temp0303  # Already named
 
@@ -2007,23 +2007,6 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
     y <- cbind(y)
     ncoly <- ncol(y)
 
-    mills.ratio1 <- function(x) {
-      ans <- exp(dnorm(x, log = TRUE) - pnorm(x, log = TRUE))
-      if (any(vecTF <- (x < -1e2))) {
-        xvneg <- x[vecTF]
-        ans[vecTF] <- -xvneg / (1 - 1/xvneg^2 + 3 / xvneg^4)
-      }
-      ans
-    }  # mills.ratio1()
-
-
-  mills.ratio2 <- function(x) {
-    ans <- exp(2 * dnorm(x, log = TRUE) - pnorm(x, log = TRUE))
-    ans[x < -40] <- 0
-    ans
-  }
-
-
 
 moment.k.dnorm <- function(z, k = 0) {
   if (any(k < 0))
@@ -2068,14 +2051,14 @@ moment.millsratio2 <- function(zedd) {
     if (any(cenL)) {
       mumL <- Lowmat - mum
       temp21L <- mumL[cenL] / sdm[cenL]
-      fred21 <- mills.ratio1(temp21L)
+      fred21 <- mills.ratio(temp21L)
       dl.dmu[cenL] <- -fred21 / sdm[cenL]
       dl.dsd[cenL] <-  fred21 * (-temp21L / sdm[cenL])
     }
     if (any(cenU)) {
       mumU <- Uppmat - mum
       temp21U <- mumU[cenU] / sdm[cenU]
-      fred21 <- -mills.ratio1(-temp21U)
+      fred21 <- -mills.ratio(-temp21U)
       dl.dmu[cenU] <- -fred21 / sdm[cenU]  # Negated
       dl.dsd[cenU] <-  fred21 * (-temp21U / sdm[cenU])
     }
@@ -2109,7 +2092,7 @@ moment.millsratio2 <- function(zedd) {
         zedd0 <- (            mum[, spp.]) / sdm[, spp.]
         phivec  <- dnorm(zedd0)
         Phivec  <- pnorm(zedd0)
-        phicPhi <- mills.ratio1(-zedd0)
+        phicPhi <- mills.ratio(-zedd0)
 
         wz1[, iam(1, 2, M = M1)] <- phivec * (1 + zedd0 *
                                     (zedd0 - phicPhi))
@@ -2120,7 +2103,7 @@ moment.millsratio2 <- function(zedd) {
                                     moment.k.dnorm(-zedd0, k = 1)
         wz1[, iam(2, 2, M = M1)] <- 2 * Phivec +
                                     moment.k.dnorm(-zedd0, k = 2) *
-                                    mills.ratio1(-zedd0) +
+                                    mills.ratio(-zedd0) +
                                     moment.k.dnorm(-zedd0, k = 1) +
                                     moment.k.dnorm(-zedd0, k = 3)
 
@@ -2161,8 +2144,8 @@ moment.millsratio2 <- function(zedd) {
       Phivec.A  <- pnorm(A.i)
       Phivec.B  <- pnorm(B.i)
       Phivec.BB <- pnorm(-B.i)
-      phiPhi.A  <- mills.ratio1( A.i)
-      phicPhi.B <- mills.ratio1(-B.i)
+      phiPhi.A  <- mills.ratio( A.i)
+      phicPhi.B <- mills.ratio(-B.i)
 
 
 
@@ -2184,9 +2167,9 @@ moment.millsratio2 <- function(zedd) {
                      moment.millsratio2( A.i)
       ned2l.dmusd <- phivec.A - phivec.B +
                      moment.k.dnorm( A.i, k = 2) +
-                     moment.k.dnorm( A.i, k = 1) * mills.ratio1( A.i) +
+                     moment.k.dnorm( A.i, k = 1) * mills.ratio( A.i) +
                      moment.k.dnorm( B.i, k = 2) +
-                     moment.k.dnorm(-B.i, k = 1) * mills.ratio1(-B.i)
+                     moment.k.dnorm(-B.i, k = 1) * mills.ratio(-B.i)
 
 
 
@@ -2219,7 +2202,6 @@ moment.millsratio2 <- function(zedd) {
 
 
 
- normal1 <-
  uninormal <-
   function(lmean = "identitylink", lsd = "loge", lvar = "loge",
            var.arg = FALSE,
@@ -2289,6 +2271,24 @@ moment.millsratio2 <- function(zedd) {
             "\n",
             if (var.arg) "Variance: var" else "Variance: sd^2"),
 
+  charfun = eval(substitute(function(x, eta, extra = NULL,
+                                     varfun = FALSE) {
+    mymu <- eta2theta(eta[, c(TRUE, FALSE)], .lmean , earg = .emean )
+    if ( .var.arg ) {
+      Varm <- eta2theta(eta[, c(FALSE, TRUE)], .lvare , earg = .evare )
+    } else {
+      sdev <- eta2theta(eta[, c(FALSE, TRUE)], .lsdev , earg = .esdev )
+      Varm <- sdev^2
+    }
+    if (varfun) {
+      Varm
+    } else {
+      exp(x * (mymu * 1i - 0.5 * x * Varm))
+    }
+  }, list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+           .emean = emean, .esdev = esdev, .evare = evare,
+           .var.arg = var.arg ))),
+
 
 
   constraints = eval(substitute(expression({
@@ -2309,6 +2309,7 @@ moment.millsratio2 <- function(zedd) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         charfun = TRUE,
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = TRUE,
@@ -2369,8 +2370,9 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-    mynames1 <- param.names("mean", ncoly)
-    mynames2 <- param.names(if ( .var.arg ) "var" else "sd", ncoly)
+    mynames1 <- param.names("mean", ncoly, skip1 = TRUE)
+    mynames2 <- param.names(if ( .var.arg ) "var" else "sd",
+                            ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lmean , earg = .emean , tag = FALSE),
           if ( .var.arg )
@@ -2492,7 +2494,7 @@ moment.millsratio2 <- function(zedd) {
 
     if ( .lmean == "explink") {
       if (any(eta[, M1*(1:ncoly) - 1] <= 0)) {
-        warning("turning some columns of 'eta' positive in @loglikelihood")
+      warning("turning some columns of 'eta' positive in @loglikelihood")
         for (ii in 1:ncoly)
           eta[, M1*ii - 1] <- pmax( .smallno , eta[, M1*ii - 1])
       }
@@ -2812,6 +2814,7 @@ moment.millsratio2 <- function(zedd) {
   infos = eval(substitute(function(...) {
     list(M1 = NA,
          Q1 = 1,
+         hadof = FALSE,  # This ==> hdeff() does not work.
          multipleResponses = FALSE,  # zz unsure
          parameters.names = as.character(NA),  # zz unsure
          zero = .zero )
@@ -2935,7 +2938,8 @@ moment.millsratio2 <- function(zedd) {
       mynames1 <- mynames1[-max(extra$col.index.is.multilogit)]
     }
 
-    mynames2 <- param.names(if ( .var.arg ) "var" else "sd", ncoly)
+    mynames2 <- param.names(if ( .var.arg ) "var" else "sd",
+                            ncoly, skip1 = TRUE)
     predictors.names <-
         c(mynames1,
           if ( .var.arg )
@@ -2990,7 +2994,7 @@ moment.millsratio2 <- function(zedd) {
       if (!icoefficients.given) {
         if (LLL <- length(extra$is.multilogit)) {
           raw.coeffs <- jfit.coeff[extra$col.index.is.multilogit]
-          possum1 <- (0.01 + abs(raw.coeffs)) / sum(0.01 + abs(raw.coeffs))
+        possum1 <- (0.01 + abs(raw.coeffs)) / sum(0.01 + abs(raw.coeffs))
           jfit.coeff[extra$is.multilogit] <- possum1
         }
       }

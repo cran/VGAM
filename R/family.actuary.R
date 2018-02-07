@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -246,8 +248,8 @@ rgumbelII <- function(n, scale = 1, shape) {
     M <- M1 * ncoly
 
 
-    mynames1 <- param.names("scale", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("scale", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
 
 
     predictors.names <-
@@ -720,7 +722,8 @@ pperks <- function(q, scale = 1, shape,
 }
 
 
-qperks <- function(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE) {
+ qperks <-
+  function(p, scale = 1, shape, lower.tail = TRUE, log.p = FALSE) {
 
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
@@ -872,8 +875,8 @@ perks.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncoly
 
 
-    mynames1 <- param.names("scale", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("scale", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lscale , .escale , tag = FALSE),
           namesof(mynames2, .lshape , .eshape , tag = FALSE))[
@@ -1061,8 +1064,8 @@ perks.control <- function(save.weights = TRUE, ...) {
       nd2l.dada <- 1 / Shape^2 + 1 / (1 + Shape)^2 -
         2 * exp(2 * Scale * y[, spp.]) / temp8
 
-      nd2l.dbdb <- 2 * Shape * y[, spp.]^2 * exp(Scale * y[, spp.]) / temp8
-
+      nd2l.dbdb <- 2 * Shape * y[, spp.]^2 *
+                   exp(Scale * y[, spp.]) / temp8
 
       ave.oim11 <- weighted.mean(nd2l.dada, w[, spp.])
       ave.oim12 <- weighted.mean(nd2l.dadb, w[, spp.])
@@ -1178,7 +1181,8 @@ pmakeham <- function(q, scale = 1, shape, epsilon = 0,
 
   if (lower.tail) {
     if (log.p) {
-      ans <- log(-expm1(-q * epsilon - (shape / scale) * expm1(scale * q)))
+      ans <- log(-expm1(-q * epsilon - (shape / scale) *
+                        expm1(scale * q)))
       ans[q <= 0 ] <- -Inf
       ans[q == Inf] <- 0
     } else {
@@ -1386,9 +1390,9 @@ makeham.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncoly
 
 
-    mynames1 <- param.names("scale",   ncoly)
-    mynames2 <- param.names("shape",   ncoly)
-    mynames3 <- param.names("epsilon", ncoly)
+    mynames1 <- param.names("scale",   ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape",   ncoly, skip1 = TRUE)
+    mynames3 <- param.names("epsilon", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lscale , .escale , tag = FALSE),
           namesof(mynames2, .lshape , .eshape , tag = FALSE),
@@ -1603,7 +1607,7 @@ makeham.control <- function(save.weights = TRUE, ...) {
     dThetas.detas <- dthetas.detas[, interleave.VGAM(M, M1 = M1)]
     wz <- matrix(0.0, n, M + M - 1 + M - 2)  # wz has half-bandwidth 3
 
-    ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)  # Use simulated EIM
+    ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)  # Use SFS
 
     for (spp. in 1:NOS) {
       run.varcov <- 0
@@ -1612,7 +1616,7 @@ makeham.control <- function(save.weights = TRUE, ...) {
       Epsil <- epsil[, spp.]
 
       for (ii in 1:( .nsimEIM )) {
-        ysim <- rmakeham(n = n, scale = Scale, shape = Shape, epsil = Epsil)
+        ysim <- rmakeham(n, scale = Scale, shape = Shape, epsil = Epsil)
         temp2 <- exp(ysim * Scale)
         temp3 <- Epsil + Shape * temp2
         dl.dshape <- temp2 / temp3 - expm1(ysim * Scale) / Scale
@@ -1630,7 +1634,8 @@ makeham.control <- function(save.weights = TRUE, ...) {
 
       wz1 <- if (intercept.only)
         matrix(colMeans(run.varcov, na.rm = TRUE),
-               nrow = n, ncol = ncol(run.varcov), byrow = TRUE) else run.varcov
+               nrow = n, ncol = ncol(run.varcov), byrow = TRUE) else
+        run.varcov
 
       wz1 <- wz1 * dThetas.detas[, M1 * (spp. - 1) + ind1$row] *
                    dThetas.detas[, M1 * (spp. - 1) + ind1$col]
@@ -1872,8 +1877,8 @@ gompertz.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncoly
 
 
-    mynames1 <- param.names("scale", ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("scale", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lscale , .escale , tag = FALSE),
           namesof(mynames2, .lshape , .eshape , tag = FALSE))[
@@ -2250,8 +2255,8 @@ exponential.mo.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncoly
 
 
-    mynames1 <- param.names("alpha",  ncoly)
-    mynames2 <- param.names("lambda", ncoly)
+    mynames1 <- param.names("alpha",  ncoly, skip1 = TRUE)
+    mynames2 <- param.names("lambda", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lalpha0 , .ealpha0 , tag = FALSE),
           namesof(mynames2, .llambda , .elambda , tag = FALSE))[
@@ -2574,18 +2579,22 @@ if (ii < 3) {
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha1.names  <- param.names("shape1.a",  NOS)
-    sha2.names  <- param.names("shape2.p",  NOS)
-    sha3.names  <- param.names("shape3.q",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha1.names  <- param.names("shape1.a",  NOS, skip1 = TRUE)
+    sha2.names  <- param.names("shape2.p",  NOS, skip1 = TRUE)
+    sha3.names  <- param.names("shape3.q",  NOS, skip1 = TRUE)
 
     predictors.names <- c(
       if ( .lss ) {
-        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
-          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+        c(namesof(scaL.names , .lscale    , earg = .escale    ,
+                  tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a ,
+                  tag = FALSE))
       } else {
-        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
-          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a ,
+                  tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    ,
+                  tag = FALSE))
       },
       namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE),
       namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
@@ -2605,10 +2614,10 @@ if (ii < 3) {
           gshape1.a  <- .gshape1.a
           gshape2.p  <- .gshape2.p
           gshape3.q  <- .gshape3.q
-          if (length( .iscale    )) gscale    <-  rep_len( .iscale    , NOS)
-          if (length( .ishape1.a )) gshape1.a <-  rep_len( .ishape1.a , NOS)
-          if (length( .ishape2.p )) gshape2.p <-  rep_len( .ishape2.p , NOS)
-          if (length( .ishape3.q )) gshape3.q <-  rep_len( .ishape3.q , NOS)
+        if (length( .iscale    )) gscale    <-  rep_len( .iscale    , NOS)
+        if (length( .ishape1.a )) gshape1.a <-  rep_len( .ishape1.a , NOS)
+        if (length( .ishape2.p )) gshape2.p <-  rep_len( .ishape2.p , NOS)
+        if (length( .ishape3.q )) gshape3.q <-  rep_len( .ishape3.q , NOS)
 
 
         try.this <-
@@ -2633,12 +2642,12 @@ if (ii < 3) {
 
       etastart <-
         cbind(if ( .lss )
-              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
-                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
-              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
-                    theta2eta(sc.init, .lscale    , earg = .escale    )),
-              theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ),
-              theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
+          cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+          cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                theta2eta(sc.init, .lscale    , earg = .escale    )),
+          theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ),
+          theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
       etastart <- etastart[, interleave.VGAM(M, M1 = M1)]
     }  # End of etastart.
   }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
@@ -3468,17 +3477,21 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha1.names  <- param.names("shape1.a",  NOS)
-    sha3.names  <- param.names("shape3.q",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha1.names  <- param.names("shape1.a",  NOS, skip1 = TRUE)
+    sha3.names  <- param.names("shape3.q",  NOS, skip1 = TRUE)
 
     predictors.names <- c(
       if ( .lss ) {
-        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
-          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+        c(namesof(scaL.names , .lscale    , earg = .escale    ,
+                  tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a ,
+                  tag = FALSE))
       } else {
-        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
-          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a ,
+                  tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    ,
+                  tag = FALSE))
       },
       namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
@@ -3496,9 +3509,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
           gshape3.q  <- .gshape3.q
-          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
-          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
-          if (length( .ishape3.q )) gshape3.q <- rep_len( .ishape3.q , NOS)
+        if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+        if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
+        if (length( .ishape3.q )) gshape3.q <- rep_len( .ishape3.q , NOS)
 
 
 
@@ -3536,11 +3549,11 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
       etastart <-
         cbind(if ( .lss )
-              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
-                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
-              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
-                    theta2eta(sc.init, .lscale    , earg = .escale    )),
-              theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
+          cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+          cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                theta2eta(sc.init, .lscale    , earg = .escale    )),
+          theta2eta(qq.init , .lshape3.q , earg = .eshape3.q ))
       etastart <- etastart[, interleave.VGAM(M, M1 = M1)]
     }  # End of etastart.
   }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
@@ -3929,9 +3942,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha1.names  <- param.names("shape1.a",  NOS)
-    sha2.names  <- param.names("shape2.p",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha1.names  <- param.names("shape1.a",  NOS, skip1 = TRUE)
+    sha2.names  <- param.names("shape2.p",  NOS, skip1 = TRUE)
 
     predictors.names <- c(
       if ( .lss ) {
@@ -3995,11 +4008,11 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
       etastart <-
         cbind(if ( .lss )
-              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
-                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
-              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
-                    theta2eta(sc.init, .lscale    , earg = .escale    )),
-              theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ))
+          cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+          cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                theta2eta(sc.init, .lscale    , earg = .escale    )),
+          theta2eta(pp.init , .lshape2.p , earg = .eshape2.p ))
       etastart <- etastart[, interleave.VGAM(M, M1 = M1)]
     }  # End of etastart.
   }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
@@ -4371,14 +4384,14 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha2.names  <- param.names("shape2.p",  NOS)
-    sha3.names  <- param.names("shape3.q",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha2.names  <- param.names("shape2.p",  NOS, skip1 = TRUE)
+    sha3.names  <- param.names("shape3.q",  NOS, skip1 = TRUE)
 
     predictors.names <-
-      c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
-        namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE),
-        namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
+    c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+      namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE),
+      namesof(sha3.names , .lshape3.q , earg = .eshape3.q , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     if (!length(etastart)) {
@@ -4476,9 +4489,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 3
 
-    misc$link <- c(rep_len( .lscale    , ncoly),
-                   rep_len( .lshape2.p , ncoly),
-                   rep_len( .lshape3.q , ncoly))[interleave.VGAM(M, M1 = M1)]
+    misc$link <-
+      c(rep_len( .lscale    , ncoly),
+        rep_len( .lshape2.p , ncoly),
+        rep_len( .lshape3.q , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(scaL.names,             sha2.names, sha3.names)
     names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
 
@@ -4707,8 +4721,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha3.names  <- param.names("shape3.q",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha3.names  <- param.names("shape3.q",  NOS, skip1 = TRUE)
 
     predictors.names <-
       c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
@@ -4796,8 +4810,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep_len( .lscale    , ncoly),
-                   rep_len( .lshape3.q , ncoly))[interleave.VGAM(M, M1 = M1)]
+    misc$link <-
+      c(rep_len( .lscale    , ncoly),
+        rep_len( .lshape3.q , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <-
       c(scaL.names,                         sha3.names)
     names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
@@ -5048,8 +5063,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha1.names  <- param.names("shape1.a",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha1.names  <- param.names("shape1.a",  NOS, skip1 = TRUE)
 
     predictors.names <- if ( .lss ) {
       c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
@@ -5071,8 +5086,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1 ) {
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
-          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
-          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
+        if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+        if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
 
 
 
@@ -5167,9 +5182,6 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         misc$earg[[M1*ii-1]] <- .eshape1.a
         misc$earg[[M1*ii  ]] <- .escale
       }
-
-    misc$expected          <- TRUE
-    misc$multipleResponses <- TRUE
   }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
             .escale    = escale   , .eshape1.a = eshape1.a,
             .lss = lss ))),
@@ -5284,10 +5296,6 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     qq   <- 1
     temp1 <- log(y/Scale)
     temp2 <- (y/Scale)^aa
-    temp3 <- digamma(parg + qq)
-    temp3a <- digamma(parg)
-    temp3b <- digamma(qq)
-    temp4 <- log1p(temp2)
 
     dl.dscale <- (aa/Scale) * (-parg + (parg+qq) / (1+1/temp2))
     dl.da <- 1/aa + parg * temp1 - (parg+qq) * temp1 / (1+1/temp2)
@@ -5307,37 +5315,23 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
              .escale    = escale   , .eshape1.a = eshape1.a,
              .lss = lss ))),
   weight = eval(substitute(expression({
-    temp5  <- trigamma(parg + qq)
-    temp5a <- trigamma(parg)
-    temp5b <- trigamma(qq)
+    ned2l.da <- (1 + (-6 + pi^2) / 9) / aa^2
+    ned2l.dscale  <- ((aa / Scale)^2) / 3
 
-    ned2l.da <- (1 + parg + qq + parg * qq * (temp5a + temp5b +
-                (temp3b - temp3a + (parg-qq)/(parg*qq))^2 -
-                (parg^2 + qq^2) / (parg*qq)^2)) / (aa^2 * (1+parg+qq))
-    ned2l.dscale  <- (aa^2) * parg * qq / ((1+parg+qq) * Scale^2)
-    ned2l.dascale <- (parg - qq - parg * qq *
-                     (temp3a -temp3b)) / (Scale*(1 + parg+qq))
-    wz <- if ( .lss ) {
-      array(c(c(w) * ned2l.dscale * dscale.deta^2,
-              c(w) * ned2l.da * da.deta^2,
-              c(w) * ned2l.dascale * da.deta * dscale.deta),
-            dim = c(n, M/M1, M1*(M1+1)/2))
+
+    wz <- matrix(0, n, M)  # Diagonal
+    if ( .lss ) {
+      wz[, c(TRUE, FALSE)] <- ned2l.dscale * dscale.deta^2
+      wz[, c(FALSE, TRUE)] <- ned2l.da * da.deta^2
     } else {
-      array(c(c(w) * ned2l.da * da.deta^2,
-              c(w) * ned2l.dscale * dscale.deta^2,
-              c(w) * ned2l.dascale * da.deta * dscale.deta),
-            dim = c(n, M/M1, M1*(M1+1)/2))
+      wz[, c(TRUE, FALSE)] <- ned2l.da * da.deta^2
+      wz[, c(FALSE, TRUE)] <- ned2l.dscale * dscale.deta^2
     }
-    wz <- arwz2wz(wz, M = M, M1 = M1)
-    wz
+    c(w) * wz
   }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
             .escale    = escale   , .eshape1.a = eshape1.a,
             .lss = lss ))))
 }
-
-
-
-
 
 
 
@@ -5427,8 +5421,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha2.names  <- param.names("shape2.p",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha2.names  <- param.names("shape2.p",  NOS, skip1 = TRUE)
 
     predictors.names <-
       c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
@@ -5505,8 +5499,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   last = eval(substitute(expression({
     M1 <- 2
 
-    misc$link <- c(rep_len( .lscale    , ncoly),
-                   rep_len( .lshape2.p , ncoly))[interleave.VGAM(M, M1 = M1)]
+    misc$link <-
+      c(rep_len( .lscale    , ncoly),
+        rep_len( .lshape2.p , ncoly))[interleave.VGAM(M, M1 = M1)]
     temp.names <- c(scaL.names, sha2.names)
     names(misc$link) <- temp.names[interleave.VGAM(M, M1 = M1)]
 
@@ -5754,16 +5749,20 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha1.names  <- param.names("shape1.a",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha1.names  <- param.names("shape1.a",  NOS, skip1 = TRUE)
 
     predictors.names <-
       if ( .lss ) {
-        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
-          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+        c(namesof(scaL.names , .lscale    , earg = .escale    ,
+                  tag = FALSE),
+          namesof(sha1.names , .lshape1.a , earg = .eshape1.a ,
+                  tag = FALSE))
       } else {
-        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
-          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a ,
+                  tag = FALSE),
+          namesof(scaL.names , .lscale    , earg = .escale    ,
+                  tag = FALSE))
       }
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
@@ -5818,10 +5817,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
       }
 
       etastart <- if ( .lss )
-              cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
-                    theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
-              cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
-                    theta2eta(sc.init, .lscale    , earg = .escale    ))
+          cbind(theta2eta(sc.init, .lscale    , earg = .escale    ),
+                theta2eta(aa.init, .lshape1.a , earg = .eshape1.a )) else
+          cbind(theta2eta(aa.init, .lshape1.a , earg = .eshape1.a ),
+                theta2eta(sc.init, .lscale    , earg = .escale    ))
       etastart <- etastart[, interleave.VGAM(M, M1 = M1)]
     }  # End of etastart.
   }), list( .lscale    = lscale   , .lshape1.a = lshape1.a,
@@ -6152,16 +6151,16 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     NOS  <- ncoly <- ncol(y)
     M    <- M1*ncol(y)
 
-    scaL.names  <- param.names("scale",     NOS)
-    sha1.names  <- param.names("shape1.a",  NOS)
+    scaL.names  <- param.names("scale",     NOS, skip1 = TRUE)
+    sha1.names  <- param.names("shape1.a",  NOS, skip1 = TRUE)
 
     predictors.names <- if ( .lss ) {
-        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
-          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
-      } else {
-        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
-          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
-      }
+    c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+      namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+    } else {
+    c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+      namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+   }
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     if (!length(etastart)) {
@@ -6175,8 +6174,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
         if ( .imethod == 1 ) {
           gscale     <- .gscale
           gshape1.a  <- .gshape1.a
-          if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
-          if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
+        if (length( .iscale    )) gscale    <- rep_len( .iscale    , NOS)
+        if (length( .ishape1.a )) gshape1.a <- rep_len( .ishape1.a , NOS)
 
 
         inv.paralogistic.Loglikfun2 <-

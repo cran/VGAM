@@ -133,13 +133,15 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 
 \seealso{
-  \code{\link[stats]{rlnorm}},
+  \code{\link[stats]{Lognormal}},
   \code{\link{uninormal}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}}.
 
 
+
 % \code{\link{lognormal3}},
+% \code{\link[stats]{rlnorm}},
 
 
 }

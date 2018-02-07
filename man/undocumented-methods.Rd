@@ -4,8 +4,18 @@
 %\alias{ccoef-method}
 %
 %
+% 201801
+\alias{lrt.stat,ANY-method}
+\alias{lrt.stat,vlm-method}
+\alias{wald.stat,ANY-method}
+\alias{wald.stat,vlm-method}
+\alias{score.stat,ANY-method}
+\alias{score.stat,vlm-method}
+% 20170915
+\alias{TIC,ANY-method}
+\alias{TIC,vlm-method}
 % 201707
-\alias{lrp,vglm-method}
+% \alias{lrp,vglm-method}
 % 201704
 \alias{hdeff,vglm-method}
 % 201607, 201608:

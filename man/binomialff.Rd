@@ -34,7 +34,8 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
   }
   \item{multiple.responses}{
-  Multivariate response? If \code{TRUE}, then the response is interpreted
+    Multivariate response? If \code{TRUE}, then the response is
+    interpreted
   as \eqn{M} independent binary responses, where \eqn{M} is the number
   of columns of the response matrix. In this case, the response matrix
   should have \eqn{Q} columns consisting of counts (successes),
@@ -105,18 +106,19 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
   }
 }
 \details{
-  This function is largely to mimic \code{\link[stats:Binomial]{binomial}},
+  This function is largely to
+  mimic \code{\link[stats:Binomial]{binomial}},
   however there are some differences.
 
 
-  If the dispersion parameter is unknown, then the resulting estimate
-  is not fully a maximum likelihood estimate (see pp.124--8 of McCullagh
+  If the dispersion parameter is unknown, then the resulting estimate is
+  not fully a maximum likelihood estimate (see pp.124--8 of McCullagh
   and Nelder, 1989).
 
 
   A dispersion parameter that is less/greater than unity corresponds to
-  under-/over-dispersion relative to the binomial model.  Over-dispersion
-  is more common in practice.
+  under-/over-dispersion relative to the binomial model.
+  Over-dispersion is more common in practice.
 
 
   Setting \code{multiple.responses = TRUE} is necessary
@@ -204,6 +206,7 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
 
 }
 \seealso{
+    \code{\link{hdeff.vglm}},
     \code{\link{quasibinomialff}},
     \code{\link{Links}},
     \code{\link{rrvglm}},
@@ -218,7 +221,6 @@ binomialff(link = "logit", dispersion = 1, multiple.responses = FALSE,
     \code{\link{simplex}},
     \code{\link[stats:Binomial]{binomial}},
     \code{\link{simulate.vlm}},
-    \code{\link{hdeff.vglm}},
     \pkg{safeBinaryRegression}.
 
 
@@ -256,8 +258,8 @@ shunua <- hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
 fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog),
             data = shunua)
 \dontrun{
-plot(agaaus ~ jitter(altitude), shunua, ylab = "P(Agaaus = 1)",
-     main = "Presence/absence of Agathis australis", col = "blue", las = 1)
+plot(agaaus ~ jitter(altitude), shunua, ylab = "Pr(Agaaus = 1)",
+     main = "Presence/absence of Agathis australis", col = 4, las = 1)
 with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
 
 
@@ -270,7 +272,7 @@ with(shunua, matplot(altitude, fitted(fit2), type = "l",
 
 
 # Shows that Fisher scoring can sometime fail. See Ridout (1990).
-ridout <- data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = c(5, 5, 5))
+ridout <- data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = rep(5, 3))
 (ridout <- transform(ridout, logv = log(v)))
 # The iterations oscillates between two local solutions:
 glm.fail <- glm(r / n ~ offset(logv) + 1, weight = n,

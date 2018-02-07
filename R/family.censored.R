@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,7 +16,9 @@
 
 
 
- cens.poisson <- function(link = "loge", imu = NULL) {
+cens.poisson <- function(link = "loge", imu = NULL,
+                         biglambda = 10,
+                         smallno = 1e-10) {
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -27,6 +29,19 @@
   blurb = c("Censored Poisson distribution\n\n",
             "Link:     ", namesof("mu", link, earg = earg), "\n",
             "Variance: mu"),
+  infos = eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         expected = FALSE,
+         multipleResponses = FALSE,
+         parameters.names = c("mu"),
+         link = .link ,
+         biglambda = .biglambda ,
+         smallno = .smallno )
+  }, list( .link = link,
+           .biglambda = biglambda,
+           .smallno = smallno ))),
+
   initialize = eval(substitute(expression({
     if (anyNA(y))
       stop("NAs are not allowed in the response")
@@ -41,35 +56,35 @@
     centype <- attr(y, "type")
 
     if (centype == "right") {
-        temp <- y[, 2]
-        extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$leftcensored <- rep_len(FALSE, n)
-        extra$interval <- rep_len(FALSE, n)
-        init.mu <- pmax(y[, 1], 1/8)
+      temp <- y[, 2]
+      extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
+      extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
+      extra$leftcensored <- rep_len(FALSE, n)
+      extra$interval <- rep_len(FALSE, n)
+      init.mu <- pmax(y[, 1], 1/8)
     } else
     if (centype == "left") {
-        temp <- y[, 2]
-        extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- rep_len(FALSE, n)
-        extra$leftcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$interval <- rep_len(FALSE, n)
-        init.mu <- pmax(y[, 1], 1/8)
+      temp <- y[, 2]
+      extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
+      extra$rightcensored <- rep_len(FALSE, n)
+      extra$leftcensored <- ifelse(temp == 0, TRUE, FALSE)
+      extra$interval <- rep_len(FALSE, n)
+      init.mu <- pmax(y[, 1], 1/8)
     } else
     if (centype == "interval" ||
         centype == "interval2") {
-        temp <- y[, 3]
-        extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
-        extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
-        extra$leftcensored <- ifelse(temp == 2, TRUE, FALSE)
-        extra$intervalcensored <- ifelse(temp == 3, TRUE, FALSE)
-        init.mu <- pmax((y[, 1] + y[, 2])/2, 1/8)  # for intervalcensored
-        if (any(extra$uncensored))
-        init.mu[extra$uncensored] <- pmax(y[extra$uncensored, 1], 1/8)
-        if (any(extra$rightcensored))
+      temp <- y[, 3]
+      extra$uncensored <- ifelse(temp == 1, TRUE, FALSE)
+      extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
+      extra$leftcensored <- ifelse(temp == 2, TRUE, FALSE)
+      extra$intervalcensored <- ifelse(temp == 3, TRUE, FALSE)
+      init.mu <- pmax((y[, 1] + y[, 2])/2, 1/8)  # for intervalcensored
+      if (any(extra$uncensored))
+      init.mu[extra$uncensored] <- pmax(y[extra$uncensored, 1], 1/8)
+      if (any(extra$rightcensored))
      init.mu[extra$rightcensored] <- pmax(y[extra$rightcensored, 1], 1/8)
-        if (any(extra$leftcensored))
-       init.mu[extra$leftcensored] <- pmax(y[extra$leftcensored, 1], 1/8)
+      if (any(extra$leftcensored))
+      init.mu[extra$leftcensored] <- pmax(y[extra$leftcensored, 1], 1/8)
     } else
     if (centype == "counting") {
       stop("type == 'counting' not compatible with cens.poisson()")
@@ -84,23 +99,18 @@
         namesof("mu", .link, earg = .earg, short = TRUE)
 
       if (!length(etastart))
-        etastart <- theta2eta(init.mu, link = .link, earg = .earg)
+        etastart <- theta2eta(init.mu, link = .link , earg = .earg )
   }), list( .link = link, .earg = earg, .imu = imu))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    mu <- eta2theta(eta, link = .link, earg = .earg)
-    mu
+    mu <- eta2theta(eta, link = .link , earg = .earg )
+    as.vector(mu)
   }, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
-    misc$expected <- FALSE
-
-    misc$link <-    c("mu" = .link)
-
-    misc$earg <- list("mu" = .earg)
-
-    misc$multipleResponses <- FALSE
+    misc$link <-    c("mu" = .link )
+    misc$earg <- list("mu" = .earg )
   }), list( .link = link, .earg = earg ))),
   linkfun = eval(substitute(function(mu, extra = NULL) {
-    theta2eta(mu, link = .link, earg = .earg)
+    theta2eta(mu, link = .link , earg = .earg )
   }, list( .link = link, .earg = earg ))),
   loglikelihood = function(mu, y, w, residuals = FALSE, eta,
                            extra = NULL) {
@@ -129,53 +139,96 @@
     cenL <- extra$leftcensored
     cenU <- extra$rightcensored
     cenI <- extra$intervalcensored
-      lambda <- eta2theta(eta, link = .link , earg = .earg )
+    lambda <- eta2theta(eta, link = .link , earg = .earg )
 
-      dl.dlambda <- (y[, 1] - lambda)/lambda   # uncensored
+    dl.dlambda <-  y[, 1] / lambda - 1  # uncensored
 
-      yllim <- yulim <- y[, 1]   # uncensored
+    yllim <- yulim <- y[, 1]  # uncensored
 
-      if (any(cenU)) {
-        yllim[cenU] <- y[cenU, 1]
-        densm1 <- dpois(yllim-1, lambda)
-        queue <- ppois(yllim-1, lambda, lower.tail = FALSE)
-        dl.dlambda[cenU] <- densm1[cenU] / queue[cenU]
+    if (any(cenU)) {
+      yllim[cenU] <- y[cenU, 1]
+      densm1 <- dpois(yllim-1, lambda)
+      queue <- ppois(yllim-1, lambda, lower.tail = FALSE)
+      dl.dlambda[cenU] <- densm1[cenU] / queue[cenU]
+      if (any(fix.up <- (is.na(dl.dlambda) |
+                         queue < .smallno ) &
+                         cenU &
+                         lambda > .biglambda )) {
+        zedd <- (yllim[fix.up] - 1) / sqrt(lambda[fix.up]) -
+                sqrt(lambda[fix.up])
+        dl.dlambda[fix.up] <-
+          mills.ratio(-zedd) / sqrt(lambda[fix.up])
       }
-      if (any(cenL)) {
-          yulim[cenL] <- y[cenL, 1] - 1
-          densm0 <- dpois(yulim, lambda)
-          Queue <- ppois(yulim, lambda)    # Left tail probability
-          dl.dlambda[cenL] <- -densm0[cenL] / Queue[cenL]
+    }
+    if (any(cenL)) {
+      yulim[cenL] <- y[cenL, 1] - 1
+      densm0 <- dpois(yulim, lambda)
+      Queue <- ppois(yulim, lambda)  # Left tail probability
+      dl.dlambda[cenL] <- -densm0[cenL] / Queue[cenL]
+      if (any(fix.up <- (is.na(dl.dlambda) |
+                         Queue < .smallno ) &
+                         cenL &
+                         lambda > .biglambda )) {
+        dl.dlambda[fix.up] <-
+          -mills.ratio(yulim[fix.up] / sqrt(lambda[fix.up]) -
+                        sqrt(lambda[fix.up])) / sqrt(lambda[fix.up])
       }
-      if (any(cenI)) {
-          yllim[cenI] <- y[cenI, 1] + 1
-          yulim[cenI] <- y[cenI, 2]
-          Queue1 <- ppois(yllim-1, lambda)
-          Queue2 <- ppois(yulim, lambda)
-          densm02 <- dpois(yulim, lambda)
-          densm12 <- dpois(yllim-1, lambda)
-          dl.dlambda[cenI] <-
-              (-densm02[cenI]+densm12[cenI]) / (Queue2[cenI]-Queue1[cenI])
-      }
+    }
+    if (any(cenI)) {
+      yllim[cenI] <- y[cenI, 1] + 1
+      yulim[cenI] <- y[cenI, 2]
+      Queue1 <- ppois(yllim-1, lambda)
+      Queue2 <- ppois(yulim  , lambda)
+      densm02 <- dpois(yulim  , lambda)
+      densm12 <- dpois(yllim-1, lambda)
+      dl.dlambda[cenI] <-
+        (-densm02[cenI]+densm12[cenI]) / (Queue2[cenI]-Queue1[cenI])
+    }
 
-      dlambda.deta <- dtheta.deta(theta=lambda, link =  .link, earg = .earg)
+    dlambda.deta <- dtheta.deta(theta = lambda,
+                                link =  .link , earg = .earg )
 
-    c(w) * dl.dlambda * dlambda.deta
-  }), list( .link = link, .earg = earg ))),
+    der1 <- c(w) * dl.dlambda * dlambda.deta
+    der1
+  }), list( .link = link, .earg = earg,
+            .biglambda = biglambda ,
+            .smallno = smallno ))),
   weight = eval(substitute(expression({
     d2lambda.deta2 <- d2theta.deta2(theta = lambda,
-                                    link = .link, earg = .earg )
-    d2l.dlambda2 <- 1 / lambda # uncensored; Fisher scoring
+                                    link = .link , earg = .earg )
+    d2l.dlambda2 <- 1 / lambda  # uncensored; Fisher scoring
 
     if (any(cenU)) {
       densm2 <- dpois(yllim-2, lambda)
       d2l.dlambda2[cenU] <- (dl.dlambda[cenU])^2 -
-          (densm2[cenU]-densm1[cenU])/queue[cenU]
+          (densm2[cenU] - densm1[cenU]) / queue[cenU]
+      if (any(fix.up <- is.na(d2l.dlambda2) | fix.up)) {
+ warning("incorrect as one of the queue uses yulim, not yulim-1")
+
+        zeddm1 <- (yllim[fix.up] - 1) /  sqrt(lambda[fix.up]) -
+                      sqrt(lambda[fix.up])
+        zeddm2 <- (yllim[fix.up] - 2) /  sqrt(lambda[fix.up]) -
+                      sqrt(lambda[fix.up])
+
+        d2l.dlambda2[fix.up] <- (dl.dlambda[fix.up])^2 -
+        (mills.ratio(-zeddm2) -
+         mills.ratio(-zeddm1)) / sqrt(lambda[fix.up])
+      }
     }
+
     if (any(cenL)) {
       densm1 <- dpois(yulim-1, lambda)
       d2l.dlambda2[cenL] <- (dl.dlambda[cenL])^2 -
-          (densm0[cenL]-densm1[cenL])/Queue[cenL]
+          (densm0[cenL] - densm1[cenL]) / Queue[cenL]
+
+      if (any(fix.up <- is.na(d2l.dlambda2) | fix.up)) {
+        d2l.dlambda2[fix.up] <- (dl.dlambda[fix.up])^2 -
+        (mills.ratio(yulim[fix.up] / sqrt(lambda[fix.up]) -
+                      sqrt(lambda[fix.up])) -
+         mills.ratio((yulim[fix.up] - 1) / sqrt(lambda[fix.up]) -
+                      sqrt(lambda[fix.up]))) / sqrt(lambda[fix.up])
+      }
+
     }
     if (any(cenI)) {
       densm03 <- dpois(yulim-1, lambda)
@@ -186,8 +239,12 @@
     }
     wz <-  c(w) * ((dlambda.deta^2) * d2l.dlambda2)
     wz
-  }), list( .link = link, .earg = earg ))))
+  }), list( .link = link, .earg = earg,
+            .biglambda = biglambda ,
+            .smallno = smallno ))))
 }
+
+
 
 
 
@@ -756,15 +813,16 @@ if (FALSE)
            "don't use SurvS4()")
 
 
-    mynames1 <- param.names("mean" , ncoly)
-    mynames2 <- param.names("shape", ncoly)
+    mynames1 <- param.names("mean" , ncoly, skip1 = TRUE)
+    mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lmeann , earg = .emeann , tag = FALSE),
           namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
 
-    Meann.init <- matrix(if (length( .imeann )) .imeann else 0.5 * colMeans(y),
+    Meann.init <- matrix(if (length( .imeann ))
+                         .imeann else 0.5 * colMeans(y),
                          n, ncoly, byrow = TRUE) + 0.5 * y
     Shape.init <- matrix(if (length( .ishape )) .ishape else 0 + NA,
                          n, ncoly, byrow = TRUE)
@@ -1032,15 +1090,15 @@ if (FALSE)
 
 
     if ( .lss ) {
-      mynames1 <- param.names("scale", ncoly)
-      mynames2 <- param.names("shape", ncoly)
+      mynames1 <- param.names("scale", ncoly, skip1 = TRUE)
+      mynames2 <- param.names("shape", ncoly, skip1 = TRUE)
       predictors.names <-
           c(namesof(mynames1, .lscale , earg = .escale , tag = FALSE),
             namesof(mynames2, .lshape , earg = .eshape , tag = FALSE))
 
     } else {
-      mynames1 <- param.names("shape", ncoly)
-      mynames2 <- param.names("scale", ncoly)
+      mynames1 <- param.names("shape", ncoly, skip1 = TRUE)
+      mynames2 <- param.names("scale", ncoly, skip1 = TRUE)
       predictors.names <-
           c(namesof(mynames1, .lshape , earg = .eshape , tag = FALSE),
             namesof(mynames2, .lscale , earg = .escale , tag = FALSE))
@@ -1190,6 +1248,7 @@ if (FALSE)
             .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ) )),
   weight = eval(substitute(expression({
     EulerM <- -digamma(1.0)
+
 
 
 
@@ -1546,8 +1605,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
            "don't use SurvS4()")
 
 
-    mynames1 <- param.names("Alpha", ncoly)
-    mynames2 <- param.names("Betaa", ncoly)
+    mynames1 <- param.names("Alpha", ncoly, skip1 = TRUE)
+    mynames2 <- param.names("Betaa", ncoly, skip1 = TRUE)
     predictors.names <-
         c(namesof(mynames1, .lAlpha , earg = .eAlpha , tag = FALSE),
           namesof(mynames2, .lBetaa , earg = .eBetaa , tag = FALSE))[

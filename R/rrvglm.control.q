@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -91,7 +91,8 @@ rrvglm.control <-
     Corner <- TRUE
   }
   if (Quadratic && Algorithm != "derivative")
-   stop("Quadratic model can only be fitted using the derivative algorithm")
+      stop("Quadratic model can only be fitted using the",
+           "derivative algorithm")
 
   if (Corner && (Svd.arg || Uncorrelated.latvar || length(Wmat)))
       stop("cannot have 'Corner = TRUE' and either 'Svd = TRUE' or ",
@@ -168,9 +169,15 @@ rrvglm.control <-
 
 
 
+
+
+
 setClass("summary.rrvglm",
          representation("rrvglm",
                         coef3 = "matrix",
+                        coef4lrt0   = "matrix",
+                        coef4score0 = "matrix",
+                        coef4wald0  = "matrix",
                         cov.unscaled = "matrix",
                         correlation = "matrix",
                         df = "numeric",

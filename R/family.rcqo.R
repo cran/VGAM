@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2017 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -121,7 +121,7 @@ rcqo <- function(n, p, S,
     eval(change.seed.expression)
     xmat <- matrix(rnorm(n*(p-1)), n, p-1) %*% L
     xmat <- scale(xmat, center = TRUE)
-    xnames <- paste("x", 2:p, sep = "")
+    xnames <- param.names("x", p)[-1]
     dimnames(xmat) <- list(as.character(1:n), xnames)
   }
   eval(change.seed.expression)
@@ -196,11 +196,10 @@ rcqo <- function(n, p, S,
 
 
 
-  ynames <- paste("y", 1:S, sep = "")
+  ynames <- param.names("y", S)
   Kvector <- rep_len(Kvector, S)
   names(Kvector) <- ynames
-  latvarnames <- if (Rank == 1) "latvar" else
-                 paste("latvar", 1:Rank, sep = "")
+  latvarnames <- param.names("latvar", Rank, skip1 = TRUE)
   Tols <- if (eq.tolerances) {
     matrix(1, S, Rank)
   } else {
@@ -268,9 +267,9 @@ rcqo <- function(n, p, S,
       ymat <- 0 + (ymat > 0)
 
     myform <- as.formula(paste(paste("cbind(",
-             paste(paste("y", 1:S, sep = ""), collapse = ", "),
+             paste(param.names("y", S), collapse = ", "),
              ") ~ ", sep = ""),
-             paste(paste("x", 2:p, sep = ""), collapse = "+"), sep = ""))
+             paste(param.names("x", p)[-1], collapse = "+"), sep = ""))
 
   dimnames(ymat) <- list(as.character(1:n), ynames)
   ans <- data.frame(xmat, ymat)
@@ -351,7 +350,7 @@ dcqo <-
 
   xmat <- matrix(rnorm(n*(p-1)), n, p-1,
                  dimnames = list(as.character(1:n),
-                                 paste("x", 2:p, sep = "")))
+                                 param.names("x", p)[-1]))
   Ccoefs <- matrix(rnorm((p-1)*Rank), p-1, Rank)
   latvarmat <- xmat %*% Ccoefs
   optimums <- matrix(rnorm(Rank*S, sd = sd.optimums), S, Rank)
@@ -381,8 +380,8 @@ dcqo <-
   if (family == "binomial")
     ymat <- 0 + (ymat > 0)
 
-  dimnames(ymat) <- list(as.character(1:n),
-                         paste("y", 1:S, sep = ""))
+  dimnames(ymat) <- list(param.names("", n),  # == as.character(1:n),
+                         param.names("y", S))
   ans <- data.frame(xmat, ymat)
   attr(ans, "concoefficients") <- Ccoefs
   attr(ans, "family") <- family
