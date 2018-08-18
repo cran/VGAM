@@ -31,7 +31,14 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \details{
   The complementary log-log link function is commonly used for parameters
-  that lie in the unit interval.  Numerical values of \code{theta}
+  that lie in the unit interval.
+  But unlike 
+    \code{\link{logit}},
+    \code{\link{probit}} and
+    \code{\link{cauchit}}, this link is not symmetric.
+  It is the inverse CDF of the extreme value
+  (or Gumbel or log-Weibull) distribution.
+  Numerical values of \code{theta}
   close to 0 or 1 or out of range result in \code{Inf}, \code{-Inf},
   \code{NA} or \code{NaN}.
 
@@ -90,7 +97,8 @@ cloglog(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
     \code{\link{logitoffsetlink}},
     \code{\link{logit}},
     \code{\link{probit}},
-    \code{\link{cauchit}}.
+    \code{\link{cauchit}},
+    \code{\link{pgumbel}}.
 
 
 }

@@ -7,6 +7,7 @@
   \emph{reduced-rank vector generalized additive model} (RR-VGAM)
   framework.
 
+
 }
 \usage{
 cao(formula, family = stop("argument 'family' needs to be assigned"),
@@ -304,9 +305,9 @@ Constrained additive ordination.
 % hang/lock up in the microsoft Windows version.
 
 
-  Currently the dispersion parameter for a
-  \code{\link{gaussianff}} CAO model is estimated slightly differently
-  and may be slightly biased downwards (usually a little too small).
+% Currently the dispersion parameter for a
+% \code{\link{gaussianff}} CAO model is estimated slightly differently
+% and may be slightly biased downwards (usually a little too small).
 
 
 }
@@ -318,15 +319,21 @@ Constrained additive ordination.
   \code{\link{latvar}},
   \code{\link{Opt}},
   \code{\link{Max}},
+  \code{\link{calibrate.qrrvglm}},
   \code{persp.cao},
   \code{\link{poissonff}},
   \code{\link{binomialff}},
   \code{\link{negbinomial}},
   \code{\link{gamma2}},
-  \code{\link{gaussianff}},
   \code{\link[base:Random]{set.seed}},
   \code{\link[gam]{gam}},
   \code{\link[VGAMdata]{trapO}}.
+
+
+
+% \code{\link{gaussianff}},
+
+
 
 }
 

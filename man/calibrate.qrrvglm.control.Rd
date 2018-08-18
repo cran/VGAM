@@ -6,10 +6,12 @@
   Algorithmic constants and parameters for running
   \code{\link{calibrate.qrrvglm}} are set using this function.
 
+
 }
 \usage{
-calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
+calibrate.qrrvglm.control(object, trace = FALSE, method.optim = "BFGS",
     gridSize = ifelse(Rank == 1, 21, 9), varI.latvar = FALSE, ...)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,13 +24,13 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 
   }
   \item{trace}{
-    Logical indicating if output should be produced for each iteration. It
-    is a good idea to set this argument to be \code{TRUE} since the
+    Logical indicating if output should be produced for each iteration.
+    It is a good idea to set this argument to be \code{TRUE} since the
     computations are expensive.
 
 
   }
-\item{Method.optim}{
+\item{method.optim}{
   Character. Fed into the \code{method} argument of
   \code{\link[stats]{optim}}.
 
@@ -65,7 +67,7 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
   directly.
 
 
-  }
+}
 \value{
   A list which with the following components.
   \item{trace}{Numeric (even though the input can be logical). }
@@ -76,19 +78,21 @@ calibrate.qrrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 }
 \references{
 
-Yee, T. W. (2013)
+Yee, T. W. (2018)
 On constrained and unconstrained quadratic ordination.
 \emph{Manuscript in preparation}.
 
 
 }
-\author{T. W. Yee}
+% \author{T. W. Yee}
 \note{
   Despite the name of this function, CAO models are handled
   as well.
 
 
 % Despite the name of this function, UQO and CAO models are handled
+
+
 
 }
 
@@ -101,27 +105,23 @@ On constrained and unconstrained quadratic ordination.
 
 }
 \examples{
-\dontrun{ hspider[, 1:6] <- scale(hspider[, 1:6])  # Needed when I.tol = TRUE
+\dontrun{ hspider[, 1:6] <- scale(hspider[, 1:6])  # Needed for I.tol=TRUE
 set.seed(123)
 p1 <- cqo(cbind(Alopacce, Alopcune, Pardlugu, Pardnigr,
                 Pardpull, Trocterr, Zoraspin) ~
-          WaterCon + BareSand + FallTwig +
-          CoveMoss + CoveHerb + ReflLux,
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
           family = poissonff, data = hspider, I.tol = TRUE)
 sort(deviance(p1, history = TRUE))  # A history of all the iterations
-
 siteNos <- 3:4  # Calibrate these sites
 cp1 <- calibrate(p1, trace = TRUE,
                  new = data.frame(depvar(p1)[siteNos, ]))
 }
-
 \dontrun{
 # Graphically compare the actual site scores with their calibrated values
 persp(p1, main = "Site scores: solid=actual, dashed=calibrated",
       label = TRUE, col = "blue", las = 1)
-abline(v = latvar(p1)[siteNos], lty = 1,
-       col = 1:length(siteNos))  # Actual site scores
-abline(v = cp1, lty = 2, col = 1:length(siteNos))  # Calibrated values
+abline(v = latvar(p1)[siteNos], col = seq(siteNos))  # Actual site scores
+abline(v = cp1, lty = 2, col = seq(siteNos))  # Calibrated values
 }
 }
 \keyword{models}

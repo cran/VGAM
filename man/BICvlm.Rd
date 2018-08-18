@@ -48,10 +48,10 @@ BICvlm(object, \dots, k = log(nobs(object)))
   BIC, AIC and other ICs can have have many additive
   constants added to them. The important thing are the
   differences since the minimum value corresponds to the best model.
-  Preliminary testing shows absolute differences
-  with some \pkg{VGAM} family functions such as
-  \code{\link{gaussianff}},
-  however, they should agree with non-normal families.
+% Preliminary testing shows absolute differences
+% with some \pkg{VGAM} family functions such as
+% \code{\link{gaussianff}},
+% however, they should agree with non-normal families.
 
 
   BIC has not been defined for QRR-VGLMs yet.
@@ -109,19 +109,26 @@ BIC(fit1)
               cumulative(parallel = FALSE, reverse = TRUE), data = pneumo))
 coef(fit2, matrix = TRUE)
 BIC(fit2)
-
-# These do not agree in absolute terms:
-gdata <- data.frame(x2 = sort(runif(n <- 40)))
-gdata <- transform(gdata, y1 = 1 + 2*x2 + rnorm(n, sd = 0.1))
-fit.v <- vglm(y1 ~ x2, gaussianff, data = gdata)
-fit.g <-  glm(y1 ~ x2, gaussian  , data = gdata)
-fit.l <-   lm(y1 ~ x2, data = gdata)
-c(BIC(fit.l), BIC(fit.g), BIC(fit.v))
-c(AIC(fit.l), AIC(fit.g), AIC(fit.v))
-c(AIC(fit.l) - AIC(fit.v),
-  AIC(fit.g) - AIC(fit.v))
-c(logLik(fit.l), logLik(fit.g), logLik(fit.v))
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+%# These do not agree in absolute terms:
+%gdata <- data.frame(x2 = sort(runif(n <- 40)))
+%gdata <- transform(gdata, y1 = 1 + 2*x2 + rnorm(n, sd = 0.1))
+%fit.v <- vglm(y1 ~ x2, gaussianff, data = gdata)
+%fit.g <-  glm(y1 ~ x2, gaussian  , data = gdata)
+%fit.l <-   lm(y1 ~ x2, data = gdata)
+%c(BIC(fit.l), BIC(fit.g), BIC(fit.v))
+%c(AIC(fit.l), AIC(fit.g), AIC(fit.v))
+%c(AIC(fit.l) - AIC(fit.v),
+%  AIC(fit.g) - AIC(fit.v))
+%c(logLik(fit.l), logLik(fit.g), logLik(fit.v))
+
+
+
+
+
 

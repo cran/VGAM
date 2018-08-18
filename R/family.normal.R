@@ -41,6 +41,9 @@ VGAM.weights.function <- function(w, M, n) {
 
 
 
+
+
+if (FALSE)
  gaussianff <- function(dispersion = 0, parallel = FALSE, zero = NULL) {
 
   if (!is.Numeric(dispersion, length.arg = 1) ||
@@ -1853,7 +1856,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
   linkinv = eval(substitute( function(eta, extra = NULL) {
     M1 <- 2
     NOS <- ncoly <- ncol(eta) / M1
-    mum <- eta2theta(eta[, M1*(1:ncoly)-1, drop = FALSE],
+    mum <- eta2theta(eta[, M1 * (1:ncoly) - 1, drop = FALSE],
                      .lmu , earg = .emu )
     mum <- label.cols.y(mum, colnames.y = extra$colnames.y, NOS = NOS)
 
@@ -1868,7 +1871,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
     type.fitted <- match.arg(type.fitted,
                              c("uncensored", "censored", "mean.obs"))[1]
 
-    if ( type.fitted == "uncensored")
+    if (type.fitted == "uncensored")
       return(mum)
 
     Lowmat <- matrix( .Lower , nrow = nrow(eta), ncol = ncoly,
@@ -1882,7 +1885,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
     } else {
 
 
-      sdm <- eta2theta(eta[, M1*(1:ncoly)-0, drop = FALSE],
+      sdm <- eta2theta(eta[, M1 * (1:ncoly) - 0, drop = FALSE],
                        .lsd , earg = .esd )
       zeddL <- (Lowmat - mum) / sdm
       zeddU <- (Uppmat - mum) / sdm
@@ -1916,8 +1919,6 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
       misc$earg[[M1*ii  ]] <- .esd
     }
 
-    misc$multipleResponses <- TRUE
-    misc$expected <- TRUE
     misc$imethod <- .imethod
     misc$M1 <- M1
     misc$stdTobit <- .stdTobit
@@ -1978,7 +1979,8 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
            .emu = emu, .esd = esd,
            .byrow.arg = byrow.arg,
            .Lower = Lower, .Upper = Upper ))),
-  vfamily = c("tobit"),
+
+  vfamily = c("tobit", "VGAMcategorical"),  # For margeff()
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     M1 <- 2
     ncoly <- NCOL(y)
@@ -2209,7 +2211,7 @@ moment.millsratio2 <- function(zedd) {
            isd = NULL,
            parallel = FALSE,
            smallno = 1.0e-5,
-           zero = "sd") {
+           zero = if (var.arg) "var" else "sd") {
 
 
 

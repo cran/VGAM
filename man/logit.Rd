@@ -55,19 +55,24 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
 \details{
   The logit link function is very commonly used for parameters that
   lie in the unit interval.
+  It is the inverse CDF of the logistic distribution.
   Numerical values of \code{theta} close to 0 or 1 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
+  
 
   The \emph{extended} logit link function \code{extlogit} should be used
-  more generally for parameters that lie in the interval \eqn{(A,B)}, say.
+  more generally for parameters that lie in the interval \eqn{(A,B)},
+  say.
   The formula is
   \deqn{\log((\theta-A)/(B-\theta))}{%
         log((theta-A)/(B-theta))}
-  and the default values for \eqn{A} and \eqn{B} correspond to the ordinary
+  and the default values for \eqn{A} and \eqn{B} correspond to
+  the ordinary
   logit function.
-  Numerical values of \code{theta} close to \eqn{A} or \eqn{B} or out of range
+  Numerical values of \code{theta} close to \eqn{A} or \eqn{B} or
+  out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
   However these can be replaced by values \eqn{bminvalue} and
@@ -123,7 +128,7 @@ extlogit(theta, min = 0, max = 1, bminvalue = NULL, bmaxvalue = NULL,
     \code{\link{cauchit}},
     \code{\link{logistic1}},
     \code{\link{loge}},
-    \code{\link[stats]{plogis}},
+    \code{\link[stats]{Logistic}},
     \code{\link{multilogit}}.
 
 

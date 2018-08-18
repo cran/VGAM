@@ -284,7 +284,7 @@
 
   }), list( .lphi = lphi, .ephi = ephi, .iphi = iphi ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    M <- if (is.matrix(eta)) ncol(eta) else 1
+    M <- NCOL(eta)
     temp <- cbind(exp(eta[, -M, drop = FALSE]), 1)
     prop.table(temp, 1)
   }, list( .ephi = ephi, .lphi = lphi ))),
@@ -311,7 +311,7 @@
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    M <- if (is.matrix(eta)) ncol(eta) else 1
+    M <- NCOL(eta)
     probs <- cbind(exp(eta[, -M]), 1)
     probs <- prop.table(probs, 1)
     phi <- eta2theta(eta[, M], .lphi , earg = .ephi )
@@ -368,6 +368,7 @@
   }, list( .ephi = ephi, .lphi = lphi ))),
   vfamily = c("dirmultinomial"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
+    M <- NCOL(eta)
     probs <- cbind(exp(eta[, -M]), 1)
     probs <- prop.table(probs, 1)
     phi <- eta2theta(eta[, M], .lphi , earg = .ephi )
@@ -531,8 +532,7 @@
     wz <- wz * d1Thetas.deta[, index$row] * d1Thetas.deta[, index$col]
     wz
   }), list( .ephi = ephi, .lphi = lphi ))))
-}
-
+}  # dirmultinomial
 
 
 
@@ -655,7 +655,7 @@ dirmul.old <- function(link = "loge", ialpha = 0.01,
 
     wz
   }), list( .link = link, .earg = earg ))))
-}
+}  # dirmul.old
 
 
 
@@ -3496,13 +3496,23 @@ rbetageom <- function(n, shape1, shape2) {
   }), list( .ldof = ldof, .edof = edof ))),
   weight = eval(substitute(expression({
 
+
+
+
     const2 <- (Dof + 0) / (Dof + 3)
     const2[!is.finite(Dof)] <- 1  # Handles Inf
 
     tmp6 <- DDS(Dof)
-    nedl2.dnu2 <- 0.5 * (tmp6 *(const2 * tmp6 - 2 / (Dof + 1)) - DDSp(Dof))
+    ned2l.dnu2 <- 0.5 * (tmp6 *(const2 * tmp6 - 2 / (Dof + 1)) - DDSp(Dof))
 
-    wz <- c(w) * nedl2.dnu2 * ddf.deta^2
+
+
+
+
+
+
+
+    wz <- c(w) * ned2l.dnu2 * ddf.deta^2
     wz
   }), list( .ldof = ldof, .edof = edof ))))
 }

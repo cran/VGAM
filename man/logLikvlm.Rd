@@ -82,7 +82,8 @@
   VGLMs are described in \code{\link{vglm-class}};
   VGAMs are described in \code{\link{vgam-class}};
   RR-VGLMs are described in \code{\link{rrvglm-class}};
-  \code{\link[stats]{AIC}}.
+  \code{\link[stats]{AIC}};
+  \code{\link{anova.vglm}}.
 
 
 }

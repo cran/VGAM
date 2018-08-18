@@ -92,7 +92,7 @@ qvar(object, se = FALSE, ...)
 \examples{
 data("ships", package = "MASS")
 Shipmodel <- vglm(incidents ~ type + year + period,
-                  quasipoissonff, offset = log(service),
+                  poissonff, offset = log(service),
                   data = ships, subset = (service > 0))
 
 # Easiest form of input

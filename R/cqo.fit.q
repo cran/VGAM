@@ -296,6 +296,8 @@ checkCMCO <- function(Hlist, control, modelno) {
 
 
 
+
+
 cqo.fit <- function(x, y, w = rep_len(1, length(x[, 1])),
     etastart = NULL, mustart = NULL, coefstart = NULL,
     offset = 0, family,
@@ -591,7 +593,8 @@ ny <- names(y)
         x = x,
         y = y)),
         vclass = family@vfamily)
-}
+}  # cqo.fit
+
 
 
 
@@ -719,7 +722,8 @@ ny <- names(y)
     }
   }
   ans
-}
+}  # .Init.Poisson.QO
+
 
 
 
@@ -758,7 +762,7 @@ cqo.init.derivative.expression <- expression({
   p1star <- if (nice31) ifelse(modelno %in% c(3, 5), 1+p1, p1) else
             (ncol(X.vlm.save) - p2star)
   X.vlm.1save <- if (p1star > 0) X.vlm.save[, -(1:p2star)] else NULL
-})
+})  # cqo.init.derivative.expression
 
 
 
@@ -824,7 +828,7 @@ cqo.derivative.expression <- expression({
   Dmat <- alt$Dmat  #
 
   eval(cqo.end.expression)  #
-})
+})  # cqo.derivative.expression
 
 
 
@@ -863,7 +867,7 @@ cqo.end.expression <- expression({
 
 
 
-})
+})  # cqo.end.expression
 
 
 
@@ -885,7 +889,7 @@ crow1C <- function(cmat,
   if (length(amat))
     list(cmat = cmat, amat = amat) else
     cmat
-}
+}  # crow1C
 
 
 
@@ -919,7 +923,7 @@ printqrrvglm <- function(x, ...) {
   }
 
   invisible(x)
-}
+}  # printqrrvglm
 
 
 setMethod("Coef", "qrrvglm", function(object, ...)

@@ -55,7 +55,8 @@
 
 
   if (Rank == 0 && !has.intercept)
-    warning("probably 'has.intercept == TRUE' is better for a rank-0 model")
+    warning("probably 'has.intercept == TRUE' is better for ",
+            "a rank-0 model")
 
 
 
@@ -119,19 +120,24 @@
 
 
   .rcim.df <-
-    if (!noroweffects) data.frame("Row.2" = I.col(2, nrow(y))) else  # See below
-    if (!nocoleffects) data.frame("Col.2" = I.col(2, nrow(y))) else  # See below
-    stop("at least one of 'noroweffects' and 'nocoleffects' must be FALSE")
+    if (!noroweffects)
+      data.frame("Row.2" = I.col(2, nrow(y))) else  # See below
+    if (!nocoleffects)
+      data.frame("Col.2" = I.col(2, nrow(y))) else  # See below
+      stop("at least one of 'noroweffects' and 'nocoleffects' ",
+           "must be FALSE")
 
 
-  min.row.val <- rindex[1]  # == min(rindex) since it is sorted # Usually 2
-  min.col.val <- cindex[1]  # == min(cindex) since it is sorted # Usually 2
+  min.row.val <- rindex[1]  # == min(rindex) since its sorted # Usually 2
+  min.col.val <- cindex[1]  # == min(cindex) since its sorted # Usually 2
   if (!noroweffects) {
-    colnames( .rcim.df ) <- paste(rprefix, as.character(min.row.val),  # "2",
-                                  sep = "")  # Overwrite "Row.2"
+    colnames( .rcim.df ) <-
+      paste(rprefix, as.character(min.row.val),  # "2",
+            sep = "")  # Overwrite "Row.2"
   } else if (!nocoleffects) {
-    colnames( .rcim.df ) <- paste(cprefix, as.character(min.col.val),  # "2",
-                                  sep = "")  # Overwrite "Col.2"
+    colnames( .rcim.df ) <-
+      paste(cprefix, as.character(min.col.val),  # "2",
+            sep = "")  # Overwrite "Col.2"
   }
 
 
@@ -602,15 +608,15 @@ setMethod("plot", "rcim",
   ind1 <- if (is.character(roffset))
              which(rownames(mat) == roffset) else
                    if (is.numeric(roffset)) roffset + 1 else
-                     stop("argument 'roffset' not matched (character). ",
-                           "It must be numeric, ",
+                     stop("argument 'roffset' not matched (character).",
+                           " It must be numeric, ",
                            "else character and match the ",
                            "row names of the response")
   ind2 <- if (is.character(coffset))
              which(colnames(mat) == coffset) else
                    if (is.numeric(coffset)) coffset + 1 else
-                     stop("argument 'coffset' not matched (character). ",
-                           "It must be numeric, ",
+                     stop("argument 'coffset' not matched (character).",
+                           " It must be numeric, ",
                            "else character and match the ",
                            "column names of the response")
 
@@ -753,7 +759,7 @@ Confint.nb1 <- function(nb1, level = 0.95) {
 
 
   myvec <- cbind(c(-1, 1, rep_len(0, nrow(myvcov) - 2)))
-  (se.mydiff <- sqrt(t(myvec) %*%  myvcov %*%  myvec))
+  se.mydiff <- c(sqrt(t(myvec) %*% myvcov %*% myvec))  # c() to drop the 2-D
 
   ci.mydiff <- mydiff + c(-1, 1) * qnorm(1 - (1 - level)/2) * se.mydiff
 

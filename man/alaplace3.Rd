@@ -243,10 +243,10 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
 }
 \author{ Thomas W. Yee }
 \section{Warning}{
-  These functions are experimental and especially subject to
+  These functions are \emph{experimental} and especially subject to
   change or withdrawal.
-  The MLE regularity conditions do not hold for this distribution
-  so that misleading inferences may result,
+  The usual MLE regularity conditions do \emph{not} hold for this
+  distribution so that misleading inferences may result,
   e.g., in the \code{summary} and \code{vcov} of the object.
 
 
@@ -255,6 +255,7 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   Care is needed with \code{tau} values which are too small, e.g.,
   for count data with \code{llocation = "loge"} and if the sample
   proportion of zeros is greater than \code{tau}.
+
 
 
 }

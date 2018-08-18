@@ -82,10 +82,10 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
 
   The probability function is
-  \deqn{P(T=t) = {N \choose t} \frac{B(\alpha+t, \beta+N-t)}
-                  {B(\alpha, \beta)}}{%
-        P(T=t) = choose(N,t) B(alpha+t, beta+N-t) / B(alpha, beta)}
-  where \eqn{t=0,1,\ldots,N}, and \eqn{B} is the
+  \deqn{P(T=t) = {N \choose t} \frac{Be(\alpha+t, \beta+N-t)}
+                  {Be(\alpha, \beta)}}{%
+        P(T=t) = choose(N,t) Be(alpha+t, beta+N-t) / Be(alpha, beta)}
+  where \eqn{t=0,1,\ldots,N}, and \eqn{Be} is the
   \code{\link[base:Special]{beta}} function
   with shape parameters \eqn{\alpha}{alpha} and \eqn{\beta}{beta}.
   Recall \eqn{Y = T/N} is the real response being modelled.
@@ -197,7 +197,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 # Example 1
 bdata <- data.frame(N = 10, mu = 0.5, rho = 0.8)
 bdata <- transform(bdata,
-                   y = rbetabinom(n = 100, size = N, prob = mu, rho = rho))
+                   y = rbetabinom(100, size = N, prob = mu, rho = rho))
 fit <- vglm(cbind(y, N-y) ~ 1, betabinomial, data = bdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
@@ -224,9 +224,9 @@ coef(fit2, matrix = TRUE)
                  xlab = "Hemoglobin", ylab = "Estimated rho",
                  pch = as.character(grp[N > 1]), col = grp[N > 1])) }
 \dontrun{  # cf. Figure 3 of Moore and Tsiatis (1991)
-with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
+with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp,
                  xlab = "Hemoglobin level", ylab = "Proportion Dead",
-                 main = "Fitted values (lines)"))
+                 main = "Fitted values (lines)", las = 1))
 smalldf <- with(lirat, lirat[N > 1, ])
 for (gp in 1:4) {
   xx <- with(smalldf, hb[grp == gp])

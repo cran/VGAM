@@ -11,6 +11,11 @@
 
 
 
+
+
+
+
+
 residualsvlm  <-
   function(object,
            type = c("response", "deviance", "pearson", "working")) {
@@ -74,15 +79,19 @@ residualsvlm  <-
 
 
 
+
+
 residualsvglm  <-
   function(object,
-           type = c("working", "pearson", "response", "deviance", "ldot"),
+           type = c("working", "pearson", "response", "deviance", "ldot",
+                    "stdres"),
            matrix.arg = TRUE) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
-          c("working", "pearson", "response", "deviance", "ldot"))[1]
+          c("working", "pearson", "response", "deviance", "ldot",
+            "stdres"))[1]
 
   na.act <- object@na.action
   object@na.action <- list()
@@ -91,14 +100,14 @@ residualsvglm  <-
   if (is.null(pooled.weight))
     pooled.weight <- FALSE
 
+  n <- object@misc$n
+  M <- object@misc$M
   answer <-
   switch(type,
     working = if (pooled.weight) NULL else object@residuals,
     pearson = {
       if (pooled.weight) return(NULL)
 
-      n <- object@misc$n
-      M <- object@misc$M
       wz <- weights(object, type = "work")   # $weights
 
       if (M == 1) {
@@ -171,6 +180,66 @@ residualsvglm  <-
         NULL
       }
     },
+    stdres = {
+
+
+
+      if (is(object, "vgam"))
+        stop("argument 'object' was estimated by backfitting and ",
+             "not really IRLS, hence hatvalues() is incorrect.")
+
+
+      vfam <- object@family@vfamily
+      if (!any(vfam %in% c("VGAMglm", "VGAMcategorical")))
+        warning("standardized residuals implemented only for ",
+                "'GLM' or 'VGAMcategorical' families; ",
+                "this function may return nonsense.")
+                
+      y <- depvar(object)  # as.matrix(object@y)
+      E1 <- fitted(object)  # @fitted
+      if (any(vfam %in% "VGAMglm")) {
+        varfun <- object@family@charfun
+        vfun <- varfun(x = NULL, eta = predict(object),
+                       extra = object@extra, varfun = TRUE)
+        ans <- (y - E1) / sqrt(vfun * (1 - c(hatvalues(object))))
+      } else {
+        w <- weights(object, type = "prior")  # object@prior.weights
+        x <- y * c(w)
+        E1 <- E1 * c(w)
+
+
+
+
+        if (any(x < 0) || anyNA(x)) 
+          stop("all entries of 'x' must be nonnegative and finite")
+        if ((n <- sum(x)) == 0) 
+          stop("at least one entry of 'x' must be positive")
+
+
+        if (length(dim(x)) > 2L) 
+          stop("invalid 'x'")
+        if (length(x) == 1L) 
+          stop("'x' must at least have 2 elements")
+
+
+        sr <- rowSums(x)
+        sc <- colSums(x)
+        E <- outer(sr, sc, "*")/n
+        v <- function(r, c, n) c * r * (n - r) * (n - c)/n^3
+        V <- outer(sr, sc, v, n)
+        dimnames(E) <- dimnames(x)
+
+
+
+
+
+        ans <- stdres <- (x - E) / sqrt(V)
+      }  # "GLM" or "VGAMcategorical"
+
+
+
+      ans
+    },
     response = {
       y <- object@y
 
@@ -182,21 +251,21 @@ residualsvglm  <-
 
       ans <- if (true.mu) y - mu else NULL
 
-
-      if (!matrix.arg && length(ans)) {
-        if (ncol(ans) == 1) {
-          names.ans <- dimnames(ans)[[1]]
-          ans <- c(ans)
-          names(ans) <- names.ans
-          ans
-        } else {
-          warning("ncol(ans) is not 1")
-          ans
-        }
-      } else {
-        ans
-      }
+      ans
     })
+
+
+  if (length(answer)) {
+    if (matrix.arg) {
+      answer <- as.matrix(answer)
+    } else {
+      if (NCOL(answer) == 1) {
+        names.ans <- dimnames(answer)[[1]]
+        answer <- c(answer)
+        names(answer) <- names.ans
+      }
+    }
+  }
 
   if (length(answer) && length(na.act)) {
     napredict(na.act[[1]], answer)
@@ -269,6 +338,8 @@ residualsqrrvglm  <- function(object,
     answer
   }
 }
+
+
 
 
 

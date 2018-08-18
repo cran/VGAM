@@ -195,6 +195,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
   \code{\link{posnormal}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{mills.ratio}},
+  \code{\link{margeff}},
   \code{\link[stats:Normal]{rnorm}}.
 
 
@@ -286,8 +287,8 @@ plot(y3 ~ x2, data = tdata, las = 1,
            as.numeric(attr(y3, "cenU") * 2),
      pch = as.numeric(attr(y3, "cenL")) + 1 +
            as.numeric(attr(y3, "cenU") * 2))
-legend(x = "topleft", leg = c("censored", "uncensored"),
-       pch = c(2, 1), col = c("blue", "green"))
+legend(x = "topleft", leg = c("censoredL", "censoredU", "uncensored"),
+       pch = c(2, 3, 1), col = c(3, 4, 2))
 legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
        col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
 lines(meanfun3(x2) ~ x2, tdata, col = "purple", lwd = 2)
@@ -301,8 +302,8 @@ plot(y3 ~ x2, data = tdata, las = 1,
            as.numeric(attr(y3, "cenU") * 2),
      pch = as.numeric(attr(y3, "cenL")) + 1 +
            as.numeric(attr(y3, "cenU") * 2))
-legend(x = "topleft", leg = c("censored", "uncensored"),
-       pch = c(2, 1), col = c("blue", "green"))
+legend(x = "topleft", leg = c("censoredL", "censoredU", "uncensored"),
+       pch = c(2, 3, 1), col = c(3, 4, 2))
 legend(-1.0, 3.5, c("Truth", "Estimate", "Naive"),
        col = c("purple", "orange", "black"), lwd = 2, lty = c(1, 2, 2))
 lines(meanfun3(x2) ~ x2, data = tdata, col = "purple", lwd = 2)

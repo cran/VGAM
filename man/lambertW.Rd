@@ -30,10 +30,26 @@ Maximum number of iterations of third-order Halley's method.
   The Lambert \eqn{W} function is the root of the equation
   \eqn{W(z) \exp(W(z)) = z}{W(z) * exp(W(z)) = z}
   for complex \eqn{z}.
-  It is multi-valued if \eqn{z} is real and \eqn{z < -1/e}.
-  For real \eqn{-1/e \leq z < 0}{-1/e <= z < 0} it has two
-  possible real values, and currently only the upper branch
-  is computed.
+  If \eqn{z} is real and \eqn{-1/e < z < 0} then
+  it has two possible real values,
+  and currently only the upper branch
+  (often called \eqn{W_0})
+  is computed so that
+  a value that is \eqn{\geq -1}{>= -1} is returned.
+
+
+
+% It is multi-valued if \eqn{z} is real and
+% \eqn{0 > z > -1/e}{0 > z > -1/e}.
+% For real \eqn{-1/e < z < 0}{-1/e < z < 0} it has two
+% possible real values, and currently only the upper branch
+% is computed.
+
+% Prior to 20180511:
+%  It is multi-valued if \eqn{z} is real and \eqn{z < -1/e}.
+% For real \eqn{-1/e \leq z < 0}{-1/e <= z < 0} it has two
+
+
 
 
 }
@@ -59,15 +75,18 @@ On the Lambert \eqn{W} function.
 \author{
 T. W. Yee
 
+
 }
 \note{
 If convergence does not occur then increase the value of
 \code{maxit} and/or \code{tolerance}.
 
 
+
 Yet to do: add an argument \code{lbranch = TRUE} to return
-the lower branch for
-real \eqn{-1/e \leq z < 0}{-1/e <= z < 0};
+the lower branch
+(often called \eqn{W_{-1}})
+for real \eqn{-1/e \leq z < 0}{-1/e <= z < 0};
 this would give \eqn{W(z) \leq -1}{W(z) <= -1}.
 
 
@@ -77,14 +96,15 @@ this would give \eqn{W(z) \leq -1}{W(z) <= -1}.
 
 \seealso{
   \code{\link[base:log]{log}},
-  \code{\link[base:log]{exp}}.
+  \code{\link[base:log]{exp}},
+  \code{\link{bell}}.
   There is also a package called \pkg{LambertW}.
 
 
 }
 \examples{ \dontrun{
 curve(lambertW, -exp(-1), 3, xlim = c(-1, 3), ylim = c(-2, 1),
-      las = 1, col = "orange")
+      las = 1, col = "orange", n = 1001)
 abline(v = -exp(-1), h = -1, lwd = 2, lty = "dotted", col = "gray")
 abline(h = 0, v = 0, lty = "dashed", col = "blue") }
 }

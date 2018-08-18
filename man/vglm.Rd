@@ -182,7 +182,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
   \item{constraints}{
   an optional list  of constraint matrices.
-  The components of the list must be named with the term it corresponds to
+  The components of the list must be named with the term it
+  corresponds to
   (and it must match in character format exactly).
   There are two types of input: \code{"lm"}-type and \code{"vlm"}-type.
   The former is a subset of the latter.
@@ -312,9 +313,11 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{qr}{the QR decomposition used in the fitting.}
-  \item{R}{the \bold{R} matrix in the QR decomposition used in the fitting.}
+  \item{R}{the \bold{R} matrix in the QR decomposition
+    used in the fitting.}
   \item{rank}{numerical rank of the fitted model.}
-  \item{residuals}{the \emph{working} residuals at the final IRLS iteration.}
+  \item{residuals}{the \emph{working} residuals at the
+    final IRLS iteration.}
   \item{ResSS}{residual sum of squares at the final IRLS iteration with
   the adjusted dependent vectors and weight matrices.}
   \item{smart.prediction}{
@@ -393,12 +396,18 @@ The \code{VGAM} Package.
 
 
   Some \pkg{VGAM} family functions end in \code{"ff"} to avoid
-  interference with other functions, e.g., \code{\link{binomialff}},
-  \code{\link{poissonff}}, \code{\link{gaussianff}},
-  \code{gammaff}. This is because \pkg{VGAM} family
+  interference with other functions, e.g.,
+  \code{\link{binomialff}},
+  \code{\link{poissonff}}.
+  This is because \pkg{VGAM} family
   functions are incompatible with \code{\link[stats]{glm}}
   (and also \code{\link[gam]{gam}} in the \pkg{gam} library and
   \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
+
+
+
+% \code{gammaff}.
+% \code{\link{gaussianff}},
 
 
 
@@ -414,7 +423,8 @@ The \code{VGAM} Package.
 
 
   In Example 5 below, the \code{xij} argument to illustrate covariates
-  that are specific to a linear predictor. Here, \code{lop}/\code{rop} are
+  that are specific to a linear predictor. Here, \code{lop}/\code{rop}
+  are
   the ocular pressures of the left/right eye (artificial data).
   Variables \code{leye} and \code{reye} might be the presence/absence of
   a particular disease on the LHS/RHS eye respectively.
@@ -448,6 +458,7 @@ The \code{VGAM} Package.
   \code{\link{rrvglm}},
   \code{\link{vgam}}.
   Methods functions include
+  \code{\link{anova.vglm}},
   \code{\link{AICvlm}},
   \code{\link{coefvlm}},
   \code{\link{confintvglm}},
@@ -463,6 +474,7 @@ The \code{VGAM} Package.
   \code{\link{npred.vlm}},
   \code{\link{plotvglm}},
   \code{\link{predictvglm}},
+  \code{\link{residualsvglm}},
   \code{\link{summaryvglm}},
   \code{\link{lrtest_vglm}},
   etc.

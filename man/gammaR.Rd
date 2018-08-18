@@ -57,9 +57,9 @@ gammaR(lrate = "loge", lshape = "loge", irate = NULL,
 }
 \details{
   The density function is given by
-  \deqn{f(y) = \exp(-rate \times y) \times y^{shape-1} \times rate^{shape}
+  \deqn{f(y; rate, shape) = \exp(-rate \times y) \times y^{shape-1} \times rate^{shape}
                / \Gamma(shape)}{%
-   f(y) = exp(-rate * y) y^(shape-1) rate^(shape) / gamma(shape)}
+   f(y; rate, shape) = exp(-rate * y) y^(shape-1) rate^(shape) / gamma(shape)}
   for \eqn{shape > 0}, \eqn{rate > 0} and \eqn{y > 0}.
   Here, \eqn{\Gamma(shape)}{gamma(shape)} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
@@ -68,8 +68,14 @@ gammaR(lrate = "loge", lshape = "loge", irate = NULL,
   \eqn{\sigma^2 = \mu^2 /shape = shape/rate^2}{sigma^2 =
        mu^2 /shape = shape/rate^2}.
   By default, the two linear/additive predictors are
-  \eqn{\eta_1 = \log(shape)}{eta1 = log(shape)} and
-  \eqn{\eta_2 = \log(rate)}{eta2 = log(rate)}.
+  \eqn{\eta_1 = \log(rate)}{eta1 = log(rate)} and
+  \eqn{\eta_2 = \log(shape)}{eta2 = log(shape)}.
+
+
+  
+% 20180403: picked up a bug:
+%  \eqn{\eta_1 = \log(shape)}{eta1 = log(shape)} and
+%  \eqn{\eta_2 = \log(rate)}{eta2 = log(rate)}.
 
 
 
@@ -112,8 +118,19 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   Multiple responses are handled.
 
 
+
   If \eqn{rate = 1} use the family function \code{\link{gamma1}} to
   estimate \eqn{shape}.
+
+
+
+  The reciprocal of a 2-parameter gamma random variate has an
+  \emph{inverse gamma} distribution.
+  One might write a \pkg{VGAM} family function called \code{invgammaR()}
+  to estimate this, but for now, just feed in the reciprocal of the
+  response.
+  % 20180403
+
 
 
 }

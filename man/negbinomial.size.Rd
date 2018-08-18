@@ -97,13 +97,16 @@ Reduced-rank vector generalized linear models with two linear predictors.
 \seealso{
   \code{\link{negbinomial}},
   \code{\link{nbcanlink}} (NB-C model),
-  \code{\link{quasipoissonff}},
   \code{\link{poissonff}},
   \code{\link[stats:NegBinomial]{rnbinom}},
   \code{\link{simulate.vlm}}.
 
 
 % \code{\link[MASS]{rnegbin}}.
+% \code{\link{quasipoissonff}},
+
+
+
 
 
 }

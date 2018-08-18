@@ -70,7 +70,7 @@ p1cqo <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                   Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                   Trocterr, Zoraspin) ~
             WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-            quasipoissonff, data = hspider, Crow1positive = FALSE)
+            poissonff, data = hspider, Crow1positive = FALSE)
 
 nos <- ncol(depvar(p1cqo))
 clr <- 1:nos  # OR (1:(nos+1))[-7]  to omit yellow

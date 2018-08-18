@@ -21,8 +21,12 @@ and Associated Models
   This package centers on the
   \emph{iteratively reweighted least squares} (IRLS)
 algorithm.
-Other key words include Fisher scoring, additive models, penalized
-likelihood, reduced-rank regression and constrained ordination.
+Other key words include
+Fisher scoring,
+additive models,
+reduced-rank regression,
+penalized likelihood,
+and constrained ordination.
 The central modelling functions are
 \code{\link{vglm}},
 \code{\link{vgam}},
@@ -30,12 +34,79 @@ The central modelling functions are
 \code{\link{rcim}},
 \code{\link{cqo}},
 \code{\link{cao}}.
-For detailed control of fitting,
-each of these has its own control function, e.g.,
-\code{\link{vglm.control}}.
+Function
+\code{\link{vglm}}
+operates very similarly to
+\code{\link[stats]{glm}} but is much more general,
+and many methods functions
+such as \code{\link[VGAM:coefvlm]{coef}} and
+\code{\link[VGAM:predictvglm]{predict}}
+are available.
 The package uses S4 (see \code{\link[methods]{methods-package}}).
 A companion package called \pkg{VGAMdata} contains some larger
 data sets which were shifted from \pkg{VGAM}.
+
+
+
+Compared to other similar packages, such as
+\pkg{gamlss} and
+\pkg{mgcv},
+\pkg{VGAM} has more models implemented (150+ of them) and they
+are not restricted to
+a location-scale-shape framework or
+(largely) the 1-parameter exponential family.
+There is a general statistical framework behind it all,
+that once grasped, makes regression modelling quite unified.
+Some features of the package are:
+(i) most family functions handle multiple responses;
+(ii) reduced-rank regression is available by operating
+on latent variables (optimal linear combinations of the
+explanatory variables);
+(iii) basic
+automatic smoothing parameter selection is implemented for VGAMs,
+although it has to be refined;
+(iv) \emph{smart} prediction allows correct prediction of nested
+terms in the formula provided smart functions are used.
+
+
+
+
+The GLM and GAM classes are special cases of VGLMs and VGAMs.
+The VGLM/VGAM framework is intended to be very general
+so that it encompasses as many distributions and models as
+possible. VGLMs are limited only by the assumption that the
+regression coefficients enter through a set of linear predictors.
+The VGLM class is very large and encompasses a wide range of
+multivariate response types and models, e.g., it includes
+univariate and multivariate distributions,
+categorical data analysis,
+extreme values,
+correlated binary data,
+quantile and expectile regression,
+time series
+problems.
+Potentially, it can handle
+generalized estimating equations,
+survival analysis,
+bioassay data and
+nonlinear least-squares
+problems.
+
+
+
+Crudely, VGAMs are to VGLMs what GAMs are to GLMs.
+Two types of VGAMs are implemented:
+1st-generation VGAMs with \code{\link{s}} use vector backfitting,
+while
+2nd-generation VGAMs with \code{\link{sm.os}} and
+\code{\link{sm.ps}} use O-splines and P-splines,
+do not use the backfitting algorithm,
+and have automatic smoothing parameter selection.
+The former is older and is based on Yee and Wild (1996).
+The latter is more modern
+(Yee, Somchit and Wild, 2018)
+but it requires a reasonably large number of observations
+to work well.
 
 
 
@@ -58,43 +129,6 @@ all three methods require further IRLS iterations to obtain
 new values of the other regression coefficients after one
 of the coefficients has had its value set (usually to 0).
 Hence the computation load is overall significant.
-
-
-
-The GLM and GAM classes are special cases of VGLMs and VGAMs.
-The VGLM/VGAM framework is intended to be very general
-so that it encompasses as many distributions and models as
-possible. VGLMs are limited only by the assumption that the
-regression coefficients enter through a set of linear predictors.
-The VGLM class is very large and encompasses a wide range of
-multivariate response types and models, e.g., it includes
-univariate and multivariate distributions,
-categorical data analysis,
-time series,
-survival analysis,
-generalized estimating equations,
-extreme values,
-correlated binary data,
-quantile and expectile regression,
-bioassay data and
-nonlinear least-squares
-problems.
-
-
-
-Crudely, VGAMs are to VGLMs what GAMs are to GLMs.
-Two types of VGAMs are implemented:
-1st-generation VGAMs with \code{\link{s}} use vector backfitting,
-while
-2nd-generation VGAMs with \code{\link{sm.os}} and
-\code{\link{sm.ps}} use O-splines and P-splines,
-do not use the backfitting algorithm,
-and have automatic smoothing parameter selection.
-The former is older and is based on Yee and Wild (1996).
-The latter is more modern
-(Yee, Somchit and Wild, 2018)
-but it requires a reasonably large number of observations
-to work well.
 
 
 
@@ -121,6 +155,15 @@ added to the package.
 
 %~~ An overview of how to use the package, including the most important ~~
 %~~ functions ~~
+
+
+
+%For detailed control of fitting,
+%each of these has its own control function, e.g.,
+%\code{\link{vglm.control}}.
+
+
+
 
 
 }
@@ -229,9 +272,10 @@ Manuscript in preparation.
 
 
 My website for the \pkg{VGAM} package and book is at
-\url{https://www.stat.auckland.ac.nz/~yee}
-and I hope to put more resources there in the future,
-especially as relating to my book.
+\url{https://www.stat.auckland.ac.nz/~yee}.
+There are some resources there,
+especially as relating to my book and new features
+added to \pkg{VGAM}.
 
 
 

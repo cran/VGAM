@@ -1861,10 +1861,28 @@ warning("20150711; this function has not been updated")
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
+    lastchars1 <- substr(theta, nchar(theta), nchar(theta))
+    lastchars2 <- ifelse(nchar(theta) > 1,
+                    substr(theta, nchar(theta) - 1, nchar(theta) - 1),
+                    rep("", length(theta)))
+
+    size.names <- rep("size", length(theta))
+    dig1 <- lastchars1 %in% as.character(0:9)
+    dig2 <- lastchars2 %in% as.character(0:9)
+    size.names <- ifelse(dig1,
+                         paste("size",            lastchars1, sep = ""),
+                         size.names)
+    size.names <- ifelse(dig2,
+                         paste("size", lastchars2, lastchars1, sep = ""),
+                         size.names)
+
     string <- if (short)
-      paste("nbcanlink(", theta, ")", sep = "") else {
+      paste("nbcanlink(", theta,
+             ", ", theta, "(", size.names, ")",  # Added 20180803
+             ")", sep = "") else {
       theta <- as.char.expression(theta)
-      paste("log(", theta, " / (", theta, " + size))", sep = "")
+      paste("log(", theta, " / (", theta, " + ", size.names, "))",
+            sep = "")
     }
     if (tag)
       string <- paste("Nbcanlink:", string)

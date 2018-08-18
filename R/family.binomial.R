@@ -1509,11 +1509,12 @@ my.dbinom <- function(x,
 
 
 
+
  dbetabinom.ab <-
-    function(x, size, shape1, shape2, log = FALSE,
-             Inf.shape = exp(20),  # 1e6, originally
-             limit.prob = 0.5  # Strictly should be NaN
-            ) {
+  function(x, size, shape1, shape2, log = FALSE,
+           Inf.shape = exp(20),  # 1e6, originally
+           limit.prob = 0.5  # Strictly should be NaN
+          ) {
 
 
   Bigg  <- Inf.shape
@@ -1523,11 +1524,14 @@ my.dbinom <- function(x,
   rm(log)
 
 
-  LLL <- max(length(x), length(size), length(shape1), length(shape2))
+  LLL <- max(length(x), length(size), length(shape1), length(shape2),
+             length(limit.prob))
   if (length(x)      != LLL) x      <- rep_len(x,      LLL)
   if (length(size)   != LLL) size   <- rep_len(size,   LLL)
   if (length(shape1) != LLL) shape1 <- rep_len(shape1, LLL)
   if (length(shape2) != LLL) shape2 <- rep_len(shape2, LLL)
+  if (length(limit.prob) != LLL)
+    limit.prob <- rep_len(limit.prob, LLL)
   is.infinite.shape1 <- is.infinite(shape1)  # Includes -Inf !!
   is.infinite.shape2 <- is.infinite(shape2)
 
@@ -1597,14 +1601,16 @@ my.dbinom <- function(x,
 
 
 
-  if (any(ok3)) {
-    prob1 <- shape1[ok3] / (shape1[ok3] + shape2[ok3])
-    ans[ok3] <- dbinom(x = x[ok3], size = size[ok3],
-                       prob = prob1, log = log.arg)
+  if (any(ok3, na.rm = TRUE)) {
+    ok33 <- !is.na(ok3) & ok3
+    prob1 <- shape1[ok33] / (shape1[ok33] + shape2[ok33])
+    ans[ok33] <- dbinom(x = x[ok33], size = size[ok33],
+                        prob = prob1, log = log.arg)
 
     if (any(ok4)) {
       ans[ok4] <- dbinom(x = x[ok4], size = size[ok4],
-                         prob = limit.prob, log = log.arg)
+                         prob = limit.prob[ok4],
+                         log = log.arg)
     }
   }  # ok3
 
@@ -1618,79 +1624,91 @@ my.dbinom <- function(x,
                        log = log.arg)
 
 
-  ans[shape1 < 0] <- NaN
-  ans[shape2 < 0] <- NaN
+  ans[is.na(shape1) | shape1 < 0] <- NaN
+  ans[is.na(shape2) | shape2 < 0] <- NaN
+  a.NA <- is.na(x) | is.na(size) | is.na(shape1) | is.na(shape2)
+  ans[a.NA] <- NA  # 20180217
 
   ans
-}
+}  # dbetabinom.ab
 
 
 
 
 
 
- pbetabinom.ab <- function(q, size, shape1, shape2, log.p = FALSE) {
+pbetabinom.ab <-
+  function(q, size, shape1, shape2,
+           limit.prob = 0.5,  # Strictly should be NaN
+           log.p = FALSE) {
 
-  if (!is.Numeric(q))
-    stop("bad input for argument 'q'")
-  if (!is.Numeric(size, integer.valued = TRUE))
-    stop("bad input for argument 'size'")
-  if (!is.Numeric(shape1, positive = TRUE))
-    stop("bad input for argument 'shape1'")
-  if (!is.Numeric(shape2, positive = TRUE))
-    stop("bad input for argument 'shape2'")
-  LLL <- max(length(q), length(size), length(shape1), length(shape2))
+
+
+  LLL <- max(length(q), length(size), length(shape1), length(shape2),
+             length(limit.prob))
 
   if (length(q)       != LLL) q      <- rep_len(q,      LLL)
   if (length(shape1)  != LLL) shape1 <- rep_len(shape1, LLL)
   if (length(shape2)  != LLL) shape2 <- rep_len(shape2, LLL)
   if (length(size)    != LLL) size   <- rep_len(size,   LLL)
+  if (length(limit.prob) != LLL)
+    limit.prob <- rep_len(limit.prob, LLL)
+
+
+  ind3 <- !is.na(size) & !is.na(q) & q > size
+  q[ind3] <- size[ind3]  # Useful if q == Inf as it makes q finite
 
   ans <- q   # Retains names(q)
-  ans[] <- 0  #  Set all elements to 0
+  ans[] <- NA_real_  # Handles NAs in size, shape1, etc. hopefully
 
-  if (max(abs(size   -   size[1])) < 1.0e-08 &&
-      max(abs(shape1 - shape1[1])) < 1.0e-08 &&
-      max(abs(shape2 - shape2[1])) < 1.0e-08) {
-    if (any(is.infinite(qstar <- floor(q))))
-      stop("argument 'q' must be finite")
-    temp <- if (max(qstar) >= 0) {
-              dbetabinom.ab(0:max(qstar), size = size[1],
-                            shape1 = shape1[1],
-                            shape2 = shape2[1])
-            } else {
-              0 * qstar
-            }
-      unq <- unique(qstar)
+  if (all(size       == size[1])   &&
+      all(shape1     == shape1[1]) &&  # Cannot handle NAs in comparison
+      all(shape2     == shape2[1]) &&
+      all(limit.prob == limit.prob[1]) &&
+      !any(is.na(c(size, shape1, shape2, limit.prob)))) {
+    qstar <- floor(q)
+    maxqstar <- max(qstar, na.rm = TRUE)
+    tmp2 <- dbetabinom.ab(if (maxqstar >= 0) 0:maxqstar else -1,
+                          size = size[1],
+                          shape1 = shape1[1], shape2 = shape2[1],
+                          limit.prob = limit.prob[1])
+    unq <- unique(qstar[!is.na(qstar)])
     for (ii in unq) {
-      index <- (qstar == ii)
-      ans[index] <- if (ii >= 0) sum(temp[1:(1+ii)]) else 0
+      index <- !is.na(qstar) & (qstar == ii)
+      ans[index] <- if (ii >= 0) sum(tmp2[1:(1+ii)]) else tmp2
     }
   } else {
     for (ii in 1:LLL) {
       qstar <- floor(q[ii])
-      ans[ii] <- if (qstar >= 0) {
-                   sum(dbetabinom.ab(x = 0:qstar, size = size[ii],
-                                     shape1 = shape1[ii],
-                                     shape2 = shape2[ii]))
-                 } else 0
+      qvec <- if (!is.na(qstar) && qstar >= 0) 0:qstar else NA
+      ans[ii] <- sum(dbetabinom.ab(x = qvec,
+                                   size = size[ii],
+                                   shape1 = shape1[ii],
+                                   shape2 = shape2[ii],
+                                   limit.prob = limit.prob[ii]))
     }
   }
+
+
+
+  ind4 <- !is.na(size) & !is.na(q) & !is.na(shape1) & !is.na(shape2) & q < 0
+  ans[ind4] <- 0
+
+
+
+
   if (log.p) log(ans) else ans
-}
+}  # pbetabinom.ab
 
 
 
- rbetabinom.ab <- function(n, size, shape1, shape2,
-                           .dontuse.prob = NULL) {
+rbetabinom.ab <-
+  function(n, size, shape1, shape2,
+           limit.prob = 0.5,  # Strictly should be NaN
+           .dontuse.prob = NULL   # 20180814 temporary!!
+          ) {
  #                         checkargs = TRUE
 
-  if (!is.Numeric(size, integer.valued = TRUE))
-    stop("bad input for argument 'size'")
-  if (any(shape1 < 0, na.rm = TRUE))
-    stop("negative values for argument 'shape1' not allowed")
-  if (any(shape2 < 0, na.rm = TRUE))
-    stop("negative values for argument 'shape2' not allowed")
 
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
@@ -1699,33 +1717,28 @@ my.dbinom <- function(x,
   if (length(size)   != use.n) size   <- rep_len(size,   use.n)
   if (length(shape1) != use.n) shape1 <- rep_len(shape1, use.n)
   if (length(shape2) != use.n) shape2 <- rep_len(shape2, use.n)
+  if (length(limit.prob) != use.n)
+    limit.prob <- rep_len(limit.prob, use.n)
 
   ans <- rep_len(NA_real_, use.n)
-  okay0 <- is.finite(shape1) & is.finite(shape2)
-  if (smalln <- sum(okay0))
-    ans[okay0] <- rbinom(n = smalln, size = size[okay0],
-                         prob = rbeta(n = smalln, shape1 = shape1[okay0],
-                                                  shape2 = shape2[okay0]))
+  ind3 <- !is.na(shape1) & !is.na(shape2) &  # !is.na(limit.prob) &
+          ((is.infinite(shape1) & is.infinite(shape2))) # |
 
-  okay1 <- is.na(shape1)       & is.infinite(shape2)  # rho=0 & prob==0
-  okay2 <- is.infinite(shape1) & is.na(shape2)   # rho = 0 & prob == 1
-  okay3 <- is.infinite(shape1) & is.infinite(shape2)  # rho=0 & 0<prob<1
+  if (sum.ind3 <- sum(ind3))
+    ans[ind3]<- rbinom(n = sum.ind3, size = size[ind3],
+                       prob = limit.prob[ind3])
 
-  if (sum.okay1 <- sum(okay1))
-    ans[okay1] <- rbinom(n = sum.okay1, size = size[okay1],
-                         prob = 0)
-  if (sum.okay2 <- sum(okay2))
-    ans[okay2] <- rbinom(n = sum.okay2, size = size[okay2],
-                         prob = 1)
-  if (sum.okay3 <- sum(okay3)) {
-    if (length( .dontuse.prob ) != use.n)
-      .dontuse.prob   <- rep_len( .dontuse.prob , use.n)
-    ans[okay3] <- rbinom(n = sum.okay3, size = size[okay3],
-                         prob = .dontuse.prob[okay3])
-  }
+  if (ssum.ind3 <- sum(!ind3))
+    ans[!ind3] <- rbinom(n = ssum.ind3, size = size[!ind3],
+                         prob = rbeta(n = ssum.ind3,
+                                      shape1 = shape1[!ind3],
+                                      shape2 = shape2[!ind3]))
+
+  ans[is.na(shape1) | shape1 < 0] <- NaN
+  ans[is.na(shape2) | shape2 < 0] <- NaN
 
   ans
-}
+}  # rbetabinom.ab
 
 
 
@@ -1733,23 +1746,42 @@ my.dbinom <- function(x,
 
 
 
- dbetabinom <- function(x, size, prob, rho = 0, log = FALSE) {
-  dbetabinom.ab(x = x, size = size, shape1 = prob*(1-rho)/rho,
-                shape2 = (1-prob)*(1-rho)/rho, log = log)
-}
 
-
- pbetabinom <- function(q, size, prob, rho, log.p = FALSE) {
-  pbetabinom.ab(q = q, size = size, shape1 = prob*(1-rho)/rho,
-                shape2 = (1-prob)*(1-rho)/rho, log.p = log.p)
-}
-
-
- rbetabinom <- function(n, size, prob, rho = 0) {
-  rbetabinom.ab(n = n, size = size, shape1 = prob*(1-rho)/rho,
+dbetabinom <-
+  function(x, size, prob, rho = 0,
+           log = FALSE) {
+  dbetabinom.ab(x = x, size = size,
+                shape1 = prob*(1-rho)/rho,
                 shape2 = (1-prob)*(1-rho)/rho,
-                .dontuse.prob = prob)
+                limit.prob = prob,  # 20180216, since rho = 0.
+                log = log)
 }
+
+
+
+pbetabinom <-
+  function(q, size, prob, rho = 0,
+           log.p = FALSE) {
+  pbetabinom.ab(q = q, size = size,
+                shape1 = prob*(1-rho)/rho,
+                shape2 = (1-prob)*(1-rho)/rho,
+                limit.prob = prob,  # 20180217, since rho = 0.
+                log.p = log.p)
+}
+
+
+
+rbetabinom <-
+  function(n, size, prob, rho = 0
+          ) {
+  rbetabinom.ab(n = n, size = size,
+                shape1 = prob*(1-rho)/rho,
+                shape2 = (1-prob)*(1-rho)/rho,
+                limit.prob = prob  # 20180217, since rho = 0.
+               )
+}
+
+
 
 
 
@@ -2067,6 +2099,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             .eshape1 = eshape1, .eshape2 = eshape2,
             .nsimEIM = nsimEIM ))))
 }
+
+
+
 
 
 
@@ -3016,7 +3051,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       } else if ( .imethod == 1) {
         mu1.init <- weighted.mean(extra$ymat2col[, 1], c(w))
         index1 <- (extra$ymat2col[, 1] == 1)
-        mu2.init <- weighted.mean(extra$ymat2col[index1, 2], w[index1, 1])
+        mu2.init <- weighted.mean(extra$ymat2col[index1, 2],
+                                  w[index1, 1])
         mu1.init <- rep_len(mu1.init, n)
         mu2.init <- rep_len(mu2.init, n)
 

@@ -45,8 +45,8 @@
   all.Hk <- constraints(object, matrix = TRUE)
   X.lm  <- model.matrix(object, type =  "lm")
   X.vlm.save <- model.matrix(object, type = "vlm")
-  eta.mat <- predict(object)
-  n.LM <- NROW(eta.mat)
+  eta.mat.orig <- predict(object)
+  n.LM <- NROW(eta.mat.orig)
   p.VLM <- ncol(all.Hk)
 
   vc2 <- vcov(object)
@@ -150,6 +150,8 @@
 
 
     if (iterate) {
+      if (NCOL(X.vlm.save) == 1)
+        stop("The large model matrix only has one column")
       X.vlm.mk <- X.vlm.save[, -kay, drop = FALSE]
  # This is needed by vglm.fit():
       attr(X.vlm.mk, "assign") <- attr(X.vlm.save, "assign")  # zz wrong!
@@ -162,7 +164,7 @@
                      X.vlm.arg = X.vlm.mk,
                      Xm2 = Xm2, Terms = mt,
                      constraints = clist, extra = object@extra,
-                     etastart = eta.mat,
+                     etastart = eta.mat.orig,
                      offset = ooo, family = Fam,
                      control = object@control)
     }  # iterate
@@ -191,7 +193,7 @@
       if (is.matrix(fm$predictors))
         fm$predictors else as.matrix(fm$predictors)
     } else {
-      eta.mat +
+      eta.mat.orig +
       matrix(X.vlm.save[, kay] * (values0.use[kay] - cobj[kay]),
              n.LM, M, byrow = TRUE)
     }

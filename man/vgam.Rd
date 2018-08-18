@@ -312,12 +312,17 @@ by Wood, S. N. and Pya, N. and Safken, N.,
 
   Some \pkg{VGAM} family functions end in \code{"ff"}
   to avoid interference with other functions, e.g.,
-  \code{\link{binomialff}}, \code{\link{poissonff}},
-  \code{\link{gaussianff}}, \code{gammaff}. This is
-  because \pkg{VGAM} family functions are incompatible with
+  \code{\link{binomialff}}, \code{\link{poissonff}}.
+  This is because \pkg{VGAM} family functions are incompatible with
   \code{\link[stats]{glm}} (and also \code{\link[gam]{gam}}
   in the \pkg{gam} library and \code{\link[mgcv]{gam}}
   in the \pkg{mgcv} library).
+
+
+% \code{\link{gaussianff}},
+% \code{gammaff}.
+
+
 
 
   The smart prediction (\code{\link{smartpred}}) library

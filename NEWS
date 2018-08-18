@@ -6,6 +6,65 @@
 
 
 
+                CHANGES IN VGAM VERSION 1.0-6
+
+NEW FEATURES
+
+    o   New functions: [dr]bell(), bellff(), [dr]trinorm(), trinormal(),
+    o   New functions: anova.vglm(), R2latvar(), ordsup().
+        And residualsvglm(..., type = "stdres") is implemented for
+        'VGAMcategorical' models and "poissonff" and "binomialff" models.
+        Thanks to Alan Agresti suggesting all these.
+        anova.vglm() works for 'type = "II"' (default) and "I" and "III".
+    o   calibrate() has argument 'lr.confint' for likelihood ratio based
+        confidence intervals (for Rank == 1 "rrvglm" and "qrrvglm" objects
+        only). Wald vcov matrix returned in vcov list component for
+        poisson and binomial.
+        calibrate() has argument 'cf.confint' for characteristic function based
+        confidence intervals (for Rank == 1 "rrvglm" and "qrrvglm" objects
+        only).
+    o   margeff() works for tobit() objects.
+    o   A .control() function for a VGAM family function allows the 'HDEtest'
+        argument in summaryvglm() to be FALSE by default, e.g.,
+        zanegbinomial.control(summary.HDEtest = FALSE) means that
+        summary(zanegbinomialfit) does not conduct any HDE tests.
+    o   vcov() for "qrrvglm" objects (but assumes C is given).
+    o   New functions: attr.assign.x.vglm().
+    o   New documentation: residualsvglm().
+    o   Tested okay on R 3.5.1.
+
+
+
+BUG FIXES and CHANGES
+
+    o   By default, dbetabinom() now behaves like dbinom() wrt 'size' and
+        'prob', since rho = 0. This is done by 'limit.prob'.
+        Thanks to S. A. Mousavi for picking this up.
+        The functions [dr]betabinom() have also been modified accordingly to
+        behave like the binomial distribution, by default.
+    o   pbetabinom.ab() did not handle negative values of 'q' correctly;
+        NAs now replaced by 0s.
+    o   vglm()@predictors did not contain the offsets; now they do.
+        Hence predict() will be affected.
+    o   pzeta() was incorrect if the first argument was greater than c.12.
+        Thanks to Mitchell Newberry at the University of Pennsylvania
+        for picking this up.
+    o   profilevglm() did not call constraints() correctly.
+    o   Deprecated: quasibinomialff(), quasipoisonff(), gaussianff().
+        The models fitted now have a log-likelihood that fully specifies
+        the model.
+    o   nbcanlink() has a cosmetically improved label.
+    o   lambertW() documentation improved; thanks to Jan Somorcik for this.
+    o   dirmultinomial()@validparams had M unassigned [thanks to Feng Zeng].
+    o   For model.matrix() for "qrrvglm" objects, model.matrix(type = "lm")
+        is new and returns what used to be model.matrix(type = "vlm").
+        And now model.matrix(type = "vlm") returns the big model matrix
+        of the CQO given the constrained coefficients C.
+    o   For uninormal(), if var.arg = TRUE then zero = "var", i.e., then
+        "sd" remains intercept-only by default even if var.arg = TRUE.
+
+
+
                 CHANGES IN VGAM VERSION 1.0-5
 
 NEW FEATURES

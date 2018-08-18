@@ -496,7 +496,7 @@ vglm.fit <-
     eval(slot(family, "last"))
 
   structure(c(fit,
-   list(predictors = fv,  # tfit$predictors,
+   list(predictors = eta,  # 20180320: was fv,  # tfit$predictors,
         contrasts = attr(x, "contrasts"),
         control = control,
         crit.list = crit.list,

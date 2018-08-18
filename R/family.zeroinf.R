@@ -1036,8 +1036,16 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
 
-zanegbinomial.control <- function(save.weights = TRUE, ...) {
-  list(save.weights = save.weights)
+
+
+
+
+zanegbinomial.control <-
+  function(save.weights = TRUE,
+           summary.HDEtest = FALSE,  # Overwrites the summary() default.
+           ...) {
+  list(save.weights = save.weights,
+       summary.HDEtest = summary.HDEtest)
 }
 
 

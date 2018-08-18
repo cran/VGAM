@@ -31,6 +31,10 @@ summaryvglm <-
            ...  # Added 20151211
           ) {
 
+  missing.HDEtest <- missing(HDEtest)
+
+
+
 
 
 
@@ -125,6 +129,13 @@ summaryvglm <-
   } else {
   }
 
+
+
+  control <- object@control
+  if (missing.HDEtest &&
+      length(temp <- object@control$summary.HDEtest)) {
+    HDEtest <- temp
+  }
 
   if (HDEtest) {
     answer@post$hdeff <- hdeff(object, derivative = 1, se.arg = TRUE)

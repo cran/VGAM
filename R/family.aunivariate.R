@@ -479,7 +479,8 @@ pkumar <- function(q, shape1, shape2,
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
             .eshape1 = eshape1, .eshape2 = eshape2 ))),
   loglikelihood = eval(substitute(
-  function(mu, y, w, residuals = FALSE, eta, extra = NULL, summation = TRUE) {
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL, summation = TRUE) {
     shape1 <- eta2theta(eta[, c(TRUE, FALSE)], .lshape1 , earg = .eshape1 )
     shape2 <- eta2theta(eta[, c(FALSE, TRUE)], .lshape2 , earg = .eshape2 )
     if (residuals) {
@@ -528,10 +529,11 @@ pkumar <- function(q, shape1, shape2,
     ned2l.dshape12 <-
        (digamma(2) - digamma(1 + shape2)) / ((shape2 - 1) * shape1)
 
-    index1 <- (abs(shape2 - 1) < .tol12 )  # Fix up singular point at shape2 == 1
+    index1 <- (abs(shape2 - 1) < .tol12 )
     ned2l.dshape12[index1] <- -trigamma(2) / shape1[index1]
-    index2 <- (abs(shape2 - 2) < .tol12 )  # Fix up singular point at shape2 == 2
-    ned2l.dshape11[index2] <- (1 - 2 * psigamma(2, deriv = 2)) / shape1[index2]^2
+    index2 <- (abs(shape2 - 2) < .tol12 )
+    ned2l.dshape11[index2] <-
+      (1 - 2 * psigamma(2, deriv = 2)) / shape1[index2]^2
 
     wz <- array(c(c(w) * ned2l.dshape11 * dshape1.deta^2,
                   c(w) * ned2l.dshape22 * dshape2.deta^2,
@@ -713,7 +715,8 @@ riceff.control <- function(save.weights = TRUE, ...) {
       seq(quantile(rep(y, w), probs = seq(0, 1, 0.2))["20%"],
           quantile(rep(y, w), probs = seq(0, 1, 0.2))["80%"], len = 11)
     vee.init <- if (length( .ivee )) .ivee else
-      grid.search(vee.grid, objfun = riceff.Loglikfun, y = y,  x = x, w = w)
+                grid.search(vee.grid, objfun = riceff.Loglikfun,
+                            y = y,  x = x, w = w)
       vee.init <- rep_len(vee.init, length(y))
       sigma.init <- if (length( .isigma )) .isigma else
           sqrt(max((weighted.mean(y^2, w) - vee.init^2)/2, 0.001))
@@ -2683,7 +2686,8 @@ qbenf <- function(p, ndigits = 1,
 
 
     mynames1 <- param.names("prob", ncoly, skip1 = TRUE)
-    predictors.names <- namesof(mynames1, .link , earg = .earg , tag = FALSE)
+    predictors.names <-
+      namesof(mynames1, .link , earg = .earg , tag = FALSE)
 
 
     if (!length(etastart)) {
@@ -3031,9 +3035,11 @@ if (FALSE) {
     temp1 <- m1u*phi
     temp2 <- (1-m1u)*phi
     if ( .stdbeta ) {
-      dl.dmu1 <- phi*(digamma(temp2) - digamma(temp1) + log(y) - log1p(-y))
-      dl.dphi <- digamma(phi) - mu*digamma(temp1) - (1-mu)*digamma(temp2) +
-          mu*log(y) + (1-mu)*log1p(-y)
+      dl.dmu1 <- phi * (digamma(temp2) -
+                        digamma(temp1) + log(y) - log1p(-y))
+      dl.dphi <- digamma(phi) - mu*digamma(temp1) -
+                 (1-mu)*digamma(temp2) +
+                 mu*log(y) + (1-mu)*log1p(-y)
     } else {
       dl.dmu1 <- phi*(digamma(temp2) - digamma(temp1) +
                      log(y-.A) - log( .B-y))
@@ -3483,12 +3489,15 @@ if (FALSE) {
         cbind(con.s[[klocal]], con.p[[klocal]])
  # Delete rows that are not needed:
       if (!cind0[1]) {
-        con.use[[klocal]] <- (con.use[[klocal]])[c(TRUE, TRUE, FALSE, TRUE), ]
+        con.use[[klocal]] <-
+       (con.use[[klocal]])[c(TRUE, TRUE, FALSE, TRUE), ]
       }
       if (!cind1[1]) {
-        con.use[[klocal]] <- (con.use[[klocal]])[c(TRUE, TRUE, TRUE, FALSE), ]
+        con.use[[klocal]] <-
+       (con.use[[klocal]])[c(TRUE, TRUE, TRUE, FALSE), ]
       }
-      col.delete <- apply(con.use[[klocal]], 2, function(HkCol) all(HkCol == 0))
+      col.delete <- apply(con.use[[klocal]], 2,
+                          function(HkCol) all(HkCol == 0))
       con.use[[klocal]] <- (con.use[[klocal]])[, !col.delete]
     }
 
@@ -3555,11 +3564,11 @@ if (FALSE) {
       c(namesof(mynames1, .lshape1 , earg = .eshape1 , short = TRUE),
         namesof(mynames2, .lshape2 , earg = .eshape2 , short = TRUE),
         if (cind0[1])
-          namesof(mynames3, .lprobb0 , earg = .eprobb0 , short = TRUE) else
-          NULL,
+        namesof(mynames3, .lprobb0 , earg = .eprobb0 , short = TRUE) else
+        NULL,
         if (cind1[1])
-          namesof(mynames4, .lprobb1 , earg = .eprobb1 , short = TRUE) else
-          NULL)[interleave.VGAM(M, M1 = M1)]
+        namesof(mynames4, .lprobb1 , earg = .eprobb1 , short = TRUE) else
+        NULL)[interleave.VGAM(M, M1 = M1)]
 
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
@@ -3778,7 +3787,7 @@ if (FALSE) {
                 .lprobb0 , earg = .eprobb0 ) else 0
     probb1 <- if (cind1[1])
       eta2theta(eta[, c(FALSE, FALSE,
-                        if (cind0[1]) FALSE else NULL, TRUE), drop = FALSE],
+                    if (cind0[1]) FALSE else NULL, TRUE), drop = FALSE],
                 .lprobb1 , earg = .eprobb1 ) else 0
 
 
@@ -3854,6 +3863,221 @@ ned2l.dshape1probb0 <- 0
   }))
 }  # zoabetaR
 
+
+
+
+
+
+
+dbell <- function(x, shape = 1, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  L <- max(length(x), length(shape))
+  if (length(x)     != L) x     <- rep_len(x,     L)
+  if (length(shape) != L) shape <- rep_len(shape, L)
+
+  logdensity <- rep_len(log(0), L)
+  xok <- (0 <= x) & is.finite(x) & (x == round(x))
+  bellnos <- bell(x[xok])
+  logdensity[xok] <-
+    x[xok] * log(shape[xok]) - expm1(shape[xok]) +
+    log(bellnos[x[xok] + 1]) - lgamma(x[xok] + 1)
+  logdensity[shape <= 0] <- NaN
+  if (log.arg) logdensity else exp(logdensity)
+}
+
+
+
+rbell <- function(n, shape = 1) {
+  use.n <- if ((length.n <- length(n)) > 1) length.n else
+           if (!is.Numeric(n, integer.valued = TRUE,
+                           length.arg = 1, positive = TRUE))
+             stop("bad input for argument 'n'") else n
+
+  shape <- rep_len(shape, use.n)
+  N <- rpois(use.n, expm1(shape))  # Might have 0s
+  ans <- rep_len(0, use.n)
+  Nok <- !is.na(shape) & N > 0
+  if (any(Nok)) {
+    maxN <- max(N[Nok])
+    for (kk in seq(maxN)) {
+      sum.ok <- Nok & kk <= N  # [Nok]
+      ans[sum.ok] <- ans[sum.ok] + rpospois(sum(sum.ok), shape[sum.ok])
+    }
+  }
+  ans[shape <= 0] <- NaN
+  ans[is.na(shape)] <- NA
+  ans
+}
+
+
+
+ bellff <- function(lshape = "loge", zero = NULL,
+                    gshape = expm1(1.6 * ppoints(7))) {
+
+  lshape <- as.list(substitute(lshape))  # orig
+  eshape <- link2list(lshape)
+  lshape <- attr(eshape, "function.name")
+
+
+
+  new("vglmff",
+  blurb = c("Bell distribution\n",
+            "Pr(Y=y; shape) = shape^y * exp(-expm1(shape)) * bell(y) / y!,\n",
+            "y in 0(1)Inf, 0 < shape\n",
+            "Link:    ",
+            namesof("shape", lshape, earg = eshape), "\n",
+            "Mean:    shape * exp(shape)"),
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
+  }), list( .zero = zero ))),
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         expected = TRUE,
+         hadof = TRUE,
+         multipleResponses = TRUE,
+         parameters.names = "shape",
+         zero = .zero )
+  }, list( .zero = zero ))),
+
+
+  initialize = eval(substitute(expression({
+    temp5 <-
+    w.y.check(w = w, y = y,
+              Is.nonnegative.y = TRUE,
+              Is.integer.y = TRUE,
+              ncol.w.max = Inf,
+              ncol.y.max = Inf,
+              out.wy = TRUE,
+              colsyperw = 1,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+    if (is.infinite(bell(max(y))))
+      stop("max(y) > 218, therefore bell() returns Inf")
+
+
+    ncoly <- ncol(y)
+    M1 <- 1
+    extra$ncoly <- ncoly
+    extra$M1 <- M1
+    M <- M1 * ncoly
+
+
+    mynames1  <- param.names("shape", ncoly, skip1 = TRUE)
+    predictors.names <-
+      namesof(mynames1, .lshape , earg = .eshape , tag = FALSE)
+
+
+    if (!length(etastart)) {
+      shape.init <- matrix(0, nrow(x), ncoly)
+      gshape <- .gshape
+      bellff.Loglikfun <- function(shape, y, x = NULL,
+                                   w, extraargs = NULL) {
+        sum(c(w) * dbell(x = y, shape = shape, log = TRUE))
+      }
+
+      for (jay in 1:ncoly) {
+        shape.init[, jay] <- grid.search(gshape,
+                                         objfun = bellff.Loglikfun,
+                                         y = y[, jay], w = w[, jay])
+      }
+      etastart <- theta2eta(shape.init, .lshape , earg = .eshape )
+    }
+  }), list( .lshape = lshape, .gshape = gshape,
+            .eshape = eshape ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    shape * exp(shape)
+  }, list( .lshape = lshape,
+           .eshape = eshape ))),
+  last = eval(substitute(expression({
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- mynames1
+    for (ilocal in 1:ncoly) {
+      misc$earg[[ilocal]] <- .eshape
+    }
+
+    misc$link <- rep_len( .lshape , ncoly)
+    names(misc$link) <- mynames1
+  }), list( .lshape = lshape, .eshape = eshape ))),
+
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL,
+             summation = TRUE) {
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dbell(x = y, shape = shape, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .lshape = lshape, .eshape = eshape ))),
+  vfamily = c("bellff"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    okay1 <- all(is.finite(shape)) && all(0 < shape)
+    okay1
+  }, list( .lshape = lshape, .eshape = eshape ))),
+
+
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(), deriv = 1,
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2),
+           ...) {
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    ans <- c(w) *
+    switch(as.character(deriv),
+           "0" =  exp(shape) * (1 + 1 / shape),
+           "1" =  exp(shape) * (1 + 1 / shape - 1 / shape^2),
+           "2" =  exp(shape) * (1 + 1 / shape - 2 / shape^2 + 2 / shape^3),
+           "3" =  exp(shape) * (1 + 1 / shape - 3 / shape^2 + 6 / shape^3 -
+                                                              6 / shape^4),
+           stop("argument 'deriv' must be 0, 1, 2 or 3"))
+    if (deriv == 0) ans else retain.col(ans, linpred.index)  # M1 = 1
+  }, list( .lshape = lshape, .eshape = eshape ))),
+
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+ 
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1))
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    rbell(nsim * length(shape), shape = c(shape))
+  }, list( .lshape = lshape,
+           .eshape = eshape ))),
+
+
+  deriv = eval(substitute(expression({
+    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    dl.dshape <- y / shape - exp(shape)
+    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    c(w) * dl.dshape * dshape.deta
+  }), list( .lshape = lshape, .eshape = eshape ))),
+  weight = eval(substitute(expression({
+    ned2l.dshape2 <- (1 + shape) * exp(shape) / shape
+    wz <- c(w) * ned2l.dshape2 * dshape.deta^2
+    wz
+  }), list( .lshape = lshape, .eshape = eshape ))))
+}  # bellff
 
 
 
@@ -4062,7 +4286,7 @@ rtopple <- function(n, shape) {
            "2" =   6 / shape^4,
            "3" = -24 / shape^5,
            stop("argument 'deriv' must be 0, 1, 2 or 3"))
-    if (deriv == 0) ans else retain.col(ans, linpred.index)  # Since M1 = 1
+    if (deriv == 0) ans else retain.col(ans, linpred.index)  # M1 = 1
   }, list( .lshape = lshape, .eshape = eshape ))),
 
 
@@ -4092,7 +4316,7 @@ rtopple <- function(n, shape) {
     wz <- c(w) * ned2l.dshape2 * dshape.deta^2
     wz
   }), list( .lshape = lshape, .eshape = eshape ))))
-}
+}  # topple
 
 
 
@@ -4112,12 +4336,12 @@ dzeta <- function(x, shape, log = FALSE) {
   zero <- ox | round(x) != x | x < 1
   ans <- rep_len(if (log.arg) log(0) else 0, LLL)
   if (any(!zero)) {
-      if (log.arg) {
-          ans[!zero] <- (-shape[!zero]-1)*log(x[!zero]) -
-                        log(zeta(shape[!zero]+1))
-      } else {
-          ans[!zero] <- x[!zero]^(-shape[!zero]-1) / zeta(shape[!zero]+1)
-      }
+    if (log.arg) {
+      ans[!zero] <- (-shape[!zero]-1)*log(x[!zero]) -
+                    log(zeta(shape[!zero]+1))
+    } else {
+      ans[!zero] <- x[!zero]^(-shape[!zero]-1) / zeta(shape[!zero]+1)
+    }
   }
   if (any(ox))
     ans[ox] <- if (log.arg) log(0) else 0
@@ -4144,11 +4368,11 @@ dzeta <- function(x, shape, log = FALSE) {
   if (lower.tail) {
     if (any(vecTF))
       ans[vecTF] <- zeta(shape[vecTF]+1) -
-                    Zeta.aux(shape[vecTF]+1, qfloor[vecTF]+1)
+                    Zeta.aux(shape[vecTF]+1, qfloor[vecTF]  )
   } else {
     ans <- zeta(shape+1) - ans
     if (any(vecTF))
-      ans[vecTF] <- Zeta.aux(shape[vecTF]+1, qfloor[vecTF]+1)
+      ans[vecTF] <- Zeta.aux(shape[vecTF]+1, qfloor[vecTF]  )
   }
   ans / zeta(shape+1)
 }  # pzeta
@@ -4183,7 +4407,8 @@ dzeta <- function(x, shape, log = FALSE) {
   approx.ans[!lhs] <- bisection.basic(foo, lo[!lhs], hi[!lhs], tol = 1/16,
                                       shape = shape[!lhs], p = p[!lhs])
   faa <- floor(approx.ans)
-  ans <- ifelse(pzeta(faa, shape) < p & p <= pzeta(faa+1, shape), faa+1, faa)
+   ans <- ifelse(pzeta(faa, shape) < p &
+                 p <= pzeta(faa+1, shape), faa+1, faa)
 
   ans[p == 1] <- Inf
   ans[shape <= 0] <- NaN
@@ -4609,7 +4834,8 @@ rzipf <- function(n, N, shape) {
       if ( .lshape == "loglog") shape.init[shape.init <= 1] <- 1.2
       etastart <- theta2eta(shape.init, .lshape , earg = .eshape )
     }
-  }), list( .lshape = lshape, .eshape = eshape, .ishape = ishape, .N = N ))),
+  }), list( .lshape = lshape, .eshape = eshape,
+            .ishape = ishape, .N = N ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     shape <- eta2theta(eta, .lshape , earg = .eshape )
     gharmonic2(extra$N,
@@ -5377,7 +5603,7 @@ roizipf <- function(n, N, shape, pstr1 = 0) {
       switch(type.fitted,
              "mean"      = pstr1 + (1 - pstr1) * Meanfun(shape, extra),
              "shape"     = shape,
-             "pobs1"     = doizipf(1, N = extra$N, s = shape, pstr1 = pstr1),
+         "pobs1"     = doizipf(1, N = extra$N, s = shape, pstr1 = pstr1),
              "pstr1"     =     pstr1,
              "onempstr1" = 1 - pstr1)
 
@@ -5763,7 +5989,8 @@ ddiffzeta <- function(x, shape, start = 1, log = FALSE) {
     hi[!done] <- 2 * lo[!done] + 10
     lo[!done] <- hi.save
     done[!done] <- is.infinite(hi[!done]) |
-                   (p[!done] <= pdiffzeta(hi[!done], shape[!done], start[!done]))
+                   (p[!done] <= pdiffzeta(hi[!done], shape[!done],
+                                          start[!done]))
     iter <- iter + 1
   }
 

@@ -104,7 +104,11 @@ lqnorm(qpower = 2, link = "identitylink",
 }
 
 \seealso{
-  \code{\link{gaussianff}}.
+  \code{\link{uninormal}}.
+
+
+
+% \code{\link{gaussianff}}.
 
 
 }

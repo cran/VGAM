@@ -39,12 +39,18 @@ cqo(formula, family = stop("argument 'family' needs to be assigned"),
   \code{\link{binomialff}}
       (\code{\link{logit}} and \code{\link{cloglog}} links available),
   \code{\link{negbinomial}},
-  \code{\link{gamma2}},
-  \code{\link{gaussianff}}.
+  \code{\link{gamma2}}.
   Sometimes special arguments are required for \code{cqo()}, e.g.,
   \code{binomialff(multiple.responses = TRUE)}.
-  Also, \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}}
-  may or may not work.
+
+
+% \code{\link{gaussianff}}.
+
+
+
+
+% Also, \code{\link{quasipoissonff}} and \code{\link{quasibinomialff}}
+% may or may not work.
 
 
 % \code{negbinomial(deviance = TRUE)},
@@ -225,11 +231,15 @@ cqo(formula, family = stop("argument 'family' needs to be assigned"),
   to be used with \code{cqo} correspond to the Poisson, binomial,
   normal, and negative binomial distributions. The latter is a
   2-parameter model. All of these are implemented, as well as the
-  2-parameter gamma.  The Poisson is or should be catered for by
-  \code{\link{quasipoissonff}} and \code{\link{poissonff}}, and the
-  binomial by \code{\link{quasibinomialff}} and \code{\link{binomialff}}.
-  Those beginning with \code{"quasi"} have dispersion parameters that
-  are estimated for each species.
+  2-parameter gamma. 
+
+
+
+% The Poisson is or should be catered for by
+% \code{\link{quasipoissonff}} and \code{\link{poissonff}}, and the
+% binomial by \code{\link{quasibinomialff}} and \code{\link{binomialff}}.
+% Those beginning with \code{"quasi"} have dispersion parameters that
+% are estimated for each species.
 
 
   %the negative binomial by \code{\link{negbinomial}}, and the normal by
@@ -535,6 +545,9 @@ original FORTRAN code into C.
   \code{\link{qrrvglm.control}},
   \code{\link{Coef.qrrvglm}},
   \code{\link{predictqrrvglm}},
+  \code{\link{calibrate.qrrvglm}},
+  \code{\link{model.matrixqrrvglm}},
+  \code{\link{vcovqrrvglm}},
   \code{\link{rcqo}},
   \code{\link{cao}},
   \code{\link{uqo}},

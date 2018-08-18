@@ -172,7 +172,8 @@ rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
              ki[i] <- max((1:plag)[dsrank == udsrank[i]])
           ki <- c(ki, plag+1)  # For computing a
           Ranks. <- c(Ranks., 0)  # For computing a
-          aa <- sum( (MM-Ranks.[ki[1:uu]]) * (Ranks.[ki[1:uu]]-Ranks.[ki[-1]]) )
+          aa <- sum( (MM-Ranks.[ki[1:uu]]) *
+                     (Ranks.[ki[1:uu]]-Ranks.[ki[-1]]) )
       }
       if (!intercept.only)
         warning("ignoring explanatory variables")
@@ -445,9 +446,10 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
 
 
         x[, 1:p.lm] <- x[, 1:p.lm] -
-                       x.save[tt.index-ii, 1:p.lm] * new.coeffs[ii + p.lm]
-        x[, p.lm+ii] <- temp - x.save[tt.index-ii, 1:p.lm, drop = FALSE] %*%
-                            new.coeffs[1:p.lm]
+                   x.save[tt.index-ii, 1:p.lm] * new.coeffs[ii + p.lm]
+        x[, p.lm+ii] <- temp -
+            x.save[tt.index-ii, 1:p.lm, drop = FALSE] %*%
+            new.coeffs[1:p.lm]
     }
     class(x) <- "matrix" # Added 20020227; 20040226
 

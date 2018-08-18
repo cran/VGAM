@@ -6,11 +6,15 @@
 \description{
   Family function for a generalized linear model fitted to
   Poisson responses.
-  The dispersion parameters may be known or unknown.
+
+
+% The dispersion parameters may be known or unknown.
+% link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
+
 
 }
 \usage{
-poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
+poissonff(link = "loge", imu = NULL,
           imethod = 1, parallel = FALSE, zero = NULL, bred = FALSE,
           earg.link = FALSE, type.fitted = c("mean", "quantiles"),
                        percentiles = c(25, 50, 75))
@@ -24,26 +28,26 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 
 
   }
-  \item{dispersion}{
-  Dispersion parameter. By default, maximum
-  likelihood is used to estimate the model because it is known.
-  However, the user can specify
-  \code{dispersion = 0} to have it estimated, or
-  else specify a known positive value (or values if the response
-  is a matrix---one value per column).
+% \item{dispersion}{
+% Dispersion parameter. By default, maximum
+% likelihood is used to estimate the model because it is known.
+% However, the user can specify
+% \code{dispersion = 0} to have it estimated, or
+% else specify a known positive value (or values if the response
+% is a matrix---one value per column).
 
 
-  }
-  \item{onedpar}{
-  One dispersion parameter? If the response is a matrix,
-  then a separate
-  dispersion parameter will be computed for each response (column),
-  by default.
-  Setting \code{onedpar=TRUE} will pool them so that there is only
-  one dispersion parameter to be estimated.
+% }
+% \item{onedpar}{
+% One dispersion parameter? If the response is a matrix,
+% then a separate
+% dispersion parameter will be computed for each response (column),
+% by default.
+% Setting \code{onedpar=TRUE} will pool them so that there is only
+% one dispersion parameter to be estimated.
 
 
-  }
+% }
   \item{parallel}{
   A logical or formula. Used only if the response is a matrix.
 
@@ -81,22 +85,33 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 }
 \details{
   \eqn{M} defined above is the number of linear/additive predictors.
+  With overdispersed data try \code{\link{negbinomial}}.
 
 
-  If the dispersion parameter is unknown, then the resulting estimate
-  is not fully a maximum likelihood estimate.
 
 
-  A dispersion parameter that is less/greater than unity corresponds to
-  under-/over-dispersion relative to the Poisson model.  Over-dispersion
-  is more common in practice.
+% If the dispersion parameter is unknown, then the resulting estimate
+% is not fully a maximum likelihood estimate.
 
 
-  When fitting a Quadratic RR-VGLM (see \code{\link{cqo}}), the
-  response is a matrix of \eqn{M}, say, columns (e.g., one column
-  per species). Then there will be \eqn{M} dispersion parameters
-  (one per column of the response matrix) if \code{dispersion = 0} and
-  \code{onedpar = FALSE}.
+% A dispersion parameter that is less/greater than unity corresponds to
+% under-/over-dispersion relative to the Poisson model.  Over-dispersion
+% is more common in practice.
+
+
+% When fitting a Quadratic RR-VGLM (see \code{\link{cqo}}), the
+% response is a matrix of \eqn{M}, say, columns (e.g., one column
+% per species). Then there will be \eqn{M} dispersion parameters
+% (one per column of the response matrix) if \code{dispersion = 0} and
+% \code{onedpar = FALSE}.
+
+
+
+
+
+
+
+
 
 
 }
@@ -126,10 +141,10 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
   This function will handle a matrix response automatically.
 
 
-  The call \code{poissonff(dispersion=0, ...)} is equivalent to
-  \code{quasipoissonff(...)}.  The latter was written so that R users
-  of \code{quasipoisson()} would only need to add a  ``\code{ff}''
-  to the end of the family function name.
+% The call \code{poissonff(dispersion=0, ...)} is equivalent to
+% \code{quasipoissonff(...)}.  The latter was written so that R users
+% of \code{quasipoisson()} would only need to add a  ``\code{ff}''
+% to the end of the family function name.
 
 
   Regardless of whether the dispersion parameter is to be estimated or
@@ -152,8 +167,8 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
 
 \seealso{
     \code{\link{Links}},
-    \code{\link{quasipoissonff}},
     \code{\link{hdeff.vglm}},
+    \code{\link{negbinomial}},
     \code{\link{genpoisson}},
     \code{\link{zipoisson}},
     \code{\link{pospoisson}},
@@ -172,13 +187,19 @@ poissonff(link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
     \code{\link{cqo}},
     \code{\link{cao}},
     \code{\link{binomialff}},
-    \code{\link{quasibinomialff}},
     \code{\link[stats]{poisson}},
     \code{\link[stats]{Poisson}},
     \code{\link{poisson.points}},
     \code{\link{ruge}},
-    \code{\link{V1}}.
+    \code{\link{V1}},
+    \code{\link{residualsvglm}}.
 
+
+ 
+%   \code{\link{quasipoissonff}},
+%   \code{\link{quasibinomialff}},
+
+ 
 
 }
 \examples{

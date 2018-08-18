@@ -103,10 +103,13 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                 Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          fam = quasipoissonff, data = hspider, Crow1positive = FALSE)
+          family = poissonff, data = hspider, Crow1positive = FALSE)
 concoef(p1)
 }
 }
 \keyword{models}
 \keyword{regression}
+
+%         family = quasipoissonff, data = hspider, Crow1positive = FALSE
+
 

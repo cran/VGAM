@@ -32,6 +32,7 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \details{
   The probit link function is commonly used for parameters that
   lie in the unit interval.
+  It is the inverse CDF of the standard normal distribution.
   Numerical values of \code{theta} close to 0 or 1 or out of range
   result in
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
@@ -75,7 +76,8 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \code{\link{Links}},
   \code{\link{logit}},
   \code{\link{cloglog}},
-  \code{\link{cauchit}}.
+  \code{\link{cauchit}},
+  \code{\link[stats]{Normal}}.
 
 
 }

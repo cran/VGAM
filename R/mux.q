@@ -66,13 +66,15 @@ mux22 <- function(cc, xmat, M, upper = FALSE, as.matrix = FALSE) {
 
   ans <- rep_len(NA_real_, n*M)
   fred <- .C("mux22ccc", as.double(cc), as.double(t(xmat)),
-               ans = as.double(ans), as.integer(dimm.value),
-               as.integer(index$row), as.integer(index$col),
-               as.integer(n), as.integer(M), wk = double(M*M),
-               as.integer(as.numeric(upper)), NAOK = TRUE)
-  if (!as.matrix) fred$ans else {
+             ans = as.double(ans), as.integer(dimm.value),
+             as.integer(index$row), as.integer(index$col),
+             as.integer(n), as.integer(M), wk = double(M*M),
+             as.integer(as.numeric(upper)), NAOK = TRUE)
+  if (as.matrix) {
     dim(fred$ans) <- c(M, n)
     t(fred$ans)
+  } else {
+    fred$ans
   }
 }
 
@@ -102,23 +104,23 @@ mux5 <- function(cc, x, M, matrix.arg = FALSE) {
   }
 
   if (is.matrix(x))
-    x <- array(x,c(M, r, n))
+    x <- array(x, c(M, r, n))
   index.M <- iam(NA, NA, M, both = TRUE, diag = TRUE)
   index.r <- iam(NA, NA, r, both = TRUE, diag = TRUE)
 
-  size <- if (matrix.arg) dimm(r)*n else r*r*n
+  size <- if (matrix.arg) dimm(r) * n else r * r * n
   fred <- .C("mux5ccc", as.double(cc), as.double(x),
-               ans = double(size),
-               as.integer(M), as.integer(n), as.integer(r),
-               as.integer(neltscci),
-               as.integer(dimm(r)),
-               as.integer(as.numeric(matrix.arg)),
-               double(M*M), double(r*r),
-               as.integer(index.M$row), as.integer(index.M$col),
-               as.integer(index.r$row), as.integer(index.r$col),
-               ok3 = as.integer(1), NAOK = TRUE)
+             ans = double(size),
+             as.integer(M), as.integer(n), as.integer(r),
+             as.integer(neltscci),
+             as.integer(dimm(r)),
+             as.integer(as.numeric(matrix.arg)),
+             double(M*M), double(r*r),
+             as.integer(index.M$row), as.integer(index.M$col),
+             as.integer(index.r$row), as.integer(index.r$col),
+             ok3 = as.integer(1), NAOK = TRUE)
   if (fred$ok3 == 0)
-    stop("can only handle matrix.arg == 1")
+    stop("can only handle 'matrix.arg == 1'")
 
 
   if (matrix.arg) {
@@ -171,9 +173,9 @@ mux7 <- function(cc, x) {
 
   ans <- array(NA, c(M, r, n))
   fred <- .C("mux7ccc", as.double(cc), as.double(x),
-               ans = as.double(ans),
-               as.integer(M), as.integer(qq), as.integer(n),
-               as.integer(r), NAOK = TRUE)
+             ans = as.double(ans),
+             as.integer(M), as.integer(qq), as.integer(n),
+             as.integer(r), NAOK = TRUE)
   array(fred$ans, c(M, r, n))
 }
 

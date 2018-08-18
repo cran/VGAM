@@ -1,13 +1,15 @@
 \name{calibrate-methods}
 \docType{methods}
 \alias{calibrate,rrvglm-method}
+\alias{calibrate,qrrvglm-method}
+\alias{calibrate,rrvgam-method}
 \alias{calibrate,Coef.qrrvglm-method}
 \title{ Calibration for Constrained Regression Models }
 \description{
   \code{calibrate} is a generic function applied to
   RR-VGLMs,
   QRR-VGLMs and
-  RR-VGAMs etc.
+  RR-VGAMs, etc.
 
 }
 %\usage{

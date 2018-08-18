@@ -56,7 +56,8 @@ df.residual_vlm(object, type = c("vlm", "lm"), \dots)
 \seealso{
   \code{\link{vglm}},
   \code{\link[stats]{deviance}},
-  \code{\link[stats]{lm}}.
+  \code{\link[stats]{lm}},
+  \code{\link{anova.vglm}},
 
 
 }

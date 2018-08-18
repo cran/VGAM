@@ -41,7 +41,12 @@ profilevglm <-
   Xm2 <- model.matrix(object, type = "lm2")  # Could be a 0 x 0 matrix
   if (!length(Xm2))
      Xm2 <- NULL  # Make sure. This is safer
-  clist <- constraints(object, type = "lm")  # type = c("lm", "term")
+
+
+
+
+  clist <- constraints(object, type = "term")  # type = c("lm", "term")
+
 
 
 

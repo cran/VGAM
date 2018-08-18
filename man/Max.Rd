@@ -86,14 +86,12 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                 Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          quasipoissonff, Bestof = 2, data = hspider, Crow1positive = FALSE)
-
+          poissonff, Bestof = 2, data = hspider, Crow1positive = FALSE)
 Max(p1)
 
 index <- 1:ncol(depvar(p1))
 persp(p1, col = index, las = 1, llwd = 2)
 abline(h = Max(p1), lty = 2, col = index)
-
 }
 }
 \keyword{models}

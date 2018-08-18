@@ -3,9 +3,11 @@
 \alias{vcov}
 \alias{vcovvlm}
 \alias{vcovrrvglm}
+\alias{vcovqrrvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Calculate Variance-Covariance Matrix for a Fitted
         VLM or RR-VGLM
+        or QRR-VGLM
         Object
 
 }
@@ -20,12 +22,14 @@
 \usage{
 vcov(object, \dots)
 vcovvlm(object, dispersion = NULL, untransform = FALSE)
+vcovqrrvglm(object, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ A fitted model object,
   having class \code{\link[VGAM]{vlm-class}} or
   \code{\link[VGAM]{rrvglm-class}} or
+  \code{\link[VGAM]{qrrvglm-class}} or
   a superclass of such.
   The former includes a \code{\link{vglm}} object.
 
@@ -66,6 +70,20 @@ vcovvlm(object, dispersion = NULL, untransform = FALSE)
   not positive-definite.
 
 
+
+  For \code{"qrrvglm"} objects,
+  \code{\link{vcovqrrvglm}}
+  is currently working with \code{Rank = 1} objects or
+  when \code{I.tolerances = TRUE}.
+  Then the answer is conditional given \bold{C}.
+  The code is based on \code{\link{model.matrixqrrvglm}}
+  so that the \code{dimnames} are the same.
+
+
+
+
+
+
 }
 \value{
   Same as \code{\link[stats]{vcov}}.
@@ -98,7 +116,8 @@ vcovvlm(object, dispersion = NULL, untransform = FALSE)
   \code{\link{summaryvglm}},
   \code{\link[stats]{vcov}},
   \code{\link{hdeff.vglm}},
-  \code{\link{lrt.stat.vlm}}.
+  \code{\link{lrt.stat.vlm}},
+  \code{\link{model.matrixqrrvglm}}.
 
 
 }

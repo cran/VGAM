@@ -12,7 +12,7 @@ replace.constraints <- function(Hlist, cm, index) {
   for (iii in index)
     Hlist[[iii]] <- cm
   Hlist
-}
+}  # replace.constraints
 
 
 
@@ -36,7 +36,7 @@ replace.constraints <- function(Hlist, cm, index) {
        Maxit = Maxit,
        Suppress.warning = Suppress.warning,
        Tolerance = Tolerance)
-}
+}  # valt.control
 
 
 
@@ -58,7 +58,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
   }
   list(matrix = if (Aoffset > 0) ans else ans[, -(1:Rank), drop = FALSE],
        offset = moff)
-}
+}  # qrrvglm.xprod
 
 
 
@@ -236,7 +236,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
        fitted = fit$fitted,
        new.coeffs = fit$coef,
        ResSS = fit$ResSS)
-}
+}  # valt
 
 
 
@@ -321,7 +321,7 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
            Aoffset = Aoffset,
            latvar.mat = latvar.mat,
            offset = tmp900$offset)
-}
+}  # lm2qrrvlm.model.matrix
 
 
 
@@ -338,7 +338,7 @@ valt.2iter <- function(x, z, U, Hlist, A, control) {
   list(A = A, C = C,
        fitted = fit$fitted, new.coeffs = fit$coef,
        Hlist = clist1, ResSS = fit$ResSS)
-}
+}  # valt.2iter
 
 
 
@@ -423,7 +423,7 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
          fitted = if (M == 1) c(fv) else fv,
          new.coeffs = fit$coef, constraints = clist2, ResSS = fit$ResSS,
          offset = if (length(tmp833$offset)) tmp833$offset else NULL)
-}
+}  # valt.1iter
 
 
 
@@ -462,7 +462,9 @@ rrr.init.expression <- expression({
   }
 
 
-})
+})  # rrr.init.expression
+
+
 
 
 
@@ -490,7 +492,9 @@ rrr.alternating.expression <- expression({
     rrcontrol$Cinit <- ans2$C   # For next valt() call
 
     eval(rrr.end.expression)    # Put Amat into Hlist, and create new z
-})
+})  # rrr.alternating.expression
+
+
 
 
 
@@ -510,7 +514,9 @@ rrr.alternating.expression <- expression({
       }
     }
     Dmat
-  }
+  }  # adjust.Dmat.expression
+
+
 
 
 
@@ -585,8 +591,7 @@ rrr.normalize <- function(rrcontrol, A, C, x, Dmat = NULL) {
 
 
     list(Amat = A, Cmat = C, Dmat = Dmat)
-}
-
+}  # rrr.normalize
 
 
 
@@ -642,7 +647,9 @@ rrr.end.expression <- expression({
 
 
 
-})
+})  # rrr.end.expression
+
+
 
 
 
@@ -808,7 +815,9 @@ rrr.derivative.expression <- expression({
     Dmat <- alt$Dmat  # Put later into extra
 
     eval(rrr.end.expression)    # Put Amat into Hlist, and create new z
-})
+})  # rrr.derivative.expression
+
+
 
 
 
@@ -856,7 +865,7 @@ rrr.derivC.ResSS <- function(theta, U, z, M, xmat, Hlist, rrcontrol,
              matrix.out = FALSE, is.vlmX = FALSE, ResSS = TRUE,
              qr = FALSE, Eta.range = rrcontrol$Eta.range,
              xij = rrcontrol$xij)$ResSS
-}
+}  # rrr.derivC.ResSS
 
 
 
@@ -876,7 +885,7 @@ rrvglm.optim.control <- function(Fnscale = 1,
          Switch.optimizer = Switch.optimizer,
          Abstol = Abstol,
          Reltol = Reltol)
-}
+}  # rrvglm.optim.control
 
 
 
@@ -897,7 +906,9 @@ nlminbcontrol <- function(Abs.tol = 10^(-6),
        Rel.tol = Rel.tol,
        Step.min = Step.min,
        X.tol = X.tol)
-}
+}  # nlminbcontrol
+
+
 
 
 
@@ -911,7 +922,7 @@ Coef.qrrvglm <-
 
 
   if (length(varI.latvar) != 1 || !is.logical(varI.latvar))
-    stop("'varI.latvar' must be TRUE or FALSE")
+    stop("argument 'varI.latvar' must be TRUE or FALSE")
   if (length(refResponse) > 1)
     stop("argument 'refResponse' must be of length 0 or 1")
   if (length(refResponse) &&
@@ -923,10 +934,10 @@ Coef.qrrvglm <-
     stop("cannot determine whether the model is constrained or not")
 
   ocontrol <- object@control
-  coef.object <- object@coefficients
+  coef.object <- object@coefficients  # Unscaled
   Rank <- ocontrol$Rank
   M <- object@misc$M
-  NOS <- if (length(object@y)) ncol(object@y) else M
+  NOS <- if (length(object@y)) NCOL(object@y) else M
   MSratio <- M / NOS  # First value is g(mean) = quadratic form in latvar
   Quadratic <- if (ConstrainedQO) ocontrol$Quadratic else TRUE
   if (!Quadratic) stop("object is not a quadratic ordination object")
@@ -962,7 +973,6 @@ Coef.qrrvglm <-
 
   td.expression <- function(Dmat, Amat, M, Dzero, Rank, bellshaped) {
 
-
     Tolerance <- Darray <- m2a(Dmat, M = Rank)
     for (ii in 1:M)
       if (length(Dzero) && any(Dzero == ii)) {
@@ -970,8 +980,8 @@ Coef.qrrvglm <-
         bellshaped[ii] <- FALSE
       } else {
         Tolerance[, , ii] <- -0.5 * solve(Darray[, , ii])
-        bellshaped[ii] <- all(eigen(Tolerance[, , ii],
-                                    symmetric = TRUE)$values > 0)
+        bellshaped[ii] <-
+          all(eigen(Tolerance[, , ii], symmetric = TRUE)$values > 0)
       }
     optimum <- matrix(NA_real_, Rank, M)
     for (ii in 1:M)
@@ -982,9 +992,7 @@ Coef.qrrvglm <-
          Tolerance  = Tolerance,
          Darray     = Darray,
          bellshaped = bellshaped)
-  }
-
-
+  }  # td.expression
 
 
 
@@ -1006,17 +1014,17 @@ Coef.qrrvglm <-
     if (ptr1 > 0) {
       this.spp <- candidates[ptr1]
     }
-  elts <- Dmat[this.spp,, drop = FALSE]
-      if (length(elts) < Rank)
-        elts <- matrix(elts, 1, Rank)
-      Dk <- m2a(elts, M = Rank)[, , 1]  # Hopefully negative-def
-      temp400 <- eigen(Dk, symmetric = TRUE)
-      ptr1 <- ptr1 + 1
-      if (all(temp400$value < 0))
-        break
-      if (ptr1 > length(candidates))
-        break
-  }
+    elts <- Dmat[this.spp,, drop = FALSE]
+    if (length(elts) < Rank)
+      elts <- matrix(elts, 1, Rank)
+    Dk <- m2a(elts, M = Rank)[, , 1]  # Hopefully negative-def
+    temp400 <- eigen(Dk, symmetric = TRUE)
+    ptr1 <- ptr1 + 1
+    if (all(temp400$value < 0))
+      break
+    if (ptr1 > length(candidates))
+      break
+  }  # repeat
   if (all(temp400$value < 0)) {
     temp1tol <- -0.5 * solve(Dk)
     dim(temp1tol) <- c(Rank,Rank)
@@ -1085,7 +1093,7 @@ Coef.qrrvglm <-
       Tolerance  <- retlist$Tolerance
       Darray     <- retlist$Darray
       bellshaped <- retlist$bellshaped
-  }
+  }  # Rank > 1
 
 
   if (ConstrainedQO)
@@ -1102,11 +1110,8 @@ Coef.qrrvglm <-
       Amat <- temp800$amat
                Cmat # Not needed
 
-
-
       Dmat <- adjust.Dmat.expression(Mmat = Mmat, Rank = Rank,
                                      Dmat = Dmat, M = M)
-
 
 
       retlist <- td.expression(Dmat = Dmat, Amat = Amat, M = M,
@@ -1116,7 +1121,7 @@ Coef.qrrvglm <-
       Tolerance  <- retlist$Tolerance
       Darray     <- retlist$Darray
       bellshaped <- retlist$bellshaped
-    }
+    }  # (varI.latvar)
 
 
   cx1i <- ocontrol$colx1.index
@@ -1193,7 +1198,7 @@ Coef.qrrvglm <-
   dimnames(ans@Optimum) <- list(latvar.names, ynames)
   dimnames(ans@Tolerance) <- list(latvar.names, latvar.names, ynames)
   ans
-}  # End of Coef.qrrvglm
+}  # Coef.qrrvglm
 
 
 
@@ -1298,7 +1303,9 @@ show.Coef.qrrvglm <- function(x, ...) {
     cat("\nStandard deviation of the latent variables (site scores)\n")
     print(apply(cbind(object@latvar), 2, sd))
     invisible(object)
-}
+}  # show.Coef.qrrvglm
+
+
 
 
 
@@ -1454,19 +1461,50 @@ predictqrrvglm <-
     }
   }
   pred
-}
+}  # predictqrrvglm
 
 
 setMethod("predict", "qrrvglm", function(object, ...)
   predictqrrvglm(object, ...))
 
 
-coefqrrvglm <- function(object, matrix.out = FALSE,
-                       label = TRUE) {
+
+
+coefqrrvglm <-
+  function(object, matrix.out = FALSE,
+           label = TRUE) {
   if (matrix.out)
     stop("currently cannot handle matrix.out = TRUE")
-  coefvlm(object, matrix.out = matrix.out, label = label)
-}
+
+  cobj <- coefvlm(object, matrix.out = matrix.out, label = label)
+
+
+  M <- npred(object)
+  M1 <- npred(object, type = "one.response")
+  NOS <- M / M1
+  Rank <- Rank(object)
+  colx1.index <- object@control$colx1.index
+  colx2.index <- object@control$colx2.index
+  etol <- object@control$eq.tolerances
+  Itol <- object@control$I.tolerances
+  names.A <- param.names("A", M * Rank, skip1 = FALSE)
+  if (Itol)
+    names.D <- NULL  # Because it was estimated by offsets
+  if (etol && !Itol)
+    names.D <- param.names("D", Rank * (Rank + 1) / 2, skip1 = FALSE)
+  if (!etol)
+    names.D <- param.names("D",
+               NOS * Rank * (Rank + 1) / 2, skip1 = FALSE)
+  names.B1 <- param.names("x1.", NOS * length(colx1.index), skip1 = FALSE)
+  if (length(temp <- c(names.A, names.D, names.B1)) == length(cobj))   
+    names(cobj) <- temp
+ 
+  cobj
+}  # coefqrrvglm
+
+
+
+
 
 
 
@@ -1530,7 +1568,7 @@ show.rrvglm <- function(x, ...) {
   }
 
   invisible(x)
-}
+}  # show.rrvglm
 
 
 
@@ -1546,15 +1584,16 @@ setMethod("show", "rrvglm", function(object) show.rrvglm(object))
 
 
 
-summary.rrvglm <- function(object, correlation = FALSE,
-                           dispersion = NULL, digits = NULL,
-                           numerical = TRUE,
-                           h.step = 0.0001,
-                           kill.all = FALSE, omit13 = FALSE,
-                           fixA = FALSE,
-                           presid = TRUE,
-                           signif.stars = getOption("show.signif.stars"),
-                           nopredictors = FALSE, ...) {
+summary.rrvglm <-
+  function(object, correlation = FALSE,
+           dispersion = NULL, digits = NULL,
+           numerical = TRUE,
+           h.step = 0.0001,
+           kill.all = FALSE, omit13 = FALSE,
+           fixA = FALSE,
+           presid = TRUE,
+           signif.stars = getOption("show.signif.stars"),
+           nopredictors = FALSE, ...) {
 
 
 
@@ -1642,17 +1681,18 @@ summary.rrvglm <- function(object, correlation = FALSE,
     answer@misc$nopredictors <- nopredictors  # 20150925
 
     answer
-}
+}  # summary.rrvglm
 
 
 
 
 
 
-get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
-                           numerical = TRUE,
-                           fixA = FALSE, h.step = 0.0001,
-                           trace.arg = FALSE, ...) {
+get.rrvglm.se1 <-
+  function(fit, omit13 = FALSE, kill.all = FALSE,
+           numerical = TRUE,
+           fixA = FALSE, h.step = 0.0001,
+           trace.arg = FALSE, ...) {
 
 
 
@@ -1853,7 +1893,10 @@ get.rrvglm.se1 <- function(fit, omit13 = FALSE, kill.all = FALSE,
     list(cov.unscaled = ans,
          coefficients = acoefs,
          ResSS       = sfit1122@ResSS)
-}
+}  # get.rrvglm.se1
+
+
+
 
 
 
@@ -1867,7 +1910,10 @@ get.rrvglm.se2 <- function(cov.unscaled, dispersion = 1, coefficients) {
   dimnames(ans) <-
     list(d8, c("Estimate", "Std. Error", "z value", "Pr(>|z|)"))
   ans
-}
+}  # get.rrvglm.se2
+
+
+
 
 
 
@@ -1930,7 +1976,8 @@ num.deriv.rrr <- function(fit, M, r, x1mat, x2mat,
     }
 
     dct.da
-}
+}  # num.deriv.rrr
+
 
 
 
@@ -1995,7 +2042,9 @@ dctda.fast.only <- function(theta, wz, U, zmat, M, r, x1mat, x2mat,
   ans1 <- matrix(c(ans1), r*p2, (M-r)*r)
   ans1 <- t(ans1)
   ans1
-}
+}  # dcda.fast.only
+
+
 
 
 
@@ -2107,7 +2156,10 @@ dcda.fast <- function(theta, wz, U, z, M, r, xmat, pp, Index.corner,
   ans2 <- matrix(c(ans2), (M-r)*r, M)
 
   list(dc.da = ans1, dint.da = ans2)
-}
+}  # dcda.fast
+
+
+
 
 
 
@@ -2132,7 +2184,7 @@ rrr.deriv.ResSS <- function(theta, wz, U, z, M, r, xmat,
 
   vlm.wfit(xmat = xmat, z, Hlist, U = U, matrix.out = FALSE,
            ResSS = TRUE, xij = xij)$ResSS
-}
+}  # rrr.deriv.ResSS
 
 
 
@@ -2219,7 +2271,8 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
                             t(xmat[, -1, drop = FALSE]) else t(xmat))
     }
 
-  etastar <- (if (intercept) xmat[, -1, drop = FALSE] else xmat) %*% Cimat
+  etastar <- (if (intercept) xmat[, -1, drop = FALSE] else
+              xmat) %*% Cimat
   eta <- matrix(int.vec, nn, M, byrow = TRUE) + etastar %*% t(Aimat)
 
   sumWinv <- solve((m2a(t(colSums(wz)), M = M))[, , 1])
@@ -2255,7 +2308,7 @@ rrr.deriv.gradient.fast <- function(theta, wz, U, z, M, r, xmat,
   ans <- -2 * c(ans[cbindex, ])
 
   ans
-}
+}  # rrr.deriv.gradient.fast
 
 
 
@@ -2274,7 +2327,7 @@ vellipse <- function(R, ratio = 1, orientation = 0,
   x <- center[1] + cos(orientation)*x1 - sin(orientation)*y1
   y <- center[2] + sin(orientation)*x1 + cos(orientation)*y1
   cbind(x, y)
-}
+}  # vellipse
 
 
 biplot.qrrvglm <- function(x, ...) {
@@ -2434,8 +2487,8 @@ biplot.qrrvglm <- function(x, ...) {
             Mmat <- diag(rep_len(ifelse(object@control$Crow1positive,
                                         1, -1),
                                  Rank))
-            etoli <- eigen(t(Mmat) %*% Coef.list@Tolerance[,,i] %*% Mmat,
-                           symmetric = TRUE)
+            etoli <-
+     eigen(t(Mmat) %*% Coef.list@Tolerance[,,i] %*% Mmat, symmetric = TRUE)
             A <- ifelse(etoli$val[1]>0, sqrt(2*cutpoint*etoli$val[1]), Inf)
             B <- ifelse(etoli$val[2]>0, sqrt(2*cutpoint*etoli$val[2]), Inf)
             if (ellipse < 0)
@@ -2482,7 +2535,7 @@ biplot.qrrvglm <- function(x, ...) {
     }
   }
   invisible(nustar)
-}
+}  # lvplot.qrrvglm
 
 
 
@@ -2622,7 +2675,7 @@ lvplot.rrvglm <-
     }
 
     invisible(nuhat)
-}
+}  # lvplot.rrvglm
 
 
 
@@ -2669,7 +2722,7 @@ lvplot.rrvglm <-
     ans@Atilde <- Amat[-c(object@control$Index.corner,
                        object@control$str0),, drop = FALSE]
   ans
-}
+}  # Coef.rrvglm
 
 
 
@@ -2698,7 +2751,7 @@ show.Coef.rrvglm <- function(x, ...) {
   }
 
   invisible(object)
-}
+}  # show.Coef.rrvglm
 
 
  if (!isGeneric("biplot"))
@@ -2748,7 +2801,7 @@ summary.qrrvglm <-
       answer@misc$dispersion <- (answer@post$Coef)@dispersion
 
   as(answer, "summary.qrrvglm")
-}
+}  # summary.qrrvglm
 
 
 
@@ -2774,7 +2827,7 @@ show.summary.qrrvglm <- function(x, ...) {
     cat("\nDispersion parameter:  ", x@dispersion, "\n")
   }
 
-}
+}  # show.summary.qrrvglm
 
 
  setClass("summary.qrrvglm", contains = "qrrvglm")
@@ -2897,11 +2950,13 @@ setMethod("show", "Coef.rrvglm", function(object)
       rm(".grc.df", envir = VGAMenv)
 
     answer
-}
+}  # grc
+
 
 summary.grc <- function(object, ...) {
     grc(object, summary.arg= TRUE, ...)
 }
+
 
 
 
@@ -3008,7 +3063,9 @@ trplot.qrrvglm <-
     }
   invisible(list(species.names = species.names,
                  sitenames     = sitenames[oo]))
-}
+}  # trplot.qrrvglm
+
+
 
  if (!isGeneric("trplot"))
      setGeneric("trplot",
@@ -3022,20 +3079,37 @@ setMethod("trplot", "rrvgam",
 
 
 
+
 vcovrrvglm <- function(object, ...) {
   summary.rrvglm(object, ...)@cov.unscaled
-}
+}  # vcovrrvglm
 
 
 
 vcovqrrvglm <-
   function(object,
-           I.tolerances = object@control$eq.tolerances,
-           MaxScale = c("predictors", "response"),
-           dispersion = rep_len(if (length(sobj@dispersion))
-                                sobj@dispersion else 1, M),
            ...) {
+
+
+
+  object@control$trace <- FALSE  # Suppress this for vglm.fit().
+  fit1 <- fnumat2R(object, refit.model = TRUE)
+  RR <- fit1$R
+  covun <- chol2inv(RR)
+  dimnames(covun) <- list(names(coef(fit1)), names(coef(fit1)))
+  return(covun)
+
+
+
   stop("this function is not yet completed")
+
+
+
+I.tolerances = object@control$eq.tolerances
+
+
+
+  
 
   if (mode(MaxScale) != "character" && mode(MaxScale) != "name")
     MaxScale <- as.character(substitute(MaxScale))
@@ -3050,7 +3124,8 @@ vcovqrrvglm <-
   if (cobj@Rank != 1)
     stop("object must be a rank 1 model")
 
-  dvecMax <- cbind(1, -0.5 * cobj@A / c(cobj@D), (cobj@A / c(2*cobj@D))^2)
+  dvecMax <- cbind(1, -0.5 * cobj@A / c(cobj@D),
+                   (cobj@A / c(2*cobj@D))^2)
   dvecTol <- cbind(0, 0, 1 / c(-2 * cobj@D)^1.5)
   dvecOpt <- cbind(0, -0.5 / c(cobj@D), 0.5 * cobj@A / c(cobj@D^2))
 
@@ -3093,7 +3168,8 @@ vcovqrrvglm <-
       Cov.unscaled = Cov.unscaled,
       dispersion = dispersion,
       se = sqrt(answer))
-}
+}  # vcovqrrvglm
+
 
 
 setMethod("vcov", "rrvglm", function(object, ...)
@@ -3111,21 +3187,27 @@ setClass(Class = "vcov.qrrvglm", representation(
 
 
 
-model.matrix.qrrvglm <- function(object,
-                                 type = c("latvar", "vlm"), ...) {
+
+model.matrixqrrvglm <-
+  function(object,
+           type = c("latvar", "lm", "vlm"), ...) {
+
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-  type <- match.arg(type, c("latvar", "vlm"))[1]
+  type <- match.arg(type, c("latvar", "lm", "vlm"))[1]
 
   switch(type,
-         latvar  = Coef(object, ...)@latvar,
-         vlm = object@x)
-}
+         latvar = Coef(object, ...)@latvar,
+         lm     = object@x,  # 20180516 was "vlm"
+         vlm    = fnumat2R(object)  # 20180516 change
+         )
+}  # model.matrixqrrvglm
 
 
 setMethod("model.matrix",  "qrrvglm", function(object, ...)
-           model.matrix.qrrvglm(object, ...))
+           model.matrixqrrvglm(object, ...))
+
 
 
 
@@ -3263,7 +3345,7 @@ perspqrrvglm <-
                    latvar1grid  = latvar1,
                    latvar2grid  = if (Rank == 2) latvar2 else NULL,
                    max.fitted   = if (Rank == 2) max.fitted else NULL))
-}
+}  # perspqrrvglm
 
 
 
@@ -3424,10 +3506,12 @@ setMethod("concoef", "Coef.qrrvglm",
 
 
 
+
 setMethod("coef", "qrrvglm",
   function(object, ...) Coef.qrrvglm(object, ...))
 setMethod("coefficients", "qrrvglm",
   function(object, ...) Coef.qrrvglm(object, ...))
+
 
 
  if (!isGeneric("lv"))
@@ -3562,6 +3646,9 @@ setMethod("is.bell","rrvgam",
   function(object, ...) is.bell.rrvgam(object, ...))
 setMethod("is.bell","Coef.qrrvglm",
   function(object,...) is.bell.qrrvglm(object,...))
+
+
+
 
 
 

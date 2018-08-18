@@ -67,12 +67,12 @@ canonical Gaussian ordination.
 # QRR-VGLM on the hunting spiders data
 # This is computationally expensive
 set.seed(111)  # This leads to the global solution
-# hspider[, 1:6] <- scale(hspider[, 1:6])  # Standardize the environmental variables
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Standardize environ vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
                 Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
                 Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          quasipoissonff, data = hspider, Crow1positive = FALSE)
+          poissonff, data = hspider, Crow1positive = FALSE)
 par(mfrow = c(3, 4))
 plot(p1, rtype = "response", col = "blue", pch = 4, las = 1, main = "")
 }

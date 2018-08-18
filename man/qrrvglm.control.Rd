@@ -10,35 +10,17 @@
 
 }
 \usage{
-qrrvglm.control(Rank = 1,
-                Bestof = if (length(Cinit)) 1 else 10,
-                checkwz = TRUE,
-                Cinit = NULL,
-                Crow1positive = TRUE,
-                epsilon = 1.0e-06,
-                EqualTolerances = NULL,
-                eq.tolerances = TRUE,
-                Etamat.colmax = 10,
-                FastAlgorithm = TRUE,
-                GradientFunction = TRUE,
-                Hstep = 0.001,
-                isd.latvar = rep_len(c(2, 1, rep_len(0.5, Rank)), Rank),
-                iKvector = 0.1,
-                iShape = 0.1,
-                ITolerances = NULL,
-                I.tolerances = FALSE,
-                maxitl = 40,
-                imethod = 1,
-                Maxit.optim = 250,
-                MUXfactor = rep_len(7, Rank),
-                noRRR = ~ 1, Norrr = NA,
-                optim.maxit = 20,
-                Parscale = if (I.tolerances) 0.001 else 1.0,
-                sd.Cinit = 0.02,
-                SmallNo = 5.0e-13,
-                trace = TRUE,
-                Use.Init.Poisson.QO = TRUE,
-                wzepsilon = .Machine$double.eps^0.75, ...)
+qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
+    checkwz = TRUE, Cinit = NULL, Crow1positive = TRUE,
+    epsilon = 1.0e-06, EqualTolerances = NULL, eq.tolerances = TRUE,
+    Etamat.colmax = 10, FastAlgorithm = TRUE, GradientFunction = TRUE,
+    Hstep = 0.001, isd.latvar = rep_len(c(2, 1, rep_len(0.5, Rank)), Rank),
+    iKvector = 0.1, iShape = 0.1, ITolerances = NULL, I.tolerances = FALSE,
+    maxitl = 40, imethod = 1, Maxit.optim = 250, MUXfactor = rep_len(7, Rank),
+    noRRR = ~ 1, Norrr = NA, optim.maxit = 20,
+    Parscale = if (I.tolerances) 0.001 else 1.0,
+    sd.Cinit = 0.02, SmallNo = 5.0e-13, trace = TRUE,
+    Use.Init.Poisson.QO = TRUE, wzepsilon = .Machine$double.eps^0.75, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -116,13 +98,6 @@ qrrvglm.control(Rank = 1,
     Use \code{eq.tolerances} instead.
 
   }
-
-
-
-
-
-
-
 
 
 
@@ -503,10 +478,10 @@ Constrained additive ordination.
   \code{\link{binomialff}},
   \code{\link{poissonff}},
   \code{\link{negbinomial}},
-  \code{\link{gamma2}},
-  \code{\link{gaussianff}}.
+  \code{\link{gamma2}}.
 
 
+% \code{\link{gaussianff}}.
 % \code{\link{rrvglm}},
 % \code{\link{rrvglm.control}},
 % \code{\link{rrvglm.optim.control}},
@@ -521,7 +496,7 @@ hspider[,1:6] <- scale(hspider[,1:6])  # Good idea when I.tolerances = TRUE
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          quasipoissonff, data = hspider, eq.tolerances = TRUE)
+          poissonff, data = hspider, eq.tolerances = TRUE)
 sort(deviance(p1, history = TRUE))  # A history of all the iterations
 
 (isd.latvar <- apply(latvar(p1), 2, sd))  # Should be approx isd.latvar
@@ -531,7 +506,7 @@ set.seed(111)  # This leads to the global solution
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
           WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-          I.tolerances = TRUE, quasipoissonff, data = hspider,
+          I.tolerances = TRUE, poissonff, data = hspider,
           isd.latvar = isd.latvar)  # Note the use of isd.latvar here
 sort(deviance(p1, history = TRUE))  # A history of all the iterations
 }

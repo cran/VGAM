@@ -99,21 +99,21 @@ lrt.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
 
 }
 
-\note{
-  Only models with a full-likelihood are handled,
-  so that quasi-type models such as \code{\link{quasipoissonff}}
-  should not be fed in.
+%\note{
+%  Only models with a full-likelihood are handled,
+%  so that quasi-type models such as \code{\link{quasipoissonff}}
+%  should not be fed in.
 
 
 
-% One day this function might allow for terms,
-% such as arising from \code{\link[stats]{poly}}
-% and \code{\link[splines]{bs}}.
+%% One day this function might allow for terms,
+%% such as arising from \code{\link[stats]{poly}}
+%% and \code{\link[splines]{bs}}.
 
 
-% i.e., some of the columns are grouped together,
+%% i.e., some of the columns are grouped together,
 
-}
+%}
 \seealso{
   \code{\link{score.stat}},
   \code{\link{wald.stat}},

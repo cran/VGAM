@@ -77,7 +77,8 @@ Vector generalized additive models.
 }
 
 \seealso{
-  \code{\link{cumulative}}.
+  \code{\link{cumulative}},
+  \code{\link{R2latvar}}.
 
 
 }

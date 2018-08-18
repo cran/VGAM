@@ -4,6 +4,8 @@
 \title{ Optimums }
 \description{
   Generic function for the \emph{optimums} (or optima) of a model.
+
+
 }
 \usage{
 Opt(object, ...)
@@ -84,20 +86,30 @@ called the \emph{species score}.
 \examples{
 set.seed(111)  # This leads to the global solution
 hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
-# vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-# vvv                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-# vvv                Trocterr, Zoraspin) ~
-# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-# vvv          Bestof = 2,
-# vvv          fam = quasipoissonff, data = hspider, Crow1positive=FALSE)
-# vvv Opt(p1)
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
+                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          family = poissonff, data = hspider, Crow1positive = FALSE)
+Opt(p1)
 
 \dontrun{
-index <- 1:ncol(depvar(p1))
-persp(p1, col = index, las = 1, lwd = 2, main = "Vertical lines at the optimums")
-abline(v = Opt(p1), lty = 2, col = index)
+clr <- (1:(ncol(depvar(p1))+1))[-7]  # Omits yellow
+persp(p1, col = clr, las = 1, main = "Vertical lines at the optimums")
+abline(v = Opt(p1), lty = 2, col = clr)
 }
 }
 \keyword{models}
 \keyword{regression}
+
+
+
+
+% index <- 1:ncol(depvar(p1))
+% persp(p1, col = index, las = 1, main = "Vertical lines at the optimums")
+% # abline(v = Opt(p1), lty = 2, col = index)
+% rug(Opt(p1), col = clr, side = 3)
+
+
+
 

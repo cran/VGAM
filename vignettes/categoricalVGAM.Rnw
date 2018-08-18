@@ -247,6 +247,7 @@ Some general references for categorical data providing
 background to this article include
 \cite{agre:2010},
 \cite{agre:2013},
+\cite{agre:2018},
 \cite{fahr:tutz:2001},
 \cite{full:xu:2016},
 \cite{harr:2015},

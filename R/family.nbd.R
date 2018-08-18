@@ -221,7 +221,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
  negbinomial <-
   function(
-           zero = "size",
+           zero = -2,
            parallel = FALSE,
            deviance.arg = FALSE,
            type.fitted = c("mean", "quantiles"),
@@ -337,6 +337,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints = constraints)
+
 
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
                                 predictors.names = predictors.names,
@@ -894,7 +895,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
     ned2l.dmunb2 <- 1 / munb - 1 / (munb + kmat)
-    wz[, c(TRUE, FALSE)] <- ned2l.dmunb2 * dmunb.deta1^2
+    wz[, vecTF] <- ned2l.dmunb2 * dmunb.deta1^2
 
 
 
@@ -915,7 +916,9 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
       } else {
         cbind(wz, wzoffdiag)
       }
-    }
+
+
+    }  # if ( .lmunb == "nbcanlink")
 
 
 

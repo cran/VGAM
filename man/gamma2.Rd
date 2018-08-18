@@ -150,9 +150,9 @@ McCullagh, P. and Nelder, J. A. (1989)
   see \code{\link[stats]{GammaDist}}.
 
 
-  For \code{\link{cqo}} and \code{\link{cao}}, taking the logarithm
-  of the response means (approximately) a \code{\link{gaussianff}} family
-  may be used on the transformed data.
+% For \code{\link{cqo}} and \code{\link{cao}}, taking the logarithm
+% of the response means (approximately) a \code{\link{gaussianff}} family
+% may be used on the transformed data.
 
 
 }

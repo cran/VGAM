@@ -279,7 +279,8 @@
                        theta2eta(nS, .link , earg = .earg ))
       mustart <- NULL  # Since etastart has been computed.
     }
-  }), list( .link = link, .imS = imS, .ims = ims, .inS = inS, .earg = earg))),
+  }), list( .link = link, .imS = imS, .ims = ims, .inS = inS,
+            .earg = earg))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     mS <- eta2theta(eta[, 1], link = .link , earg = .earg )
     ms <- eta2theta(eta[, 2], link = .link , earg = .earg )
@@ -331,7 +332,8 @@
     dl1 <- rowSums(y * dP1 / mu)
     dl2 <- rowSums(y * dP2 / mu)
     dl3 <- rowSums(y * dP3 / mu)
-    dPP.deta <- dtheta.deta(cbind(mS, ms, nS), link = .link , earg = .earg )
+    dPP.deta <- dtheta.deta(cbind(mS, ms, nS),
+                            link = .link , earg = .earg )
     c(w) * dPP.deta * cbind(dl1, dl2, dl3)
   }), list( .link = link, .earg = earg))),
   weight = eval(substitute(expression({
@@ -419,7 +421,8 @@
       pO <- if (is.Numeric( .ipO )) rep_len( .ipO , n) else
         rep_len(c(sqrt( weighted.mean(mustart[, 4], w)) ), n)
       pA <- if (is.Numeric( .ipA )) rep_len( .ipA , n) else
-        rep_len(c(1-sqrt(weighted.mean(mustart[, 2] + mustart[, 4], w))), n)
+              rep_len(c(1 - sqrt(weighted.mean(mustart[, 2] +
+                                               mustart[, 4], w))), n)
       pB <- if (is.Numeric( .ipB )) rep_len( .ipB , n) else
             abs(1 - pA - pO)
       etastart <- cbind(theta2eta(pA, .link.pA , earg = .earg.pA ),

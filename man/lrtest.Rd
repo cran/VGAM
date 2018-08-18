@@ -137,7 +137,8 @@
   \code{\link{vglm}},
   \code{\link{lrt.stat.vlm}},
   \code{\link{score.stat.vlm}},
-  \code{\link{wald.stat.vlm}}.
+  \code{\link{wald.stat.vlm}},
+  \code{\link{anova.vglm}}.
 
 
 

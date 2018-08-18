@@ -27,17 +27,19 @@
 }
 \usage{
 dbetabinom(x, size, prob, rho = 0, log = FALSE)
-pbetabinom(q, size, prob, rho, log.p = FALSE)
+pbetabinom(q, size, prob, rho = 0, log.p = FALSE)
 rbetabinom(n, size, prob, rho = 0)
 dbetabinom.ab(x, size, shape1, shape2, log = FALSE, Inf.shape = exp(20),
               limit.prob = 0.5)
-pbetabinom.ab(q, size, shape1, shape2, log.p = FALSE)
-rbetabinom.ab(n, size, shape1, shape2, .dontuse.prob = NULL)
+pbetabinom.ab(q, size, shape1, shape2, limit.prob = 0.5, log.p = FALSE)
+rbetabinom.ab(n, size, shape1, shape2, limit.prob = 0.5,
+              .dontuse.prob = NULL)
 dzoibetabinom(x, size, prob, rho = 0, pstr0 = 0, pstrsize = 0, log = FALSE)
 pzoibetabinom(q, size, prob, rho, pstr0 = 0, pstrsize = 0,
               lower.tail = TRUE, log.p = FALSE)
 rzoibetabinom(n, size, prob, rho = 0, pstr0 = 0, pstrsize = 0)
-dzoibetabinom.ab(x, size, shape1, shape2, pstr0 = 0, pstrsize = 0, log = FALSE)
+dzoibetabinom.ab(x, size, shape1, shape2, pstr0 = 0, pstrsize = 0,
+                 log = FALSE)
 pzoibetabinom.ab(q, size, shape1, shape2, pstr0 = 0, pstrsize = 0,
               lower.tail = TRUE, log.p = FALSE)
 rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
@@ -63,10 +65,21 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 
   }
   \item{rho}{
-  the correlation parameter \eqn{\rho}{rho}.
-  Usually must be in the unit open interval \eqn{(0,1)},
-  however, the value 0 is sometimes supported
-  (if so then it corresponds to the usual binomial distribution).
+  the correlation parameter \eqn{\rho}{rho}, which
+  should be in the interval \eqn{[0, 1)}.
+  The default value of 0 corresponds to the
+  usual binomial distribution with probability \code{prob}.
+  Setting \code{rho = 1} would set both shape parameters equal to 0,
+  and the ratio \code{0/0}, which is actually \code{NaN},
+  is interpreted by \code{\link[stats]{Beta}} as 0.5.
+  See the warning below.
+
+
+
+%  also corresponds to the
+%  binomial distribution with probability \code{prob}.
+
+
 
 
   }
@@ -74,6 +87,16 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
   the two (positive) shape parameters of the standard
   beta distribution. They are called \code{a} and \code{b} in
   \code{\link[base:Special]{beta}} respectively.
+Note that
+\code{shape1 = prob*(1-rho)/rho} and
+\code{shape2 = (1-prob)*(1-rho)/rho}
+is an important relationship between the parameters,
+so that the shape parameters are infinite by default because
+\code{rho = 0}; hence \code{limit.prob = prob} is used to
+obtain the behaviour of the
+  usual binomial distribution.
+
+
 
 
   }
@@ -96,33 +119,57 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 
   }
   \item{limit.prob}{
+  Numerical vector; recycled if necessary.
   If either shape parameters are \code{Inf} then the binomial limit is
-  taken, with \code{shape1 / (shape1 + shape2)} as the probability of
-  success. In the case where both are \code{Inf} this probability
+  taken, with \code{shape1 / (shape1 + shape2)} as the
+  probability of success.
+  In the case where both are \code{Inf} this probability
   will be a \code{NaN = Inf/Inf}, however,
-  the value \code{limit.prob} is used instead. Hence the default is to
-  assume that both shape parameters are equal as the limit is taken.
-  Purists may assign \code{NaN} to this argument.
+  the value \code{limit.prob} is used instead.
+  Hence the default
+  for \code{dbetabinom.ab()}
+  is to assume that
+  both shape parameters are equal as the limit is taken
+  (indeed, \code{\link[stats]{Beta}} uses 0.5).
+  Note that
+  for \code{[dpr]betabinom()},
+  because \code{rho = 0} by default, then
+  \code{limit.prob = prob} so that the beta-binomial distribution
+  behaves like the ordinary binomial distribution with respect
+  to arguments
+  \code{size} and \code{prob}.
+
+
+% Purists may assign \code{NaN} to this argument.
+
+
+
+% 20180216:
+% Note that for \code{dbetabinom()}, because \code{rho = 0}
+% by default, then ......
+
 
 
   }
   \item{.dontuse.prob}{
-  An argument that should be ignored and unused.
+  An argument that should be ignored and \emph{not} used.
 
 
   }
 
   \item{pstr0}{
-  Probability of a structual zero (i.e., ignoring the beta-binomial distribution).
-  The default value of \code{pstr0} corresponds to the response having a
-  beta-binomial distribuion inflated only at \code{size}.
+    Probability of a structual zero
+    (i.e., ignoring the beta-binomial distribution).
+  The default value of \code{pstr0} corresponds to the response
+  having a beta-binomial distribuion inflated only at \code{size}.
 
   }
 
   \item{pstrsize}{
-  Probability of a structual maximum value \code{size}. The default value of
-  \code{pstrsize} corresponds to the response having a beta-binomial distribution
-  inflated only at 0.
+    Probability of a structual maximum value \code{size}.
+    The default value of
+    \code{pstrsize} corresponds to the response having a
+    beta-binomial distribution inflated only at 0.
 
   }
 
@@ -130,16 +177,21 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 }
 \value{
   \code{dbetabinom} and \code{dbetabinom.ab} give the density,
-  \code{pbetabinom} and \code{pbetabinom.ab} give the distribution function, and
+  \code{pbetabinom} and \code{pbetabinom.ab} give the
+  distribution function, and
   \code{rbetabinom} and \code{rbetabinom.ab} generate random deviates.
 
 
-% \code{qbetabinom} and \code{qbetabinom.ab} gives the quantile function, and
+% \code{qbetabinom} and \code{qbetabinom.ab} gives the
+%quantile function, and
 
 
-  \code{dzoibetabinom} and \code{dzoibetabinom.ab} give the inflated density,
-  \code{pzoibetabinom} and \code{pzoibetabinom.ab} give the inflated distribution function, and
-  \code{rzoibetabinom} and \code{rzoibetabinom.ab} generate random inflated deviates.
+\code{dzoibetabinom} and \code{dzoibetabinom.ab} give the
+inflated density,
+\code{pzoibetabinom} and \code{pzoibetabinom.ab} give the
+inflated distribution function, and
+\code{rzoibetabinom} and \code{rzoibetabinom.ab} generate
+random inflated deviates.
 
 
 }
@@ -153,14 +205,18 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
   mean or the probability of success.
 
 
+  
   See \code{\link{betabinomial}} and \code{\link{betabinomialff}},
   the \pkg{VGAM} family functions for
   estimating the parameters, for the formula of the probability density
   function and other details.
 
+
+  
   For the inflated beta-binomial distribution, the probability mass
   function is
-  \deqn{P(Y = y) =(1 - pstr0 - pstrsize) \times BB(y) + pstr0 \times I[y = 0] +
+  \deqn{P(Y = y) =
+    (1 - pstr0 - pstrsize) \times BB(y) + pstr0 \times I[y = 0] +
         pstrsize \times I[y = size]}{%
         F(Y = y) =(1 -  pstr0 - pstrsize) * BB(y) +  pstr0 * I[y = 0] +
         pstrsize * I[y = size]}
@@ -189,10 +245,22 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
 
 
 }
+\section{Warning }{
+
+
+  Setting \code{rho = 1} is not recommended,
+  however the code may be
+  modified in the future to handle this special case.
+
+
+}
+
+
 \seealso{
   \code{\link{betabinomial}},
   \code{\link{betabinomialff}},
-  \code{\link{Zoabeta}}.
+  \code{\link{Zoabeta}},
+  \code{\link[stats]{Beta}}.
 
 
 }
@@ -206,11 +274,13 @@ barplot(rbind(dy, dbinom(xx, size = N, prob = s1 / (s1+s2))),
         beside = TRUE, col = c("blue","green"), las = 1,
         main = paste("Beta-binomial (size=",N,", shape1=", s1,
                    ", shape2=", s2, ") (blue) vs\n",
-        " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)", sep = ""),
+        " Binomial(size=", N, ", prob=", s1/(s1+s2), ") (green)",
+                     sep = ""),
         names.arg = as.character(xx), cex.main = 0.8)
 sum(dy * xx)  # Check expected values are equal
 sum(dbinom(xx, size = N, prob = s1 / (s1+s2)) * xx)
-cumsum(dy) - pbetabinom.ab(xx, N, shape1 = s1, shape2 = s2)  # Should be all 0
+# Should be all 0:
+cumsum(dy) - pbetabinom.ab(xx, N, shape1 = s1, shape2 = s2)
 
 y <- rbetabinom.ab(n = 1e4, size = N, shape1 = s1, shape2 = s2)
 ty <- table(y)
@@ -218,8 +288,8 @@ barplot(rbind(dy, ty / sum(ty)),
         beside = TRUE, col = c("blue", "orange"), las = 1,
         main = paste("Beta-binomial (size=", N, ", shape1=", s1,
                      ", shape2=", s2, ") (blue) vs\n",
-        " Random generated beta-binomial(size=", N, ", prob=", s1/(s1+s2),
-        ") (orange)", sep = ""), cex.main = 0.8,
+        " Random generated beta-binomial(size=", N, ", prob=",
+        s1/(s1+s2), ") (orange)", sep = ""), cex.main = 0.8,
         names.arg = as.character(xx))
 
 N <- 1e5; size <- 20; pstr0 <- 0.2; pstrsize <- 0.2

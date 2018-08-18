@@ -9,9 +9,9 @@
 }
 \usage{
 predictqrrvglm(object, newdata=NULL,
-               type = c("link", "response", "latvar", "terms"),
-               se.fit = FALSE, deriv = 0, dispersion = NULL,
-               extra = object@extra, varI.latvar = FALSE, refResponse = NULL, ...)
+    type = c("link", "response", "latvar", "terms"),
+    se.fit = FALSE, deriv = 0, dispersion = NULL,
+    extra = object@extra, varI.latvar = FALSE, refResponse = NULL, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -70,26 +70,27 @@ canonical Gaussian ordination.
 }
 
 \seealso{
-  \code{\link{cqo}}.
+  \code{\link{cqo}},
+  \code{\link{calibrate.qrrvglm}}.
 
 
 }
 
 \examples{
-hspider[,1:6] <- scale(hspider[,1:6])  # Standardize the environmental vars
-set.seed(1234)
-# vvv p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute,
-# vvv                 Arctperi, Auloalbi, Pardlugu, Pardmont,
-# vvv                 Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-# vvv       WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-# vvv       poissonff, data = hspider, Crow1positive = FALSE, I.tol = TRUE)
-# vvv sort(deviance(p1, history = TRUE))  # A history of all the iterations
+\dontrun{ set.seed(1234)
+hspider[, 1:6] <- scale(hspider[, 1:6])  # Standardize the X vars
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute,
+                Arctperi, Auloalbi, Pardlugu, Pardmont,
+                Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          poissonff, data = hspider, Crow1positive = FALSE, I.toler = TRUE)
+sort(deviance(p1, history = TRUE))  # A history of all the iterations
+head(predict(p1))
 
-# vvv head(predict(p1))
-
-# The following should be all zeros
-# vvv max(abs(predict(p1, new = head(hspider)) - head(predict(p1))))
-# vvv max(abs(predict(p1, new = head(hspider), type = "res")-head(fitted(p1))))
+# The following should be all 0s:
+max(abs(predict(p1, newdata = head(hspider)) - head(predict(p1))))
+max(abs(predict(p1, newdata = head(hspider), type = "res")-head(fitted(p1))))
+}
 }
 \keyword{models}
 \keyword{regression}

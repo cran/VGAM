@@ -98,12 +98,15 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
 \seealso{
   \code{\link{uninormal}},
-  \code{\link{gaussianff}},
+  \code{\link{trinormal}},
   \code{\link{pbinorm}},
   \code{\link{bistudentt}}.
 
 
+% \code{\link{gaussianff}},
 % \code{\link{pnorm2}},
+
+
 }
 \examples{
 set.seed(123); nn <- 1000

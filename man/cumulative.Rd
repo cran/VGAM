@@ -284,6 +284,8 @@ Vector generalized additive models.
 
 \seealso{
   \code{\link{propodds}},
+  \code{\link{R2latvar}},
+  \code{\link{ordsup}},
   \code{\link{prplot}},
   \code{\link{margeff}},
   \code{\link{acat}},
@@ -317,6 +319,7 @@ constraints(fit)  # Constraint matrices
 apply(fitted(fit), 1, which.max)  # Classification
 apply(predict(fit, newdata = pneumo, type = "response"),
       1, which.max)  # Classification
+R2latvar(fit)
 
 # Check that the model is linear in let ----------------------
 fit2 <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),

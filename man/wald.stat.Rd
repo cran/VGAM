@@ -63,13 +63,16 @@ wald.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
 }
 \item{iterate}{
   Logical. If \code{TRUE} then IRLS iterations are performed to
-  get MLEs of the other regression coefficients, subject
+  get MLEs of the \emph{other} regression coefficients, subject
   to that one coefficient equal to the appropriate
   \code{values0} value.
   If \code{FALSE} then the other regression coefficients have
   values obtained at the original fit.
   It is recommended that a \code{TRUE} be used as the answer
   tends to be more accurate.
+  If the large model matrix only has one column and
+  \code{iterate = TRUE} then an error will occur because
+  there are no \emph{other} regression coefficients to estimate.
 
 
 }

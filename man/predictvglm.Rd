@@ -171,7 +171,8 @@ Reduced-rank vector generalized linear models.
   \code{\link[stats]{predict}},
   \code{\link{vglm}},
   \code{predictvlm},
-  \code{\link{smartpred}}.
+  \code{\link{smartpred}},
+  \code{\link{calibrate}}.
 
 
 }

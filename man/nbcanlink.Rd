@@ -94,8 +94,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 
 
 }
-\author{ Thomas W. Yee and with a lot of help by Victor Miranda
-  to get it going with \code{\link{negbinomial}}.
+\author{ Victor Miranda and Thomas W. Yee.
 
 
 }
@@ -174,8 +173,8 @@ ndata <- transform(ndata, y1 = rnbinom(nn, mu = mu1, size = size1),
 summary(ndata)
 
 nbcfit <- vglm(cbind(y1, y2) ~ x2,
-#           negbinomial(lmu = "nbcanlink", imethod = 1),  # Try this
-            negbinomial(lmu = "nbcanlink", imethod = 2),  # Try this
+            negbinomial(lmu = "nbcanlink", imethod = 1),  # Try this
+#            negbinomial(lmu = "nbcanlink", imethod = 2),  # Try this
             data = ndata, trace = TRUE)
 coef(nbcfit, matrix = TRUE)
 summary(nbcfit)

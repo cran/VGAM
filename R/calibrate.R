@@ -19,253 +19,415 @@
 
 
 
-fitCQOagain <-
-  function(Object,
-           which.spp = 1,
-           error.check = TRUE) {
-
-  lv1 <- latvar(Object)
-
-  X.lm1 <- model.matrix(Object, type = "vlm")  # Has latvar vars too.
-  etol <- Object@control$eq.tolerances
-  Itol <- Object@control$I.tolerances
-  colx1.index <- Object@control$colx1.index
-  colx2.index <- Object@control$colx2.index
-  nice31 <- !etol || Itol
-  NOS <- npred(Object) / npred(Object, type = "one.response")
-
-
-  if (length(colx1.index) != 1 ||
-      names(colx1.index) != "(Intercept)")
-    stop("calibrate() can only operate when B1 is intercept-only")
-
-  if (!etol) {
-
-
- print("could fit all species separately ,,,,,,,,,,,,,,,,,,,,,")
 
 
 
 
-  if (FALSE) {
-    X.lm <-  # Same order as in the C code:
-    cbind(lv1,
-          lv1^2,  # Always here even when I.tol is TRUE
-          X.lm1[, colx1.index])
 
-    dev.total <- 0
-    index.spp <- c(3, 1, 2)  # Order becomes: Intercept, \nu, and \nu^2.
-    Y.all <- depvar(Object)
-    loop.spp. <- if (error.check) 1:NOS else which.spp
-    for (spp. in loop.spp.) {
-      y.use <- Y.all[, spp.]  # One species response
-      fit1.tmp <- vglm(y.use ~ X.lm - 1,
-                       family = Object@family, trace = FALSE)
-      dev.total <- dev.total + deviance(fit1.tmp)
-      if (spp. == which.spp) {
-        vcov.spp <- vcov(fit1.tmp)[index.spp, index.spp]
-        cofs.spp <- coef(fit1.tmp)[index.spp]
+
+
+
+phifun.integrand <- function(charfun, muvec, parlink, earg,
+                             cc, xi, ee, ss, sigma2.fuzz = 1e-8) {
+  cnew <- cc / ss
+
+  eta.use <- theta2eta(muvec, link = parlink, earg = earg)  # Dangerous
+  chfw <- charfun(x = xi * cnew, eta = eta.use, extra = list())
+  chfw <- prod(chfw)
+  phi <- chfw * exp(-1i * ee * cnew) * exp(-sigma2.fuzz * (cnew^2) / 2)
+  phi
+}  # phifun.integrand 
+
+
+
+cdffun.integrand <-
+  function(Object, A.qnorm = 4, wtil, lam, xi, ee, ss,
+           sigma2.fuzz = 1e-8,
+           nodes = sqrt(2) * ghn100,
+           qwts  = sqrt(2) * ghw100 / (2 * pi)) {
+  if (!(is(Object, "qrrvglm") || is(Object,  "rrvglm")))
+    stop("argument 'Object' must be a 'qrrvglm' or 'rrvglm' Object")
+  famfun <- Object@family
+  infos <- famfun@infos()
+  charfun <- if (is.logical(infos$charfun) && infos$charfun)
+    famfun@charfun else stop("the family function has no charfun slot")
+  parlink <- linkfun(Object)[1]  # All the same, choose the first
+  Earg <- Object@misc$earg[[1]]  # Dangerous
+
+  N <- length(nodes)
+  intgrnd <- numeric(N)
+  for (k in 1:N) {
+    curnode <- nodes[k]
+    exptrm <- (exp( 1i * curnode * A.qnorm) -
+               exp(-1i * curnode * wtil)) / (1i * curnode) 
+    intgrnd[k] <- phifun.integrand(charfun = charfun,
+        muvec = lam, parlink = parlink, earg = Earg,  # Dangerous
+        cc = curnode, xi = xi,
+        ee = ee, ss = ss, sigma2.fuzz = sigma2.fuzz) *
+                  exptrm * exp(0.5 * curnode^2)
+  }
+  sum(qwts * intgrnd)
+}  # cdffun.integrand 
+
+
+
+
+charfun.cqo.cdf <-
+  function(
+                bnu,
+                y0,
+                extra ,
+                objfun,
+                Object,
+                Coefs,
+                B1bix,
+                misc.list = list(),
+                Everything,
+                mu.function,
+
+
+           A.qnorm = 4,
+           sigma2.fuzz = 1e-8, lower.latvar = NULL, upper.latvar = NULL,
+           nodes = sqrt(2) * ghn100,
+           qwts  = sqrt(2) * ghw100 / (2 * pi)) {
+  wt.mean <- function(x, y, alpha = 0.5) (1 - alpha) * x + alpha * y
+  site.scores <- latvar(Object)
+  range.ss <- range(site.scores)
+  if (is.null(lower.latvar))
+    lower.latvar <- wt.mean(range.ss[1], range.ss[2],  0.0)
+  if (is.null(upper.latvar))
+    upper.latvar <- wt.mean(range.ss[1], range.ss[2],  1.0)
+
+  famfun <- Object@family
+  infos <- famfun@infos()
+  charfun <- if (is.logical(infos$charfun) && infos$charfun)
+    famfun@charfun else stop("the family function has no charfun slot")
+  Earg <- Object@misc$earg[[1]]  # Dangerous
+  
+  uopt <- Opt(Object)
+  tol <- Tol(Object)[1, 1, ]  # Interpreted as a variance, not SDs
+  parlink <- linkfun(Object)[1]  # All the same, choose the first
+  alf <- theta2eta(Max(Object), parlink, earg = list())
+
+
+
+
+    nu0 <- bnu
+    qtrm <- (nu0 - uopt) / sqrt(tol)  # sqrt(tol), not tol
+    eta <- alf - 0.5 * qtrm^2
+
+    muvec <- eta2theta(eta, parlink, earg = Earg)  # Dangerous
+    lam <- muvec
+
+    xi <- -qtrm / sqrt(tol)  # sqrt(tol), not tol
+
+    nxi <- sqrt(sum(xi^2))
+    xi <- xi / nxi
+
+    ee <- sum(lam * xi)
+    varfun <- charfun(eta = eta,  # log(muvec),
+                      extra = list(),  # Object@extra,  # For now
+                      varfun = TRUE)
+    ss <- sqrt(sum(varfun * xi^2))  # For both poissonff and binomialff
+    w.obs <- sum(y0 * xi)
+    wtil <- (w.obs - ee) / ss
+    if (is.na(wtil)) {
+      prb <- 1  # zz
+      prb <- 0  # zz
+    } else {
+      nrm.prb <- pnorm(wtil)
+      prb <- if (wtil < -A.qnorm) 0 else
+             if ( A.qnorm < wtil) 1 else {
+        prbc <- cdffun.integrand(Object, A.qnorm = A.qnorm,
+                                 wtil = wtil, lam = lam, xi = xi,
+                                 ee = ee, ss = ss,
+                                 sigma2.fuzz = sigma2.fuzz)
+        Re(prbc)
       }
     }
-  }
-
-
-
-
- print("attempt2")
-    index.spp <- which.spp + (0:2) * NOS
-    lv12 <- lv1^2
-    clist12 <- list("(Intercept)" = diag(NOS),
-                    "lv1"         = diag(NOS),
-                    "lv12"        = diag(NOS))
-    fit1 <-
-      vglm(depvar(Object) ~ lv1 + lv12,
-           family = Object@family,  # Handles link = "cloglog", etc
-           etastart = predict(Object),  # Gives immediate convergence
-           constraints = clist12,
-           trace = TRUE)
-
-    dev.total <- deviance(fit1)
-    vcov.spp <- vcov(fit1)[index.spp, index.spp]
-    cofs.spp <- coef(fit1)[index.spp]
+    prb
+}  # charfun.cqo.cdf
 
 
 
 
 
-  } else {
- print("fitting all species simultaneously ,,,,,,,,,,,,,,,,,,,,,")
 
 
- print("attempt2")
-    index.spp <- c(which.spp, NOS + which.spp, 2 * NOS + 1)
-    lv12 <- lv1^2
-    clist12 <- list("(Intercept)" = diag(NOS),
-                    "lv1"         = diag(NOS),
-                    "lv12"        = matrix(1, NOS, 1))
-    fit1 <-
-      vglm(depvar(Object) ~ lv1 + lv12,
-           family = Object@family,  # Handles link = "cloglog", etc
-           etastart = predict(Object),  # Gives immediate convergence
-           constraints = clist12,
-           trace = TRUE)
- print("coef(fit1)")
- print( coef(fit1) )
 
-    dev.total <- deviance(fit1)
-    vcov.spp <- vcov(fit1)[index.spp, index.spp]
-    cofs.spp <- coef(fit1)[index.spp]
-  }
+charfun.clo.cdf <-
+  function(
+           bnu,
+           y0,
+           extra ,
+           objfun,
+           Object,
+           Coefs,
+           B1bix,
+           misc.list = list(),
+           Everything,
+           mu.function,
 
 
-  if (error.check) {
-    check.diff <- deviance(Object) - dev.total  # Should be 0
-    if (abs(check.diff) / (1 + deviance(Object)) > 0.01) {
-      warning("the two models do not appear to be the same")
+           A.qnorm = 4,
+           sigma2.fuzz = 1e-8, lower.latvar = NULL, upper.latvar = NULL,
+           nodes = sqrt(2) * ghn100,
+           qwts  = sqrt(2) * ghw100 / (2 * pi)) {
+  if (length(bnu) > 1)
+    stop("can only handle rank-1 objects")
+  vfam <- intersect(Object@family@vfamily, c("binomialff", "poissonff"))
+  if (!length(vfam))
+    stop("only 'poissonff' and 'binomialff' families allowed")
+  all.links <- linkfun(Object)
+  parlink <- all.links[1]  # All the same, choose the first
+  canon.link <- switch(vfam,
+                       binomialff = all(all.links == "logit"),
+                       poissonff  = all(all.links == "loge"))
+  if (!canon.link) stop("model does not use the canonical link")  # else
+  A.mat <- Coefs@A
+  B1.mat <- Coefs@B1
+  Index.corner <- Object@control$Index.corner  # Corner constraints
+
+
+  wt.mean <- function(x, y, alpha = 0.5) (1 - alpha) * x + alpha * y
+  site.scores <- latvar(Object)
+  range.ss <- range(site.scores)
+  if (is.null(lower.latvar))
+    lower.latvar <- wt.mean(range.ss[1], range.ss[2],  0.0)
+  if (is.null(upper.latvar))
+    upper.latvar <- wt.mean(range.ss[1], range.ss[2],  1.0)
+
+  famfun <- Object@family
+  infos <- famfun@infos()
+  charfun <- if (is.logical(infos$charfun) && infos$charfun)
+    famfun@charfun else stop("the family function has no charfun slot")
+  Earg <- Object@misc$earg[[1]]  # Dangerous
+
+
+  
+if (FALSE) {
+  uopt <- Opt(Object)
+  tol <- Tol(Object)[1, 1, ]  # Interpreted as a variance, not SDs
+  parlink <- linkfun(Object)[1]  # All the same, choose the first
+  alf <- theta2eta(Max(Object), parlink, earg = list())
+}
+
+
+  
+
+
+
+
+
+
+
+    nu0 <- bnu
+
+
+    eta <- Coefs@B1["(Intercept)", ] + A.mat %*% nu0
+    eta <- rbind(c(eta))  # Make sure it is 1 x M
+
+
+    muvec <- eta2theta(eta, parlink, earg = Earg)  # Dangerous
+    lam <- muvec
+
+    xi <- A.mat[, 1]
+
+
+
+    nxi <- sqrt(sum(xi^2))
+    xi <- xi / nxi
+
+
+
+    ee <- sum(lam * xi)
+    varfun <- charfun(eta = eta,  # log(muvec),
+                      extra = list(),  # Object@extra,  # For now
+                      varfun = TRUE)
+    ss <- sqrt(sum(varfun * xi^2))  # For both poissonff and binomialff
+    w.obs <- sum(y0 * xi)
+    wtil <- (w.obs - ee) / ss
+    if (is.na(wtil)) {
+      prb <- 1  # zz
+      prb <- 0  # zz
     } else {
-      cat("Both models appear to be the same (a good thing).\n")
+      nrm.prb <- pnorm(wtil)
+      prb <- if (wtil < -A.qnorm) 0 else
+             if ( A.qnorm < wtil) 1 else {
+        prbc <- cdffun.integrand(Object, A.qnorm = A.qnorm,
+                                 wtil = wtil, lam = lam, xi = xi,
+                                 ee = ee, ss = ss,
+                                 sigma2.fuzz = sigma2.fuzz)
+        Re(prbc)
+      }
     }
+    prb
+}  # charfun.clo.cdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fnumat2R <- 
+  function(object,
+           refit.model = FALSE) {
+
+
+
+  numat <- latvar(object)  # After scaling
+  Rank <- Rank(object)
+  control <- object@control
+
+  M <- npred(object)
+  M1 <- npred(object, type = "one.response")
+  if (M1 > 1)
+    stop("this function only works with M1==1 models")
+  nsmall <- nobs(object)
+
+  X.lm <- model.matrix(object, type = "lm")  # Has latvar vars too.
+  etol <- control$eq.tolerances
+  Itol <- control$I.tolerances
+  colx1.index <- control$colx1.index
+  colx2.index <- control$colx2.index
+  NOS <- M / M1
+
+  if (!etol) {
+    index.rc <- iam(NA, NA, M = Rank, both = TRUE)
+    numat2 <- numat[, index.rc$row.index, drop = FALSE] *
+              numat[, index.rc$col.index, drop = FALSE]
+    if (Rank > 1)
+      numat2[, -(1:Rank)] <- numat2[, -(1:Rank)] * 2
+  }  # !etol
+  if (etol && !Itol) {
+    numat2 <- numat[, 1:Rank, drop = FALSE] *
+              numat[, 1:Rank, drop = FALSE]  # Same as Itol
   }
-
-
-  if (cofs.spp[3] >= 0)
-    warning("the 3rd coefficient should be negative!!")
-
-
-  list(Coefficients = cofs.spp,
-       VarCov       = vcov.spp)
-}  # fitCQOagain
+  if (Itol) {
+    numat2 <- numat[, 1:Rank, drop = FALSE] *
+              numat[, 1:Rank, drop = FALSE]
+  }  # Itol
 
 
 
+  if (Rank >= 2 && (!etol || (etol && !Itol)))
+    stop("cannot currently handle the given scalings")
 
 
 
 
-fitCLOagain <-
-  function(Object,
-           which.spp = 1,
-           error.check = TRUE) {
-
- print("in fitCLOagain()")
-  lvmat <- latvar(Object)
-
-  X.lm1 <- model.matrix(Object, type = "lm")  # Has latvar vars too.
-  colx1.index <- Object@control$colx1.index
-  colx2.index <- Object@control$colx2.index
-  NOS <- npred(Object) / npred(Object, type = "one.response")
+  ansA <- kronecker(numat, diag(M))
+  colnames(ansA) <- param.names("A", NCOL(ansA), skip1 = FALSE)
 
 
-  if (length(colx1.index) != 1 ||
-      names(colx1.index) != "(Intercept)")
-    warning("calibrate() can only operate when B1 is intercept-only")
+  ansD <- kronecker(numat2, if (Itol || etol) matrix(1, M, 1) else
+                            diag(M)) * (-0.5)
+  colnames(ansD) <- param.names("D", NCOL(ansD), skip1 = FALSE)
+  ansx1 <- if (length(colx1.index))
+           kronecker(X.lm[, colx1.index, drop = FALSE], diag(M)) else
+           NULL  # Trivial constraints are assumed.
+  if (length(ansx1))
+    colnames(ansx1) <- param.names("x1.", NCOL(ansx1), skip1 = FALSE)
+  X.vlm <- cbind(ansA, ansD, ansx1)
+  if (!refit.model)
+    return(X.vlm)
 
-  X.lm.use <- X.lm1
- print("head(X.lm.use)")
- print( head(X.lm.use) )
 
- print("attempt2")
-  index.spp <- TRUE  # which.spp + (0:2) * NOS
-  clist12 <- constraints(Object, type = "term")
+  mf <- model.frame(object)
+  mt <- attr(mf, "terms")
+  clist <- vector("list", ncol(X.vlm))
+  names(clist) <- colnames(X.vlm)
+  for (ii in seq(length(clist)))
+    clist[[ii]] <- diag(M)  # Wrong but doesnt matter; trivial constraints
 
+  somejunk <- clist
+  inci <- 0
+  for (ii in seq(length(somejunk))) {
+    inci <- inci + 1
+    somejunk[[ii]] <- inci
+  }
+  attr(numat, "assign") <- somejunk
+  attr(X.vlm, "assign") <- somejunk
+  control$Check.cm.rank <- FALSE
+  control$stepsize <- 1
+  control$half.stepsizing <- FALSE
+  control$Check.rank <- FALSE
 
-  data.frame.use <- if(exists(Object@misc$dataname))
-      get(Object@misc$dataname) else list()
+  eta.mat.orig <- predict(object)
+  OOO.orig <- object@offset
+  if (!length(OOO.orig) || all(OOO.orig == 0))
+    OOO.orig <- matrix(0, nsmall, M)
 
   fit1 <-
-    vglm(
-         formula = formula(Object@call),
-         data = data.frame.use,
-         family = Object@family,  # Handles link = "cloglog", etc
-         etastart = predict(Object),  # Gives immediate convergence
-         constraints = clist12,
-         trace = TRUE)
-
-  dev.total <- deviance(fit1)
-  vcov.spp <- vcov(fit1)[index.spp, index.spp]
-  cofs.spp <- coef(fit1)[index.spp]
-
-
-
-  if (error.check) {
-    check.diff <- deviance(Object) - dev.total  # Should be 0
-    if (abs(check.diff) / (1 + deviance(Object)) > 0.01) {
-      warning("the two models do not appear to be the same")
-    } else {
-      cat("Both models appear to be the same (a good thing).\n")
-    }
-  }
-
-
-
-  list(Coefficients = cofs.spp,
-       VarCov       = vcov.spp)
-}  # fitCLOagain
-
-
-
-
-
-getMaxOptTol <-
-  function(coeff3, vc, varcov.arg = FALSE) {
-
-  if (length(coeff3) != 3 || coeff3[3] > 0)
-    stop("bad input for argument 'coeff3'")
-  beta0 <- coeff3[1]
-  beta1 <- coeff3[2]
-  beta2 <- coeff3[3]
-  uj <- -0.5 * beta1 / beta2
-  tolj <- 1 / sqrt(-2 * beta2)  # Like a sdev, it's sqrt(Tol) really.
-  alphaj <- beta0 - 0.25 * (beta1^2) / beta2
-  dimn <- c("Maximum", "Optimum", "Tolerance")
-  ans <- c(alphaj, uj, tolj)
-  names(ans) <- dimn
-  if (varcov.arg) {
-    dmax.dbeta <- c(1, uj, uj^2)
-    dopt.dbeta <- c(0, tolj^2, 2 * uj * tolj)
-    dtol.dbeta <- c(0, 0, tolj^3)
-    dTheta.dbeta <- cbind(dmax.dbeta, dopt.dbeta, dtol.dbeta)
-    varcov <- t(dTheta.dbeta) %*% vc %*% dTheta.dbeta
-    dimnames(varcov) <- list(dimn, dimn)
-    list(coeffs = ans, varcov = varcov)
-  } else {   
-    ans
-  }
-}  # getMaxOptTol
+    vglm.fit(x = numat, y = depvar(object),
+             w = c(weights(object, type = "prior")),
+             X.vlm.arg = X.vlm,
+             Xm2 = NULL, Terms = mt,
+             constraints = clist, extra = object@extra,
+             etastart = eta.mat.orig,
+             offset = OOO.orig, family = object@family,
+             control = control)
+  if (fit1$iter > 3)
+    warning("refitted model took an unusually large number of ",
+            "iterations to converge")  # Usually 1 iteration is needed
+  return(fit1)
+}  # fnumat2R
 
 
 
 
 
 
+forG.calib.qrrvglm <-
+  function(bnu0,  # coeff3 = NULL, 
+           numerator = c("xi", "eta"),
+           lenb1bix = 1) {
 
 
 
-
-
-getG.calib <-
-  function(nu0, coeff3 = NULL, 
-           uj = NULL, tolj = NULL, alphaj = NULL,
-           numerator = c("xi", "eta"), ...) {
-
-  if (mode(numerator) != "character" && mode(numerator) != "name")
-    numerator <- as.character(substitute(numerator))
   numerator <- match.arg(numerator, c("xi", "eta"))[1]
 
+  if (FALSE) {
+    if (!is.null(coeff3)) {
+      if (length(coeff3) != 3 || coeff3[3] > 0)
+        stop("bad input for argument 'coeff3'")
+      beta1 <- coeff3[2]  # beta0 <- coeff3[1] is unneeded
+      beta2 <- coeff3[3]
+    }
+    if (is.null(uj))     uj <- -0.5 * beta1 / beta2
+    if (is.null(tolj))   tolj <- 1 / sqrt(-2 * beta2)
+  }  # FALSE
 
-  if (!is.null(coeff3)) {
-    if (length(coeff3) != 3 || coeff3[3] > 0)
-      stop("bad input for argument 'coeff3'")
-    beta1 <- coeff3[2]  # beta0 <- coeff3[1] is unneeded
-    beta2 <- coeff3[3]
-  }
-  if (is.null(uj))     uj <- -0.5 * beta1 / beta2
-  if (is.null(tolj))   tolj <- 1 / sqrt(-2 * beta2)
+
+
+
+
+  Rank <- length(bnu0)  # Usually 1, sometimes 2.
   switch(numerator,
-         "xi"  = c(0, 1, 2 * nu0),
-         "eta" = c(1, nu0,
-                   nu0^2 - 2 * uj * (nu0 - uj) * (1 - 1 / tolj)))
-}  # getG.calib
+    "xi"  = cbind(rep_len(1, Rank), 2 * bnu0, matrix(0, Rank, lenb1bix)),
+    "eta" = cbind(bnu0,               bnu0^2, matrix(1, Rank, lenb1bix)))
+}  # forG.calib.qrrvglm
+
 
 
 
@@ -274,75 +436,110 @@ getG.calib <-
 
 
 dzwald.qrrvglm <-
-  function(bnu0, y0, extra = NULL,
-           objfun, Coefs, Object,
-           B1bix,
-           misc.list,
-           everything = TRUE,
-           mu.function,
-           link.function, earg = list(),  # These go together
-           which.spp = 1) {
- print("y0")
- print( y0)
+  function(bnu0, y0, Object, CoefsObject,
+           B1bix, mu.function) {
 
-  
-  M <- misc.list$M
-  if ((Rank <- length(bnu0)) != 1)
-    stop("can only handle rank-1 objects")
+
+
+
+  M <- npred(Object)
+  if ((M1 <- npred(Object, type = "one.response")) > 1)
+    stop("this function only works with M1==1 models")
+  nsmall <- nobs(Object)
+  NOS <- M / M1
+  etol <- Object@control$eq.tolerances
+  Itol <- Object@control$I.tolerances
+  Earg <- Object@misc$earg
+  all.links <- linkfun(Object)
+
+  if ((Rank <- Rank(Object)) >= 2 && !Itol)
+    warning("can only handle rank-1 (or rank-2 Itol) objects")
 
   linkfun <- Object@family@linkfun
   if (!is.function(linkfun))
-    stop("could not obtain linkfun")
+    stop("could not obtain @linkfun")
 
 
+  vfam <- intersect(Object@family@vfamily, c("binomialff", "poissonff"))
+  if (!length(vfam))
+    stop("only 'poissonff' and 'binomialff' families allowed")
 
-  
-
-  aaa <- fitCQOagain(Object, which.spp = which.spp)
-  cofs.spp <- aaa$Coefficients  # 3-vector
-
-  bbb <- getMaxOptTol(cofs.spp,
-                      vc = aaa$VarCov, varcov.arg = TRUE)
-  Omegamat <- bbb$varcov
-
-
+  canon.link <- switch(vfam,
+                       binomialff = all(all.links == "logit"),
+                       poissonff  = all(all.links == "loge"))
+  if (!canon.link) stop("model does not use the canonical link")  # else
+ 
 
 
+  Omegamat <- vcov(Object)
+  dimn <- colnames(Omegamat)
 
-  NOS <- M  # TRUE for binomial and Poisson
-  Dmat <- Gmat <- 0
+
+  DD <- 0  # Later becomes a matrix.
+  Gmat <- matrix(0, ncol(Omegamat), Rank)
   for (spp. in 1:NOS) {
-    uj.jay <- Coefs@Optimum[, spp.]
-    tolj.jay <- sqrt(Coefs@Tolerance[Rank, Rank, spp.])  # care!!
-    alphaj.jay <- linkfun(Coefs@Maximum,
-                          extra = Object@extra)[spp.]
+    index.A.spp. <- spp. + (seq(Rank) - 1) * M  # Rank-vector
+    index.D.spp. <- if (Itol || etol) (Rank * M) + seq(Rank) else
+    if (!etol) (Rank * M) +
+      spp. + (seq(Rank * (Rank+1) / 2) - 1) * M  # Rank-vector
+    dd <- min(which(substr(dimn, 1, 3) == "x1."))
+    index.B1.spp. <- dd - 1 + spp. + (seq(1000) - 1) * M
+    index.B1.spp. <- index.B1.spp.[index.B1.spp. <= ncol(Omegamat)]
+    all.index <- c(index.A.spp., index.D.spp., index.B1.spp.)
 
-    eta0.jay <- alphaj.jay - 0.5 * ((bnu0 - uj.jay) / tolj.jay)^2
+
+
+
+
+
+  if (!all(should.be.TRUE <- substr(dimn[index.D.spp.], 1, 1) == "D"))
+    stop("encountered a bookkeeping error; failed to pick up the ",
+         "D array coefficients")
+
+
+
+
+
+    uj.jay <- CoefsObject@Optimum[, spp.]  # Rank-vector
+    tolj.jay <- if (Rank == 1) sqrt(CoefsObject@Tolerance[, , spp.]) else
+                diag(sqrt(CoefsObject@Tolerance[, , spp.]))  # Ditto
+    alphaj.jay <- linkfun(CoefsObject@Maximum,
+                          extra = Object@extra)[spp.]  # Scalar
+
+
+    eta0.jay <- alphaj.jay - 0.5 * sum(((bnu0 - uj.jay) / tolj.jay)^2)
     eta0.jay <- rbind(eta0.jay)
-
-
-
     fv0.jay <- mu.function(eta0.jay, extra = Object@extra)
     fv0.jay <- c(fv0.jay)  # Remove array attributes
-    dTheta.deta0j <- dtheta.deta(fv0.jay, link.function, earg = earg)
+    dTheta.deta0j <- dtheta.deta(fv0.jay,
+                                 all.links[spp.],
+                                 earg = Earg[[spp.]])  # Scalar
     dTheta.deta0j <- c(dTheta.deta0j)  # Remove array attributes
 
 
-    xi0.jay <- -(bnu0 - uj.jay)  / tolj.jay^2
-    Dmat <- Dmat + dTheta.deta0j * xi0.jay^2  # More general
-    dxi0.dtheta <-
-      getG.calib(nu0 = bnu0, coeff3 = cofs.spp,  # NULL, 
-                 numerator = "xi",
-                 which.spp = spp.)
-    deta0.dtheta <-
-      getG.calib(nu0 = bnu0, coeff3 = cofs.spp,  # NULL, 
-                 numerator = "eta",
-                 which.spp = spp.)
-    Gmat <- Gmat + (y0[1, spp.] - fv0.jay) * dxi0.dtheta -
-            xi0.jay * dTheta.deta0j * deta0.dtheta
-  }
+    xi0.jay <- -(bnu0 - uj.jay) / tolj.jay^2  # Rank-vector
+    DD <- DD + dTheta.deta0j *
+        (cbind(xi0.jay) %*% rbind(xi0.jay))  # More general
+    dxi0.dtheta <- forG.calib.qrrvglm(bnu0, numerator = "xi")  # R x dim11
+    deta0.dtheta <- forG.calib.qrrvglm(bnu0, numerator = "eta")  # Rxdim11
+    Index.All <- cbind(index.A.spp., index.D.spp.,
+                       rep_len(index.B1.spp., Rank))  # Just to make sure
+    for (rlocal in seq(Rank)) {
+      Gmat[Index.All[rlocal, ], rlocal] <-
+      Gmat[Index.All[rlocal, ], rlocal] +
+      (y0[1, spp.] - fv0.jay) * dxi0.dtheta[rlocal, ] -
+      xi0.jay[rlocal] * dTheta.deta0j * deta0.dtheta[rlocal, ]
+    }  # rlocal
 
-  1 / Dmat + (rbind(Gmat) %*% Omegamat %*% cbind(Gmat)) / Dmat^2
+  }  #  for spp.
+
+
+
+
+  DDinv <- solve(DD)
+  muxf <- diag(Rank) + t(Gmat) %*% Omegamat %*% Gmat %*% DDinv
+  Vmat <- DDinv %*% muxf
+  Vmat
 }  # dzwald.qrrvglm
 
 
@@ -359,7 +556,7 @@ dzwald.qrrvglm <-
 calibrate.qrrvglm.control <-
   function(object,
            trace = FALSE,  # passed into optim()
-           Method.optim = "BFGS",  # passed into optim(method = Method)
+           method.optim = "BFGS",  # passed into optim(method = Method)
            gridSize = ifelse(Rank == 1, 21, 9),
            varI.latvar = FALSE, ...) {
 
@@ -373,7 +570,7 @@ calibrate.qrrvglm.control <-
 
   list(
        trace = as.numeric(trace)[1],
-       Method.optim = Method.optim,
+       method.optim = method.optim,
        gridSize = gridSize,
        varI.latvar = as.logical(varI.latvar)[1])
 }  # calibrate.qrrvglm.control
@@ -382,6 +579,9 @@ calibrate.qrrvglm.control <-
 
 
 
+ if (!isGeneric("calibrate"))
+     setGeneric("calibrate",
+                function(object, ...) standardGeneric("calibrate"))
 
 
 
@@ -390,16 +590,20 @@ calibrate.qrrvglm.control <-
 calibrate.qrrvglm <-
   function(object,
            newdata = NULL,
-           type = c("latvar", "predictors", "response",
-                    "vcov", "all3or4"),
-           se.type = c("asbefore", "wald"),
-           initial.vals = NULL, ...) {
+           type = c("latvar", "predictors", "response", "vcov",
+                    "everything"),
+           lr.confint = FALSE,  # 20180430
+           cf.confint = FALSE,  # 20180602
+           level = 0.95,        # 20180430
+           initial.vals = NULL,
+           ...) {
 
 
 
 
+      
 
-
+  se.type <- c("dzwald", "asbefore")  # Effectively only the 1st one used
   Quadratic <- if (is.logical(object@control$Quadratic))
                object@control$Quadratic else FALSE  # T if CQO, F if CAO
 
@@ -413,12 +617,19 @@ calibrate.qrrvglm <-
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type, c("latvar", "predictors",
-                            "response", "vcov", "all3or4"))[1]
+                            "response", "vcov", "everything"))[1]
 
-  get.SEs <- Quadratic && type %in% c("vcov", "all3or4")
+
+
+
+  get.SEs <- Quadratic && type %in% c("vcov", "everything")
+
+
+
   if (mode(se.type) != "character" && mode(se.type) != "name")
     se.type <- as.character(substitute(se.type))
-  se.type <- match.arg(se.type, c("asbefore", "wald"))[1]
+  se.type <- match.arg(se.type, c("dzwald", "asbefore"))[1]
+  if (se.type == "asbefore") warning("'asbefore' is buggy")
 
   if (!Quadratic && type == "vcov")
     stop("cannot have 'type=\"vcov\"' when object is ",
@@ -430,6 +641,8 @@ calibrate.qrrvglm <-
     warning("not all the prior weights of 'object' are 1; assuming ",
             "they all are here")
 
+
+  
 
 
   if (!is.data.frame(newdata))
@@ -451,27 +664,21 @@ calibrate.qrrvglm <-
 
 
   obfunct <- slot(object@family, object@misc$criterion)  # deviance
- print("object@misc$criterion")
- print( object@misc$criterion )
- print("obfunct7")
- print( obfunct )
   minimize.obfunct <-
     if (Quadratic) object@control$min.criterion else
     TRUE  # Logical; TRUE for CAO objects because deviance is minimized
   if (!is.logical(minimize.obfunct))
     stop("object@control$min.criterion is not a logical")
- print("minimize.obfunct")
- print( minimize.obfunct )
   optim.control <- calibrate.qrrvglm.control(object = object, ...)
 
   use.optim.control <- optim.control
-  use.optim.control$Method.optim <-
+  use.optim.control$method.optim <-
   use.optim.control$gridSize     <-
   use.optim.control$varI.latvar  <- NULL
 
 
   if ((Rank <- object@control$Rank) > 2)
-    stop("currently can only handle Rank = 1 and 2")
+    stop("currently can only handle Rank = 1 and Rank = 2")
   Coefobject <- if (Quadratic) {
     Coef(object, varI.latvar = optim.control$varI.latvar)
   } else {
@@ -489,10 +696,6 @@ calibrate.qrrvglm <-
                   seq(Lvec[2], Uvec[2], length = optim.control$gridSize))
   }
 
- print("head(initial.vals)")
- print( head(initial.vals) )
- print("tail(initial.vals)")
- print( tail(initial.vals) )
 
 
 
@@ -501,7 +704,7 @@ calibrate.qrrvglm <-
   M <- npred(object)
   v.simple <- if (Quadratic) {
     length(object@control$colx1.index) == 1 &&
-    names(object@control$colx1.index) == "(Intercept)" &&
+     names(object@control$colx1.index) == "(Intercept)" &&
     (if (any(names(constraints(object)) == "(Intercept)"))
     trivial.constraints(constraints(object))["(Intercept)"] == 1 else
     TRUE)
@@ -514,13 +717,13 @@ calibrate.qrrvglm <-
     Xlm <- predict.vlm(as(object, "vglm"),  # object,
                        newdata = newdata.orig,
                        type = "Xlm")
+    if (se.type == "dzwald" && (type == "everything" || type == "vcov"))
+      stop("only noRRR = ~ 1 models are handled for ",
+           "type = 'everything' or type = 'vcov'")
+
     Xlm[, names(object@control$colx1.index), drop = FALSE] %*%
     (if (Quadratic) Coefobject@B1 else object@coefficients[1:M])
   }  # !v.simple
- print("head(B1bix)")
- print( head(B1bix) )
- print("dim(B1bix)")
- print( dim(B1bix) )
 
 
 
@@ -539,10 +742,10 @@ calibrate.qrrvglm <-
               Coefs = extraargs$Coefobject,
               B1bix = extraargs$B1bix,
               misc.list = extraargs$object.misc,
-              everything = FALSE,
+              Everything = FALSE,
               mu.function = extraargs$mu.function))
     ans
-  }
+  }  # objfun1
 
   objfun2 <- function(lv1val, lv2val,
                       x = NULL, y, w = 1, extraargs) {
@@ -555,10 +758,10 @@ calibrate.qrrvglm <-
               Coefs = extraargs$Coefobject,
               B1bix = extraargs$B1bix,
               misc.list = extraargs$object.misc,
-              everything = FALSE,
+              Everything = FALSE,
               mu.function = extraargs$mu.function))
     ans
-  }
+  }  # objfun2
 
 
   choose.fun <- if (Quadratic) .my.calib.objfunction.qrrvglm else
@@ -572,7 +775,7 @@ calibrate.qrrvglm <-
          B1bix        = NA,  # Will be replaced below
          obfunct      = obfunct,  # deviance
          object.misc  = object@misc,
-         Object       = if (Quadratic) 666 else object,
+         Object       = if (Quadratic) 777 else object,
          mu.function  = mu.function)
 
 
@@ -603,13 +806,11 @@ calibrate.qrrvglm <-
     init.vals[i1, ] <- c(lv1.init, lv2.init)
   }  # for i1
 
- print("hi34")
- print("head(init.vals)")
- print( head(init.vals) )
 
 
 
 
+ 
   BestOFpar <- matrix(NA_real_, nn, Rank)
   BestOFvalues <- rep(NA_real_, nn)  # Best OF objective function values
 
@@ -622,70 +823,270 @@ calibrate.qrrvglm <-
     ans <-
       optim(par = init.vals[i1, ],
             fn  = choose.fun,
-            method = optim.control$Method.optim,  # "BFGS" or "CG" or...
+            method = optim.control$method.optim,  # "BFGS" or "CG" or...
             control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
                         use.optim.control),  # as.vector() needed
               y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
               extra = object@extra,
               objfun = obfunct,  # deviance
-              Object = if (Quadratic) 666 else object,
+              Object = if (Quadratic) 777 else object,
               Coefs = Coefobject,
               B1bix = B1bix[i1, , drop = FALSE],
               misc.list = object@misc,
-              everything = FALSE,  # Differs from Step 4. below
+              Everything = FALSE,  # Differs from Step 6. below
               mu.function = mu.function)
 
-        if (optim.control$trace) {
-          if (ans$convergence == 0)
-            cat("Successful convergence\n") else
-            cat("Unsuccessful convergence\n")
-          flush.console()
-        }
-        if (ans$convergence == 0) {
-          BestOFpar[i1, ] <- ans$par
-          BestOFvalues[i1] <- ans$value
-        }  # else do nothing since NA_real_ signifies convergence failure
+    if (optim.control$trace) {
+      if (ans$convergence == 0)
+        cat("Successful convergence\n") else
+        cat("Unsuccessful convergence\n")
+      flush.console()
+    }
+    if (ans$convergence == 0) {
+      BestOFpar[i1, ] <- ans$par
+      BestOFvalues[i1] <- ans$value
+    }  # else do nothing since NA_real_ signifies convergence failure
   }  # for i1
 
- print("hi43")
- print("BestOFvalues")
- print( BestOFvalues )
- print("BestOFpar")
- print( BestOFpar )
- print("dimnames(newdata)")
- print( dimnames(newdata) )
 
 
 
 
-  pretty <- function(BestOFpar, newdata, Rank) {
+
+
+  prettyCQO <- function(BestOFpar, newdata, Rank) {
     if (Rank == 1) {
+      BestOFpar <- c(BestOFpar)  # Drop the dimension
       if (!is.null(dimnames(newdata)[[1]])) {
-        BestOFpar <- c(BestOFpar)
         names(BestOFpar) <- dimnames(newdata)[[1]]
       }
     } else {
       dimnames(BestOFpar) <- list(dimnames(newdata)[[1]],
-                                  param.names("latvar", Rank, skip1 = TRUE))
+                             param.names("latvar", Rank, skip1 = TRUE))
     }
     BestOFpar
-  }  # pretty
+  }  # prettyCQO
 
-  BestOFpar <- pretty(BestOFpar, newdata, Rank)
+  BestOFpar <- prettyCQO(BestOFpar, newdata, Rank)
   attr(BestOFpar,"objectiveFunction") <-
-    pretty(BestOFvalues, newdata, Rank = 1)
-  if (type == "latvar")
+    prettyCQO(BestOFvalues, newdata, Rank = 1)
+  if (type == "latvar" && (!cf.confint && !lr.confint)) {
     return(BestOFpar)
+  }
 
 
 
+  
+   
+
+
+  if (lr.confint && Rank > 1) {
+    warning("argument 'lr.confint' should only be TRUE if Rank == 1. ",
+            "Setting 'lr.confint = FALSE'.")
+    lr.confint <- FALSE
+  }
+
+
+  if (lr.confint && !(type %in% c("latvar", "everything"))) {
+    warning("argument 'lr.confint' should only be TRUE if ",
+            "'type = \"latvar\"' or 'type = \"everything\"'. ",
+            "Setting 'lr.confint = FALSE'.")
+    lr.confint <- FALSE
+  }
+  if (lr.confint && Rank == 1) {
+
+    format.perc <- function(probs, digits)
+      paste(format(100 * probs, trim = TRUE, scientific = FALSE,
+            digits = digits), "%")
+    aa <- (1 - level) / 2
+    aa <- c(aa, 1 - aa)
+
+    pct <- format.perc(aa, 3)
+    cimat <- array(NA, dim = c(nn, 2L),
+                   dimnames = list(dimnames(newdata)[[1]], pct))
+
+    for (i1 in 1:nn) {
+      if (optim.control$trace) {
+        cat("\nSolving for the roots for obsn", i1, "---------------\n")
+        flush.console()
+      }
+
+
+      foo1.lhs.rhs <-
+      function(bnu,
+               y0, extra = NULL,
+               objfun, Coefs,
+               Object,  # Not needed
+               B1bix,
+               misc.list,
+               Everything = FALSE,
+               mu.function,
+               BestOFvalues = NA,
+               level = 0.95,
+               criterion.arg = "loglikelihood") {
+        if (!(criterion.arg %in% c("deviance", "loglikelihood")))
+          stop("'criterion.arg' must be 'deviance' or 'loglikelihood'")
+        ifelse(criterion.arg == "deviance", 1, -2) *
+        (-BestOFvalues +
+             .my.calib.objfunction.qrrvglm(bnu = bnu,
+                y0 = y0,
+                extra = extra,
+                objfun = objfun,
+                Object = Object,
+                Coefs = Coefs,
+                B1bix = B1bix,
+                misc.list = misc.list,
+                Everything = Everything,
+                mu.function = mu.function)) -
+        qchisq(level, df = 1)
+      }
+
+
+      for (Side in 1:2) {
+        ans.lhs.rhs <-
+        uniroot(f = foo1.lhs.rhs,
+                interval = if (Side == 1) c(Lvec, BestOFpar[i1]) else
+                                          c(BestOFpar[i1], Uvec),
+                extendInt = ifelse(Side == 1, "downX", "upX"),
+                y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
+                extra = object@extra,
+                objfun = obfunct,
+                Coefs = Coefobject,
+                Object = 777,  # object,
+                B1bix = B1bix[i1, , drop = FALSE],
+                misc.list = object@misc,
+                Everything = FALSE,
+                mu.function = mu.function,
+                BestOFvalues = BestOFvalues[i1], level = level,
+                criterion.arg = object@misc$criterion)
+        cimat[i1, Side] <- ans.lhs.rhs$root
+      }  # Side
+    }  # for i1
+
+    if (type == "latvar")
+      return(cbind(estimate = BestOFpar,
+                   objfun   = BestOFvalues,
+                   cimat))
+  }  # if (lr.confint && Rank == 1)
+
+
+
+
+  
+   
+
+
+
+  if (cf.confint && Rank > 1) {
+    warning("argument 'cf.confint' should only be TRUE if Rank == 1. ",
+            "Setting 'cf.confint = FALSE'.")
+    cf.confint <- FALSE
+  }
+
+
+  if (cf.confint && !(type %in% c("latvar", "everything"))) {
+    warning("argument 'cf.confint' should only be TRUE if ",
+            "'type = \"latvar\"' or 'type = \"everything\"'. ",
+            "Setting 'cf.confint = FALSE'.")
+    cf.confint <- FALSE
+  }
+  if (cf.confint && Rank == 1) {
+
+    format.perc <- function(probs, digits)
+      paste(format(100 * probs, trim = TRUE, scientific = FALSE,
+            digits = digits), "%")
+    aa <- (1 - level) / 2
+    aa <- c(aa, 1 - aa)
+    pct <- format.perc(aa, 3)
+    cimat2 <- array(NA, dim = c(nn, 2L),
+                    dimnames = list(dimnames(newdata)[[1]], pct))
+
+
+
+    for (i1 in 1:nn) {
+      if (optim.control$trace) {
+        cat("\nSolving for the roots for obsn", i1, "---------------\n")
+        flush.console()
+      }
+
+
+      foo2.lhs.rhs <-
+      function(bnu,
+               y0, extra = NULL,
+               objfun, Coefs,
+               Object,  # Not needed
+               B1bix,
+               misc.list,
+               Everything = FALSE,
+               mu.function,
+               BestOFvalues = NA,
+               pr.level = c(0.05, 0.95)[1]
+               ) {
+    charfun.cqo.cdf(bnu = bnu,
+                y0 = y0,
+                extra = extra,
+                objfun = objfun,
+                Coefs = Coefs,
+                Object = Object,
+                B1bix = B1bix,
+                misc.list = misc.list,
+                Everything = Everything,
+                mu.function = mu.function
+                ) -
+        pr.level
+      }
+
+
+
+
+
+      
+
+      for (Side in 1:2) {
+        ans.lhs.rhs <-
+        uniroot(f = foo2.lhs.rhs,
+                interval = if (Side == 1) c(Lvec, BestOFpar[i1]) else
+                                          c(BestOFpar[i1], Uvec),
+                extendInt = "yes",  # Might be worse than above.
+                y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
+                extra = object@extra,
+                objfun = obfunct,
+                Coefs = Coefobject,
+                Object = object,
+                B1bix = B1bix[i1, , drop = FALSE],
+                misc.list = object@misc,
+                Everything = FALSE,
+                mu.function = mu.function,
+                BestOFvalues = BestOFvalues[i1],
+                pr.level = ifelse(Side == 1, aa[1], aa[2])
+               )
+        cimat2[i1, Side] <- ans.lhs.rhs$root
+      }  # Side
+    }  # for i1
+
+    vecTF <- cimat2[, 2] < cimat2[, 1]
+    if (any(vecTF)) {
+      temp <- cimat2[vecTF, 1]
+      cimat2[vecTF, 1] <- cimat2[vecTF, 2]
+      cimat2[vecTF, 2] <- temp
+    }
+    if (type == "latvar")
+      return(cbind(estimate = BestOFpar,
+                   objfun   = BestOFvalues,
+                   cimat2))
+
+  }  # if (cf.confint && Rank == 1)
+
+
+
+
+      
 
 
 
   etaValues <- matrix(NA_real_, nn, M)
   muValues <- matrix(NA_real_, nn, ncol(fitted(object)))
-  if (get.SEs)
-    vcValues <- array(0, c(Rank, Rank, nn))
+  vcValues <- if (get.SEs) array(0, c(Rank, Rank, nn)) else NULL
 
 
   if (optim.control$trace)
@@ -697,42 +1098,38 @@ calibrate.qrrvglm <-
           "-----------------\n")
       flush.console()
     }
-    ans <- choose.fun(
+    ans5 <- choose.fun(
               bnu = if (Rank == 1) BestOFpar[i1] else BestOFpar[i1, ],
               y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
               extra = object@extra,
               objfun = obfunct,  # deviance
-              Object = if (Quadratic) 666 else object,
+              Object = if (Quadratic) 777 else object,
               Coefs = Coefobject,
               B1bix = B1bix[i1, , drop = FALSE],
               misc.list = object@misc,
-              everything = get.SEs,  # Differs from Step 3.
+              Everything = TRUE,  # Differs from Step 3.
               mu.function = mu.function)
 
-    muValues[i1, ] <- ans$mu
-    etaValues[i1, ] <- ans$eta
+     muValues[i1, ] <- ans5$mu
+    etaValues[i1, ] <- ans5$eta
 
 
     if (get.SEs) {
-      vcValues[, , i1] <-
-        if (se.type == "wald")
+      vcValues[, , i1] <- if (se.type == "dzwald")
         dzwald.qrrvglm(
               bnu0 = if (Rank == 1) BestOFpar[i1] else BestOFpar[i1, ],
               y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
-              extra = object@extra,
-              objfun = obfunct,  # deviance
               Object = object,
-              Coefs = Coefobject,
+              CoefsObject = Coefobject,
               B1bix = B1bix[i1, , drop = FALSE],
-              misc.list = object@misc,
-              everything = TRUE,
-              mu.function = mu.function,
-              link.function = linkfun(object)[i1],
-              earg          = object@misc$earg[[i1]], 
-              which.spp = i1) else
-        ans$vcmat  # Might be NULL, e.g., "rvgam"
+              mu.function = mu.function) else
+        ans5$vcmat  # Might be NULL, e.g., "rrvgam"
     }  # if (get.SEs)
   }  # for i1
+
+
+
+
 
 
 
@@ -745,13 +1142,24 @@ calibrate.qrrvglm <-
                                dimnames(newdata)[[1]])
 
   switch(type,
-         response   = muValues,
+         latvar     = BestOFpar,  # Done already, so not really needed
          predictors = etaValues,
+         response   = muValues,
          vcov       = vcValues,
-         all3or4 = list(latvar     = BestOFpar,
-                        predictors = etaValues,
-                        response   = muValues,
-                        vcov       = if (get.SEs) vcValues else NULL))
+         everything = list(
+             latvar     = BestOFpar,
+             predictors = etaValues,
+             response   = muValues,
+             vcov       = vcValues,
+             lr.confint = if (lr.confint)
+                            cbind(estimate = BestOFpar,
+                                  objfun   = BestOFvalues,
+                                  cimat) else NULL,
+             cf.confint = if (cf.confint)
+                            cbind(estimate = BestOFpar,
+                                  objfun   = BestOFvalues,
+                                  cimat2) else NULL)
+        )
 }  # calibrate.qrrvglm
 
 
@@ -769,18 +1177,19 @@ calibrate.qrrvglm <-
            objfun, Coefs, Object,
            B1bix,
            misc.list,
-           everything = TRUE,
+           Everything = TRUE,
            mu.function) {
 
+ 
   bnumat <- cbind(bnu)
   Rank <- length(bnu)
   eta <- cbind(c(B1bix)) + Coefs@A %*% bnumat
   M <- misc.list$M
   check.eta <- matrix(0, M, 1)
-  for (ss in 1:M) {
-    temp <- Coefs@D[, , ss, drop = FALSE]
-    dim(temp) <- dim(temp)[1:2]  # c(Rank, Rank)
-    eta[ss, 1] <- eta[ss, 1] + t(bnumat) %*% temp %*% bnumat
+    for (ss in 1:M) {
+      temp <- Coefs@D[, , ss, drop = FALSE]
+      dim(temp) <- dim(temp)[1:2]  # c(Rank, Rank)
+      eta[ss, 1] <- eta[ss, 1] + t(bnumat) %*% temp %*% bnumat
 
     if (FALSE) {
       warning("this line is wrong:")
@@ -789,28 +1198,30 @@ calibrate.qrrvglm <-
       check.eta[ss, 1] <- alf - 0.5 * t(bnumat) %*%
                           solve(tolmat) %*% bnumat  
     }  # FALSE
-  }  # for ss
+    }  # for ss
   eta <- matrix(eta, 1, M, byrow = TRUE)
-  mu <- rbind(mu.function(eta, extra))  # Make sure it has 1 row
+  mu <- matrix(mu.function(eta, extra = extra), nrow = 1)
   obvalue <- objfun(mu = mu, y = y0,
                     w = 1,  # ignore prior.weights on the object
                     residuals = FALSE, eta = eta, extra = extra)
-  if (everything) {
-    vcmat <- matrix(0, Rank, Rank)
-    for (ss in 1:M) {
-      vec1 <- cbind(Coefs@A[ss, ]) +
-                    2 * matrix(Coefs@D[, , ss], Rank, Rank) %*% bnumat
-      vcmat <- vcmat + mu[1, ss] * vec1 %*% t(vec1)
-    }
+  if (Everything) {
+    vcmat <- diag(Rank)
+    if (FALSE && M == NCOL(mu)) {
+      for (ss in 1:M) {
+        vec1 <- cbind(Coefs@A[ss, ]) +
+                      2 * matrix(Coefs@D[, , ss], Rank, Rank) %*% bnumat
+        vcmat <- vcmat + mu[1, ss] * vec1 %*% t(vec1)
+      }  # ss
+    }  # if (M == NCOL(mu))
     vcmat <- solve(vcmat)
   } else {
     vcmat <- NULL
   }
-  if (everything)
-    list(eta = eta,
-         mu = mu,
+  if (Everything)
+    list(eta     = eta,
+         mu      = mu,
          obvalue = obvalue,
-         vcmat = vcmat) else
+         vcmat   = vcmat) else
     obvalue
 }  # .my.calib.objfunction.qrrvglm
 
@@ -826,7 +1237,7 @@ calibrate.qrrvglm <-
            Coefs,
            B1bix,  # Actually not needed here
            misc.list,
-           everything = TRUE,
+           Everything = TRUE,
            mu.function) {
     Rank <- length(bnu)
     NOS <- Coefs@NOS
@@ -840,7 +1251,7 @@ calibrate.qrrvglm <-
                       w = 1,  # ignore prior.weights on the object
                       residuals = FALSE, eta = eta, extra = extra)
     vcmat <- NULL  # No theory as of yet to compute the vcmat
-  if (everything)
+  if (Everything)
     list(eta = eta,
          mu = mu,
          obvalue = obvalue,
@@ -860,81 +1271,129 @@ calibrate.qrrvglm <-
 
 
 
+forG.calib.rrvglm <-
+  function(bnu0,
+           numerator = c("xi", "eta"),
+           lenb1bix = 1) {
+
+  numerator <- match.arg(numerator, c("xi", "eta"))[1]
+
+  Rank <- length(bnu0)  # Usually 1, sometimes 2.
+  switch(numerator,
+    "xi"  = cbind(rep_len(1, Rank), matrix(0, Rank, lenb1bix)),
+    "eta" = cbind(bnu0,             matrix(1, Rank, lenb1bix)))
+}  # forG.calib.rrvglm
+
+
+
+
 
 
 dzwald.rrvglm <-
-  function(bnu0, y0, extra = NULL,
-           objfun, Coefs, Object,
+  function(bnu0, y0,  # extra = NULL, objfun,
+           Object,  CoefsObject,
            B1bix,
-           misc.list,
-           everything = TRUE,
-           mu.function,
-           link.function, earg = list(),  # These go together
-           which.spp = 1) {
- print("in dzwald.rrvglm()")
- warning("dzwald.rrvglm() is not working yet")
- print("y0")
- print( y0)
+           mu.function
+           ) {
 
   
-  M <- misc.list$M
-  if ((Rank <- length(bnu0)) != 1)
-    stop("can only handle rank-1 objects")
+  M <- npred(Object)
+  if ((M1 <- npred(Object, type = "one.response")) > 1)
+    stop("this function only works with M1==1 models")
+  NOS <- M / M1
+  Earg <- Object@misc$earg
+  all.links <- linkfun(Object)
+
+
+
+
+  Rank <- Rank(Object)
 
   linkfun <- Object@family@linkfun
   if (!is.function(linkfun))
-    stop("could not obtain linkfun")
+    stop("could not obtain @linkfun")
 
 
+  vfam <- intersect(Object@family@vfamily, c("binomialff", "poissonff"))
+  if (!length(vfam))
+    stop("only 'poissonff' and 'binomialff' families allowed")
 
-  
-
-  aaa <- fitCQOagain(Object, which.spp = which.spp)
-  cofs.spp <- aaa$Coefficients  # 3-vector
-
-  bbb <- getMaxOptTol(cofs.spp,
-                      vc = aaa$VarCov, varcov.arg = TRUE)
-  Omegamat <- bbb$varcov
-
-
+  canon.link <- switch(vfam,
+                       binomialff = all(all.links == "logit"),
+                       poissonff  = all(all.links == "loge"))
+  if (!canon.link) stop("model does not use the canonical link")  # else
+ 
 
 
+  Omegamat <- vcov(Object)  # Numerical problems might occur to get this.
+  dimn <- colnames(Omegamat)
+  A.mat <- CoefsObject@A
+  B1.mat <- CoefsObject@B1
+  Index.corner <- Object@control$Index.corner  # Corner constraints
 
-  NOS <- M  # TRUE for binomial and Poisson
-  Dmat <- Gmat <- 0
+  DD <- 0  # Later becomes a matrix.
+  Gmat <- matrix(0, ncol(Omegamat), Rank)
+  icounter <- 0  # Number of rows of \bigtilde{\bA}.
   for (spp. in 1:NOS) {
-    uj.jay <- Coefs@Optimum[, spp.]
-    tolj.jay <- sqrt(Coefs@Tolerance[Rank, Rank, spp.])  # care!!
-    alphaj.jay <- linkfun(Coefs@Maximum,
-                          extra = Object@extra)[spp.]
+    index.A.spp. <- if (any(spp. == Index.corner)) NULL else {
+      icounter <- icounter + 1
+      icounter + (M - Rank) * (seq(Rank) - 1)
+    }
+    index.D.spp. <- NULL
+    dd <- max(which(substr(dimn, 1, 8) == "I(latvar"))
+    index.B1.spp. <- dd + spp. + (seq(nrow(B1.mat)) - 1) * M
 
-    eta0.jay <- alphaj.jay - 0.5 * ((bnu0 - uj.jay) / tolj.jay)^2
+
+    all.index <- c(index.A.spp., index.D.spp., index.B1.spp.)
+
+
+
+
+
+
+
+    alphaj.jay <- CoefsObject@B1["(Intercept)", spp.]  # Scalar
+
+
+    eta0.jay <- alphaj.jay + A.mat[spp., , drop = FALSE] %*% bnu0
     eta0.jay <- rbind(eta0.jay)
-
-
-
     fv0.jay <- mu.function(eta0.jay, extra = Object@extra)
     fv0.jay <- c(fv0.jay)  # Remove array attributes
-    dTheta.deta0j <- dtheta.deta(fv0.jay, link.function, earg = earg)
+    dTheta.deta0j <- dtheta.deta(fv0.jay,
+                                 all.links[spp.],
+                                 earg = Earg[[spp.]])  # Scalar
     dTheta.deta0j <- c(dTheta.deta0j)  # Remove array attributes
 
 
-    xi0.jay <- -(bnu0 - uj.jay)  / tolj.jay^2
-    Dmat <- Dmat + dTheta.deta0j * xi0.jay^2  # More general
-    dxi0.dtheta <-
-      getG.calib(nu0 = bnu0, coeff3 = cofs.spp,  # NULL, 
-                 numerator = "xi",
-                 which.spp = spp.)
-    deta0.dtheta <-
-      getG.calib(nu0 = bnu0, coeff3 = cofs.spp,  # NULL, 
-                 numerator = "eta",
-                 which.spp = spp.)
-    Gmat <- Gmat + (y0[1, spp.] - fv0.jay) * dxi0.dtheta -
-            xi0.jay * dTheta.deta0j * deta0.dtheta
-  }
+    xi0.jay <- A.mat[spp., ]  # Rank-vector
+    DD <- DD + dTheta.deta0j *
+        (cbind(xi0.jay) %*% rbind(xi0.jay))  # More general
+    dxi0.dtheta <- forG.calib.rrvglm(bnu0, numerator = "xi")  # R x dim11
+    deta0.dtheta <- forG.calib.rrvglm(bnu0, numerator = "eta")  # Rxdim11
+    Index.All <- cbind(index.A.spp., index.D.spp.,
+                       rep_len(index.B1.spp., Rank))  # Just to make sure
 
-  1 / Dmat + (rbind(Gmat) %*% Omegamat %*% cbind(Gmat)) / Dmat^2
+    if (!is.null(index.A.spp.))
+    for (rlocal in seq(Rank)) {
+      Gmat[Index.All[rlocal, ], rlocal] <-
+      Gmat[Index.All[rlocal, ], rlocal] +
+      (y0[1, spp.] - fv0.jay) * dxi0.dtheta[rlocal, ] -
+      xi0.jay[rlocal] * dTheta.deta0j * deta0.dtheta[rlocal, ]
+    }  # rlocal
+
+  }  #  for spp.
+
+
+
+
+  DDinv <- solve(DD)
+  muxf <- diag(Rank) + t(Gmat) %*% Omegamat %*% Gmat %*% DDinv
+  Vmat <- DDinv %*% muxf
+  Vmat
 }  # dzwald.rrvglm
+
+
+
 
 
 
@@ -945,10 +1404,13 @@ calibrate.rrvglm <-
   function(object,
            newdata = NULL,
            type = c("latvar", "predictors", "response", "vcov",
-                    "all3or4"),
-           se.type = c("asbefore", "wald"),
+                    "everything"),
+           lr.confint = FALSE,  # 20180427
+           cf.confint = FALSE,  # 20180604
+           level = 0.95,        # 20180428
            initial.vals = NULL,  # For one observation only
            ...) {
+  se.type <- c("dzwald", "asbefore")  # Effectively only the 1st one used
 
 
   Quadratic <- FALSE  # Because this function was adapted from CQO code.
@@ -960,16 +1422,18 @@ calibrate.rrvglm <-
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type, c("latvar", "predictors",
-                            "response", "vcov", "all3or4"))[1]
-  get.SEs <- type %in% c("vcov", "all3or4")
+                            "response", "vcov", "everything"))[1]
+  get.SEs <- type %in% c("vcov", "everything")
   if (mode(se.type) != "character" && mode(se.type) != "name")
     se.type <- as.character(substitute(se.type))
-  se.type <- match.arg(se.type, c("asbefore", "wald"))[1]
+  se.type <- match.arg(se.type, c("dzwald", "asbefore"))[1]
 
   if (!all(weights(object, type = "prior") == 1))
     warning("not all the prior weights of 'object' are 1; assuming ",
             "they all are here")
 
+
+ 
 
   if (!is.data.frame(newdata))
     newdata <- data.frame(newdata)
@@ -987,22 +1451,14 @@ calibrate.rrvglm <-
 
 
   obfunct <- slot(object@family, object@misc$criterion)
- print("object@misc$criterion")
- print( object@misc$criterion )
- print("obfunct7")
- print( obfunct )
   minimize.obfunct <- object@control$min.criterion  # deviance
   if (!is.logical(minimize.obfunct))
     stop("object@control$min.criterion is not a logical")
   minimize.obfunct <- as.vector(minimize.obfunct)
- print("minimize.obfunct")
- print( minimize.obfunct )
   optim.control <- calibrate.rrvglm.control(object = object, ...)
- print("optim.control")
- print( optim.control )
 
   use.optim.control <- optim.control
-  use.optim.control$Method.optim <-
+  use.optim.control$method.optim <-
   use.optim.control$gridSize     <-
   use.optim.control$varI.latvar  <- NULL
 
@@ -1029,10 +1485,6 @@ calibrate.rrvglm <-
   expand.grid(seq(Lvec[1], Uvec[1], length = optim.control$gridSize),
               seq(Lvec[2], Uvec[2], length = optim.control$gridSize),
               seq(Lvec[3], Uvec[3], length = optim.control$gridSize))
- print("head(initial.vals)")
- print( head(initial.vals) )
- print("tail(initial.vals)")
- print( tail(initial.vals) )
   }  # !length(initial.vals)
 
 
@@ -1040,26 +1492,24 @@ calibrate.rrvglm <-
 
   M <- npred(object)
   v.simple <- length(object@control$colx1.index) == 1 &&
-              names(object@control$colx1.index) == "(Intercept)" &&
+               names(object@control$colx1.index) == "(Intercept)" &&
               (if (any(names(constraints(object)) == "(Intercept)"))
       trivial.constraints(constraints(object))["(Intercept)"] == 1 else
       TRUE)
   B1bix <- if (v.simple) {
     matrix(Coefobject@B1, nn, M, byrow = TRUE)
   } else {
- print("not v.simple")
     Xlm <- predict.vlm(as(object, "vglm"),  # object,
                        newdata = newdata.orig,
                        type = "Xlm")
- print("head(Xlm)0")
- print( head(Xlm) )
+    if (se.type == "dzwald" && (type == "everything" || type == "vcov"))
+      stop("only noRRR = ~ 1 models are handled for ",
+           "type = 'everything' or type = 'vcov'")
+
     Xlm[, names(object@control$colx1.index), drop = FALSE] %*%
     Coefobject@B1
   }  # !v.simple
- print("head(B1bix)")
- print( head(B1bix) )
- print("dim(B1bix)")
- print( dim(B1bix) )
+
 
 
 
@@ -1075,7 +1525,7 @@ calibrate.rrvglm <-
               Coefs = extraargs$Coefobject,
               B1bix = extraargs$B1bix,
               misc.list = extraargs$object.misc,
-              everything = FALSE,
+              Everything = FALSE,
               mu.function = extraargs$mu.function))
     ans
   }
@@ -1091,7 +1541,7 @@ calibrate.rrvglm <-
               Coefs = extraargs$Coefobject,
               B1bix = extraargs$B1bix,
               misc.list = extraargs$object.misc,
-              everything = FALSE,
+              Everything = FALSE,
               mu.function = extraargs$mu.function))
     ans
   }
@@ -1107,7 +1557,7 @@ calibrate.rrvglm <-
               Coefs = extraargs$Coefobject,
               B1bix = extraargs$B1bix,
               misc.list = extraargs$object.misc,
-              everything = FALSE,
+              Everything = FALSE,
               mu.function = extraargs$mu.function))
     ans
   }
@@ -1122,11 +1572,10 @@ calibrate.rrvglm <-
          B1bix        = NA,  # Will be replaced below
          obfunct      = obfunct,
          object.misc  = object@misc,
-         Object       = 666,  # object,
+         Object       = 777,  # object,
          mu.function  = mu.function)
 
 
-  M <- npred(object)
   init.vals <- matrix(NA_real_, nn, Rank)
   for (i1 in 1:nn) {
     if (optim.control$trace)
@@ -1164,6 +1613,7 @@ calibrate.rrvglm <-
 
 
 
+
   BestOFpar <- matrix(NA_real_, nn, Rank)
   BestOFvalues <- rep(NA_real_, nn)  # Best OF objective function values
 
@@ -1176,17 +1626,17 @@ calibrate.rrvglm <-
     ans <-
       optim(par = init.vals[i1, ],
             fn  = .my.calib.objfunction.rrvglm,
-            method = optim.control$Method.optim,  # "BFGS" or "CG" or...
+            method = optim.control$method.optim,  # "BFGS" or "CG" or...
             control = c(fnscale = ifelse(minimize.obfunct, 1, -1),
                         use.optim.control),  # as.vector() needed
               y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
               extra = object@extra,
               objfun = obfunct,
-              Object = 666,  # object,
+              Object = 777,  # object,
               Coefs = Coefobject,
               B1bix = B1bix[i1, , drop = FALSE],
               misc.list = object@misc,
-              everything = FALSE,  # Differs from below
+              Everything = FALSE,  # Differs from Step 5 below
               mu.function = mu.function)
 
         if (optim.control$trace) {
@@ -1202,43 +1652,240 @@ calibrate.rrvglm <-
   }  # for i1
 
 
- print("hi43")
- print("BestOFvalues")
- print( BestOFvalues )
- print("BestOFpar")
- print( BestOFpar )
- print("dimnames(newdata)")
- print( dimnames(newdata) )
 
 
 
 
 
-  pretty <- function(BestOFpar, newdata, Rank) {
+  prettyCLO <- function(BestOFpar, newdata, Rank) {
     if (Rank == 1) {
-      BestOFpar <- c(BestOFpar)
-      names(BestOFpar) <- dimnames(newdata)[[1]]
+      BestOFpar <- c(BestOFpar)  # Drop the dimension
+      if (!is.null(dimnames(newdata)[[1]])) {
+        names(BestOFpar) <- dimnames(newdata)[[1]]
+      }
     } else
       dimnames(BestOFpar) <- list(dimnames(newdata)[[1]],
-                                  param.names("latvar", Rank, skip1 = TRUE))
+                             param.names("latvar", Rank, skip1 = TRUE))
     BestOFpar
-  }  # pretty
+  }  # prettyCLO
 
-
-  BestOFpar <- pretty(BestOFpar, newdata, Rank)
+  BestOFpar <- prettyCLO(BestOFpar, newdata, Rank)  # Dimension may drop.
   attr(BestOFpar,"objectiveFunction") <-
-    pretty(BestOFvalues, newdata, Rank = 1)
-  if (type == "latvar")
+    prettyCLO(BestOFvalues, newdata, Rank = 1)
+  if (type == "latvar" && (!cf.confint && !lr.confint)) {
     return(BestOFpar)
+  }
+
+
+
+
+
+
+  if (lr.confint && Rank > 1) {
+    warning("argument 'lr.confint' should only be TRUE if Rank == 1. ",
+            "Setting 'lr.confint = FALSE'.")
+    lr.confint <- FALSE
+  }
+
+
+  if (lr.confint && !(type %in% c("latvar", "everything"))) {
+    warning("argument 'lr.confint' should only be TRUE if ",
+            "'type = \"latvar\"' or 'type = \"everything\"'. ",
+            "Setting 'lr.confint = FALSE'.")
+    lr.confint <- FALSE
+  }
+  if (lr.confint && Rank == 1) {
+
+    format.perc <- function(probs, digits)
+      paste(format(100 * probs, trim = TRUE, scientific = FALSE,
+            digits = digits), "%")
+    aa <- (1 - level) / 2
+    aa <- c(aa, 1 - aa)
+
+    pct <- format.perc(aa, 3)
+    cimat <- array(NA, dim = c(nn, 2L),
+                   dimnames = list(dimnames(newdata)[[1]], pct))
+
+    for (i1 in 1:nn) {
+      if (optim.control$trace) {
+        cat("Solving for the roots for obsn", i1, "---------------\n")
+        flush.console()
+      }
+
+
+      foo3.lhs.rhs <-
+      function(bnu,
+               y0, extra = NULL,
+               objfun, Coefs,
+               Object,  # Not needed
+               B1bix,
+               misc.list,
+               Everything = FALSE,
+               mu.function,
+               BestOFvalues = NA,
+               level = 0.95,
+               criterion.arg = "loglikelihood") {
+        if (!(criterion.arg %in% c("deviance", "loglikelihood")))
+          stop("'criterion.arg' must be 'deviance' or 'loglikelihood'")
+        ifelse(criterion.arg == "deviance", 1, -2) *
+        (-BestOFvalues +
+             .my.calib.objfunction.rrvglm(bnu = bnu,
+                y0 = y0,
+                extra = extra,
+                objfun = objfun,
+                Object = Object,
+                Coefs = Coefs,
+                B1bix = B1bix,
+                misc.list = misc.list,
+                Everything = Everything,
+                mu.function = mu.function)) -
+        qchisq(level, df = 1)
+      }
+
+
+      for (Side in 1:2) {
+        ans.lhs.rhs <-
+        uniroot(f = foo3.lhs.rhs,
+                interval = if (Side == 1) c(Lvec, BestOFpar[i1]) else
+                                          c(BestOFpar[i1], Uvec),
+                extendInt = ifelse(Side == 1, "downX", "upX"),
+                y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
+                extra = object@extra,
+                objfun = obfunct,
+                Object = 777,  # object,
+                Coefs = Coefobject,
+                B1bix = B1bix[i1, , drop = FALSE],
+                misc.list = object@misc,
+                Everything = FALSE,
+                mu.function = mu.function,
+                BestOFvalues = BestOFvalues[i1], level = level,
+                criterion.arg = object@misc$criterion)
+        cimat[i1, Side] <- ans.lhs.rhs$root
+      }  # Side
+    }  # for i1
+
+    if (type == "latvar")
+      return(cbind(estimate = BestOFpar,
+                   objfun   = BestOFvalues,
+                   cimat))
+  }  # if (lr.confint && Rank == 1)
+
+
+  
+   
+
+
+
+  if (cf.confint && Rank > 1) {
+    warning("argument 'cf.confint' should only be TRUE if Rank == 1. ",
+            "Setting 'cf.confint = FALSE'.")
+    cf.confint <- FALSE
+  }
+
+
+  if (cf.confint && !(type %in% c("latvar", "everything"))) {
+    warning("argument 'cf.confint' should only be TRUE if ",
+            "'type = \"latvar\"' or 'type = \"everything\"'. ",
+            "Setting 'cf.confint = FALSE'.")
+    cf.confint <- FALSE
+  }
+  if (cf.confint && Rank == 1) {
+
+    format.perc <- function(probs, digits)
+      paste(format(100 * probs, trim = TRUE, scientific = FALSE,
+            digits = digits), "%")
+    aa <- (1 - level) / 2
+    aa <- c(aa, 1 - aa)
+    pct <- format.perc(aa, 3)
+    cimat2 <- array(NA, dim = c(nn, 2L),
+                    dimnames = list(dimnames(newdata)[[1]], pct))
+
+
+
+    for (i1 in 1:nn) {
+      if (optim.control$trace) {
+        cat("\nSolving for the roots for obsn", i1, "---------------\n")
+        flush.console()
+      }
+
+
+      foo4.lhs.rhs <-
+      function(bnu,
+               y0, extra = NULL,
+               objfun, Coefs,
+               Object,  # Not needed
+               B1bix,
+               misc.list,
+               Everything = FALSE,
+               mu.function,
+               BestOFvalues = NA,
+               pr.level = c(0.05, 0.95)[1]
+               ) {
+    charfun.clo.cdf(bnu = bnu,
+                y0 = y0,
+                extra = extra,
+                objfun = objfun,
+                Object = Object,
+                Coefs = Coefs,
+                B1bix = B1bix,
+                misc.list = misc.list,
+                Everything = Everything,
+                mu.function = mu.function
+                ) -
+        pr.level
+      }
+
+
+
+
+
+      
+
+      for (Side in 1:2) {
+        ans.lhs.rhs <-
+        uniroot(f = foo4.lhs.rhs,
+                interval = if (Side == 1) c(Lvec, BestOFpar[i1]) else
+                                          c(BestOFpar[i1], Uvec),
+                extendInt = "yes",  # Might be worse than above.
+                y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
+                extra = object@extra,
+                objfun = obfunct,
+                Object = object,
+                Coefs = Coefobject,
+                B1bix = B1bix[i1, , drop = FALSE],
+                misc.list = object@misc,
+                Everything = FALSE,
+                mu.function = mu.function,
+                BestOFvalues = BestOFvalues[i1],
+                pr.level = ifelse(Side == 1, aa[1], aa[2])
+               )
+        cimat2[i1, Side] <- ans.lhs.rhs$root
+      }  # Side
+    }  # for i1
+
+    vecTF <- cimat2[, 2] < cimat2[, 1]
+    if (any(vecTF)) {
+      temp <- cimat2[vecTF, 1]
+      cimat2[vecTF, 1] <- cimat2[vecTF, 2]
+      cimat2[vecTF, 2] <- temp
+    }
+    if (type == "latvar")
+      return(cbind(estimate = BestOFpar,
+                   objfun   = BestOFvalues,
+                   cimat2))
+
+  }  # if (cf.confint && Rank == 1)
+
+
+
 
 
 
 
 
   etaValues <- matrix(NA_real_, nn, M)
-  muValues <- matrix(NA_real_, nn, ncol(fitted(object)))
-  if (get.SEs)
-    vcValues <- array(0, c(Rank, Rank, nn))
+  muValues  <- matrix(NA_real_, nn, ncol(fitted(object)))
+  vcValues <- if (get.SEs) array(0, c(Rank, Rank, nn)) else NULL
 
 
   if (optim.control$trace)
@@ -1250,42 +1897,43 @@ calibrate.rrvglm <-
           "-----------------\n")
       flush.console()
     }
-    ans <- .my.calib.objfunction.rrvglm(
+    ans5 <- .my.calib.objfunction.rrvglm(
               bnu = if (Rank == 1) BestOFpar[i1] else BestOFpar[i1, ],
               y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
               extra = object@extra,
               objfun = obfunct,  # deviance
-              Object = 666,  # object,
+              Object = 777,  # object,
               Coefs = Coefobject,
               B1bix = B1bix[i1, , drop = FALSE],
               misc.list = object@misc,
-              everything = get.SEs,  # Differs from Step 3.
+              Everything = TRUE,  # Differs from Step 3.
               mu.function = mu.function)
 
-    muValues[i1, ] <- ans$mu
-    etaValues[i1, ] <- ans$eta
+
+    muValues[i1, ] <- ans5$mu
+    etaValues[i1, ] <- ans5$eta
 
 
     if (get.SEs)
-      vcValues[, , i1] <- if (se.type == "wald")
+      vcValues[, , i1] <- if (se.type == "dzwald")
         dzwald.rrvglm(
               bnu0 = if (Rank == 1) BestOFpar[i1] else BestOFpar[i1, ],
               y0 = newdata[i1, , drop = FALSE],  # drop added 20150624
-              extra = object@extra,
-              objfun = obfunct,  # deviance
               Object = object,
-              Coefs = Coefobject,
+              CoefsObject = Coefobject,
               B1bix = B1bix[i1, , drop = FALSE],
-              misc.list = object@misc,
-              everything = TRUE,
-              mu.function = mu.function,
-              link.function = linkfun(object)[i1],
-              earg          = object@misc$earg[[i1]], 
-              which.spp = i1) else
-         ans$vcmat
+              mu.function = mu.function
+            ) else
+        ans5$vcmat
+
 
 
   }  # for i1
+
+
+
+
+
 
 
   dimnames(muValues) <- dimnames(newdata)
@@ -1297,14 +1945,26 @@ calibrate.rrvglm <-
                                dimnames(newdata)[[1]])
 
   switch(type,
-         response   = muValues,
+         latvar     = BestOFpar,  # Done already, so not really needed
          predictors = etaValues,
+         response   = muValues,
          vcov       = vcValues,
-         all3or4 = list(latvar     = BestOFpar,
-                        predictors = etaValues,
-                        response   = muValues,
-                        vcov       = if (get.SEs) vcValues else NULL))
+         everything = list(
+             latvar     = BestOFpar,
+             predictors = etaValues,
+             response   = muValues,
+             vcov       = vcValues,
+             lr.confint = if (lr.confint)
+                            cbind(estimate = BestOFpar,
+                                  objfun   = BestOFvalues,
+                                  cimat) else NULL,
+             cf.confint = if (cf.confint)
+                            cbind(estimate = BestOFpar,
+                                  objfun   = BestOFvalues,
+                                  cimat2) else NULL)
+        )
 }  # calibrate.rrvglm
+
 
 
 
@@ -1317,7 +1977,7 @@ calibrate.rrvglm <-
            Object,  # Not needed
            B1bix,
            misc.list,
-           everything = TRUE,
+           Everything = TRUE,
            mu.function) {
 
 
@@ -1327,27 +1987,26 @@ calibrate.rrvglm <-
   eta <- cbind(c(B1bix)) + Coefs@A %*% bnumat
   M <- misc.list$M
   eta <- matrix(eta, 1, M, byrow = TRUE)
-  mu <- rbind(mu.function(eta, extra = extra))  # Make sure it has 1 row
+
+  mu <- matrix(mu.function(eta, extra = extra), nrow = 1)
   obvalue <- objfun(mu = mu, y = y0,
                     w = 1,  # ignore prior.weights on the object zz
                     residuals = FALSE, eta = eta, extra = extra)
-  if (everything) {
-    vcmat <- matrix(0, Rank, Rank)
-    for (ss in 1:M) {
-      vec1 <- cbind(Coefs@A[ss, ])
-      vcmat <- vcmat + mu[1, ss] * vec1 %*% t(vec1)
-    }
+  if (Everything) {
+    vcmat <- diag(Rank)
     vcmat <- solve(vcmat)
   } else {
     vcmat <- NULL
   }
-  if (everything)
-    list(eta   = eta,
-         mu    = mu,
+  if (Everything)
+    list(eta     = eta,
+         mu      = mu,
          obvalue = obvalue,
-         vcmat = vcmat) else
+         vcmat   = vcmat) else
     obvalue
 }  # .my.calib.objfunction.rrvglm
+
+
 
 
 
@@ -1355,7 +2014,7 @@ calibrate.rrvglm <-
 calibrate.rrvglm.control <-
   function(object,
            trace = FALSE,  # passed into optim()
-           Method.optim = "BFGS",  # passed into optim(method = Method)
+           method.optim = "BFGS",  # passed into optim(method = Method)
            gridSize = ifelse(Rank == 1, 17, 9),
            ...) {
 
@@ -1369,7 +2028,7 @@ calibrate.rrvglm.control <-
 
   list(
        trace = as.numeric(trace)[1],
-       Method.optim = Method.optim,
+       method.optim = method.optim,
        gridSize = gridSize
       )
 }  # calibrate.rrvglm.control
@@ -1377,6 +2036,14 @@ calibrate.rrvglm.control <-
 
 
 
+
+setMethod("calibrate", "rrvglm", function(object, ...)
+          calibrate.rrvglm(object, ...))
+
+
+
+  setMethod("calibrate", "qrrvglm", function(object, ...)
+           calibrate.qrrvglm(object, ...))
 
 
 

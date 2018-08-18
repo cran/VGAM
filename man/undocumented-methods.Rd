@@ -4,6 +4,10 @@
 %\alias{ccoef-method}
 %
 %
+% 201802
+\alias{ordsup,ANY-method}
+\alias{ordsup,vglm-method}
+\alias{anova,vglm-method}
 % 201801
 \alias{lrt.stat,ANY-method}
 \alias{lrt.stat,vlm-method}
@@ -67,6 +71,7 @@
 \alias{margeffS4VGAM,ANY,ANY,sratio-method}
 \alias{margeffS4VGAM,ANY,ANY,cumulative-method}
 \alias{margeffS4VGAM,ANY,ANY,multinomial-method}
+\alias{margeffS4VGAM,ANY,ANY,tobit-method}
 %
 %\alias{margeffS4VGAM,ANY,VGAMcategorical-method}
 %\alias{margeffS4VGAM,ANY,VGAMordinal-method}
@@ -193,8 +198,10 @@
 %\alias{AICc,rrvglm-method}
 %\alias{AICc,qrrvglm-method}
 \alias{attrassign,lm-method}
-\alias{calibrate,qrrvglm-method}
-\alias{calibrate,rrvgam-method}
+\alias{calibrate,ANY-method}
+%\alias{calibrate,rrvglm-method}
+%\alias{calibrate,qrrvglm-method}
+% \alias{calibrate,rrvgam-method}
 %\alias{calibrate,uqo-method}
 \alias{cdf,vglm-method}
 \alias{cdf,vgam-method}

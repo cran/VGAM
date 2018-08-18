@@ -20,7 +20,7 @@ fit <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
 
 
 ###################################################
-### code chunk number 3: categoricalVGAM.Rnw:906-910
+### code chunk number 3: categoricalVGAM.Rnw:907-911
 ###################################################
 journal <- c("Biometrika", "Comm.Statist", "JASA", "JRSS-B")
 squaremat <- matrix(c(NA, 33, 320, 284,   730, NA, 813, 276,
@@ -29,7 +29,7 @@ dimnames(squaremat) <- list(winner = journal, loser = journal)
 
 
 ###################################################
-### code chunk number 4: categoricalVGAM.Rnw:1013-1017 (eval = FALSE)
+### code chunk number 4: categoricalVGAM.Rnw:1014-1018 (eval = FALSE)
 ###################################################
 ## abodat <- data.frame(A = 725, B = 258, AB = 72, O = 1073)
 ## fit <- vglm(cbind(A, B, AB, O) ~ 1, ABO, data = abodat)
@@ -38,28 +38,28 @@ dimnames(squaremat) <- list(winner = journal, loser = journal)
 
 
 ###################################################
-### code chunk number 5: categoricalVGAM.Rnw:1297-1299
+### code chunk number 5: categoricalVGAM.Rnw:1298-1300
 ###################################################
 head(marital.nz, 4)
 summary(marital.nz)
 
 
 ###################################################
-### code chunk number 6: categoricalVGAM.Rnw:1302-1304
+### code chunk number 6: categoricalVGAM.Rnw:1303-1305
 ###################################################
 fit.ms <- vgam(mstatus ~ s(age, df = 3), multinomial(refLevel = 2),
                data = marital.nz)
 
 
 ###################################################
-### code chunk number 7: categoricalVGAM.Rnw:1308-1310
+### code chunk number 7: categoricalVGAM.Rnw:1309-1311
 ###################################################
 head(depvar(fit.ms), 4)
 colSums(depvar(fit.ms))
 
 
 ###################################################
-### code chunk number 8: categoricalVGAM.Rnw:1319-1331
+### code chunk number 8: categoricalVGAM.Rnw:1320-1332
 ###################################################
 # Plot output
 mycol <- c("red", "darkgreen", "blue")
@@ -76,7 +76,7 @@ plot(fit.ms, se = TRUE, scale = 12,
 
 
 ###################################################
-### code chunk number 9: categoricalVGAM.Rnw:1374-1387
+### code chunk number 9: categoricalVGAM.Rnw:1375-1388
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 # Plot output
@@ -95,13 +95,13 @@ plot(fit.ms, se = TRUE, scale = 12,
 
 
 ###################################################
-### code chunk number 10: categoricalVGAM.Rnw:1407-1408
+### code chunk number 10: categoricalVGAM.Rnw:1408-1409
 ###################################################
 plot(fit.ms, deriv=1, lcol=mycol, scale=0.3)
 
 
 ###################################################
-### code chunk number 11: categoricalVGAM.Rnw:1417-1421
+### code chunk number 11: categoricalVGAM.Rnw:1418-1422
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 # Plot output
@@ -111,7 +111,7 @@ plot(fit.ms, deriv = 1, lcol = mycol, scale = 0.3)
 
 
 ###################################################
-### code chunk number 12: categoricalVGAM.Rnw:1444-1456
+### code chunk number 12: categoricalVGAM.Rnw:1445-1457
 ###################################################
 foo <- function(x, elbow = 50)
   poly(pmin(x, elbow), 2)
@@ -128,13 +128,13 @@ fit2.ms <-
 
 
 ###################################################
-### code chunk number 13: categoricalVGAM.Rnw:1459-1460
+### code chunk number 13: categoricalVGAM.Rnw:1460-1461
 ###################################################
 coef(fit2.ms, matrix = TRUE)
 
 
 ###################################################
-### code chunk number 14: categoricalVGAM.Rnw:1464-1471
+### code chunk number 14: categoricalVGAM.Rnw:1465-1472
 ###################################################
 par(mfrow = c(2, 2))
 plotvgam(fit2.ms, se = TRUE, scale = 12,
@@ -146,7 +146,7 @@ plotvgam(fit2.ms, se = TRUE, scale = 12,
 
 
 ###################################################
-### code chunk number 15: categoricalVGAM.Rnw:1482-1491
+### code chunk number 15: categoricalVGAM.Rnw:1483-1492
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 # Plot output
@@ -161,25 +161,25 @@ plotvgam(fit2.ms, se = TRUE, scale = 12,
 
 
 ###################################################
-### code chunk number 16: categoricalVGAM.Rnw:1509-1510
+### code chunk number 16: categoricalVGAM.Rnw:1510-1511
 ###################################################
 deviance(fit.ms) - deviance(fit2.ms)
 
 
 ###################################################
-### code chunk number 17: categoricalVGAM.Rnw:1516-1517
+### code chunk number 17: categoricalVGAM.Rnw:1517-1518
 ###################################################
 (dfdiff <- df.residual(fit2.ms) - df.residual(fit.ms))
 
 
 ###################################################
-### code chunk number 18: categoricalVGAM.Rnw:1520-1521
+### code chunk number 18: categoricalVGAM.Rnw:1521-1522
 ###################################################
 pchisq(deviance(fit.ms) - deviance(fit2.ms), df = dfdiff, lower.tail = FALSE)
 
 
 ###################################################
-### code chunk number 19: categoricalVGAM.Rnw:1534-1545
+### code chunk number 19: categoricalVGAM.Rnw:1535-1546
 ###################################################
 ooo <- with(marital.nz, order(age))
 with(marital.nz, matplot(age[ooo], fitted(fit.ms)[ooo, ],
@@ -195,7 +195,7 @@ abline(v = seq(10,90,by = 5), h = seq(0,1,by = 0.1), col = "gray", lty = "dashed
 
 
 ###################################################
-### code chunk number 20: categoricalVGAM.Rnw:1560-1573
+### code chunk number 20: categoricalVGAM.Rnw:1561-1574
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
  par(mfrow = c(1,1))
@@ -214,7 +214,7 @@ abline(v = seq(10,90,by = 5), h = seq(0,1,by = 0.1), col = "gray", lty = "dashed
 
 
 ###################################################
-### code chunk number 21: categoricalVGAM.Rnw:1607-1611
+### code chunk number 21: categoricalVGAM.Rnw:1608-1612
 ###################################################
 # Scale the variables? Yes; the Anderson (1984) paper did (see his Table 6).
 head(backPain, 4)
@@ -223,26 +223,26 @@ backPain <- transform(backPain, sx1 = -scale(x1), sx2 = -scale(x2), sx3 = -scale
 
 
 ###################################################
-### code chunk number 22: categoricalVGAM.Rnw:1615-1617
+### code chunk number 22: categoricalVGAM.Rnw:1616-1618
 ###################################################
 bp.rrmlm1 <- rrvglm(factor(pain, ordered = FALSE) ~ sx1 + sx2 + sx3,
                     multinomial, data = backPain)
 
 
 ###################################################
-### code chunk number 23: categoricalVGAM.Rnw:1620-1621
+### code chunk number 23: categoricalVGAM.Rnw:1621-1622
 ###################################################
 Coef(bp.rrmlm1)
 
 
 ###################################################
-### code chunk number 24: categoricalVGAM.Rnw:1649-1650
+### code chunk number 24: categoricalVGAM.Rnw:1650-1651
 ###################################################
 set.seed(123)
 
 
 ###################################################
-### code chunk number 25: categoricalVGAM.Rnw:1653-1656
+### code chunk number 25: categoricalVGAM.Rnw:1654-1657
 ###################################################
 bp.rrmlm2 <- rrvglm(factor(pain, ordered = FALSE) ~ sx1 + sx2 + sx3,
                    multinomial, data = backPain, Rank = 2,
@@ -250,7 +250,7 @@ bp.rrmlm2 <- rrvglm(factor(pain, ordered = FALSE) ~ sx1 + sx2 + sx3,
 
 
 ###################################################
-### code chunk number 26: categoricalVGAM.Rnw:1664-1668
+### code chunk number 26: categoricalVGAM.Rnw:1665-1669
 ###################################################
 biplot(bp.rrmlm2, Acol = "blue", Ccol = "darkgreen", scores = TRUE,
 #      xlim = c(-1, 6), ylim = c(-1.2, 4),  # Use this if not scaled
@@ -259,7 +259,7 @@ biplot(bp.rrmlm2, Acol = "blue", Ccol = "darkgreen", scores = TRUE,
 
 
 ###################################################
-### code chunk number 27: categoricalVGAM.Rnw:1700-1708
+### code chunk number 27: categoricalVGAM.Rnw:1701-1709
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 # Plot output
@@ -273,7 +273,7 @@ biplot(bp.rrmlm2, Acol = "blue", Ccol = "darkgreen", scores = TRUE,
 
 
 ###################################################
-### code chunk number 28: categoricalVGAM.Rnw:1822-1823
+### code chunk number 28: categoricalVGAM.Rnw:1823-1824
 ###################################################
 iam(NA, NA, M = 4, both = TRUE, diag = TRUE)
 

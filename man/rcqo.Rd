@@ -170,8 +170,15 @@ rcqo(n, p, S, Rank = 1,
     Assigning \code{log.arg = TRUE} when \code{family="gamma2"} means
     that the resulting species data can be considered very crudely to be
     approximately Gaussian distributed about its (quadratic) mean.
-    The result is that it is much easier (less numerical
-    problems) to estimate using something like \code{cqo(..., family="gaussianff")}.
+
+
+
+%   The result is that it is much easier (less numerical
+%   problems) to estimate using something like
+%  \code{cqo(..., family="gaussianff")}.
+
+
+
 
   }
   \item{rhox}{
@@ -358,8 +365,11 @@ A theory of gradient analysis.
   \code{\link{binomialff}},
   \code{\link{poissonff}},
   \code{\link{negbinomial}},
-  \code{\link{gamma2}},
-  \code{\link{gaussianff}}.
+  \code{\link{gamma2}}.
+
+
+
+% \code{\link{gaussianff}}.
 
 
 }
@@ -393,23 +403,30 @@ lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
 # Compare the fitted model with the 'truth'
 concoef(fit)  # The fitted model
 attr(mydata, "concoefficients")  # The 'truth'
-
-
-# Example 3: gamma2 data fitted using a Gaussian model:
-n <- 200; p <- 5; S <- 3
-mydata <- rcqo(n, p, S, fam = "gamma2", log.arg = TRUE)
-fit <- cqo(attr(mydata, "formula"),
-           fam = gaussianff, data = mydata)  # I.tol = TRUE,
-matplot(attr(mydata, "latvar"),
-        exp(mydata[, -(1:(p-1))]), col = 1:S)  # 'raw' data
-# Fitted model to transformed data:
-lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
-# Compare the fitted model with the 'truth'
-concoef(fit)  # The fitted model
-attr(mydata, "concoefficients")  # The 'truth'
 }
 }
 \keyword{distribution}
 \keyword{datagen}
+
+
+
+%# Example 3: gamma2 data fitted using a Gaussian model:
+%n <- 200; p <- 5; S <- 3
+%mydata <- rcqo(n, p, S, fam = "gamma2", log.arg = TRUE)
+%fit <- cqo(attr(mydata, "formula"),
+%           fam = gaussianff, data = mydata)  # I.tol = TRUE,
+%matplot(attr(mydata, "latvar"),
+%        exp(mydata[, -(1:(p-1))]), col = 1:S)  # 'raw' data
+%# Fitted model to transformed data:
+%lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)
+%# Compare the fitted model with the 'truth'
+%concoef(fit)  # The fitted model
+%attr(mydata, "concoefficients")  # The 'truth'
+
+
+
+
+
+
 
 

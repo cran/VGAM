@@ -88,9 +88,12 @@ huber2(llocation = "identitylink", lscale = "loge",
 \seealso{
     \code{\link{rhuber}},
     \code{\link{uninormal}},
-    \code{\link{gaussianff}},
     \code{\link{laplace}},
     \code{\link{CommonVGAMffArguments}}.
+
+
+%   \code{\link{gaussianff}},
+
 
 
 }

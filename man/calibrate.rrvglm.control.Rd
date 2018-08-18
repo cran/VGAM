@@ -8,7 +8,7 @@
 
 }
 \usage{
-calibrate.rrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
+calibrate.rrvglm.control(object, trace = FALSE, method.optim = "BFGS",
     gridSize = ifelse(Rank == 1, 17, 9), ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -22,7 +22,7 @@ calibrate.rrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 
 
   }
-  \item{trace, Method.optim}{
+  \item{trace, method.optim}{
     Same as \code{\link{calibrate.qrrvglm.control}}.
 
 
@@ -54,7 +54,7 @@ calibrate.rrvglm.control(object, trace = FALSE, Method.optim = "BFGS",
 }
 %\references{
 %}
-\author{T. W. Yee}
+% \author{T. W. Yee}
 %\note{
 % Despite the name of this function, UQO and CAO models are handled
 % }

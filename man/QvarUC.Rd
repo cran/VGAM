@@ -215,7 +215,7 @@ Row-column interaction models, with an R implementation.
 data("ships", package = "MASS")
 
 Shipmodel <- vglm(incidents ~ type + year + period,
-                  quasipoissonff, offset = log(service),
+                  poissonff, offset = log(service),
 #                 trace = TRUE, model = TRUE,
                   data = ships, subset = (service > 0))
 
@@ -274,3 +274,10 @@ qvplot(Fit2, scol = "blue", pch = 16, main = expression(eta[2]),
 \keyword{models}
 \keyword{regression}
 % \code{\link[qvcalc:qvcalc]{qvcalc}} in \pkg{qvcalc}
+
+
+
+%                 quasipoissonff, offset = log(service),
+
+
+

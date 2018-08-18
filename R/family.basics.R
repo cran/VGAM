@@ -1832,3 +1832,35 @@ which.xij <-
 
 
 
+
+
+
+attr.assign.x.vglm <-
+  function(object) {
+  x.lm.vglm <- model.matrix(formula(object),
+                            data = get(object@misc$dataname))
+  attr.x.lm.vglm <- attr(x.lm.vglm, "assign")
+
+  clist <- constraints(object, type = "term")  # type = "lm" is default
+  ncols.cm <- unlist(lapply(clist, function(cm) ncol(cm)))
+
+  icounter <- 1
+  attr.x.vglm <- NULL
+  for (ii in min(attr.x.lm.vglm):max(attr.x.lm.vglm)) {
+    attr.x.vglm <- c(attr.x.vglm,
+                     rep(ii, sum(attr.x.lm.vglm == ii) *
+                             ncols.cm[icounter]))
+    icounter <- icounter + 1
+  }
+
+  attr.x.vglm
+}  # attr.assign.x.vglm
+
+
+
+
+
+
+
+
+

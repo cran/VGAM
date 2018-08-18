@@ -10,7 +10,7 @@
 
 }
 \usage{
-negbinomial(zero = "size", parallel = FALSE, deviance.arg = FALSE,
+negbinomial(zero = -2, parallel = FALSE, deviance.arg = FALSE,
             type.fitted = c("mean", "quantiles"),
             percentiles = c(25, 50, 75),
             mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
@@ -257,7 +257,7 @@ respect to the \code{size} parameter.
   \item{parallel}{
   See \code{\link{CommonVGAMffArguments}} for more information.
   Setting \code{parallel = TRUE} is useful in order to get
-  something similar to \code{\link{quasipoissonff}} or
+  something similar to \code{\link[stats]{quasipoisson}} or
   what is known as NB-1.
   If \code{parallel = TRUE} then the parallelism constraint
   does not apply to any intercept term.
@@ -308,6 +308,9 @@ respect to the \code{size} parameter.
   value means that the value is recycled, so setting \eqn{-2}
   means all \eqn{k} are intercept-only.
   See \code{\link{CommonVGAMffArguments}} for more information.
+  Because of the new labelling for \code{\link{nbcanlink}} the default
+  is now \code{-2} rather than \code{"size"}; the latter is more
+  understandable really.
 
 
   }
@@ -438,14 +441,18 @@ Set \code{trace = TRUE} to monitor convergence.
 
 
   These functions are fragile; the maximum likelihood
-  estimate of the index parameter is fraught (see Lawless,
-  1987). In general, the \code{\link{quasipoissonff}} is
-  more robust. Other alternatives to \code{negbinomial} are
+  estimate of the index parameter is fraught (see Lawless, 1987).
+  Other alternatives to \code{negbinomial} are
   to fit a NB-1 or RR-NB (aka NB-P) model; see Yee (2014).
   Also available are the NB-C, NB-H and NB-G.
   Assigning values to the \code{isize} argument may lead
   to a local solution, and smaller values are preferred
   over large values when using this argument.
+
+
+
+% In general, the \code{\link{quasipoissonff}} is more robust.
+
 
 
 
@@ -613,7 +620,7 @@ Reduced-rank vector generalized linear models with two linear predictors.
   Secondly,
   the use of \code{negbinomial} with \code{parallel = TRUE}
   inside \code{\link{vglm}}
-  can result in a model similar to \code{\link{quasipoissonff}}.
+  can result in a model similar to \code{\link[stats]{quasipoisson}}.
   This is named the \emph{NB-1} model.
   The dispersion parameter is estimated by MLE whereas
   \code{\link[stats:glm]{glm}} uses the method of moments.
@@ -628,7 +635,7 @@ Reduced-rank vector generalized linear models with two linear predictors.
 }
 
 \seealso{
-  \code{\link{quasipoissonff}},
+  \code{\link[stats]{quasipoisson}},
   \code{\link{poissonff}},
   \code{\link{zinegbinomial}},
   \code{\link{negbinomial.size}} (e.g., NB-G),
@@ -647,6 +654,7 @@ Reduced-rank vector generalized linear models with two linear predictors.
 
 
 % \code{\link[MASS]{rnegbin}}.
+% \code{\link{quasipoissonff}},
 
 
 }

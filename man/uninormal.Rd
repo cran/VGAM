@@ -12,7 +12,7 @@
 \usage{
 uninormal(lmean = "identitylink", lsd = "loge", lvar = "loge",
           var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
-          smallno = 1e-05, zero = "sd")
+          smallno = 1e-05, zero = if (var.arg) "var" else "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 %         apply.parint = FALSE,
@@ -107,9 +107,9 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 \seealso{
-    \code{\link{gaussianff}},
     \code{\link{posnormal}},
     \code{\link{mix2normal}},
+    \code{\link{ordsup}},
     \code{\link{normal.vcm}},
     \code{\link{Qvar}},
     \code{\link{tobit}},
@@ -122,9 +122,15 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
     \code{\link{huber2}},
     \code{\link{studentt}},
     \code{\link{binormal}},
+    \code{\link{trinormal}},
     \code{\link[stats:Normal]{dnorm}},
     \code{\link{simulate.vlm}},
     \code{\link{hdeff.vglm}}.
+
+
+
+%   \code{\link{gaussianff}},
+
 
 
 }

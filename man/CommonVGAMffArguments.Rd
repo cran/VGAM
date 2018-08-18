@@ -434,9 +434,11 @@ In the future, most \pkg{VGAM} family functions might be converted
 
   }
   \item{earg.link}{
-  Sometimes the link argument can receive \code{earg}-type input,
-  such as \code{\link{quasibinomial}} calling \code{\link{binomial}}.
   This argument should be generally ignored.
+
+
+% Sometimes the link argument can receive \code{earg}-type input,
+% such as \code{\link{quasibinomial}} calling \code{\link{binomial}}.
 
 
 

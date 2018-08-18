@@ -113,10 +113,10 @@ Constrained additive ordination.
 set.seed(111)  # This leads to the global solution
 hspider[,1:6] <- scale(hspider[, 1:6])  # Standardized environmental vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
-               Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
-               Trocterr, Zoraspin) ~
-         WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-         Bestof = 2, quasipoissonff, data = hspider, Crow1positive = FALSE)
+                Auloalbi, Pardlugu, Pardmont, Pardnigr, Pardpull,
+                Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+          poissonff, data = hspider, Crow1positive = FALSE)
 
 Tol(p1)
 }

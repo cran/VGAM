@@ -53,7 +53,7 @@ score.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
   make it vulnerable to the Hauck-Donner effect
   (HDE; see \code{\link{hdeff}}).
   This function is similar to \code{\link{wald.stat}} in that
-  one coefficient is set to 0 (by default) and the other
+  one coefficient is set to 0 (by default) and the \emph{other}
   coefficients are iterated by IRLS to get their MLE subject to this
   constraint.
 
@@ -96,6 +96,9 @@ score.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
   \code{\link[stats]{summary.glm}},
   \code{\link{vglm}},
   \code{\link{hdeff}}.
+
+
+% \code{\link{anova.vglm}},
 
 
 

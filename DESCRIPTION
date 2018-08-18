@@ -1,24 +1,24 @@
 Package: VGAM
-Version: 1.0-5
-Date: 2018-02-07
+Version: 1.0-6
+Date: 2018-08-14
 Title: Vector Generalized Linear and Additive Models
 Author: Thomas W. Yee <t.yee@auckland.ac.nz>
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
 Depends: R (>= 3.4.0), methods, stats, stats4, splines
 Suggests: VGAMdata, MASS, mgcv
 Description: An implementation of about 6 major classes of
-    statistical regression models. At the heart of it are the
-    vector generalized linear and additive model (VGLM/VGAM)
-    classes, and the book "Vector Generalized Linear and
-    Additive Models: With an Implementation in R" (Yee, 2015)
-    <DOI:10.1007/978-1-4939-2818-7>
-    gives details of the statistical framework and VGAM package.
-    Currently only fixed-effects models are implemented,
-    i.e., no random-effects models. Many (150+) models and
+    statistical regression models. The central algorithm is
+    Fisher scoring and iterative reweighted least squares.
+    At the heart of this package are the vector generalized linear
+    and additive model (VGLM/VGAM) classes. VGLMs can be loosely
+    thought of as multivariate GLMs. VGAMs are data-driven
+    VGLMs that use smoothing. The book "Vector Generalized
+    Linear and Additive Models: With an Implementation in R"
+    (Yee, 2015) <DOI:10.1007/978-1-4939-2818-7> gives details of
+    the statistical framework and the package. Currently only
+    fixed-effects models are implemented. Many (150+) models and
     distributions are estimated by maximum likelihood estimation
-    (MLE) or penalized MLE, using Fisher scoring. VGLMs can be
-    loosely thought of as multivariate GLMs. VGAMs are data-driven
-    VGLMs (i.e., with smoothing). The other classes are RR-VGLMs
+    (MLE) or penalized MLE. The other classes are RR-VGLMs
     (reduced-rank VGLMs), quadratic RR-VGLMs, reduced-rank VGAMs,
     RCIMs (row-column interaction models)---these classes perform
     constrained and unconstrained quadratic ordination (CQO/UQO)
@@ -31,6 +31,6 @@ NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2018-02-07 04:58:40 UTC; tyee001
+Packaged: 2018-08-14 03:48:15 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2018-02-07 16:17:54 UTC
+Date/Publication: 2018-08-18 23:50:03 UTC

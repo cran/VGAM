@@ -589,6 +589,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
+
+
  vglm.multinomial.deviance.control <-
   function(maxit = 21, panic = FALSE, ...) {
   if (maxit < 1) {
@@ -639,9 +641,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
- multinomial <- function(zero = NULL, parallel = FALSE,
-                         nointercept = NULL, refLevel = "(Last)",
-                         whitespace = FALSE) {
+ multinomial <-
+  function(zero = NULL, parallel = FALSE,
+           nointercept = NULL, refLevel = "(Last)",
+           whitespace = FALSE) {
 
 
 
@@ -1267,7 +1270,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
         aindex <- (iii-1)*(Llevels) + 1:(Llevels)
         cump <- tapplymat1(as.matrix(mu[, aindex]), "cumsum")
-        eta.matrix[,cindex] =
+        eta.matrix[, cindex] <-
             theta2eta(if ( .reverse ) 1-cump[, 1:(Llevels-1)] else
                   cump[, 1:(Llevels-1)], .link , earg = .earg )
       }
@@ -1505,8 +1508,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
- acat <- function(link = "loge", parallel = FALSE,
-                  reverse = FALSE, zero = NULL, whitespace = FALSE) {
+ acat <-
+  function(link = "loge", parallel = FALSE,
+           reverse = FALSE, zero = NULL, whitespace = FALSE) {
 
 
   link <- as.list(substitute(link))
@@ -1712,6 +1716,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     c(w) * wz
   }), list( .earg = earg, .link = link, .reverse = reverse ))))
 }  # acat()
+
 
 
 acat.deriv <- function(zeta, reverse, M, n) {
@@ -2677,6 +2682,76 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "VGAMordinal"),
   object@post$Thetamat <- Thetamat
   object
   })
+
+
+
+
+
+setClass("tobit",          contains = "VGAMcategorical")
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "tobit"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+  object <- callNextMethod(VGAMff = VGAMff,
+                           object = object,
+                           subset = subset,
+                           ...)
+
+  etamat <- predict(object)  # nnn x M
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  Lowmat <- object@misc$Lower
+  Uppmat <- object@misc$Upper
+  censoL <- object@extra$censoredL
+  censoU <- object@extra$censoredU
+
+  mustar <- fitted(object, type.fitted = "uncensored")
+  M1 <- npred(object, type = "one.response")
+  NOS <- M / M1
+  sigmahat <- matrix(NA_real_, nnn, NOS)
+  for (jay in seq(NOS))
+    sigmahat[, jay] <-
+      eta2theta(etamat[, M1 * jay],
+                link = object@misc$link[[M1 * jay]],
+                earg = object@misc$earg[[M1 * jay]])
+
+  ymat <- depvar(object)
+  cnymat <- colnames(ymat)
+  rnymat <- rownames(ymat)
+  ymat[censoL] <- Lowmat[censoL]
+  ymat[censoU] <- Uppmat[censoU]
+  zedd <- (ymat - mustar) / sigmahat  # nnn x NOS
+  coefmat <- coef(object, matrix = TRUE)[, c(TRUE, FALSE), drop = FALSE]
+  ppp <- nrow(coefmat)
+
+  betamat <- matrix(c(coefmat), nnn, ppp * NOS, byrow = TRUE)
+  ans <- betamat  *
+         kronecker(dnorm(zedd) / sigmahat, matrix(1, 1, ppp))
+
+  uncens <- !censoL && !censoU
+  ans[uncens] <- ans[uncens] * zedd[uncens] / sigmahat[uncens]
+
+  ans[censoL] <- -ans[censoL]
+
+
+  dim(ans) <- c(nnn, ppp, NOS)
+  ans <- aperm(ans, c(2, 3, 1))  # ppp x NOS x nnn
+  dimnames(ans) <- list(rownames(coefmat), cnymat, rnymat)
+
+  ans
+})
+
+
+
+
+
+
 
 
 
@@ -3746,6 +3821,214 @@ setMethod("showvgamS4VGAM",
       1 + object@misc$M, "levels\n")
   invisible(object)
   })
+
+
+
+
+
+
+R2latvar <- function(object) {
+
+
+  if (!is(object, "vglm"))
+      stop("argument 'object' is not a vglm() fit")
+ 
+
+  vfam <- object@family@vfamily
+  fam.permitted <- c("cumulative", "propodds", "binomialff")
+  if (!(vfam[1] %in% fam.permitted))
+    stop("the family function must be one of ", fam.permitted)
+
+
+  linkfn <- linkfun(object)[1]
+  link.permitted <- c("logit", "probit", "cloglog")  # "cauchit"
+  if (!(linkfn %in% link.permitted))
+    stop("allowable link functions supported are ", link.permitted)
+
+  infos <- object@family@infos()
+  if (length(infos$parallel) == 1 &&
+      is.logical(infos$parallel))
+    if (!infos$parallel)
+      stop("the linear predictors are not parallel")
+  if (!all(unlist(constraints(object)[-1]) == 1))
+      stop("the linear predictors are not parallel")
+
+
+
+  eta1 <- predict(object)[, 1]
+  offset <- switch(linkfn,
+                   logit   = (pi^2)/3,
+                   probit  = 1,
+                   cloglog = (pi^2) / 6,
+                   stop("link unrecognized"))
+
+  veta1 <- var(eta1)
+  veta1 / (veta1 + offset) 
+}
+
+
+
+
+
+
+
+
+ordsup.vglm <-
+  function(object, all.vars = FALSE, confint = FALSE, ...) {
+
+
+  if (!is(object, "vglm"))
+    stop("argument 'object' is not a vglm() fit")
+ 
+
+  vfam <- object@family@vfamily
+  fam.permitted <- c("uninormal", "propodds", "cumulative")
+  if (!(vfam[1] %in% fam.permitted))
+    stop("the family function must be one of ",
+         paste(fam.permitted, collapse = ", "))
+
+
+  linkfns <- linkfun(object)
+  link.permitted <- c("identitylink", "logit", "probit")
+  if (!any(linkfns %in% link.permitted))
+    stop("allowable link functions supported are ",
+         paste("'", link.permitted, "'",
+               sep = "", collapse = ", "))
+
+
+  R <- npred(object) / npred(object, type = "one.response")      
+  if (R > 1)
+    stop("currently cannot handle multiple responses")
+
+
+  infos <- object@family@infos()
+  cobj <- coef(object)
+  cobj.mat <- coef(object, matrix = TRUE)
+  x.LM  <- model.matrix(object, type =  "lm")
+  is.binary <- apply(if (has.intercept(object)) x.LM[, -1, drop = FALSE]
+                     else x.LM,
+                     2, function(coln) length(unique(coln)) == 2)
+
+  if (all.vars) {
+    is.binary[] <- TRUE
+  } else {
+    if (sum(is.binary) == 0) {
+      warning("no binary explanatory variables; returning a NULL")
+      return(NULL)
+    }
+  }
+
+
+  is.binary <- names(is.binary)[is.binary]
+
+
+      
+
+  switch(vfam[1],
+  uninormal = {
+    if (!all(linkfns[c(TRUE, FALSE)] == "identitylink"))
+      stop("must use 'identitylink' for the mean parameter")               
+    if (!all(cobj.mat[-1, c(FALSE, TRUE)] == 0))
+      stop("the sdev or var parameter must be intercept-only")
+    sdev <- numeric(ncol(cobj.mat) / 2)
+    for (jay in 1:(ncol(cobj.mat) / 2))
+      sdev[jay] <- eta2theta(cobj.mat["(Intercept)", 2*jay],
+                             link = object@misc$link[2*jay],
+                             earg = object@misc$earg[2*jay])
+    if (infos$parameters.names[2] == "var")
+      sdev <- sqrt(sdev)  # It was actually the variance before
+  },
+  cumulative = {
+
+  if (length(infos$parallel) == 1 &&
+      is.logical(infos$parallel))
+    if (!infos$parallel)
+      stop("the linear predictors are not parallel")
+  if (!all(unlist(constraints(object)[-1]) == 1))
+      stop("the linear predictors are not parallel")
+
+
+  reverse <- infos$reverse
+  if (FALSE)
+  if (!reverse) {
+    stop("the 'reverse' argument must be TRUE")
+  }
+  },
+  {
+  stop("family unrecognized")
+  })
+
+
+
+  gamma.fun <- function(cobj, is.binary, vfam,
+                        reverse, linkfns = NULL) {
+  switch(vfam[1],
+  uninormal = {
+    gamma <- pnorm(cobj[ is.binary ] / (sqrt(2) * sdev))
+  },
+  cumulative = {
+    gamma <-
+    switch(linkfns[1],
+           cloglog = cloglog(ifelse(reverse, 1, -1) *  # Not sure
+                             cobj[ is.binary ], inverse = TRUE),
+           logit   =   logit(ifelse(reverse, 1, -1) *
+                             cobj[ is.binary ] / sqrt(2), inverse = TRUE),
+           probit  =  probit(ifelse(reverse, 1, -1) *
+                             cobj[ is.binary ] / sqrt(2), inverse = TRUE))
+  },
+  zzzz = {
+  })
+  gamma
+  }
+
+
+      
+
+  gamma <- gamma.fun(cobj, is.binary, vfam, reverse, linkfns)
+  Delta <- 2 * gamma - 1
+
+      
+
+  
+
+  if (confint) {
+    ans2 <- confint(object, parm = is.binary, ...)
+    if (!is.matrix(ans2))
+      ans2 <- matrix(ans2, 1, 2,
+                     dimnames = list(is.binary, names(ans2)))
+    ans2.low <- gamma.fun(ans2[, 1], TRUE, vfam, reverse, linkfns)
+    ans2.upp <- gamma.fun(ans2[, 2], TRUE, vfam, reverse, linkfns)
+    Delta.low <- 2 * ans2.low - 1
+    Delta.upp <- 2 * ans2.upp - 1
+    names(ans2.low) <- names(ans2.upp) <-
+    names(Delta.low) <- names(Delta.upp) <- is.binary
+  }
+
+
+  c(
+  list(gamma = gamma,
+       Delta = Delta),
+       if (confint) {
+         list(lower.gamma = ans2.low,
+              upper.gamma = ans2.upp,
+              Lower.Delta = Delta.low,
+              Upper.Delta = Delta.upp)
+       } else NULL)
+}  # ordsup.vglm
+
+
+
+ if (!isGeneric("ordsup"))
+     setGeneric("ordsup",
+  function(object, ...) standardGeneric("ordsup"))
+
+setMethod("ordsup",  "vglm",
+  function(object, ...) ordsup.vglm(object, ...))
+
+
+
+
+
 
 
 

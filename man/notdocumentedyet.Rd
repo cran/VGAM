@@ -5,7 +5,11 @@
 %
 %\alias{mills.ratio}
 %\alias{mills.ratio2}
-% 201801
+% 201805
+\alias{fnumat2R}
+% 201802
+\alias{attr.assign.x.vglm}
+\alias{car.relatives}
 % 201712
 \alias{which.etas}
 \alias{which.xij}
@@ -69,6 +73,7 @@
 \alias{vbacksub}
 \alias{vchol}
 \alias{process.constraints}
+\alias{mux5}
 \alias{mux22}
 \alias{mux111}
 %
@@ -406,7 +411,7 @@
 % \alias{alias.vgam}
 % \alias{alias.vglm}
 \alias{anova.vgam}
-\alias{anova.vglm}
+% \alias{anova.vglm}
 % \alias{as.vanova}
 % \alias{attrassign}
 % \alias{attrassigndefault}
@@ -552,7 +557,7 @@
 \alias{mix2exp.control}
 \alias{mix2normal.control}
 \alias{mix2poisson.control}
-\alias{model.matrix.qrrvglm}
+% \alias{model.matrix.qrrvglm}
 \alias{model.matrixvgam}
 % \alias{mux11}
 % \alias{mux15}
@@ -629,8 +634,8 @@
 % \alias{rainfall}
 % \alias{remove.arg}
 % \alias{replace.constraints}
-\alias{resid}
-\alias{residuals}
+%\alias{resid}
+%\alias{residuals}
 % \alias{residualsqrrvglm}
 % \alias{residualsuqo}
 % \alias{residualsvglm}

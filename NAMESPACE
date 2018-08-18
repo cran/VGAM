@@ -7,6 +7,18 @@
 useDynLib(VGAM, .registration = TRUE)
 
 
+export(bell, bellff, dbell, rbell)
+exportMethods(calibrate)
+export(fnumat2R)
+export(dtrinorm, rtrinorm, trinormal)
+export(car.relatives)
+export(attr.assign.x.vglm)
+importFrom("stats", "stat.anova")
+export(ordsup, ordsup.vglm)
+export(R2latvar)
+importFrom("stats", anova)
+export(dtrinorm, rtrinorm)
+export(mux5)
 export( wald.stat,  wald.stat.vlm)
 export(score.stat, score.stat.vlm)
 export(  lrt.stat,   lrt.stat.vlm)
@@ -485,7 +497,7 @@ S3method(deviance, qrrvglm)
 S3method(deviance, vlm)
 S3method(logLik, qrrvglm)
 S3method(logLik, vlm)
-S3method(model.matrix, qrrvglm)
+S3method(model.matrix, qrrvglm, model.matrixqrrvglm)
 S3method(nobs, vlm)
 S3method(persp, rrvgam)
 S3method(plot, rrvgam)
@@ -519,7 +531,7 @@ erlang,
 dfelix, felix,
 fittedvlm, fittedvsmooth.spline, foldsqrt,
 formulavlm, formulaNA.VGAM,
-garma, gaussianff,
+garma,
 hypersecant, hypersecant01,
 hyperg,
 inv.binomial, InverseBrat, inverse.gaussianff,
@@ -539,7 +551,7 @@ lvplot.rrvgam,
 Rank, Rank.rrvglm, Rank.qrrvglm, Rank.rrvgam,
 Max.Coef.qrrvglm, Max.qrrvglm,
 is.bell.vlm, is.bell.rrvglm, is.bell.qrrvglm, is.bell.rrvgam, is.bell,
-model.matrix.qrrvglm,
+model.matrixqrrvglm,
 model.matrixvlm,
 model.framevlm,
 nakagami, dnaka, pnaka, qnaka, rnaka,
@@ -712,7 +724,7 @@ binom2.or,  dbinom2.or,  rbinom2.or,
 binom2.rho, dbinom2.rho, rbinom2.rho, binom2.Rho,
 binomialff, biplot.rrvglm, brat,
 bratt, Brat, calibrate.qrrvglm.control, calibrate.qrrvglm,
-calibrate, cao.control,
+cao.control,
 cao,
 cdf.lmscreg, cgo, chisq, clo,
 concoef,
@@ -792,7 +804,8 @@ dposgeom, pposgeom, qposgeom, rposgeom, # posgeometric,
 dposnegbin, pposnegbin, qposnegbin, rposnegbin, posnegbinomial,
 dposnorm, pposnorm, qposnorm, rposnorm, posnormal,
 dpospois, ppospois, qpospois, rpospois, pospoisson,
-qtplot.lmscreg, quasibinomialff, quasipoissonff, rdiric, rigff,
+qtplot.lmscreg,
+rdiric, rigff,
 rrar, rrvglm.control,
 rrvglm.optim.control)
 
@@ -870,7 +883,7 @@ plot,
 logLik,
 vcov,
 deviance,
-calibrate, cdf, df.residual,
+cdf, df.residual,
 lv, latvar, Max, Opt, Tol,
 biplot, deplot, lvplot, qtplot, rlplot, meplot,
 trplot, vplot,

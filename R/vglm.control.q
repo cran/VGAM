@@ -121,9 +121,11 @@ vglm.control <- function(checkwz = TRUE,
 
 
 
+
+
 vcontrol.expression <- expression({
 
-  control <- control   # First one, e.g., vgam.control(...)
+  control <- control  # First one, e.g., vgam.control(...)
   mylist <- family@vfamily
   for (jay in length(mylist):1) {
     for (ii in 1:2) {
@@ -135,9 +137,9 @@ vcontrol.expression <- expression({
         temp <- temp(...)
         for (kk in names(temp))
           control[[kk]] <- temp[[kk]]
-      }
-    }
-  }
+      }  # if
+    }  # for ii
+  }  # for jay
 
 
 
@@ -152,10 +154,11 @@ vcontrol.expression <- expression({
       } else {
         control$criterion <- "coefficients"
       }
-    }
-  }
+    }  # for i
+  }  # if
 
   control$min.criterion <- control$min.criterion[control$criterion]
+
 
 
 
@@ -172,8 +175,11 @@ vcontrol.expression <- expression({
       for (k in names(temp))
         control[[k]] <- temp[[k]]
     }
-  }
-})
+  }  # for ii
+
+
+})  # vcontrol.expression 
+
 
 
 

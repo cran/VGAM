@@ -13,14 +13,18 @@
 
 
 
+
  binomialff <-
   function(link = "logit",
-           dispersion = 1,
-           multiple.responses = FALSE, onedpar = !multiple.responses,
+           multiple.responses = FALSE,
            parallel = FALSE,  # apply.parint = FALSE,
            zero = NULL,
            bred = FALSE,
            earg.link = FALSE) {
+
+
+  dispersion = 1
+  onedpar = !multiple.responses
 
 
  if (!is.logical(bred) || length(bred) > 1)
@@ -59,7 +63,7 @@
     if (!length(size <- extra$size))
       size <- 1
     if (varfun) {
-      size * mu * (1 - mu)
+      mu * (1 - mu) / size
     } else {
       (1 + mu * (exp(1i * x) - 1))^size
     }
@@ -84,10 +88,12 @@
          charfun = TRUE,
          expected = TRUE,
          hadof = TRUE,
+         multiple.responses = .multiple.responses ,
          parameters.names = c("prob"),  # new.name
          zero = .zero )
   }, list( .zero = zero,
-           .bred = bred ))),
+           .bred = bred,
+           .multiple.responses = multiple.responses ))),
 
   initialize = eval(substitute(expression({
     assign("CQO.FastAlgorithm",
@@ -244,12 +250,14 @@
       }
     }
 
-    misc$multiple.responses <- .multiple.responses
+
+
+    if (! ( .multiple.responses ))
+      extra$size <- nvec  # For @charfun, and therefore "stdres"
+
     misc$dispersion <- dpar
     misc$default.dispersion <- 1
     misc$estimated.dispersion <- .estimated.dispersion
-    misc$bred <- .bred
-    misc$expected <- TRUE
 
     misc$link <- rep_len( .link , M)
     names(misc$link) <- if (M > 1) dn2 else new.name  # Was old.name=="mu"
@@ -308,8 +316,7 @@
     okay1 <- all(is.finite(mymu)) && all(0 < mymu & mymu < 1)
     okay1
   }, list( .link = link, .earg = earg, .bred = bred))),
-  vfamily = c("binomialff", "VGAMcategorical"),
-
+  vfamily = c("binomialff", "VGAMglm"),  # "VGAMcategorical",
 
 
 
@@ -484,6 +491,8 @@
 
 
 
+
+
  gammaff <- function(link = "nreciprocal", dispersion = 0) {
   estimated.dispersion <- dispersion == 0
 
@@ -606,6 +615,8 @@
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
   }), list( .link = link, .earg = earg))))
 }  # gammaff()
+
+
 
 
 
@@ -1023,7 +1034,6 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
  poissonff <- function(link = "loge",
-                       dispersion = 1, onedpar = FALSE,
                        imu = NULL, imethod = 1,
                        parallel = FALSE, zero = NULL,
                        bred = FALSE,
@@ -1031,6 +1041,10 @@ rinv.gaussian <- function(n, mu, lambda) {
                        type.fitted = c("mean", "quantiles"),
                        percentiles = c(25, 50, 75)) {
 
+
+
+  dispersion = 1
+  onedpar = FALSE
 
 
   type.fitted <- match.arg(type.fitted,
@@ -1279,7 +1293,7 @@ rinv.gaussian <- function(n, mu, lambda) {
       }
     }
   }, list( .link = link, .earg = earg ))),
-  vfamily = "poissonff",
+  vfamily = c("poissonff", "VGAMglm"),  # For "stdres"
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     mupo <- eta2theta(eta, link = .link , earg = .earg )
     okay1 <- all(is.finite(mupo)) && all(0 < mupo)
@@ -1370,6 +1384,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
+if (FALSE)
  quasibinomialff <-
   function(
            link = "logit",
@@ -1405,7 +1420,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
-
+if (FALSE)
  quasipoissonff <- function(link = "loge", onedpar = FALSE,
                             parallel = FALSE, zero = NULL) {
 
