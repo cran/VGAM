@@ -10,7 +10,7 @@
 
 }
 \usage{
-binom2.rho(lmu = "probit", lrho = "rhobit", imu1 = NULL, imu2 = NULL,
+binom2.rho(lmu = "probitlink", lrho = "rhobitlink", imu1 = NULL, imu2 = NULL,
            irho = NULL, imethod = 1, zero = "rho",
            exchangeable = FALSE, grho = seq(-0.95, 0.95, by = 0.05),
            nsimEIM = NULL)
@@ -18,7 +18,7 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
            exchangeable = FALSE, nsimEIM = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
-% binom2.rho(lrho = "rhobit", lmu = "probit", imu1 = NULL, imu2 = NULL,...)
+% binom2.rho(lrho = "rhobitlink", lmu = "probitlink", imu1 = NULL, imu2 = NULL,...)
 \arguments{
   \item{lmu}{
   Link function applied to the marginal probabilities.
@@ -164,7 +164,7 @@ Freedman, D. A. and Sekhon, J. S. (2010)
   the \eqn{\rho}{rho} parameter to be modelled as a function
   of the explanatory variables.  The value \eqn{\rho}{rho}
   lies in the interval \eqn{(-1,1)}{(-1,1)}, therefore a
-  \code{\link{rhobit}} link is default.
+  \code{\link{rhobitlink}} link is default.
 
 
   Converge problems can occur.
@@ -200,14 +200,14 @@ Freedman, D. A. and Sekhon, J. S. (2010)
 }
 \seealso{
   \code{\link{rbinom2.rho}},
-  \code{\link{rhobit}},
+  \code{\link{rhobitlink}},
   \code{\link{pbinorm}},
   \code{\link{binom2.or}},
   \code{\link{loglinb2}},
   \code{\link{coalminers}},
   \code{\link{binomialff}},
-  \code{\link{rhobit}},
-  \code{\link{fisherz}}.
+  \code{\link{rhobitlink}},
+  \code{\link{fisherzlink}}.
 
 
 

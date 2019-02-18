@@ -7,7 +7,7 @@
 
 }
 \usage{
-betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
+betaff(A = 0, B = 1, lmu = "logitlink", lphi = "loglink",
        imu = NULL, iphi = NULL,
        gprobs.y = ppoints(8), gphi  = exp(-3:5)/4, zero = NULL)
 }
@@ -25,8 +25,8 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   \item{lmu, lphi}{
   Link function for the mean and precision parameters.
   The values \eqn{A} and \eqn{B} are extracted from the
-  \code{min} and \code{max} arguments of \code{\link{extlogit}}.
-  Consequently, only \code{\link{extlogit}} is allowed.
+  \code{min} and \code{max} arguments of \code{\link{extlogitlink}}.
+  Consequently, only \code{\link{extlogitlink}} is allowed.
 
 
 % See below for more details.
@@ -112,7 +112,7 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   The response must have values in the interval (\eqn{A}, \eqn{B}).
   The user currently needs to manually choose \code{lmu} to match
   the input of arguments \code{A} and \code{B}, e.g.,
-  with \code{\link{extlogit}}; see the example below.
+  with \code{\link{extlogitlink}}; see the example below.
 
 
 }
@@ -130,7 +130,7 @@ betaff(A = 0, B = 1, lmu = "logit", lphi = "loge",
   \code{\link{rbetageom}},
   \code{\link{rbetanorm}},
   \code{\link{kumar}},
-  \code{\link{extlogit}},
+  \code{\link{extlogitlink}},
   \code{\link{simulate.vlm}}.
 
 
@@ -143,7 +143,7 @@ Coef(fit1)  # Useful for intercept-only models
 
 # General A and B, and with a covariate
 bdata <- transform(bdata, x2 = runif(nn))
-bdata <- transform(bdata, mu   = logit(0.5 - x2, inverse = TRUE),
+bdata <- transform(bdata, mu   = logitlink(0.5 - x2, inverse = TRUE),
                           prec =   exp(3.0 + x2))  # prec == phi
 bdata <- transform(bdata, shape2 = prec * (1 - mu),
                          shape1 = mu * prec)
@@ -151,7 +151,7 @@ bdata <- transform(bdata,
                    y = rbeta(nn, shape1 = shape1, shape2 = shape2))
 bdata <- transform(bdata, Y = 5 + 8 * y)  # From 5 to 13, not 0 to 1
 fit <- vglm(Y ~ x2, data = bdata, trace = TRUE,
-            betaff(A = 5, B = 13, lmu = extlogit(min = 5, max = 13)))
+            betaff(A = 5, B = 13, lmu = extlogitlink(min = 5, max = 13)))
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

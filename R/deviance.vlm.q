@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -181,8 +181,8 @@ if (FALSE) {
 
 set.seed(123)
 zapdat <- data.frame(x2 = runif(nn <- 2000))
-zapdat <- transform(zapdat, p0     = logit(-0.5 + 1*x2, inverse = TRUE),
-                           lambda =  loge( 0.5 + 2*x2, inverse = TRUE),
+zapdat <- transform(zapdat, p0     = logitlink(-0.5 + 1*x2, inverse = TRUE),
+                           lambda =  loglink( 0.5 + 2*x2, inverse = TRUE),
                            f1     =  gl(4, 50, labels = LETTERS[1:4]),
                            x3     =  runif(nn))
 zapdat <- transform(zapdat, y = rzapois(nn, lambda, p0))

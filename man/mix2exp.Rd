@@ -9,7 +9,7 @@
 
 }
 \usage{
-mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
+mix2exp(lphi = "logitlink", llambda = "loglink", iphi = 0.5, il1 = NULL,
         il2 = NULL, qmu = c(0.8, 0.2), nsimEIM = 100, zero = "phi")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -114,7 +114,7 @@ mix2exp(lphi = "logit", llambda = "loge", iphi = 0.5, il1 = NULL,
 
 \examples{
 \dontrun{ lambda1 <- exp(1); lambda2 <- exp(3)
-(phi <- logit(-1, inverse = TRUE))
+(phi <- logitlink(-1, inverse = TRUE))
 mdata <- data.frame(y1 = rexp(nn <- 1000, lambda1))
 mdata <- transform(mdata, y2 = rexp(nn, lambda2))
 mdata <- transform(mdata, Y  = ifelse(runif(nn) < phi, y1, y2))

@@ -7,7 +7,7 @@
 
 }
 \usage{
-logff(lshape = "logit", gshape = ppoints(8), zero = NULL)
+logff(lshape = "logitlink", gshape = ppoints(8), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -67,7 +67,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \note{
   The function \code{\link[base:Log]{log}} computes the natural logarithm.
   In the \pkg{VGAM} library, a link function with option
-  \code{\link{loge}} corresponds to this.
+  \code{\link{loglink}} corresponds to this.
 
 
   Multiple responses are permitted.
@@ -86,15 +86,15 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{oilog}},
   \code{\link{otlog}},
   \code{\link[base:Log]{log}},
-  \code{\link{loge}},
-  \code{\link{logoff}},
+  \code{\link{loglink}},
+  \code{\link{logofflink}},
   \code{\link{explogff}},
   \code{\link{simulate.vlm}}.
 
 
 }
 \examples{
-ldata <- data.frame(y = rlog(n = 1000, shape = logit(0.2, inverse = TRUE)))
+ldata <- data.frame(y = rlog(n = 1000, shape = logitlink(0.2, inverse = TRUE)))
 fit <- vglm(y ~ 1, logff, data = ldata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)

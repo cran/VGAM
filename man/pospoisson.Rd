@@ -6,7 +6,7 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loge", type.fitted = c("mean", "lambda", "prob0"),
+pospoisson(link = "loglink", type.fitted = c("mean", "lambda", "prob0"),
            expected = TRUE, ilambda = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -85,6 +85,7 @@ The equilibrium size distribution of freely-forming groups.
 }
 \seealso{
   \code{\link{Pospois}},
+  \code{\link{gentpoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{poissonff}},
   \code{\link{otpospoisson}},

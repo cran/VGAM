@@ -8,8 +8,8 @@
 
 }
 \usage{
-genbetaII(lscale = "loge", lshape1.a = "loge", lshape2.p = "loge",
-          lshape3.q = "loge", iscale = NULL, ishape1.a = NULL,
+genbetaII(lscale = "loglink", lshape1.a = "loglink", lshape2.p = "loglink",
+          lshape3.q = "loglink", iscale = NULL, ishape1.a = NULL,
           ishape2.p = NULL, ishape3.q = NULL, lss = TRUE,
           gscale = exp(-5:5), gshape1.a = exp(-5:5),
           gshape2.p = exp(-5:5), gshape3.q = exp(-5:5),

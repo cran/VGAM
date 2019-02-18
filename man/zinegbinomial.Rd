@@ -14,12 +14,12 @@ zinegbinomial(zero = "size",
               "onempstr0"),
               mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
               eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-              lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+              lpstr0 = "logitlink", lmunb = "loglink", lsize = "loglink",
               imethod = 1, ipstr0 = NULL, imunb =  NULL,
               iprobs.y = NULL, isize = NULL,
               gprobs.y = (0:9)/10,
               gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
-zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
+zinegbinomialff(lmunb = "loglink", lsize = "loglink", lonempstr0 = "logitlink",
                 type.fitted = c("mean", "munb", "pobs0", "pstr0",
                 "onempstr0"), imunb = NULL, isize = NULL, ionempstr0 =
                 NULL, zero = c("size", "onempstr0"), imethod = 1,
@@ -260,7 +260,7 @@ zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
 \dontrun{
 # Example 1
 ndata <- data.frame(x2 = runif(nn <- 1000))
-ndata <- transform(ndata, pstr0 = logit(-0.5 + 1 * x2, inverse = TRUE),
+ndata <- transform(ndata, pstr0 = logitlink(-0.5 + 1 * x2, inverse = TRUE),
                           munb  =   exp( 3   + 1 * x2),
                           size  =   exp( 0   + 2 * x2))
 ndata <- transform(ndata,
@@ -277,7 +277,7 @@ round(vcov(nfit), 3)
 ndata <- data.frame(x2 = runif(nn <- 2000))
 ndata <- transform(ndata, x3 = runif(nn))
 ndata <- transform(ndata, eta1 =          3   + 1   * x2 + 2 * x3)
-ndata <- transform(ndata, pstr0  = logit(-1.5 + 0.5 * eta1, inverse = TRUE),
+ndata <- transform(ndata, pstr0  = logitlink(-1.5 + 0.5 * eta1, inverse = TRUE),
                           munb = exp(eta1),
                           size = exp(4))
 ndata <- transform(ndata,
@@ -292,7 +292,7 @@ Coef(rrzinb)
 \keyword{models}
 \keyword{regression}
 
-%zinegbinomial(lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+%zinegbinomial(lpstr0 = "logitlink", lmunb = "loglink", lsize = "loglink",
 %              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
 %              ipstr0 = NULL, isize = NULL, zero = "size",
 %              imethod = 1, ishrinkage = 0.95,
@@ -306,11 +306,11 @@ Coef(rrzinb)
 %              type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
 %              nsimEIM = 250, cutoff.prob = 0.999, max.support = 2000,
 %              max.chunk.MB = 30,
-%              lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+%              lpstr0 = "logitlink", lmunb = "loglink", lsize = "loglink",
 %              imethod = 1, ipstr0 = NULL, imunb =  NULL,
 %              probs.y = 0.85, ishrinkage = 0.95,
 %              isize = NULL, gpstr0 = 1:19/20, gsize = exp((-4):4))
-%zinegbinomialff(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
+%zinegbinomialff(lmunb = "loglink", lsize = "loglink", lonempstr0 = "logitlink",
 %                type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
 %                isize = NULL, ionempstr0 = NULL,
 %                zero = c("size", "onempstr0"),

@@ -7,7 +7,7 @@
 
 }
 \usage{
-betageometric(lprob = "logit", lshape = "loge",
+betageometric(lprob = "logitlink", lshape = "loglink",
               iprob = NULL,    ishape = 0.1,
               moreSummation = c(2, 100), tolerance = 1.0e-10, zero = NULL)
 }

@@ -13,7 +13,7 @@
 \usage{
 rposbern(n, nTimePts = 5, pvars = length(xcoeff), xcoeff = c(-2, 1, 2),
          Xmatrix = NULL, cap.effect = 1, is.popn = FALSE,
-         link = "logit", earg.link = FALSE)
+         link = "logitlink", earg.link = FALSE)
 dposbern(x, prob, prob0 = prob, log = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

@@ -46,7 +46,7 @@ linkfun(object, ...)
 
 \seealso{
   \code{\link{linkfun.vglm}},
-  \code{\link{multilogit}},
+  \code{\link{multilogitlink}},
   \code{\link{vglm}}.
 
 

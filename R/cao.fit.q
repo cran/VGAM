@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -101,7 +101,6 @@ cao.fit <-
   special.matrix <- matrix(-34956.125, M, M)  # An unlikely used matrix
   just.testing <- cm.VGAM(special.matrix, x, rrcontrol$noRRR, constraints)
   findex <- trivial.constraints(just.testing, special.matrix)
-  tc1 <- trivial.constraints(constraints)
 
 
   if (all(findex == 1))

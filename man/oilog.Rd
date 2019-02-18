@@ -8,7 +8,7 @@
 
 }
 \usage{
-oilog(lpstr1 = "logit", lshape = "logit",
+oilog(lpstr1 = "logitlink", lshape = "logitlink",
       type.fitted = c("mean", "shape", "pobs1", "pstr1", "onempstr1"),
       ishape = NULL, gpstr1 = ppoints(8), gshape = ppoints(8), zero = NULL)
 }
@@ -81,7 +81,7 @@ oilog(lpstr1 = "logit", lshape = "logit",
 }
 \examples{
 \dontrun{ odata <- data.frame(x2 = runif(nn <- 1000))  # Artificial data
-odata <- transform(odata, pstr1 = logit(-1 + x2, inverse = TRUE), shape = 0.5)
+odata <- transform(odata, pstr1 = logitlink(-1 + x2, inverse = TRUE), shape = 0.5)
 odata <- transform(odata, y1 = roilog(nn, shape, pstr1 = pstr1))
 with(odata, table(y1))
 fit1 <- vglm(y1 ~ x2, oilog(zero = "shape"), data = odata, trace = TRUE)

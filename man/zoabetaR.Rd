@@ -8,8 +8,8 @@
 
 }
 \usage{
-zoabetaR(lshape1 = "loge", lshape2 = "loge", lpobs0 = "logit",
-   lpobs1 = "logit", ishape1 = NULL, ishape2 = NULL, trim = 0.05,
+zoabetaR(lshape1 = "loglink", lshape2 = "loglink", lpobs0 = "logitlink",
+   lpobs1 = "logitlink", ishape1 = NULL, ishape2 = NULL, trim = 0.05,
    type.fitted = c("mean", "pobs0", "pobs1", "beta.mean"),
    parallel.shape = FALSE, parallel.pobs = FALSE, zero = NULL)
 }
@@ -87,8 +87,8 @@ zoabetaR(lshape1 = "loge", lshape2 = "loge", lpobs0 = "logit",
 nn <- 1000; set.seed(1)
 bdata <- data.frame(x2 = runif(nn))
 bdata <- transform(bdata,
-  pobs0 = logit(-2 + x2, inverse = TRUE),
-  pobs1 = logit(-2 + x2, inverse = TRUE))
+  pobs0 = logitlink(-2 + x2, inverse = TRUE),
+  pobs1 = logitlink(-2 + x2, inverse = TRUE))
 bdata <- transform(bdata,
   y1 = rzoabeta(nn, shape1 = exp(1 + x2), shape2 = exp(2 - x2),
                 pobs0 = pobs0, pobs1 = pobs1))

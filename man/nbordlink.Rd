@@ -1,4 +1,6 @@
-\name{nbolf}
+\name{nbordlink}
+%\name{nbolf}
+\alias{nbordlink}
 \alias{nbolf}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Negative Binomial-Ordinal Link Function }
@@ -8,8 +10,8 @@
 
 }
 \usage{
-nbolf(theta, cutpoint = NULL, k = NULL,
-      inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+nbordlink(theta, cutpoint = NULL, k = NULL,
+          inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +25,7 @@ nbolf(theta, cutpoint = NULL, k = NULL,
   with the negative binomial distribution; see
   \code{\link{negbinomial}}.
   The cutpoints should be non-negative integers.
-  If \code{nbolf()} is used as the link function in
+  If \code{nbordlink()} is used as the link function in
   \code{\link{cumulative}} then one should choose
   \code{reverse = TRUE, parallel = TRUE}.
 
@@ -90,9 +92,9 @@ nbolf(theta, cutpoint = NULL, k = NULL,
 \seealso{
   \code{\link{Links}},
   \code{\link{negbinomial}},
-  \code{\link{polf}},
-  \code{\link{golf}},
-  \code{nbolf2},
+  \code{\link{pordlink}},
+  \code{\link{gordlink}},
+  \code{nbord2link},
   \code{\link{cumulative}},
   \code{\link{CommonVGAMffArguments}}.
 
@@ -100,16 +102,16 @@ nbolf(theta, cutpoint = NULL, k = NULL,
 }
 \examples{
 \dontrun{
-nbolf("p", cutpoint = 2, k = 1, short = FALSE)
-nbolf("p", cutpoint = 2, k = 1, tag = TRUE)
+nbordlink("p", cutpoint = 2, k = 1, short = FALSE)
+nbordlink("p", cutpoint = 2, k = 1, tag = TRUE)
 
 p <- seq(0.02, 0.98, by = 0.01)
-y <- nbolf(p,cutpoint = 2, k = 1)
-y. <- nbolf(p,cutpoint = 2, k = 1, deriv = 1)
-max(abs(nbolf(y,cutpoint = 2, k = 1, inv = TRUE) - p))  # Should be 0
+y <- nbordlink(p,cutpoint = 2, k = 1)
+y. <- nbordlink(p,cutpoint = 2, k = 1, deriv = 1)
+max(abs(nbordlink(y,cutpoint = 2, k = 1, inv = TRUE) - p))  # Should be 0
 
 #\ dontrun{ par(mfrow = c(2, 1), las = 1)
-#plot(p, y, type = "l", col = "blue", main = "nbolf()")
+#plot(p, y, type = "l", col = "blue", main = "nbordlink()")
 #abline(h = 0, v = 0.5, col = "red", lty = "dashed")
 #
 #plot(p, y., type = "l", col = "blue",
@@ -129,7 +131,7 @@ table(cuty) / sum(table(cuty))
 fit <- vglm(cuty ~ x2 + x3, trace = TRUE,
             cumulative(reverse = TRUE, multiple.responses = TRUE,
                        parallel = TRUE,
-                       link = nbolf(cutpoint = cutpoints[2:3], k = k)))
+                       link = nbordlink(cutpoint = cutpoints[2:3], k = k)))
 head(depvar(fit))
 head(fitted(fit))
 head(predict(fit))

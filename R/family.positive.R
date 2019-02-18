@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -180,7 +180,7 @@ rposbern <-
            Xmatrix = NULL,  # If is.null(Xmatrix) then it is created
            cap.effect =  1,
            is.popn = FALSE,
-           link = "logit",
+           link = "logitlink",
            earg.link = FALSE) {
 
 
@@ -655,7 +655,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
            eps.trig = 1e-7,
            max.support = 4000,  # 20160201; I have changed this
            max.chunk.MB = 30,  # max.memory = Inf is allowed
-           lmunb = "loge", lsize = "loge",
+           lmunb = "loglink", lsize = "loglink",
            imethod = 1,
            imunb = NULL,
            iprobs.y = NULL,  # 0.35,
@@ -1291,7 +1291,7 @@ rpospois <- function(n, lambda) {
 
 
 
- pospoisson <- function(link = "loge",
+ pospoisson <- function(link = "loglink",
                         type.fitted = c("mean", "lambda", "prob0"),
                         expected = TRUE,
                         ilambda = NULL, imethod = 1, zero = NULL) {
@@ -1548,7 +1548,7 @@ rposbinom <- function(n, size, prob) {
 
 
  posbinomial <-
-  function(link = "logit",
+  function(link = "logitlink",
            multiple.responses = FALSE, parallel = FALSE,
            omit.constant = FALSE,
 
@@ -1726,10 +1726,10 @@ rposbinom <- function(n, size, prob) {
       R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
       R[lower.tri(R)] <- 0
       tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
-                                 R = R, w = w,
-                                 X.vlm = X.vlm.save,
-                                 Hlist = Hlist,  # 20150428; bug fixed here
-                                 extra = extra, model.type = "0")
+                             R = R, w = w,
+                             X.vlm = X.vlm.save,
+                             Hlist = Hlist,  # 20150428; bug fixed here
+                             extra = extra, model.type = "0")
       extra$N.hat    <- tmp6$N.hat
       extra$SE.N.hat <- tmp6$SE.N.hat
     }
@@ -1857,7 +1857,7 @@ rposbinom <- function(n, size, prob) {
     wz
   }), list( .link = link, .earg = earg,
             .multiple.responses = multiple.responses ))))
-}
+}  # posbinomial
 
 
 
@@ -1866,7 +1866,7 @@ rposbinom <- function(n, size, prob) {
 
 
  posbernoulli.t <-
-  function(link = "logit",
+  function(link = "logitlink",
 
            parallel.t = FALSE ~ 1,
 
@@ -2127,7 +2127,7 @@ rposbinom <- function(n, size, prob) {
 
 
  posbernoulli.b <-
-  function(link = "logit",
+  function(link = "logitlink",
 
 
            drop.b = FALSE ~ 1,
@@ -2497,7 +2497,7 @@ rposbinom <- function(n, size, prob) {
 
 
  posbernoulli.tb <-
-  function(link = "logit",
+  function(link = "logitlink",
            parallel.t = FALSE ~  1,
            parallel.b = FALSE ~  0,
            drop.b     = FALSE ~  1,
@@ -2505,7 +2505,7 @@ rposbinom <- function(n, size, prob) {
            imethod = 1,
            iprob = NULL,
            p.small = 1e-4, no.warning = FALSE,
-           ridge.constant = 0.01,
+           ridge.constant = 0.0001,  # 20181020
            ridge.power = -4) {
 
 
@@ -2847,7 +2847,7 @@ rposbinom <- function(n, size, prob) {
   vfamily = c("posbernoulli.tb"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     probs <- eta2theta(eta, .link , earg = .earg )
-    okay1 <- all(is.finite(probs)) &&  all(0 < probs & probs < 1)
+    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
     okay1
   }, list( .link = link, .earg = earg ))),
 
@@ -2898,7 +2898,7 @@ rposbinom <- function(n, size, prob) {
 
     QQQcummat <- exp(t( apply(log1p(-prc), 1, cumsum)))
     wz.pc <- (QQQcummat / prc - QQQ / (1 - QQQ)) / ((1 - QQQ) *
-              (1 - prc)^2)
+             (1 - prc)^2)
     wz[, 1:tau] <- wz.pc
 
 
@@ -2923,9 +2923,20 @@ rposbinom <- function(n, size, prob) {
                dprobs.deta[, cindex$col.index]
 
 
+   if (TRUE) {  # ------------------------------------
+      wz.adjustment <- .ridge.constant * iter^( .ridge.power )
+      wz[, 1:tau] <- wz[, 1:tau] * (1 + wz.adjustment)
+   } else {  # ------------------------------------
       wz.mean <- mean(wz[, 1:tau])
       wz.adjustment <- wz.mean * .ridge.constant * iter^( .ridge.power )
       wz[, 1:tau] <- wz[, 1:tau] + wz.adjustment
+   }  # ------------------------------------
+
+
+
+
+
+
 
     c(w) * wz
   }), list( .link = link, .earg = earg,

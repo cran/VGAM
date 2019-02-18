@@ -12,7 +12,7 @@
 
 }
 \usage{
-weibull.mean(lmean = "loge", lshape = "loge", imean = NULL,
+weibull.mean(lmean = "loglink", lshape = "loglink", imean = NULL,
              ishape = NULL, probs.y = c(0.2, 0.5, 0.8),
              imethod = 1, zero = "shape")
 }
@@ -41,10 +41,10 @@ weibull.mean(lmean = "loge", lshape = "loge", imean = NULL,
   for this family function too.
   The mean of \eqn{Y} is \eqn{b \, \Gamma(1+ 1/a)}{b * gamma(1+ 1/a)}
   (returned as the fitted values),
-  and this is the first parameter (a \code{\link{loge}}
+  and this is the first parameter (a \code{\link{loglink}}
   link is the default because it is positive).
   The other parameter is the positive shape paramter \eqn{a},
-  also having a default \code{\link{loge}} link.
+  also having a default \code{\link{loglink}} link.
 
 
   This \pkg{VGAM} family function currently does not handle
@@ -57,7 +57,7 @@ weibull.mean(lmean = "loge", lshape = "loge", imean = NULL,
   (according to Kleiber and Kotz (2003)).
   If this is violated then a warning message is issued.
   One can enforce \eqn{a>2} by
-  choosing \code{lshape = logoff(offset = -2)}.
+  choosing \code{lshape = logofflink(offset = -2)}.
   Common values of the shape parameter lie between 0.5 and 3.5.
 
 

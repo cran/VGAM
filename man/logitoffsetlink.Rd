@@ -9,7 +9,7 @@
 }
 \usage{
 logitoffsetlink(theta, offset = 0, inverse = FALSE, deriv = 0,
-      short = TRUE, tag = FALSE)
+                short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,12 +35,12 @@ logitoffsetlink(theta, offset = 0, inverse = FALSE, deriv = 0,
 }
 \details{
   This  link function allows for some asymmetry compared to the
-  ordinary \code{\link{logit}} link.
+  ordinary \code{\link{logitlink}} link.
   The formula is
   \deqn{\log(\theta/(1-\theta) - K)}{%
         log(theta/(1-theta) - K)}
   and the default value for the offset \eqn{K} is corresponds to the
-  ordinary \code{\link{logit}} link.
+  ordinary \code{\link{logitlink}} link.
   When \code{inverse = TRUE} will mean that the value will
   lie in the interval \eqn{(K / (1+K), 1)}.
 
@@ -78,14 +78,14 @@ logitoffsetlink(theta, offset = 0, inverse = FALSE, deriv = 0,
 
 \note{
   This function is numerical less stability than
-  \code{\link{logit}}.
+  \code{\link{logitlink}}.
 
 
 }
 
 \seealso{
     \code{\link{Links}},
-    \code{\link{logit}}.
+    \code{\link{logitlink}}.
 
 
 }

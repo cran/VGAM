@@ -7,7 +7,7 @@
   beta II distribution.
 }
 \usage{
-betaII(lscale = "loge", lshape2.p = "loge", lshape3.q = "loge",
+betaII(lscale = "loglink", lshape2.p = "loglink", lshape3.q = "loglink",
        iscale = NULL, ishape2.p = NULL, ishape3.q = NULL, imethod = 1,
        gscale = exp(-5:5), gshape2.p = exp(-5:5),
        gshape3.q = seq(0.75, 4, by = 0.25),

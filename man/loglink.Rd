@@ -1,6 +1,10 @@
-\name{loge}
+\name{loglink}
+%\name{loge}
+\alias{loglink}
 \alias{loge}
+\alias{negloglink}
 \alias{negloge}
+\alias{logneglink}
 \alias{logneg}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log Link Function, and Variants }
@@ -11,12 +15,12 @@
 
 }
 \usage{
-loge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-     short = TRUE, tag = FALSE)
-negloge(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+loglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
         short = TRUE, tag = FALSE)
-logneg(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-       short = TRUE, tag = FALSE)
+negloglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE)
+logneglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,12 +52,12 @@ logneg(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
-  The function \code{loge} computes
-  \eqn{\log(\theta)}{log(theta)} whereas \code{negloge} computes
+  The function \code{loglink} computes
+  \eqn{\log(\theta)}{log(theta)} whereas \code{negloglink} computes
   \eqn{-\log(\theta)=\log(1/\theta)}{-log(theta)=log(1/theta)}.
 
 
-  The function \code{logneg} computes
+  The function \code{logneglink} computes
   \eqn{\log(-\theta)}{log(-theta)}, hence is suitable for parameters
   that are negative, e.g.,
   a trap-shy effect in \code{\link{posbernoulli.b}}.
@@ -61,7 +65,7 @@ logneg(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 }
 \value{
-  The following concerns \code{loge}.
+  The following concerns \code{loglink}.
   For \code{deriv = 0}, the log of \code{theta}, i.e., \code{log(theta)}
   when \code{inverse = FALSE}, and if \code{inverse = TRUE} then
   \code{exp(theta)}.
@@ -81,10 +85,8 @@ logneg(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \author{ Thomas W. Yee }
 
 \note{
-  This function is called \code{loge} to avoid conflict with the
+  This function was called \code{loge} to avoid conflict with the
   \code{\link[base:Log]{log}} function.
-
-
   Numerical instability may occur when \code{theta} is close to 0 unless
   \code{bvalue} is used.
 
@@ -94,22 +96,22 @@ logneg(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \seealso{
     \code{\link{Links}},
     \code{\link{explink}},
-    \code{\link{logit}},
-    \code{\link{logc}},
-    \code{\link{loglog}},
+    \code{\link{logitlink}},
+    \code{\link{logclink}},
+    \code{\link{logloglink}},
     \code{\link[base:Log]{log}},
-    \code{\link{logoff}},
+    \code{\link{logofflink}},
     \code{\link{lambertW}},
     \code{\link{posbernoulli.b}}.
 
 
 }
 \examples{
-\dontrun{ loge(seq(-0.2, 0.5, by = 0.1))
- loge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin)
-negloge(seq(-0.2, 0.5, by = 0.1))
-negloge(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin) }
-logneg(seq(-0.5, -0.2, by = 0.1))
+\dontrun{ loglink(seq(-0.2, 0.5, by = 0.1))
+ loglink(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin)
+negloglink(seq(-0.2, 0.5, by = 0.1))
+negloglink(seq(-0.2, 0.5, by = 0.1), bvalue = .Machine$double.xmin) }
+logneglink(seq(-0.5, -0.2, by = 0.1))
 }
 \keyword{math}
 \keyword{models}

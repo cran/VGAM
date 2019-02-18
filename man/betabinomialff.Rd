@@ -10,7 +10,7 @@
 
 }
 \usage{
-betabinomialff(lshape1 = "loge", lshape2 = "loge", ishape1 = 1,
+betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
                ishape2 = NULL, imethod = 1, ishrinkage = 0.95,
                nsimEIM = NULL, zero = NULL)
 }
@@ -208,9 +208,9 @@ fit@misc$rho  # The correlation parameter
 t(fitted(fit))
 t(depvar(fit))
 t(weights(fit, type = "prior"))
-# A "loge" link for the 2 shape parameters is a logistic regression:
+# A "loglink" link for the 2 shape parameters is a logistic regression:
 all.equal(c(fitted(fit)),
-          as.vector(logit(predict(fit)[, 1] -
+          as.vector(logitlink(predict(fit)[, 1] -
                           predict(fit)[, 2], inverse = TRUE)))
 
 
@@ -221,7 +221,7 @@ fit2 <- vglm(cbind(R, N-R) ~ fgrp + hb, betabinomialff(zero = 2),
            data = lirat, trace = TRUE, subset = N > 1)
 coef(fit2, matrix = TRUE)
 coef(fit2, matrix = TRUE)[, 1] -
-coef(fit2, matrix = TRUE)[, 2]  # logit(p)
+coef(fit2, matrix = TRUE)[, 2]  # logitlink(p)
 \dontrun{ with(lirat, plot(hb[N > 1], fit2@misc$rho,
                  xlab = "Hemoglobin", ylab = "Estimated rho",
                  pch = as.character(grp[N > 1]), col = grp[N > 1])) }

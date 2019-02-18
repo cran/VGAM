@@ -11,7 +11,7 @@
 
 }
 \usage{
-hyperg(N = NULL, D = NULL, lprob = "logit", iprob = NULL)
+hyperg(N = NULL, D = NULL, lprob = "logitlink", iprob = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

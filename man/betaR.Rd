@@ -8,7 +8,7 @@
 
 }
 \usage{
-betaR(lshape1 = "loge", lshape2 = "loge",
+betaR(lshape1 = "loglink", lshape2 = "loglink",
       i1 = NULL, i2 = NULL, trim = 0.05,
       A = 0, B = 1, parallel = FALSE, zero = NULL)
 }
@@ -151,8 +151,8 @@ c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 \keyword{regression}
 
 % 3/1/06; this works well:
-% fit <- vglm(y~1, beta.abqn(link = logoff(offset = 1), tr = TRUE, crit = "c")
+% fit <- vglm(y~1, beta.abqn(link = logofflink(offset = 1), tr = TRUE, crit = "c")
 % 3/1/06; this does not work so well:
-%  it <- vglm(y~1, beta.abqn(link = logoff(offset = 0), tr = TRUE, crit = "c")
+%  it <- vglm(y~1, beta.abqn(link = logofflink(offset = 0), tr = TRUE, crit = "c")
 % Interesting!!
 

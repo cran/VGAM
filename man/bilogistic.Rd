@@ -8,7 +8,7 @@
 
 }
 \usage{
-bilogistic(llocation = "identitylink", lscale = "loge",
+bilogistic(llocation = "identitylink", lscale = "loglink",
            iloc1 = NULL, iscale1 = NULL, iloc2 = NULL, iscale2 = NULL,
            imethod = 1, nsimEIM = 250, zero = NULL)
 }

@@ -3,8 +3,8 @@
 %\alias{vglm.fit}
 \title{Fitting Vector Generalized Linear Models }
 \description{
-  \code{vglm} is used to fit vector generalized linear models (VGLMs).
-  This is a very large class of models that includes
+  \code{vglm} fits vector generalized linear models (VGLMs).
+  This very large class of models includes
   generalized linear models (GLMs) as a special case.
 
 
@@ -24,15 +24,18 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   \item{formula}{
   a symbolic description of the model to be fit.
   The RHS of the formula is applied to each linear
-  predictor. Different variables in each linear predictor
-  can be chosen by specifying constraint matrices.
+  predictor.
+  The effect of different variables in each linear predictor
+  can be controlled by specifying constraint matrices---see
+  \code{constraints} below.
 
 
   }
   \item{family}{
   a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
   describing what statistical model is to be fitted. This is called a
-  ``\pkg{VGAM} family function''.  See \code{\link{CommonVGAMffArguments}}
+  ``\pkg{VGAM} family function''.
+  See \code{\link{CommonVGAMffArguments}}
   for general information about many types of arguments found in this
   type of function.
   The argument name \code{"family"} is used loosely and for
@@ -75,9 +78,11 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   Currently the \code{weights} argument does not support sampling
   weights from complex sampling designs.
-  And currently sandwich estimators are not computed in any shape or form.
+  And currently sandwich estimators are not computed in any
+  shape or form.
   The present weights are multiplied by the corresponding
-  log-likelihood contributions.
+  log-likelihood contributions and added to form the
+  overall log-likelihood.
 
 
 
@@ -106,33 +111,40 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   a function which indicates what should happen when
   the data contain \code{NA}s.
   The default is set by the \code{na.action} setting
-  of \code{\link[base]{options}}, and is \code{na.fail} if that is unset.
+  of \code{\link[base]{options}}, and is \code{na.fail} if that
+  is unset.
   The ``factory-fresh'' default is \code{na.omit}.
 
 
   }
   \item{etastart}{
-  starting values for the linear predictors.
-  It is a \eqn{M}-column matrix with the same number of rows as the response.
+  optional starting values for the linear predictors.
+  It is a \eqn{M}-column matrix with the same number of rows as
+  the response.
   If \eqn{M = 1} then it may be a vector.
   Note that \code{etastart} and the output of \code{predict(fit)}
   should be comparable.
   Here, \code{fit} is the fitted object.
-
+  Almost all \pkg{VGAM} family functions are self-starting.
+  
+  
 
   }
   \item{mustart}{
-  starting values for the fitted values.
+  optional starting values for the fitted values.
   It can be a vector or a matrix;
   if a matrix, then it has the same number of rows as the response.
   Usually \code{mustart} and the output of \code{fitted(fit)}
   should be comparable.
-  Some family functions do not make use of this argument.
-
+  Most family functions do not make use of this argument
+  because it is not possible to compute all \eqn{M} columns of
+  \code{eta} from \code{mu}.
+  
+  
 
   }
   \item{coefstart}{
-  starting values for the coefficient vector.
+  optional starting values for the coefficient vector.
   The length and order must match that of \code{coef(fit)}.
 
 
@@ -166,10 +178,10 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
   \item{x.arg, y.arg}{
   logical values indicating whether
-  the model matrix and response vector/matrix used in the fitting
+  the LM matrix and response vector/matrix used in the fitting
   process should be assigned in the \code{x} and \code{y} slots.
-  Note the model matrix is the LM model matrix; to get the VGLM
-  model matrix type \code{model.matrix(vglmfit)} where
+  Note that the model matrix is the LM matrix; to get the VGLM
+  matrix type \code{model.matrix(vglmfit)} where
   \code{vglmfit} is a \code{vglm} object.
 
 
@@ -181,14 +193,14 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{constraints}{
-  an optional list  of constraint matrices.
-  The components of the list must be named with the term it
-  corresponds to
-  (and it must match in character format exactly).
+  an optional \code{\link[base]{list}} of constraint matrices.
+  The components of the list must be named (labelled)
+  with the term it corresponds to
+  (and it must match in character format \emph{exactly}---see below).
   There are two types of input: \code{"lm"}-type and \code{"vlm"}-type.
   The former is a subset of the latter.
   The former has a matrix for each term of the LM matrix.
-  The latter has a matrix for each column of the VLM matrix.
+  The latter has a matrix for each column of the big VLM matrix.
   After fitting, the \code{\link{constraints}}
   extractor function may be applied; it returns
   the \code{"vlm"}-type list of constraint matrices
@@ -197,13 +209,43 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   argument and it should give the same model as before.
 
 
-  Each constraint matrix must have \eqn{M} rows, and be of
+
+  If the \code{constraints} argument is used then the
+  family function's \code{zero} argument (if it exists)
+  needs to be set to
+  \code{NULL}. This avoids what could be a probable contradiction.
+  Sometimes setting other arguments related to constraint
+  matrices to \code{FALSE} is also a good idea, e.g.,
+  \code{parallel = FALSE},
+  \code{exchangeable = FALSE}.
+
+
+
+  Properties:
+  each constraint matrix must have \eqn{M} rows, and be of
   full-column rank.  By default, constraint matrices are
   the \eqn{M} by \eqn{M} identity matrix unless arguments
   in the family function itself override these values, e.g.,
   \code{parallel} (see  \code{\link{CommonVGAMffArguments}}).
-  If \code{constraints} is used it must contain \emph{all}
+  If \code{constraints} is used then it must contain \emph{all}
   the terms; an incomplete list is not accepted.
+
+
+
+  As mentioned above, the labelling of each constraint matrix
+  must match exactly, e.g.,
+  \code{list("s(x2,df=3)"=diag(2))}
+  will fail as
+  \code{as.character(~ s(x2,df=3))} produces white spaces:
+  \code{"s(x2, df = 3)"}.
+  Thus
+  \code{list("s(x2, df = 3)" = diag(2))}
+  is needed.
+  See Example 6 below.
+  More details are given in Yee (2015; Section 3.3.1.3)
+  which is on p.101.
+  Note that the label for the intercept is \code{"(Intercept)"}.  
+
 
 
   }
@@ -214,7 +256,7 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{form2}{
-  The second (optional) formula.
+  the second (optional) formula.
   If argument \code{xij} is used (see \code{\link{vglm.control}}) then
   \code{form2} needs to have \emph{all} terms in the model.
   Also, some \pkg{VGAM} family functions such as \code{\link{micmen}}
@@ -247,7 +289,7 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 \details{
   A vector generalized linear model (VGLM) is loosely defined
   as a statistical model that is a function of \eqn{M} linear
-  predictors.
+  predictors and can be estimated by Fisher scoring.
   The central formula is given by
   \deqn{\eta_j = \beta_j^T x}{%
          eta_j = beta_j^T x}
@@ -266,8 +308,11 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   \code{\link[stats]{glm}}.
   The function \code{vglm.fit} actually does the work.
 
+
 % If more than one of \code{etastart}, \code{start} and \code{mustart}
 % is specified, the first in the list will be used.
+
+
 
 }
 \value{
@@ -360,10 +405,10 @@ Vector generalized additive models.
 
 
 
-  Yee, T. W. (2014)
-  Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis},
-  \bold{71}, 889--902.
+Yee, T. W. (2014)
+Reduced-rank vector generalized linear models with two linear predictors.
+\emph{Computational Statistics and Data Analysis},
+\bold{71}, 889--902.
 
 
 
@@ -534,6 +579,15 @@ coef(fit5, matrix = TRUE)
 constraints(fit5)
 fit5@control$xij
 head(model.matrix(fit5))
+
+
+# Example 6. The use of the 'constraints' argument.
+as.character(~ bs(year,df=3))  # Get the white spaces right
+clist <- list("(Intercept)"      = diag(3),
+              "bs(year, df = 3)" = rbind(1, 0, 0))
+fit1 <- vglm(r1 ~ bs(year,df=3), gev(zero = NULL),
+             data = venice, constraints = clist, trace = TRUE)
+coef(fit1, matrix = TRUE)  # Check
 }
 \keyword{models}
 \keyword{regression}

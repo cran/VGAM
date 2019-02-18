@@ -6,7 +6,7 @@
   by maximum likelihood estimation.
 }
 \usage{
-gammaR(lrate = "loge", lshape = "loge", irate = NULL,
+gammaR(lrate = "loglink", lshape = "loglink", irate = NULL,
        ishape = NULL, lss = TRUE, zero = "shape")
 }
 %                                 zero = ifelse(lss, -2, -1)
@@ -114,7 +114,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   The parameters \eqn{rate} and \eqn{shape} match with the arguments
   \code{rate} and \code{shape} of \code{\link[stats]{rgamma}}.
   The order of the arguments agree too.
-  Here, \eqn{scale = 1/rate} is used, so one can use \code{\link{negloge}}.
+  Here, \eqn{scale = 1/rate} is used, so one can use \code{\link{negloglink}}.
   Multiple responses are handled.
 
 
@@ -143,7 +143,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{expexpff}},
   \code{\link{simulate.vlm}},
   \code{\link[stats]{rgamma}},
-  \code{\link{negloge}}.
+  \code{\link{negloglink}}.
 
 
 }

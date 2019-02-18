@@ -9,9 +9,11 @@
 
 }
 \usage{
-   rayleigh(lscale = "loge", nrfs = 1/3 + 0.01,
-            oim.mean = TRUE, zero = NULL)
-cens.rayleigh(lscale = "loge", oim = TRUE)
+   rayleigh(lscale = "loglink", nrfs = 1/3 + 0.01,
+            oim.mean = TRUE, zero = NULL, parallel = FALSE,
+            type.fitted = c("mean", "percentiles", "Qlink"),
+            percentiles = 50)
+cens.rayleigh(lscale = "loglink", oim = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +27,8 @@ cens.rayleigh(lscale = "loge", oim = TRUE)
   \item{nrfs}{
   Numeric, of length one, with value in \eqn{[0,1]}.
   Weighting factor between Newton-Raphson and Fisher scoring.
-  The value 0 means pure Newton-Raphson, while 1 means pure Fisher scoring.
+  The value 0 means pure Newton-Raphson,
+  while 1 means pure Fisher scoring.
   The default value uses a mixture of the two algorithms, and retaining
   positive-definite working weights.
 
@@ -33,7 +36,8 @@ cens.rayleigh(lscale = "loge", oim = TRUE)
   }
   \item{oim.mean}{
   Logical, used only for intercept-only models.
-  \code{TRUE} means the mean of the OIM elements are used as working weights.
+  \code{TRUE} means the mean of the OIM elements are used as
+  working weights.
   If \code{TRUE} then this argument has top priority for working
   out the working weights.
   \code{FALSE} means use another algorithm.
@@ -48,8 +52,14 @@ cens.rayleigh(lscale = "loge", oim = TRUE)
 
 
   }
-  \item{zero}{
+  \item{zero, parallel}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{type.fitted, percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  Using \code{"Qlink"} is for quantile-links in \pkg{VGAMextra}.
 
 
   }
@@ -67,16 +77,17 @@ cens.rayleigh(lscale = "loge", oim = TRUE)
   \eqn{b^2 (4-\pi)/2}{b^2 (4-pi)/2}.
 
 
-  The \pkg{VGAM} family function \code{cens.rayleigh} handles right-censored
-  data (the true value is greater than the observed value). To indicate
-  which type of censoring, input \code{extra = list(rightcensored = vec2)}
-  where \code{vec2} is a logical vector the same length as the response.
-  If the component of this list is missing then the logical values are
-  taken to be \code{FALSE}.  The fitted object has this component stored
-  in the \code{extra} slot.
+  The \pkg{VGAM} family function \code{cens.rayleigh} handles
+  right-censored data (the true value is greater than the observed
+  value). To indicate which type of censoring, input \code{extra =
+  list(rightcensored = vec2)} where \code{vec2} is a logical vector the
+  same length as the response.  If the component of this list is missing
+  then the logical values are taken to be \code{FALSE}.  The fitted
+  object has this component stored in the \code{extra} slot.
 
 
-  The \pkg{VGAM} family function \code{rayleigh} handles multiple responses.
+  The \pkg{VGAM} family function \code{rayleigh} handles multiple
+  responses.
 
 
 }
@@ -135,7 +146,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \examples{
 nn <- 1000; Scale <- exp(2)
 rdata <- data.frame(ystar = rrayleigh(nn, scale = Scale))
-fit <- vglm(ystar ~ 1, rayleigh, data = rdata, trace = TRUE, crit = "coef")
+fit <- vglm(ystar ~ 1, rayleigh, data = rdata, trace = TRUE)
 head(fitted(fit))
 with(rdata, mean(ystar))
 coef(fit, matrix = TRUE)

@@ -9,7 +9,7 @@
 
 }
 \usage{
-binormalcop(lrho = "rhobit", irho = NULL, imethod = 1,
+binormalcop(lrho = "rhobitlink", irho = NULL, imethod = 1,
             parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -101,7 +101,7 @@ Derivatives and Fisher information of bivariate copulas.
 }
 \examples{
 nn <- 1000
-ymat <- rbinormcop(n = nn, rho = rhobit(-0.9, inverse = TRUE))
+ymat <- rbinormcop(n = nn, rho = rhobitlink(-0.9, inverse = TRUE))
 bdata <- data.frame(y1 = ymat[, 1],
                     y2 = ymat[, 2],
                     y3 = ymat[, 1],

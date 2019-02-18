@@ -27,7 +27,7 @@ lvplot.qrrvglm(object, varI.latvar = FALSE, refResponse = NULL,
     Clty = par()$lty, Ccol = par()$col, Clwd = par()$lwd,
     Ccex = par()$cex, Cadj.arg = -0.1, stretchC = 1,
     sites = FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
-    sfont = par()$font, check.ok = TRUE, ...)
+    sfont = par()$font, check.ok = TRUE, jitter.y = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -244,6 +244,12 @@ For rank-2 models, points are the optimums.
   \item{check.ok}{ Logical. Whether a check is performed to see
   that \code{noRRR = ~ 1} was used.
   It doesn't make sense to have a latent variable plot unless this is so.
+
+  }
+
+  \item{jitter.y}{ Logical. If \code{y} is plotted, jitter it first?
+  This may be useful for counts and proportions.
+
   }
 
   \item{\dots}{ Arguments passed into the \code{plot} function

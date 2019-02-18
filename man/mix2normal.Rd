@@ -8,7 +8,7 @@
 
 }
 \usage{
-mix2normal(lphi = "logit", lmu = "identitylink", lsd = "loge",
+mix2normal(lphi = "logitlink", lmu = "identitylink", lsd = "loglink",
            iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
            qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = "phi")
 }
@@ -185,14 +185,14 @@ London: Chapman & Hall.
 \examples{
 \dontrun{ mu1 <-  99; mu2 <- 150; nn <- 1000
 sd1 <- sd2 <- exp(3)
-(phi <- logit(-1, inverse = TRUE))
+(phi <- logitlink(-1, inverse = TRUE))
 mdata <- data.frame(y = ifelse(runif(nn) < phi, rnorm(nn, mu1, sd1),
                                                 rnorm(nn, mu2, sd2)))
 fit <- vglm(y ~ 1, mix2normal(eq.sd = TRUE), data = mdata)
 
 # Compare the results
 cfit <- coef(fit)
-round(rbind('Estimated' = c(logit(cfit[1], inverse = TRUE),
+round(rbind('Estimated' = c(logitlink(cfit[1], inverse = TRUE),
             cfit[2], exp(cfit[3]), cfit[4]),
             'Truth' = c(phi, mu1, sd1, mu2)), digits = 2)
 
@@ -201,7 +201,7 @@ xx <- with(mdata, seq(min(y), max(y), len = 200))
 plot(xx, (1-phi) * dnorm(xx, mu2, sd2), type = "l", xlab = "y",
      main = "Orange = estimate, blue = truth",
      col = "blue", ylab = "Density")
-phi.est <- logit(coef(fit)[1], inverse = TRUE)
+phi.est <- logitlink(coef(fit)[1], inverse = TRUE)
 sd.est <- exp(coef(fit)[3])
 lines(xx, phi*dnorm(xx, mu1, sd1), col = "blue")
 lines(xx, phi.est * dnorm(xx, Coef(fit)[2], sd.est), col = "orange")

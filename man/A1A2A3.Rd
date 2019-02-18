@@ -8,7 +8,7 @@
 
 }
 \usage{
-A1A2A3(link = "logit", inbreeding = FALSE, ip1 = NULL, ip2 = NULL, iF = NULL)
+A1A2A3(link = "logitlink", inbreeding = FALSE, ip1 = NULL, ip2 = NULL, iF = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -87,8 +87,8 @@ Lange, K. (2002)
 }
 \examples{
 ymat <- cbind(108, 196, 429, 143, 513, 559)
-fit <- vglm(ymat ~ 1, A1A2A3(link = probit), trace = TRUE, crit = "coef")
-fit <- vglm(ymat ~ 1, A1A2A3(link = logit, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
+fit <- vglm(ymat ~ 1, A1A2A3(link = probitlink), trace = TRUE, crit = "coef")
+fit <- vglm(ymat ~ 1, A1A2A3(link = logitlink, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
             trace = TRUE, crit = "coef")
 Coef(fit)  # Estimated p1 and p2
 rbind(ymat, sum(ymat) * fitted(fit))
@@ -96,3 +96,6 @@ sqrt(diag(vcov(fit)))
 }
 \keyword{models}
 \keyword{regression}
+
+
+% 20190213; made dontrun, for VGAM 1.1-0. Used to be link = probit

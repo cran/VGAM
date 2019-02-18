@@ -13,7 +13,7 @@
 \usage{
 normal.vcm(link.list = list("(Default)" = "identitylink"),
            earg.list = list("(Default)" = list()),
-           lsd = "loge", lvar = "loge",
+           lsd = "loglink", lvar = "loglink",
            esd = list(), evar = list(),
            var.arg = FALSE, imethod = 1,
            icoefficients = NULL, isd = NULL, zero = "sd",
@@ -97,9 +97,9 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
   through argument \code{formula}.
 
 
-  The \code{\link{multilogit}} link allows a subset of the
+  The \code{\link{multilogitlink}} link allows a subset of the
   coefficients to be positive and add to unity.  Either
-  none or more than one call to \code{\link{multilogit}}
+  none or more than one call to \code{\link{multilogitlink}}
   is allowed. The last variable will be used as the
   baseline/reference group, and therefore excluded from
   the estimation.
@@ -125,16 +125,16 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
   described by Hastie and Tibshirani (1993). However, it should
   be able to manage some simple models, especially involving the
   following links:
-  \code{\link{identity}},
-  \code{\link{loge}},
-  \code{\link{logoff}},
-  \code{\link{loglog}},
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cauchit}}.
-  \code{\link{cloglog}},
-  \code{\link{rhobit}},
-  \code{\link{fisherz}}.
+  \code{\link{identitylink}},
+  \code{\link{loglink}},
+  \code{\link{logofflink}},
+  \code{\link{logloglink}},
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{cauchitlink}}.
+  \code{\link{clogloglink}},
+  \code{\link{rhobitlink}},
+  \code{\link{fisherzlink}}.
 
 
 
@@ -201,28 +201,28 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
 }
 \examples{
 ndata <- data.frame(x2 = runif(nn <- 2000))
-# Note that coeff1 + coeff2 + coeff5 == 1. So try a "multilogit" link.
+# Note that coeff1 + coeff2 + coeff5 == 1. So try "multilogitlink".
 myoffset <- 10
 ndata <- transform(ndata,
-           coeff1 = 0.25,  # "multilogit" link
-           coeff2 = 0.25,  # "multilogit" link
-           coeff3 = exp(-0.5),  # "loge" link
-# "logoff" link:
-           coeff4 = logoff(+0.5, offset = myoffset, inverse = TRUE),
-           coeff5 = 0.50,  # "multilogit" link
-           coeff6 = 1.00,  # "identitylink" link
+           coeff1 = 0.25,  # "multilogitlink"
+           coeff2 = 0.25,  # "multilogitlink"
+           coeff3 = exp(-0.5),  # "loglink"
+# "logofflink" link:
+           coeff4 = logofflink(+0.5, offset = myoffset, inverse = TRUE),
+           coeff5 = 0.50,  # "multilogitlink"
+           coeff6 = 1.00,  # "identitylink"
            v2 = runif(nn),
            v3 = runif(nn),
            v4 = runif(nn),
            v5 = rnorm(nn),
            v6 = rnorm(nn))
 ndata <- transform(ndata,
-           Coeff1 =          0.25 - 0 * x2,
-           Coeff2 =          0.25 - 0 * x2,
-           Coeff3 =   logit(-0.5  - 1 * x2, inverse = TRUE),
-           Coeff4 =  loglog( 0.5  - 1 * x2, inverse = TRUE),
-           Coeff5 =          0.50 - 0 * x2,
-           Coeff6 =          1.00 + 1 * x2)
+           Coeff1 =              0.25 - 0 * x2,
+           Coeff2 =              0.25 - 0 * x2,
+           Coeff3 =   logitlink(-0.5  - 1 * x2, inverse = TRUE),
+           Coeff4 =  logloglink( 0.5  - 1 * x2, inverse = TRUE),
+           Coeff5 =              0.50 - 0 * x2,
+           Coeff6 =              1.00 + 1 * x2)
 ndata <- transform(ndata,
                    y1 = coeff1 * 1 +
                         coeff2 * v2 +
@@ -240,12 +240,12 @@ ndata <- transform(ndata,
 # An intercept-only model
 fit1 <- vglm(y1 ~ 1,
              form2 = ~ 1 + v2 + v3 + v4 + v5 + v6,
-             normal.vcm(link.list = list("(Intercept)" = "multilogit",
-                                         "v2"          = "multilogit",
-                                         "v3"          = "loge",
-                                         "v4"          = "logoff",
+             normal.vcm(link.list = list("(Intercept)" = "multilogitlink",
+                                         "v2"          = "multilogitlink",
+                                         "v3"          = "loglink",
+                                         "v4"          = "logofflink",
                                          "(Default)"   = "identitylink",
-                                         "v5"          = "multilogit"),
+                                         "v5"          = "multilogitlink"),
                         earg.list = list("(Intercept)" = list(),
                                          "v2"          = list(),
                                          "v4"          = list(offset = myoffset),
@@ -257,17 +257,17 @@ fit1 <- vglm(y1 ~ 1,
 coef(fit1, matrix = TRUE)
 summary(fit1)
 # This works only for intercept-only models:
-multilogit(rbind(coef(fit1, matrix = TRUE)[1, c(1, 2)]), inverse = TRUE)
+multilogitlink(rbind(coef(fit1, matrix = TRUE)[1, c(1, 2)]), inverse = TRUE)
 
 # A model with covariate x2 for the regression coefficients
 fit2 <- vglm(y2 ~ 1 + x2,
              form2 = ~ 1 + v2 + v3 + v4 + v5 + v6,
-             normal.vcm(link.list = list("(Intercept)" = "multilogit",
-                                         "v2"          = "multilogit",
-                                         "v3"          = "logit",
-                                         "v4"          = "loglog",
+             normal.vcm(link.list = list("(Intercept)" = "multilogitlink",
+                                         "v2"          = "multilogitlink",
+                                         "v3"          = "logitlink",
+                                         "v4"          = "logloglink",
                                          "(Default)"   = "identitylink",
-                                         "v5"          = "multilogit"),
+                                         "v5"          = "multilogitlink"),
                         earg.list = list("(Intercept)" = list(),
                                          "v2"          = list(),
                                          "v3"          = list(),

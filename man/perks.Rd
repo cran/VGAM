@@ -8,7 +8,7 @@
 
 }
 \usage{
-perks(lscale = "loge", lshape = "loge",
+perks(lscale = "loglink", lshape = "loglink",
       iscale = NULL,   ishape = NULL,
       gscale = exp(-5:5), gshape = exp(-5:5),
       nsimEIM = 500, oim.mean = FALSE, zero = NULL, nowarning = FALSE)

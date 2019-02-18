@@ -9,7 +9,7 @@
 
 }
 \usage{
-biclaytoncop(lapar = "loge", iapar = NULL, imethod = 1,
+biclaytoncop(lapar = "loglink", iapar = NULL, imethod = 1,
              parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -124,7 +124,7 @@ ymat <- rbiclaytoncop(n = nn, apar = with(bdata, apar))
 bdata <- transform(bdata, y5 = ymat[, 1],
                           y6 = ymat[, 2])
 fit2 <- vgam(cbind(y5, y6) ~ s(x2), data = bdata,
-             biclaytoncop(lapar = "loge"), trace = TRUE)
+             biclaytoncop(lapar = "loglink"), trace = TRUE)
 \dontrun{ plot(fit2, lcol = "blue", scol = "orange", se = TRUE, las = 1) }
 }
 \keyword{models}

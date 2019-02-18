@@ -173,6 +173,13 @@ deleting variables from the latter effect.
 }
 
 \note{
+  It is possible for this function to \code{\link[base]{stop}}
+  when \code{type = 2} or \code{3}, e.g.,
+  \code{anova(vglm(cans ~ myfactor, poissonff, data = boxcar))}
+  where \code{myfactor} is a factor.
+
+
+
   The code was adapted
   directly from \code{\link[stats]{anova.glm}}
   and \code{\link[car]{Anova.glm}}
@@ -236,7 +243,9 @@ deleting variables from the latter effect.
   \code{\link[car]{Anova.glm}} if \pkg{car} is installed,
   \code{\link{vglm}},
   \code{\link{lrtest}},
-  \code{\link{lrt.stat.vlm}}.
+  \code{\link{lrt.stat.vlm}},
+  \code{\link{score.stat.vlm}},
+  \code{\link{wald.stat.vlm}}.
 
 
 
@@ -278,9 +287,6 @@ anova(fitlogit, type = "III")
 %                  lower.tail = FALSE))
 
 %type = c("I", "II","III", 1, 2, 3),
-
-
-
 
 
 

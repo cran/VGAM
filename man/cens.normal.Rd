@@ -12,7 +12,7 @@
 
 }
 \usage{
-cens.normal(lmu = "identitylink", lsd = "loge", imethod = 1, zero = "sd")
+cens.normal(lmu = "identitylink", lsd = "loglink", imethod = 1, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

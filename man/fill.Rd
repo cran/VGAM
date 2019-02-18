@@ -177,8 +177,8 @@ eyesdata <- transform(eyesdata,
     eta1 = 0 - 2*lop + 0.04*age,  # Linear predictor for left eye
     eta2 = 0 - 2*rop + 0.04*age)  # Linear predictor for right eye
 eyesdata <- transform(eyesdata,
-    leye = rbinom(nn, size = 1, prob = logit(eta1, inverse = TRUE)),
-    reye = rbinom(nn, size = 1, prob = logit(eta2, inverse = TRUE)))
+    leye = rbinom(nn, size = 1, prob = logitlink(eta1, inverse = TRUE)),
+    reye = rbinom(nn, size = 1, prob = logitlink(eta2, inverse = TRUE)))
 
 # Example 1
 # All effects are linear

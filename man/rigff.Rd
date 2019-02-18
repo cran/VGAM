@@ -8,7 +8,7 @@
 
 }
 \usage{
-rigff(lmu = "identitylink", llambda = "loge", imu = NULL, ilambda = 1)
+rigff(lmu = "identitylink", llambda = "loglink", imu = NULL, ilambda = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

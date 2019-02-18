@@ -6,7 +6,7 @@
 \description{
   A detection test for the
   Hauck-Donner effect on each regression coefficient
-  in a VGLM regression model.
+  of a VGLM regression.
 
 
 }
@@ -141,6 +141,10 @@ observed in other regression models by various authors.  This function
 computes the first, and possibly second, derivative of the Wald
 statistic for each regression coefficient.  A negative value of the
 first derivative is indicative of the HDE being present.
+More information can be obtained from \code{\link{hdeffsev}}
+regarding HDE severity: there may be none,
+faint, weak, moderate, strong and extreme amounts of HDE
+present.
 
 
 
@@ -163,7 +167,8 @@ where the first two derivatives have been implemented).
 }
 \value{
 By default this function returns a labelled logical vector;
-a \code{TRUE} means the HDE is affirmative for that coefficient.
+a \code{TRUE} means the HDE is affirmative for that coefficient
+(negative slope).
   Hence ideally all values are \code{FALSE}.
   Any \code{TRUE} values suggests that the MLE is
   too near the boundary of the parameter space,
@@ -213,7 +218,7 @@ does not suffer from the HDE.
   been implemented explicitly (the vast majority of them),
   finite-difference approximations
   to the derivatives will be used---see the arguments
-  \code{hstep} and \code{fd.only} for some control on them.
+  \code{hstep} and \code{fd.only} for getting some control on them.
 
 
 
@@ -242,8 +247,9 @@ Corrigenda: JASA, \bold{75}, 482.
 
 
 
-Yee, T. W. (2018)
-Detecting the Hauck-Donner effect in Wald tests
+Yee, T. W. (2019)
+On the Hauck-Donner effect in Wald tests:
+Detection and parameter space characterization
 (\emph{in preparation}).
 
 
@@ -298,12 +304,14 @@ Detecting the Hauck-Donner effect in Wald tests
 
   This function is currently under development
   and may change a little in the short future.
+  For HDE severity measures see \code{\link{hdeffsev}}.
 
 
 
 }
 \seealso{
   \code{\link{summaryvglm}},
+  \code{\link{hdeffsev}},
   \code{\link{vglm}},
   \code{\link{lrt.stat}},
   \code{\link{score.stat}},

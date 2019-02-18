@@ -7,7 +7,7 @@
 
 }
 \usage{
-yulesimon(lshape = "loge", ishape = NULL, nsimEIM = 200, zero = NULL)
+yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -74,7 +74,7 @@ ahsb1 <- cao(cbind(Alopcune, Arctlute, Auloalbi, Zoraspin) ~
              family = binomialff(multiple.responses = TRUE),
              df1.nl = 2.2, Bestof = 3, data = hsbin)
 par(mfrow = 2:1, las = 1)
-lvplot(ahsb1, type = "predictors", llwd = 2, ylab = "logit p", lcol = 1:9)
+lvplot(ahsb1, type = "predictors", llwd=2, ylab="logitlink(p)", lcol=1:9)
 persp(ahsb1, rug = TRUE, col = 1:10, lwd = 2)
 coef(ahsb1)
 }

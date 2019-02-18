@@ -9,11 +9,11 @@
 
 }
 \usage{
-zibinomial(lpstr0 = "logit", lprob = "logit",
+zibinomial(lpstr0 = "logitlink", lprob = "logitlink",
            type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
            ipstr0 = NULL, zero = NULL, multiple.responses = FALSE,
            imethod = 1)
-zibinomialff(lprob = "logit", lonempstr0 = "logit",
+zibinomialff(lprob = "logitlink", lonempstr0 = "logitlink",
              type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
              ionempstr0 = NULL, zero = "onempstr0",
              multiple.responses = FALSE, imethod = 1)
@@ -195,6 +195,7 @@ Fitting and interpreting occupancy models.
   \code{\link{rzibinom}},
   \code{\link{binomialff}},
   \code{\link{posbinomial}},
+  \code{\link{gentbinomial}},
   \code{\link[stats:Binomial]{rbinom}}.
 
 
@@ -202,8 +203,8 @@ Fitting and interpreting occupancy models.
 \examples{
 size <- 10  # Number of trials; N in the notation above
 nn <- 200
-zdata <- data.frame(pstr0 = logit( 0, inverse = TRUE),  # 0.50
-                    mubin = logit(-1, inverse = TRUE),  # Mean of usual binomial
+zdata <- data.frame(pstr0 = logitlink( 0, inverse = TRUE),  # 0.50
+                    mubin = logitlink(-1, inverse = TRUE),  # Mean of usual binomial
                     sv    = rep(size, length = nn))
 zdata <- transform(zdata,
                    y = rzibinom(nn, size = sv, prob = mubin, pstr0 = pstr0))

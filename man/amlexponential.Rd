@@ -9,7 +9,7 @@
 }
 \usage{
 amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
-               link = "loge")
+               link = "loglink")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -133,8 +133,8 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 \examples{
 nn <- 2000
 mydat <- data.frame(x = seq(0, 1, length = nn))
-mydat <- transform(mydat, mu = loge(-0 + 1.5*x + 0.2*x^2, inverse = TRUE))
-mydat <- transform(mydat, mu = loge(0 - sin(8*x), inverse = TRUE))
+mydat <- transform(mydat, mu = loglink(-0 + 1.5*x + 0.2*x^2, inverse = TRUE))
+mydat <- transform(mydat, mu = loglink(0 - sin(8*x), inverse = TRUE))
 mydat <- transform(mydat,  y = rexp(nn, rate = 1/mu))
 (fit  <- vgam(y ~ s(x,df = 5), amlexponential(w = c(0.001, 0.1, 0.5, 5, 60)),
               mydat, trace = TRUE))

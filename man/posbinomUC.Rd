@@ -105,6 +105,7 @@ rposbinom(n, size, prob)
 \seealso{
   \code{\link{posbinomial}},
   \code{\link{dposbern}},
+  \code{\link{dgentbinom}},
   \code{\link{zabinomial}},
   \code{\link{zibinomial}},
   \code{\link[stats:Binomial]{rbinom}}.
@@ -135,8 +136,8 @@ round(dposbinom(1:10, size, prob) * 1000)  # Should be similar
 # Simulated data example
 nn <- 1000; sizeval1 <- 10; sizeval2 <- 20
 pdata <- data.frame(x2 = seq(0, 1, length = nn))
-pdata <- transform(pdata, prob1  = logit(-2 + 2 * x2, inverse = TRUE),
-                          prob2  = logit(-1 + 1 * x2, inverse = TRUE),
+pdata <- transform(pdata, prob1  = logitlink(-2 + 2 * x2, inverse = TRUE),
+                          prob2  = logitlink(-1 + 1 * x2, inverse = TRUE),
                           sizev1 = rep(sizeval1, len = nn),
                           sizev2 = rep(sizeval2, len = nn))
 pdata <- transform(pdata, y1 = rposbinom(nn, size = sizev1, prob = prob1),

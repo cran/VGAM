@@ -8,7 +8,7 @@
 
 }
 \usage{
-predictqrrvglm(object, newdata=NULL,
+predictqrrvglm(object, newdata = NULL,
     type = c("link", "response", "latvar", "terms"),
     se.fit = FALSE, deriv = 0, dispersion = NULL,
     extra = object@extra, varI.latvar = FALSE, refResponse = NULL, ...)

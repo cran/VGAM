@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -332,7 +332,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
 
- yip88 <- function(link = "loge", n.arg = NULL, imethod = 1) {
+ yip88 <- function(link = "loglink", n.arg = NULL, imethod = 1) {
 
 
 
@@ -470,7 +470,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
  zapoisson <-
-  function(lpobs0 = "logit", llambda = "loge",
+  function(lpobs0 = "logitlink", llambda = "loglink",
            type.fitted = c("mean", "lambda", "pobs0", "onempobs0"),
            imethod = 1,
            ipobs0 = NULL, ilambda = NULL, ishrinkage = 0.95,
@@ -692,7 +692,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
     mu.phi0 <- phimat
 
-    temp3 <- if ( .lpobs.0 == "logit") {
+    temp3 <- if ( .lpobs.0 == "logitlink") {
       c(w) * (y0 - mu.phi0)
     } else {
       c(w) * dtheta.deta(mu.phi0, link = .lpobs.0 , earg = .epobs.0 ) *
@@ -718,7 +718,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
     tmp100 <- mu.phi0 * (1 - mu.phi0)
-    tmp200 <- if ( .lpobs.0 == "logit" && is.empty.list( .epobs.0 )) {
+    tmp200 <- if ( .lpobs.0 == "logitlink" && is.empty.list( .epobs.0 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
@@ -751,7 +751,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
  zapoissonff <-
-  function(llambda = "loge", lonempobs0 = "logit",
+  function(llambda = "loglink", lonempobs0 = "logitlink",
            type.fitted = c("mean", "lambda", "pobs0", "onempobs0"),
            imethod = 1,
            ilambda = NULL, ionempobs0 = NULL, ishrinkage = 0.95,
@@ -936,8 +936,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
                            .lonempobs0 , e= .eonempobs0 )
 
     okay1 <- all(is.finite(lambda))    && all(0 < lambda) &&
-             all(is.finite(onempobs0)) && all(0 < onempobs0 &
-                                              onempobs0 < 1)
+             all(is.finite(onempobs0)) &&
+             all(0 < onempobs0 & onempobs0 < 1)
     okay1
   }, list( .lonempobs0 = lonempobs0, .llambda = llambda,
            .eonempobs0 = eonempobs0, .elambda = elambda ))),
@@ -983,7 +983,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
     mu.phi0 <- omphimat
 
-    temp3 <- if ( FALSE && .lonempobs0 == "logit") {
+    temp3 <- if ( FALSE && .lonempobs0 == "logitlink") {
     } else {
  c(w) * dtheta.deta(mu.phi0, link = .lonempobs0 , earg = .eonempobs0 ) *
         dl.dPHImat
@@ -1009,7 +1009,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
     tmp100 <- mu.phi0 * (1.0 - mu.phi0)
-    tmp200 <- if ( .lonempobs0 == "logit" &&
+    tmp200 <- if ( .lonempobs0 == "logitlink" &&
                   is.empty.list( .eonempobs0 )) {
         cbind(c(w) * tmp100)
     } else {
@@ -1060,7 +1060,7 @@ zanegbinomial.control <-
            eps.trig = 1e-7,
            max.support = 4000,  # 20160127; I have changed this
            max.chunk.MB = 30,  # max.memory = Inf is allowed
-           lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+           lpobs0 = "logitlink", lmunb = "loglink", lsize = "loglink",
            imethod = 1,
            ipobs0 = NULL,
            imunb = NULL,
@@ -1384,11 +1384,11 @@ zanegbinomial.control <-
     size <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                       .lsize , earg = .esize )
 
-    okay1 <- all(is.finite(munb))  && all(0 < munb) &&
-             all(is.finite(size))  && all(0 < size) &&
-             all(is.finite(phi0))  && all(0 < phi0 & phi0 < 1)
+    okay1 <- all(is.finite(munb)) && all(0 < munb) &&
+             all(is.finite(size)) && all(0 < size) &&
+             all(is.finite(phi0)) && all(0 < phi0 & phi0 < 1)
     smallval <- .mds.min  # .munb.div.size
-    overdispersion <- if (okay1) all(munb / size > smallval) else FALSE
+    overdispersion <- if (okay1) all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values; ",
               "try fitting a zero-altered Poisson ",
@@ -1487,7 +1487,7 @@ zanegbinomial.control <-
                               dl.dsize * dsize.deta)
 
 
-    dl.deta1 <- if ( .lpobs0 == "logit") {
+    dl.deta1 <- if ( .lpobs0 == "logitlink") {
       c(w) * (y0 - phi0)
     } else {
       c(w) * dl.dphi0 * dphi0.deta
@@ -1514,7 +1514,7 @@ zanegbinomial.control <-
     mu.phi0 <- phi0  # pobs0  # phi0
     tmp100 <- mu.phi0 * (1 - mu.phi0)
     wz[, (1:NOS)*M1 - 2] <-
-    if ( .lpobs0 == "logit" && is.empty.list( .epobs0 )) {
+    if ( .lpobs0 == "logitlink" && is.empty.list( .epobs0 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
@@ -1677,7 +1677,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
  zanegbinomialff <-
   function(
-           lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
+           lmunb = "loglink", lsize = "loglink", lonempobs0 = "logitlink",
            type.fitted = c("mean", "munb", "pobs0", "onempobs0"),
            isize = NULL, ionempobs0 = NULL,
            zero = c("size", "onempobs0"),
@@ -2018,10 +2018,9 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     onempobs0 <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                            .lonempobs0 , earg = .eonempobs0 )
 
-    okay1 <- all(is.finite(munb))       && all(0 < munb) &&
-             all(is.finite(size))       && all(0 < size) &&
-             all(is.finite(onempobs0))  && all(0 < onempobs0 &
-                                               onempobs0 < 1)
+    okay1 <- all(is.finite(munb))      && all(0 < munb) &&
+             all(is.finite(size))      && all(0 < size) &&
+             all(is.finite(onempobs0)) && all(0 < onempobs0 & onempobs0 < 1)
     smallval <- .mds.min  # .munb.div.size
     overdispersion <- if (okay1) all(munb / size > smallval) else FALSE
     if (!overdispersion)
@@ -2115,7 +2114,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
-    dl.deta3 <- if ( .lonempobs0 == "logit") {
+    dl.deta3 <- if ( .lonempobs0 == "logitlink") {
       -c(w) * (y0 - phi0)
     } else {
       -c(w) * dl.donempobs0 * donempobs0.deta
@@ -2144,7 +2143,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
     tmp100 <- onempobs0 * (1 - onempobs0)
     wz[, (1:NOS)*M1    ] <-
-    if ( .lonempobs0 == "logit" && is.empty.list( .eonempobs0 )) {
+    if ( .lonempobs0 == "logitlink" && is.empty.list( .eonempobs0 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
@@ -2323,7 +2322,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zipoisson <-
-  function(lpstr0 = "logit", llambda = "loge",
+  function(lpstr0 = "logitlink", llambda = "loglink",
            type.fitted = c("mean", "lambda", "pobs0", "pstr0", "onempstr0"),
            ipstr0 = NULL,    ilambda = NULL,
            gpstr0 = NULL,  # (1:9) / 10,
@@ -2683,7 +2682,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     ans <- ans[, interleave.VGAM(M, M1 = M1)]
 
 
-    if ( .llambda == "loge" && is.empty.list( .elambda ) &&
+    if ( .llambda == "loglink" && is.empty.list( .elambda ) &&
        any(lambda[!index0] < .Machine$double.eps)) {
       for (spp. in 1:(M / M1)) {
         ans[!index0[, spp.], M1 * spp.] <-
@@ -2726,7 +2725,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zipoissonff <-
-  function(llambda = "loge", lonempstr0 = "logit",
+  function(llambda = "loglink", lonempstr0 = "logitlink",
            type.fitted = c("mean", "lambda", "pobs0", "pstr0", "onempstr0"),
            ilambda = NULL,   ionempstr0 = NULL,
            gonempstr0 = NULL,  # (1:9) / 10,
@@ -3099,7 +3098,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     ans <- ans[, interleave.VGAM(ncol(ans), M1 = M1)]
 
 
-    if ( .llambda == "loge" && is.empty.list( .elambda ) &&
+    if ( .llambda == "loglink" && is.empty.list( .elambda ) &&
        any(lambda[!ind0] < .Machine$double.eps)) {
       for (spp. in 1:ncoly) {
         ans[!ind0[, spp.], M1 * spp.] <-
@@ -3143,7 +3142,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zibinomial <-
-  function(lpstr0 = "logit", lprob = "logit",
+  function(lpstr0 = "logitlink", lprob = "logitlink",
            type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
            ipstr0 = NULL,
            zero = NULL,  # 20130917; was originally zero = 1,
@@ -3393,7 +3392,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     ans <- cbind(dl.dphi   * dphi.deta,
                  dl.dmubin * dmubin.deta)
 
-      if ( .lprob == "logit") {
+      if ( .lprob == "logitlink") {
         ans[!index, 2] <- w[!index] * (y[!index] - mubin[!index])
       }
 
@@ -3443,7 +3442,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zibinomialff <-
-  function(lprob = "logit", lonempstr0 = "logit",
+  function(lprob = "logitlink", lonempstr0 = "logitlink",
            type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
            ionempstr0 = NULL,
            zero = "onempstr0",
@@ -3701,7 +3700,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     ans <- cbind(dl.dmubin * dmubin.deta,
                  dl.domphi * domphi.deta)
 
-      if ( .lprob == "logit") {
+      if ( .lprob == "logitlink") {
         ans[!index, 1] <- w[!index] * (y[!index] - mubin[!index])
       }
 
@@ -3999,7 +3998,7 @@ zinegbinomial.control <- function(save.weights = TRUE, ...) {
            eps.trig = 1e-7,
            max.support = 4000,  # 20160127; I have changed this
            max.chunk.MB = 30,  # max.memory = Inf is allowed
-           lpstr0 = "logit", lmunb = "loge", lsize = "loge",
+           lpstr0 = "logitlink", lmunb = "loglink", lsize = "loglink",
            imethod = 1,
            ipstr0 = NULL,
            imunb =  NULL,
@@ -4362,7 +4361,7 @@ zinegbinomial.control <- function(save.weights = TRUE, ...) {
 
     smallval <- .mds.min  # .munb.div.size
     overdispersion <- if (okay1 && okay2.deflat)
-      all(munb / size > smallval) else FALSE
+      all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values; ",
               "try fitting a zero-inflated Poisson ",
@@ -4676,7 +4675,7 @@ zinegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zinegbinomialff <-
-  function(lmunb = "loge", lsize = "loge", lonempstr0 = "logit",
+  function(lmunb = "loglink", lsize = "loglink", lonempstr0 = "logitlink",
            type.fitted = c("mean", "munb", "pobs0", "pstr0", "onempstr0"),
            imunb = NULL, isize = NULL, ionempstr0 = NULL,
            zero = c("size", "onempstr0"),
@@ -5041,7 +5040,7 @@ zinegbinomialff.control <- function(save.weights = TRUE, ...) {
 
     smallval <- .mds.min  # .munb.div.size
     overdispersion <- if (okay1 && okay2.deflat)
-      all(munb / size > smallval) else FALSE
+      all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values; ",
               "try fitting a zero-inflated Poisson ",
@@ -5438,8 +5437,8 @@ rzigeom <- function(n, prob, pstr0 = 0) {
 
  zigeometric <-
   function(
-           lpstr0 = "logit",
-           lprob  = "logit",
+           lpstr0 = "logitlink",
+           lprob  = "logitlink",
            type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
            ipstr0  = NULL, iprob = NULL,
            imethod = 1,
@@ -5774,8 +5773,8 @@ rzigeom <- function(n, prob, pstr0 = 0) {
 
 
  zigeometricff <-
-  function(lprob       = "logit",
-           lonempstr0  = "logit",
+  function(lprob       = "logitlink",
+           lonempstr0  = "logitlink",
            type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
            iprob = NULL,   ionempstr0  = NULL,
            imethod = 1,
@@ -6319,8 +6318,8 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
  zabinomial <-
-  function(lpobs0 = "logit",
-           lprob  = "logit",
+  function(lpobs0 = "logitlink",
+           lprob  = "logitlink",
            type.fitted = c("mean", "prob", "pobs0"),
            ipobs0 = NULL, iprob = NULL,
            imethod = 1,
@@ -6617,7 +6616,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     mu.phi0 <- phi0
     tmp100 <- mu.phi0 * (1.0 - mu.phi0)
-    tmp200 <- if ( .lpobs0 == "logit" && is.empty.list( .epobs0 )) {
+    tmp200 <- if ( .lpobs0 == "logitlink" && is.empty.list( .epobs0 )) {
       tmp100
     } else {
       (dphi0.deta^2) / tmp100
@@ -6635,8 +6634,8 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
  zabinomialff <-
-  function(lprob  = "logit",
-           lonempobs0 = "logit",
+  function(lprob  = "logitlink",
+           lonempobs0 = "logitlink",
            type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
            iprob = NULL, ionempobs0 = NULL,
            imethod = 1,
@@ -6938,7 +6937,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     mu.phi0 <- phi0
     tmp100 <- mu.phi0 * (1.0 - mu.phi0)
     tmp200 <- if (FALSE &&
-                  .lonempobs0 == "logit" &&
+                  .lonempobs0 == "logitlink" &&
                   is.empty.list( .eonempobs0 )) {
       tmp100
     } else {
@@ -6958,7 +6957,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
  zageometric <-
-    function(lpobs0 = "logit", lprob = "logit",
+    function(lpobs0 = "logitlink", lprob = "logitlink",
              type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
              imethod = 1,
              ipobs0 = NULL, iprob = NULL,
@@ -7243,7 +7242,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     mu.phi0 <- phi0
     tmp100 <- mu.phi0 * (1.0 - mu.phi0)
-    tmp200 <- if ( .lpobs0 == "logit" && is.empty.list( .epobs0 )) {
+    tmp200 <- if ( .lpobs0 == "logitlink" && is.empty.list( .epobs0 )) {
       cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (dphi0.deta^2) / tmp100)
@@ -7263,7 +7262,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
  zageometricff <-
-    function(lprob = "logit", lonempobs0 = "logit",
+    function(lprob = "logitlink", lonempobs0 = "logitlink",
              type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
              imethod = 1,
              iprob = NULL, ionempobs0 = NULL,
@@ -7563,7 +7562,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     mu.phi0 <- pobs0  # phi0
     tmp100 <- mu.phi0 * (1.0 - mu.phi0)
     tmp200 <- if ( FALSE &&
-                  .lonempobs0 == "logit" &&
+                  .lonempobs0 == "logitlink" &&
                   is.empty.list( .eonempobs0 )) {
 
       cbind(c(w) * tmp100)
@@ -7697,7 +7696,7 @@ roipospois <- function(n, lambda, pstr1 = 0) {
 
 
  oipospoisson <-
-  function(lpstr1 = "logit", llambda = "loge",
+  function(lpstr1 = "logitlink", llambda = "loglink",
            type.fitted = c("mean", "lambda", "pobs1", "pstr1", "onempstr1"),
            ilambda = NULL,
            gpstr1 = (1:19)/20,
@@ -8107,7 +8106,7 @@ roiposbinom <- function(n, size, prob, pstr1 = 0) {
 
 
  oiposbinomial <-
-  function(lpstr1 = "logit", lprob = "logit",
+  function(lpstr1 = "logitlink", lprob = "logitlink",
            type.fitted = c("mean", "prob", "pobs1", "pstr1", "onempstr1"),
            iprob = NULL,
     gpstr1 = ppoints(9),  # (1:19)/20,

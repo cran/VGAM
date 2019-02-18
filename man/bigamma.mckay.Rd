@@ -8,7 +8,7 @@
 
 }
 \usage{
-bigamma.mckay(lscale = "loge", lshape1 = "loge", lshape2 = "loge",
+bigamma.mckay(lscale = "loglink", lshape1 = "loglink", lshape2 = "loglink",
               iscale = NULL, ishape1 = NULL, ishape2 = NULL,
               imethod = 1, zero = "shape")
 }

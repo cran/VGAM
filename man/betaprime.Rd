@@ -9,7 +9,7 @@
 
 }
 \usage{
-betaprime(lshape = "loge", ishape1 = 2, ishape2 = NULL, zero = NULL)
+betaprime(lshape = "loglink", ishape1 = 2, ishape2 = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

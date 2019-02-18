@@ -8,7 +8,7 @@
 
 }
 \usage{
-expgeometric(lscale = "loge", lshape = "logit",
+expgeometric(lscale = "loglink", lshape = "logitlink",
              iscale = NULL,   ishape = NULL,
              tol12 = 1e-05, zero = 1, nsimEIM = 400)
 }
@@ -81,7 +81,7 @@ expgeometric(lscale = "loge", lshape = "logit",
 }
 \examples{
 \dontrun{
-Scale <- exp(2); shape = logit(-1, inverse = TRUE);
+Scale <- exp(2); shape = logitlink(-1, inverse = TRUE);
 edata <- data.frame(y = rexpgeom(n = 2000, scale = Scale, shape = shape))
 fit <- vglm(y ~ 1, expgeometric, edata, trace = TRUE)
 c(with(edata, mean(y)), head(fitted(fit), 1))

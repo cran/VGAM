@@ -7,6 +7,8 @@
   Extractor function for the \emph{constraint matrices} of objects
   in the \pkg{VGAM} package.
 
+
+
 }
 \usage{
 constraints(object, ...)
@@ -67,10 +69,12 @@ constraints.vlm(object, type = c("lm", "term"), all = TRUE, which,
   matrix has one column and has unit values).
 
 
+  
   VGLMs and VGAMs have constraint matrices which are \emph{known}.
   The class of RR-VGLMs have constraint matrices which are
   \emph{unknown} and are to be estimated.
 
+  
 
 }
 \value{
@@ -170,6 +174,8 @@ is.parallel(fit1)
 
 # An equivalent model to fit1 (needs the type "term" constraints):
 clist.term <- constraints(fit1, type = "term")  # "term"-type constraints
+# cumulative() has no 'zero' argument to set to NULL (a good idea
+# when using the 'constraints' argument):
 (fit2 <- vglm(cbind(normal, mild, severe) ~ sm.bs(let, 3), data = pneumo,
               cumulative(reverse = TRUE), constraints = clist.term))
 abs(max(coef(fit1, matrix = TRUE) -

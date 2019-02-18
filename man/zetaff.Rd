@@ -7,7 +7,7 @@
 
 }
 \usage{
-zetaff(lshape = "loge", ishape = NULL, gshape = exp(-3:4)/4, zero = NULL)
+zetaff(lshape = "loglink", ishape = NULL, gshape = exp(-3:4)/4, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,7 +16,7 @@
 
 
 
-cens.poisson <- function(link = "loge", imu = NULL,
+cens.poisson <- function(link = "loglink", imu = NULL,
                          biglambda = 10,
                          smallno = 1e-10) {
 
@@ -251,7 +251,7 @@ cens.poisson <- function(link = "loge", imu = NULL,
 
 if (FALSE)
  cens.exponential <-
- ecens.exponential <- function(link = "loge", location = 0) {
+ ecens.exponential <- function(link = "loglink", location = 0) {
   if (!is.Numeric(location, length.arg = 1))
     stop("bad input for 'location'")
 
@@ -402,7 +402,7 @@ if (FALSE)
 
 
  cennormal <-
- cens.normal <- function(lmu = "identitylink", lsd = "loge",
+ cens.normal <- function(lmu = "identitylink", lsd = "loglink",
                          imethod = 1, zero = "sd") {
 
 
@@ -608,7 +608,7 @@ if (FALSE)
 
 
 
- cens.rayleigh <- function(lscale = "loge",
+ cens.rayleigh <- function(lscale = "loglink",
                            oim  = TRUE) {
 
   lscale <- as.list(substitute(lscale))
@@ -718,7 +718,7 @@ if (FALSE)
 
 
  weibull.mean <-
-  function(lmean = "loge", lshape = "loge",
+  function(lmean = "loglink", lshape = "loglink",
            imean = NULL,   ishape = NULL,
            probs.y = c(0.2, 0.5, 0.8),
            imethod = 1, zero = "shape") {
@@ -981,7 +981,7 @@ if (FALSE)
 
 
  weibullR <-
-  function(lscale = "loge", lshape = "loge",
+  function(lscale = "loglink", lshape = "loglink",
            iscale = NULL,   ishape = NULL,
            lss = TRUE,
            nrfs = 1,
@@ -1491,7 +1491,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
  truncweibull <-
   function(lower.limit = 1e-5,
-           lAlpha = "loge", lBetaa = "loge",
+           lAlpha = "loglink", lBetaa = "loglink",
            iAlpha = NULL,   iBetaa = NULL,
            nrfs = 1,
            probs.y = c(0.2, 0.5, 0.8),

@@ -9,10 +9,10 @@
 
 }
 \usage{
-gumbel(llocation = "identitylink", lscale = "loge",
+gumbel(llocation = "identitylink", lscale = "loglink",
        iscale = NULL, R = NA, percentiles = c(95, 99),
        mpv = FALSE, zero = NULL)
-gumbelff(llocation = "identitylink", lscale = "loge",
+gumbelff(llocation = "identitylink", lscale = "loglink",
          iscale = NULL, R = NA, percentiles = c(95, 99),
          zero = "scale", mpv = FALSE)
 }

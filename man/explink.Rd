@@ -23,7 +23,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 % }
 
   \item{bvalue}{
-  See \code{cloglog}.
+  See \code{\link{clogloglink}}.
 
   }
   \item{inverse, deriv, short, tag}{
@@ -46,7 +46,8 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 }
 \value{
-  For \code{explink} with \code{deriv = 0}, the exponential of \code{theta}, i.e.,
+  For \code{explink} with \code{deriv = 0},
+  the exponential of \code{theta}, i.e.,
   \code{exp(theta)} when \code{inverse = FALSE}.
   And if \code{inverse = TRUE} then
   \code{log(theta)};
@@ -84,7 +85,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 \seealso{
     \code{\link{Links}},
-    \code{\link{loge}},
+    \code{\link{loglink}},
     \code{\link{rcim}},
     \code{\link{Qvar}},
     \code{\link{uninormal}}.

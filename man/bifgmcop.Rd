@@ -9,7 +9,7 @@
 
 }
 \usage{
-bifgmcop(lapar = "rhobit", iapar = NULL, imethod = 1)
+bifgmcop(lapar = "rhobitlink", iapar = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -85,7 +85,7 @@ Invariance theorems for Fisher information.
 
 }
 \examples{
-ymat <- rbifgmcop(n = 1000, apar = rhobit(3, inverse = TRUE))
+ymat <- rbifgmcop(n = 1000, apar = rhobitlink(3, inverse = TRUE))
 \dontrun{plot(ymat, col = "blue")}
 fit <- vglm(ymat ~ 1, fam = bifgmcop, trace = TRUE)
 coef(fit, matrix = TRUE)

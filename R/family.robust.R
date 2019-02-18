@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -180,7 +180,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
 
 
 
- huber2 <- function(llocation = "identitylink", lscale = "loge",
+ huber2 <- function(llocation = "identitylink", lscale = "loglink",
                     k = 0.862, imethod = 1,
                     zero = "scale") {
 
@@ -253,7 +253,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
     if (!length(etastart)) {
       junk <- lm.wfit(x = x, y = c(y), w = c(w))
       scale.y.est <- sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
-      location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
+      location.init <- if ( .llocat == "loglink") pmax(1/1024, y) else {
         if ( .imethod == 3) {
           rep_len(weighted.mean(y, w), n)
         } else if ( .imethod == 2) {
@@ -411,7 +411,7 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
 
     if (!length(etastart)) {
       junk <- lm.wfit(x = x, y = c(y), w = c(w))
-      location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
+      location.init <- if ( .llocat == "loglink") pmax(1/1024, y) else {
         if ( .imethod == 3) {
           rep_len(weighted.mean(y, w), n)
         } else if ( .imethod == 2) {
@@ -480,10 +480,10 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
     cond2 <- (abs(zedd) <=  myk)
     cond3 <-     (zedd  >   myk)
 
-    dl.dlocat        <- -myk + 0 * zedd # cond1
+    dl.dlocat        <- -myk + 0 * zedd  # cond1
     dl.dlocat[cond2] <- zedd[cond2]
     dl.dlocat[cond3] <-  myk  # myk is a scalar
-    dl.dlocat <- dl.dlocat # / myscale
+    dl.dlocat <- dl.dlocat  # / myscale
 
 
     if (FALSE) {

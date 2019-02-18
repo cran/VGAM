@@ -13,12 +13,12 @@
 
 }
 \usage{
-posbernoulli.tb(link = "logit", parallel.t = FALSE ~ 1,
+posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
                 parallel.b = FALSE ~ 0, drop.b = FALSE ~ 1,
                 type.fitted = c("likelihood.cond", "mean.uncond"),
                 imethod = 1, iprob = NULL,
                 p.small = 1e-4, no.warning = FALSE,
-                ridge.constant = 0.01, ridge.power = -4)
+                ridge.constant = 0.0001, ridge.power = -4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -293,5 +293,11 @@ constraints(Fit1)
 %yyy <- depvar(fit1)
 %if (length(table(4 * yyy[, 1] + 2 * yyy[, 2] + 1 * yyy[, 3])) != 2^(ncol(yyy)) - 1)
 %  warning("not every combination is represented by a row in the response matrix")
+
+
+% 20181020; was this for a long time until now:
+%               ridge.constant = 0.01,
+
+
 
 

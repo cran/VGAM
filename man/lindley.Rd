@@ -9,7 +9,7 @@
 
 }
 \usage{
-lindley(link = "loge", itheta = NULL, zero = NULL)
+lindley(link = "loglink", itheta = NULL, zero = NULL)
 
 }
 %- maybe also 'usage' for other objects documented here.

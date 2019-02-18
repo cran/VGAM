@@ -1,5 +1,6 @@
 \name{identitylink}
-\alias{identitylink}
+   \alias{identitylink}
+\alias{negidentitylink}
 \alias{negidentity}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Identity Link Function }
@@ -9,8 +10,8 @@
 
 }
 \usage{
-identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
- negidentity(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+    identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+ negidentitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -72,9 +73,9 @@ identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 
 \seealso{
   \code{\link{Links}},
-  \code{\link{loge}},
-  \code{\link{logit}},
-  \code{\link{probit}},
+  \code{\link{loglink}},
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
   \code{\link{powerlink}}.
 
 
@@ -83,7 +84,7 @@ identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 identitylink((-5):5)
 identitylink((-5):5, deriv = 1)
 identitylink((-5):5, deriv = 2)
-negidentity((-5):5)
+negidentitylink((-5):5)
 negidentity((-5):5, deriv = 1)
 negidentity((-5):5, deriv = 2)
 }

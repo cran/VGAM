@@ -10,11 +10,11 @@
 
 }
 \usage{
-zapoisson(lpobs0 = "logit", llambda = "loge", type.fitted =
+zapoisson(lpobs0 = "logitlink", llambda = "loglink", type.fitted =
           c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
           ipobs0 = NULL, ilambda = NULL, ishrinkage = 0.95, probs.y = 0.35,
           zero = NULL)
-zapoissonff(llambda = "loge", lonempobs0 = "logit", type.fitted =
+zapoissonff(llambda = "loglink", lonempobs0 = "logitlink", type.fitted =
             c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
             ilambda = NULL, ionempobs0 = NULL, ishrinkage = 0.95,
             probs.y = 0.35, zero = "onempobs0")
@@ -202,6 +202,7 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 \seealso{
   \code{\link{rzapois}},
   \code{\link{zipoisson}},
+  \code{\link{genapoisson}},
   \code{\link{pospoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{binomialff}},
@@ -214,8 +215,8 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 
 \examples{
 zdata <- data.frame(x2 = runif(nn <- 1000))
-zdata <- transform(zdata, pobs0  = logit( -1 + 1*x2, inverse = TRUE),
-                          lambda = loge(-0.5 + 2*x2, inverse = TRUE))
+zdata <- transform(zdata, pobs0  = logitlink( -1 + 1*x2, inverse = TRUE),
+                          lambda = loglink(-0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y = rzapois(nn, lambda, pobs0 = pobs0))
 
 with(zdata, table(y))
@@ -242,9 +243,9 @@ with(Abdata, mean(yy))  # Compare this with fitted(fit3)
 \keyword{regression}
 
 
-%zapoisson(lpobs0 = "logit", llambda = "loge",
+%zapoisson(lpobs0 = "logitlink", llambda = "loglink",
 %          type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
-%zapoissonff(llambda = "loge", lonempobs0 = "logit",
+%zapoissonff(llambda = "loglink", lonempobs0 = "logitlink",
 %            type.fitted = c("mean", "pobs0", "onempobs0"), zero = "onempobs0")
 
 

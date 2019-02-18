@@ -9,16 +9,16 @@
 
 }
 \usage{
-gev(llocation = "identitylink", lscale = "loge",
-    lshape = logoff(offset = 0.5), percentiles = c(95, 99),
+gev(llocation = "identitylink", lscale = "loglink",
+    lshape = logofflink(offset = 0.5), percentiles = c(95, 99),
     ilocation = NULL, iscale = NULL, ishape = NULL, imethod = 1,
     gprobs.y = (1:9)/10, gscale.mux = exp((-5:5)/6),
     gshape = (-5:5) / 11 + 0.01,
     iprobs.y = NULL, tolshape0 = 0.001,
     type.fitted = c("percentiles", "mean"),
     zero = c("scale", "shape"))
-gevff(llocation = "identitylink", lscale = "loge",
-    lshape = logoff(offset = 0.5), percentiles = c(95, 99),
+gevff(llocation = "identitylink", lscale = "loglink",
+    lshape = logofflink(offset = 0.5), percentiles = c(95, 99),
     ilocation = NULL, iscale = NULL, ishape = NULL, imethod = 1,
     gprobs.y = (1:9)/10, gscale.mux = exp((-5:5)/6),
     gshape = (-5:5) / 11 + 0.01,
@@ -34,7 +34,7 @@ gevff(llocation = "identitylink", lscale = "loge",
 
 
   For the shape parameter,
-  the default \code{\link{logoff}} link has an offset
+  the default \code{\link{logofflink}} link has an offset
   called \eqn{A} below; and then the linear/additive predictor is
   \eqn{\log(\xi+A)}{log(xi+A)} which means that
   \eqn{\xi > -A}{xi > -A}.
@@ -49,7 +49,7 @@ gevff(llocation = "identitylink", lscale = "loge",
 %  \item{Offset}{
 %  Numeric, of length 1.
 %  Called \eqn{A} below.
-%  Offset value if \code{lshape = "logoff"}.
+%  Offset value if \code{lshape = "logofflink"}.
 %  Then the linear/additive predictor is
 %  \eqn{\log(\xi+A)}{log(xi+A)} which means that
 %  \eqn{\xi > -A}{xi > -A}.
@@ -102,7 +102,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   }
 %  \item{rshape}{
 %  Numeric, of length 2.
-%  Range of \eqn{\xi}{xi} if \code{lshape = "extlogit"} is chosen.
+%  Range of \eqn{\xi}{xi} if \code{lshape = "extlogitlink"} is chosen.
 %  The rationale for the default values is given below.
 %  }
 
@@ -202,8 +202,8 @@ gevff(llocation = "identitylink", lscale = "loge",
   Smith (1985) established that when \eqn{\xi > -0.5}{xi > -0.5},
   the maximum likelihood estimators are completely regular.
   To have some control over the estimated \eqn{\xi}{xi} try
-  using \code{lshape = logoff(offset = 0.5)}, say,
-  or \code{lshape = extlogit(min = -0.5, max = 0.5)}, say.
+  using \code{lshape = logofflink(offset = 0.5)}, say,
+  or \code{lshape = extlogitlink(min = -0.5, max = 0.5)}, say.
 
 
 % and when \eqn{-1 < \xi < -0.5}{-1 < xi < -0.5} they exist but are
@@ -320,7 +320,7 @@ gevff(llocation = "identitylink", lscale = "loge",
   \code{\link{gpd}},
   \code{\link{weibullR}},
   \code{\link{frechet}},
-  \code{\link{extlogit}},
+  \code{\link{extlogitlink}},
   \code{\link{oxtemp}},
   \code{\link{venice}},
   \code{\link{CommonVGAMffArguments}}.

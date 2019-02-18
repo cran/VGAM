@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -221,13 +221,12 @@ vglm.fit <-
     }  # if (trace && orig.stepsize == 1)
 
 
-    take.half.step <- (control$half.stepsizing &&
-                       length(old.coeffs)) &&
-                       ((orig.stepsize != 1) ||
-                        (!is.finite(new.crit)) ||  # 20160321
-                      (criterion != "coefficients" &&
-                      (if (minimize.criterion) new.crit > old.crit else
-                                               new.crit < old.crit)))
+    take.half.step <- (control$half.stepsizing && length(old.coeffs)) &&
+                      ((orig.stepsize != 1) ||
+                       any(!is.finite(new.crit)) ||  # 20160321; 20190213
+                       (criterion != "coefficients" &&
+                       (if (minimize.criterion) new.crit > old.crit else
+                                                new.crit < old.crit)))
     if (!is.logical(take.half.step))
       take.half.step <- TRUE
 
@@ -293,7 +292,7 @@ vglm.fit <-
         validfitted <- slot(family, "validfitted")(mu, y, extra = extra)
 
         if (validparams && validfitted &&
-           (is.finite(new.crit)) &&  # 20160321
+           all(is.finite(new.crit)) &&  # 20160321; 20190213
            (criterion == "coefficients" ||
            (( minimize.criterion && new.crit < old.crit) ||
             (!minimize.criterion && new.crit > old.crit))))

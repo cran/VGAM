@@ -9,7 +9,7 @@
 
 }
 \usage{
-borel.tanner(Qsize = 1, link = "logit", imethod = 1)
+borel.tanner(Qsize = 1, link = "logitlink", imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

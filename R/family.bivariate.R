@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -100,12 +100,12 @@ trinormal.control <-
            lmean1 = "identitylink",
            lmean2 = "identitylink",
            lmean3 = "identitylink",
-           lsd1   = "loge",
-           lsd2   = "loge",
-           lsd3   = "loge",
-           lrho12 = "rhobit",
-           lrho23 = "rhobit",
-           lrho13 = "rhobit",
+           lsd1   = "loglink",
+           lsd2   = "loglink",
+           lsd3   = "loglink",
+           lrho12 = "rhobitlink",
+           lrho23 = "rhobitlink",
+           lrho13 = "rhobitlink",
            imean1 = NULL,       imean2 = NULL,       imean3 = NULL,
            isd1   = NULL,       isd2   = NULL,       isd3   = NULL,
            irho12 = NULL,       irho23 = NULL,       irho13 = NULL,
@@ -416,9 +416,9 @@ trinormal.control <-
     okay1 <- all(is.finite(mean1)) &&
              all(is.finite(mean2)) &&
              all(is.finite(mean3)) &&
-             all(is.finite(sd1  )) && all(0 < sd1) &&
-             all(is.finite(sd2  )) && all(0 < sd2) &&
-             all(is.finite(sd3  )) && all(0 < sd3) &&
+             all(is.finite(sd1  )) && all(0 < sd1)        &&
+             all(is.finite(sd2  )) && all(0 < sd2)        &&
+             all(is.finite(sd3  )) && all(0 < sd3)        &&
              all(is.finite(Rho12)) && all(abs(Rho12) < 1) &&
              all(is.finite(Rho23)) && all(abs(Rho23) < 1) &&
              all(is.finite(Rho13)) && all(abs(Rho13) < 1) &&
@@ -896,7 +896,7 @@ rbiclaytoncop <- function(n, apar = 0) {
 
 
 
- biclaytoncop <- function(lapar    = "loge",
+ biclaytoncop <- function(lapar    = "loglink",
                           iapar    = NULL,
                           imethod   = 1,
                           parallel  = FALSE,
@@ -999,10 +999,10 @@ rbiclaytoncop <- function(n, apar = 0) {
           } else if ( .imethod == 2) {
             spearman.rho <-  max(0.05, cor(ymatj[, 1],
                                            ymatj[, 2], meth = "spearman"))
-            rhobit(spearman.rho)
+            rhobitlink(spearman.rho)
           } else {
             pearson.rho <- max(0.05, cor(ymatj[, 1], ymatj[, 2]))
-            rhobit(pearson.rho)
+            rhobitlink(pearson.rho)
           }
 
           if (anyNA(apar.init[, spp.]))
@@ -1198,8 +1198,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
 
  bistudentt <-
-   function(ldf     = "loglog",
-            lrho    = "rhobit",
+   function(ldf     = "logloglink",
+            lrho    = "rhobitlink",
             idf     = NULL,
             irho    = NULL,
             imethod = 1,
@@ -1563,7 +1563,7 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
 
 
 
- binormalcop <- function(lrho    = "rhobit",
+ binormalcop <- function(lrho    = "rhobitlink",
                          irho    = NULL,
                          imethod = 1,
                          parallel = FALSE,
@@ -1812,7 +1812,7 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
 
 
  bilogistic  <- function(llocation = "identitylink",
-                         lscale = "loge",
+                         lscale = "loglink",
                          iloc1 = NULL, iscale1 = NULL,
                          iloc2 = NULL, iscale2 = NULL,
                          imethod = 1,
@@ -1911,9 +1911,9 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
       scale2.init <- if (length( .iscale2 )) rep_len( .iscale2 , n) else
                                              rep_len(1, n)
 
-      if ( .llocat == "loge")
+      if ( .llocat == "loglink")
         locat.init1 <- abs(locat.init1) + 0.001
-      if ( .llocat == "loge")
+      if ( .llocat == "loglink")
         locat.init2 <- abs(locat.init2) + 0.001
 
       etastart <-
@@ -2144,10 +2144,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
  freund61 <-
-  function(la  = "loge",
-           lap = "loge",
-           lb  = "loge",
-           lbp = "loge",
+  function(la  = "loglink",
+           lap = "loglink",
+           lb  = "loglink",
+           lbp = "loglink",
            ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
            independent = FALSE,
            zero = NULL) {
@@ -2377,9 +2377,9 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
 
- bigamma.mckay <- function(lscale = "loge",
-                           lshape1 = "loge",
-                           lshape2 = "loge",
+ bigamma.mckay <- function(lscale = "loglink",
+                           lshape1 = "loglink",
+                           lshape2 = "loglink",
                            iscale = NULL,
                            ishape1 = NULL,
                            ishape2 = NULL,
@@ -2742,7 +2742,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
 
 
- bifrankcop <- function(lapar = "loge", iapar = 2, nsimEIM = 250) {
+ bifrankcop <- function(lapar = "loglink", iapar = 2, nsimEIM = 250) {
 
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
@@ -2918,7 +2918,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
 
  gammahyperbola <-
-  function(ltheta = "loge", itheta = NULL, expected = FALSE) {
+  function(ltheta = "loglink", itheta = NULL, expected = FALSE) {
 
   ltheta <- as.list(substitute(ltheta))
   etheta <- link2list(ltheta)
@@ -3027,7 +3027,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
 
  bifgmexp <-
-  function(lapar = "rhobit",
+  function(lapar = "rhobitlink",
            iapar = NULL, tola0 = 0.01,
            imethod = 1) {
   lapar <- as.list(substitute(lapar))
@@ -3253,7 +3253,7 @@ pbifgmcop <- function(q1, q2, apar) {
 
 
 
- bifgmcop <- function(lapar = "rhobit", iapar = NULL,
+ bifgmcop <- function(lapar = "rhobitlink", iapar = NULL,
                       imethod = 1) {
 
   lapar <- as.list(substitute(lapar))
@@ -3624,7 +3624,7 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
 
 
 
- biplackettcop <- function(link = "loge", ioratio = NULL,
+ biplackettcop <- function(link = "loglink", ioratio = NULL,
                       imethod = 1, nsimEIM = 200) {
 
   link <- as.list(substitute(link))
@@ -3871,7 +3871,7 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
 }
 
 
- biamhcop <- function(lapar = "rhobit", iapar = NULL,
+ biamhcop <- function(lapar = "rhobitlink", iapar = NULL,
                  imethod = 1, nsimEIM = 250) {
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
@@ -4096,9 +4096,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
  binormal <- function(lmean1 = "identitylink",
                       lmean2 = "identitylink",
-                      lsd1   = "loge",
-                      lsd2   = "loge",
-                      lrho   = "rhobit",
+                      lsd1   = "loglink",
+                      lsd2   = "loglink",
+                      lrho   = "rhobitlink",
                       imean1 = NULL,       imean2 = NULL,
                       isd1   = NULL,       isd2   = NULL,
                       irho   = NULL,       imethod = 1,

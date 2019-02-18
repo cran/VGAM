@@ -200,10 +200,10 @@
 nn <- 10; mysize <- 20; set.seed(123)
 bdata <- data.frame(x2 = rnorm(nn))
 bdata <- transform(bdata,
-  y1   = rbinom(nn, size = mysize, p = logit(1+x2, inverse = TRUE)),
-  y2   = rbinom(nn, size = mysize, p = logit(1+x2, inverse = TRUE)),
+  y1   = rbinom(nn, size = mysize, p = logitlink(1+x2, inverse = TRUE)),
+  y2   = rbinom(nn, size = mysize, p = logitlink(1+x2, inverse = TRUE)),
   f1   = factor(as.numeric(rbinom(nn, size = 1,
-                                  p = logit(1+x2, inverse = TRUE)))))
+                                  p = logitlink(1+x2, inverse = TRUE)))))
 (fit1 <- vglm(cbind(y1, aaa = mysize - y1) ~ x2,  # Matrix response (2-colns)
               binomialff, data = bdata))
 (fit2 <- vglm(f1 ~ x2, binomialff, model = TRUE, data = bdata)) # Factor response
@@ -227,10 +227,10 @@ summary(rowMeans(aaa[, , 2]) - fitted(fit1)[, 2])  # Should be all 0s
 # An n x F x N example
 n <- 100; set.seed(111); nsim <- 1000
 zdata <- data.frame(x2 = runif(n))
-zdata <- transform(zdata, lambda1 =  loge(-0.5 + 2 * x2, inverse = TRUE),
-                          lambda2 =  loge( 0.5 + 2 * x2, inverse = TRUE),
-                          pstr01  = logit( 0,            inverse = TRUE),
-                          pstr02  = logit(-1.0,          inverse = TRUE))
+zdata <- transform(zdata, lambda1 =  loglink(-0.5 + 2 * x2, inverse = TRUE),
+                          lambda2 =  loglink( 0.5 + 2 * x2, inverse = TRUE),
+                          pstr01  = logitlink( 0,            inverse = TRUE),
+                          pstr02  = logitlink(-1.0,          inverse = TRUE))
 zdata <- transform(zdata, y1 = rzipois(n, lambda = lambda1, pstr0 = pstr01),
                           y2 = rzipois(n, lambda = lambda2, pstr0 = pstr02))
 zip.fit  <- vglm(cbind(y1, y2) ~ x2, zipoissonff, data = zdata, crit = "coef")

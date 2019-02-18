@@ -9,7 +9,7 @@
 
 }
 \usage{
-rec.exp1(lrate = "loge", irate = NULL, imethod = 1)
+rec.exp1(lrate = "loglink", irate = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

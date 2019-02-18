@@ -7,7 +7,7 @@
 
 }
 \usage{
-posbinomial(link = "logit", multiple.responses = FALSE, parallel = FALSE,
+posbinomial(link = "logitlink", multiple.responses = FALSE, parallel = FALSE,
             omit.constant = FALSE, p.small = 1e-4, no.warning = FALSE,
             zero = NULL)
 }
@@ -129,6 +129,7 @@ Drapers Company Research Memoirs.
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.t}},
   \code{\link{posbernoulli.tb}},
+  \code{\link{gentbinomial}},
   \code{\link{binomialff}},
   \code{\link{AICvlm}}, \code{\link{BICvlm}},
   \code{\link{simulate.vlm}}.

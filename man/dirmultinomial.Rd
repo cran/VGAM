@@ -7,7 +7,7 @@
 
 }
 \usage{
-dirmultinomial(lphi = "logit", iphi = 0.10, parallel = FALSE, zero = "M")
+dirmultinomial(lphi = "logitlink", iphi = 0.10, parallel = FALSE, zero = "M")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

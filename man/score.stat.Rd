@@ -94,6 +94,7 @@ score.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
   \code{\link{lrt.stat}},
   \code{\link{summaryvglm}},
   \code{\link[stats]{summary.glm}},
+  \code{\link{anova.vglm}},
   \code{\link{vglm}},
   \code{\link{hdeff}}.
 

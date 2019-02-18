@@ -8,7 +8,7 @@
 
 }
 \usage{
-bifrankcop(lapar = "loge", iapar = 2, nsimEIM = 250)
+bifrankcop(lapar = "loglink", iapar = 2, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -8,7 +8,7 @@
 
 }
 \usage{
-nakagami(lscale = "loge", lshape = "loge", iscale = 1, ishape = NULL,
+nakagami(lscale = "loglink", lshape = "loglink", iscale = 1, ishape = NULL,
          nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

@@ -1,4 +1,5 @@
-\name{multilogit}
+\name{multilogitlink}
+\alias{multilogitlink}
 \alias{multilogit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Multi-logit Link Function }
@@ -8,9 +9,9 @@
 
 }
 \usage{
-multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
-           bvalue = NULL, inverse = FALSE, deriv = 0, all.derivs = FALSE,
-           short = TRUE, tag = FALSE)
+multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
+               bvalue = NULL, inverse = FALSE, deriv = 0, all.derivs = FALSE,
+               short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -55,7 +56,7 @@ multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 }
 \details{
   The \code{multilogit()} link function is a generalization of the
-  \code{\link{logit}} link to \eqn{M} levels/classes.
+  \code{\link{logitlink}} link to \eqn{M} levels/classes.
   It forms the basis of the \code{\link{multinomial}} logit model.
   It is sometimes called the \emph{multi-logit} link
   or the \emph{multinomial logit} link.
@@ -65,7 +66,7 @@ multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 
 }
 \value{
-  For \code{multilogit} with \code{deriv = 0}, the multilogit of \code{theta},
+  For \code{multilogitlink} with \code{deriv = 0}, the multilogit of \code{theta},
   i.e.,
   \code{log(theta[, j]/theta[, M+1])} when \code{inverse = FALSE},
   and if \code{inverse = TRUE} then
@@ -92,7 +93,7 @@ multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 
 \note{
   Numerical instability may occur when \code{theta} is
-  close to 1 or 0 (for \code{multilogit}).
+  close to 1 or 0 (for \code{multilogitlink}).
   One way of overcoming this is to use, e.g., \code{bvalue}.
   Currently \code{care.exp()} is used to avoid \code{NA}s being
   returned if the probability is too close to 1.
@@ -103,7 +104,7 @@ multilogit(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 \seealso{
     \code{\link{Links}},
     \code{\link{multinomial}},
-    \code{\link{logit}},
+    \code{\link{logitlink}},
     \code{\link{normal.vcm}},
     \code{\link{CommonVGAMffArguments}}.
 
@@ -116,15 +117,15 @@ fit <- vglm(cbind(normal, mild, severe) ~ let,
 fitted(fit)
 predict(fit)
 
-multilogit(fitted(fit))
-multilogit(fitted(fit)) - predict(fit)  # Should be all 0s
+multilogitlink(fitted(fit))
+multilogitlink(fitted(fit)) - predict(fit)  # Should be all 0s
 
-multilogit(predict(fit), inverse = TRUE)  # rowSums() add to unity
-multilogit(predict(fit), inverse = TRUE, refLevel = 1)  # For illustration only
-multilogit(predict(fit), inverse = TRUE) - fitted(fit)  # Should be all 0s
+multilogitlink(predict(fit), inverse = TRUE)  # rowSums() add to unity
+multilogitlink(predict(fit), inverse = TRUE, refLevel = 1)  # For illustration only
+multilogitlink(predict(fit), inverse = TRUE) - fitted(fit)  # Should be all 0s
 
-multilogit(fitted(fit), deriv = 1)
-multilogit(fitted(fit), deriv = 2)
+multilogitlink(fitted(fit), deriv = 1)
+multilogitlink(fitted(fit), deriv = 2)
 }
 \keyword{math}
 \keyword{models}

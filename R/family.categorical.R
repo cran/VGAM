@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -184,7 +184,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
- sratio <- function(link = "logit",
+ sratio <- function(link = "logitlink",
                     parallel = FALSE, reverse = FALSE, zero = NULL,
                     whitespace = FALSE) {
   link <- as.list(substitute(link))
@@ -382,7 +382,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
- cratio <- function(link = "logit",
+ cratio <- function(link = "logitlink",
                     parallel = FALSE, reverse = FALSE, zero = NULL,
                     whitespace = FALSE) {
   link <- as.list(substitute(link))
@@ -731,7 +731,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     list(parallel = .parallel ,
          refLevel = .refLevel ,  # original
          M1 = -1,
-         link = "multilogit",
+         link = "multilogitlink",
          link1parameter = FALSE,  # The link is multiparameter
          expected = TRUE,
          multipleResponses = FALSE,
@@ -782,7 +782,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (anyNA(eta))
       warning("there are NAs in eta in slot inverse")
-    ans <- multilogit(eta,
+    ans <- multilogitlink(eta,
                       refLevel = extra$use.refLevel,  # .refLevel ,
                       inverse = TRUE)
     if (anyNA(ans))
@@ -794,9 +794,9 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   }), list( .refLevel = refLevel )),
 
   last = eval(substitute(expression({
-    misc$link <- "multilogit"
+    misc$link <- "multilogitlink"
 
-    misc$earg <- list(multilogit = list(
+    misc$earg <- list(multilogitlink = list(
       M = M,
       refLevel = use.refLevel
     ))
@@ -817,7 +817,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
           ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
-    multilogit(mu, refLevel = extra$use.refLevel)  # .refLevel
+    multilogitlink(mu, refLevel = extra$use.refLevel)  # .refLevel
   }), list( .refLevel = refLevel )),
 
   loglikelihood =
@@ -926,7 +926,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       if (use.refLevel == "(Last)")
         use.refLevel <- M+1
     }
-    mu.use <- multilogit(eta, refLevel = use.refLevel, inverse = TRUE)
+    mu.use <- multilogitlink(eta, refLevel = use.refLevel, inverse = TRUE)
     mu.use <- pmax(mu.use, .Machine$double.eps * 1.0e-0)
 
 
@@ -958,7 +958,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
   validparams = eval(substitute(function(eta, y, extra = NULL) {
-    probs <- multilogit(eta, refLevel = extra$use.refLevel,
+    probs <- multilogitlink(eta, refLevel = extra$use.refLevel,
                         inverse = TRUE)  # .refLevel
     okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
     okay1
@@ -1001,7 +1001,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  cumulative <-
-  function(link = "logit",
+  function(link = "logitlink",
            parallel = FALSE,  # Does not apply to the intercept
            reverse = FALSE,
            multiple.responses = FALSE,
@@ -1509,7 +1509,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  acat <-
-  function(link = "loge", parallel = FALSE,
+  function(link = "loglink", parallel = FALSE,
            reverse = FALSE, zero = NULL, whitespace = FALSE) {
 
 
@@ -1765,7 +1765,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   new("vglmff",
   blurb = c(paste("Bradley-Terry model (without ties)\n\n"),
             "Links:   ",
-            namesof("alpha's", "loge")),
+            namesof("alpha's", "loglink")),
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
@@ -1789,7 +1789,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     if (!is.finite(M))
       stop("cannot determine 'M'")
     ialpha <- matrix(rep_len( .ialpha , M), n, M, byrow = TRUE)
-    etastart <- matrix(theta2eta(ialpha, "loge",
+    etastart <- matrix(theta2eta(ialpha, "loglink",
                                  earg = list(theta = NULL)),
                        n, M, byrow = TRUE)
     refgp <- .refgp
@@ -1799,7 +1799,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     uindex <- if ( .refgp == "last") 1:M else (1:(M+1))[-( .refgp ) ]
 
     predictors.names <-
-      namesof(paste("alpha", uindex, sep = ""), "loge", short = TRUE)
+      namesof(paste("alpha", uindex, sep = ""), "loglink", short = TRUE)
 
   }), list( .refgp = refgp, .ialpha = ialpha ))),
 
@@ -1807,7 +1807,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     probs <- NULL
     eta <- as.matrix(eta)  # in case M = 1; prior to 20171227
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loglink",
                                      earg = list(theta = NULL)),
                            .refvalue , .refgp )
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
@@ -1821,7 +1821,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   }, list( .refgp = refgp, .refvalue = refvalue) )),
 
   last = eval(substitute(expression({
-    misc$link <- rep_len("loge", M)
+    misc$link <- rep_len("loglink", M)
     names(misc$link) <- paste("alpha", uindex, sep = "")
 
     misc$earg <- vector("list", M)
@@ -1865,7 +1865,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     probs <- NULL
     eta <- as.matrix(eta)  # in case M = 1
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loglink",
                                      earg = list(theta = NULL)),
                            .refvalue , .refgp )
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
@@ -1882,7 +1882,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     uindex <- if ( .refgp == "last") 1:M else (1:(M+1))[-( .refgp ) ]
     eta <- as.matrix(eta)  # in case M = 1
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loglink",
                                      earg = list(theta = NULL)),
                            .refvalue, .refgp )
       ymat <- InverseBrat(y[ii, ], NCo = M+1, diag = 0)
@@ -1900,7 +1900,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   weight = eval(substitute(expression({
     wz <- matrix(0, n, dimm(M))
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, ], "loglink",
                                      earg = list(theta = NULL)),
                           .refvalue, .refgp)
       ymat <- InverseBrat(y[ii, ], NCo = M+1, diag = 0)
@@ -1949,7 +1949,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
   new("vglmff",
   blurb = c(paste("Bradley-Terry model (with ties)\n\n"),
             "Links:   ",
-            namesof("alpha's", "loge"), ", log(alpha0)"),
+            namesof("alpha's", "loglink"), ", log(alpha0)"),
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
@@ -1986,10 +1986,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
     ialpha0 <- .i0
     etastart <-
       cbind(matrix(theta2eta(ialpha,
-                             "loge",
+                             "loglink",
                              list(theta = NULL)),
                    n, NCo-1, byrow = TRUE),
-            theta2eta(rep_len(ialpha0, n), "loge", list(theta = NULL)))
+            theta2eta(rep_len(ialpha0, n), "loglink", list(theta = NULL)))
     refgp <- .refgp
     if (!intercept.only)
       warning("this function only works with intercept-only models")
@@ -2000,8 +2000,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
     uindex <- if (refgp == "last") 1:(NCo-1) else (1:(NCo))[-refgp ]
 
     predictors.names <- c(
-      namesof(paste("alpha", uindex, sep = ""), "loge", short = TRUE),
-      namesof("alpha0", "loge", short = TRUE))
+      namesof(paste("alpha", uindex, sep = ""), "loglink", short = TRUE),
+      namesof("alpha0", "loglink", short = TRUE))
   }), list( .refgp = refgp,
            .i0 = i0,
            .ialpha = ialpha ))),
@@ -2011,9 +2011,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
     M <- ncol(eta)
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, -M],
-                                     "loge"),
+                                     "loglink"),
                            .refvalue , .refgp )
-      alpha0 <- loge(eta[ii, M], inverse = TRUE)
+      alpha0 <- loglink(eta[ii, M], inverse = TRUE)
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
        probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))  #
@@ -2025,7 +2025,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     probs
   }, list( .refgp = refgp, .refvalue = refvalue) )),
   last = eval(substitute(expression({
-    misc$link <- rep_len("loge", M)
+    misc$link <- rep_len("loglink", M)
     names(misc$link) <- c(paste("alpha", uindex, sep = ""), "alpha0")
 
 
@@ -2061,9 +2061,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
     M <- ncol(eta)
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, -M],
-                                     "loge"),
+                                     "loglink"),
                            .refvalue , .refgp )
-      alpha0 <- loge(eta[ii, M], inverse = TRUE)
+      alpha0 <- loglink(eta[ii, M], inverse = TRUE)
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
        probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))  #
@@ -2080,10 +2080,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
     uindex <- if ( .refgp == "last") 1:(M-1) else (1:(M))[-( .refgp )]
     eta <- as.matrix(eta)
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loglink",
                                      earg = list(theta = NULL)),
                            .refvalue, .refgp )
-      alpha0 <- loge(eta[ii, M], inverse = TRUE)
+      alpha0 <- loglink(eta[ii, M], inverse = TRUE)
       ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
       tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
       answer <- rep_len(0, NCo-1)  # deriv wrt eta[-M]
@@ -2111,10 +2111,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
   weight = eval(substitute(expression({
     wz <- matrix(0, n, dimm(M))   # includes diagonal
     for (ii in 1:nrow(eta)) {
-      alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loge",
+      alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loglink",
                            earg = list(theta = NULL)),
                           .refvalue, .refgp)
-      alpha0 <- loge(eta[ii, M], inverse = TRUE)
+      alpha0 <- loglink(eta[ii, M], inverse = TRUE)
       ymat <- InverseBrat(   y[ii, ], NCo = M, diag = 0)
       tmat <- InverseBrat(ties[ii, ], NCo = M, diag = 0)
 
@@ -2288,7 +2288,7 @@ InverseBrat <-
                         countdata = FALSE, NOS = NULL, Levels = NULL,
                         init.mu = NULL, parallel = FALSE,
                         zero = NULL,
-                        link = "loge") {
+                        link = "loglink") {
 
   link <- as.list(substitute(link))
   earg  <- link2list(link)
@@ -2847,8 +2847,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
 
 
 
-    if (!all(object@misc$link == "loge"))
-      stop("currently only the 'loge' link is supported")
+    if (!all(object@misc$link == "loglink"))
+      stop("currently only the 'loglink' link is supported")
 
 
   acat.derivs <- function(jay, tee,
@@ -3402,8 +3402,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
 
 
   if (any(vfamily == "acat")) {
-    if (!all(object@misc$link == "loge"))
-      stop("currently only the 'loge' link is supported")
+    if (!all(object@misc$link == "loglink"))
+      stop("currently only the 'loglink' link is supported")
 
 
   acat.derivs <- function(jay, tee,
@@ -3841,7 +3841,8 @@ R2latvar <- function(object) {
 
 
   linkfn <- linkfun(object)[1]
-  link.permitted <- c("logit", "probit", "cloglog")  # "cauchit"
+  link.permitted <- c("logitlink", "probitlink",
+                      "clogloglink")  # "cauchitlink"
   if (!(linkfn %in% link.permitted))
     stop("allowable link functions supported are ", link.permitted)
 
@@ -3857,9 +3858,9 @@ R2latvar <- function(object) {
 
   eta1 <- predict(object)[, 1]
   offset <- switch(linkfn,
-                   logit   = (pi^2)/3,
-                   probit  = 1,
-                   cloglog = (pi^2) / 6,
+                   logitlink   = (pi^2)/3,
+                   probitlink  = 1,
+                   clogloglink = (pi^2) / 6,
                    stop("link unrecognized"))
 
   veta1 <- var(eta1)
@@ -3889,7 +3890,7 @@ ordsup.vglm <-
 
 
   linkfns <- linkfun(object)
-  link.permitted <- c("identitylink", "logit", "probit")
+  link.permitted <- c("identitylink", "logitlink", "probitlink")
   if (!any(linkfns %in% link.permitted))
     stop("allowable link functions supported are ",
          paste("'", link.permitted, "'",
@@ -3905,8 +3906,8 @@ ordsup.vglm <-
   cobj <- coef(object)
   cobj.mat <- coef(object, matrix = TRUE)
   x.LM  <- model.matrix(object, type =  "lm")
-  is.binary <- apply(if (has.intercept(object)) x.LM[, -1, drop = FALSE]
-                     else x.LM,
+  is.binary <- apply(if (has.intercept(object))
+                     x.LM[, -1, drop = FALSE] else x.LM,
                      2, function(coln) length(unique(coln)) == 2)
 
   if (all.vars) {
@@ -3969,12 +3970,12 @@ ordsup.vglm <-
   cumulative = {
     gamma <-
     switch(linkfns[1],
-           cloglog = cloglog(ifelse(reverse, 1, -1) *  # Not sure
-                             cobj[ is.binary ], inverse = TRUE),
-           logit   =   logit(ifelse(reverse, 1, -1) *
-                             cobj[ is.binary ] / sqrt(2), inverse = TRUE),
-           probit  =  probit(ifelse(reverse, 1, -1) *
-                             cobj[ is.binary ] / sqrt(2), inverse = TRUE))
+    clogloglink = clogloglink(ifelse(reverse, 1, -1) *  # Not sure
+                                cobj[ is.binary ], inverse = TRUE),
+    logitlink   =   logitlink(ifelse(reverse, 1, -1) *
+                                cobj[ is.binary ] / sqrt(2), inverse = TRUE),
+    probitlink  =  probitlink(ifelse(reverse, 1, -1) *
+                              cobj[ is.binary ] / sqrt(2), inverse = TRUE))
   },
   zzzz = {
   })

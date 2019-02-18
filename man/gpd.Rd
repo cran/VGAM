@@ -8,7 +8,7 @@
 
 }
 \usage{
-gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
+gpd(threshold = 0, lscale = "loglink", lshape = logofflink(offset = 0.5),
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
     tolshape0 = 0.001, type.fitted = c("percentiles", "mean"),
     imethod = 1, zero = "shape")
@@ -37,7 +37,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
 
   For the shape parameter,
-  the default \code{\link{logoff}} link has an offset
+  the default \code{\link{logofflink}} link has an offset
   called \eqn{A} below; and then the second linear/additive predictor is
   \eqn{\log(\xi+A)}{log(xi+A)} which means that
   \eqn{\xi > -A}{xi > -A}.
@@ -49,7 +49,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 % \item{Offset}{
 % Numeric, of length 1.
 % Called \eqn{A} below.
-% Offset value if \code{lshape = "logoff"}.
+% Offset value if \code{lshape = "logofflink"}.
 % Then the second linear/additive predictor is
 % \eqn{\log(\xi+A)}{log(xi+A)} which means that
 % \eqn{\xi > -A}{xi > -A}.
@@ -94,7 +94,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
   }
 % \item{rshape}{
 % Numeric, of length 2.
-% Range of \eqn{\xi}{xi} if \code{lshape = "extlogit"} is chosen.
+% Range of \eqn{\xi}{xi} if \code{lshape = "extlogitlink"} is chosen.
 % The default values ensures the algorithm works (\eqn{\xi > -0.5}{xi > -0.5})
 % and the variance exists (\eqn{\xi < 0.5}{xi < 0.5}).
 
@@ -180,7 +180,7 @@ gpd(threshold = 0, lscale = "loge", lshape = logoff(offset = 0.5),
 
   The mean of \eqn{Y} does not exist unless \eqn{\xi < 1}{xi < 1}, and
   the variance does not exist unless \eqn{\xi < 0.5}{xi < 0.5}.  So if
-  you want to fit a model with finite variance use \code{lshape = "extlogit"}.
+  you want to fit a model with finite variance use \code{lshape = "extlogitlink"}.
 
 
 }

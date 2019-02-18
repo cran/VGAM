@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,7 +15,7 @@
 
 
  binomialff <-
-  function(link = "logit",
+  function(link = "logitlink",
            multiple.responses = FALSE,
            parallel = FALSE,  # apply.parint = FALSE,
            zero = NULL,
@@ -97,10 +97,10 @@
 
   initialize = eval(substitute(expression({
     assign("CQO.FastAlgorithm",
-           ( .link == "logit" || .link == "cloglog"),
+           ( .link == "logitlink" || .link == "clogloglink"),
            envir = VGAMenv)
-    assign("modelno", if ( .link == "logit") 1 else
-                      if ( .link == "cloglog") 4 else NULL,
+    assign("modelno", if ( .link == "logitlink") 1 else
+                      if ( .link == "clogloglink") 4 else NULL,
            envir = VGAMenv)
 
 
@@ -419,9 +419,9 @@
     }
 
 
-    answer <- if ( .link == "logit") {
+    answer <- if ( .link == "logitlink") {
       c(w) * (yBRED - mu)
-    } else if ( .link == "cloglog") {
+    } else if ( .link == "clogloglink") {
       mu.use <- mu
       smallno <- 100 * .Machine$double.eps
       mu.use[mu.use <       smallno] <-       smallno
@@ -438,9 +438,9 @@
   weight = eval(substitute(expression({
     tmp100 <- mu * (1.0 - mu)
 
-    ned2ldprob2 <- if ( .link == "logit") {
+    ned2ldprob2 <- if ( .link == "logitlink") {
       cbind(c(w) * tmp100)
-    } else if ( .link == "cloglog") {
+    } else if ( .link == "clogloglink") {
       cbind(c(w) * (1.0 - mu.use) * (log1p(-mu.use))^2 / mu.use)
     } else {
       cbind(c(w) * dtheta.deta(mu, link = .link ,
@@ -493,7 +493,7 @@
 
 
 
- gammaff <- function(link = "nreciprocal", dispersion = 0) {
+ gammaff <- function(link = "negreciprocal", dispersion = 0) {
   estimated.dispersion <- dispersion == 0
 
 
@@ -812,7 +812,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- inv.gaussianff <- function(lmu = "loge", llambda = "loge",
+ inv.gaussianff <- function(lmu = "loglink", llambda = "loglink",
                             imethod = 1,  ilambda = NULL,
                             parallel = FALSE,
                             ishrinkage = 0.99,
@@ -1033,7 +1033,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- poissonff <- function(link = "loge",
+ poissonff <- function(link = "loglink",
                        imu = NULL, imethod = 1,
                        parallel = FALSE, zero = NULL,
                        bred = FALSE,
@@ -1153,7 +1153,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 
     M <- ncoly <- ncol(y)
 
-    assign("CQO.FastAlgorithm", ( .link == "loge"), envir = VGAMenv)
+    assign("CQO.FastAlgorithm", ( .link == "loglink"), envir = VGAMenv)
 
 
 
@@ -1354,7 +1354,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     }
 
 
-    answer <- if ( .link == "loge" && (any(mupo < .Machine$double.eps))) {
+    answer <- if ( .link == "loglink" && (any(mupo < .Machine$double.eps))) {
       c(w) * (yBRED - mupo)
     } else {
       lambda <- mupo
@@ -1368,7 +1368,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   }), list( .link = link, .earg = earg, .bred = bred))),
 
   weight = eval(substitute(expression({
-    if ( .link == "loge" && (any(mupo < .Machine$double.eps))) {
+    if ( .link == "loglink" && (any(mupo < .Machine$double.eps))) {
       tmp600 <- mupo
       tmp600[tmp600 < .Machine$double.eps] <- .Machine$double.eps
       c(w) * tmp600
@@ -1387,7 +1387,7 @@ rinv.gaussian <- function(n, mu, lambda) {
 if (FALSE)
  quasibinomialff <-
   function(
-           link = "logit",
+           link = "logitlink",
            multiple.responses = FALSE, onedpar = !multiple.responses,
            parallel = FALSE, zero = NULL) {
 
@@ -1421,7 +1421,7 @@ if (FALSE)
 
 
 if (FALSE)
- quasipoissonff <- function(link = "loge", onedpar = FALSE,
+ quasipoissonff <- function(link = "loglink", onedpar = FALSE,
                             parallel = FALSE, zero = NULL) {
 
   link <- as.list(substitute(link))
@@ -1452,8 +1452,8 @@ if (FALSE)
 
 
  double.exppoisson <-
-  function(lmean = "loge",
-           ldispersion = "logit",
+  function(lmean = "loglink",
+           ldispersion = "logitlink",
            idispersion = 0.8,
            zero = NULL) {
 
@@ -1598,7 +1598,7 @@ if (FALSE)
 
 
  double.expbinomial <-
-  function(lmean = "logit", ldispersion = "logit",
+  function(lmean = "logitlink", ldispersion = "logitlink",
            idispersion = 0.25, zero = "dispersion") {
 
   lmean <- as.list(substitute(lmean))
@@ -1786,7 +1786,7 @@ if (FALSE)
 
 
 
- augbinomial <- function(link = "logit", multiple.responses = FALSE,
+ augbinomial <- function(link = "logitlink", multiple.responses = FALSE,
                          parallel = TRUE) {
 
   if (!is.logical(parallel) ||
@@ -1972,7 +1972,7 @@ if (FALSE)
 
     Konst1 <- 1  # Works with this
     deriv1 <- Konst1 * w *
-      if ( .link == "logit") {
+      if ( .link == "logitlink") {
           y * (1 - mu)
       } else  {
           stop("this is not programmed in yet")
@@ -1980,7 +1980,7 @@ if (FALSE)
           (y / mu - 1.0) / (1.0 - mu)
       }
     deriv2 = Konst1 * w *
-      if ( .link == "logit") {
+      if ( .link == "logitlink") {
          -(1 - y) * mu
       } else  {
           stop("this is not programmed in yet")
@@ -1995,7 +1995,7 @@ if (FALSE)
   weight = eval(substitute(expression({
     tmp100 <- mu * (1.0 - mu)
 
-    tmp200 <- if ( .link == "logit") {
+    tmp200 <- if ( .link == "logitlink") {
       cbind(w * tmp100)
     } else {
       cbind(w * dtheta.deta(mu, link = .link , earg = .earg )^2 / tmp100)

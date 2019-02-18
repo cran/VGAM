@@ -8,7 +8,7 @@
 
 }
 \usage{
-makeham(lscale = "loge", lshape = "loge", lepsilon = "loge",
+makeham(lscale = "loglink", lshape = "loglink", lepsilon = "loglink",
         iscale = NULL,   ishape = NULL,   iepsilon = NULL,
         gscale = exp(-5:5),gshape = exp(-5:5), gepsilon = exp(-4:1),
         nsimEIM = 500, oim.mean = TRUE, zero = NULL, nowarning = FALSE)

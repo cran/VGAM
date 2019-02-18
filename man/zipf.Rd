@@ -7,7 +7,7 @@
 
 }
 \usage{
-zipf(N = NULL, lshape = "loge", ishape = NULL)
+zipf(N = NULL, lshape = "loglink", ishape = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

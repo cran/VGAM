@@ -89,10 +89,10 @@
 }
 \examples{
 zdata <- data.frame(x2 = runif(nn <- 50))
-zdata <- transform(zdata, Ps01    = logit(-0.5       , inverse = TRUE),
-                          Ps02    = logit( 0.5       , inverse = TRUE),
-                          lambda1 =  loge(-0.5 + 2*x2, inverse = TRUE),
-                          lambda2 =  loge( 0.5 + 2*x2, inverse = TRUE))
+zdata <- transform(zdata, Ps01    = logitlink(-0.5       , inverse = TRUE),
+                          Ps02    = logitlink( 0.5       , inverse = TRUE),
+                          lambda1 =  loglink(-0.5 + 2*x2, inverse = TRUE),
+                          lambda2 =  loglink( 0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y1 = rzipois(nn, lambda = lambda1, pstr0 = Ps01),
                           y2 = rzipois(nn, lambda = lambda2, pstr0 = Ps02))
 

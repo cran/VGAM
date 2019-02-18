@@ -1,8 +1,44 @@
-    *************************************************
-    *                                                *
-    *           1.0 SERIES NEWS                      *
-    *                                                *
-    **************************************************
+                CHANGES IN VGAM VERSION 1.1-0
+
+NEW FEATURES
+
+    o   New family functions: gentbinomial(dpr), gentpoisson(dpr),
+        genapoisson(dpr), genipoisson(dpr).
+    o   New functions: [dpr]genabinom(), [dpr]genibinom(), care.exp2().
+    o   Argument 'parallel' added to benini1(), gamma1(), maxwell(),
+        rayleigh() and topple().
+    o   Argument 'parallel = TRUE' for exponential() does not apply to the
+        intercept now.
+    o   New link function: loglogloglink().
+    o   New variable: rainbow.sky.
+    o   Some family functions now support 'type.fitted = "Qlinks"'
+        (quantile link functions in \pkg{VGAMextra}),
+        e.g., benini1(), gamma1(), exponential(), maxwell(), rayleigh(),
+        topple().
+    o   Tested okay on R 3.5.2.
+
+
+
+BUG FIXES and CHANGES
+
+    o   All link function names now end in "link", e.g.,
+        loglink() replaces loge(), logitlink() replaces logit().
+        Backward compatability holds for older link function names,
+        probably for quite a while.
+    o   gaussianff() reinstated but is effectively deprecated;
+        it calls uninormal() instead after a warning.
+    o   Documentation for lerch.Rd improved, as well as zeta()
+        (thanks to Jerry Lewis).
+    o   rrar.control(summary.HDEtest = FALSE) is now set.
+    o   anova.vglm() gives an error message if it operates on a model
+        with just a single factor as explanatory, when type = 2 or 3.
+    o   "summary.vglm" and "summary.vgam" prints out the names of
+        the linear/additive predictors by breaking the output into
+        lines that are not too long. 
+        Number of "Fisher scoring" iterations printed.
+    o   posbernoulli.tb(ridge.constant = 0.0001) now, it was
+        ridge.constant = 0.01 for a long time. The adjustment is now
+        multiplicative rather than additive.
 
 
 
@@ -407,14 +443,6 @@ BUG FIXES and CHANGES
         Ditto for vcovvlm() by vcov.vlm().
         Also model.matrix() and formula().
         Thanks to Michael Friendly and John Fox for help here.
-
-
-
-    *************************************************
-    *                                                *
-    *           0.9 SERIES NEWS                      *
-    *                                                *
-    **************************************************
 
 
 
@@ -1074,13 +1102,6 @@ BUG FIXES and CHANGES
 
 
 
-    **************************************************
-    *                                                *
-    *           0.8 SERIES NEWS                      *
-    *                                                *
-    **************************************************
-
-
                 CHANGES IN VGAM VERSION 0.8-7
 
 NEW FEATURES
@@ -1380,13 +1401,6 @@ BUG FIXES
     o   zapoisson() did not implement the elambda argument correctly.
     o   Tested ok on R 2.11.1.
 
-
-
-    **************************************************
-    *                                                *
-    *           0.7 SERIES NEWS                      *
-    *                                                *
-    **************************************************
 
 
                 CHANGES IN VGAM VERSION 0.7-10
@@ -1820,14 +1834,6 @@ CHANGES
 
 
 
-    **************************************************
-    *                                                *
-    *           0.6 SERIES NEWS                      *
-    *                                                *
-    **************************************************
-
-
-
         CHANGES IN VGAM VERSION 0.6-9
 
 
@@ -2110,14 +2116,6 @@ BUG FIXES
         a one column matrix) and the deviance has been decommissioned.
         Instead, the log-likelihood is computed. 
 
-
-
-
-    **************************************************
-    *                                                *
-    *           0.5 SERIES NEWS                      *
-    *                                                *
-    **************************************************
 
 
 

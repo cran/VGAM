@@ -83,8 +83,9 @@ rzibinom(n, size, prob, pstr0 = 0)
 }
 
 \seealso{
-    \code{\link{zibinomial}},
-    \code{\link[stats:Binomial]{dbinom}}.
+  \code{\link{zibinomial}},
+  \code{\link{rgentbinom}},
+  \code{\link[stats:Binomial]{dbinom}}.
 
 
 }

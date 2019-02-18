@@ -7,7 +7,7 @@
 
 }
 \usage{
-yip88(link = "loge", n.arg = NULL, imethod = 1)
+yip88(link = "loglink", n.arg = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -3,8 +3,42 @@
 %
 %
 %
+% 201901
+\alias{getarg}
+\alias{rainbow.sky}
+%\alias{loglink}
+%\alias{logneglink}
+%\alias{logofflink}
+%\alias{negidentitylink}
+%\alias{logitlink}
+%
+%\alias{logloglink}
+%\alias{clogloglink, }
+%\alias{reciprocallink}
+%\alias{negloglink}
+%
+%\alias{negreciprocallink}
+%\alias{rhobitlink}
+%\alias{fisherzlink}
+%\alias{multilogitlink}
+%
+%\alias{foldsqrtlink}
+%\alias{extlogitlink}
+%\alias{logclink}
+%\alias{cauchitlink}
+%
+%\alias{gordlink}
+%\alias{pordlink}
+%\alias{nbordlink}
+\alias{nbord2link}
+\alias{stieltjes}
+\alias{zeta.specials}
+%\alias{loglogloglink}
 %\alias{mills.ratio}
 %\alias{mills.ratio2}
+% 201810
+%\alias{seglines}
+%\alias{hdeffsev}
 % 201805
 \alias{fnumat2R}
 % 201802
@@ -432,6 +466,7 @@
 % \alias{cao.fit}
 \alias{car.all}
 \alias{care.exp}
+\alias{care.exp2}
 %
 \alias{concoef.Coef.rrvgam}
 \alias{concoef.Coef.qrrvglm}
@@ -785,7 +820,7 @@
 
 }
 %\usage{
-%uninormal(lmean = "identitylink", lsd = "loge", zero = NULL)
+%uninormal(lmean = "identitylink", lsd = "loglink", zero = NULL)
 %}
 %- maybe also 'usage' for other objects documented here.
 %\arguments{

@@ -1,12 +1,33 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 useDynLib(VGAM, .registration = TRUE)
 
-
+export(getarg)
+export(rainbow.sky)
+export(loglink, logneglink, logofflink, negidentitylink, logitlink)
+export(logloglink, clogloglink, reciprocallink, negloglink, probitlink)
+export(negreciprocallink, rhobitlink, fisherzlink, multilogitlink)
+export(foldsqrtlink, extlogitlink, logclink, cauchitlink)
+export(gordlink, pordlink, nbordlink, nbord2link)
+export(zeta.specials)
+export(stieltjes)
+export(loglogloglink)
+importFrom("graphics", "legend")
+export(hdeffsev, seglines)
+export(pgenapois)
+export(pgenipois)
+export(pgentpois)
+export(pgentbinom)
+export(dgenabinom, pgenabinom, rgenabinom)
+export(dgenibinom, pgenibinom, rgenibinom)
+export(dgenapois, rgenapois, genapoisson)
+export(dgenipois, rgenipois, genipoisson)
+export(dgentpois, rgentpois, gentpoisson)
+export(dgentbinom, rgentbinom, gentbinomial)
 export(bell, bellff, dbell, rbell)
 exportMethods(calibrate)
 export(fnumat2R)
@@ -469,7 +490,7 @@ dbetabinom,    pbetabinom,    rbetabinom,
 dbetabinom.ab, pbetabinom.ab, rbetabinom.ab,
 biplot.qrrvglm,
 dbort, rbort, borel.tanner,
-care.exp,
+care.exp, care.exp2,
 cauchy, cauchy1,
 concoef.rrvgam, concoef.Coef.rrvgam, concoef.Coef.qrrvglm, concoef.qrrvglm,
 cdf, cdf.lms.bcg, cdf.lms.bcn,
@@ -532,6 +553,7 @@ dfelix, felix,
 fittedvlm, fittedvsmooth.spline, foldsqrt,
 formulavlm, formulaNA.VGAM,
 garma,
+gaussianff,
 hypersecant, hypersecant01,
 hyperg,
 inv.binomial, InverseBrat, inverse.gaussianff,

@@ -98,6 +98,14 @@ wald.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
   be ignored or overwritten.
 
 
+
+This argument may be renamed to \code{as.glm} because
+the Wald statistics will be computed in the same way
+as \code{summary(glm())}.
+% 20190112.
+
+
+
 }
 \item{\dots}{
   Ignored for now.
@@ -125,6 +133,8 @@ wald.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
 
   None of the tests here are joint,
   hence the degrees of freedom is always unity.
+For a factor with more than 2 levels one can use
+\code{\link{anova.vglm}} to test for the significance of the factor.
   If \code{iterate = FALSE} then
   one retains the MLEs of the original fit for the values of
   the other coefficients, and replaces one coefficient at a
@@ -198,8 +208,10 @@ setting \code{wald0.arg = TRUE} in \code{\link{summaryvglm}}.
   \code{\link{score.stat}},
   \code{\link{summaryvglm}},
   \code{\link[stats]{summary.glm}},
+  \code{\link{anova.vglm}},
   \code{\link{vglm}},
-  \code{\link{hdeff}}.
+  \code{\link{hdeff}},
+  \code{\link{hdeffsev}}.
 
 
 

@@ -6,7 +6,7 @@
    Maximum likelihood estimation of the (2-parameter) F distribution.
 }
 \usage{
-fff(link = "loge", idf1 = NULL, idf2 = NULL, nsimEIM = 100,
+fff(link = "loglink", idf1 = NULL, idf2 = NULL, nsimEIM = 100,
     imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

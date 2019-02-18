@@ -8,7 +8,7 @@
 
 }
 \usage{
-seq2binomial(lprob1 = "logit", lprob2 = "logit",
+seq2binomial(lprob1 = "logitlink", lprob2 = "logitlink",
              iprob1 = NULL,    iprob2 = NULL,
              parallel = FALSE, zero = NULL)
 }
@@ -104,8 +104,8 @@ seq2binomial(lprob1 = "logit", lprob2 = "logit",
 \examples{
 sdata <- data.frame(mvector = round(rnorm(nn <- 100, m = 10, sd = 2)),
                     x2 = runif(nn))
-sdata <- transform(sdata, prob1 = logit(+2 - x2, inverse = TRUE),
-                          prob2 = logit(-2 + x2, inverse = TRUE))
+sdata <- transform(sdata, prob1 = logitlink(+2 - x2, inverse = TRUE),
+                          prob2 = logitlink(-2 + x2, inverse = TRUE))
 sdata <- transform(sdata, successes1 = rbinom(nn, size = mvector,    prob = prob1))
 sdata <- transform(sdata, successes2 = rbinom(nn, size = successes1, prob = prob2))
 sdata <- transform(sdata, y1 = successes1 / mvector)

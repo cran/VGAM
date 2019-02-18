@@ -8,7 +8,7 @@
 
 }
 \usage{
-gengamma.stacy(lscale = "loge", ld = "loge", lk = "loge",
+gengamma.stacy(lscale = "loglink", ld = "loglink", lk = "loglink",
                iscale = NULL, id = NULL, ik = NULL, imethod = 1,
                gscale.mux = exp((-4:4)/2), gshape1.d = exp((-5:5)/2),
                gshape2.k = exp((-5:5)/2), probs.y = 0.3, zero = c("d", "k"))

@@ -9,7 +9,7 @@
 
 }
 \usage{
-simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL,
+simplex(lmu = "logitlink", lsigma = "loglink", imu = NULL, isigma = NULL,
         imethod = 1, ishrinkage = 0.95, zero = "sigma")
 
 }
@@ -106,7 +106,7 @@ simplex(lmu = "logit", lsigma = "loge", imu = NULL, isigma = NULL,
 sdata <- data.frame(x2 = runif(nn <- 1000))
 sdata <- transform(sdata, eta1 = 1 + 2 * x2,
                           eta2 = 1 - 2 * x2)
-sdata <- transform(sdata, y = rsimplex(nn, mu = logit(eta1, inverse = TRUE),
+sdata <- transform(sdata, y = rsimplex(nn, mu = logitlink(eta1, inverse = TRUE),
                                        dispersion = exp(eta2)))
 (fit <- vglm(y ~ x2, simplex(zero = NULL), data = sdata, trace = TRUE))
 coef(fit, matrix = TRUE)

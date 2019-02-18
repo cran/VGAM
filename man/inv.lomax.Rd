@@ -7,7 +7,7 @@
   inverse Lomax distribution.
 }
 \usage{
-inv.lomax(lscale = "loge", lshape2.p = "loge", iscale = NULL,
+inv.lomax(lscale = "loglink", lshape2.p = "loglink", iscale = NULL,
     ishape2.p = NULL, imethod = 1, gscale = exp(-5:5),
     gshape2.p = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = "shape2.p")
 }

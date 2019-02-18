@@ -42,7 +42,7 @@ and their mortality measured.
 }
 \seealso{
   \code{\link{binomialff}},
-  \code{\link{probit}}.
+  \code{\link{probitlink}}.
 
 
 }
@@ -56,8 +56,8 @@ and their mortality measured.
 %}
 
 \examples{
-fit1 <- vglm(cbind(killed, exposed - killed) ~ logdose, binomialff(link = probit),
-             data = flourbeetle, trace = TRUE)
+fit1 <- vglm(cbind(killed, exposed - killed) ~ logdose,
+             binomialff(link = probitlink), flourbeetle, trace = TRUE)
 summary(fit1)
 }
 \keyword{datasets}

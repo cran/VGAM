@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -376,6 +376,8 @@ anova.vglm <-
 
   if (length(tl) == 0L)
     table <- table[1, , drop = FALSE]
+  if (1 + length(tl) != nrow(table))
+    stop("cannot apply dimnames to 'table'")
   dimnames(table) <-
     list(c("NULL", tl),
          c("Df", "Deviance", "Resid. Df", "Resid. Dev"))

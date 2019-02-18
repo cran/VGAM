@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -197,8 +197,8 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
 
  cardioid <- function(
-     lmu  = extlogit(min = 0, max = 2*pi),
-     lrho = extlogit(min = -0.5, max = 0.5),
+     lmu  = extlogitlink(min = 0, max = 2*pi),
+     lrho = extlogitlink(min = -0.5, max = 0.5),
      imu = NULL, irho = 0.3,
      nsimEIM = 100, zero = NULL) {
 
@@ -383,8 +383,8 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
 
 
- vonmises <- function(llocation = extlogit(min = 0, max = 2*pi),
-                      lscale  = "loge",
+ vonmises <- function(llocation = extlogitlink(min = 0, max = 2*pi),
+                      lscale  = "loglink",
                       ilocation = NULL, iscale  = NULL,
                       imethod = 1, zero = NULL) {
 

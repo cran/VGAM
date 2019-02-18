@@ -9,7 +9,7 @@
 
 }
 \usage{
-bistudentt(ldf = "loglog", lrho = "rhobit",
+bistudentt(ldf = "logloglink", lrho = "rhobitlink",
            idf = NULL, irho = NULL, imethod = 1,
            parallel = FALSE, zero = "rho")
 }

@@ -1,14 +1,16 @@
-\name{probit}
+\name{probitlink}
+\alias{probitlink}
 \alias{probit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Probit Link Function }
 \description{
   Computes the probit transformation, including its inverse and the
   first two derivatives.
+
 }
 \usage{
-probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-       short = TRUE, tag = FALSE)
+probitlink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -74,30 +76,30 @@ probit(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \seealso{
   \code{\link{Links}},
-  \code{\link{logit}},
-  \code{\link{cloglog}},
-  \code{\link{cauchit}},
+  \code{\link{logitlink}},
+  \code{\link{clogloglink}},
+  \code{\link{cauchitlink}},
   \code{\link[stats]{Normal}}.
 
 
 }
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
-probit(p)
-max(abs(probit(probit(p), inverse = TRUE) - p))  # Should be 0
+probitlink(p)
+max(abs(probitlink(probitlink(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-probit(p)  # Has NAs
-probit(p, bvalue = .Machine$double.eps)  # Has no NAs
+probitlink(p)  # Has NAs
+probitlink(p, bvalue = .Machine$double.eps)  # Has no NAs
 
 \dontrun{p <- seq(0.01, 0.99, by = 0.01); par(lwd = (mylwd <- 2))
-plot(p, logit(p), type = "l", col = "limegreen", ylab = "transformation",
+plot(p, logitlink(p), type = "l", col = "limegreen", ylab = "transformation",
      las = 1, main = "Some probability link functions")
-lines(p,  probit(p), col = "purple")
-lines(p, cloglog(p), col = "chocolate")
-lines(p, cauchit(p), col = "tan")
+lines(p,  probitlink(p), col = "purple")
+lines(p, clogloglink(p), col = "chocolate")
+lines(p, cauchitlink(p), col = "tan")
 abline(v = 0.5, h = 0, lty = "dashed")
-legend(0.1, 4.0, c("logit", "probit", "cloglog", "cauchit"),
+legend(0.1, 4, c("logitlink", "probitlink", "clogloglink", "cauchitlink"),
        col = c("limegreen", "purple", "chocolate", "tan"), lwd = mylwd)
 par(lwd = 1) }
 }

@@ -193,42 +193,48 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
   For parameters lying between 0 and 1 (e.g., probabilities):
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}},
-  \code{\link{cauchit}},
-  \code{\link{foldsqrt}},
-  \code{\link{logc}},
-  \code{\link{golf}},
-  \code{\link{polf}},
-  \code{\link{nbolf}}.
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}},
+  \code{\link{cauchitlink}},
+  \code{\link{foldsqrtlink}},
+  \code{\link{logclink}},
+  \code{\link{gordlink}},
+  \code{\link{pordlink}},
+  \code{\link{nbordlink}}.
 
 
+  
   For positive parameters (i.e., greater than 0):
-  \code{\link{loge}},
-  \code{\link{negloge}},
+  \code{\link{loglink}},
+  \code{\link{negloglink}},
   \code{\link{powerlink}}.
 
 
+  
   For parameters greater than 1:
-  \code{\link{loglog}}.
+  \code{\link{logloglink}},
+  \code{\link{loglogloglink}} (greater than \eqn{e}).
 
+  
 
   For parameters between \eqn{-1} and \eqn{1}:
-  \code{\link{fisherz}},
-  \code{\link{rhobit}}.
+  \code{\link{fisherzlink}},
+  \code{\link{rhobitlink}}.
 
+  
 
   For parameters between \eqn{A} and \eqn{B}:
-  \code{\link{extlogit}},
-  \code{\link{logoff}} (\eqn{B = \infty}{B = Inf}).
+  \code{\link{extlogitlink}},
+  \code{\link{logofflink}} (\eqn{B = \infty}{B = Inf}).
 
 
+  
   For unrestricted parameters (i.e., any value):
-  \code{\link{identity}},
-  \code{\link{negidentity}},
-  \code{\link{reciprocal}},
-  \code{\link{negreciprocal}}.
+  \code{\link{identitylink}},
+  \code{\link{negidentitylink}},
+  \code{\link{reciprocallink}},
+  \code{\link{negreciprocallink}}.
 
 
 % Other links:
@@ -255,8 +261,20 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
 
-  One day in the future, \emph{all} \pkg{VGAM} link functions
-  may be renamed to end in the characters \code{"link"}.
+  In \pkg{VGAM} \code{1.0-7} (January 2019)
+  all link function names were made to
+  end in the characters \code{"link"},
+  e.g.,
+  \code{\link{loglink}} replaces \code{\link{loge}},
+  \code{\link{logitlink}} replaces \code{\link{logit}}.
+  For this most of them were renamed.
+  Upward compatability holds for older link function names,
+  however, users should adopt the new names immediately.
+
+
+
+%  One day in the future, \emph{all} \pkg{VGAM} link functions
+%  may be renamed to end in the characters \code{"link"}.
 
 
 
@@ -278,21 +296,22 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 }
 \author{T. W. Yee}
 \note{
-  \pkg{VGAM} link functions are generally not compatible with other functions
-  outside the package.
+  \pkg{VGAM} link functions are generally not compatible with
+  other functions outside the package.
   In particular, they won't work with
   \code{\link[stats]{glm}} or any other package for fitting GAMs.
 
 
+  
   From October 2006 onwards,
   all \pkg{VGAM} family functions will only
   contain one default value for each link argument rather than giving a
   vector of choices.
   For example, rather than
-  \code{binomialff(link = c("logit", "probit", "cloglog",
-  "cauchit", "identitylink"), ...)}
+  \code{binomialff(link = c("logitlink", "probitlink", "clogloglink",
+  "cauchitlink", "identitylink"), ...)}
   it is now
-  \code{binomialff(link = "logit", ...)}.
+  \code{binomialff(link = "logitlink", ...)}.
   No checking will be done to see if the user's choice is reasonable.
   This means that the user can write his/her own \pkg{VGAM} link function
   and use it within any \pkg{VGAM} family function.
@@ -301,6 +320,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   link function, by either assigning the link argument the full name as
   a character string, or just the name itself.  See the examples below.
 
+  
 
   From August 2012 onwards, a major change in link functions occurred.
   Argument \code{esigma} (and the like such as \code{earg})
@@ -309,9 +329,9 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   The major change is that arguments such as \code{offset} that used to
   be passed in via those arguments can done directly through
   the link function. For example,
-  \code{gev(lshape = "logoff", eshape = list(offset = 0.5))}
+  \code{gev(lshape = "logofflink", eshape = list(offset = 0.5))}
   is replaced by
-  \code{gev(lshape = logoff(offset = 0.5))}.
+  \code{gev(lshape = logofflink(offset = 0.5))}.
   The \code{@misc} slot no longer
   has \code{link} and \code{earg} components, but two other
   components replace these. Functions such as
@@ -325,38 +345,47 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
 
+  From January 2019 onwards, all link function names ended
+  in \code{"link"}. See above for details.
 
+
+  
 
 }
 \examples{
-logit("a")
-logit("a", short = FALSE)
-logit("a", short = FALSE, tag = TRUE)
+logitlink("a")
+logitlink("a", short = FALSE)
+logitlink("a", short = FALSE, tag = TRUE)
 
-logoff(1:5, offset = 1)  # Same as log(1:5 + 1)
+logofflink(1:5, offset = 1)  # Same as log(1:5 + 1)
 powerlink(1:5, power = 2)  # Same as (1:5)^2
 
 \dontrun{ # This is old and no longer works:
-logoff(1:5, earg = list(offset = 1))
+logofflink(1:5, earg = list(offset = 1))
 powerlink(1:5, earg = list(power = 2))
 }
 
-fit1 <- vgam(agaaus ~ altitude, binomialff(link = "cloglog"), hunua)  # best
-fit2 <- vgam(agaaus ~ altitude, binomialff(link =  cloglog ), hunua)  # okay
+fit1 <- vgam(agaaus ~ altitude,
+             binomialff(link = "clogloglink"), hunua)  # best
+fit2 <- vgam(agaaus ~ altitude,
+             binomialff(link =  clogloglink ), hunua)  # okay
 
 \dontrun{
 # This no longer works since "clog" is not a valid VGAM link function:
-fit3 <- vgam(agaaus ~ altitude, binomialff(link = "clog"), hunua)  # not okay
+fit3 <- vgam(agaaus ~ altitude,
+             binomialff(link = "clog"), hunua)  # not okay
 
 
 # No matter what the link, the estimated var-cov matrix is the same
 y <- rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1))
-fit1 <- vglm(y ~ 1, betaR(lshape1 = "identitylink", lshape2 = "identitylink"),
+fit1 <- vglm(y ~ 1, betaR(lshape1 = "identitylink",
+                          lshape2 = "identitylink"),
              trace = TRUE, crit = "coef")
-fit2 <- vglm(y ~ 1, betaR(lshape1 = logoff(offset = 1.1),
-                          lshape2 = logoff(offset = 1.1)), trace = TRUE)
+fit2 <- vglm(y ~ 1, betaR(lshape1 = logofflink(offset = 1.1),
+                          lshape2 = logofflink(offset = 1.1)), trace=TRUE)
 vcov(fit1, untransform = TRUE)
-vcov(fit1, untransform = TRUE) - vcov(fit2, untransform = TRUE)  # Should be all 0s
+vcov(fit1, untransform = TRUE) -
+vcov(fit2, untransform = TRUE)  # Should be all 0s
 \dontrun{ # This is old:
 fit1@misc$earg  # Some 'special' parameters
 fit2@misc$earg  # Some 'special' parameters are here
@@ -366,10 +395,10 @@ fit2@misc$earg  # Some 'special' parameters are here
 par(mfrow = c(2, 2))
 p <- seq(0.05, 0.95, len = 200)  # A rather restricted range
 x <- seq(-4, 4, len = 200)
-plot(p, logit(p), type = "l", col = "blue")
-plot(x, logit(x, inverse = TRUE), type = "l", col = "blue")
-plot(p, logit(p, deriv = 1), type = "l", col = "blue")  # 1 / (p*(1-p))
-plot(p, logit(p, deriv = 2), type = "l", col = "blue")  # (2*p-1)/(p*(1-p))^2
+plot(p, logitlink(p), type = "l", col = "blue")
+plot(x, logitlink(x, inverse = TRUE), type = "l", col = "blue")
+plot(p, logitlink(p, deriv=1), type="l", col="blue") # 1 / (p*(1-p))
+plot(p, logitlink(p, deriv=2), type="l", col="blue") # (2*p-1)/(p*(1-p))^2
 }
 }
 \keyword{models}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -171,8 +171,8 @@ EIM.NB.speciald <-
   trigg.term <- if (intercept.only) {
      dnbinom(Y.mat, size = size, mu = mu) %*% trigamma(Y.mat + size)
   } else {
-     rowSums(dnbinom(Y.mat, size = size, mu = mu) *
-             trigamma(Y.mat + size))
+     .rowSums(dnbinom(Y.mat, size = size, mu = mu) * trigamma(Y.mat + size),
+              NROW(Y.mat), NCOL(Y.mat))
   }
   ned2l.dk2 <- trigamma(size) - trigg.term
   if (extra.bit)
@@ -211,17 +211,20 @@ negbinomial.initialize.yj <-
 
 
 
-negbinomial.control <- function(save.weights = TRUE, ...) {
+
+
+
+
+negbinomial.control <- function(save.weights = FALSE, ...) {
+
     list(save.weights = save.weights)
 }
 
 
 
-
-
  negbinomial <-
   function(
-           zero = -2,
+           zero = "size",  # Reinstated
            parallel = FALSE,
            deviance.arg = FALSE,
            type.fitted = c("mean", "quantiles"),
@@ -231,7 +234,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
            eps.trig = 1e-7,
            max.support = 4000,
            max.chunk.MB = 30,  # max.memory = Inf is allowed
-           lmu = "loge", lsize = "loge",
+           lmu = "loglink", lsize = "loglink",
            imethod = 1,
            imu = NULL,
            iprobs.y = NULL,  # 0.35,
@@ -292,7 +295,8 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
                "greater than 10, say")
 
 
-    if (is.logical( parallel ) && parallel  && length(zero))
+    if (is.logical( parallel ) && parallel &&
+        !(is.null(zero) || all(is.na(zero)) || zero == ""))
       stop("need to set 'zero = NULL' when parallel = TRUE")
 
 
@@ -391,7 +395,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
     assign("CQO.FastAlgorithm",
-          ( .lmunb == "loge") && ( .lsize == "loge"),
+          ( .lmunb == "loglink") && ( .lsize == "loglink"),
            envir = VGAMenv)
 
     if (any(function.name == c("cqo", "cao")) &&
@@ -466,9 +470,11 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
       if ( .lmunb == "nbcanlink") {
-        if (any(cond1 <- is.na(etastart[, c(TRUE, FALSE)])) ||
-            any(cond2 <- etastart[, c(TRUE, FALSE)] >= 0))
-          etastart[c(cond1) || c(cond2), c(TRUE, FALSE)] <- -0.1
+        etastart[is.na(etastart)] <- -0.1
+        for (j1 in 1:(M/M1)) {
+          cond1 <- etastart[, 2 * j1 - 1] >= 0
+          etastart[cond1, 2 * j1 - 1] <- -0.1
+        }
       }
 
 
@@ -549,7 +555,9 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
       ind2 <- FALSE
 
 
-    save.weights <- control$save.weights <- !all(ind2)
+
+
+    control$save.weights <- save.weights  # Latter assigned in @weights
 
 
     temp0303 <- c(rep_len( .lmunb , NOS),
@@ -694,7 +702,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
       warning("parameter 'size' has very large values relative ",
               "to 'mu'; ",
               "try fitting a quasi-Poisson ",
-              "model instead.")
+              "model instead (e.g., using glm()).")
     okay1 && overdispersion && okay0
   }, list( .lmunb = lmunb, .emunb = emunb,
            .lsize = lsize, .esize = esize,
@@ -818,7 +826,7 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
       eps.trig <- .eps.trig
-      Q.MAXS <- if ( .lsize == "loge")
+      Q.MAXS <- if ( .lsize == "loglink")
         pmax(10, ceiling(kmat[, jay] / sqrt(eps.trig))) else Inf
       Q.maxs <- pmin(Q.maxs, Q.MAXS)
 
@@ -866,6 +874,8 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
+
+
     for (jay in 1:NOS) {
       run.varcov <- 0
       ii.TF <- !ind2[, jay]  # Not assigned above
@@ -890,8 +900,8 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-    save.weights <- !all(ind2)
-
+    if (any(!ind2))
+      save.weights <- TRUE
 
 
     ned2l.dmunb2 <- 1 / munb - 1 / (munb + kmat)
@@ -983,7 +993,9 @@ negbinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
-polya.control <- function(save.weights = TRUE, ...) {
+
+polya.control <- function(save.weights = FALSE, ...) {
+
     list(save.weights = save.weights)
 }
 
@@ -998,7 +1010,7 @@ polya.control <- function(save.weights = TRUE, ...) {
            eps.trig = 1e-7,
            max.support = 4000,
            max.chunk.MB = 30,  # max.memory = Inf is allowed
-           lprob = "logit", lsize = "loge",
+           lprob = "logitlink", lsize = "loglink",
            imethod = 1,
            iprob = NULL,
            iprobs.y = NULL,
@@ -1202,6 +1214,8 @@ polya.control <- function(save.weights = TRUE, ...) {
   }, list( .lprob = lprob, .eprob = eprob,
            .lsize = lsize, .esize = esize))),
   last = eval(substitute(expression({
+    control$save.weights <- save.weights  # Latter assigned in @weights
+
     temp0303 <- c(rep_len( .lprob , NOS),
                   rep_len( .lsize , NOS))
     names(temp0303) <- c(param.names("prob", NOS, skip1 = TRUE),
@@ -1233,7 +1247,7 @@ polya.control <- function(save.weights = TRUE, ...) {
     pmat  <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
                        .lprob , earg = .eprob)
     temp300 <-         eta[, c(FALSE, TRUE), drop = FALSE]
-    if ( .lsize == "loge") {
+    if ( .lsize == "loglink") {
       bigval <- 68
       temp300[temp300 >  bigval] <-  bigval
       temp300[temp300 < -bigval] <- -bigval
@@ -1279,7 +1293,7 @@ polya.control <- function(save.weights = TRUE, ...) {
     okay1 <- all(is.finite(munb)) && all(0 < munb) &&
              all(is.finite(size)) && all(0 < size) &&
              all(is.finite(pmat)) && all(0 < pmat & pmat < 1)
-    overdispersion <- if (okay1) all(munb / size > smallval) else FALSE
+    overdispersion <- if (okay1) all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values; ",
               "try fitting a quasi-Poisson ",
@@ -1297,7 +1311,7 @@ polya.control <- function(save.weights = TRUE, ...) {
     pmat  <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
                        .lprob , earg = .eprob )
     temp3 <-           eta[, c(FALSE, TRUE), drop = FALSE]
-    if ( .lsize == "loge") {
+    if ( .lsize == "loglink") {
       bigval <- 68
       temp3[temp3 >  bigval] <-  bigval  # pmin() collapses matrices
       temp3[temp3 < -bigval] <- -bigval
@@ -1400,7 +1414,9 @@ polya.control <- function(save.weights = TRUE, ...) {
     wz[,     M1*(1:NOS)    ] <- wz[,      M1 * (1:NOS)] * dkayy.deta^2
 
 
-    save.weights <- !all(ind2)
+    if (any(!ind2))
+      save.weights <- TRUE
+
 
 
     ned2l.dprob2 <- kmat / ((1 - pmat) * pmat^2)
@@ -1433,12 +1449,12 @@ polya.control <- function(save.weights = TRUE, ...) {
 
 
 
-    if ( .lsize == "loge") {
+    if ( .lsize == "loglink") {
       bigval <- 68
       temp300[temp300 >  bigval] <-  bigval
       temp300[temp300 < -bigval] <- -bigval
     } else {
-      stop("can only handle the 'loge' link")
+      stop("can only handle the 'loglink' link")
     }
     kayy <-  eta2theta(temp300, .lsize , earg = .esize)
     devi <- 2 * (y * log(ifelse(y < 1, 1, y) / mu) +
@@ -1484,7 +1500,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
            eps.trig = 1e-7,
            max.support = 4000,
            max.chunk.MB = 30,  # max.memory = Inf is allowed
-           lsize = "loge", lprob = "logit",
+           lsize = "loglink", lprob = "logitlink",
            imethod = 1,
            iprob = NULL,
            iprobs.y = NULL,
@@ -1720,7 +1736,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     pmat  <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                        .lprob , earg = .eprob)
     temp300 <-         eta[, c(TRUE, FALSE), drop = FALSE]
-    if ( .lsize == "loge") {
+    if ( .lsize == "loglink") {
       bigval <- 68
       temp300[temp300 >  bigval] <-  bigval
       temp300[temp300 < -bigval] <- -bigval
@@ -1762,7 +1778,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     munb <- size * (1 / pmat - 1)
 
     smallval <- .mds.min  # .munb.div.size
-    overdispersion <- all(munb / size > smallval)
+    overdispersion <- all(smallval < munb / size)
     ans <- all(is.finite(munb)) && all(0 < munb) &&
            all(is.finite(size)) && all(0 < size) &&
            all(is.finite(pmat)) && all(0 < pmat & pmat < 1) &&
@@ -1784,7 +1800,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     pmat  <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                        .lprob , earg = .eprob)
     temp3 <-           eta[, c(TRUE, FALSE), drop = FALSE]
-    if ( .lsize == "loge") {
+    if ( .lsize == "loglink") {
       bigval <- 68
       temp3[temp3 >  bigval] <-  bigval  # pmin() collapses matrices
       temp3[temp3 < -bigval] <- -bigval
@@ -1921,12 +1937,12 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
 
-    if ( .lsize == "loge") {
+    if ( .lsize == "loglink") {
       bigval <- 68
       temp300[temp300 >  bigval] <-  bigval
       temp300[temp300 < -bigval] <- -bigval
     } else {
-      stop("can only handle the 'loge' link")
+      stop("can only handle the 'loglink' link")
     }
     kayy <-  eta2theta(temp300, .lsize , earg = .esize)
     devi <- 2 * (y * log(ifelse(y < 1, 1, y) / mu) +
@@ -1953,7 +1969,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
  negbinomial.size <- function(size = Inf,
-                              lmu = "loge",
+                              lmu = "loglink",
                               imu = NULL,
                               iprobs.y = 0.35,
                               imethod = 1,
@@ -2165,7 +2181,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     }
     munb <- eta2theta(eta, .lmu , earg = newemu )
     okay1 <- all(is.finite(munb)) && all(0 < munb) &&
-                                     all(0 < kmat )
+                                     all(0 < kmat)
     okay1
   }, list( .lmu = lmu, .emu = emu, .size = size ))),
 

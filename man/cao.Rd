@@ -223,8 +223,8 @@ cao(formula, family = stop("argument 'family' needs to be assigned"),
   1} specifies that the vector \eqn{x_1}{x_1}, defined for RR-VGLMs
   and QRR-VGLMs, is simply a 1 for an intercept.
   Here, the intercept in the model is absorbed into the functions.
-  A \code{\link{cloglog}} link may be preferable over a
-  \code{\link{logit}} link.
+  A \code{\link{clogloglink}} link may be preferable over a
+  \code{\link{logitlink}} link.
 
 
   With Poisson count data, the formula is

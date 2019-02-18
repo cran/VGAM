@@ -9,7 +9,7 @@
 
 }
 \usage{
-cauchy(llocation = "identitylink", lscale = "loge",
+cauchy(llocation = "identitylink", lscale = "loglink",
        imethod = 1, ilocation = NULL, iscale = NULL,
        gprobs.y = ppoints(19), gscale.mux = exp(-3:3), zero = "scale")
 cauchy1(scale.arg = 1, llocation = "identitylink", ilocation = NULL,
@@ -150,7 +150,7 @@ set.seed(123)
 cdata <- data.frame(x2 = runif(nn <- 1000))
 cdata <- transform(cdata, loc = exp(1 + 0.5 * x2), scale = exp(1))
 cdata <- transform(cdata, y2 = rcauchy(nn, loc, scale))
-fit2 <- vglm(y2 ~ x2, cauchy(lloc = "loge"), data = cdata, trace = TRUE)
+fit2 <- vglm(y2 ~ x2, cauchy(lloc = "loglink"), data = cdata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 head(fitted(fit2))  # Location estimates
 summary(fit2)

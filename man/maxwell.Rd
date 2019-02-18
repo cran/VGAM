@@ -8,16 +8,29 @@
 
 }
 \usage{
-maxwell(link = "loge", zero = NULL)
+maxwell(link = "loglink", zero = NULL, parallel = FALSE,
+        type.fitted = c("mean", "percentiles", "Qlink"),
+        percentiles = 50)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{link, zero}{
+  \item{link}{
   Parameter link function applied to \eqn{a},
   which is called the parameter \code{rate}.
   See \code{\link{Links}} for more choices and information;
   a log link is the default because the parameter is positive.
   More information is at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{zero, parallel}{
+  See \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{type.fitted, percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  Using \code{"Qlink"} is for quantile-links in \pkg{VGAMextra}.
 
 
   }

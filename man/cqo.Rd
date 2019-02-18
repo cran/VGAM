@@ -37,7 +37,7 @@ cqo(formula, family = stop("argument 'family' needs to be assigned"),
   Currently the following families are supported:
   \code{\link{poissonff}},
   \code{\link{binomialff}}
-      (\code{\link{logit}} and \code{\link{cloglog}} links available),
+      (\code{\link{logitlink}} and \code{\link{clogloglink}} links available),
   \code{\link{negbinomial}},
   \code{\link{gamma2}}.
   Sometimes special arguments are required for \code{cqo()}, e.g.,
@@ -656,7 +656,7 @@ mydata <- rcqo(n, p, S, fam = "binomial", hi.abundance = 4,
                eq.tol = TRUE, es.opt = TRUE, eq.max = TRUE)
 myform <- attr(mydata, "formula")
 set.seed(1234)
-b1et <- cqo(myform, binomialff(multiple.responses = TRUE, link = "cloglog"),
+b1et <- cqo(myform, binomialff(multiple.responses = TRUE, link = "clogloglink"),
             data = mydata)
 sort(deviance(b1et, history = TRUE))  # A history of all the iterations
 lvplot(b1et, y = TRUE, lcol = 1:S, pch = 1:S, pcol = 1:S, las = 1)

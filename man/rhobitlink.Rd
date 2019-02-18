@@ -1,14 +1,16 @@
-\name{rhobit}
+\name{rhobitlink}
+\alias{rhobitlink}
 \alias{rhobit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Rhobit Link Function }
 \description{
   Computes the rhobit link transformation, including its inverse and the
   first two derivatives.
+
 }
 \usage{
-rhobit(theta, bminvalue = NULL, bmaxvalue = NULL,
-       inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+rhobitlink(theta, bminvalue = NULL, bmaxvalue = NULL,
+           inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,7 +41,7 @@ rhobit(theta, bminvalue = NULL, bmaxvalue = NULL,
 
 }
 \details{
-  The \code{rhobit} link function is commonly used for parameters that
+  The \code{rhobitlink} link function is commonly used for parameters that
   lie between \eqn{-1} and \eqn{1}.  Numerical values of \code{theta}
   close to \eqn{-1} or \eqn{1} or out of range result in \code{Inf},
   \code{-Inf}, \code{NA} or \code{NaN}.
@@ -80,9 +82,9 @@ rhobit(theta, bminvalue = NULL, bmaxvalue = NULL,
   for modelling this parameter as a function of explanatory variables.
 
 
-  The link function \code{rhobit} is very similar to
-  \code{\link{fisherz}}, e.g., just twice the value of
-  \code{\link{fisherz}}.
+  The link function \code{rhobitlink} is very similar to
+  \code{\link{fisherzlink}}, e.g., just twice the value of
+  \code{\link{fisherzlink}}.
 
 
 }
@@ -96,16 +98,16 @@ rhobit(theta, bminvalue = NULL, bmaxvalue = NULL,
 
 \examples{
 theta <- seq(-0.99, 0.99, by = 0.01)
-y <- rhobit(theta)
+y <- rhobitlink(theta)
 \dontrun{
-plot(theta, y, type = "l", las = 1, ylab = "", main = "rhobit(theta)")
+plot(theta, y, type = "l", las = 1, ylab = "", main = "rhobitlink(theta)")
 abline(v = 0, h = 0, lty = 2)
 }
 
 x <- c(seq(-1.02, -0.98, by = 0.01), seq(0.97, 1.02, by = 0.01))
-rhobit(x)  # Has NAs
-rhobit(x, bminvalue = -1 + .Machine$double.eps,
-          bmaxvalue =  1 - .Machine$double.eps)  # Has no NAs
+rhobitlink(x)  # Has NAs
+rhobitlink(x, bminvalue = -1 + .Machine$double.eps,
+              bmaxvalue =  1 - .Machine$double.eps)  # Has no NAs
 }
 \keyword{math}
 \keyword{models}

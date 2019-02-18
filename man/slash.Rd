@@ -7,7 +7,7 @@
   slash distribution by maximum likelihood estimation.
 }
 \usage{
-slash(lmu = "identitylink", lsigma = "loge",
+slash(lmu = "identitylink", lsigma = "loglink",
       imu = NULL, isigma = NULL, gprobs.y = ppoints(8), nsimEIM = 250,
       zero = NULL, smallno = .Machine$double.eps*1000)
 }

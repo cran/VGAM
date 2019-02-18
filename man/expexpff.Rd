@@ -9,7 +9,7 @@
 
 }
 \usage{
-expexpff(lrate = "loge", lshape = "loge",
+expexpff(lrate = "loglink", lshape = "loglink",
          irate = NULL, ishape = 1.1, tolerance = 1.0e-6, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

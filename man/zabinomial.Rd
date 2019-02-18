@@ -10,10 +10,10 @@
 
 }
 \usage{
-zabinomial(lpobs0 = "logit", lprob = "logit",
+zabinomial(lpobs0 = "logitlink", lprob = "logitlink",
            type.fitted = c("mean", "prob", "pobs0"),
            ipobs0 = NULL, iprob = NULL, imethod = 1, zero = NULL)
-zabinomialff(lprob = "logit", lonempobs0 = "logit",
+zabinomialff(lprob = "logitlink", lonempobs0 = "logitlink",
              type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
              iprob = NULL, ionempobs0 = NULL, imethod = 1, zero = "onempobs0")
 }
@@ -155,8 +155,8 @@ zabinomialff(lprob = "logit", lonempobs0 = "logit",
 \examples{
 zdata <- data.frame(x2 = runif(nn <- 1000))
 zdata <- transform(zdata, size  = 10,
-                          prob  = logit(-2 + 3*x2, inverse = TRUE),
-                          pobs0 = logit(-1 + 2*x2, inverse = TRUE))
+                          prob  = logitlink(-2 + 3*x2, inverse = TRUE),
+                          pobs0 = logitlink(-1 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata,
                    y1 = rzabinom(nn, size = size, prob = prob, pobs0 = pobs0))
 with(zdata, table(y1))

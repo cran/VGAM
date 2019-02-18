@@ -8,7 +8,7 @@
 
 }
 \usage{
-mccullagh89(ltheta = "rhobit", lnu = logoff(offset = 0.5),
+mccullagh89(ltheta = "rhobitlink", lnu = logofflink(offset = 0.5),
             itheta = NULL, inu = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -98,8 +98,8 @@ all else fails.
 }
 \seealso{
   \code{\link{leipnik}},
-  \code{\link{rhobit}},
-  \code{\link{logoff}}.
+  \code{\link{rhobitlink}},
+  \code{\link{logofflink}}.
 
 
 }

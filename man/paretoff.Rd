@@ -11,8 +11,8 @@
 
 }
 \usage{
-paretoff(scale = NULL, lshape = "loge")
-truncpareto(lower, upper, lshape = "loge", ishape = NULL, imethod = 1)
+paretoff(scale = NULL, lshape = "loglink")
+truncpareto(lower, upper, lshape = "loglink", ishape = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

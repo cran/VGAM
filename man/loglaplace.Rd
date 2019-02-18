@@ -14,12 +14,12 @@
 
 }
 \usage{
-loglaplace1(tau = NULL, llocation = "loge",
+loglaplace1(tau = NULL, llocation = "loglink",
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)), Scale.arg = 1,
     ishrinkage = 0.95, parallel.locat = FALSE, digt = 4,
     idf.mu = 3, rep0 = 0.5, minquantile = 0, maxquantile = Inf,
     imethod = 1, zero = NULL)
-logitlaplace1(tau = NULL, llocation = "logit",
+logitlaplace1(tau = NULL, llocation = "logitlink",
     ilocation = NULL, kappa = sqrt(tau/(1 - tau)),
     Scale.arg = 1, ishrinkage = 0.95, parallel.locat = FALSE,
     digt = 4, idf.mu = 3, rep01 = 0.5, imethod = 1, zero = NULL)
@@ -38,9 +38,9 @@ logitlaplace1(tau = NULL, llocation = "logit",
   However, this argument should be left unchanged with
   count data because it restricts the quantiles to be positive.
   With proportions data  \code{llocation} can be assigned a link such as
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}},
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}},
   etc.
 
 
@@ -88,7 +88,7 @@ logitlaplace1(tau = NULL, llocation = "logit",
   are replaced by
   \code{min(rangey01[1]/2, rep01/w[y< = 0])} and
   \code{max((1 + rangey01[2])/2, 1-rep01/w[y >= 1])}
-  respectively; e.g., it avoids computing \code{logit(0)} or \code{logit(1)}.
+  respectively; e.g., it avoids computing \code{logitlink(0)} or \code{logitlink(1)}.
   Here, \code{rangey01} is the 2-vector \code{range(y[(y > 0) & (y < 1)])}
   of the response.
 
@@ -98,9 +98,9 @@ logitlaplace1(tau = NULL, llocation = "logit",
   Numeric.
   The minimum and maximum values possible in the quantiles.
   These argument are effectively ignored by default since
-  \code{\link{loge}} keeps all quantiles positive.
+  \code{\link{loglink}} keeps all quantiles positive.
   However, if
-  \code{llocation = logoff(offset = 1)}
+  \code{llocation = logofflink(offset = 1)}
   then it is possible that the fitted quantiles have value 0
   because \code{minquantile = 0}.
 
@@ -227,14 +227,14 @@ fitp@extra  # Contains useful information
 # Example 2: sample proportions
 set.seed(123); nnn <- 1000; ssize <- 100  # ssize = 1 will not work!
 adata <- data.frame(x2 = sort(runif(nnn)))
-mymu <- function(x) logit( 1.0 + 4*x, inv = TRUE)
+mymu <- function(x) logitlink( 1.0 + 4*x, inv = TRUE)
 adata <- transform(adata, ssize = ssize,
                     y2 = rbinom(nnn, size = ssize, prob = mymu(x2)) / ssize)
 
 mytau <- c(0.25, 0.50, 0.75)
 fit1 <- vglm(y2 ~ sm.bs(x2, df = 3), data = adata,
              weights = ssize, trace = TRUE,
-             logitlaplace1(tau = mytau, lloc = "cloglog", paral = TRUE))
+             logitlaplace1(tau = mytau, lloc = "clogloglink", paral = TRUE))
 
 \dontrun{
 # Check the solution.  Note: this may be like comparing apples with oranges.
@@ -259,7 +259,7 @@ for (ii in 1:length(mytau))
         qbinom(p = mytau[ii], prob = mymu(smallxgrid), size = ssize) / ssize)
 
 
-# Plot on the eta (== logit()/probit()/...) scale
+# Plot on the eta (== logitlink()/probit()/...) scale
 with(adata, matplot(x2, predict(fit1), add = FALSE, lwd = 3, type = "l"))
 # Add the 'truth'
 for (ii in 1:length(mytau)) {

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -73,8 +73,8 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
 
 
 
- betabinomial <- function(lmu = "logit",
-                          lrho = "logit",
+ betabinomial <- function(lmu = "logitlink",
+                          lrho = "logitlink",
                           irho = NULL,
                           imethod = 1, ishrinkage = 0.95,
                           nsimEIM = NULL, zero = "rho") {
@@ -495,8 +495,8 @@ rbinom2.or <-
 
 
 
- binom2.or <- function(lmu = "logit", lmu1 = lmu, lmu2 = lmu,
-                       loratio = "loge",
+ binom2.or <- function(lmu = "logitlink", lmu1 = lmu, lmu2 = lmu,
+                       loratio = "loglink",
                        imu1 = NULL, imu2 = NULL, ioratio = NULL,
                        zero = "oratio",
                        exchangeable = FALSE,
@@ -912,8 +912,8 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
 
 
  binom2.rho <-
-  function(lmu = "probit",  # added 20120817, order swapped 20151128
-           lrho = "rhobit",
+  function(lmu = "probitlink",  # added 20120817, order swapped 20151128
+           lrho = "rhobitlink",
            imu1 = NULL, imu2 = NULL, irho = NULL,
            imethod = 1,
            zero =  "rho",   # 3
@@ -931,10 +931,10 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
-  if (lmu != "probit")
-    warning("argument 'lmu' should be 'probit'")
+  if (lmu != "probitlink")
+    warning("argument 'lmu' should be 'probitlink'")
 
-    lmu12 <- "probit" # But emu may contain some arguments.
+    lmu12 <- "probitlink" # But emu may contain some arguments.
     emu12 <- emu # list()
 
 
@@ -1426,7 +1426,7 @@ my.dbinom <- function(x,
 
 
 
- size.binomial <- function(prob = 0.5, link = "loge") {
+ size.binomial <- function(prob = 0.5, link = "loglink") {
   if (any(prob <= 0 | prob >= 1))
     stop("some values of prob out of range")
 
@@ -1823,7 +1823,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  betabinomialff <-
-  function(lshape1 = "loge", lshape2 = "loge",
+  function(lshape1 = "loglink", lshape2 = "loglink",
            ishape1 = 1, ishape2 = NULL, imethod = 1,
            ishrinkage = 0.95, nsimEIM = NULL,
            zero = NULL) {
@@ -2105,7 +2105,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
- betageometric <- function(lprob = "logit", lshape = "loge",
+ betageometric <- function(lprob = "logitlink", lshape = "loglink",
                            iprob = NULL, ishape = 0.1,
                            moreSummation = c(2, 100),
                            tolerance = 1.0e-10,
@@ -2320,7 +2320,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
- seq2binomial <- function(lprob1 = "logit", lprob2 = "logit",
+ seq2binomial <- function(lprob1 = "logitlink", lprob2 = "logitlink",
                           iprob1 = NULL,    iprob2 = NULL,
                           parallel = FALSE,  # apply.parint = TRUE,
                           zero = NULL) {
@@ -2511,9 +2511,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
- zipebcom   <- function(lmu12 = "cloglog",
-                        lphi12 = "logit",
-                        loratio = "loge",
+ zipebcom   <- function(lmu12 = "clogloglink",
+                        lphi12 = "logitlink",
+                        loratio = "loglink",
                         imu12 = NULL, iphi12 = NULL,
                         ioratio = NULL,
                         zero = c("phi12", "oratio"),
@@ -2541,8 +2541,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
       addRidge > 0.5)
     stop("bad input for argument 'addRidge'")
 
-  if (lmu12 != "cloglog")
-    warning("argument 'lmu12' should be 'cloglog'")
+  if (lmu12 != "clogloglink")
+    warning("argument 'lmu12' should be 'clogloglink'")
 
 
   new("vglmff",
@@ -2747,7 +2747,7 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
  binom2.Rho <- function(rho = 0, imu1 = NULL, imu2 = NULL,
                         exchangeable = FALSE, nsimEIM = NULL) {
-  lmu12 <- "probit"
+  lmu12 <- "probitlink"
   emu12 <- list()
 
   if (is.Numeric(nsimEIM)) {
@@ -2941,8 +2941,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  binom2.rho.ss <-
-               function(lrho = "rhobit",
-                        lmu = "probit",  # added 20120817
+               function(lrho = "rhobitlink",
+                        lmu = "probitlink",  # added 20120817
                         imu1 = NULL, imu2 = NULL, irho = NULL,
                         imethod = 1,
                         zero = 3,
@@ -2959,10 +2959,10 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
-  if (lmu != "probit")
-    warning("argument 'lmu' should be 'probit'. Changing it.")
+  if (lmu != "probitlink")
+    warning("argument 'lmu' should be 'probitlink'. Changing it.")
 
-    lmu12 <- "probit"  # But emu may contain some arguments.
+    lmu12 <- "probitlink"  # But emu may contain some arguments.
     emu12 <- emu  # list()
 
 
@@ -3198,8 +3198,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
     pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
                      eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
     rhovec <-        eta2theta(eta[, 3], .l.rho , earg = .e.rho )
-    okay1 <- all(is.finite(pmargin)) && all( 0<pmargin & pmargin < 1) &&
-             all(is.finite(rhovec )) && all(-1<rhovec  & rhovec  < 1)
+    okay1 <- all(is.finite(pmargin)) && all( 0 < pmargin & pmargin < 1) &&
+             all(is.finite(rhovec )) && all(-1 < rhovec  & rhovec  < 1)
     okay1
   }, list( .lmu12 = lmu12, .l.rho = l.rho,
            .emu12 = emu12, .e.rho = e.rho ))),

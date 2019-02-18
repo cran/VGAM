@@ -7,7 +7,7 @@
   regression model to an ordered (preferably) factor response.
 }
 \usage{
-sratio(link = "logit", parallel = FALSE, reverse = FALSE,
+sratio(link = "logitlink", parallel = FALSE, reverse = FALSE,
        zero = NULL, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -59,7 +59,7 @@ sratio(link = "logit", parallel = FALSE, reverse = FALSE,
   we use \emph{continuation} ratios (see \code{\link{cratio}})
   and \emph{stopping} ratios.
   Continuation ratios deal with quantities such as
-  \code{logit(P[Y>j|Y>=j])}.
+  \code{logitlink(P[Y>j|Y>=j])}.
 
 
 }
@@ -135,10 +135,10 @@ The \pkg{VGAM} package for categorical data analysis.
   \code{\link{multinomial}},
   \code{\link{margeff}},
   \code{\link{pneumo}},
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}},
-  \code{\link{cauchit}}.
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}},
+  \code{\link{cauchitlink}}.
 
 
 }

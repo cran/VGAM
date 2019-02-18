@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -68,7 +68,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
                      zero = c("lambda", "sigma"),
                      llambda = "identitylink",
                      lmu = "identitylink",
-                     lsigma = "loge",
+                     lsigma = "loglink",
                      idf.mu = 4,
                      idf.sigma = 2,
                      ilambda = 1,
@@ -289,7 +289,7 @@ lms.yjn.control <- function(trace = TRUE, ...)
                      zero = c("lambda", "sigma"),
                      llambda = "identitylink",
                      lmu = "identitylink",
-                     lsigma = "loge",
+                     lsigma = "loglink",
                      idf.mu = 4,
                      idf.sigma = 2,
                      ilambda = 1,
@@ -770,7 +770,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
                       zero = c("lambda", "sigma"),
                       llambda = "identitylink",
                       lmu = "identitylink",
-                      lsigma = "loge",
+                      lsigma = "loglink",
                       idf.mu = 4,
                       idf.sigma = 2,
                       ilambda = 1.0,
@@ -1008,7 +1008,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
  lms.yjn <- function(percentiles = c(25, 50, 75),
                     zero = c("lambda", "sigma"),
                     llambda = "identitylink",
-                    lsigma = "loge",
+                    lsigma = "loglink",
                     idf.mu = 4,
                     idf.sigma = 2,
                     ilambda = 1.0,
@@ -1604,7 +1604,7 @@ amlpoisson.deviance <- function(mu, y, w, residuals = FALSE, eta,
 
 
  amlpoisson <- function(w.aml = 1, parallel = FALSE, imethod = 1,
-                        digw = 4, link = "loge") {
+                        digw = 4, link = "loglink") {
   if (!is.Numeric(w.aml, positive = TRUE))
     stop("'w.aml' must be a vector of positive values")
 
@@ -1765,7 +1765,7 @@ amlbinomial.deviance <- function(mu, y, w, residuals = FALSE,
 
 
  amlbinomial <- function(w.aml = 1, parallel = FALSE, digw = 4,
-                         link = "logit") {
+                         link = "logitlink") {
 
   if (!is.Numeric(w.aml, positive = TRUE))
     stop("'w.aml' must be a vector of positive values")
@@ -1932,7 +1932,7 @@ amlexponential.deviance <- function(mu, y, w, residuals = FALSE,
 
 
  amlexponential <- function(w.aml = 1, parallel = FALSE, imethod = 1,
-                            digw = 4, link = "loge") {
+                            digw = 4, link = "loglink") {
   if (!is.Numeric(w.aml, positive = TRUE))
     stop("'w.aml' must be a vector of positive values")
   if (!is.Numeric(imethod, length.arg = 1,
@@ -2433,7 +2433,7 @@ ploglap <- function(q, location.ald = 0, scale.ald = 1,
 
 rlogitlap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                       kappa = sqrt(tau/(1-tau))) {
-  logit(ralap(n = n, location = location.ald, scale = scale.ald,
+  logitlink(ralap(n = n, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa),
         inverse = TRUE)  # earg = earg
 }
@@ -2458,10 +2458,10 @@ dlogitlap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
   Alpha <- sqrt(2) * kappa / scale.ald
   Beta  <- sqrt(2) / (scale.ald * kappa)
-  Delta <- logit(location.ald, inverse = TRUE)  # earg = earg
+  Delta <- logitlink(location.ald, inverse = TRUE)  # earg = earg
 
   exponent <- ifelse(x >= Delta, -Alpha, Beta) *
-             (logit(x) - # earg = earg
+             (logitlink(x) - # earg = earg
               location.ald)
   logdensity <- log(Alpha) + log(Beta) - log(Alpha + Beta) -
                log(x) - log1p(-x) + exponent
@@ -2478,7 +2478,7 @@ qlogitlap <- function(p, location.ald = 0, scale.ald = 1,
                       tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
-  ans <- logit(qqq, inverse = TRUE)  # earg = earg
+  ans <- logitlink(qqq, inverse = TRUE)  # earg = earg
   ans[(p < 0) | (p > 1)] <- NaN
   ans[p == 0] <- 0
   ans[p == 1] <- 1
@@ -2498,7 +2498,7 @@ plogitlap <- function(q, location.ald = 0, scale.ald = 1,
   tau          <- rep_len(tau,          NN)
 
   indexTF <- (q > 0) & (q < 1)
-  qqq <- logit(q[indexTF])  # earg = earg
+  qqq <- logitlink(q[indexTF])  # earg = earg
   ans <- q
   ans[indexTF] <- palap(q = qqq, location = location.ald[indexTF],
                        scale = scale.ald[indexTF],
@@ -2516,7 +2516,7 @@ rprobitlap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 
-  probit(ralap(n = n, location = location.ald, scale = scale.ald,
+  probitlink(ralap(n = n, location = location.ald, scale = scale.ald,
                tau = tau, kappa = kappa),
                inverse = TRUE)
 }
@@ -2546,7 +2546,7 @@ dprobitlap <-
   indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   if (meth2) {
     dx.dy <- x
-    use.x <- probit(x[index1])  # earg = earg
+    use.x <- probitlink(x[index1])  # earg = earg
     logdensity[index1] <-
       dalap(x = use.x, location = location.ald[index1],
             scale = scale.ald[index1], tau = tau[index1],
@@ -2569,7 +2569,7 @@ dprobitlap <-
   logdensity[x >  1 & indexTF] <- -Inf
 
   if (meth2) {
-    dx.dy[index1] <- probit(x[index1],  # earg = earg,
+    dx.dy[index1] <- probitlink(x[index1],  # earg = earg,
                             inverse = TRUE,
                             deriv = 1)
     dx.dy[!index1] <- 0
@@ -2586,7 +2586,7 @@ qprobitlap <- function(p, location.ald = 0, scale.ald = 1,
                        tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
-  ans <- probit(qqq, inverse = TRUE)  # , earg = earg
+  ans <- probitlink(qqq, inverse = TRUE)  # , earg = earg
   ans[(p < 0) | (p > 1)] = NaN
   ans[p == 0] <- 0
   ans[p == 1] <- 1
@@ -2606,7 +2606,7 @@ pprobitlap <- function(q, location.ald = 0, scale.ald = 1,
   tau          <- rep_len(tau,          NN)
 
   indexTF <- (q > 0) & (q < 1)
-  qqq <- probit(q[indexTF])  # earg = earg
+  qqq <- probitlink(q[indexTF])  # earg = earg
   ans <- q
   ans[indexTF] <- palap(q = qqq, location = location.ald[indexTF],
                        scale = scale.ald[indexTF],
@@ -2622,8 +2622,8 @@ pprobitlap <- function(q, location.ald = 0, scale.ald = 1,
 
 rclogloglap <- function(n, location.ald = 0, scale.ald = 1, tau = 0.5,
                         kappa = sqrt(tau/(1-tau))) {
-  cloglog(ralap(n = n, location = location.ald, scale = scale.ald,
-                tau = tau, kappa = kappa),  # earg = earg,
+  clogloglink(ralap(n = n, location = location.ald, scale = scale.ald,
+                    tau = tau, kappa = kappa),  # earg = earg,
           inverse = TRUE)
 }
 
@@ -2651,7 +2651,7 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
   indexTF <- (scale.ald > 0) & (tau > 0) & (tau < 1) & (kappa > 0)  # &
   if (meth2) {
     dx.dy <- x
-    use.w <- cloglog(x[index1])  # earg = earg
+    use.w <- clogloglink(x[index1])  # earg = earg
     logdensity[index1] <-
       dalap(x = use.w, location = location.ald[index1],
             scale = scale.ald[index1],
@@ -2661,7 +2661,7 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
   } else {
     Alpha <- sqrt(2) * kappa / scale.ald
     Beta  <- sqrt(2) / (scale.ald * kappa)
-    Delta <- cloglog(location.ald, inverse = TRUE)
+    Delta <- clogloglink(location.ald, inverse = TRUE)
 
     exponent <- ifelse(x >= Delta, -(Alpha+1), Beta-1) *
         log(-log1p(-x)) +
@@ -2674,7 +2674,7 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
   logdensity[x >  1 & indexTF] <- -Inf
 
   if (meth2) {
-    dx.dy[index1] <- cloglog(x[index1],  # earg = earg,
+    dx.dy[index1] <- clogloglink(x[index1],  # earg = earg,
                              inverse = TRUE, deriv = 1)
     dx.dy[!index1] <- 0
     dx.dy[!indexTF] <- NaN
@@ -2691,7 +2691,7 @@ qclogloglap <- function(p, location.ald = 0, scale.ald = 1,
                        tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
-  ans <- cloglog(qqq, inverse = TRUE)  # , earg = earg
+  ans <- clogloglink(qqq, inverse = TRUE)  # , earg = earg
   ans[(p < 0) | (p > 1)] <- NaN
   ans[p == 0] <- 0
   ans[p == 1] <- 1
@@ -2712,7 +2712,7 @@ pclogloglap <- function(q, location.ald = 0, scale.ald = 1,
 
 
   indexTF <- (q > 0) & (q < 1)
-  qqq <- cloglog(q[indexTF])  # earg = earg
+  qqq <- clogloglink(q[indexTF])  # earg = earg
   ans <- q
   ans[indexTF] <- palap(q = qqq, location = location.ald[indexTF],
                        scale = scale.ald[indexTF],
@@ -2740,7 +2740,7 @@ alaplace2.control <- function(maxit = 100, ...) {
 
  alaplace2 <-
   function(tau = NULL,
-           llocation = "identitylink", lscale = "loge",
+           llocation = "identitylink", lscale = "loglink",
            ilocation = NULL,           iscale = NULL,
            kappa = sqrt(tau / (1-tau)),
            ishrinkage = 0.95,
@@ -3347,7 +3347,7 @@ alaplace1.control <- function(maxit = 100, ...) {
           locat.init <- matrix( .ilocat  , n, M, byrow = TRUE)
         }
 
-        if ( .llocat == "loge") locat.init <- abs(locat.init)
+        if ( .llocat == "loglink") locat.init <- abs(locat.init)
         etastart <-
           cbind(theta2eta(locat.init, .llocat , earg = .elocat ))
       }
@@ -3511,7 +3511,7 @@ alaplace3.control <- function(maxit = 100, ...) {
 
 
  alaplace3 <-
-  function(llocation = "identitylink", lscale = "loge", lkappa = "loge",
+  function(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
            ilocation = NULL,           iscale = NULL,   ikappa = 1.0,
            imethod = 1, zero = c("scale", "kappa")) {
 
@@ -3819,7 +3819,7 @@ rlaplace <- function(n, location = 0, scale = 1) {
 
 
 
- laplace <- function(llocation = "identitylink", lscale = "loge",
+ laplace <- function(llocation = "identitylink", lscale = "loglink",
                      ilocation = NULL, iscale = NULL,
                      imethod = 1,
                      zero = "scale") {
@@ -3981,7 +3981,7 @@ fff.control <- function(save.weights = TRUE, ...) {
 }
 
 
- fff <- function(link = "loge",
+ fff <- function(link = "loglink",
                  idf1 = NULL, idf2 = NULL, nsimEIM = 100,  # ncp = 0,
                  imethod = 1, zero = NULL) {
   link <- as.list(substitute(link))
@@ -4158,7 +4158,7 @@ fff.control <- function(save.weights = TRUE, ...) {
 
 
  hyperg <- function(N = NULL, D = NULL,
-                    lprob = "logit",
+                    lprob = "logitlink",
                     iprob = NULL) {
 
   inputN <- is.Numeric(N, positive = TRUE)
@@ -4320,6 +4320,7 @@ fff.control <- function(save.weights = TRUE, ...) {
 
 
 
+
 dbenini <- function(x, y0, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -4335,7 +4336,7 @@ dbenini <- function(x, y0, shape, log = FALSE) {
   xok <- (x > y0)
   tempxok <- log(x[xok]/y0[xok])
   logdensity[xok] <- log(2*shape[xok]) - shape[xok] * tempxok^2 +
-                    log(tempxok) - log(x[xok])
+                     log(tempxok) - log(x[xok])
   logdensity[is.infinite(x)] <- log(0)  # 20141209 KaiH
   if (log.arg) logdensity else exp(logdensity)
 }
@@ -4422,9 +4423,19 @@ rbenini <- function(n, y0, shape) {
 
 
 
- benini1 <- function(y0 = stop("argument 'y0' must be specified"),
-                     lshape = "loge",
-                     ishape = NULL, imethod = 1, zero = NULL) {
+
+
+ benini1 <-
+  function(y0 = stop("argument 'y0' must be specified"),
+           lshape = "loglink",
+           ishape = NULL, imethod = 1, zero = NULL,
+           parallel = FALSE,
+    type.fitted = c("percentiles", "Qlink"),
+    percentiles = 50) {
+
+  type.fitted <- match.arg(type.fitted,
+                           c("percentiles", "Qlink"))[1]
+
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -4435,8 +4446,11 @@ rbenini <- function(n, y0, shape) {
                   integer.valued = TRUE, positive = TRUE) ||
       imethod > 2)
     stop("argument 'imethod' must be 1 or 2")
-  if (!is.Numeric(y0, positive = TRUE))
+
+
+  if (!is.Numeric(y0, positive = TRUE, length.arg = 1))
    stop("bad input for argument 'y0'")
+
 
 
 
@@ -4448,18 +4462,32 @@ rbenini <- function(n, y0, shape) {
             "\n", "\n",
             "Median:     qbenini(p = 0.5, y0, shape)"),
   constraints = eval(substitute(expression({
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints, apply.int = FALSE)
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
                                 predictors.names = predictors.names,
                                 M1 = 1)
-  }), list( .zero = zero ))),
+  }), list( .parallel = parallel,
+            .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
          parameters.names = c("shape"),
+         parallel = .parallel ,
+         percentiles = .percentiles ,
+         type.fitted = .type.fitted ,
          lshape = .lshape ,
-         eshape = .eshape )
-  }, list( .eshape = eshape,
+         eshape = .eshape ,
+         zero = .zero )
+  }, list( .parallel = parallel,
+           .zero = zero,
+           .percentiles = percentiles ,
+           .type.fitted = type.fitted,
+           .eshape = eshape,
            .lshape = lshape))),
 
   initialize = eval(substitute(expression({
@@ -4478,16 +4506,19 @@ rbenini <- function(n, y0, shape) {
 
     ncoly <- ncol(y)
     M1 <- 1
-    extra$ncoly <- ncoly
-    extra$M1 <- M1
     M <- M1 * ncoly
+    extra$ncoly <- ncoly
+    extra$type.fitted <- .type.fitted
+    extra$colnames.y  <- colnames(y)
+    extra$percentiles <- .percentiles
+    extra$M1 <- M1
 
 
     mynames1 <- paste("shape", if (ncoly > 1) 1:ncoly else "", sep = "")
     predictors.names <-
       namesof(mynames1, .lshape , earg = .eshape , tag = FALSE)
 
-    extra$y0 <- matrix( .y0 , n, ncoly, byrow = TRUE)
+    extra$y0 <- .y0  # Of unit length; 20181205; to make things easy.
     if (any(y <= extra$y0))
       stop("some values of the response are > argument 'y0' values")
 
@@ -4507,13 +4538,54 @@ rbenini <- function(n, y0, shape) {
   }), list( .imethod = imethod,
             .ishape = ishape,
             .lshape = lshape, .eshape = eshape,
+            .percentiles = percentiles,
+            .type.fitted = type.fitted,
             .y0 = y0 ))),
+
+
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    type.fitted <-
+      if (length(extra$type.fitted)) {
+        extra$type.fitted
+      } else {
+        warning("cannot find 'type.fitted'. Returning the 'median'.")
+        extra$percentiles <- 50  # Overwrite whatever was there
+        "percentiles"
+      }
+    type.fitted <- match.arg(type.fitted,
+                             c("percentiles", "Qlink"))[1]
 
+    if (type.fitted == "Qlink") {
+      eta2theta(eta, link = "loglink")
+    } else {
+      shape <- eta2theta(eta, .lshape , earg = .eshape )
 
-    qbenini(p = 0.5, y0 = extra$y0, shape)
+      pcent <- extra$percentiles
+      perc.mat <- matrix(pcent, NROW(eta), length(pcent),
+                         byrow = TRUE) / 100
+      fv <-
+        switch(type.fitted,
+               "percentiles" = qbenini(perc.mat,
+                   y0 = extra$y0,
+                   shape = matrix(shape, nrow(perc.mat), ncol(perc.mat))))
+      if (type.fitted == "percentiles")
+        fv <- label.cols.y(fv, colnames.y = extra$colnames.y,
+                           NOS = NCOL(eta), percentiles = pcent,
+                           one.on.one = FALSE)
+      fv
+    }
   }, list( .lshape = lshape, .eshape = eshape ))),
+
+
+
+
+
+
+
+
+
+
   last = eval(substitute(expression({
     M1 <- extra$M1
     misc$link <- c(rep_len( .lshape , ncoly))
@@ -4524,11 +4596,6 @@ rbenini <- function(n, y0, shape) {
     for (ii in 1:ncoly) {
       misc$earg[[ii]] <- .eshape
     }
-
-    misc$M1 <- M1
-    misc$expected <- TRUE
-    misc$multipleResponses <- TRUE
-
 
     extra$y0 <- .y0
 
@@ -4871,7 +4938,7 @@ triangle.control <- function(stepsize = 0.33, maxit = 100, ...) {
 
  triangle <-
   function(lower = 0, upper = 1,
-           link = extlogit(min = 0, max = 1),
+           link = extlogitlink(min = 0, max = 1),
            itheta = NULL) {
 
 
@@ -5047,7 +5114,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
 
 
  loglaplace1 <- function(tau = NULL,
-                     llocation = "loge",
+                     llocation = "loglink",
                      ilocation = NULL,
                      kappa = sqrt(tau/(1-tau)),
                      Scale.arg = 1,
@@ -5118,7 +5185,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
 
   new("vglmff",
   blurb = c("One-parameter ",
-            if (llocat == "loge") "log-Laplace" else
+            if (llocat == "loglink") "log-Laplace" else
               c(llocat, "-Laplace"),
             " distribution\n\n",
             "Links:      ", mystring0, "\n", "\n",
@@ -5204,7 +5271,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
                              rep_len( .ilocat , M) else
                              rep_len(locat.init, M)
             locat.init <- matrix(locat.init, n, M, byrow = TRUE)
-            if ( .llocat == "loge")
+            if ( .llocat == "loglink")
                 locat.init <- abs(locat.init)
             etastart <-
                 cbind(theta2eta(locat.init, .llocat , earg = .elocat ))
@@ -5268,10 +5335,10 @@ loglaplace1.control <- function(maxit = 300, ...) {
     Scale.w <- matrix(extra$Scale, extra$n, extra$M, byrow = TRUE)
     ymat <- matrix(y, extra$n, extra$M)
 
-    if ( .llocat == "loge")
+    if ( .llocat == "loglink")
       ymat <- adjust0.loglaplace1(ymat = ymat, y = y, w = w, rep0 = .rep0)
 
-   w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logoff()
+   w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logofflink()
 
 
 
@@ -5307,7 +5374,7 @@ loglaplace1.control <- function(maxit = 300, ...) {
     kappamat <- matrix(extra$kappa, n, M, byrow = TRUE)
 
     ymat <- adjust0.loglaplace1(ymat = ymat, y = y, w = w, rep0= .rep0)
-    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
+    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logitlink()
     zedd <- abs(w.mat-locat.w) / Scale.w
     dl.dlocat <- ifelse(w.mat >= locat.w, kappamat, 1/kappamat) *
                    sqrt(2) * sign(w.mat-locat.w) / Scale.w
@@ -5343,7 +5410,7 @@ loglaplace2.control <- function(save.weights = TRUE, ...) {
 
 
  loglaplace2 <- function(tau = NULL,
-                         llocation = "loge", lscale = "loge",
+                         llocation = "loglink", lscale = "loglink",
                          ilocation = NULL, iscale = NULL,
                          kappa = sqrt(tau/(1-tau)),
                          ishrinkage = 0.95,
@@ -5401,8 +5468,8 @@ loglaplace2.control <- function(save.weights = TRUE, ...) {
   if (!is.logical(fittedMean) || length(fittedMean) != 1)
     stop("bad input for argument 'fittedMean'")
 
-  if (llocat != "loge")
-    stop("argument 'llocat' must be \"loge\"")
+  if (llocat != "loglink")
+    stop("argument 'llocat' must be \"loglink\"")
 
 
   new("vglmff",
@@ -5686,7 +5753,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
 
  logitlaplace1 <-
   function(tau = NULL,
-           llocation = "logit",
+           llocation = "logitlink",
            ilocation = NULL,
            kappa = sqrt(tau/(1-tau)),
            Scale.arg = 1,
@@ -5893,7 +5960,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
     ymat     <- matrix(y,           extra$n, extra$M)
     ymat <- adjust01.logitlaplace1(ymat = ymat, y = y, w = w,
                                    rep01 = .rep01)
-    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
+    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logitlink()
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -5932,7 +5999,7 @@ adjust01.logitlaplace1 <- function(ymat, y, w, rep01) {
     kappamat <- matrix(extra$kappa, n, M, byrow = TRUE)
     ymat <- adjust01.logitlaplace1(ymat = ymat, y = y, w = w,
                                    rep01 = .rep01 )
-    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logit()
+    w.mat <- theta2eta(ymat, .llocat , earg = .elocat )  # e.g., logitlink()
     zedd <- abs(w.mat - locat.w) / Scale.w
     dl.dlocat <- ifelse(w.mat >= locat.w, kappamat, 1/kappamat) *
                  sqrt(2) * sign(w.mat-locat.w) / Scale.w

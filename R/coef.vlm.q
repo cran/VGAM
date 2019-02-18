@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -119,9 +119,11 @@ Coef.vlm <- function(object, ...) {
 
 
   answer <-
-  if (length(tmp2 <- object@misc$link) &&
+  if (length(tmp2 <- object@misc$link) != 0 &&
     object@misc$intercept.only &&
-    trivial.constraints(object@constraints)) {
+   all(as.logical(trivial.constraints(object@constraints)))) {
+
+
 
 
 
@@ -145,15 +147,14 @@ Coef.vlm <- function(object, ...) {
 
 
 
-  if (length(tmp3 <- object@misc$parameter.names) &&
+  if (length(tmp3 <- object@misc$parameter.names) != 0 &&
     object@misc$intercept.only &&
-    trivial.constraints(object@constraints)) {
+    all(as.logical(trivial.constraints(object@constraints)))) {
     answer <- c(answer)
     if (length(tmp3) == object@misc$M &&
         is.character(tmp3))
       names(answer) <- tmp3
   }
-
 
   answer
 }

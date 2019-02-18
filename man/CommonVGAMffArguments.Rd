@@ -14,13 +14,13 @@
 
 }
 \usage{
-TypicalVGAMfamilyFunction(lsigma = "loge",
+TypicalVGAMfamilyFunction(lsigma = "loglink",
                           isigma = NULL,
                           link.list = list("(Default)" = "identitylink",
-                                           x2          = "loge",
-                                           x3          = "logoff",
-                                           x4          = "multilogit",
-                                           x5          = "multilogit"),
+                                           x2          = "loglink",
+                                           x3          = "logofflink",
+                                           x4          = "multilogitlink",
+                                           x5          = "multilogitlink"),
                           earg.list = list("(Default)" = list(),
                                            x2          = list(),
                                            x3          = list(offset = -1),
@@ -30,7 +30,7 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
                           parallel = TRUE,
                           ishrinkage = 0.95,
                           nointercept = NULL, imethod = 1,
-                          type.fitted = c("mean", "quantiles",
+                          type.fitted = c("mean", "quantiles", "Qlink",
                                           "pobs0", "pstr0", "onempstr0"),
                           percentiles = c(25, 50, 75),
                           probs.x = c(0.15, 0.85),
@@ -70,12 +70,12 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
   These two arguments allow many such links and extra arguments
   to be inputted more easily.
   One has something like
-  \code{link.list = list("(Default)" = "identitylink", x2 = "loge", x3 = "logoff")}
+  \code{link.list = list("(Default)" = "identitylink", x2 = "loglink", x3 = "logofflink")}
   and
   \code{earg.list = list("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
   Then any unnamed terms will have the default link with its
   corresponding extra argument.
-  Note: the \code{\link{multilogit}} link is also possible, and if so,
+  Note: the \code{\link{multilogitlink}} link is also possible, and if so,
   at least two instances of it are necessary.
   Then the last term is the baseline/reference group.
 
@@ -130,9 +130,11 @@ TypicalVGAMfamilyFunction(lsigma = "loge",
 
   }
   \item{parallel}{
-  A logical, or a simple formula specifying which terms have equal/unequal
+  A logical, or a simple formula specifying which terms have
+  equal/unequal
   coefficients.
-  The formula must be simple, i.e., additive with simple main effects terms.
+  The formula must be simple, i.e.,
+  additive with simple main effects terms.
   Interactions and nesting etc. are not handled.
   To handle complex formulas use the \code{constraints} argument
   (of \code{\link{vglm}} etc.);
@@ -186,7 +188,8 @@ except for \eqn{X_2}.
 
 
   \item{nsimEIM}{
-  Some \pkg{VGAM} family functions use simulation to obtain an approximate
+  Some \pkg{VGAM} family functions use simulation to obtain an
+  approximate
   expected information matrix (EIM).
   For those that do, the \code{nsimEIM} argument specifies the number
   of random variates used per observation; the mean of \code{nsimEIM}
@@ -232,6 +235,23 @@ except for \eqn{X_2}.
   The available choices depends on what kind of family function it is.
   Using the first few letters of the chosen choice is okay.
   See \code{\link{fittedvlm}} for more details.
+
+
+
+  The choice \code{"Qlink"} refers to quantile-links, which was
+  introduced in December 2018 in \pkg{VGAMextra} 0.0-2 for
+  several 1-parameter distributions.
+  Here, either the
+  \code{\link{loglink}} or
+  \code{\link{logitlink}} or
+  \code{\link{identitylink}} of the quantile is the link function
+  (and the choice is dependent on the support of the distribution),
+  and link functions end in \code{"Qlink"}.
+  A limited amount of support is provided for such links,
+  e.g.,
+  \code{fitted(fit)} are the fitted quantiles, which is the same as
+  \code{predict(fit, type = "response")}.
+  However, \code{fitted(fit, percentiles = 77)} will not work.
 
 
   }
@@ -320,6 +340,7 @@ except for \eqn{X_2}.
   intercept) consists of all 0 values.
 
 
+  
   Some \pkg{VGAM} family functions allow the \code{zero} argument to
   accept negative values; if so then its absolute value is recycled
   over each (usual) response. For example, \code{zero = -2} for the
@@ -330,6 +351,7 @@ except for \eqn{X_2}.
   a matrix of responses).
 
 
+  
   Suppose \code{zero = zerovec} where \code{zerovec} is a vector
   of negative values. If \eqn{G} is the usual \eqn{M} value for
   a univariate response then the actual values for argument \code{zero}
@@ -345,6 +367,7 @@ except for \eqn{X_2}.
   absolute values should be elements from the set \code{1:G}.
 
 
+  
   Note: \code{zero} may have positive and negative values,
   for example, setting \code{zero = c(-2, 3)} in the above example
   would be equivalent to \code{zero = c(2, 3, 5, 8, 11)}.
@@ -363,7 +386,8 @@ because there are 2 responses.
 Yee (2015) described \code{zero} for only numerical input.
 Allowing character input is particularly important when the
 number of parameters cannot be determined without having the actual
-data first. For example, with time series data, an ARMA(\eqn{p},\eqn{q}) process
+data first. For example, with time series data,
+an ARMA(\eqn{p},\eqn{q}) process
 might have parameters \eqn{\theta_1,\ldots,\theta_p} which should
 be intercept-only by default. Then specifying a numerical default
 value for \code{zero} would be too difficult (there are the drift
@@ -377,6 +401,7 @@ In the future, most \pkg{VGAM} family functions might be converted
   input, the variable \code{predictors.names}
   must be assigned correctly.
 
+  
 
 %Note that \code{zero} accepts wildcards (cf. the Linux operating system):
 %\code{"location*"} means that \emph{all} location parameters
@@ -384,6 +409,7 @@ In the future, most \pkg{VGAM} family functions might be converted
 % When programming a \pkg{VGAM} family function that allows character
 % input, the variables \code{parameters.names}
 % and \code{Q1}
+
 
 
   }
@@ -416,16 +442,19 @@ In the future, most \pkg{VGAM} family functions might be converted
 
   \item{multiple.responses}{
   Logical.
-  Some \pkg{VGAM} family functions allow a multivariate or vector response.
+  Some \pkg{VGAM} family functions allow a multivariate or
+  vector response.
   If so, then usually the response is a matrix with columns
   corresponding to the individual response variables.
   They are all fitted simultaneously.
   Arguments such as \code{parallel} may then be useful to allow
   for relationships between the regressions of each response variable.
-  If \code{multiple.responses = TRUE} then sometimes the response is interpreted
+  If \code{multiple.responses = TRUE} then sometimes the response
+  is interpreted
   differently, e.g., \code{\link{posbinomial}} chooses the first
   column of a matrix response as success and combines the other
-  columns as failure, but when \code{multiple.responses = TRUE} then each column
+  columns as failure, but when \code{multiple.responses = TRUE}
+  then each column
   of the response matrix is the number of successes and the
   \code{weights} argument is of the same dimension as the
   response and contains the number of trials.
@@ -476,6 +505,7 @@ In the future, most \pkg{VGAM} family functions might be converted
   The object is used by modelling functions such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
+  
 
 }
 \section{Warning }{
@@ -548,6 +578,16 @@ Bias reduction in exponential family nonlinear models.
 %\bold{4}, 1097--1112.
 
 
+
+Miranda-Soberanis, V. F. and Yee, T. W. (2018)
+New link functions for distribution--specific
+quantile regression based on vector generalized linear and
+additive models.
+Manuscript in preparation.
+
+
+
+
 }
 
 \seealso{
@@ -555,7 +595,8 @@ Bias reduction in exponential family nonlinear models.
   \code{\link{vglmff-class}},
   \code{\link{UtilitiesVGAM}},
   \code{\link{normal.vcm}},
-  \code{\link{multilogit}}.
+  \code{\link{multilogitlink}},
+  \pkg{VGAMextra}.
 
 
 }
@@ -579,7 +620,8 @@ cumulative(link = "probit", reverse = TRUE, parallel = TRUE)
 wdata <- data.frame(x2 = runif(nn <- 1000))
 wdata <- transform(wdata,
          y = rweibull(nn, shape = 2 + exp(1 + x2), scale = exp(-0.5)))
-fit <- vglm(y ~ x2, weibullR(lshape = logoff(offset = -2), zero = 2), data = wdata)
+fit <- vglm(y ~ x2, weibullR(lshape = logofflink(offset = -2), zero = 2),
+            data = wdata)
 coef(fit, mat = TRUE)
 
 # Example 3; multivariate (multiple) response
@@ -628,24 +670,24 @@ head(predict(fit2), 2)  # Uses white spaces
 # Example 7 ('zero' argument with character input)
 set.seed(123); n <- 1000
 ldata <- data.frame(x2 = runif(n))
-ldata <- transform(ldata, y1 = rlogis(n, loc = 0+5*x2, scale = exp(2)))
-ldata <- transform(ldata, y2 = rlogis(n, loc = 0+5*x2, scale = exp(0+1*x2)))
+ldata <- transform(ldata, y1 = rlogis(n, loc = 5*x2, scale = exp(2)))
+ldata <- transform(ldata, y2 = rlogis(n, loc = 5*x2, scale = exp(1*x2)))
 ldata <- transform(ldata, w1 = runif(n))
 ldata <- transform(ldata, w2 = runif(n))
 fit7 <- vglm(cbind(y1, y2) ~ x2,
-#            logistic(zero = "location1"),  # location1 is intercept-only
-#            logistic(zero = "location2"),
-#            logistic(zero = "location*"),  # Not okay... all is unmatched
-#            logistic(zero = "scale1"),
-#            logistic(zero = "scale2"),
-#            logistic(zero = "scale"),  # Both scale parameters are matched
-             logistic(zero = c("location", "scale2")),  # All but scale1
-#            logistic(zero = c("LOCAT", "scale2")),  # Only scale2 is matched
-#            logistic(zero = c("LOCAT")),  # Nothing is matched
-#            trace = TRUE,
-#            weights = cbind(w1, w2),
-             weights = w1,
-             data = ldata)
+#        logistic(zero = "location1"),  # location1 is intercept-only
+#        logistic(zero = "location2"),
+#        logistic(zero = "location*"),  # Not okay... all is unmatched
+#        logistic(zero = "scale1"),
+#        logistic(zero = "scale2"),
+#        logistic(zero = "scale"),  # Both scale parameters are matched
+         logistic(zero = c("location", "scale2")),  # All but scale1
+#        logistic(zero = c("LOCAT", "scale2")),  # Only scale2 is matched
+#        logistic(zero = c("LOCAT")),  # Nothing is matched
+#        trace = TRUE,
+#        weights = cbind(w1, w2),
+         weights = w1,
+         data = ldata)
 coef(fit7, matrix = TRUE)
 }
 

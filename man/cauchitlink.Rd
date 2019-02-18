@@ -1,4 +1,5 @@
-\name{cauchit}
+\name{cauchitlink}
+\alias{cauchitlink}
 \alias{cauchit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Cauchit Link Function }
@@ -8,8 +9,8 @@
 
 }
 \usage{
-cauchit(theta, bvalue = .Machine$double.eps,
-        inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+cauchitlink(theta, bvalue = .Machine$double.eps,
+            inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -79,10 +80,10 @@ cauchit(theta, bvalue = .Machine$double.eps,
 }
 
 \seealso{
-    \code{\link{logit}},
-    \code{\link{probit}},
-    \code{\link{cloglog}},
-    \code{\link{loge}},
+    \code{\link{logitlink}},
+    \code{\link{probitlink}},
+    \code{\link{clogloglink}},
+    \code{\link{loglink}},
     \code{\link{cauchy}},
     \code{\link{cauchy1}},
     \code{\link[stats]{Cauchy}}.
@@ -90,12 +91,12 @@ cauchit(theta, bvalue = .Machine$double.eps,
 
  }
 \examples{
-p <- seq(0.01, 0.99, by=0.01)
-cauchit(p)
-max(abs(cauchit(cauchit(p), inverse = TRUE) - p))  # Should be 0
+p <- seq(0.01, 0.99, by = 0.01)
+cauchitlink(p)
+max(abs(cauchitlink(cauchitlink(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by=0.01), seq(0.97, 1.02, by = 0.01))
-cauchit(p)  # Has no NAs
+cauchitlink(p)  # Has no NAs
 
 \dontrun{
 par(mfrow = c(2, 2), lwd = (mylwd <- 2))
@@ -103,35 +104,37 @@ y <- seq(-4, 4, length = 100)
 p <- seq(0.01, 0.99, by = 0.01)
 
 for (d in 0:1) {
-  matplot(p, cbind(logit(p, deriv = d), probit(p, deriv = d)),
+  matplot(p, cbind(logitlink(p, deriv = d), probitlink(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation",
           las = 1, main = if (d == 0) "Some probability link functions"
           else "First derivative")
-  lines(p,   logit(p, deriv = d), col = "limegreen")
-  lines(p,  probit(p, deriv = d), col = "purple")
-  lines(p, cloglog(p, deriv = d), col = "chocolate")
-  lines(p, cauchit(p, deriv = d), col = "tan")
+  lines(p,   logitlink(p, deriv = d), col = "limegreen")
+  lines(p,  probitlink(p, deriv = d), col = "purple")
+  lines(p, clogloglink(p, deriv = d), col = "chocolate")
+  lines(p, cauchitlink(p, deriv = d), col = "tan")
   if (d == 0) {
     abline(v = 0.5, h = 0, lty = "dashed")
-    legend(0, 4.5, c("logit", "probit", "cloglog", "cauchit"), lwd = mylwd,
-           col = c("limegreen","purple","chocolate", "tan"))
+    legend(0, 4.5, c("logitlink", "probitlink", "clogloglink",
+           "cauchitlink"), lwd = mylwd,
+           col = c("limegreen", "purple", "chocolate", "tan"))
   } else
     abline(v = 0.5, lty = "dashed")
 }
 
 for (d in 0) {
-  matplot(y, cbind( logit(y, deriv = d, inverse = TRUE),
-                   probit(y, deriv = d, inverse = TRUE)),
+  matplot(y, cbind( logitlink(y, deriv = d, inverse = TRUE),
+                   probitlink(y, deriv = d, inverse = TRUE)),
           type  = "n", col = "purple", xlab = "transformation", ylab = "p",
           main = if (d == 0) "Some inverse probability link functions"
           else "First derivative", las=1)
-  lines(y,   logit(y, deriv = d, inverse = TRUE), col = "limegreen")
-  lines(y,  probit(y, deriv = d, inverse = TRUE), col = "purple")
-  lines(y, cloglog(y, deriv = d, inverse = TRUE), col = "chocolate")
-  lines(y, cauchit(y, deriv = d, inverse = TRUE), col = "tan")
+  lines(y,   logitlink(y, deriv = d, inverse = TRUE), col = "limegreen")
+  lines(y,  probitlink(y, deriv = d, inverse = TRUE), col = "purple")
+  lines(y, clogloglink(y, deriv = d, inverse = TRUE), col = "chocolate")
+  lines(y, cauchitlink(y, deriv = d, inverse = TRUE), col = "tan")
   if (d == 0) {
       abline(h = 0.5, v = 0, lty = "dashed")
-      legend(-4, 1, c("logit", "probit", "cloglog", "cauchit"), lwd = mylwd,
+      legend(-4, 1, c("logitlink", "probitlink", "clogloglink",
+             "cauchitlink"), lwd = mylwd,
              col = c("limegreen", "purple", "chocolate", "tan"))
   }
 }
@@ -142,11 +145,11 @@ par(lwd = 1)
 \keyword{models}
 \keyword{regression}
 
-%plot(y, logit(y, inverse = TRUE), type = "l", col = "limegreen",
+%plot(y, logitlink(y, inverse = TRUE), type = "l", col = "limegreen",
 %     xlab = "transformation", ylab = "p",
 %     lwd=2, las=1, main = "Some inverse probability link functions")
-%lines(y, probit(y, inverse = TRUE), col = "purple", lwd=2)
-%lines(y, cloglog(y, inverse = TRUE), col = "chocolate", lwd=2)
+%lines(y, probitlink(y, inverse = TRUE), col = "purple", lwd=2)
+%lines(y, clogloglink(y, inverse = TRUE), col = "chocolate", lwd=2)
 %abline(h=0.5, v = 0, lty = "dashed")
 
 

@@ -1,4 +1,5 @@
-\name{fisherz}
+\name{fisherzlink}
+\alias{fisherzlink}
 \alias{fisherz}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Fisher's Z Link Function }
@@ -8,8 +9,8 @@
 
 }
 \usage{
-fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
-        inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+fisherzlink(theta, bminvalue = NULL, bmaxvalue = NULL,
+            inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -82,8 +83,8 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
   One way of overcoming this is to use, e.g., \code{bminvalue}.
 
 
-  The link function \code{\link{rhobit}} is very similar to \code{fisherz},
-  e.g., just twice the value of \code{fisherz}.
+  The link function \code{\link{rhobitlink}} is very similar to \code{fisherzlink},
+  e.g., just twice the value of \code{fisherzlink}.
   This link function may be renamed to \code{atanhlink} in the near future.
 
 
@@ -91,23 +92,27 @@ fisherz(theta, bminvalue = NULL, bmaxvalue = NULL,
 
 \seealso{
   \code{\link{Links}},
-  \code{\link{rhobit}},
-  \code{\link{atanh}},
-  \code{\link{logit}}.
+  \code{\link{rhobitlink}},
+  \code{\link{logitlink}}.
+
+
+
+% \code{\link{atanhlink}},
+
 
 
 }
 \examples{
 theta <- seq(-0.99, 0.99, by = 0.01)
-y <- fisherz(theta)
+y <- fisherzlink(theta)
 \dontrun{ plot(theta, y, type = "l", las = 1, ylab = "",
-   main = "fisherz(theta)", col = "blue")
+   main = "fisherzlink(theta)", col = "blue")
 abline(v = (-1):1, h = 0, lty = 2, col = "gray") }
 
 x <- c(seq(-1.02, -0.98, by = 0.01), seq(0.97, 1.02, by = 0.01))
-fisherz(x)  # Has NAs
-fisherz(x, bminvalue = -1 + .Machine$double.eps,
-           bmaxvalue =  1 - .Machine$double.eps)  # Has no NAs
+fisherzlink(x)  # Has NAs
+fisherzlink(x, bminvalue = -1 + .Machine$double.eps,
+               bmaxvalue =  1 - .Machine$double.eps)  # Has no NAs
 }
 \keyword{math}
 \keyword{models}

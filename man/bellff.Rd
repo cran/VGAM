@@ -8,7 +8,7 @@
 
 }
 \usage{
-bellff(lshape = "loge", zero = NULL, gshape = expm1(1.6 * ppoints(7)))
+bellff(lshape = "loglink", zero = NULL, gshape = expm1(1.6 * ppoints(7)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -79,7 +79,7 @@ bellff(lshape = "loge", zero = NULL, gshape = expm1(1.6 * ppoints(7)))
 
 }
 \examples{
-bdata <- data.frame(y = rbell(1000, shape = loge(0.5, inverse = TRUE)))
+bdata <- data.frame(y = rbell(1000, shape = loglink(0.5, inverse = TRUE)))
 bfit <- vglm(y ~ 1, bellff, data = bdata, trace = TRUE, crit = "coef")
 coef(bfit, matrix = TRUE)
 Coef(bfit)

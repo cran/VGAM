@@ -9,7 +9,7 @@
 }
 \usage{
 lms.bcn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
-        llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
+        llambda = "identitylink", lmu = "identitylink", lsigma = "loglink",
         idf.mu = 4, idf.sigma = 2, ilambda = 1,
         isigma = NULL, tol0 = 0.001)
 }
@@ -106,6 +106,7 @@ lms.bcn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
   by maximum likelihood or penalized maximum likelihood.
 
 
+  
 In more detail,
 the basic idea behind this method is that, for a fixed
 value of \eqn{x}, a Box-Cox transformation of the response \eqn{Y}
@@ -118,6 +119,7 @@ appropriate quantiles of the standard normal distribution
 are back-transformed onto the original scale to get the
 desired quantiles.
 The three parameters may vary as a smooth function of \eqn{x}.
+
 
 
 The Box-Cox power transformation here of the \eqn{Y}, given \eqn{x}, is
@@ -143,12 +145,14 @@ by inverting the Box-Cox power transformation at the
 normal distribution.
 
 
+
 Of the three functions, it is often a good idea to allow
 \eqn{\mu(x)}{mu(x)} to be more flexible because the functions
 \eqn{\lambda(x)}{lambda(x)} and \eqn{\sigma(x)}{sigma(x)}
 usually vary more smoothly with \eqn{x}. This is somewhat
 reflected in the default value for the argument \code{zero},
 viz. \code{zero = c(1, 3)}.
+
 
 
 }
@@ -188,7 +192,8 @@ Quantile regression via vector generalized additive models.
 \author{ Thomas W. Yee }
 \note{
   The response must be positive because the Box-Cox
-  transformation cannot handle negative values. The
+  transformation cannot handle negative values.
+  In theory, the
   LMS-Yeo-Johnson-normal method can handle both positive
   and negative values.
 
@@ -225,6 +230,7 @@ Quantile regression via vector generalized additive models.
   stopping the iterations by assigning \code{maxits} to be the iteration
   number corresponding to the highest likelihood value.
 
+  
 
   One trick is to fit a simple model and use it to provide
   initial values for a more complex model; see in the
@@ -268,6 +274,18 @@ head(fitted(fit))
 head(BMIdata)
 head(cdf(fit))  # Person 46 is probably overweight, given his age
 100 * colMeans(depvar(fit, drop = TRUE) < fitted(fit))  # Empirical proportions
+
+# Correct for "vgam" objects but not very elegant:
+fit@family@linkinv(eta = predict(fit, data.frame(age = 60)),
+   extra = list(percentiles = c(10, 50)))
+
+if (FALSE) {
+# These work for "vglm" objects:
+fit2 <- vglm(BMI ~ bs(age, df = 4), lms.bcn(zero = 3), data = BMIdata)
+predict(fit2, percentiles = c(10, 50),
+        newdata = data.frame(age = 60), type = "response")  # A specific age
+head(fitted(fit2, percentiles = c(10, 50)))  # Get different percentiles
+}
 
 # Convergence problems? Try this trick: fit0 is a simpler model used for fit1
 fit0 <- vgam(BMI ~ s(age, df = 4), lms.bcn(zero = c(1, 3)), data = BMIdata)

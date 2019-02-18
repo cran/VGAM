@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -21,7 +21,7 @@ hzeta.control <- function(save.weights = TRUE, ...) {
 
 
 
- hzeta <- function(lshape = "loglog", ishape = NULL, nsimEIM = 100) {
+ hzeta <- function(lshape = "logloglink", ishape = NULL, nsimEIM = 100) {
 
   stopifnot(ishape > 0)
   stopifnot(nsimEIM > 10,
@@ -368,7 +368,7 @@ pkumar <- function(q, shape1, shape2,
 
 
  kumar <-
-  function(lshape1 = "loge", lshape2 = "loge",
+  function(lshape1 = "loglink", lshape2 = "loglink",
            ishape1 = NULL,   ishape2 = NULL,
            gshape1 = exp(2*ppoints(5) - 1), tol12 = 1.0e-4, zero = NULL) {
   lshape1 <- as.list(substitute(lshape1))
@@ -627,7 +627,7 @@ riceff.control <- function(save.weights = TRUE, ...) {
 
 
 
- riceff <- function(lsigma = "loge", lvee = "loge",
+ riceff <- function(lsigma = "loglink", lvee = "loglink",
                     isigma = NULL, ivee = NULL,
                     nsimEIM = 100, zero = NULL, nowarning = FALSE) {
 
@@ -907,7 +907,7 @@ skellam.control <- function(save.weights = TRUE, ...) {
 }
 
 
- skellam <- function(lmu1 = "loge", lmu2 = "loge",
+ skellam <- function(lmu1 = "loglink", lmu2 = "loglink",
                      imu1 = NULL,   imu2 = NULL,
                      nsimEIM = 100, parallel = FALSE, zero = NULL) {
 
@@ -1222,7 +1222,7 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
 
 
 
- yulesimon <- function(lshape = "loge",
+ yulesimon <- function(lshape = "loglink",
                        ishape = NULL, nsimEIM = 200,
                        zero = NULL) {
 
@@ -1482,7 +1482,7 @@ rlind <- function(n, theta) {
 
 
 
- lindley <- function(link = "loge",
+ lindley <- function(link = "loglink",
                      itheta = NULL, zero = NULL) {
 
 
@@ -1791,7 +1791,7 @@ slash.control <- function(save.weights = TRUE, ...) {
 
 
 
- slash <- function(lmu = "identitylink", lsigma = "loge",
+ slash <- function(lmu = "identitylink", lsigma = "loglink",
                    imu = NULL, isigma = NULL,
                    gprobs.y = ppoints(8),
                    nsimEIM = 250, zero = NULL,
@@ -2043,7 +2043,7 @@ dnefghs <- function(x, tau, log = FALSE) {
 
 
 
- nefghs <- function(link = "logit",
+ nefghs <- function(link = "logitlink",
                     itau = NULL, imethod = 1) {
 
   if (length(itau) &&
@@ -2178,7 +2178,7 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
 
 
 
- logF <- function(lshape1 = "loge", lshape2 = "loge",
+ logF <- function(lshape1 = "loglink", lshape2 = "loglink",
                   ishape1 = NULL, ishape2 = 1,
                   imethod = 1) {
 
@@ -2592,7 +2592,7 @@ qbenf <- function(p, ndigits = 1,
 
  truncgeometric <-
   function(upper.limit = Inf,  # lower.limit = 1,  # Inclusive
-           link = "logit", expected = TRUE,
+           link = "logitlink", expected = TRUE,
            imethod = 1, iprob = NULL, zero = NULL) {
 
   if (is.finite(upper.limit) &&
@@ -2816,8 +2816,8 @@ qbenf <- function(p, ndigits = 1,
 
  betaff <-
   function(A = 0, B = 1,
-           lmu = "logit",
-           lphi = "loge",
+           lmu = "logitlink",
+           lphi = "loglink",
            imu = NULL, iphi = NULL,  # imethod = 1,
            gprobs.y = ppoints(8),  # (1:9)/10,
            gphi  = exp(-3:5)/4,
@@ -2867,7 +2867,9 @@ qbenf <- function(p, ndigits = 1,
             namesof("mu",  lmu,  earg = emu),  ", ",
             namesof("phi", lphi, earg = ephi)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -3071,7 +3073,7 @@ if (FALSE) {
 
 
  betaR <-
-  function(lshape1 = "loge", lshape2 = "loge",
+  function(lshape1 = "loglink", lshape2 = "loglink",
            i1 = NULL, i2 = NULL, trim = 0.05,
            A = 0, B = 1, parallel = FALSE, zero = NULL) {
 
@@ -3115,7 +3117,9 @@ if (FALSE) {
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
                            bool = .parallel ,
                            constraints, apply.int  = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -3256,7 +3260,7 @@ if (FALSE) {
 
 
  betaprime <-
-  function(lshape = "loge", ishape1 = 2, ishape2 = NULL, zero = NULL) {
+  function(lshape = "loglink", ishape1 = 2, ishape2 = NULL, zero = NULL) {
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -3272,7 +3276,9 @@ if (FALSE) {
             namesof("shape2", lshape, earg = eshape), "\n",
             "Mean:     shape1/(shape2-1) provided shape2>1"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 2)
   }), list( .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -3383,8 +3389,8 @@ if (FALSE) {
 
 
  zoabetaR <-
-  function(lshape1 = "loge", lshape2 = "loge",
-           lpobs0 = "logit", lpobs1 = "logit",
+  function(lshape1 = "loglink", lshape2 = "loglink",
+           lpobs0 = "logitlink", lpobs1 = "logitlink",
            ishape1 = NULL, ishape2 = NULL, trim = 0.05,
            type.fitted = c("mean", "pobs0", "pobs1", "beta.mean"),
            parallel.shape = FALSE,
@@ -3755,9 +3761,6 @@ if (FALSE) {
       eta2theta(eta[, c(FALSE, FALSE,
                         if (cind0[1]) FALSE else NULL, TRUE), drop = FALSE],
                 .lprobb1 , earg = .eprobb1 ) else 0.5
-
-
-
     okay1 <- all(is.finite(shape1)) && all(0 < shape1) &&
              all(is.finite(shape2)) && all(0 < shape2) &&
              all(is.finite(probb0)) && all(0 < probb0 & probb0 < 1) &&
@@ -3914,7 +3917,7 @@ rbell <- function(n, shape = 1) {
 
 
 
- bellff <- function(lshape = "loge", zero = NULL,
+ bellff <- function(lshape = "loglink", zero = NULL,
                     gshape = expm1(1.6 * ppoints(7))) {
 
   lshape <- as.list(substitute(lshape))  # orig
@@ -3925,13 +3928,16 @@ rbell <- function(n, shape = 1) {
 
   new("vglmff",
   blurb = c("Bell distribution\n",
-            "Pr(Y=y; shape) = shape^y * exp(-expm1(shape)) * bell(y) / y!,\n",
+            "Pr(Y=y; shape) = shape^y * exp(-expm1(shape)) * ",
+            "bell(y) / y!,\n",
             "y in 0(1)Inf, 0 < shape\n",
             "Link:    ",
             namesof("shape", lshape, earg = eshape), "\n",
             "Mean:    shape * exp(shape)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -4156,9 +4162,16 @@ rtopple <- function(n, shape) {
 
 
 
- topple <- function(lshape = "logit", zero = NULL,
-                    gshape = ppoints(8)) {
+ topple <-
+  function(lshape = "logitlink", zero = NULL,
+           gshape = ppoints(8),
+           parallel = FALSE,
+           type.fitted = c("mean", "percentiles", "Qlink"),
+           percentiles = 50) {
 
+
+  type.fitted <- match.arg(type.fitted,
+                           c("mean", "percentiles", "Qlink"))[1]
 
   lshape <- as.list(substitute(lshape))  # orig
   eshape <- link2list(lshape)
@@ -4173,8 +4186,14 @@ rtopple <- function(n, shape) {
             "Link:    ",
             namesof("shape", lshape, earg = eshape)),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M)
-  }), list( .zero = zero ))),
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           constraints, apply.int = FALSE)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
+  }), list( .parallel = parallel,
+            .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
@@ -4182,9 +4201,15 @@ rtopple <- function(n, shape) {
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = TRUE,
+         parallel = .parallel ,
          parameters.names = "shape",
+         percentiles = .percentiles ,
+         type.fitted = .type.fitted ,
          zero = .zero )
-  }, list( .zero = zero ))),
+  }, list( .parallel = parallel,
+           .percentiles = percentiles ,
+           .type.fitted = type.fitted,
+           .zero = zero ))),
 
 
   initialize = eval(substitute(expression({
@@ -4202,11 +4227,21 @@ rtopple <- function(n, shape) {
       stop("response must be in (0, 1)")
 
 
+
     ncoly <- ncol(y)
     M1 <- 1
-    extra$ncoly <- ncoly
-    extra$M1 <- M1
     M <- M1 * ncoly
+    extra$ncoly <- ncoly
+    extra$type.fitted <- .type.fitted
+    extra$colnames.y  <- colnames(y)
+    extra$percentiles <- .percentiles
+    extra$M1 <- M1
+
+
+    if ((NOS <- M / M1) > 1 && length( .percentiles ) > 1)
+      stop("can only have one response when 'percentiles' is a ",
+           "vector longer than unity")
+
 
 
     mynames1  <- param.names("shape", ncoly, skip1 = TRUE)
@@ -4230,12 +4265,44 @@ rtopple <- function(n, shape) {
       etastart <- theta2eta(shape.init, .lshape , earg = .eshape )
     }
   }), list( .lshape = lshape, .gshape = gshape,
-            .eshape = eshape ))),
+            .eshape = eshape,
+            .percentiles = percentiles,
+            .type.fitted = type.fitted
+           ))),
+
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    shape <- eta2theta(eta, .lshape , earg = .eshape )
-    1 - (gamma(1 + shape))^2 * 4^shape / gamma(2 * (1 + shape))
-  }, list( .lshape = lshape,
-           .eshape = eshape ))),
+    type.fitted <-
+      if (length(extra$type.fitted)) {
+        extra$type.fitted
+      } else {
+        warning("cannot find 'type.fitted'. Returning the 'mean'.")
+        "mean"
+      }
+    type.fitted <- match.arg(type.fitted,
+                             c("mean", "percentiles", "Qlink"))[1]
+
+    if (type.fitted == "Qlink") {
+      eta2theta(eta, link = "logitlink")
+    } else {
+      shape <- eta2theta(eta, .lshape , earg = .eshape )
+      pcent <- extra$percentiles
+      perc.mat <- matrix(pcent, NROW(eta), length(pcent),
+                         byrow = TRUE) / 100
+      fv <-
+        switch(type.fitted,
+               "mean" = 1 - (gamma(1 + shape))^2 *
+                            4^shape / gamma(2 * (1 + shape)),
+               "percentiles" = qtopple(perc.mat,
+                  shape = matrix(shape, nrow(perc.mat), ncol(perc.mat))))
+      if (type.fitted == "percentiles")
+        fv <- label.cols.y(fv, colnames.y = extra$colnames.y,
+                           NOS = NCOL(eta), percentiles = pcent,
+                           one.on.one = FALSE)
+      fv
+    }
+  }, list( .lshape = lshape, .eshape = eshape ))),
+
+
   last = eval(substitute(expression({
     misc$earg <- vector("list", M)
     names(misc$earg) <- mynames1
@@ -4427,7 +4494,7 @@ rzeta <- function(n, shape) {
 
 
  zetaff <-
-    function(lshape = "loge",
+    function(lshape = "loglink",
              ishape = NULL,
              gshape = exp(-3:4)/4,
              zero = NULL) {
@@ -4766,7 +4833,7 @@ rzipf <- function(n, N, shape) {
 
 
 
- zipf <- function(N = NULL, lshape = "loge", ishape = NULL) {
+ zipf <- function(N = NULL, lshape = "loglink", ishape = NULL) {
 
   if (length(N) &&
     (!is.Numeric(N, positive = TRUE,
@@ -4831,7 +4898,7 @@ rzipf <- function(n, N, shape) {
                     llfun = llfun,
                     y = y, N = extra$N, w = w)
       shape.init <- rep_len(shape.init, length(y))
-      if ( .lshape == "loglog") shape.init[shape.init <= 1] <- 1.2
+      if ( .lshape == "logloglink") shape.init[shape.init <= 1] <- 1.2
       etastart <- theta2eta(shape.init, .lshape , earg = .eshape )
     }
   }), list( .lshape = lshape, .eshape = eshape,
@@ -5019,7 +5086,7 @@ roizeta <- function(n, shape, pstr1 = 0) {
 
 
  oizeta <-
-  function(lpstr1 = "logit", lshape = "loge",
+  function(lpstr1 = "logitlink", lshape = "loglink",
            type.fitted = c("mean", "shape", "pobs1", "pstr1", "onempstr1"),
            ishape = NULL,
            gpstr1 = ppoints(8),
@@ -5432,7 +5499,7 @@ roizipf <- function(n, N, shape, pstr1 = 0) {
 
 
  oizipf <-
-  function(N = NULL, lpstr1 = "logit", lshape = "loge",
+  function(N = NULL, lpstr1 = "logitlink", lshape = "loglink",
            type.fitted = c("mean", "shape", "pobs1", "pstr1", "onempstr1"),
            ishape = NULL,
            gpstr1 = ppoints(8),
@@ -5785,7 +5852,7 @@ rotzeta <- function(n, shape) {
 
 
  otzeta <-
-    function(lshape = "loge",
+    function(lshape = "loglink",
              ishape = NULL,
              gshape = exp((-4:3)/4),
              zero = NULL) {
@@ -6023,7 +6090,7 @@ rdiffzeta <- function(n, shape, start = 1) {
 
 
 
- diffzeta <- function(start = 1, lshape = "loge", ishape = NULL) {
+ diffzeta <- function(start = 1, lshape = "loglink", ishape = NULL) {
 
 
   if (!is.Numeric(start, positive = TRUE,
@@ -6088,7 +6155,7 @@ rdiffzeta <- function(n, shape, start = 1) {
                     llfun = llfun,
                     y = y, start = extra$start, w = w)
       shape.init <- rep_len(shape.init, length(y))
-      if ( .lshape == "loglog") shape.init[shape.init <= 1] <- 1.2
+      if ( .lshape == "logloglink") shape.init[shape.init <= 1] <- 1.2
       etastart <- theta2eta(shape.init, .lshape , earg = .eshape )
     }
   }), list( .lshape = lshape,

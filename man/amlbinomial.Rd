@@ -8,7 +8,7 @@
 
 }
 \usage{
-amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
+amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -122,7 +122,7 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logit")
 set.seed(1234)
 sizevec <- rep(100, length = (nn <- 200))
 mydat <- data.frame(x = sort(runif(nn)))
-mydat <- transform(mydat, prob = logit(-0 + 2.5*x + x^2, inverse = TRUE))
+mydat <- transform(mydat, prob = logitlink(-0 + 2.5*x + x^2, inverse = TRUE))
 mydat <- transform(mydat, y = rbinom(nn, size = sizevec, prob = prob))
 (fit <- vgam(cbind(y, sizevec - y) ~ s(x, df = 3),
              amlbinomial(w = c(0.01, 0.2, 1, 5, 60)),

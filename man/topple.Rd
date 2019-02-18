@@ -8,12 +8,25 @@
 
 }
 \usage{
-topple(lshape = "logit", zero = NULL, gshape = ppoints(8))
+topple(lshape = "logitlink", zero = NULL, gshape = ppoints(8),
+       parallel = FALSE, type.fitted = c("mean", "percentiles", "Qlink"),
+       percentiles = 50)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lshape, zero, gshape}{
-  More information is at \code{\link{CommonVGAMffArguments}}.
+  \item{lshape, gshape}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{zero, parallel}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{type.fitted, percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  Using \code{"Qlink"} is for quantile-links in \pkg{VGAMextra}.
 
 
   }
@@ -25,7 +38,8 @@ topple(lshape = "logit", zero = NULL, gshape = ppoints(8))
         f(y;s) = 2 * s * (1 - y) * (y * (2-y))^(s-1)}
   for \eqn{0<y<1} and shape parameter \eqn{0<s<1}.
   The mean of \eqn{Y} is
-  \eqn{1 - 4^s [\Gamma(1+s)]^2 / \Gamma(2 + 2s)}{1 - 4^s [Gamma(1+s)]^2 / Gamma(2 + 2s)}
+  \eqn{1 - 4^s [\Gamma(1+s)]^2 / \Gamma(2 + 2s)}{1 - 4^s
+    [Gamma(1+s)]^2 / Gamma(2 + 2s)}
   (returned as the fitted values).
 
 
@@ -64,7 +78,7 @@ topple(lshape = "logit", zero = NULL, gshape = ppoints(8))
 
 }
 \examples{
-tdata <- data.frame(y = rtopple(1000, shape = logit(1, inverse = TRUE)))
+tdata <- data.frame(y = rtopple(1000, shape = logitlink(1, inverse = TRUE)))
 tfit <- vglm(y ~ 1, topple, data = tdata, trace = TRUE, crit = "coef")
 coef(tfit, matrix = TRUE)
 Coef(tfit)

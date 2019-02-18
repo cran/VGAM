@@ -7,7 +7,7 @@
 
 }
 \usage{
-tikuv(d, lmean = "identitylink", lsigma = "loge", isigma = NULL,
+tikuv(d, lmean = "identitylink", lsigma = "loglink", isigma = NULL,
       zero = "sigma")
 }
 %- maybe also 'usage' for other objects documented here.

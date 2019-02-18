@@ -1,15 +1,16 @@
-\name{logc}
+\name{logclink}
+\alias{logclink}
 \alias{logc}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Complementary-log Link Function }
 \description{
-  Computes the Complementary-log Transformation, Including its Inverse and the
-  First Two Derivatives.
+  Computes the Complementary-log Transformation, Including its Inverse
+  and the First Two Derivatives.
 
 }
 \usage{
-logc(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
-     short = TRUE, tag = FALSE)
+logclink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+         short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -76,18 +77,18 @@ logc(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 \seealso{
     \code{\link{Links}},
-    \code{\link{loge}},
-    \code{\link{cloglog}},
-    \code{\link{loglog}},
-    \code{\link{logoff}}.
+    \code{\link{loglink}},
+    \code{\link{clogloglink}},
+    \code{\link{logloglink}},
+    \code{\link{logofflink}}.
 
 
 }
 \examples{
 \dontrun{
-logc(seq(-0.2, 1.1, by = 0.1))  # Has NAs
+logclink(seq(-0.2, 1.1, by = 0.1))  # Has NAs
 }
-logc(seq(-0.2, 1.1, by = 0.1), bvalue = 1 - .Machine$double.eps)  # Has no NAs
+logclink(seq(-0.2,1.1,by=0.1),bvalue=1-.Machine$double.eps) # Has no NAs
 }
 \keyword{math}
 \keyword{models}

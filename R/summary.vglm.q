@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -276,7 +276,7 @@ show.summary.vglm <-
   digits <- if (is.null(digits)) options()$digits - 2 else digits
 
   cat("\nCall:\n", paste(deparse(x@call), sep = "\n", collapse = "\n"),
-      "\n\n", sep = "")
+      "\n", sep = "")
 
 
 
@@ -389,6 +389,7 @@ show.summary.vglm <-
 
 
 
+  if (M >= 5)
   cat("\nNumber of linear predictors: ", M, "\n")
 
   if (!is.null(x@misc$predictors.names) && !use.nopredictors) {
@@ -396,9 +397,13 @@ show.summary.vglm <-
       cat("\nName of linear predictor:",
           paste(x@misc$predictors.names, collapse = ", "), "\n")
     } else
-    if (M <= 5) {
+    if (M <= 12) {
+      LLL <- length(x@misc$predictors.names)
       cat("\nNames of linear predictors:",
-        paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
+          if (LLL == 1)
+            x@misc$predictors.names else
+        c(paste0(x@misc$predictors.names[-LLL], sep = ","),
+          x@misc$predictors.names[LLL]),  fill = TRUE)
     }
   }
 
@@ -449,18 +454,19 @@ show.summary.vglm <-
   }
 
 
-  cat("\nNumber of iterations:", format(trunc(x@iter)), "\n")
+  cat("\nNumber of Fisher scoring iterations:", format(trunc(x@iter)), "\n\n")
 
 
   if (!is.null(correl)) {
     ncol.X.vlm <- dim(correl)[2]
     if (ncol.X.vlm > 1) {
-      cat("\nCorrelation of Coefficients:\n")
+      cat("Correlation of Coefficients:\n\n")
       ll <- lower.tri(correl)
       correl[ll] <- format(round(correl[ll], digits))
       correl[!ll] <- ""
       print(correl[-1,  -ncol.X.vlm, drop = FALSE], quote = FALSE,
             digits = digits)
+      cat("\n")
     }
   }
 
@@ -473,14 +479,14 @@ show.summary.vglm <-
         length(hado <- x@post$hdeff)) {
     if (is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
         all(hado[, "deriv1"] > 0))
-      cat("\nNo Hauck-Donner effect found in any of the estimates\n")
+      cat("No Hauck-Donner effect found in any of the estimates\n\n")
     if (is.Numeric(hado[, "deriv1"]) &  # Could be all NAs
         any(hado[, "deriv1"] < 0)) {
-      cat("\nWarning: Hauck-Donner effect detected in the",
+      cat("Warning: Hauck-Donner effect detected in the",
             "following estimate(s):\n")
       cat(paste("'", rownames(hado)[hado[, "deriv1"] < 0],
                 "'", collapse = ", ", sep = ""))
-      cat("\n")
+      cat("\n\n")
     }
   }  # Situation == 2 && length(hado)
 

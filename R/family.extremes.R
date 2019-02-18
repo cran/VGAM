@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -197,8 +197,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
  gev <-
   function(
     llocation = "identitylink",
-    lscale = "loge",
-    lshape = logoff(offset = 0.5),
+    lscale = "loglink",
+    lshape = logofflink(offset = 0.5),
     percentiles = c(95, 99),
     ilocation = NULL,
     iscale = NULL, ishape = NULL,
@@ -515,13 +515,13 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
     shape <- eta2theta(eta[, c(FALSE, FALSE, TRUE)], .lshape , .eshape )
 
     okay1 <- all(is.finite(Locat)) &&
-             all(is.finite(sigma)) && all(sigma > 0) &&
+             all(is.finite(sigma)) && all(0 < sigma) &&
              all(is.finite(shape))
     okay.support <-
       if (okay1) {
         Boundary <- Locat - sigma / shape
-        all((shape == 0) ||
-            (shape <  0 & y < Boundary) ||
+        all((shape == 0) |  # was || 20190213
+            (shape <  0 & y < Boundary) |  # was || 20190213
             (shape >  0 & y > Boundary))
       } else {
         TRUE
@@ -687,8 +687,8 @@ dgammadx <- function(x, deriv.arg = 1) {
  gevff <-
   function(
     llocation = "identitylink",
-    lscale = "loge",
-    lshape = logoff(offset = 0.5),
+    lscale = "loglink",
+    lshape = logofflink(offset = 0.5),
     percentiles = c(95, 99),
     ilocation = NULL, iscale = NULL, ishape = NULL,
     imethod = 1,
@@ -820,7 +820,7 @@ dgammadx <- function(x, deriv.arg = 1) {
     if (!length(etastart)) {
 
 
-      if ( .lshape == "extlogit" && length( .ishape ) &&
+      if ( .lshape == "extlogitlink" && length( .ishape ) &&
          (any( .ishape <= eshape$min | .ishape >= eshape$max)))
         stop("bad input for argument 'eshape'")
 
@@ -1019,8 +1019,8 @@ dgammadx <- function(x, deriv.arg = 1) {
     okay.support <-
       if (okay1) {
         Boundary <- Locat - Scale / shape
-        all((shape == 0) ||
-            (shape <  0 & y < Boundary) ||
+        all((shape == 0) |   # 20190213 was ||
+            (shape <  0 & y < Boundary) |   # 20190213 was ||
             (shape >  0 & y > Boundary))
       } else {
         TRUE
@@ -1234,7 +1234,7 @@ pgumbel <- function(q, location = 0, scale = 1,
 
 
  gumbel <- function(llocation = "identitylink",
-                    lscale = "loge",
+                    lscale = "loglink",
                     iscale = NULL,
                     R = NA, percentiles = c(95, 99),
                     mpv = FALSE, zero = NULL) {
@@ -1636,8 +1636,8 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
 
 
  gpd <- function(threshold = 0,
-          lscale = "loge",
-          lshape = logoff(offset = 0.5),
+          lscale = "loglink",
+          lshape = logofflink(offset = 0.5),
           percentiles = c(90, 95),
           iscale = NULL,
           ishape = NULL,
@@ -1783,7 +1783,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
       init.sig[init.sig <=  0.0] <-  0.01  # sigma > 0
       init.xii[init.xii <= -0.5] <- -0.40  # FS works if xi > -0.5
       init.xii[init.xii >=  1.0] <-  0.90  # Mean/var exists if xi < 1/0.5
-      if ( .lshape == "loge")
+      if ( .lshape == "loglink")
         init.xii[init.xii <= 0.0] <-  0.05
 
 
@@ -1959,13 +1959,13 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
     Shape <- eta2theta(eta[, c(FALSE, TRUE)], .lshape , earg = .eshape )
     Locat <- extra$threshold
     okay1 <- all(is.finite(Locat)) &&
-             all(is.finite(sigma)) && all(sigma > 0) &&
+             all(is.finite(sigma)) && all(0 < sigma) &&
              all(is.finite(Shape))
     okay.support <-
       if (okay1) {
         Boundary <- Locat - sigma / Shape
         all((y > Locat) &
-            ((Shape <  0 & y < Boundary) ||
+            ((Shape <  0 & y < Boundary) |  # 20190213 was ||
              (Shape >= 0 & y < Inf)))
       } else {
         TRUE
@@ -2155,7 +2155,7 @@ setMethod("guplot", "vlm",
 
 
  gumbelff <- function(llocation = "identitylink",
-                      lscale = "loge",
+                      lscale = "loglink",
                       iscale = NULL,
                       R = NA, percentiles = c(95, 99),
                       zero = "scale",  # Was NULL in egumbel()
@@ -2371,7 +2371,7 @@ setMethod("guplot", "vlm",
     Scale <- eta2theta(eta[, c(FALSE, TRUE)], .lscale , .escale )
 
     okay1 <- all(is.finite(Locat)) &&
-             all(is.finite(Scale)) && all(Scale > 0)
+             all(is.finite(Scale)) && all(0 < Scale)
     okay1
   }, list( .llocat = llocat, .lscale = lscale,
            .elocat = elocat, .escale = escale ))),
@@ -2414,7 +2414,7 @@ setMethod("guplot", "vlm",
 
 
  cens.gumbel <- function(llocation = "identitylink",
-                         lscale = "loge",
+                         lscale = "loglink",
                          iscale = NULL,
                          mean = TRUE, percentiles = NULL,
                          zero = "scale") {
@@ -2728,8 +2728,8 @@ frechet.control <- function(save.weights = TRUE, ...) {
 
 
  frechet <- function(location = 0,
-                     lscale = "loge",
-                     lshape = logoff(offset = -2),
+                     lscale = "loglink",
+                     lshape = logofflink(offset = -2),
                      iscale = NULL, ishape = NULL,
                      nsimEIM = 250,
                      zero = NULL) {
@@ -2957,7 +2957,7 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
 }
 
 
- rec.normal <- function(lmean = "identitylink", lsd = "loge",
+ rec.normal <- function(lmean = "identitylink", lsd = "loglink",
                         imean = NULL, isd = NULL, imethod = 1,
                         zero = NULL) {
   lmean <- as.list(substitute(lmean))
@@ -3029,7 +3029,7 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
 
     if (!length(etastart)) {
         mean.init <- if (length( .imean )) rep_len( .imean , n) else {
-            if (.lmean == "loge") pmax(1/1024, min(y)) else min(y)}
+            if (.lmean == "loglink") pmax(1/1024, min(y)) else min(y)}
         sd.init <- if (length( .isdev)) rep_len( .isdev , n) else {
             if (.imethod == 1)  1*(sd(c(y))) else
             if (.imethod == 2)  5*(sd(c(y))) else
@@ -3117,7 +3117,7 @@ rec.exp1.control <- function(save.weights = TRUE, ...) {
 }
 
 
- rec.exp1 <- function(lrate = "loge", irate = NULL, imethod = 1) {
+ rec.exp1 <- function(lrate = "loglink", irate = NULL, imethod = 1) {
   lrate <- as.list(substitute(lrate))
   erate <- link2list(lrate)
   lrate <- attr(erate, "function.name")
@@ -3154,7 +3154,7 @@ rec.exp1.control <- function(save.weights = TRUE, ...) {
           init.rate <-
               if (.imethod == 1) length(y) / y[length(y), 1] else
               if (.imethod == 2) 1/mean(y) else 1/median(y)
-          if (.lrate == "loge") pmax(1/1024, init.rate) else
+          if (.lrate == "loglink") pmax(1/1024, init.rate) else
             init.rate
       }
 
@@ -3254,7 +3254,7 @@ dpois.points <- function(x, lambda, ostatistic,
 
  poisson.points <-
   function(ostatistic, dimension = 2,
-           link = "loge",
+           link = "loglink",
            idensity = NULL, imethod = 1) {
 
 

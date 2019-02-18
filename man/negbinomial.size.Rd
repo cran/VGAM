@@ -8,7 +8,7 @@
 
 }
 \usage{
-negbinomial.size(size = Inf, lmu = "loge", imu = NULL,
+negbinomial.size(size = Inf, lmu = "loglink", imu = NULL,
                  iprobs.y = 0.35, imethod = 1,
                  ishrinkage = 0.95, zero = NULL)
 }

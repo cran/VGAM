@@ -9,7 +9,7 @@
 
 }
 \usage{
-expexpff1(lrate = "loge", irate = NULL, ishape = 1)
+expexpff1(lrate = "loglink", irate = NULL, ishape = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

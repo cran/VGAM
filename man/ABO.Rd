@@ -8,7 +8,7 @@
 
 }
 \usage{
-ABO(link.pA = "logit", link.pB = "logit", ipA = NULL, ipB = NULL,
+ABO(link.pA = "logitlink", link.pB = "logitlink", ipA = NULL, ipB = NULL,
     ipO = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

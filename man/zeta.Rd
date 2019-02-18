@@ -4,7 +4,7 @@
 \title{ Riemann's Zeta Function }
 \description{
   Computes Riemann's zeta function and its first two derivatives.
-  Also can computes Hurwitz's zeta function.
+  Also can compute the Hurwitz zeta function.
 
 }
 \usage{
@@ -14,7 +14,8 @@ zeta(x, deriv = 0, shift = 1)
 \arguments{
   \item{x}{
    A complex-valued vector/matrix whose real values must be
-   \eqn{\geq 1}{>= 1}. Otherwise, if \code{x} may be real.
+   \eqn{\geq 1}{>= 1}. Otherwise, \code{x} may be real.
+   It is called \eqn{s} below.
    If \code{deriv} is 1 or 2 then \code{x} must be real and positive.
 
   }
@@ -45,13 +46,13 @@ zeta(x, deriv = 0, shift = 1)
 
   The (Riemann) formula used here for analytic continuation is
   \deqn{\zeta(s) = 2^s \pi^{s-1} \sin(\pi s/2) \Gamma(1-s) \zeta(1-s).}{%
-        zeta(s)  = 2^s * pi^(s-1) * sin(pi*s/2) * gamma(1-s) *  zeta(1-s).}
+      zeta(s)  = 2^s * pi^(s-1) * sin(pi*s/2) * gamma(1-s) *  zeta(1-s).}
   This is actually one of several formulas, but this one was discovered
   by Riemann himself and is called the \emph{functional equation}.
 
 
 
-  The Hurwitz zeta function for real \eqn{0 < s} is
+  The Hurwitz zeta function for real \eqn{s > 0} is
   \deqn{\sum_{n=0}^{\infty} 1 / (A + n)^s.}{%
          sum_{n=0}^Inf      1 / (A + n)^s.}
   where \eqn{0 < A} is known here as the \code{shift}.
@@ -155,7 +156,7 @@ zeta(2) - pi^2 / 6     # Should be 0
 zeta(4) - pi^4 / 90    # Should be 0
 zeta(6) - pi^6 / 945   # Should be 0
 zeta(8) - pi^8 / 9450  # Should be 0
-# zeta(0, deriv = 1) + 0.5 * log(2*pi)  # Should be 0
+zeta(0, deriv = 1) + 0.5 * log(2*pi)  # Should be 0
 }
 \keyword{math}
 

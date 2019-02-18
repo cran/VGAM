@@ -11,7 +11,7 @@
 }
 \usage{
 truncweibull(lower.limit = 1e-5,
-             lAlpha = "loge", lBetaa = "loge",
+             lAlpha = "loglink", lBetaa = "loglink",
              iAlpha = NULL,   iBetaa = NULL,
              nrfs = 1, probs.y = c(0.2, 0.5, 0.8),
              imethod = 1, zero = "Betaa")

@@ -9,7 +9,7 @@
 
 }
 \usage{
-gammahyperbola(ltheta = "loge", itheta = NULL, expected = FALSE)
+gammahyperbola(ltheta = "loglink", itheta = NULL, expected = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

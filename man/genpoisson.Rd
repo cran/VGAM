@@ -7,7 +7,7 @@
 
 }
 \usage{
-genpoisson(llambda = "rhobit", ltheta = "loge",
+genpoisson(llambda = "rhobitlink", ltheta = "loglink",
            ilambda = NULL, itheta = NULL,
            use.approx = TRUE, imethod = 1, ishrinkage = 0.95,
            zero = "lambda")
@@ -19,7 +19,7 @@ genpoisson(llambda = "rhobit", ltheta = "loge",
   See \code{\link{Links}} for more choices.
   The \eqn{\lambda} parameter lies at least within the interval
   \eqn{[-1,1]}; see below for more details,
-  and an alternative link is \code{\link{rhobit}}.
+  and an alternative link is \code{\link{rhobitlink}}.
   The \eqn{\theta} parameter is positive, therefore the default is the
   log link.
 
@@ -154,8 +154,8 @@ New York, USA: Marcel Dekker.
   \code{\link{poissonff}},
   \code{\link[stats:Poisson]{dpois}}.
   \code{\link{dgenpois}},
-  \code{\link{rhobit}},
-  \code{\link{extlogit}}.
+  \code{\link{rhobitlink}},
+  \code{\link{extlogitlink}}.
 
 
 }

@@ -14,7 +14,7 @@
 
 }
 \usage{
-zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
+zipebcom(lmu12 = "clogloglink", lphi12 = "logitlink", loratio = "loglink",
          imu12 = NULL, iphi12 = NULL, ioratio = NULL,
          zero = c("phi12", "oratio"), tol = 0.001, addRidge = 0.001)
 }
@@ -87,7 +87,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 }
 \details{
   This \pkg{VGAM} family function fits an exchangeable bivariate odds
-  ratio model (\code{\link{binom2.or}}) with a \code{\link{cloglog}} link.
+  ratio model (\code{\link{binom2.or}}) with a \code{\link{clogloglink}} link.
   The data are assumed to come from a zero-inflated Poisson (ZIP) distribution
   that has been converted to presence/absence.
   Explicitly, the default model is
@@ -114,12 +114,12 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
   Suppose a dataset1 comes from a Poisson distribution that has been
   converted to presence/absence, and that both marginal probabilities
   are the same (exchangeable).
-  Then \code{binom2.or("cloglog", exch=TRUE)} is appropriate.
+  Then \code{binom2.or("clogloglink", exch=TRUE)} is appropriate.
   Now suppose a dataset2 comes from a \emph{zero-inflated} Poisson
   distribution. The first linear/additive predictor of \code{zipebcom()}
   applied to dataset2
   is the same as that of
-  \code{binom2.or("cloglog", exch=TRUE)}
+  \code{binom2.or("clogloglink", exch=TRUE)}
   applied to dataset1.
   That is, the \eqn{\phi}{phi} has been taken care
   of by \code{zipebcom()} so that it is just like the simpler
@@ -134,7 +134,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 
 
   If \eqn{\phi=0}{phi=0} then \code{zipebcom()} should be equivalent to
-  \code{binom2.or("cloglog", exch=TRUE)}.
+  \code{binom2.or("clogloglink", exch=TRUE)}.
   Full details are given in Yee and Dirnbock (2009).
 
 
@@ -212,7 +212,7 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 \seealso{
   \code{\link{binom2.or}},
   \code{\link{zipoisson}},
-  \code{\link{cloglog}},
+  \code{\link{clogloglink}},
   \code{\link{CommonVGAMffArguments}}.
 
 
@@ -220,9 +220,9 @@ zipebcom(lmu12 = "cloglog", lphi12 = "logit", loratio = "loge",
 \examples{
 zdata <- data.frame(x2 = seq(0, 1, len = (nsites <- 2000)))
 zdata <- transform(zdata, eta1 =  -3 + 5 * x2,
-                         phi1 = logit(-1, inverse = TRUE),
+                         phi1 = logitlink(-1, inverse = TRUE),
                          oratio = exp(2))
-zdata <- transform(zdata, mu12 = cloglog(eta1, inverse = TRUE) * (1-phi1))
+zdata <- transform(zdata, mu12 = clogloglink(eta1, inverse = TRUE) * (1-phi1))
 tmat <-  with(zdata, rbinom2.or(nsites, mu1 = mu12, oratio = oratio, exch = TRUE))
 zdata <- transform(zdata, ybin1 = tmat[, 1], ybin2 = tmat[, 2])
 

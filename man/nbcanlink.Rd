@@ -125,7 +125,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 
   While theoretically nice, this function is not recommended
   in general since its value is always negative (linear predictors
-  ought to be unbounded in general). A \code{\link{loge}}
+  ought to be unbounded in general). A \code{\link{loglink}}
   link for argument \code{lmu} is recommended instead.
 
 

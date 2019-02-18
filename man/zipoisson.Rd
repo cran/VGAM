@@ -9,11 +9,11 @@
 
 }
 \usage{
-zipoisson(lpstr0 = "logit", llambda = "loge", type.fitted =
+zipoisson(lpstr0 = "logitlink", llambda = "loglink", type.fitted =
           c("mean", "lambda", "pobs0", "pstr0", "onempstr0"), ipstr0 =
           NULL, ilambda = NULL, gpstr0 = NULL, imethod = 1,
           ishrinkage = 0.95, probs.y = 0.35, parallel = FALSE, zero = NULL)
-zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
+zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
             c("mean", "lambda", "pobs0", "pstr0", "onempstr0"),
             ilambda = NULL, ionempstr0 = NULL, gonempstr0 = NULL,
             imethod = 1, ishrinkage = 0.95, probs.y = 0.35, zero =
@@ -241,6 +241,7 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
 }
 
 \seealso{
+  \code{\link{genapoisson}},
   \code{\link{zapoisson}},
   \code{\link{Zipois}},
   \code{\link{yip88}},
@@ -255,12 +256,12 @@ zipoissonff(llambda = "loge", lonempstr0 = "logit", type.fitted =
 \examples{
 # Example 1: simulated ZIP data
 zdata <- data.frame(x2 = runif(nn <- 1000))
-zdata <- transform(zdata, pstr01  = logit(-0.5 + 1*x2, inverse = TRUE),
-                          pstr02  = logit( 0.5 - 1*x2, inverse = TRUE),
-                          Ps01    = logit(-0.5       , inverse = TRUE),
-                          Ps02    = logit( 0.5       , inverse = TRUE),
-                          lambda1 =  loge(-0.5 + 2*x2, inverse = TRUE),
-                          lambda2 =  loge( 0.5 + 2*x2, inverse = TRUE))
+zdata <- transform(zdata, pstr01  = logitlink(-0.5 + 1*x2, inverse = TRUE),
+                          pstr02  = logitlink( 0.5 - 1*x2, inverse = TRUE),
+                          Ps01    = logitlink(-0.5       , inverse = TRUE),
+                          Ps02    = logitlink( 0.5       , inverse = TRUE),
+                          lambda1 =  loglink(-0.5 + 2*x2, inverse = TRUE),
+                          lambda2 =  loglink( 0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y1 = rzipois(nn, lambda = lambda1, pstr0 = Ps01),
                           y2 = rzipois(nn, lambda = lambda2, pstr0 = Ps02))
 
@@ -293,7 +294,7 @@ with(cholera, cbind(actual = wfreq,
 # Example 3: data from Angers and Biswas (2003)
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 abdata <- subset(abdata, w > 0)
-fit <- vglm(y ~ 1, zipoisson(lpstr0 = probit, ipstr0 = 0.8),
+fit <- vglm(y ~ 1, zipoisson(lpstr0 = probitlink, ipstr0 = 0.8),
             data = abdata, weight = w, trace = TRUE)
 fitted(fit, type = "pobs0")  # Estimate of P(Y = 0)
 coef(fit, matrix = TRUE)
@@ -303,7 +304,7 @@ with(abdata, weighted.mean(y, w))  # Compare this with fitted(fit)
 summary(fit)
 
 # Example 4: zero-deflated model for intercept-only data
-zdata <- transform(zdata, lambda3 = loge(0.0, inverse = TRUE))
+zdata <- transform(zdata, lambda3 = loglink(0.0, inverse = TRUE))
 zdata <- transform(zdata, deflat.limit = -1 / expm1(lambda3))  # Boundary
 # The 'pstr0' parameter is negative and in parameter space:
 zdata <- transform(zdata, usepstr0 = deflat.limit / 2)  # Not too near the boundary
@@ -332,17 +333,17 @@ summary(rrzip)
 \keyword{regression}
 
 %# head(zdata, 1); pfit1 <- predict(fit1, zdata[1, ]);
-%# lambda <- loge(pfit1[2], inverse = TRUE)
+%# lambda <- loglink(pfit1[2], inverse = TRUE)
 %# lambda <- (fitted(fit1, type = "mean") / fitted(fit1, type = "onempstr0"))[1]
 %# (prob.struc.0 <- pstr0 / dzipois(x = 0, lambda = lambda, pstr0 = pstr0))
 % fit@misc$pobs0  # Estimate of P(Y = 0)
 
 
-%zipoisson(lpstr0 = "logit", llambda = "loge",
+%zipoisson(lpstr0 = "logitlink", llambda = "loglink",
 %          type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
 %          ipstr0 = NULL, ilambda = NULL,
 %          imethod = 1, ishrinkage = 0.8, zero = NULL)
-%zipoissonff(llambda = "loge", lonempstr0 = "logit",
+%zipoissonff(llambda = "loglink", lonempstr0 = "logitlink",
 %            type.fitted = c("mean", "pobs0", "pstr0", "onempstr0"),
 %            ilambda = NULL,   ionempstr0 = NULL,
 %            imethod = 1, ishrinkage = 0.8, zero = "onempstr0")

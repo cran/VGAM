@@ -8,7 +8,7 @@
 }
 \usage{
 lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
-        llambda = "identitylink", lmu = "identitylink", lsigma = "loge",
+        llambda = "identitylink", lmu = "identitylink", lsigma = "loglink",
         idf.mu = 4, idf.sigma = 2, ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

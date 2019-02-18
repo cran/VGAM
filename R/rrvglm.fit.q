@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -114,6 +114,7 @@ rrvglm.fit <-
 
 
     special.matrix <- matrix(-34956.125, M, M)  # An unlikely used matrix
+
     just.testing <- cm.VGAM(special.matrix, x, rrcontrol$noRRR,
                             constraints)
 
@@ -121,12 +122,13 @@ rrvglm.fit <-
     if (is.null(just.testing)) findex <- NULL  # 20100617
     tc1 <- trivial.constraints(constraints)
 
-    if (!is.null(findex) && !control$Quadratic && sum(!tc1)) {
+    if (!is.null(findex) && !control$Quadratic && sum(!tc1)
+       ) {
       for (ii in names(tc1))
         if (!tc1[ii] && !any(ii == names(findex)[findex == 1]))
           warning("'", ii, "' is a non-trivial constraint that ",
                   "will be overwritten by reduced-rank regression")
-    }
+    }  # if
 
     if (!is.null(findex) && all(findex == 1))
       stop("use vglm(), not rrvglm()!")
@@ -138,9 +140,9 @@ rrvglm.fit <-
         if (findex[ii]) {
           names.colx1.index <- c(names.colx1.index, dx2[asx[[ii]]])
           colx1.index <- c(colx1.index, asx[[ii]])
-      }
+        }
       names(colx1.index) <- names.colx1.index
-    }
+    }  # if (sum(findex))
     rrcontrol$colx1.index <- control$colx1.index <-
                                      colx1.index  # Save it on the object
     colx2.index <- 1:ncol(x)

@@ -97,8 +97,8 @@ AR1EIM(x = NULL, var.arg = NULL, p.drift = NULL,
   In particular, for the AR(\eqn{1}) model, the vector of parameters
   to be estimated under the VGAM/VGLM approach is
 
-  \deqn{   \boldsymbol{\eta} = (\mu^{*}, loge(\sigma^2), rhobit(\rho)),}{
-           \eta = ( mu^*, loge(sigma^2), rhobit(rho)),
+  \deqn{   \boldsymbol{\eta} = (\mu^{*}, \log(\sigma^2), rhobit(\rho)),}{
+           \eta = ( mu^*, log(sigma^2), rhobit(rho)),
   }
   where \eqn{\sigma^2}{sigma^2} is the variance of the white noise
   and \eqn{mu^{*}}{mu^*} is the drift parameter

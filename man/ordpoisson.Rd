@@ -10,7 +10,7 @@
 \usage{
 ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
            Levels = NULL, init.mu = NULL, parallel = FALSE,
-           zero = NULL, link = "loge")
+           zero = NULL, link = "loglink")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

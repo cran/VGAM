@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -146,7 +146,7 @@ rexppois <- function(n, rate = 1, shape) {
 
 
 
- exppoisson <- function(lrate = "loge", lshape = "loge",
+ exppoisson <- function(lrate = "loglink", lshape = "loglink",
                         irate = 2.0, ishape = 1.1,
                         zero = NULL) {
 
@@ -457,7 +457,7 @@ genrayleigh.control <- function(save.weights = TRUE, ...) {
 
 
  genrayleigh <-
-  function(lscale = "loge", lshape = "loge",
+  function(lscale = "loglink", lshape = "loglink",
            iscale = NULL,   ishape = NULL,
            tol12 = 1.0e-05,
            nsimEIM = 300, zero = 2) {
@@ -736,7 +736,7 @@ expgeometric.control <- function(save.weights = TRUE, ...) {
 }
 
 
- expgeometric <- function(lscale = "loge", lshape = "logit",
+ expgeometric <- function(lscale = "loglink", lshape = "logitlink",
                           iscale = NULL,   ishape = NULL,
                           tol12 = 1.0e-05, zero = 1,
                           nsimEIM = 400) {
@@ -1033,7 +1033,7 @@ explogff.control <- function(save.weights = TRUE, ...) {
 }
 
 
- explogff <- function(lscale = "loge", lshape = "logit",
+ explogff <- function(lscale = "loglink", lshape = "logitlink",
                       iscale = NULL,   ishape = NULL,
                       tol12 = 1.0e-05, zero = 1,
                       nsimEIM = 400) {
@@ -1398,7 +1398,7 @@ rtpn <- function(n, location = 0, scale = 1, skewpar = 0.5) {
 
 
 
-tpnff <- function(llocation = "identitylink", lscale = "loge",
+tpnff <- function(llocation = "identitylink", lscale = "loglink",
                   pp = 0.5, method.init = 1,  zero = 2) {
   if (!is.Numeric(method.init, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -1466,7 +1466,7 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
         junk <- lm.wfit(x = x, y = c(y), w = c(w))
         scale.y.est <-
           sqrt( sum(c(w) * junk$resid^2) / junk$df.residual )
-        location.init <- if ( .llocat == "loge")
+        location.init <- if ( .llocat == "loglink")
           pmax(1/1024, y) else {
 
         if ( .method.init == 3) {
@@ -1540,8 +1540,7 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
     mypp    <- .pp
 
     zedd <- (y - mylocat) / myscale
- #   cond1 <-    (zedd <= 0)
-     cond2 <-    (zedd > 0)
+    cond2 <-    (zedd > 0)
 
     dl.dlocat        <-  zedd / (4 * mypp^2)  # cond1
     dl.dlocat[cond2] <- (zedd / (4 * (1 - mypp)^2))[cond2]
@@ -1551,8 +1550,6 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
     dl.dscale[cond2] <- (zedd^2 / (4 * (1 - mypp)^2))[cond2]
     dl.dscale        <- (-1 + dl.dscale) / myscale
 
-    #dl.dpp        <-  zedd^2 /  (4 * mypp^3)
-    #dl.dpp[cond2] <- -zedd^2 /  (4 * (1 - mypp)^3)[cond2]
 
     dlocat.deta <- dtheta.deta(mylocat, .llocat, earg = .elocat)
     dscale.deta <- dtheta.deta(myscale, .lscale, earg = .escale)
@@ -1584,7 +1581,7 @@ tpnff <- function(llocation = "identitylink", lscale = "loge",
 
 
 tpnff3 <- function(llocation = "identitylink",
-                    lscale   = "loge",
+                    lscale   = "loglink",
                     lskewpar = "identitylink",
                     method.init = 1,  zero = 2)
 {
@@ -1659,7 +1656,7 @@ tpnff3 <- function(llocation = "identitylink",
     if (!length(etastart)) {
       junk = lm.wfit(x = x, y = c(y), w = c(w))
       scale.y.est <- sqrt(sum(c(w) * junk$resid^2) / junk$df.residual)
-      location.init <- if ( .llocat == "loge") pmax(1/1024, y) else {
+      location.init <- if ( .llocat == "loglink") pmax(1/1024, y) else {
         if ( .method.init == 3) {
           rep_len(weighted.mean(y, w), n)
         } else if ( .method.init == 2) {
@@ -1740,7 +1737,7 @@ tpnff3 <- function(llocation = "identitylink",
 
 
     zedd <- (y - mylocat) / myscale
-   cond2 <-    (zedd > 0)
+    cond2 <-    (zedd > 0)
 
     dl.dlocat        <-  zedd / (4 * myskew^2)  # cond1
     dl.dlocat[cond2] <- (zedd / (4 * (1 - myskew)^2))[cond2]

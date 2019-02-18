@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -181,8 +181,8 @@ charfun.clo.cdf <-
   all.links <- linkfun(Object)
   parlink <- all.links[1]  # All the same, choose the first
   canon.link <- switch(vfam,
-                       binomialff = all(all.links == "logit"),
-                       poissonff  = all(all.links == "loge"))
+                       binomialff = all(all.links == "logitlink"),
+                       poissonff  = all(all.links == "loglink"))
   if (!canon.link) stop("model does not use the canonical link")  # else
   A.mat <- Coefs@A
   B1.mat <- Coefs@B1
@@ -263,16 +263,6 @@ if (FALSE) {
     }
     prb
 }  # charfun.clo.cdf
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -465,8 +455,8 @@ dzwald.qrrvglm <-
     stop("only 'poissonff' and 'binomialff' families allowed")
 
   canon.link <- switch(vfam,
-                       binomialff = all(all.links == "logit"),
-                       poissonff  = all(all.links == "loge"))
+                       binomialff = all(all.links == "logitlink"),
+                       poissonff  = all(all.links == "loglink"))
   if (!canon.link) stop("model does not use the canonical link")  # else
  
 
@@ -1193,7 +1183,7 @@ calibrate.qrrvglm <-
 
     if (FALSE) {
       warning("this line is wrong:")
-      alf <- loge(Coefs@Maximum[ss])  # zz get the link function
+      alf <- loglink(Coefs@Maximum[ss])  # zz get the link function
       tolmat <- Coefs@Tolerance[, , ss, drop = FALSE]
       check.eta[ss, 1] <- alf - 0.5 * t(bnumat) %*%
                           solve(tolmat) %*% bnumat  
@@ -1319,8 +1309,8 @@ dzwald.rrvglm <-
     stop("only 'poissonff' and 'binomialff' families allowed")
 
   canon.link <- switch(vfam,
-                       binomialff = all(all.links == "logit"),
-                       poissonff  = all(all.links == "loge"))
+                       binomialff = all(all.links == "logitlink"),
+                       poissonff  = all(all.links == "loglink"))
   if (!canon.link) stop("model does not use the canonical link")  # else
  
 
@@ -1448,7 +1438,7 @@ calibrate.rrvglm <-
 
 
   nn <- nrow(newdata)  # Number of sites to calibrate
-
+      
 
   obfunct <- slot(object@family, object@misc$criterion)
   minimize.obfunct <- object@control$min.criterion  # deviance
@@ -1473,6 +1463,7 @@ calibrate.rrvglm <-
 
 
 
+      
  
   if (!length(initial.vals)) {
     Lvec <- apply(latvar(object), 2, min)
@@ -1502,6 +1493,9 @@ calibrate.rrvglm <-
     Xlm <- predict.vlm(as(object, "vglm"),  # object,
                        newdata = newdata.orig,
                        type = "Xlm")
+    if (NROW(Xlm) != nn)
+      warning("NROW(Xlm) and ", nn, " are unequal")
+
     if (se.type == "dzwald" && (type == "everything" || type == "vcov"))
       stop("only noRRR = ~ 1 models are handled for ",
            "type = 'everything' or type = 'vcov'")

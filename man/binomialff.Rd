@@ -18,7 +18,7 @@
 
 }
 \usage{
-binomialff(link = "logit", multiple.responses = FALSE,
+binomialff(link = "logitlink", multiple.responses = FALSE,
        parallel = FALSE, zero = NULL, bred = FALSE, earg.link = FALSE)
 
 }
@@ -101,7 +101,7 @@ binomialff(link = "logit", multiple.responses = FALSE,
   multiple responses (\code{multiple.responses = TRUE}) and
   all \pkg{VGAM} link functions;
   it has been tested for
-  \code{\link{logit}} only (and it gives similar
+  \code{\link{logitlink}} only (and it gives similar
   results to \pkg{brglm} but not identical),
   and further testing is required.
   One result from fitting bias reduced binary regression
@@ -137,7 +137,7 @@ binomialff(link = "logit", multiple.responses = FALSE,
 
 
   When used with \code{\link{cqo}} and \code{\link{cao}}, it may be
-  preferable to use the \code{\link{cloglog}} link.
+  preferable to use the \code{\link{clogloglink}} link.
 
 
 }
@@ -221,6 +221,7 @@ binomialff(link = "logit", multiple.responses = FALSE,
     \code{\link{cqo}},
     \code{\link{cao}},
     \code{\link{betabinomial}},
+    \code{\link{gentbinomial}},
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
     \code{\link{double.expbinomial}},
@@ -262,7 +263,7 @@ binomialff(link = "logit", multiple.responses = FALSE,
 
 \examples{
 shunua <- hunua[sort.list(with(hunua, altitude)), ]  # Sort by altitude
-fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = cloglog),
+fit <- vglm(agaaus ~ poly(altitude, 2), binomialff(link = clogloglink),
             data = shunua)
 \dontrun{
 plot(agaaus ~ jitter(altitude), shunua, ylab = "Pr(Agaaus = 1)",
@@ -287,7 +288,7 @@ glm.fail <- glm(r / n ~ offset(logv) + 1, weight = n,
 coef(glm.fail)
 # vglm()'s half-stepping ensures the MLE of -5.4007 is obtained:
 vglm.ok <- vglm(cbind(r, n-r) ~ offset(logv) + 1,
-               binomialff(link = cloglog), ridout, trace = TRUE)
+               binomialff(link = clogloglink), ridout, trace = TRUE)
 coef(vglm.ok)
 
 

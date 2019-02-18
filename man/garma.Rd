@@ -15,18 +15,18 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
   \item{link}{
   Link function applied to the mean response.
   The default is suitable for continuous responses.
-  The link \code{\link{loge}} should be chosen if the data are counts.
+  The link \code{\link{loglink}} should be chosen if the data are counts.
   The link \code{\link{reciprocal}} can be chosen if the data are counts
   and the variance assumed for this is \eqn{\mu^2}{mu^2}.
-  The links \code{\link{logit}}, \code{\link{probit}},
-  \code{\link{cloglog}}, and
-  \code{\link{cauchit}} are supported and suitable for binary responses.
+  The links \code{\link{logitlink}}, \code{\link{probitlink}},
+  \code{\link{clogloglink}}, and
+  \code{\link{cauchitlink}} are supported and suitable for binary responses.
 
 
   Note that when the log or logit link is chosen:
   for log and logit,
   zero values can be replaced by \code{bvalue}.
-  See \code{\link{loge}} and \code{\link{logit}} etc. for specific
+  See \code{\link{loglink}} and \code{\link{logitlink}} etc. for specific
   information about each link function.
 
 
@@ -172,7 +172,7 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
 
 
 % \code{\link{identity}},
-% \code{\link{logit}}.
+% \code{\link{logitlink}}.
 
 
 %}
@@ -193,7 +193,7 @@ gdata <- data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 gdata <- transform(gdata, spikenum = seq(interspike))
 bvalue <- 0.1  # .Machine$double.xmin # Boundary value
 fit <- vglm(interspike ~ 1, trace = TRUE, data = gdata,
-            garma(loge(bvalue = bvalue),
+            garma(loglink(bvalue = bvalue),
                   p = 2, coefstart = c(4, 0.3, 0.4)))
 summary(fit)
 coef(fit, matrix = TRUE)

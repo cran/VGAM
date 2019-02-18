@@ -10,10 +10,10 @@
 
 }
 \usage{
-studentt (ldf = "loglog", idf = NULL, tol1 = 0.1, imethod = 1)
-studentt2(df = Inf, llocation = "identitylink", lscale = "loge",
+studentt (ldf = "logloglink", idf = NULL, tol1 = 0.1, imethod = 1)
+studentt2(df = Inf, llocation = "identitylink", lscale = "loglink",
           ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
-studentt3(llocation = "identitylink", lscale = "loge", ldf = "loglog",
+studentt3(llocation = "identitylink", lscale = "loglink", ldf = "logloglink",
           ilocation = NULL, iscale = NULL, idf = NULL,
           imethod = 1, zero = c("scale", "df"))
 }

@@ -9,7 +9,7 @@
 
 }
 \usage{
-inv.gaussianff(lmu = "loge", llambda = "loge",
+inv.gaussianff(lmu = "loglink", llambda = "loglink",
                imethod = 1, ilambda = NULL,
                parallel = FALSE, ishrinkage = 0.99, zero = NULL)
 }

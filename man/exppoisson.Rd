@@ -8,7 +8,7 @@
 
 }
 \usage{
-exppoisson(lrate = "loge", lshape = "loge",
+exppoisson(lrate = "loglink", lshape = "loglink",
            irate = 2, ishape = 1.1,  zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

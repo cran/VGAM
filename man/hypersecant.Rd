@@ -11,8 +11,8 @@
 
 }
 \usage{
-  hypersecant(link.theta = extlogit(min = -pi/2, max = pi/2), init.theta = NULL)
-hypersecant01(link.theta = extlogit(min = -pi/2, max = pi/2), init.theta = NULL)
+  hypersecant(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = NULL)
+hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -96,7 +96,7 @@ Natural exponential families with quadratic variance functions.
 
 %}
 \seealso{
-  \code{\link{extlogit}}.
+  \code{\link{extlogitlink}}.
 
 
 % \code{\link{nefghs}},

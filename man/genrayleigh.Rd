@@ -8,7 +8,7 @@
 
 }
 \usage{
-genrayleigh(lscale = "loge", lshape = "loge",
+genrayleigh(lscale = "loglink", lshape = "loglink",
             iscale = NULL,   ishape = NULL,
             tol12 = 1e-05, nsimEIM = 300, zero = 2)
 }

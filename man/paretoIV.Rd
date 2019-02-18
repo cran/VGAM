@@ -12,11 +12,12 @@
 
 }
 \usage{
-paretoIV(location = 0, lscale = "loge", linequality = "loge", lshape = "loge",
-         iscale = 1, iinequality = 1, ishape = NULL, imethod = 1)
-paretoIII(location = 0, lscale = "loge", linequality = "loge",
+paretoIV(location = 0, lscale = "loglink", linequality = "loglink",
+         lshape = "loglink", iscale = 1, iinequality = 1, ishape = NULL,
+         imethod = 1)
+paretoIII(location = 0, lscale = "loglink", linequality = "loglink",
           iscale = NULL, iinequality = NULL)
-paretoII(location = 0, lscale = "loge", lshape = "loge",
+paretoII(location = 0, lscale = "loglink", lshape = "loglink",
          iscale = NULL, ishape = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -113,7 +114,7 @@ paretoII(location = 0, lscale = "loge", lshape = "loge",
   and
   the Pareto(I) distribution \eqn{PI(b,s)} is \eqn{PIV(b,b,g=1,s)}.
   Thus the Burr distribution can be fitted using the
-  \code{\link{negloge}} link
+  \code{\link{negloglink}} link
   function and using the default \code{location=0} argument.
   The Pareto(I) distribution can be fitted using \code{\link{paretoff}}
   but there is a slight change in notation: \eqn{s=k} and

@@ -10,10 +10,10 @@
 
 }
 \usage{
-geometric(link = "logit", expected = TRUE, imethod = 1,
+geometric(link = "logitlink", expected = TRUE, imethod = 1,
           iprob = NULL, zero = NULL)
 truncgeometric(upper.limit = Inf,
-               link = "logit", expected = TRUE, imethod = 1,
+               link = "logitlink", expected = TRUE, imethod = 1,
                iprob = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -124,7 +124,7 @@ gdata <- data.frame(x2 = runif(nn <- 1000) - 0.5)
 gdata <- transform(gdata, x3 = runif(nn) - 0.5,
                           x4 = runif(nn) - 0.5)
 gdata <- transform(gdata, eta  = -1.0 - 1.0 * x2 + 2.0 * x3)
-gdata <- transform(gdata, prob = logit(eta, inverse = TRUE))
+gdata <- transform(gdata, prob = logitlink(eta, inverse = TRUE))
 gdata <- transform(gdata, y1 = rgeom(nn, prob))
 with(gdata, table(y1))
 fit1 <- vglm(y1 ~ x2 + x3 + x4, geometric, data = gdata, trace = TRUE)

@@ -8,7 +8,7 @@
 
 }
 \usage{
-hzeta(lshape = "loglog", ishape = NULL, nsimEIM = 100)
+hzeta(lshape = "logloglink", ishape = NULL, nsimEIM = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

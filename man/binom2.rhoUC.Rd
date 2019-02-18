@@ -101,15 +101,15 @@ dbinom2.rho(mu1,
 
 }
 \examples{
-(myrho <- rhobit(2, inverse = TRUE))  # Example 1
+(myrho <- rhobitlink(2, inverse = TRUE))  # Example 1
 ymat <- rbinom2.rho(nn <- 2000, mu1 = 0.8, rho = myrho, exch = TRUE)
 (mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))
 fit <- vglm(ymat ~ 1, binom2.rho(exch = TRUE))
 coef(fit, matrix = TRUE)
 
 bdata <- data.frame(x2 = sort(runif(nn)))  # Example 2
-bdata <- transform(bdata, mu1 = probit(-2+4*x2, inverse = TRUE),
-                          mu2 = probit(-1+3*x2, inverse = TRUE))
+bdata <- transform(bdata, mu1 = probitlink(-2+4*x2, inverse = TRUE),
+                          mu2 = probitlink(-1+3*x2, inverse = TRUE))
 dmat <- with(bdata, dbinom2.rho(mu1, mu2, myrho))
 ymat <- with(bdata, rbinom2.rho(nn, mu1, mu2, myrho))
 fit2 <- vglm(ymat ~ x2, binom2.rho, data = bdata)

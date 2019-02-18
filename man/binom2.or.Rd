@@ -12,7 +12,7 @@
 
 }
 \usage{
-binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
+binom2.or(lmu = "logitlink", lmu1 = lmu, lmu2 = lmu, loratio = "loglink",
           imu1 = NULL, imu2 = NULL, ioratio = NULL, zero = "oratio",
           exchangeable = FALSE, tol = 0.001, more.robust = FALSE)
 }
@@ -104,8 +104,8 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   \code{zero = NULL} in order to model the odds ratio as a function of all the
   explanatory variables.
   The function \code{binom2.or()} can handle other probability link
-  functions such as \code{\link{probit}},
-  \code{\link{cloglog}} and \code{\link{cauchit}} links as well, so is
+  functions such as \code{\link{probitlink}},
+  \code{\link{clogloglink}} and \code{\link{cauchitlink}} links as well, so is
   quite general.  In fact, the two marginal probabilities can each have
   a different link function.  A similar model is the \emph{bivariate
   probit model} (\code{\link{binom2.rho}}), which is based on a standard
@@ -205,10 +205,10 @@ binom2.or(lmu = "logit", lmu1 = lmu, lmu2 = lmu, loratio = "loge",
   \code{\link{zipebcom}},
   \code{\link{coalminers}},
   \code{\link{binomialff}},
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}},
-  \code{\link{cauchit}}.
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}},
+  \code{\link{cauchitlink}}.
 
 
 }

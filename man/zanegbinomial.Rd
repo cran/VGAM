@@ -13,11 +13,11 @@
 zanegbinomial(zero = "size", type.fitted = c("mean", "munb", "pobs0"),
               mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
               eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-              lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+              lpobs0 = "logitlink", lmunb = "loglink", lsize = "loglink",
               imethod = 1, ipobs0 = NULL,
               imunb = NULL, iprobs.y = NULL, gprobs.y = (0:9)/10,
               isize = NULL, gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
-zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
+zanegbinomialff(lmunb = "loglink", lsize = "loglink", lonempobs0 = "logitlink",
                 type.fitted = c("mean", "munb", "pobs0", "onempobs0"),
                 isize = NULL, ionempobs0 = NULL, zero = c("size",
                 "onempobs0"), mds.min = 1e-3, iprobs.y = NULL, gprobs.y = (0:9)/10,
@@ -267,7 +267,7 @@ for counts with extra zeros.
 \examples{
 \dontrun{
 zdata <- data.frame(x2 = runif(nn <- 2000))
-zdata <- transform(zdata, pobs0 = logit(-1 + 2*x2, inverse = TRUE))
+zdata <- transform(zdata, pobs0 = logitlink(-1 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata,
          y1 = rzanegbin(nn, munb = exp(0+2*x2), size = exp(1), pobs0 = pobs0),
          y2 = rzanegbin(nn, munb = exp(1+2*x2), size = exp(1), pobs0 = pobs0))
@@ -284,7 +284,7 @@ head(predict(fit))
 \keyword{regression}
 
 
-%             lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+%             lpobs0 = "logitlink", lmunb = "loglink", lsize = "loglink",
 %             type.fitted = c("mean", "pobs0"),
 %             ipobs0 = NULL, isize = NULL, zero = "size",
 %             probs.y = 0.75, cutoff.prob = 0.999,
@@ -298,11 +298,11 @@ head(predict(fit))
 %zero = "size", type.fitted = c("mean", "pobs0"),
 %           nsimEIM = 250, cutoff.prob = 0.999,
 %           max.support = 2000, max.chunk.MB = 30,
-%           lpobs0 = "logit", lmunb = "loge", lsize = "loge",
+%           lpobs0 = "logitlink", lmunb = "loglink", lsize = "loglink",
 %           imethod = 1, ipobs0 = NULL, probs.y = 0.75,
 %           ishrinkage = 0.95, isize = NULL, gsize = exp((-4):4))
 
-%zanegbinomialff(lmunb = "loge", lsize = "loge", lonempobs0 = "logit",
+%zanegbinomialff(lmunb = "loglink", lsize = "loglink", lonempobs0 = "logitlink",
 %                type.fitted = c("mean", "pobs0", "onempobs0"), isize = NULL,
 %                ionempobs0 = NULL, zero = c("size", "onempobs0"),
 %                probs.y = 0.75, cutoff.prob = 0.999,

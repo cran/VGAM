@@ -8,7 +8,7 @@
 
 }
 \usage{
-double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loge",
+double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loglink",
                    imu = NULL, isd = NULL, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.

@@ -9,7 +9,7 @@
 
 }
 \usage{
-cens.poisson(link = "loge", imu = NULL,
+cens.poisson(link = "loglink", imu = NULL,
              biglambda = 10, smallno = 1e-10)
 }
 %- maybe also 'usage' for other objects documented here.

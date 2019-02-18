@@ -308,8 +308,8 @@ Vector generalized additive models.
 }
 \examples{
 cratio()
-cratio(link = "cloglog")
-cratio(link = "cloglog", reverse = TRUE)
+cratio(link = "clogloglink")
+cratio(link = "clogloglink", reverse = TRUE)
 }
 \keyword{classes}
 

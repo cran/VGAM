@@ -7,7 +7,7 @@
   non-negative integers.
 }
 \usage{
-dirmul.old(link = "loge", ialpha = 0.01, parallel = FALSE, zero = NULL)
+dirmul.old(link = "loglink", ialpha = 0.01, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

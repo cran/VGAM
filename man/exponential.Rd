@@ -8,7 +8,9 @@
 
 }
 \usage{
-exponential(link = "loge", location = 0, expected = TRUE,
+exponential(link = "loglink", location = 0, expected = TRUE,
+            type.fitted = c("mean", "percentiles", "Qlink"),
+            percentiles = 50,
             ishrinkage = 0.95, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,6 +33,11 @@ exponential(link = "loge", location = 0, expected = TRUE,
 
   }
   \item{ishrinkage, parallel, zero}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+
+
+  }
+  \item{type.fitted, percentiles}{
   See \code{\link{CommonVGAMffArguments}} for information.
 
 

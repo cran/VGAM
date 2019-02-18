@@ -8,7 +8,7 @@
 
 }
 \usage{
-kumar(lshape1 = "loge", lshape2 = "loge",
+kumar(lshape1 = "loglink", lshape2 = "loglink",
       ishape1 = NULL,   ishape2 = NULL, gshape1 = exp(2*ppoints(5) - 1),
       tol12 = 1.0e-4, zero = NULL)
 

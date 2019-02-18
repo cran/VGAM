@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -127,7 +127,6 @@ vgam.nlchisq <- function(qr, resid, wz, smomat, deriv, U, smooth.labels,
   if (!is.matrix(deriv)) deriv <- as.matrix(deriv)
   if (!is.matrix(resid)) resid <- as.matrix(resid)
 
-  trivc <- trivial.constraints(constraints)
 
   ans <- rep_len(NA_real_, ncol(smomat))
   Uderiv <- vbacksub(U, t(deriv), M = M, n = n)  # \bU_i^{-1} \biu_i

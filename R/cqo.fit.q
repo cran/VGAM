@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -394,7 +394,7 @@ ny <- names(y)
     findex <- trivial.constraints(just.testing, special.matrix)
     tc1 <- trivial.constraints(constraints)
 
-    if (!control$Quadratic && sum(!tc1)) {
+    if (!control$Quadratic && sum(!tc1) != 0) {
       for (ii in names(tc1))
         if (!tc1[ii] && !any(ii == names(findex)[findex == 1]))
           warning("'", ii, "' is a non-trivial constraint that will ",
@@ -863,7 +863,7 @@ cqo.end.expression <- expression({
     wz <- checkwz(wz, M = M, trace = trace, wzeps = control$wzepsilon)
   U <- vchol(wz, M = M, n = n, silent = !trace)
   tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-  z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset  # Contains \bI\bnu
+  z <- eta + vbacksub(U, tvfor, M=M, n=n) - offset  # Contains \bI\bnu
 
 
 

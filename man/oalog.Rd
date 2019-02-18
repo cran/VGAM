@@ -10,7 +10,7 @@
 
 }
 \usage{
-oalog(lpobs1 = "logit", lshape = "logit",
+oalog(lpobs1 = "logitlink", lshape = "logitlink",
       type.fitted = c("mean", "shape", "pobs1", "onempobs1"),
       ipobs1 = NULL, gshape = ppoints(8), zero = NULL)
 }
@@ -121,8 +121,8 @@ oalog(lpobs1 = "logit", lshape = "logit",
 
 \examples{
 odata <- data.frame(x2 = runif(nn <- 1000))
-odata <- transform(odata, pobs1 = logit(-1 + 2*x2, inverse = TRUE),
-                          shape  = logit(-2 + 3*x2, inverse = TRUE))
+odata <- transform(odata, pobs1 = logitlink(-1 + 2*x2, inverse = TRUE),
+                          shape  = logitlink(-2 + 3*x2, inverse = TRUE))
 odata <- transform(odata, y1 = roalog(nn, shape = shape, pobs1 = pobs1),
                           y2 = roalog(nn, shape = shape, pobs1 = pobs1))
 with(odata, table(y1))

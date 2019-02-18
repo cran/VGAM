@@ -1,14 +1,16 @@
-\name{logoff}
+\name{logofflink}
+\alias{logofflink}
 \alias{logoff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log Link Function with an Offset }
 \description{
   Computes the log transformation with an offset,
   including its inverse and the first two derivatives.
+
 }
 \usage{
-logoff(theta, offset = 0, inverse = FALSE, deriv = 0,
-       short = TRUE, tag = FALSE)
+logofflink(theta, offset = 0, inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -73,7 +75,7 @@ logoff(theta, offset = 0, inverse = FALSE, deriv = 0,
 \author{ Thomas W. Yee }
 
 \note{
-  The default means this function is identical to \code{\link{loge}}.
+  The default means this function is identical to \code{\link{loglink}}.
 
 
   Numerical instability may occur when \code{theta} is
@@ -84,15 +86,15 @@ logoff(theta, offset = 0, inverse = FALSE, deriv = 0,
 
 \seealso{
   \code{\link{Links}},
-  \code{\link{loge}}.
+  \code{\link{loglink}}.
 
 
 }
 \examples{
 \dontrun{
-logoff(seq(-0.2, 0.5, by = 0.1))
-logoff(seq(-0.2, 0.5, by = 0.1), offset = 0.5)
-   log(seq(-0.2, 0.5, by = 0.1) + 0.5) }
+logofflink(seq(-0.2, 0.5, by = 0.1))
+logofflink(seq(-0.2, 0.5, by = 0.1), offset = 0.5)
+       log(seq(-0.2, 0.5, by = 0.1) + 0.5) }
 }
 \keyword{math}
 \keyword{models}

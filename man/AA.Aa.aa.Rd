@@ -9,7 +9,7 @@
 
 }
 \usage{
-AA.Aa.aa(linkp = "logit", linkf = "logit", inbreeding = FALSE,
+AA.Aa.aa(linkp = "logitlink", linkf = "logitlink", inbreeding = FALSE,
          ipA = NULL, ifp = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

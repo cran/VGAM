@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -122,7 +122,7 @@ show.summary.vgam <-
 
 
   cat("\nCall:\n", paste(deparse(x@call), sep = "\n", collapse = "\n"),
-      "\n\n", sep = "")
+      "\n", sep = "")
 
 
   Presid <- x@pearson.resid
@@ -153,19 +153,24 @@ show.summary.vgam <-
 
 
 
-  cat("\nNumber of linear predictors:   ", M, "\n")
+  if (M >= 5)
+  cat("\nNumber of additive predictors:   ", M, "\n")
 
 
 
 
   if (!is.null(x@misc$predictors.names) && !use.nopredictors) {
     if (M == 1) {
-      cat("\nName of linear predictor:",
+      cat("\nName of additive predictor:",
           paste(x@misc$predictors.names, collapse = ", "), "\n")
     } else
-    if (M <= 5) {
-      cat("\nNames of linear predictors:",
-        paste(x@misc$predictors.names, collapse = ", "), fill = TRUE)
+    if (M <= 12) {
+      LLL <- length(x@misc$predictors.names)
+      cat("\nNames of additive predictors:",
+          if (LLL == 1)
+            x@misc$predictors.names else
+        c(paste0(x@misc$predictors.names[-LLL], sep = ","), 
+          x@misc$predictors.names[LLL]),  fill = TRUE)
     }
   }
 
@@ -206,7 +211,7 @@ show.summary.vgam <-
   }
 
 
-  cat("\nNumber of iterations: ", x@iter, "\n")
+  cat("\nNumber of Fisher scoring iterations: ", x@iter, "\n")
 
   if (length(x@anova)) {
     show.vanova(x@anova, digits = digits)   # ".vanova" for Splus6

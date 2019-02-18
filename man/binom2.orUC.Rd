@@ -112,15 +112,15 @@ dbinom2.or(mu1, mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
 }
 \examples{
 nn <- 1000  # Example 1
-ymat <- rbinom2.or(nn, mu1 = logit(1, inv = TRUE), oratio = exp(2), exch = TRUE)
+ymat <- rbinom2.or(nn, mu1 = logitlink(1, inv = TRUE), oratio = exp(2), exch = TRUE)
 (mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))
 (myor <- mytab["0","0"] * mytab["1","1"] / (mytab["1","0"] * mytab["0","1"]))
 fit <- vglm(ymat ~ 1, binom2.or(exch = TRUE))
 coef(fit, matrix = TRUE)
 
 bdata <- data.frame(x2 = sort(runif(nn)))  # Example 2
-bdata <- transform(bdata, mu1 = logit(-2 + 4 * x2, inverse = TRUE),
-                          mu2 = logit(-1 + 3 * x2, inverse = TRUE))
+bdata <- transform(bdata, mu1 = logitlink(-2 + 4 * x2, inverse = TRUE),
+                          mu2 = logitlink(-1 + 3 * x2, inverse = TRUE))
 dmat <- with(bdata, dbinom2.or(mu1 = mu1, mu2 = mu2, oratio = exp(2)))
 ymat <- with(bdata, rbinom2.or(n = nn, mu1 = mu1, mu2 = mu2, oratio = exp(2)))
 fit2 <- vglm(ymat ~ x2, binom2.or, data = bdata)

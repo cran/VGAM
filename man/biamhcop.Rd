@@ -9,7 +9,7 @@
 
 }
 \usage{
-biamhcop(lapar = "rhobit", iapar = NULL, imethod = 1, nsimEIM = 250)
+biamhcop(lapar = "rhobitlink", iapar = NULL, imethod = 1, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -105,7 +105,7 @@ New York: Springer.
 
 }
 \examples{
-ymat <- rbiamhcop(1000, apar = rhobit(2, inverse = TRUE))
+ymat <- rbiamhcop(1000, apar = rhobitlink(2, inverse = TRUE))
 fit <- vglm(ymat ~ 1, biamhcop, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)

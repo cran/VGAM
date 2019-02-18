@@ -10,7 +10,7 @@
 
 }
 \usage{
-sc.studentt2(percentile = 50, llocation = "identitylink", lscale = "loge",
+sc.studentt2(percentile = 50, llocation = "identitylink", lscale = "loglink",
              ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.

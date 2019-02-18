@@ -7,7 +7,7 @@
   Singh-Maddala distribution.
 }
 \usage{
-sinmad(lscale = "loge", lshape1.a = "loge", lshape3.q = "loge",
+sinmad(lscale = "loglink", lshape1.a = "loglink", lshape3.q = "loglink",
        iscale = NULL, ishape1.a = NULL, ishape3.q = NULL, imethod = 1,
        lss = TRUE, gscale = exp(-5:5), gshape1.a = exp(-5:5),
        gshape3.q = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),

@@ -11,7 +11,7 @@
 
 }
 \usage{
-weibullR(lscale = "loge", lshape = "loge",
+weibullR(lscale = "loglink", lshape = "loglink",
          iscale = NULL,   ishape = NULL, lss = TRUE, nrfs = 1,
          probs.y = c(0.2, 0.5, 0.8), imethod = 1, zero = "shape")
 }
@@ -80,7 +80,7 @@ weibullR(lscale = "loge", lshape = "loge",
   (according to Kleiber and Kotz (2003)).
   If this is violated then a warning message is issued.
   One can enforce \eqn{a>2} by
-  choosing \code{lshape = logoff(offset = -2)}.
+  choosing \code{lshape = logofflink(offset = -2)}.
   Common values of the shape parameter lie between 0.5 and 3.5.
 
 

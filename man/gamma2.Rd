@@ -8,7 +8,7 @@
 
 }
 \usage{
-gamma2(lmu = "loge", lshape = "loge",
+gamma2(lmu = "loglink", lshape = "loglink",
        imethod = 1,  ishape = NULL,
        parallel = FALSE, deviance.arg = FALSE, zero = "shape")
 }
@@ -165,10 +165,10 @@ McCullagh, P. and Nelder, J. A. (1989)
   \code{\link{bigamma.mckay}} for \emph{a} bivariate gamma distribution,
   \code{\link{expexpff}},
   \code{\link[stats]{GammaDist}},
-  \code{\link{golf}},
+  \code{\link{gordlink}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}},
-  \code{\link{negloge}}.
+  \code{\link{negloglink}}.
 
 
 }

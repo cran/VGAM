@@ -8,7 +8,7 @@
 
 }
 \usage{
-prentice74(llocation = "identitylink", lscale = "loge",
+prentice74(llocation = "identitylink", lscale = "loglink",
            lshape = "identitylink", ilocation = NULL, iscale = NULL,
            ishape = NULL, imethod = 1,
            glocation.mux = exp((-4:4)/2), gscale.mux = exp((-4:4)/2),

@@ -7,7 +7,7 @@
 
 }
 \usage{
-dirichlet(link = "loge", parallel = FALSE, zero = NULL, imethod = 1)
+dirichlet(link = "loglink", parallel = FALSE, zero = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

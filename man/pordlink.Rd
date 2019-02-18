@@ -1,4 +1,6 @@
-\name{polf}
+\name{pordlink}
+%\name{polf}
+\alias{pordlink}
 \alias{polf}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Poisson-Ordinal Link Function }
@@ -8,8 +10,8 @@
 
 }
 \usage{
-polf(theta, cutpoint = NULL,
-     inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+pordlink(theta, cutpoint = NULL,
+         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +22,7 @@ polf(theta, cutpoint = NULL,
   }
   \item{cutpoint}{
   The cutpoints should be non-negative integers.
-  If \code{polf()} is used as the link function in
+  If \code{pordlink()} is used as the link function in
   \code{\link{cumulative}} then one should choose
   \code{reverse = TRUE, parallel = TRUE}.
 
@@ -87,24 +89,24 @@ polf(theta, cutpoint = NULL,
   \code{\link{Links}},
   \code{\link{ordpoisson}},
   \code{\link{poissonff}},
-  \code{\link{nbolf}},
-  \code{\link{golf}},
+  \code{\link{nbordlink}},
+  \code{\link{gordlink}},
   \code{\link{cumulative}}.
 
 
 }
 \examples{
 \dontrun{
-polf("p", cutpoint = 2, short = FALSE)
-polf("p", cutpoint = 2, tag = TRUE)
+pordlink("p", cutpoint = 2, short = FALSE)
+pordlink("p", cutpoint = 2, tag = TRUE)
 
 p <- seq(0.01, 0.99, by = 0.01)
-y <- polf(p, cutpoint = 2)
-y. <- polf(p, cutpoint = 2, deriv = 1)
-max(abs(polf(y, cutpoint = 2, inv = TRUE) - p))  # Should be 0
+y <- pordlink(p, cutpoint = 2)
+y. <- pordlink(p, cutpoint = 2, deriv = 1)
+max(abs(pordlink(y, cutpoint = 2, inv = TRUE) - p))  # Should be 0
 
 #\ dontrun{ par(mfrow = c(2, 1), las = 1)
-#plot(p, y, type = "l", col = "blue", main = "polf()")
+#plot(p, y, type = "l", col = "blue", main = "pordlink()")
 #abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
 #
 #plot(p, y., type = "l", col = "blue",
@@ -118,7 +120,7 @@ ruge <- data.frame(yy = rep(0:14,
 with(ruge, length(yy))  # 2608 1/8-minute intervals
 cutpoint <- 5
 ruge <- transform(ruge, yy01 = ifelse(yy <= cutpoint, 0, 1))
-fit <- vglm(yy01 ~ 1, binomialff(link = polf(cutpoint = cutpoint)), ruge)
+fit <- vglm(yy01 ~ 1, binomialff(link=pordlink(cutpoint=cutpoint)), ruge)
 coef(fit, matrix = TRUE)
 exp(coef(fit))
 
@@ -135,7 +137,7 @@ with(pdata, table(cuty) / sum(table(cuty)))
 fit <- vglm(cuty ~ x2 + x3, data = pdata, trace = TRUE,
             cumulative(reverse = TRUE,
                        parallel = TRUE,
-                       link = polf(cutpoint = cutpoints[2:3]),
+                       link = pordlink(cutpoint = cutpoints[2:3]),
                        multiple.responses = TRUE))
 head(depvar(fit))
 head(fitted(fit))

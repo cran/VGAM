@@ -9,14 +9,14 @@
 }
 \usage{
 trinormal(zero = c("sd", "rho"), eq.mean = FALSE,
-          eq.sd = FALSE, eq.cor = FALSE,
-          lmean1 = "identitylink", lmean2 = "identitylink",
-          lmean3 = "identitylink",
-          lsd1   = "loge", lsd2   = "loge", lsd3   = "loge",
-          lrho12 = "rhobit", lrho23 = "rhobit", lrho13 = "rhobit",
-          imean1 = NULL, imean2 = NULL, imean3 = NULL,
-          isd1   = NULL, isd2   = NULL, isd3   = NULL,
-          irho12 = NULL, irho23 = NULL, irho13 = NULL, imethod = 1)
+    eq.sd = FALSE, eq.cor = FALSE,
+    lmean1 = "identitylink", lmean2 = "identitylink",
+    lmean3 = "identitylink",
+    lsd1   = "loglink", lsd2   = "loglink", lsd3   = "loglink",
+    lrho12 = "rhobitlink", lrho23 = "rhobitlink", lrho13 = "rhobitlink",
+    imean1 = NULL, imean2 = NULL, imean3 = NULL,
+    isd1   = NULL, isd2   = NULL, isd3   = NULL,
+    irho12 = NULL, irho23 = NULL, irho13 = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -140,9 +140,9 @@ summary(fit1)
 \dontrun{ # Try this when eq.sd = TRUE, eq.cor = TRUE:
 fit2 <- vglm(cbind(y1, y2, y3) ~ x2, data = tdata, stepsize = 0.25,
              trinormal(eq.sd = TRUE, eq.cor = TRUE,
-                       lrho12 = extlogit(min = -0.5),
-                       lrho23 = extlogit(min = -0.5),
-                       lrho13 = extlogit(min = -0.5)), trace = TRUE)
+                       lrho12 = extlogitlink(min = -0.5),
+                       lrho23 = extlogitlink(min = -0.5),
+                       lrho13 = extlogitlink(min = -0.5)), trace = TRUE)
 coef(fit2, matrix = TRUE)
 }
 }

@@ -9,7 +9,7 @@
 
 }
 \usage{
-leipnik(lmu = "logit", llambda = logoff(offset = 1),
+leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
         imu = NULL, ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -89,7 +89,7 @@ leipnik(lmu = "logit", llambda = logoff(offset = 1),
 %\section{Warning }{
 % If \code{llambda="identitylink"} then it is possible that the
 % \code{lambda} estimate becomes less than \eqn{-1}, i.e., out of
-% bounds. One way to stop this is to choose \code{llambda = "loge"},
+% bounds. One way to stop this is to choose \code{llambda = "loglink"},
 % however, \code{lambda} is then constrained to be positive.
 
 
@@ -118,10 +118,10 @@ sum(weights(fit, type = "work"))  # Sum of the working weights
 %fit <- vglm(y ~ 1, leipnik(ilambda = 1), tr = TRUE, cri = "c", checkwz = FALSE)
 
 
-% leipnik(lmu = "logit", llambda = "loge", imu = NULL, ilambda = NULL)
+% leipnik(lmu = "logitlink", llambda = "loglink", imu = NULL, ilambda = NULL)
 
 
-%fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logoff(offset = 1)),
+%fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logofflink(offset = 1)),
 %            data = ldata, trace = TRUE, crit = "coef")
 % fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE, checkwz = FALSE)
 

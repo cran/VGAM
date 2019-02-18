@@ -9,7 +9,7 @@
 
 }
 \usage{
-rec.normal(lmean = "identitylink", lsd = "loge",
+rec.normal(lmean = "identitylink", lsd = "loglink",
           imean = NULL, isd = NULL, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

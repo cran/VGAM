@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -44,7 +44,7 @@ qrrvglm.control <- function(Rank = 1,
 
 
   if (!is.null(EqualTolerances)) {
-    warning("argument 'EqualTolerances' is depreciated. ",
+    warning("argument 'EqualTolerances' is deprecated. ",
             "Use argument 'eq.tolerances'")
     if (is.logical(EqualTolerances)) {
       if (eq.tolerances != EqualTolerances)
@@ -58,7 +58,7 @@ qrrvglm.control <- function(Rank = 1,
 
 
   if (!is.null(ITolerances)) {
-    warning("argument 'ITolerances' is depreciated. ",
+    warning("argument 'ITolerances' is deprecated. ",
             "Use argument 'I.tolerances'")
     if (is.logical(ITolerances)) {
       if (I.tolerances != ITolerances)

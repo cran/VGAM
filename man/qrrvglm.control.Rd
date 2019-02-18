@@ -391,7 +391,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
 %numerical problems associated with the inner minimization problem.  A
 %consequence of this is that the fitted values are bounded, e.g., between
 %\code{1/(1+exp(-Eta.range[1]))} and \code{1/(1+exp(-Eta.range[2]))} for
-%binary data (logit link), and greater than \code{exp(Eta.range[1])} for
+%binary data (logitlink), and greater than \code{exp(Eta.range[1])} for
 %Poisson data (log link).  It is suggested that, for binary responses,
 %\code{c(-16, 16)} be used, and for Poisson responses, \code{c(-16, Inf)}
 %be used.  The value \code{NULL} corresponds to \code{c(-Inf, Inf)}.

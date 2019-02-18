@@ -9,7 +9,7 @@
 
 }
 \usage{
-riceff(lsigma = "loge", lvee = "loge", isigma = NULL,
+riceff(lsigma = "loglink", lvee = "loglink", isigma = NULL,
        ivee = NULL, nsimEIM = 100, zero = NULL, nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

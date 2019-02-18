@@ -9,7 +9,7 @@
 
 }
 \usage{
-bifgmexp(lapar = "rhobit", iapar = NULL, tola0 = 0.01, imethod = 1)
+bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

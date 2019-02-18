@@ -12,7 +12,7 @@
 
 }
 \usage{
-posbernoulli.b(link = "logit", drop.b = FALSE ~ 1,
+posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
                type.fitted = c("likelihood.cond", "mean.uncond"), I2 = FALSE,
                ipcapture = NULL, iprecapture = NULL,
                p.small = 1e-4, no.warning = FALSE)

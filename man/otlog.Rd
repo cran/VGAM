@@ -8,7 +8,7 @@
 
 }
 \usage{
-otlog(lshape = "logit", gshape = ppoints(8), zero = NULL)
+otlog(lshape = "logitlink", gshape = ppoints(8), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -51,7 +51,7 @@ otlog(lshape = "logit", gshape = ppoints(8), zero = NULL)
 
 }
 \examples{
-odata <- data.frame(y1 = rotlog(n = 1000, shape = logit(1/3, inverse = TRUE)))
+odata <- data.frame(y1 = rotlog(n = 1000, shape = logitlink(1/3, inverse = TRUE)))
 ofit <- vglm(y1 ~ 1, otlog, data = odata, trace = TRUE, crit = "c")
 coef(ofit, matrix = TRUE)
 Coef(ofit)

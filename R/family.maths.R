@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -61,6 +61,8 @@ erfc <- function(x, inverse = FALSE) {
 
 
 
+
+
 lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
   if (any(Im(x) != 0.0))
     stop("argument 'x' must be real, not complex!")
@@ -89,8 +91,8 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
     delta <- (exp2 - x) / (exp2 + exp1 -
                 ((ans + 2) * (exp2 - x) / (2 * (ans + 1.0))))
     ans <- ans - delta
-    if (all(is.na(delta) ||
-        max(abs(delta), na.rm = TRUE) < tolerance)) break
+    if (all(is.na(delta)) ||
+        max(abs(delta), na.rm = TRUE) < tolerance) break
     if (ii == maxit)
       warning("did not converge")
   }
@@ -185,6 +187,7 @@ expint <- function (x, deriv = 0) {
 }
 
 
+
 expexpint <- function (x, deriv = 0) {
   LLL <- length(x)
   answer <- .C("sf_C_expexpint", x = as.double(x),
@@ -207,6 +210,7 @@ expexpint <- function (x, deriv = 0) {
   }
   answer
 }
+
 
 
 expint.E1 <- function (x, deriv = 0) {
@@ -283,14 +287,11 @@ expexpint <- function(x) {
 }
 
 
+
 if (FALSE)
 pochhammer <- function (x, n) {
   exp(lgamma(x+n) - lgamma(x))
 }
-
-
-
-
 
 
 
@@ -311,6 +312,7 @@ expint.E1 <- function(x) {
 
   answer
 }
+
 
 
 
@@ -346,11 +348,29 @@ expint.E1 <- function(x) {
 
 
 
+ zeta.specials <- function(ans, x, deriv.arg = 0, shift = 1) {
 
+   ans[Im(x) == 0 & abs(x) < .Machine$double.eps &
+       deriv.arg == 0 & shift == 1] <- -0.5
+  ans[Im(x) == 0 & x > 1e5 & deriv.arg == 0 & shift == 1] <- 1
+  ans[Im(x) == 0 & x > 1e5 & deriv.arg == 1 & shift == 1] <- 0
+  ans[Im(x) == 0 & x > 1e5 & deriv.arg == 2 & shift == 1] <- 0
+
+  ans[Im(x) == 0 & abs(x) < .Machine$double.eps & deriv.arg == 1 &
+      shift == 1] <- -0.5 * log(2*pi)
+
+  ans[Im(x) == 0 & abs(x) < .Machine$double.eps & deriv.arg == 2 &
+      shift == 1] <- (-0.5 * (log(2*pi))^2 - pi^2 / 24 +
+                       0.5 * (stieltjes['0'])^2 +  stieltjes['1'])
+
+  ans
+}  # zeta.specials
 
 
 
  zeta <- function(x, deriv = 0, shift = 1) {
+
+
 
 
 
@@ -365,8 +385,9 @@ expint.E1 <- function(x) {
 
 
   if (deriv.arg > 0)
-    return(Zeta.derivative(x, deriv.arg = deriv.arg, shift = shift))
-
+    return(zeta.specials(Zeta.derivative(x, deriv.arg = deriv.arg,
+                                         shift = shift),
+                         x, deriv.arg, shift))
 
 
   if (any(special <- Re(x) <= 1)) {
@@ -392,7 +413,7 @@ expint.E1 <- function(x) {
     if (any(!special)) {
       ans[!special] <- Recall(x[!special])
     }
-    return(ans)
+    return(zeta.specials(ans, x, deriv.arg, shift))
   }  # special
 
   aa <- 12
@@ -402,8 +423,10 @@ expint.E1 <- function(x) {
 
   ans <- ans + Zeta.aux(shape = x, aa, shift = shift)
   ans[shift <= 0] <- NaN
-  ans
+
+  zeta.specials(ans, x, deriv.arg = deriv.arg, shift = shift)
 }  # zeta
+
 
 
 
@@ -439,7 +462,8 @@ expint.E1 <- function(x) {
     ans[is.finite(x) & abs(x) < 1.0e-12] <- -0.5
 
   ans
-}
+}  # Zeta.derivative
+
 
 
 
@@ -465,6 +489,24 @@ mills.ratio2 <- function(x) {
 
 
 
+
+
+
+stieltjes <- c(
++0.5772156649015328606065120900824024310421593359,
+-0.0728158454836767248605863758749013191377363383,
+-0.0096903631928723184845303860352125293590658061,
++0.0020538344203033458661600465427533842857158044,
++0.0023253700654673000574681701775260680009044694,
++0.0007933238173010627017533348774444448307315394,
+-0.0002387693454301996098724218419080042777837151,
+-0.0005272895670577510460740975054788582819962534,
+-0.0003521233538030395096020521650012087417291805,
+-0.0000343947744180880481779146237982273906207895,
++0.0002053328149090647946837222892370653029598537)
+
+
+names(stieltjes) <- as.character(0:10)
 
 
 
@@ -646,8 +688,10 @@ bell218 <- c(
 
 
 
-
-
+rainbow.sky <- c("violet" = "#9400D3", "indigo" = "#4B0082",
+                 "blue" = "#0000FF", "green" = "#00FF00",
+                 "yellow" = "#FFFF00",	"orange" = "#FF7F00",
+                 "red" = "#FF0000")
 
 
 

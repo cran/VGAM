@@ -9,8 +9,8 @@
 
 }
 \usage{
-lgamma1(lshape = "loge", ishape = NULL)
-lgamma3(llocation = "identitylink", lscale = "loge", lshape = "loge",
+lgamma1(lshape = "loglink", ishape = NULL)
+lgamma3(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
         ilocation = NULL, iscale = NULL, ishape = 1,
         zero = c("scale", "shape"))
 }

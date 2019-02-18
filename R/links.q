@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -42,13 +43,13 @@ if (FALSE) {
 
 
  TypicalVGAMfamilyFunction <-
-  function(lsigma = "loge",
+  function(lsigma = "loglink",
            isigma = NULL,
            link.list = list("(Default)" = "identitylink",
-                            x2          = "loge",
-                            x3          = "logoff",
-                            x4          = "multilogit",
-                            x5          = "multilogit"),
+                            x2          = "loglink",
+                            x3          = "logofflink",
+                            x4          = "multilogitlink",
+                            x5          = "multilogitlink"),
            earg.list = list("(Default)" = list(),
                             x2          = list(),
                             x3          = list(offset = -1),
@@ -58,7 +59,7 @@ if (FALSE) {
            parallel = TRUE,
            ishrinkage = 0.95,
            nointercept = NULL, imethod = 1,
-           type.fitted = c("mean", "quantiles",
+           type.fitted = c("mean", "quantiles", "Qlink",
                            "pobs0", "pstr0", "onempstr0"),
            percentiles = c(25, 50, 75),
            probs.x = c(0.15, 0.85),
@@ -84,12 +85,22 @@ TypicalVGAMlink <-
 
 
 
-care.exp <- function(x,
-                     thresh = -log( sqrt( .Machine$double.xmin ) )
-                     ) {
+care.exp <-
+  function(x,
+           thresh = -log( sqrt( .Machine$double.xmin ) )) {
+
+
   x[x >   thresh]  <-  thresh
   x[x < (-thresh)] <- -thresh
   exp(x)
+}
+
+
+
+care.exp2 <- function(x) {
+  if (NCOL(x) == 1)
+    x <- cbind(x)
+  exp(x - x[cbind(1:NROW(x), max.col(x))])
 }
 
 
@@ -98,6 +109,14 @@ care.exp <- function(x,
 
 
 
+
+
+
+
+
+
+
+ loglink <-
  loge <-
   function(theta,
            bvalue = NULL,  # .Machine$double.xmin is an alternative
@@ -107,8 +126,8 @@ care.exp <- function(x,
 
   if (is.character(theta)) {
     string <- if (short)
-        paste("loge(",  theta, ")", sep = "") else
-        paste("loge(",  theta, ")", sep = "")
+        paste("loglink(",  theta, ")", sep = "") else
+        paste("log(",  theta, ")", sep = "")
     if (tag)
       string <- paste("Log:", string)
     return(string)
@@ -134,12 +153,14 @@ care.exp <- function(x,
        "4" = -6 / theta^4,
        stop("argument 'deriv' unmatched"))
   }
-}
+}  # loglink
 
 
 
 
 
+
+ logneglink <-
  logneg <-
   function(theta,
            bvalue = NULL,  # .Machine$double.xmin is an alternative
@@ -149,7 +170,7 @@ care.exp <- function(x,
 
   if (is.character(theta)) {
     string <- if (short)
-        paste("logneg(",  theta, ")",  sep = "") else
+        paste("logneglink(",  theta, ")",  sep = "") else
         paste( "log(-(",  theta, "))", sep = "")
     if (tag)
       string <- paste("Log negative:", string)
@@ -176,12 +197,14 @@ care.exp <- function(x,
            "4" = -6 / theta^4,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # logneglink
 
 
 
 
 
+
+ logofflink <-
  logoff <-
   function(theta,
            offset = 0,
@@ -193,7 +216,7 @@ care.exp <- function(x,
 
   if (is.character(theta)) {
     string <- if (short)
-      paste("logoff(", theta,
+      paste("logofflink(", theta,
             ", offset = ", as.character(offset),
             ")", sep = "") else
       paste("log(",
@@ -223,7 +246,9 @@ care.exp <- function(x,
            "4" = -6 / (theta + offset)^4,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # logofflink
+
+
 
 
 
@@ -249,11 +274,14 @@ care.exp <- function(x,
          "4" = theta * 0,  # zz Does not handle Inf and -Inf
          "5" = theta * 0,  # zz Does not handle Inf and -Inf
          stop("argument 'deriv' unmatched"))
-}
+}  # identitylink
 
 
 
 
+
+
+ negidentitylink <-
  negidentity <-
   function(theta,
            inverse = FALSE, deriv = 0,
@@ -274,12 +302,14 @@ care.exp <- function(x,
          "4" = theta * 0,  # zz Does not handle Inf and -Inf
          "5" = theta * 0,  # zz Does not handle Inf and -Inf
          stop("argument 'deriv' unmatched"))
-}
+}  # negidentitylink
 
 
 
 
 
+
+ logitlink <-
  logit <-
   function(theta,
            bvalue = NULL,
@@ -287,7 +317,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("logit(",
+        paste("logitlink(",  # "logit(",
                theta,
               ")", sep = "") else
         paste("log(",
@@ -322,13 +352,14 @@ care.exp <- function(x,
        "3" = 2 * (1 - 3 * theta * (1 - theta)) / (theta * (1 - theta))^3,
        stop("argument 'deriv' unmatched"))
   }
-}
+}  # logitlink
 
 
 
 
 
 
+ logloglink <-
  loglog <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
@@ -336,7 +367,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("loglog(",  theta, ")",  sep = "") else
+        paste("logloglink(",  theta, ")",  sep = "") else
         paste("log(log(", theta, "))", sep = "")
     if (tag)
       string <- paste("Log-Log:", string)
@@ -368,12 +399,76 @@ care.exp <- function(x,
                  },
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # logloglink
 
 
 
 
 
+
+ loglogloglink <-
+  function(theta,
+           bvalue = NULL,  # .Machine$double.eps is an alternative
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE) {
+  if (is.character(theta)) {
+    string <- if (short)
+        paste("loglogloglink(",  theta, ")",  sep = "") else
+        paste("log(log(log(", theta, ")))", sep = "")
+    if (tag)
+      string <- paste("Log-Log-Log:", string)
+    return(string)
+  }
+
+  if (!inverse && length(bvalue))
+    theta[theta <= exp(1.0)] <- bvalue
+
+  if (inverse) {
+    switch(as.character(deriv),
+           "0" = exp(exp(exp(theta))),
+           "1" = theta * log(theta) * log(log(theta)),
+           "2" = { junk <- log(theta)
+                   logjunk <- log(junk)
+                   theta * junk * logjunk * (1 + logjunk * (1 + junk))
+                 },
+           "3" = { junk <- log(theta)
+                   logjunk <- log(junk)
+                   theta * junk^2 * logjunk^3  * (
+                   3 + junk + 1 / junk + 3 / logjunk +
+                   3 / (junk * logjunk) +
+                   1 / (junk * logjunk^2))
+      },
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+           "0" = log(log(log(theta))),
+           "1" = 1 / (theta * log(theta) * log(log(theta))),
+           "2" = { junk <- log(theta)
+                   logjunk <- log(junk)
+                   (-1 / (theta^2 * junk * logjunk)) *
+                   (1 + (1 / junk) * (1 + 1 / logjunk))
+           },
+           "3" = { junk <- log(theta)
+                   logjunk <- log(junk)
+                   (3 + 2 * junk + 2 / junk +
+                   3 / logjunk +
+                   3 / (junk * logjunk) +
+                   2 / (junk * logjunk^2)) / (
+                   theta^3 * junk^2 * logjunk)
+                 },
+           stop("argument 'deriv' unmatched"))
+  }
+}  # loglogloglink
+
+
+
+
+
+
+
+
+
+ clogloglink <-
  cloglog <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
@@ -381,7 +476,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("cloglog(",    theta, ")",  sep = "") else
+        paste("clogloglink(",    theta, ")",  sep = "") else
         paste("log(-log(1-",
               as.char.expression(theta),
               "))", sep = "")
@@ -421,11 +516,14 @@ care.exp <- function(x,
            },
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # clogloglink
 
 
 
 
+
+
+ probitlink <-
  probit <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
@@ -433,7 +531,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("probit(", theta, ")", sep = "") else
+        paste("probitlink(", theta, ")", sep = "") else
         paste("qnorm(",  theta, ")", sep = "")
     if (tag)
       string <- paste("Probit:", string)
@@ -516,8 +614,7 @@ care.exp <- function(x,
            },
            stop("argument 'deriv' unmatched"))
   }
-}
-
+}  # probitlink
 
 
 
@@ -558,12 +655,14 @@ care.exp <- function(x,
            "4" = exp(theta),
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # explink
 
 
 
 
 
+
+ reciprocallink <-
  reciprocal <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
@@ -597,12 +696,14 @@ care.exp <- function(x,
            "4" = 24 / theta^5,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # reciprocallink
 
 
 
 
 
+
+ negloglink <-
  negloge <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
@@ -610,7 +711,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
       string <- if (short)
-          paste("negloge(", theta, ")", sep = "") else
+          paste("negloglink(", theta, ")", sep = "") else
           paste("-log(",  theta, ")", sep = "")
       if (tag)
         string <- paste("Negative log:", string)
@@ -637,11 +738,14 @@ care.exp <- function(x,
            "4" =  6/theta^4,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # negloglink
 
 
 
 
+
+
+ negreciprocallink <-
  negreciprocal <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
@@ -676,7 +780,10 @@ care.exp <- function(x,
            "4" = -24 / theta^5,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # negreciprocallink
+
+
+
 
 
 
@@ -710,14 +817,14 @@ care.exp <- function(x,
            "4" = -60 / theta^6,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # igcanlink
 
 
 
 
 
 
-
+ rhobitlink <-
  rhobit <-
   function(theta,
            bminvalue = NULL,
@@ -726,7 +833,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("rhobit(", theta, ")", sep = "") else
+        paste("rhobitlink(", theta, ")", sep = "") else
         paste("log((1+",
               as.char.expression(theta),
               ")/(1-",
@@ -759,11 +866,14 @@ care.exp <- function(x,
            "3" = 4 * (1 + 3 * theta^2) / (1 - theta^2)^3,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # rhobitlink
 
 
 
 
+
+
+ fisherzlink <-
  fisherz <-
   function(theta,
            bminvalue = NULL,
@@ -772,7 +882,7 @@ care.exp <- function(x,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("fisherz(", theta, ")", sep = "") else
+        paste("fisherzlink(", theta, ")", sep = "") else
         paste("(1/2) * log((1+",
               as.char.expression(theta),
               ")/(1-",
@@ -803,14 +913,14 @@ care.exp <- function(x,
            "3" = 2 * (1 + 3 * theta^2) / (1 - theta^2)^3,
            stop("argument 'deriv' unmatched"))
     }
-}
+}  # fisherzlink
 
 
 
 
 
 
-
+ multilogitlink <-
  multilogit <-
   function(theta,
            refLevel = "(Last)",
@@ -851,7 +961,7 @@ care.exp <- function(x,
   if (is.character(theta)) {
     is.M <- is.finite(M) && is.numeric(M)
     string <- if (short) {
-        paste("multilogit(", theta, ")", sep = "")
+        paste("multilogitlink(", theta, ")", sep = "")
     } else {
         theta <- as.char.expression(theta)
 
@@ -915,15 +1025,15 @@ care.exp <- function(x,
 
   foo <- function(eta, refLevel = -1, M) {
     phat <- if ((refLevel < 0) || (refLevel == M+1)) {
-      cbind(care.exp(eta), 1.0)
+      care.exp2(cbind(eta, 0.0))
     } else if ( refLevel == 1) {
-      cbind(1.0, care.exp(eta))
+      care.exp2(cbind(0.0, eta))
     } else {
       use.refLevel <- if ( refLevel < 0) M+1 else refLevel
       etamat <- cbind(eta[, 1:( refLevel - 1), drop = FALSE],
                       0.0,
                       eta[, ( refLevel ):M, drop = FALSE])
-      care.exp(etamat)
+      care.exp2(etamat)
     }
     ans <- phat / rowSums(phat)
     colnames(ans) <- NULL
@@ -976,7 +1086,7 @@ care.exp <- function(x,
       },
       stop("argument 'deriv' unmatched"))
   }
-}  # end of multilogit
+}  # multilogitlink
 
 
 
@@ -985,6 +1095,9 @@ care.exp <- function(x,
 
 
 
+
+
+foldsqrtlink <-
 foldsqrt <-
   function(theta,  #  = NA  , = NULL,
            min = 0, max = 1, mux = sqrt(2),
@@ -1001,7 +1114,7 @@ foldsqrt <-
 
   if (is.character(theta)) {
     string <- if (short)
-      paste("foldsqrt(", theta, ")", sep = "") else {
+      paste("foldsqrtlink(", theta, ")", sep = "") else {
     theta <- as.char.expression(theta)
       if (abs(mux-sqrt(2)) < 1.0e-10)
         paste("sqrt(2*", theta, ") - sqrt(2*(1-", theta, "))",
@@ -1047,7 +1160,9 @@ foldsqrt <-
            },
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # foldsqrtlink
+
+
 
 
 
@@ -1092,13 +1207,15 @@ foldsqrt <-
       },
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # powerlink
 
 
 
 
 
 
+
+ extlogitlink <-
  extlogit <-
   function(theta,
            min = 0, max = 1,
@@ -1117,10 +1234,10 @@ foldsqrt <-
   if (is.character(theta)) {
     string <- if (short) {
       if (A != 0 || B != 1)
-        paste("extlogit(", theta,
+        paste("extlogitlink(", theta,
               ", min = ", A,
               ", max = ", B, ")", sep = "") else
-        paste("extlogit(", theta, ")", sep = "")
+        paste("extlogitlink(", theta, ")", sep = "")
     } else {
       paste("log((",
             as.char.expression(theta),
@@ -1159,13 +1276,14 @@ foldsqrt <-
       },
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # extlogitlink
 
 
 
 
 
 
+ logclink <-
  logc <-
   function(theta,
            bvalue = NULL,  # .Machine$double.xmin is an alternative
@@ -1173,7 +1291,7 @@ foldsqrt <-
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("logc(", theta, ")", sep = "") else {
+        paste("logclink(", theta, ")", sep = "") else {
         theta <- as.char.expression(theta)
         paste("log(1-", theta, ")", sep = "")
     }
@@ -1205,15 +1323,14 @@ foldsqrt <-
            "5" = -24 / (1 - theta)^5,
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # logclink
 
 
 
 
 
 
-
-
+ cauchitlink <-
  cauchit <-
   function(theta,
            bvalue = .Machine$double.eps,
@@ -1221,7 +1338,7 @@ foldsqrt <-
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste("cauchit(", theta, ")", sep = "") else {
+        paste("cauchitlink(", theta, ")", sep = "") else {
         theta <- as.char.expression(theta)
         paste("tan(pi*(", theta, "-0.5))", sep = "")
     }
@@ -1265,12 +1382,15 @@ foldsqrt <-
          },
            stop("argument 'deriv' unmatched"))
   }
-}
+}  # cauchitlink
 
 
 
 
 
+
+
+ gordlink <-
  golf <-
   function(theta,
            lambda = 1,
@@ -1294,7 +1414,7 @@ foldsqrt <-
     string <- if (short) {
       lenl <- length(lambda) > 1
       lenc <- length(cutpoint) > 1
-      paste("golf(", theta,
+      paste("gordlink(", theta,
             ", lambda = ",
             if (lenl) "c(" else "",
             ToString(lambda),
@@ -1386,12 +1506,15 @@ foldsqrt <-
   if (!is.Numeric(answer))
     warning("the answer contains some NAs")
   answer
-}
+}  # gordlink, aka golf
 
 
 
 
 
+
+
+ pordlink <-
  polf <-
   function(theta,  # = 1,
            cutpoint = NULL,
@@ -1410,7 +1533,7 @@ foldsqrt <-
   if (is.character(theta)) {
     string <- if (short) {
       lenc <- length(cutpoint) > 1
-      paste("polf(", theta,
+      paste("pordlink(", theta,
              ", cutpoint = ",
             if (lenc) "c(" else "",
             ToString(cutpoint),
@@ -1448,7 +1571,7 @@ foldsqrt <-
           if (any(cp.index <- cutpoint == 0)) {
               tmp <- theta
               tmp[cp.index] <-
-              cloglog(theta = theta[cp.index],
+              clogloglink(theta = theta[cp.index],
                       inverse = inverse, deriv = deriv)
               tmp[!cp.index] <-
                 pnorm(2 * exp(theta[!cp.index]/2) -
@@ -1470,7 +1593,7 @@ foldsqrt <-
 
   } else {
     if (any(cp.index <- cutpoint == 0)) {
-        cloglog(theta = theta,
+        clogloglink(theta = theta,
                 inverse = inverse, deriv = deriv)
 
 
@@ -1505,12 +1628,15 @@ foldsqrt <-
   if (!is.Numeric(answer))
     warning("the answer contains some NAs")
   answer
-}
+}  # pordlink, aka polf
 
 
 
 
 
+
+
+ nbordlink <-
  nbolf <-
   function(theta,
            cutpoint = NULL,
@@ -1536,7 +1662,7 @@ foldsqrt <-
     string <- if (short) {
         lenc <- length(cutpoint) > 1
         lenk <- length(kay) > 1
-        paste("nbolf(", theta,
+        paste("nbordlink(", theta,
               ", cutpoint = ",
               if (lenc) "c(" else "",
               ToString(cutpoint),
@@ -1645,13 +1771,14 @@ foldsqrt <-
   if (!is.Numeric(answer))
     warning("the answer contains some NAs")
   answer
-}
+}  # nbordlink, aka nbolf
 
 
 
 
 
 
+ nbord2link <-
  nbolf2 <-
   function(theta,
            cutpoint = NULL,
@@ -1679,7 +1806,7 @@ warning("20150711; this function has not been updated")
     string <- if (short) {
       lenc <- length(cutpoint) > 1
       lenk <- length(kay) > 1
-      paste("nbolf2(", theta,
+      paste("nbord2link(", theta,
             ", earg = list(cutpoint = ",
             if (lenc) "c(" else "",
             ToString(cutpoint),
@@ -1803,7 +1930,10 @@ warning("20150711; this function has not been updated")
   if (!is.Numeric(answer))
     warning("the answer contains some NAs")
   answer
-}
+}  #  nbord2link, aka nbolf2
+
+
+
 
 
 
@@ -1827,7 +1957,8 @@ warning("20150711; this function has not been updated")
   }
   attr(answer, "breaks") <- breaks
   answer
-}
+}  # Cut
+
 
 
  checkCut <- function(y) {
@@ -1843,9 +1974,7 @@ warning("20150711; this function has not been updated")
       stop("there is no ", ii, " value")
   }
   TRUE
-}
-
-
+}  # checkCut
 
 
 
@@ -1954,7 +2083,9 @@ warning("20150711; this function has not been updated")
        names(ans) <- NULL
      ans
   }
-}
+}  # nbcanlink
+
+
 
 
 
@@ -1978,7 +2109,7 @@ linkfun.vglm <- function(object, earg = FALSE, ...) {
   EARGS2 <- extra$earg
 
   if (length(LINKS1) != M && length(LINKS2) != M) {
-    if (LINKS1 != "multilogit" && LINKS2 != "multilogit")
+    if (LINKS1 != "multilogitlink" && LINKS2 != "multilogitlink")
       warning("the length of the 'links' component is not ", M)
   }
 
@@ -1987,7 +2118,7 @@ linkfun.vglm <- function(object, earg = FALSE, ...) {
   } else {
     if (earg) list(link = LINKS2, earg = EARGS2) else LINKS2
   }
-}
+}  # linkfun.vglm
 
 
 
@@ -1999,8 +2130,6 @@ if (!isGeneric("linkfun"))
 
 setMethod("linkfun", "vglm", function(object, ...)
     linkfun.vglm(object, ...))
-
-
 
 
 
@@ -2062,7 +2191,7 @@ setMethod("linkfun", "vglm", function(object, ...)
       },
        stop("argument 'deriv' unmatched"))
   }
-}
+}  # logitoffsetlink
 
 
 

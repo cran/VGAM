@@ -8,8 +8,10 @@
 
 }
 \usage{
-benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
-        ishape = NULL, imethod = 1, zero = NULL)
+benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loglink",
+        ishape = NULL, imethod = 1, zero = NULL, parallel = FALSE,
+        type.fitted = c("percentiles", "Qlink"),
+        percentiles = 50)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,14 +25,22 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loge",
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{b} is positive.
 
+
   }
   \item{ishape}{
   Optional initial value for the shape parameter.
   The default is to compute the value internally.
 
+
   }
-  \item{imethod, zero}{
+  \item{imethod, zero, parallel}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
+  }
+  \item{type.fitted, percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  Using \code{"Qlink"} is for quantile-links in \pkg{VGAMextra}.
+
 
   }
 }

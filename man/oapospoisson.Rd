@@ -10,7 +10,7 @@
 
 }
 \usage{
-oapospoisson(lpobs1 = "logit", llambda = "loge",
+oapospoisson(lpobs1 = "logitlink", llambda = "loglink",
              type.fitted = c("mean", "lambda", "pobs1", "onempobs1"),
              ipobs1 = NULL, zero = NULL)
 }
@@ -114,8 +114,8 @@ oapospoisson(lpobs1 = "logit", llambda = "loge",
 
 \examples{
 odata <- data.frame(x2 = runif(nn <- 1000))
-odata <- transform(odata, pobs1  = logit(-1 + 2*x2, inverse = TRUE),
-                          lambda =  loge( 1 + 1*x2, inverse = TRUE))
+odata <- transform(odata, pobs1  = logitlink(-1 + 2*x2, inverse = TRUE),
+                          lambda =  loglink( 1 + 1*x2, inverse = TRUE))
 odata <- transform(odata, y1 = roapospois(nn, lambda = lambda, pobs1 = pobs1),
                           y2 = roapospois(nn, lambda = lambda, pobs1 = pobs1))
 with(odata, table(y1))

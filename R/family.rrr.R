@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -41,6 +41,7 @@ replace.constraints <- function(Hlist, cm, index) {
 
 
 
+
 qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
   Rank <- ncol(numat)
   moff <- NULL
@@ -59,6 +60,9 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
   list(matrix = if (Aoffset > 0) ans else ans[, -(1:Rank), drop = FALSE],
        offset = moff)
 }  # qrrvglm.xprod
+
+
+
 
 
 
@@ -241,6 +245,8 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
 
 
 
+
+
  lm2qrrvlm.model.matrix <-
   function(x, Hlist, C, control, assign = TRUE,
            no.thrills = FALSE) {
@@ -281,14 +287,14 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
     if (!no.thrills) {
       i63 <- iam(NA, NA, M = Rank, both = TRUE)
       names(clist2) <- c(
-             if (NoA) NULL else paste("(latvar", 1:Rank, ")", sep = ""),
-             if (Quadratic && Rank == 1 && !I.tolerances)
-                 "(latvar^2)" else
-             if (Quadratic && Rank>1 && !I.tolerances)
-                 paste("(latvar", i63$row, ifelse(i63$row == i63$col, "^2",
-                 paste("*latvar", i63$col, sep = "")), ")", sep = "") else
-                 NULL,
-             if (p1) names(colx1.index) else NULL)
+         if (NoA) NULL else paste("(latvar", 1:Rank, ")", sep = ""),
+         if (Quadratic && Rank == 1 && !I.tolerances)
+             "(latvar^2)" else
+         if (Quadratic && Rank>1 && !I.tolerances)
+             paste("(latvar", i63$row, ifelse(i63$row == i63$col, "^2",
+             paste("*latvar", i63$col, sep = "")), ")", sep = "") else
+             NULL,
+         if (p1) names(colx1.index) else NULL)
     }
 
     latvar.mat <- x[, control$colx2.index, drop = FALSE] %*% C
@@ -2336,6 +2342,9 @@ biplot.qrrvglm <- function(x, ...) {
 
 
 
+
+
+
  lvplot.qrrvglm <-
   function(object, varI.latvar = FALSE, refResponse = NULL,
            add = FALSE, show.plot = TRUE, rug = TRUE, y = FALSE,
@@ -2358,7 +2367,9 @@ biplot.qrrvglm <- function(x, ...) {
               Ccex = par()$cex, Cadj.arg = -0.1, stretchC = 1,
           sites = FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
           sfont = par()$font,
-          check.ok = TRUE, ...) {
+          check.ok = TRUE,
+          jitter.y = FALSE,
+          ...) {
     if (mode(type) != "character" && mode(type) != "name")
       type <- as.character(substitute(type))
     type <- match.arg(type, c("fitted.values", "predictors"))[1]
@@ -2400,7 +2411,7 @@ biplot.qrrvglm <- function(x, ...) {
       if (Rank == 1) {
         matplot(nustar,
                 if ( y && type == "fitted.values")
-                object@y else r.curves,
+                (if (jitter.y) jitter(object@y) else object@y) else r.curves,
                 type = "n", xlab = xlab, ylab = ylab, ...)
       } else {  # Rank == 2
         matplot(c(Coef.list@Optimum[1, ], nustar[, 1]),
@@ -2439,9 +2450,9 @@ biplot.qrrvglm <- function(x, ...) {
         yy <- yy[o]
         lines(xx, yy, col = lcol[i], lwd = llwd[i], lty = llty[i])
         if ( y && type == "fitted.values") {
-          ypts <- object@y
+          ypts <- if (jitter.y) jitter(object@y) else object@y
           if (NCOL(ypts) == ncol(r.curves))
-            points(xx, ypts[o,i], col = pcol[i],
+            points(xx, ypts[o, i], col = pcol[i],
                    cex = pcex[i], pch = pch[i])
         }
       }
@@ -2536,6 +2547,9 @@ biplot.qrrvglm <- function(x, ...) {
   }
   invisible(nustar)
 }  # lvplot.qrrvglm
+
+
+
 
 
 

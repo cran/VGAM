@@ -10,10 +10,10 @@
 
 }
 \usage{
-zageometric(lpobs0 = "logit", lprob = "logit",
+zageometric(lpobs0 = "logitlink", lprob = "logitlink",
             type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
             imethod = 1, ipobs0 = NULL, iprob = NULL, zero = NULL)
-zageometricff(lprob = "logit", lonempobs0 = "logit",
+zageometricff(lprob = "logitlink", lonempobs0 = "logitlink",
               type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
               imethod = 1, iprob = NULL, ionempobs0 = NULL, zero = "onempobs0")
 
@@ -173,8 +173,8 @@ zageometricff(lprob = "logit", lonempobs0 = "logit",
 
 \examples{
 zdata <- data.frame(x2 = runif(nn <- 1000))
-zdata <- transform(zdata, pobs0 = logit(-1 + 2*x2, inverse = TRUE),
-                          prob  = logit(-2 + 3*x2, inverse = TRUE))
+zdata <- transform(zdata, pobs0 = logitlink(-1 + 2*x2, inverse = TRUE),
+                          prob  = logitlink(-2 + 3*x2, inverse = TRUE))
 zdata <- transform(zdata, y1 = rzageom(nn, prob = prob, pobs0 = pobs0),
                           y2 = rzageom(nn, prob = prob, pobs0 = pobs0))
 with(zdata, table(y1))

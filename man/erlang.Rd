@@ -9,7 +9,7 @@
 
 }
 \usage{
-erlang(shape.arg, lscale = "loge", imethod = 1, zero = NULL)
+erlang(shape.arg, lscale = "loglink", imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

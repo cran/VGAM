@@ -8,7 +8,7 @@
 
 }
 \usage{
-lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
+lino(lshape1 = "loglink", lshape2 = "loglink", llambda = "loglink",
      ishape1 = NULL,   ishape2 = NULL,   ilambda = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -63,7 +63,7 @@ lino(lshape1 = "loge", lshape2 = "loge", llambda = "loge",
   Since \eqn{\log(\lambda)=0}{log(lambda)=0} corresponds to the standard
   beta distribution, a \code{summary} of the fitted model performs a
   t-test for whether the data belongs to a standard beta distribution
-  (provided the \code{\link{loge}} link for \eqn{\lambda}{lambda} is used;
+  (provided the \code{\link{loglink}} link for \eqn{\lambda}{lambda} is used;
   this is the default).
 
 }

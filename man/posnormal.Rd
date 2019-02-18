@@ -6,7 +6,7 @@
   Fits a positive (univariate) normal distribution.
 }
 \usage{
-posnormal(lmean = "identitylink", lsd = "loge",
+posnormal(lmean = "identitylink", lsd = "loglink",
           eq.mean = FALSE, eq.sd = FALSE,
           gmean = exp((-5:5)/2), gsd = exp((-1:5)/2),
           imean = NULL, isd = NULL, probs.y = 0.10, imethod = 1,

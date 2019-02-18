@@ -8,7 +8,7 @@
 
 }
 \usage{
-AB.Ab.aB.ab(link = "logit", init.p = NULL)
+AB.Ab.aB.ab(link = "logitlink", init.p = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

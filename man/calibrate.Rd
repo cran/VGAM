@@ -35,8 +35,11 @@ calibrate(object, ...)
   regression model.
   It can be loosely thought of as the opposite of \code{\link{predict}}
   (which takes an \bold{X} and returns a \bold{Y} of some sort.)
+  In general,
+  the central algorithm is maximum likelihood calibration.
 
 
+ 
 
 }
 \value{
@@ -53,8 +56,17 @@ calibrate(object, ...)
 
 
 }
-%\references{
-%}
+\references{
+
+
+ter Braak, C. J. F. and van Dam, H. (1989).
+Inferring pH from diatoms: a comparison of old and new
+calibration methods.
+\emph{Hydrobiologia}, \bold{178}, 209--223.
+
+
+
+}
 \author{ T. W. Yee }
 \note{
   This function was not called \code{predictx} because of the

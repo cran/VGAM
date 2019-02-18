@@ -9,7 +9,7 @@
 
 }
 \usage{
-betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
+betabinomial(lmu = "logitlink", lrho = "logitlink", irho = NULL, imethod = 1,
              ishrinkage = 0.95, nsimEIM = NULL, zero = "rho")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -161,7 +161,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
   is currently not implemented in the \pkg{VGAM} package as it has
   range-restrictions for the correlation parameter that are currently
   too difficult to handle in this package.
-  However, try \code{lrho = "rhobit"}.
+  However, try \code{lrho = "rhobitlink"}.
 
 
 }
@@ -169,7 +169,7 @@ betabinomial(lmu = "logit", lrho = "logit", irho = NULL, imethod = 1,
 
 
   If the estimated rho parameter is close to 0 then it pays to
-  try \code{lrho = "rhobit"}. One day this may become the default
+  try \code{lrho = "rhobitlink"}. One day this may become the default
   link function.
 
 

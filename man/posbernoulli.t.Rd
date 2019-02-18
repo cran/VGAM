@@ -16,7 +16,7 @@
 
 }
 \usage{
-posbernoulli.t(link = "logit", parallel.t = FALSE ~ 1, iprob = NULL,
+posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
                p.small = 1e-4, no.warning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

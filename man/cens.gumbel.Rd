@@ -10,7 +10,7 @@
 
 }
 \usage{
-cens.gumbel(llocation = "identitylink", lscale = "loge", iscale = NULL,
+cens.gumbel(llocation = "identitylink", lscale = "loglink", iscale = NULL,
             mean = TRUE, percentiles = NULL, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.

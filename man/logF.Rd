@@ -12,7 +12,7 @@
 
 }
 \usage{
- logF(lshape1 = "loge", lshape2 = "loge",
+ logF(lshape1 = "loglink", lshape2 = "loglink",
       ishape1 = NULL, ishape2 = 1, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.

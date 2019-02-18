@@ -9,7 +9,7 @@ by maximum likelihood estimation.
 
 }
 \usage{
-waldff(llambda = "loge", ilambda = NULL)
+waldff(llambda = "loglink", ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

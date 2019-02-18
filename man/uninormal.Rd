@@ -1,5 +1,7 @@
 \name{uninormal}
 \alias{uninormal}
+% 20190104; gaussianff is made to call uninormal:
+\alias{gaussianff}
 %\alias{normal1}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Univariate Normal Distribution }
@@ -10,7 +12,7 @@
 
 }
 \usage{
-uninormal(lmean = "identitylink", lsd = "loge", lvar = "loge",
+uninormal(lmean = "identitylink", lsd = "loglink", lvar = "loglink",
           var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
           smallno = 1e-05, zero = if (var.arg) "var" else "sd")
 }
@@ -54,7 +56,7 @@ uninormal(lmean = "identitylink", lsd = "loge", lvar = "loge",
   }
   \item{imethod, parallel, isd, zero}{
   See \code{\link{CommonVGAMffArguments}} for more information.
-  If \code{lmean = loge} then try \code{imethod = 2}.
+  If \code{lmean = loglink} then try \code{imethod = 2}.
   If \code{parallel = TRUE} then the parallelism constraint
   is not applied to the intercept.
 
@@ -89,6 +91,25 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 
 \author{ T. W. Yee }
+
+
+\section{Warning}{
+  \code{gaussianff()} was deprecated but has been brought back
+  into \pkg{VGAM} nominally.
+  It should be called Mickey Mouse.
+  It gives a warning and calls
+  \code{\link{uninormal}}
+  instead
+  (hopefully all the arguments should pass in correctly).
+  Users should avoid calling \code{gaussianff()};
+  use \code{\link[stats]{glm}} with
+  \code{\link[stats]{gaussian}} instead.
+  It is dangerous to treat what is an
+  \code{\link{uninormal}} fit as a
+  \code{gaussianff()} object.
+  
+
+}
 
 
 %\section{Warning}{

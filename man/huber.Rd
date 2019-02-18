@@ -11,7 +11,7 @@
 }
 \usage{
 huber1(llocation = "identitylink", k = 0.862, imethod = 1)
-huber2(llocation = "identitylink", lscale = "loge",
+huber2(llocation = "identitylink", lscale = "loglink",
        k = 0.862, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.

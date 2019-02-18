@@ -22,9 +22,9 @@ R2latvar(object)
   \code{\link{binomialff}} fit using
   \code{\link{vglm}}.
   Only a few selected link functions are currently permitted:
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}}.
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}}.
   For models with more than one linear predictor,
   a parallelism assumption is needed also, i.e.,
   the constraint matrices must be a 1-column matrix of 1s
@@ -43,7 +43,7 @@ R2latvar(object)
   It is possible to summarize the predictive power of
   the model by computing \eqn{R^2} on the transformed
   scale, e.g., on a standard normal distribution for
-  a \code{\link{probit}} link.
+  a \code{\link{probitlink}} link.
   For more details see Section 6.3.7 of Agresti (2018).
 
 
@@ -99,9 +99,9 @@ R2latvar(object)
   \code{\link{vglm}},
   \code{\link{cumulative}},
   \code{\link{propodds}},
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}},
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}},
   \code{\link[stats]{summary.lm}}.
 
 

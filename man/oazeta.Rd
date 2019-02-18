@@ -10,7 +10,7 @@
 
 }
 \usage{
-oazeta(lpobs1 = "logit", lshape = "loge",
+oazeta(lpobs1 = "logitlink", lshape = "loglink",
        type.fitted = c("mean", "shape", "pobs1", "onempobs1"),
        gshape = exp((-4:3)/4), ishape = NULL, ipobs1 = NULL, zero = NULL)
 }
@@ -115,8 +115,8 @@ oazeta(lpobs1 = "logit", lshape = "loge",
 
 \examples{
 odata <- data.frame(x2 = runif(nn <- 1000))
-odata <- transform(odata, pobs1 = logit(-1 + 2*x2, inverse = TRUE),
-                          shape =  loge( 1 + 1*x2, inverse = TRUE))
+odata <- transform(odata, pobs1 = logitlink(-1 + 2*x2, inverse = TRUE),
+                          shape =  loglink( 1 + 1*x2, inverse = TRUE))
 odata <- transform(odata, y1 = roazeta(nn, shape = shape, pobs1 = pobs1),
                           y2 = roazeta(nn, shape = shape, pobs1 = pobs1))
 with(odata, table(y1))

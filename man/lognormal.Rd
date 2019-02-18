@@ -9,7 +9,7 @@
 
 }
 \usage{
-lognormal(lmeanlog = "identitylink", lsdlog = "loge", zero = "sdlog")
+lognormal(lmeanlog = "identitylink", lsdlog = "loglink", zero = "sdlog")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -160,7 +160,7 @@ coef(fit2, matrix = TRUE)
 
 
 
-%lognormal3(lmeanlog = "identitylink", lsdlog = "loge",
+%lognormal3(lmeanlog = "identitylink", lsdlog = "loglink",
 %           powers.try = (-3):3, delta = NULL, zero = 2)
 
 %lambda <- 4

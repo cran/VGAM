@@ -11,7 +11,7 @@
 posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
                mds.min = 0.001, nsimEIM = 500, cutoff.prob = 0.999,
                eps.trig = 1e-07, max.support = 4000, max.chunk.MB = 30,
-               lmunb = "loge", lsize = "loge", imethod = 1,
+               lmunb = "loglink", lsize = "loglink", imethod = 1,
                imunb = NULL, iprobs.y = NULL,
                gprobs.y = ppoints(8), isize = NULL,
                gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
@@ -263,7 +263,7 @@ fit.fail <- vglm(y1 ~ 1, weights = ofreq, posnegbinomial,
 
 
 
-%posnegbinomial(lmunb = "loge", lsize = "loge", imunb = NULL,
+%posnegbinomial(lmunb = "loglink", lsize = "loglink", imunb = NULL,
 %               isize = NULL, zero = "size", nsimEIM = 250,
 %               probs.y = 0.75, cutoff.prob = 0.999,
 %               max.support = 2000, max.chunk.MB = 30,

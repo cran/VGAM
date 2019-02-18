@@ -8,7 +8,9 @@
 
 }
 \usage{
-gamma1(link = "loge", zero = NULL)
+gamma1(link = "loglink", zero = NULL, parallel = FALSE,
+       type.fitted = c("mean", "percentiles", "Qlink"),
+       percentiles = 50)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,8 +20,14 @@ gamma1(link = "loge", zero = NULL)
 
 
   }
-  \item{zero}{
+  \item{zero, parallel}{
   Details at \code{\link{CommonVGAMffArguments}}.
+
+
+  }
+  \item{type.fitted, percentiles}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  Using \code{"Qlink"} is for quantile-links in \pkg{VGAMextra}.
 
 
   }
@@ -31,9 +39,14 @@ gamma1(link = "loge", zero = NULL)
   for \eqn{shape > 0} and \eqn{y > 0}.
   Here, \eqn{\Gamma(shape)}{gamma(shape)} is the gamma
   function, as in \code{\link[base:Special]{gamma}}.
-  The mean of \eqn{Y} (returned as the fitted values)
+  The mean of \eqn{Y} (returned as the default fitted values)
   is \eqn{\mu=shape}{mu=shape}, and the variance is
   \eqn{\sigma^2 = shape}{sigma^2 = shape}.
+
+
+
+
+
 
 
 }
@@ -64,7 +77,12 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   The parameter \eqn{shape} matches with \code{shape} in
   \code{\link[stats]{rgamma}}. The argument
   \code{rate} in \code{\link[stats]{rgamma}} is assumed
-  1 for this family function.
+  1 for this family function, so that
+  \code{scale = 1} is used for calls to
+  \code{\link[stats]{dgamma}},
+  \code{\link[stats]{qgamma}}, etc.
+
+
 
 
   If \eqn{rate} is unknown use the family function

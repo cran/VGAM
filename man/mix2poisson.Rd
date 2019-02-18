@@ -8,7 +8,7 @@
 
 }
 \usage{
-mix2poisson(lphi = "logit", llambda = "loge",
+mix2poisson(lphi = "logitlink", llambda = "loglink",
             iphi = 0.5, il1 = NULL, il2 = NULL,
             qmu = c(0.2, 0.8), nsimEIM = 100, zero = "phi")
 }
@@ -134,7 +134,7 @@ mix2poisson(lphi = "logit", llambda = "loge",
 nn <- 1000
 mu1 <- exp(2.5)  # Also known as lambda1
 mu2 <- exp(3)
-(phi <- logit(-0.5, inverse = TRUE))
+(phi <- logitlink(-0.5, inverse = TRUE))
 mdata <- data.frame(y = rpois(nn, ifelse(runif(nn) < phi, mu1, mu2)))
 mfit <- vglm(y ~ 1, mix2poisson, data = mdata)
 coef(mfit, matrix = TRUE)

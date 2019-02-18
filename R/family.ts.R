@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -130,13 +130,19 @@ rrar.Wmat <- function(y, Ranks., MM, ki, plag, aa, uu, n, coeffs) {
 
 
 
-rrar.control <- function(stepsize = 0.5, save.weights = TRUE, ...) {
+
+
+rrar.control <-
+  function(stepsize = 0.5, save.weights = TRUE,
+           summary.HDEtest = FALSE,  # Overwrites the summary() default.
+           ...) {
 
   if (stepsize <= 0 || stepsize > 1) {
     warning("bad value of stepsize; using 0.5 instead")
     stepsize <- 0.5
   }
   list(stepsize = stepsize,
+       summary.HDEtest = summary.HDEtest,
        save.weights = as.logical(save.weights)[1])
 }
 
@@ -329,8 +335,8 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
 
     copy.X.vlm <- TRUE  # x matrix changes at each iteration
 
-    if ( .link == "logit"   || .link == "probit" ||
-         .link == "cloglog" || .link == "cauchit") {
+    if ( .link == "logitlink"   || .link == "probitlink" ||
+         .link == "clogloglink" || .link == "cauchitlink") {
         delete.zero.colns <- TRUE
         eval(process.categorical.data.VGAM)
         mustart <- mustart[tt.index, 2]
@@ -387,18 +393,18 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     if (residuals) {
       switch( .link ,
               identitylink   = y - mu,
-              loge       = w * (y / mu - 1),
-              reciprocal = w * (y / mu - 1),
-              inverse    = w * (y / mu - 1),
+              loglink       = w * (y / mu - 1),
+              reciprocallink = w * (y / mu - 1),
+              inverse        = w * (y / mu - 1),
               w * (y / mu - (1-y) / (1 - mu)))
     } else {
       ll.elts <-
       switch( .link ,
               identitylink   = c(w) * (y - mu)^2,
-              loge       = c(w) * (-mu + y * log(mu)),
-              reciprocal = c(w) * (-mu + y * log(mu)),
-              inverse    = c(w) * (-mu + y * log(mu)),
-                           c(w) * (y * log(mu) + (1-y) * log1p(-mu)))
+              loglink        = c(w) * (-mu + y * log(mu)),
+              reciprocallink = c(w) * (-mu + y * log(mu)),
+              inverse        = c(w) * (-mu + y * log(mu)),
+              c(w) * (y * log(mu) + (1-y) * log1p(-mu)))
       if (summation) {
         sum(ll.elts)
       } else {
@@ -427,8 +433,8 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
   deriv = eval(substitute(expression({
     dl.dmu <- switch( .link ,
                   identitylink = y-mu,
-                  loge       = (y - mu) / mu,
-                  reciprocal = (y - mu) / mu,
+                  loglink       = (y - mu) / mu,
+                  reciprocallink = (y - mu) / mu,
                   inverse    = (y - mu) / mu,
                   (y - mu) / (mu * (1 - mu)))
     dmu.deta <- dtheta.deta(mu, .link , earg = .earg)
@@ -460,8 +466,8 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
 
     vary <- switch( .link ,
                    identitylink = 1,
-                   loge       = mu,
-                   reciprocal = mu^2,
+                   loglink       = mu,
+                   reciprocallink = mu^2,
                    inverse    = mu^2,
                    mu * (1 - mu))
     c(w) * dtheta.deta(mu, link = .link , earg = .earg )^2 / vary
@@ -595,9 +601,9 @@ AR1.control <- function(epsilon  = 1e-6,
 
  AR1 <-
   function(ldrift = "identitylink",
-           lsd  = "loge",
-           lvar = "loge",
-           lrho = "rhobit",
+           lsd  = "loglink",
+           lvar = "loglink",
+           lrho = "rhobitlink",
            idrift  = NULL,
            isd  = NULL,
            ivar = NULL,

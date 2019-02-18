@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -456,6 +456,170 @@ hdeff.vglm <-
 
 setMethod("hdeff", "vglm", function(object, ...)
           hdeff.vglm(object, ...))
+
+
+
+
+
+
+
+
+hdeffsev <-
+  function(x, y,
+           dy, ddy,  # 1st and 2nd derivs           
+           allofit = FALSE,
+           tol0 = 0.1,
+           severity.table = c("None", "Faint", "Weak",
+                              "Moderate", "Strong", "Extreme",
+                              "Undetermined")) { 
+
+
+
+
+
+
+
+  severity <- rep_len(severity.table[7], length(x))  # Initialize
+  names(severity) <- names(x)
+  zeta <- x + y * dy
+  dzeta.dx <- 1 + dy^2 + y * ddy
+  ind.none     <- dy > 0 &
+                  ifelse(0 <= x, ddy > 0, ddy < 0) &  # 20181105
+                  dzeta.dx > 0
+  severity[ind.none] <- severity.table[1]
+  severity[abs(x) < tol0] <- severity.table[1]  # Additional condition
+  ind.faint    <- dy > 0 &
+                  ifelse(0 <= x, ddy <= 0, ddy >= 0) &
+                  dzeta.dx > 0
+  severity[ind.faint] <- severity.table[2]
+  ind.weak     <- dy > 0 &
+                  ifelse(0 <= x, ddy < 0, ddy > 0) &
+                  dzeta.dx < 0
+  severity[ind.weak] <- severity.table[3]
+  ind.moderate <- dy <= 0 &  # Note <= rather than <
+                  ifelse(0 <= x, ddy < 0, ddy > 0) & 
+                  dzeta.dx < 0
+  severity[ind.moderate] <- severity.table[4]
+  ind.strong   <- dy < 0 &
+                  ifelse(0 <= x, ddy < 0, ddy > 0) & 
+                  dzeta.dx > 0
+  severity[ind.strong] <- severity.table[5]
+  ind.extreme  <- dy < 0 &
+                  ifelse(0 <= x, ddy >= 0, ddy < 0) & 
+                  dzeta.dx > 0
+  severity[ind.extreme] <- severity.table[6]
+  if (allofit) list(severity  = severity,
+                    zeta      = zeta,
+                    dzeta.dx  = dzeta.dx) else
+               severity
+}
+
+
+
+seglines <-
+  function(x, y,
+           dy, ddy,  # 1st and 2nd derivs           
+           lwd = 2,
+           cex = 2,
+           plot.it = TRUE,
+           add.legend = TRUE,
+           position.legend = "topleft",
+           lty.table = c("solid", "dashed",
+                         "solid", "dashed",
+                         "solid", "dashed",
+                         "solid"), 
+           col.table = rainbow.sky[-5],  # Omit "yellow"
+           pch.table = 7:1,
+           severity.table = c("None", "Faint", "Weak",
+                              "Moderate", "Strong", "Extreme",
+                              "Undetermined"),
+           tol0 = 0.1,
+           FYI = FALSE,
+           ...) {
+
+
+  answer <- hdeffsev(x, y, dy, ddy,
+                     severity.table = severity.table,
+                     tol0 = tol0, allofit = FYI)
+  severity <- if (FYI) answer$severity else answer
+
+  if (plot.it) {
+    myrle <- rle(severity)
+    myrle$cslength <- cumsum(myrle$length)
+    mycol <- col.table[match(severity, severity.table)]
+    mylty <- lty.table[match(severity, severity.table)]
+    mypch <- pch.table[match(severity, severity.table)]
+
+    single.points <- FALSE  # Assumes all lines()
+    pointsvec <- NULL  # History of points used
+    for (iloc in seq(length(myrle$values))) {
+      end.val <- myrle$cslength[iloc]
+      start.val <- end.val + 1 - myrle$length[iloc]
+      if (start.val < end.val) {
+        lines(x[start.val:end.val],
+              y[start.val:end.val],
+              lwd = lwd, col = mycol[start.val:end.val],
+              lty = mylty[start.val:end.val])
+      } else {
+        single.points <- TRUE
+        pointsvec <- c(pointsvec, mypch[start.val])
+        points(x[start.val:end.val],
+               y[start.val:end.val],
+               col = mycol[start.val:end.val],
+               pch = mypch[start.val:end.val],
+               cex = cex)
+      }
+
+      if (FYI) {
+        some.val <- sample(start.val:end.val,
+                           min(2, end.val-start.val+1))  
+        segments(x[some.val],
+                 y[some.val],
+                 ifelse(x[some.val] > 0,
+                         answer$zeta[some.val],
+                        -answer$zeta[some.val]),
+                 0,
+                 col = "purple", lty = "dashed")
+      }  # FYI
+    }  # for
+
+    pointsvec <- unique(pointsvec)
+    use.pch.table <- pch.table
+    for (ii in 1:7)
+      if (single.points && !any(use.pch.table[ii] == pointsvec))
+        use.pch.table[ii] <- NA
+
+
+    if (add.legend) {
+      if (FALSE && !any(is.element(severity,  severity.table[7]))) {
+        use.pch.table <- use.pch.table[-7]
+        col.table <- col.table[-7]
+        severity.table <- severity.table[-7]
+      }
+      ind3 <- match(severity.table, severity)  # length of 1st argument
+      keep.ind <- !is.na(ind3)
+      use.pch.table <- use.pch.table[keep.ind]
+      col.table <- col.table[keep.ind]
+      severity.table <- severity.table[keep.ind]
+      
+      legend(position.legend, lwd = lwd, lty = lty.table,
+             pch = use.pch.table, col = col.table,
+             legend = severity.table)
+      invisible(severity)
+    }
+  } else {
+    return(severity)
+  }
+}  # seglines
+
+
+
+
+
+
+
+
+
 
 
 

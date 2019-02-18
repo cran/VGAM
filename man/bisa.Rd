@@ -8,7 +8,7 @@
 
 }
 \usage{
-bisa(lscale = "loge", lshape = "loge", iscale = 1,
+bisa(lscale = "loglink", lshape = "loglink", iscale = 1,
      ishape = NULL, imethod = 1, zero = "shape", nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

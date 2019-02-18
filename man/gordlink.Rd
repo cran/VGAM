@@ -1,4 +1,6 @@
-\name{golf}
+\name{gordlink}
+%\name{golf}
+\alias{gordlink}
 \alias{golf}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Gamma-Ordinal Link Function }
@@ -9,8 +11,8 @@
 
 }
 \usage{
-golf(theta, lambda = 1, cutpoint = NULL,
-     inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+gordlink(theta, lambda = 1, cutpoint = NULL,
+         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +27,7 @@ golf(theta, lambda = 1, cutpoint = NULL,
   \code{cutpoint} is optional; if \code{NULL}
   then \code{cutpoint} is ignored from the GOLF definition.
   If given, the cutpoints should be non-negative integers.
-  If \code{golf()} is used as the link function in
+  If \code{gordlink()} is used as the link function in
   \code{\link{cumulative}} then, if the cutpoints are known, then
   one should choose
   \code{reverse = TRUE, parallel = FALSE ~ -1}.
@@ -59,12 +61,12 @@ golf(theta, lambda = 1, cutpoint = NULL,
 
 }
 \value{
-  See Yee (2012) for details.
+  See Yee (2019) for details.
 
 
 }
 \references{
-  Yee, T. W. (2012)
+  Yee, T. W. (2019)
   \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 
@@ -97,24 +99,24 @@ golf(theta, lambda = 1, cutpoint = NULL,
 \seealso{
   \code{\link{Links}},
   \code{\link{gamma2}},
-  \code{\link{polf}},
-  \code{\link{nbolf}},
+  \code{\link{pordlink}},
+  \code{\link{nbordlink}},
   \code{\link{cumulative}}.
 
 
 }
 \examples{
 \dontrun{
-golf("p", lambda = 1, short = FALSE)
-golf("p", lambda = 1, tag = TRUE)
+gordlink("p", lambda = 1, short = FALSE)
+gordlink("p", lambda = 1, tag = TRUE)
 
 p <- seq(0.02, 0.98, len = 201)
-y <- golf(p, lambda = 1)
-y. <- golf(p, lambda = 1, deriv = 1, inverse = TRUE)
-max(abs(golf(y, lambda = 1, inverse = TRUE) - p))  # Should be 0
+y <- gordlink(p, lambda = 1)
+y. <- gordlink(p, lambda = 1, deriv = 1, inverse = TRUE)
+max(abs(gordlink(y, lambda = 1, inverse = TRUE) - p))  # Should be 0
 
 #\ dontrun{par(mfrow = c(2, 1), las = 1)
-#plot(p, y, type = "l", col = "blue", main = "golf()")
+#plot(p, y, type = "l", col = "blue", main = "gordlink()")
 #abline(h = 0, v = 0.5, col = "orange", lty = "dashed")
 #plot(p, y., type = "l", col = "blue",
 #     main = "(Reciprocal of) first GOLF derivative")
@@ -135,7 +137,7 @@ gdata <- transform(gdata, cuty = Cut(y1, breaks = cutpoints))
 with(gdata, table(cuty) / sum(table(cuty)))
 fit <- vglm(cuty ~ x2 + x3, cumulative(multiple.responses = TRUE,
            reverse = TRUE, parallel = FALSE ~ -1,
-           link = golf(cutpoint = cutpoints[2:3], lambda = lambda)),
+           link = gordlink(cutpoint = cutpoints[2:3], lambda = lambda)),
            data = gdata, trace = TRUE)
 head(depvar(fit))
 head(fitted(fit))
@@ -158,10 +160,10 @@ fit@misc
 % mymu <- exp( 3 + 1 * x2 - 2 * x3)
 % y1 <- rnbinom(nn, mu=mymu, size=shape)
 % cuty <- Cut(y1)
-% fit <- vglm(cuty ~ x2 + x3, fam = cumulative(link = "golf", rev = TRUE,
+% fit <- vglm(cuty ~ x2 + x3, fam = cumulative(link = "gordlink", rev = TRUE,
 %            multiple.responses = TRUE, parallel = TRUE, earg = list(lambda=shape)))
 % coef(fit)
-% fit <- vglm(cuty ~ x2 + x3, fam = cumulative(link = "probit", rev = TRUE,
+% fit <- vglm(cuty ~ x2 + x3, fam = cumulative(link = "probitlink", rev = TRUE,
 %            multiple.responses = TRUE, parallel = TRUE))
 % coef(fit, matrix = TRUE)
 % coef(fit)

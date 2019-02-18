@@ -19,14 +19,14 @@ alaplace1(tau = NULL, llocation = "identitylink",
           ishrinkage = 0.95, parallel.locat = TRUE  ~ 0, digt = 4,
           idf.mu = 3, zero = NULL, imethod = 1)
 
-alaplace2(tau = NULL,  llocation = "identitylink", lscale = "loge",
+alaplace2(tau = NULL,  llocation = "identitylink", lscale = "loglink",
           ilocation = NULL, iscale = NULL, kappa = sqrt(tau/(1 - tau)),
           ishrinkage = 0.95,
           parallel.locat =  TRUE ~ 0,
           parallel.scale = FALSE ~ 0,
           digt = 4, idf.mu = 3, imethod = 1, zero = "scale")
 
-alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
+alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
           ilocation = NULL, iscale = NULL, ikappa = 1,
           imethod = 1, zero = c("scale", "kappa"))
 }
@@ -49,7 +49,7 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
   See \code{\link{Links}} for more choices.
   For example, the argument \code{llocation} can help handle
   count data by restricting the quantiles to be positive
-  (use \code{llocation = "loge"}).
+  (use \code{llocation = "loglink"}).
   However, \code{llocation} is best left alone since the theory
   only works properly with the identity link.
 
@@ -253,7 +253,7 @@ alaplace3(llocation = "identitylink", lscale = "loge", lkappa = "loge",
 
 
   Care is needed with \code{tau} values which are too small, e.g.,
-  for count data with \code{llocation = "loge"} and if the sample
+  for count data with \code{llocation = "loglink"} and if the sample
   proportion of zeros is greater than \code{tau}.
 
 
@@ -328,10 +328,10 @@ adata <- transform(adata, y = rpois(n, lambda = mymu(x2)))
 mytau <- c(0.25, 0.75); mydof <- 4
 
 fit <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
-            alaplace2(tau = mytau, llocat = "loge",
+            alaplace2(tau = mytau, llocat = "loglink",
                       parallel.locat = FALSE))
 fitp <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
-             alaplace2(tau = mytau, llocat = "loge", parallel.locat = TRUE))
+             alaplace2(tau = mytau, llocat = "loglink", parallel.locat = TRUE))
 
 par(las = 1); mylwd <- 1.5
 with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
@@ -351,12 +351,12 @@ fit@extra  # Contains useful information
 # Example 2: regression quantile at a new tau value from an existing fit
 # Nb. regression splines are used here since it is easier.
 fitp2 <- vglm(y ~ sm.bs(x2, df = mydof), data = adata, trace = TRUE,
-              alaplace1(tau = mytau, llocation = "loge",
+              alaplace1(tau = mytau, llocation = "loglink",
                         parallel.locat = TRUE))
 
 newtau <- 0.5  # Want to refit the model with this tau value
 fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[, 1]),
-              alaplace1(tau = newtau, llocation = "loge"), data = adata)
+              alaplace1(tau = newtau, llocation = "loglink"), data = adata)
 with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
                pch = "o", cex = 0.75, ylab = "y",
                main = "Example 2; parallel.locat = TRUE"))
@@ -379,9 +379,9 @@ for (ii in 1:length(mytau)) {
   adata <- transform(adata, usey = y-offsety)
   iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0)  # Well-chosen!
   mydf <- ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
-# lloc <- ifelse(ii == 1, "loge", "loge")  # 2nd value must be "loge"
+# lloc <- ifelse(ii == 1, "loglink", "loglink")  # 2nd value must be "loglink"
   fit3 <- vglm(usey ~ sm.ns(x2, df = mydf), data = adata, trace = TRUE,
-               alaplace2(tau = usetau[ii], lloc = "loge", iloc = iloc))
+               alaplace2(tau = usetau[ii], lloc = "loglink", iloc = iloc))
   answer[, ii] <- (if(ii == 1) 0 else answer[, ii-1]) + fitted(fit3)
   adata <- transform(adata, offsety = answer[, ii])
 }

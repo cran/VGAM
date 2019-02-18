@@ -12,7 +12,7 @@
 }
 \usage{
 logistic1(llocation = "identitylink", scale.arg = 1, imethod = 1)
-logistic(llocation = "identitylink", lscale = "loge",
+logistic(llocation = "identitylink", lscale = "loglink",
          ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -118,7 +118,7 @@ A Note on Deriving the Information Matrix for a Logistic Distribution,
 \seealso{
   \code{\link[stats:Logistic]{rlogis}},
   \code{\link{CommonVGAMffArguments}},
-  \code{\link{logit}},
+  \code{\link{logitlink}},
   \code{\link{cumulative}},
   \code{\link{bilogistic}},
   \code{\link{simulate.vlm}}.

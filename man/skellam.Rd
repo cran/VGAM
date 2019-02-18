@@ -8,7 +8,7 @@
 
 }
 \usage{
-skellam(lmu1 = "loge", lmu2 = "loge", imu1 = NULL, imu2 = NULL,
+skellam(lmu1 = "loglink", lmu2 = "loglink", imu1 = NULL, imu2 = NULL,
         nsimEIM = 100, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

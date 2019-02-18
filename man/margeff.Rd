@@ -140,7 +140,7 @@ with some help and motivation from Stasha Rmandic.
 
   Some other limitations are imposed, e.g.,
   for \code{\link{acat}} models
-  only a \code{\link{loge}} link is allowed.
+  only a \code{\link{loglink}} link is allowed.
 
 
 

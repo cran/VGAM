@@ -29,7 +29,7 @@ ordsup.vglm(object, all.vars = FALSE, confint = FALSE, ...)
   \code{\link{cumulative}},
   \code{\link{uninormal}}.
   The links for \code{\link{cumulative}} must be
-  \code{\link{logit}} or \code{\link{probit}},
+  \code{\link{logitlink}} or \code{\link{probitlink}},
   and \code{parallel = TRUE} is also needed.
   For \code{\link{uninormal}} the mean must
   use \code{\link{identitylink}} and model the
@@ -144,6 +144,7 @@ number of specific models.
 
 \seealso{
   \code{\link{cumulative}},
+  \code{\link{propodds}},
   \code{\link{uninormal}}.
 
 
@@ -155,7 +156,7 @@ Mental <- read.table("http://www.stat.ufl.edu/~aa/glm/data/Mental.dat",
                      header = TRUE)  # Make take a while to load in
 Mental$impair <- ordered(Mental$impair)
 pfit3 <- vglm(impair ~ ses + life, data = Mental,
-         cumulative(link = "probit", reverse = FALSE, parallel = TRUE))
+         cumulative(link = "probitlink", reverse = FALSE, parallel = TRUE))
 coef(pfit3, matrix = TRUE)
 ordsup(pfit3)  # The 'ses' variable is binary
 

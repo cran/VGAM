@@ -7,7 +7,7 @@
   (preferably) factor response.
 }
 \usage{
-acat(link = "loge", parallel = FALSE, reverse = FALSE,
+acat(link = "loglink", parallel = FALSE, reverse = FALSE,
      zero = NULL, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -72,13 +72,11 @@ acat(link = "loge", parallel = FALSE, reverse = FALSE,
 Agresti, A. (2013)
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
-
-
+\cr
 Simonoff, J. S. (2003)
 \emph{Analyzing Categorical Data},
 New York: Springer-Verlag.
-
-
+\cr
 Yee, T. W. (2010)
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},

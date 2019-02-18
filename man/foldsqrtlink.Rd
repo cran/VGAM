@@ -1,4 +1,5 @@
-\name{foldsqrt}
+\name{foldsqrtlink}
+\alias{foldsqrtlink}
 \alias{foldsqrt}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Folded Square Root Link Function }
@@ -8,8 +9,8 @@
 
 }
 \usage{
-foldsqrt(theta, min = 0, max = 1, mux = sqrt(2),
-         inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+foldsqrtlink(theta, min = 0, max = 1, mux = sqrt(2),
+             inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,9 +40,9 @@ foldsqrt(theta, min = 0, max = 1, mux = sqrt(2),
 
 }
 \value{
-  For \code{foldsqrt} with \code{deriv = 0}:
+  For \code{foldsqrtlink} with \code{deriv = 0}:
   \eqn{K (\sqrt{\theta-L} - \sqrt{U-\theta})}{K *
-         (sqrt(theta-L) - sqrt(U-theta))}
+          (sqrt(theta-L) - sqrt(U-theta))}
   or
   \code{mux * (sqrt(theta-min) - sqrt(max-theta))}
   when \code{inverse = FALSE},
@@ -81,55 +82,55 @@ foldsqrt(theta, min = 0, max = 1, mux = sqrt(2),
 }
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
-foldsqrt(p)
-max(abs(foldsqrt(foldsqrt(p), inverse = TRUE) - p))  # Should be 0
+foldsqrtlink(p)
+max(abs(foldsqrtlink(foldsqrtlink(p), inverse = TRUE) - p))  # Should be 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
-foldsqrt(p)  # Has NAs
+foldsqrtlink(p)  # Has NAs
 
 \dontrun{
 p <- seq(0.01, 0.99, by = 0.01)
 par(mfrow = c(2, 2), lwd = (mylwd <- 2))
 y <- seq(-4, 4, length = 100)
 for (d in 0:1) {
-  matplot(p, cbind(logit(p, deriv = d), foldsqrt(p, deriv = d)),
+  matplot(p, cbind(logitlink(p, deriv = d), foldsqrtlink(p, deriv = d)),
           type = "n", col = "purple", ylab = "transformation", las = 1,
           main = if (d == 0) "Some probability link functions"
           else "First derivative")
-  lines(p, logit(p, deriv = d), col = "limegreen")
-  lines(p, probit(p, deriv = d), col = "purple")
-  lines(p, cloglog(p, deriv = d), col = "chocolate")
-  lines(p, foldsqrt(p, deriv = d), col = "tan")
+  lines(p, logitlink(p, deriv = d), col = "limegreen")
+  lines(p, probitlink(p, deriv = d), col = "purple")
+  lines(p, clogloglink(p, deriv = d), col = "chocolate")
+  lines(p, foldsqrtlink(p, deriv = d), col = "tan")
   if (d == 0) {
     abline(v = 0.5, h = 0, lty = "dashed")
-    legend(0, 4.5, c("logit", "probit", "cloglog", "foldsqrt"), lwd = 2,
-           col = c("limegreen","purple","chocolate", "tan"))
+    legend(0, 4.5, c("logitlink", "probitlink", "clogloglink", "foldsqrtlink"),
+           lwd = 2, col = c("limegreen", "purple", "chocolate", "tan"))
   } else
     abline(v = 0.5, lty = "dashed")
 }
 
 for (d in 0) {
-  matplot(y, cbind(logit(y, deriv = d, inverse = TRUE),
-                   foldsqrt(y, deriv = d, inverse = TRUE)),
+  matplot(y, cbind(logitlink(y, deriv = d, inverse = TRUE),
+                   foldsqrtlink(y, deriv = d, inverse = TRUE)),
           type = "n", col = "purple", xlab = "transformation", ylab = "p",
           lwd = 2, las = 1,
           main = if (d == 0) "Some inverse probability link functions"
           else "First derivative")
-  lines(y, logit(y, deriv = d, inverse = TRUE), col = "limegreen")
-  lines(y, probit(y, deriv = d, inverse = TRUE), col = "purple")
-  lines(y, cloglog(y, deriv = d, inverse = TRUE), col = "chocolate")
-  lines(y, foldsqrt(y, deriv = d, inverse = TRUE), col = "tan")
+  lines(y, logitlink(y, deriv = d, inverse = TRUE), col = "limegreen")
+  lines(y, probitlink(y, deriv = d, inverse = TRUE), col = "purple")
+  lines(y, clogloglink(y, deriv = d, inverse = TRUE), col = "chocolate")
+  lines(y, foldsqrtlink(y, deriv = d, inverse = TRUE), col = "tan")
   if (d == 0) {
     abline(h = 0.5, v = 0, lty = "dashed")
-    legend(-4, 1, c("logit", "probit", "cloglog", "foldsqrt"), lwd = 2,
-           col = c("limegreen","purple","chocolate", "tan"))
+    legend(-4, 1, c("logitlink", "probitlink", "clogloglink", "foldsqrtlink"),
+           lwd = 2, col = c("limegreen", "purple", "chocolate", "tan"))
   }
 }
 par(lwd = 1)
 }
 
 # This is lucky to converge
-fit.h <- vglm(agaaus ~ sm.bs(altitude), binomialff(link = foldsqrt(mux = 5)),
+fit.h <- vglm(agaaus ~ sm.bs(altitude), binomialff(link = foldsqrtlink(mux = 5)),
               data = hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",
@@ -141,8 +142,8 @@ head(predict(fit.h, hunua, type = "response"))
 # The following fails.
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ let,
-            cumulative(link = foldsqrt(mux = 10), par = TRUE, rev = TRUE),
-            data = pneumo, trace = TRUE, maxit = 200) }
+       cumulative(link = foldsqrtlink(mux = 10), par = TRUE, rev = TRUE),
+       data = pneumo, trace = TRUE, maxit = 200) }
 }
 \keyword{math}
 \keyword{models}

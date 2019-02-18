@@ -250,7 +250,7 @@ Cambridge University Press.
     \code{\link{rrvglm}},
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
-    \code{\link{multilogit}},
+    \code{\link{multilogitlink}},
     \code{\link[datasets]{iris}}.
   The author's homepage has further documentation about
   categorical data analysis using \pkg{VGAM}.

@@ -83,7 +83,7 @@ tdata <- data.frame(index = 1:nn,
                     TS1 = arima.sim(nn, model = list(ar = -0.50),
                                     sd = exp(1)))
 fit1 <- vglm(TS1 ~ 1, AR1, data = tdata, trace = TRUE)
-rhobit(-0.5)
+rhobitlink(-0.5)
 coef(fit1, matrix = TRUE)
 (Cfit1 <- Coef(fit1))
 summary(fit1)  # SEs are useful to know

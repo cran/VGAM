@@ -10,7 +10,7 @@
 
 }
 \usage{
-biplackettcop(link = "loge", ioratio = NULL, imethod = 1, nsimEIM = 200)
+biplackettcop(link = "loglink", ioratio = NULL, imethod = 1, nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

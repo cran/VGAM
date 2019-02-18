@@ -9,8 +9,8 @@
 }
 \usage{
 binormal(lmean1 = "identitylink", lmean2 = "identitylink",
-         lsd1   = "loge",     lsd2   = "loge",
-         lrho   = "rhobit",
+         lsd1   = "loglink",     lsd2   = "loglink",
+         lrho   = "rhobitlink",
          imean1 = NULL,       imean2 = NULL,
          isd1   = NULL,       isd2   = NULL,
          irho   = NULL,       imethod = 1,
@@ -58,7 +58,7 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
   The response should be a two-column matrix.
   The correlation parameter is \code{rho},
   which lies between \eqn{-1} and \eqn{1}
-  (thus the \code{\link{rhobit}} link is a reasonable choice).
+  (thus the \code{\link{rhobitlink}} link is a reasonable choice).
   The fitted means are returned as the fitted values, which is in
   the form of a two-column matrix.
   Fisher scoring is implemented.
@@ -120,9 +120,9 @@ constraints(fit1)
 summary(fit1)
 
 # Estimated P(Y1 <= y1, Y2 <= y2) under the fitted model
-var1  <- loge(2 * predict(fit1)[, "loge(sd1)"], inverse = TRUE)
-var2  <- loge(2 * predict(fit1)[, "loge(sd2)"], inverse = TRUE)
-cov12 <- rhobit(predict(fit1)[, "rhobit(rho)"], inverse = TRUE)
+var1  <- loglink(2 * predict(fit1)[, "loglink(sd1)"], inverse = TRUE)
+var2  <- loglink(2 * predict(fit1)[, "loglink(sd2)"], inverse = TRUE)
+cov12 <- rhobitlink(predict(fit1)[, "rhobitlink(rho)"], inverse = TRUE)
 head(with(bdata, pbinorm(y1, y2,
                          mean1 = predict(fit1)[, "mean1"],
                          mean2 = predict(fit1)[, "mean2"],

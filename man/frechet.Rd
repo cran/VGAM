@@ -14,10 +14,10 @@
 
 }
 \usage{
-frechet(location = 0, lscale = "loge", lshape = logoff(offset = -2),
+frechet(location = 0, lscale = "loglink", lshape = logofflink(offset = -2),
         iscale = NULL, ishape = NULL, nsimEIM = 250, zero = NULL)
 }
-%frechet3(anchor = NULL, ldifference = "loge", lscale = "loge",
+%frechet3(anchor = NULL, ldifference = "loglink", lscale = "loglink",
 %         lshape = "loglog",
 %         ilocation = NULL, iscale = NULL, ishape = NULL,
 %         zero = NULL, effpos = .Machine$double.eps^0.75)

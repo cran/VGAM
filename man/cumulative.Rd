@@ -9,12 +9,12 @@
 
 }
 \usage{
-cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
+cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
            multiple.responses = FALSE, whitespace = FALSE)
 }
 %apply.parint = FALSE,
-%scumulative(link = "logit",
-%            lscale = "loge", escale = list(),
+%scumulative(link = "logitlink",
+%            lscale = "loglink", escale = list(),
 %            parallel = FALSE, sparallel = TRUE, reverse = FALSE, iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +23,7 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   Link function applied to the \eqn{J} cumulative probabilities.
   See \code{\link{Links}} for more choices,
   e.g., for the cumulative
-  \code{\link{probit}}/\code{\link{cloglog}}/\code{\link{cauchit}}/\ldots
+  \code{\link{probitlink}}/\code{\link{clogloglink}}/\code{\link{cauchitlink}}/\ldots
   models.
 
 
@@ -42,6 +42,16 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   The default results in what some people call the
   \emph{generalized ordered logit model} to be fitted.
   If \code{parallel = TRUE} then it does not apply to the intercept.
+
+
+  The \emph{partial proportional odds model} can be fitted by
+  assigning this argument something like
+  \code{parallel = TRUE ~ -1 + x3 + x5} so that
+  there is one regression coefficient for \code{x3} and \code{x5}.
+  Equivalently, setting
+  \code{parallel = FALSE ~ 1 + x2 + x4} means \eqn{M}
+  regression coefficients for the intercept and \code{x2} and \code{x4}.
+  It is important that the intercept is never parallel.
 
 
 
@@ -67,9 +77,9 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 
 
   This should be set to \code{TRUE} for \code{link=}
-  \code{\link{golf}},
-  \code{\link{polf}},
-  \code{\link{nbolf}}.
+  \code{\link{gordlink}},
+  \code{\link{pordlink}},
+  \code{\link{nbordlink}}.
   For these links the cutpoints must be an increasing sequence;
   if \code{reverse = FALSE} for then the cutpoints must be an
   decreasing sequence.
@@ -91,9 +101,9 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
 %  Logical.
 %  Whether the \code{parallel} argument should be applied to the intercept term.
 %  This should be set to \code{TRUE} for \code{link=}
-%  \code{\link{golf}},
-%  \code{\link{polf}},
-%  \code{\link{nbolf}}.
+%  \code{\link{gordlink}},
+%  \code{\link{pordlink}},
+%  \code{\link{nbordlink}}.
 %  See \code{\link{CommonVGAMffArguments}} for more information.
 %
 %
@@ -129,7 +139,7 @@ cumulative(link = "logit", parallel = FALSE, reverse = FALSE,
   the \eqn{\eta_j}{eta_j} are not constrained to be parallel.
   This is also known as the \emph{non-proportional odds model}.
   If the logit link is replaced by a complementary log-log link
-  (\code{\link{cloglog}}) then
+  (\code{\link{clogloglink}}) then
   this is known as the \emph{proportional-hazards model}.
 
 
@@ -260,7 +270,7 @@ Vector generalized additive models.
   Note that \code{propodds(reverse)} is equivalent to
   \code{cumulative(parallel = TRUE, reverse = reverse)} (which is
   equivalent to
-  \code{cumulative(parallel = TRUE, reverse = reverse, link = "logit")}).
+  \code{cumulative(parallel = TRUE, reverse = reverse, link = "logitlink")}).
   It is for convenience only. A call to
   \code{cumulative()} is preferred since it reminds the user
   that a parallelism assumption is made, as well as being a lot
@@ -295,13 +305,13 @@ Vector generalized additive models.
   \code{\link{pneumo}},
   \code{\link{Links}},
   \code{\link{hdeff.vglm}},
-  \code{\link{logit}},
-  \code{\link{probit}},
-  \code{\link{cloglog}},
-  \code{\link{cauchit}},
-  \code{\link{golf}},
-  \code{\link{polf}},
-  \code{\link{nbolf}},
+  \code{\link{logitlink}},
+  \code{\link{probitlink}},
+  \code{\link{clogloglink}},
+  \code{\link{cauchitlink}},
+  \code{\link{gordlink}},
+  \code{\link{pordlink}},
+  \code{\link{nbordlink}},
   \code{\link{logistic1}}.
 
 

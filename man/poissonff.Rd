@@ -9,12 +9,12 @@
 
 
 % The dispersion parameters may be known or unknown.
-% link = "loge", dispersion = 1, onedpar = FALSE, imu = NULL,
+% link = "loglink", dispersion = 1, onedpar = FALSE, imu = NULL,
 
 
 }
 \usage{
-poissonff(link = "loge", imu = NULL,
+poissonff(link = "loglink", imu = NULL,
           imethod = 1, parallel = FALSE, zero = NULL, bred = FALSE,
           earg.link = FALSE, type.fitted = c("mean", "quantiles"),
                        percentiles = c(25, 50, 75))
@@ -73,7 +73,7 @@ poissonff(link = "loge", imu = NULL,
   Setting \code{bred = TRUE} should work for
   multiple responses and all \pkg{VGAM} link functions;
   it has been tested for
-  \code{\link{loge}},
+  \code{\link{loglink}},
   \code{\link{identity}} but further testing is required.
 
 
@@ -170,6 +170,8 @@ poissonff(link = "loge", imu = NULL,
     \code{\link{hdeff.vglm}},
     \code{\link{negbinomial}},
     \code{\link{genpoisson}},
+    \code{\link{genapoisson}},
+    \code{\link{gentpoisson}},
     \code{\link{zipoisson}},
     \code{\link{pospoisson}},
     \code{\link{oipospoisson}},
@@ -181,7 +183,7 @@ poissonff(link = "loge", imu = NULL,
     \code{\link{amlpoisson}},
     \code{\link{inv.binomial}},
     \code{\link{simulate.vlm}},
-    \code{\link{loge}},
+    \code{\link{loglink}},
     \code{\link{polf}},
     \code{\link{rrvglm}},
     \code{\link{cqo}},

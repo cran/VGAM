@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -19,9 +19,9 @@ mix2normal.control <- function(trace = TRUE, ...) {
 
 
  mix2normal <-
-    function(lphi = "logit",
+    function(lphi = "logitlink",
              lmu = "identitylink",
-             lsd = "loge",
+             lsd = "loglink",
              iphi = 0.5,
              imu1 = NULL, imu2 = NULL,
              isd1 = NULL, isd2 = NULL,
@@ -315,7 +315,7 @@ mix2poisson.control <- function(trace = TRUE, ...) {
 }
 
 
- mix2poisson <- function(lphi = "logit", llambda = "loge",
+ mix2poisson <- function(lphi = "logitlink", llambda = "loglink",
                          iphi = 0.5, il1 = NULL, il2 = NULL,
                          qmu = c(0.2, 0.8), nsimEIM = 100,
                          zero = "phi") {
@@ -564,7 +564,7 @@ mix2exp.control <- function(trace = TRUE, ...) {
 
 
 
- mix2exp <- function(lphi = "logit", llambda = "loge",
+ mix2exp <- function(lphi = "logitlink", llambda = "loglink",
                      iphi = 0.5, il1 = NULL, il2 = NULL,
                      qmu = c(0.8, 0.2), nsimEIM = 100,
                      zero = "phi") {

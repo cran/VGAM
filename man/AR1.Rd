@@ -9,7 +9,7 @@
 
 }
 \usage{
-AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
+AR1(ldrift = "identitylink", lsd  = "loglink", lvar = "loglink", lrho = "rhobitlink",
     idrift  = NULL, isd  = NULL, ivar = NULL, irho = NULL, imethod = 1,
     ishrinkage = 0.95, type.likelihood = c("exact", "conditional"),
     type.EIM  = c("exact", "approximate"), var.arg = FALSE, nodrift = FALSE,
@@ -234,8 +234,8 @@ AR1(ldrift = "identitylink", lsd  = "loge", lvar = "loge", lrho = "rhobit",
 ### Example 1: using  arima.sim() to generate a 0-mean stationary time series.
 nn <- 500
 tsdata <- data.frame(x2 =  runif(nn))
-ar.coef.1 <- rhobit(-1.55, inverse = TRUE)  # Approx -0.65
-ar.coef.2 <- rhobit( 1.0, inverse = TRUE)   # Approx  0.50
+ar.coef.1 <- rhobitlink(-1.55, inverse = TRUE)  # Approx -0.65
+ar.coef.2 <- rhobitlink( 1.0, inverse = TRUE)   # Approx  0.50
 set.seed(1)
 tsdata  <- transform(tsdata,
               index = 1:nn,
@@ -269,7 +269,7 @@ summary(fit1b)
 
 ### Example 2: another stationary time series
 nn     <- 500
-my.rho <- rhobit(1.0, inverse = TRUE)
+my.rho <- rhobitlink(1.0, inverse = TRUE)
 my.mu  <- 1.0
 my.sd  <- exp(1)
 tsdata  <- data.frame(index = 1:nn, TS3 = runif(nn))

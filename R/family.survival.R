@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,7 +15,7 @@
  double.cens.normal <-
   function(r1 = 0, r2 = 0,
            lmu = "identitylink",
-           lsd = "loge",
+           lsd = "loglink",
            imu = NULL, isd = NULL,
            zero = "sd") {
   if (!is.Numeric(r1, length.arg = 1, integer.valued = TRUE) ||
@@ -306,7 +306,7 @@ rbisa <- function(n, scale = 1, shape) {
 
 
 
- bisa <- function(lscale = "loge", lshape = "loge",
+ bisa <- function(lscale = "loglink", lshape = "loglink",
                   iscale = 1,      ishape = NULL,
                   imethod = 1,
                   zero = "shape",

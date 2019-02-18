@@ -8,7 +8,7 @@
 
 }
 \usage{
-gompertz(lscale = "loge", lshape = "loge",
+gompertz(lscale = "loglink", lshape = "loglink",
          iscale = NULL,   ishape = NULL,
          nsimEIM = 500, zero = NULL, nowarning = FALSE)
 }

@@ -7,7 +7,7 @@
 
 }
 \usage{
-foldnormal(lmean = "identitylink", lsd = "loge", imean = NULL, isd = NULL,
+foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
            a1 = 1, a2 = 1, nsimEIM = 500, imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

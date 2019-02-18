@@ -7,7 +7,7 @@
 
 }
 \usage{
-otzeta(lshape = "loge", ishape = NULL, gshape = exp((-4:3)/4), zero = NULL)
+otzeta(lshape = "loglink", ishape = NULL, gshape = exp((-4:3)/4), zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,7 +62,7 @@ otzeta(lshape = "loge", ishape = NULL, gshape = exp((-4:3)/4), zero = NULL)
 }
 \examples{
 odata <- data.frame(x2 = runif(nn <- 1000))  # Artificial data
-odata <- transform(odata, shape = loge(-0.25 + x2, inverse = TRUE))
+odata <- transform(odata, shape = loglink(-0.25 + x2, inverse = TRUE))
 odata <- transform(odata, y1 = rotzeta(nn, shape))
 with(odata, table(y1))
 ofit <- vglm(y1 ~ x2, otzeta, data = odata, trace = TRUE, crit = "coef")

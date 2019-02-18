@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -144,7 +144,7 @@ rlog <- function(n, shape) {
 
 
 
- logff <- function(lshape = "logit", gshape = ppoints(8), zero = NULL) {
+ logff <- function(lshape = "logitlink", gshape = ppoints(8), zero = NULL) {
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -404,7 +404,7 @@ roilog <- function(n, shape, pstr1 = 0) {
 
 
  oilog <-
-  function(lpstr1 = "logit", lshape = "logit",
+  function(lpstr1 = "logitlink", lshape = "logitlink",
          type.fitted = c("mean", "shape", "pobs1", "pstr1", "onempstr1"),
            ishape = NULL,
            gpstr1 = ppoints(8),
@@ -610,7 +610,7 @@ roilog <- function(n, shape, pstr1 = 0) {
                        earg = .epstr1 )
     shape <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .lshape  ,
                        earg = .eshape )
-    okay1 <- all(is.finite(shape )) && all(0 < shape & shape < 1) &&
+    okay1 <- all(is.finite(shape)) && all(0 < shape & shape < 1) &&
              all(is.finite(pstr1)) && all(pstr1 < 1)
     deflat.limit <- deflat.limit.oizeta(shape)
     okay2.deflat <- TRUE
@@ -732,7 +732,7 @@ rotlog <- function(n, shape) {
 
 
 
- otlog <- function(lshape = "logit", gshape = ppoints(8), zero = NULL) {
+ otlog <- function(lshape = "logitlink", gshape = ppoints(8), zero = NULL) {
 
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
@@ -937,7 +937,7 @@ rotpospois <- function(n, lambda) {
 
 
  otpospoisson <-
-    function(llambda = "loge",
+    function(llambda = "loglink",
              type.fitted = c("mean", "lambda", "prob0", "prob1"),
              ilambda = NULL, imethod = 1, zero = NULL) {
 
@@ -1183,8 +1183,8 @@ roalog <- function(n, shape, pobs1 = 0) {
 
 
  oalog <-
-  function(lpobs1 = "logit",
-           lshape = "logit",
+  function(lpobs1 = "logitlink",
+           lshape = "logitlink",
            type.fitted = c("mean", "shape", "pobs1", "onempobs1"),
            ipobs1 = NULL,
            gshape = ppoints(8),
@@ -1415,7 +1415,7 @@ roalog <- function(n, shape, pobs1 = 0) {
     dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
     mu.phi1 <- pobs1
 
-    temp3 <- if ( .lpobs1 == "logit") {
+    temp3 <- if ( .lpobs1 == "logitlink") {
       c(w) * (y1 - mu.phi1)
     } else {
       c(w) * dtheta.deta(mu.phi1, link = .lpobs1 , earg = .epobs1 ) *
@@ -1449,7 +1449,7 @@ roalog <- function(n, shape, pobs1 = 0) {
 
 
     tmp100 <- mu.phi1 * (1 - mu.phi1)
-    tmp200 <- if ( .lpobs1 == "logit" && is.empty.list( .epobs1 )) {
+    tmp200 <- if ( .lpobs1 == "logitlink" && is.empty.list( .epobs1 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
@@ -1553,8 +1553,8 @@ roapospois <- function(n, lambda, pobs1 = 0) {
 
 
  oapospoisson <-
-  function(lpobs1 = "logit",
-           llambda = "loge",
+  function(lpobs1 = "logitlink",
+           llambda = "loglink",
            type.fitted = c("mean", "lambda", "pobs1", "onempobs1"),
            ipobs1 = NULL,
            zero = NULL) {
@@ -1771,7 +1771,7 @@ roapospois <- function(n, lambda, pobs1 = 0) {
     dlambd.deta <- dtheta.deta(lambda, .llambd , earg = .elambd )
     mu.phi1 <- pobs1
 
-    temp3 <- if ( .lpobs1 == "logit") {
+    temp3 <- if ( .lpobs1 == "logitlink") {
       c(w) * (y1 - mu.phi1)
     } else {
       c(w) * dtheta.deta(mu.phi1, link = .lpobs1 , earg = .epobs1 ) *
@@ -1796,7 +1796,7 @@ roapospois <- function(n, lambda, pobs1 = 0) {
 
 
     tmp100 <- mu.phi1 * (1 - mu.phi1)
-    tmp200 <- if ( .lpobs1 == "logit" && is.empty.list( .epobs1 )) {
+    tmp200 <- if ( .lpobs1 == "logitlink" && is.empty.list( .epobs1 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
@@ -1899,8 +1899,8 @@ roazeta <- function(n, shape, pobs1 = 0) {
 
 
  oazeta <-
-  function(lpobs1 = "logit",
-           lshape = "loge",
+  function(lpobs1 = "logitlink",
+           lshape = "loglink",
            type.fitted = c("mean", "shape", "pobs1", "onempobs1"),
            gshape = exp((-4:3)/4),
            ishape = NULL,
@@ -2137,7 +2137,7 @@ roazeta <- function(n, shape, pobs1 = 0) {
     dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
     mu.phi1 <- pobs1
 
-    temp3 <- if ( .lpobs1 == "logit") {
+    temp3 <- if ( .lpobs1 == "logitlink") {
       c(w) * (y1 - mu.phi1)
     } else {
       c(w) * dtheta.deta(mu.phi1, link = .lpobs1 , earg = .epobs1 ) *
@@ -2160,7 +2160,7 @@ roazeta <- function(n, shape, pobs1 = 0) {
 
 
     tmp100 <- mu.phi1 * (1 - mu.phi1)
-    tmp200 <- if ( .lpobs1 == "logit" && is.empty.list( .epobs1 )) {
+    tmp200 <- if ( .lpobs1 == "logitlink" && is.empty.list( .epobs1 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *

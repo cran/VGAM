@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -524,7 +524,7 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
 
 
  sc.studentt2 <- function(percentile = 50,
-                     llocation = "identitylink", lscale = "loge",
+                     llocation = "identitylink", lscale = "loglink",
                      ilocation = NULL,   iscale = NULL,
                      imethod = 1,
                      zero = "scale") {

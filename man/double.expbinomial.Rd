@@ -10,7 +10,7 @@
 
 }
 \usage{
-double.expbinomial(lmean = "logit", ldispersion = "logit",
+double.expbinomial(lmean = "logitlink", ldispersion = "logitlink",
                    idispersion = 0.25, zero = "dispersion")
 }
 %                  idispersion = 0.25, zero = 2
@@ -142,7 +142,7 @@ cmlist <- list("(Intercept)"    = diag(2),
 fit <- vglm(cbind(phat, 1 - phat) * ssize ~
             I(srainfall) + I(srainfall^2) + I(srainfall^3) +
             I(sN) + I(sN^2),
-            double.expbinomial(ldisp = extlogit(min = 0, max = 1.25),
+            double.expbinomial(ldisp = extlogitlink(min = 0, max = 1.25),
                          idisp = 0.2, zero = NULL),
             toxop, trace = TRUE, constraints = cmlist)
 
@@ -155,7 +155,7 @@ sqrt(diag(vcov(fit)))  # Standard errors
 
 # Effective sample size (not quite the last column of Table 1)
 head(predict(fit))
-Dispersion <- extlogit(predict(fit)[,2], min = 0, max = 1.25, inverse = TRUE)
+Dispersion <- extlogitlink(predict(fit)[,2], min = 0, max = 1.25, inverse = TRUE)
 c(round(weights(fit, type = "prior") * Dispersion, digits = 1))
 
 
@@ -171,7 +171,7 @@ cmlist2 <- list("(Intercept)"                 = diag(2),
                 "poly(sN, degree = 2)"        = rbind(0, 1))
 fit2 <- vglm(cbind(phat, 1 - phat) * ssize ~
              poly(srainfall, degree = 3) + poly(sN, degree = 2),
-             double.expbinomial(ldisp = extlogit(min = 0, max = 1.25),
+             double.expbinomial(ldisp = extlogitlink(min = 0, max = 1.25),
                           idisp = 0.2, zero = NULL),
              toxop, trace = TRUE, constraints = cmlist2)
 \dontrun{ par(mfrow = c(1, 2))

@@ -10,25 +10,25 @@
 
 }
 \usage{
-negbinomial(zero = -2, parallel = FALSE, deviance.arg = FALSE,
+negbinomial(zero = "size", parallel = FALSE, deviance.arg = FALSE,
             type.fitted = c("mean", "quantiles"),
             percentiles = c(25, 50, 75),
             mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
             eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-            lmu = "loge", lsize = "loge",
+            lmu = "loglink", lsize = "loglink",
             imethod = 1, imu = NULL, iprobs.y = NULL,
             gprobs.y = ppoints(6), isize = NULL,
             gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 polya(zero = "size", type.fitted = c("mean", "prob"),
       mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
       eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-      lprob = "logit", lsize = "loge", imethod = 1, iprob = NULL,
+      lprob = "logitlink", lsize = "loglink", imethod = 1, iprob = NULL,
       iprobs.y = NULL, gprobs.y = ppoints(6), isize = NULL,
       gsize.mux = exp(c(-30, -20, -15, -10, -6:3)), imunb = NULL)
 polyaR(zero = "size", type.fitted = c("mean", "prob"),
        mds.min = 1e-3, nsimEIM = 500,  cutoff.prob = 0.999,
        eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
-       lsize = "loge", lprob = "logit", imethod = 1, iprob = NULL,
+       lsize = "loglink", lprob = "logitlink", imethod = 1, iprob = NULL,
        iprobs.y = NULL, gprobs.y = ppoints(6), isize = NULL,
        gsize.mux = exp(c(-30, -20, -15, -10, -6:3)), imunb = NULL)
 }
@@ -37,6 +37,29 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
 
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{zero}{
+    Can be an integer-valued vector, and if so, then
+    it is usually assigned \eqn{-2}
+  or \eqn{2}. Specifies which of the two
+  linear/additive predictors are modelled as an intercept
+  only. By default, the \eqn{k} parameter (after \code{lsize}
+  is applied) is modelled as a single unknown number that
+  is estimated. It can be modelled as a function of the
+  explanatory variables by setting \code{zero = NULL}; this
+  has been called a NB-H model by Hilbe (2011). A negative
+  value means that the value is recycled, so setting \eqn{-2}
+  means all \eqn{k} are intercept-only.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+
+% 20190119; getarg() fixes this problem:
+% Because of the new labelling for \code{\link{nbcanlink}} the default
+% is now \code{-2} rather than \code{"size"}; the latter is more
+% understandable really.
+
+
+  }
   \item{lmu, lsize, lprob}{
   Link functions applied to the \eqn{\mu}{mu}, \eqn{k}
   and \eqn{p}  parameters.
@@ -46,9 +69,9 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
   \code{size} and \code{prob} arguments of
   \code{\link[stats:NegBinomial]{rnbinom}} respectively.
   Common alternatives for \code{lsize} are
-  \code{\link{negloge}} and
-  \code{\link{reciprocal}}, and
-  \code{\link{loglog}} (if \eqn{k > 1}).
+  \code{\link{negloglink}} and
+  \code{\link{reciprocallink}}, and
+  \code{\link{logloglink}} (if \eqn{k > 1}).
 
 
   }
@@ -295,25 +318,6 @@ respect to the \code{size} parameter.
 %  }
 
 
-  \item{zero}{
-    Can be an integer-valued vector, and if so, then
-    it is usually assigned \eqn{-2}
-  or \eqn{2}. Specifies which of the two
-  linear/additive predictors are modelled as an intercept
-  only. By default, the \eqn{k} parameter (after \code{lsize}
-  is applied) is modelled as a single unknown number that
-  is estimated. It can be modelled as a function of the
-  explanatory variables by setting \code{zero = NULL}; this
-  has been called a NB-H model by Hilbe (2011). A negative
-  value means that the value is recycled, so setting \eqn{-2}
-  means all \eqn{k} are intercept-only.
-  See \code{\link{CommonVGAMffArguments}} for more information.
-  Because of the new labelling for \code{\link{nbcanlink}} the default
-  is now \code{-2} rather than \code{"size"}; the latter is more
-  understandable really.
-
-
-  }
 }
 \details{
   The negative binomial distribution (NBD)
@@ -342,8 +346,8 @@ respect to the \code{size} parameter.
   It is common for some to use \eqn{\alpha=1/k}{alpha=1/k} as the
   ancillary or heterogeneity parameter;
   so common alternatives for \code{lsize} are
-  \code{\link{negloge}} and
-  \code{\link{reciprocal}}.
+  \code{\link{negloglink}} and
+  \code{\link{reciprocallink}}.
 
 
   For \code{polya} the density is
@@ -643,7 +647,7 @@ Reduced-rank vector generalized linear models with two linear predictors.
   \code{\link{posnegbinomial}},
   \code{\link{inv.binomial}},
   \code{\link[stats:NegBinomial]{rnbinom}},
-  \code{\link{nbolf}},
+  \code{\link{nbordlink}},
   \code{\link{rrvglm}},
   \code{\link{cao}},
   \code{\link{cqo}},
@@ -702,8 +706,8 @@ nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
             data = mydata, trace = TRUE)
 # Extracting out some quantities:
 cnb1 <- coef(nb1, matrix = TRUE)
-mydiff <- (cnb1["(Intercept)", "loge(size)"] -
-           cnb1["(Intercept)", "loge(mu)"])
+mydiff <- (cnb1["(Intercept)", "loglink(size)"] -
+           cnb1["(Intercept)", "loglink(mu)"])
 delta0.hat <- exp(mydiff)
 (phi.hat <- 1 + 1 / delta0.hat)  # MLE of phi
 summary(nb1)
@@ -723,7 +727,7 @@ summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 
 
 
-%lmu = "loge", lsize = "loge",
+%lmu = "loglink", lsize = "loglink",
 %            imu = NULL, isize = NULL,
 %            nsimEIM = 250, cutoff.prob = 0.999,
 %            max.support = 2000, max.chunk.MB = 30,
@@ -734,10 +738,10 @@ summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
 
 
 
-%polya(lprob = "logit", lsize = "loge",
+%polya(lprob = "logitlink", lsize = "loglink",
 %      iprob = NULL, isize = NULL, probs.y = 0.75, nsimEIM = 100,
 %      imethod = 1, ishrinkage = 0.95, zero = "size")
-%polyaR(lsize = "loge", lprob = "logit",
+%polyaR(lsize = "loglink", lprob = "logitlink",
 %       isize = NULL, iprob = NULL, probs.y = 0.75, nsimEIM = 100,
 %       imethod = 1, ishrinkage = 0.95, zero = "size")
 

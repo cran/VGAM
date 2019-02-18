@@ -56,7 +56,7 @@ linkfun.vglm(object, earg = FALSE, ...)
 
 \note{
   Presently,  the multinomial logit model has only
-  one link function, \code{\link{multilogit}}, so a warning
+  one link function, \code{\link{multilogitlink}}, so a warning
   is not issued for that link.
   For other models, if the number of link functions does
   not equal \eqn{M} then a warning may be issued.
@@ -66,14 +66,14 @@ linkfun.vglm(object, earg = FALSE, ...)
 
 \seealso{
   \code{\link{linkfun}},
-  \code{\link{multilogit}},
+  \code{\link{multilogitlink}},
   \code{\link{vglm}}.
 
 
 }
 
 \examples{
-fit1 <- vgam(cbind(r1, r2) ~ s(year, df = 3), gev(zero = 2:3), data = venice)
+fit1 <- vgam(cbind(r1, r2) ~ s(year, df = 3), gev(zero = 2:3), venice)
 coef(fit1, matrix = TRUE)
 linkfun(fit1)
 linkfun(fit1, earg = TRUE)

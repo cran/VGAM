@@ -8,7 +8,7 @@
 
 }
 \usage{
- otpospoisson(llambda = "loge",
+ otpospoisson(llambda = "loglink",
     type.fitted = c("mean", "lambda", "prob0", "prob1"),
     ilambda = NULL, imethod = 1, zero = NULL)
 }
@@ -57,7 +57,7 @@
 
 }
 \examples{
-odata <- data.frame(y1 = rotpospois(n = 1000, lambda = loge(1, inverse = TRUE)))
+odata <- data.frame(y1 = rotpospois(n = 1000, lambda = loglink(1, inverse = TRUE)))
 ofit <- vglm(y1 ~ 1, otpospoisson, data = odata, trace = TRUE, crit = "c")
 coef(ofit, matrix = TRUE)
 Coef(ofit)

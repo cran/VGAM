@@ -7,7 +7,7 @@
   the MNSs blood group system.
 }
 \usage{
-MNSs(link = "logit", imS = NULL, ims = NULL, inS = NULL)
+MNSs(link = "logitlink", imS = NULL, ims = NULL, inS = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -71,8 +71,8 @@ MNSs(link = "logit", imS = NULL, ims = NULL, inS = NULL)
 \examples{
 # Order matters only:
 y <- cbind(MS = 295, Ms = 107, MNS = 379, MNs = 322, NS = 102, Ns = 214)
-fit <- vglm(y ~ 1, MNSs("logit", .25, .28, .08), trace = TRUE)
-fit <- vglm(y ~ 1, MNSs(link = logit), trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, MNSs("logitlink", .25, .28, .08), trace = TRUE)
+fit <- vglm(y ~ 1, MNSs(link = logitlink), trace = TRUE, crit = "coef")
 Coef(fit)
 rbind(y, sum(y)*fitted(fit))
 sqrt(diag(vcov(fit)))

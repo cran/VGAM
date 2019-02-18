@@ -9,11 +9,11 @@
 
 }
 \usage{
-zigeometric(lpstr0  = "logit", lprob = "logit",
+zigeometric(lpstr0  = "logitlink", lprob = "logitlink",
             type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
             ipstr0  = NULL, iprob = NULL,
             imethod = 1, bias.red = 0.5, zero = NULL)
-zigeometricff(lprob = "logit", lonempstr0 = "logit",
+zigeometricff(lprob = "logitlink", lonempstr0 = "logitlink",
               type.fitted = c("mean", "prob", "pobs0", "pstr0", "onempstr0"),
               iprob = NULL, ionempstr0 = NULL,
               imethod = 1, bias.red = 0.5, zero = "onempstr0")
@@ -158,9 +158,9 @@ gdata <- transform(gdata, x3 = runif(nn) - 0.5,
 gdata <- transform(gdata, eta1 =  1.0 - 1.0 * x2 + 2.0 * x3,
                           eta2 = -1.0,
                           eta3 =  0.5)
-gdata <- transform(gdata, prob1 = logit(eta1, inverse = TRUE),
-                          prob2 = logit(eta2, inverse = TRUE),
-                          prob3 = logit(eta3, inverse = TRUE))
+gdata <- transform(gdata, prob1 = logitlink(eta1, inverse = TRUE),
+                          prob2 = logitlink(eta2, inverse = TRUE),
+                          prob3 = logitlink(eta3, inverse = TRUE))
 gdata <- transform(gdata, y1 = rzigeom(nn, prob1, pstr0 = prob3),
                           y2 = rzigeom(nn, prob2, pstr0 = prob3),
                           y3 = rzigeom(nn, prob2, pstr0 = prob3))

@@ -9,7 +9,7 @@
 }
 \usage{
 amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
-           link = "loge")
+           link = "loglink")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -163,7 +163,7 @@ rgumbelII <- function(n, scale = 1, shape) {
 
 
  gumbelII <-
-  function(lscale = "loge", lshape = "loge",
+  function(lscale = "loglink", lshape = "loglink",
            iscale = NULL,   ishape = NULL,
            probs.y = c(0.2, 0.5, 0.8),
            perc.out = NULL,  # 50,
@@ -791,7 +791,7 @@ perks.control <- function(save.weights = TRUE, ...) {
 
 
  perks <-
-  function(lscale = "loge",    lshape = "loge",
+  function(lscale = "loglink",    lshape = "loglink",
            iscale = NULL,      ishape = NULL,
            gscale = exp(-5:5), gshape = exp(-5:5),
            nsimEIM = 500,
@@ -1286,7 +1286,7 @@ makeham.control <- function(save.weights = TRUE, ...) {
 
 
  makeham <-
-  function(lscale = "loge", lshape = "loge", lepsilon = "loge",
+  function(lscale = "loglink", lshape = "loglink", lepsilon = "loglink",
            iscale = NULL,   ishape = NULL,   iepsilon = NULL,  # 0.3,
            gscale = exp(-5:5),
            gshape = exp(-5:5),
@@ -1796,7 +1796,7 @@ gompertz.control <- function(save.weights = TRUE, ...) {
 
 
  gompertz <-
-  function(lscale = "loge", lshape = "loge",
+  function(lscale = "loglink", lshape = "loglink",
            iscale = NULL,   ishape = NULL,
            nsimEIM = 500,
            zero = NULL, nowarning = FALSE) {
@@ -2164,7 +2164,7 @@ exponential.mo.control <- function(save.weights = TRUE, ...) {
 
 
  exponential.mo <-
-  function(lalpha = "loge", llambda = "loge",
+  function(lalpha = "loglink", llambda = "loglink",
            ealpha = list(), elambda = list(),
            ialpha = 1,      ilambda = NULL,
            imethod = 1,
@@ -2472,10 +2472,10 @@ if (ii < 3) {
 
 
 
- genbetaII <- function(lscale    = "loge",
-                       lshape1.a = "loge",
-                       lshape2.p = "loge",
-                       lshape3.q = "loge",
+ genbetaII <- function(lscale    = "loglink",
+                       lshape1.a = "loglink",
+                       lshape2.p = "loglink",
+                       lshape3.q = "loglink",
                        iscale    = NULL,
                        ishape1.a = NULL,
                        ishape2.p = NULL,
@@ -2785,10 +2785,10 @@ if (ii < 3) {
                       .lshape3.q , earg = .eshape3.q)
 
 
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -a*p < 1 < a*q has been violated; ",
@@ -3374,9 +3374,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
- sinmad    <- function(lscale    = "loge",
-                       lshape1.a = "loge",
-                       lshape3.q = "loge",
+ sinmad    <- function(lscale    = "loglink",
+                       lshape1.a = "loglink",
+                       lshape3.q = "loglink",
                        iscale    = NULL,
                        ishape1.a = NULL,
                        ishape3.q = NULL,
@@ -3719,10 +3719,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     qq   <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                       .lshape3.q , earg = .eshape3.q)
 
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -a   < 1 < a*q has been violated; ",
@@ -3837,9 +3837,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  dagum <-
-  function(lscale    = "loge",
-           lshape1.a = "loge",
-           lshape2.p = "loge",
+  function(lscale    = "loglink",
+           lshape1.a = "loglink",
+           lshape2.p = "loglink",
            iscale    = NULL,
            ishape1.a = NULL,
            ishape2.p = NULL,
@@ -4179,10 +4179,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     qq   <- 1
 
 
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -a*p < 1 < a   has been violated; ",
@@ -4291,9 +4291,9 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  betaII <-
-  function(lscale    = "loge",
-           lshape2.p = "loge",
-           lshape3.q = "loge",
+  function(lscale    = "loglink",
+           lshape2.p = "loglink",
+           lshape3.q = "loglink",
            iscale    = NULL,
            ishape2.p = NULL,
            ishape3.q = NULL,
@@ -4554,10 +4554,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                        .lshape3.q , earg = .eshape3.q )
 
 
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -p < 1 <   q has been violated; ",
@@ -4641,8 +4641,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  lomax <-
-  function(lscale    = "loge",
-           lshape3.q = "loge",
+  function(lscale    = "loglink",
+           lshape3.q = "loglink",
            iscale    = NULL,
            ishape3.q = NULL,
            imethod   = 1,
@@ -4892,11 +4892,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     parg  <- 1
     qq    <- eta2theta(eta[, M1*(1:NOS)    , drop = FALSE],
                        .lshape3.q , earg = .eshape3.q)
-
-
-
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint 1 < q has been violated; ",
@@ -4974,8 +4971,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  fisk <-
-  function(lscale    = "loge",
-           lshape1.a = "loge",
+  function(lscale    = "loglink",
+           lshape1.a = "loglink",
            iscale    = NULL,
            ishape1.a = NULL,
            imethod   = 1,
@@ -5103,7 +5100,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
           qvec <- .probs.y
           iscale <- if (length( .iscale )) .iscale else 1
           xvec <- log( quantile(yvec / iscale, probs = qvec) )
-          fit0 <- lsfit(x = xvec, y = logit(qvec), intercept = FALSE)
+          fit0 <- lsfit(x = xvec, y = logitlink(qvec), intercept = FALSE)
           sc.init[, spp.] <- iscale
           aa.init[, spp.] <- if (length( .ishape1.a )) .ishape1.a else
                              fit0$coef
@@ -5260,11 +5257,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     parg <- 1
     qq   <- 1
 
-
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -a   < 1 < a   has been violated; ",
@@ -5339,8 +5335,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
 
- inv.lomax <- function(lscale    = "loge",
-                       lshape2.p = "loge",
+ inv.lomax <- function(lscale    = "loglink",
+                       lshape2.p = "loglink",
                        iscale    = NULL,
                        ishape2.p = NULL,
                        imethod   = 1,
@@ -5579,12 +5575,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                        .lshape2.p , earg = .eshape2.p )
     qq   <- 1
     aa   <- 1
-
-
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1              ) else TRUE
     if (!okay.support)
       warning("parameter constraint -a*p < 1 has been violated; ",
@@ -5659,8 +5653,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  paralogistic <-
-  function(lscale    = "loge",
-           lshape1.a = "loge",
+  function(lscale    = "loglink",
+           lshape1.a = "loglink",
            iscale    = NULL,
            ishape1.a = NULL,
            imethod   = 1,
@@ -5962,12 +5956,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     }
     parg <- 1
     qq   <- aa
-
-
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -a < 1 < a*a has been violated; ",
@@ -6062,8 +6054,8 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
 
 
  inv.paralogistic <-
-              function(lscale    = "loge",
-                       lshape1.a = "loge",
+              function(lscale    = "loglink",
+                       lshape1.a = "loglink",
                        iscale    = NULL,
                        ishape1.a = NULL,
                        imethod   = 1,
@@ -6363,11 +6355,10 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     }
     parg <- aa
     qq   <- 1
-
-    okay1 <- all(is.finite(Scale))  && all(Scale  > 0) &&
-             all(is.finite(aa   ))  && all(aa     > 0) &&
-             all(is.finite(parg ))  && all(parg   > 0) &&
-             all(is.finite(qq   ))  && all(qq     > 0)
+    okay1 <- all(is.finite(Scale)) && all(Scale  > 0) &&
+             all(is.finite(aa   )) && all(aa     > 0) &&
+             all(is.finite(parg )) && all(parg   > 0) &&
+             all(is.finite(qq   )) && all(qq     > 0)
     okay.support <- if (okay1) all(-aa * parg < 1 & 1 < aa * qq) else TRUE
     if (!okay.support)
       warning("parameter constraint -a*a < 1 < a   has been violated; ",

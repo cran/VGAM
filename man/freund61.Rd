@@ -9,7 +9,7 @@
 
 }
 \usage{
-freund61(la = "loge",  lap = "loge",  lb = "loge", lbp = "loge",
+freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
          ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
          independent = FALSE, zero = NULL)
 }

@@ -8,7 +8,7 @@
 
 }
 \usage{
-poisson.points(ostatistic, dimension = 2, link = "loge",
+poisson.points(ostatistic, dimension = 2, link = "loglink",
                idensity = NULL, imethod = 1)
 }
 %- maybe also 'usage' for other objects documented here.

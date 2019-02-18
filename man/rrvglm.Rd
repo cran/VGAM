@@ -174,8 +174,9 @@ Regression and ordered categorical variables.
   In an example below, a rank-1 \emph{stereotype}
   model of Anderson (1984) is fitted to some car data.
   The reduced-rank regression is performed, adjusting for
-  two covariates. Setting a trivial constraint matrix for
-  the latent variable variables in \eqn{x_2}{x2} avoids
+  two covariates. Setting a trivial constraint matrix
+  (\code{diag(M)})
+  for the latent variable variables in \eqn{x_2}{x2} avoids
   a warning message when it is overwritten by a (common)
   estimated constraint matrix.  It shows that German cars
   tend to be more expensive than American cars, given a
@@ -255,9 +256,9 @@ plot(y2 ~ x2, data = mydata, pch = "+", col = 'blue', las = 1,
 rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL),
                 data = mydata, trace = TRUE)
 
-a21.hat <- (Coef(rrnb2)@A)["loge(size)", 1]
-beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loge(mu)"]
-beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "loge(size)"]
+a21.hat <- (Coef(rrnb2)@A)["loglink(size)", 1]
+beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(mu)"]
+beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(size)"]
 (delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat))
 (delta2.hat <- 2 - a21.hat)
 # exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2])  # delta1.hat

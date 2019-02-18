@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -692,12 +692,12 @@ Confint.rrnb <- function(rrnb2, level = 0.95) {
   if (rrnb2@misc$M != 2)
     stop("argument 'rrnb2' does not have M = 2")
 
-  if (!all(rrnb2@misc$link == "loge"))
+  if (!all(rrnb2@misc$link == "loglink"))
     stop("argument 'rrnb2' does not have log links for both parameters")
 
-  a21.hat <- (Coef(rrnb2)@A)["loge(size)", 1]
-  beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loge(mu)"]
-  beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "loge(size)"]
+  a21.hat <- (Coef(rrnb2)@A)["loglink(size)", 1]
+  beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(mu)"]
+  beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(size)"]
   delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat)
   delta2.hat <- 2 - a21.hat
 
@@ -742,16 +742,14 @@ Confint.nb1 <- function(nb1, level = 0.95) {
   if (nb1@misc$M != 2)
     stop("argument 'nb1' does not have M = 2")
 
-  if (!all(nb1@misc$link == "loge"))
+  if (!all(nb1@misc$link == "loglink"))
     stop("argument 'nb1' does not have log links for both parameters")
 
   cnb1 <- coefficients(as(nb1, "vglm"), matrix = TRUE)
-  mydiff <- (cnb1["(Intercept)", "loge(size)"] -
-             cnb1["(Intercept)", "loge(mu)"])
+  mydiff <- (cnb1["(Intercept)", "loglink(size)"] -
+             cnb1["(Intercept)", "loglink(mu)"])
   delta0.hat <- exp(mydiff)
   (phi0.hat <- 1 + 1 / delta0.hat)  # MLE of phi0
-
-
 
 
   myvcov <- vcov(as(nb1, "vglm"))  # Not great; improve this!

@@ -7,7 +7,7 @@
 
 }
 \usage{
-tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loge",
+tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loglink",
       imu = NULL, isd = NULL,
       type.fitted = c("uncensored", "censored", "mean.obs"),
       byrow.arg = FALSE, imethod = 1, zero = "sd")

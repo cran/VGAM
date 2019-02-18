@@ -8,7 +8,7 @@
 
 }
 \usage{
-chisq(link = "loge", zero = NULL)
+chisq(link = "loglink", zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

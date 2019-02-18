@@ -34,6 +34,17 @@ calibrate.qrrvglm(object, newdata = NULL,
     because the computations are expensive.
 
 
+% 20190211:
+
+    
+  Note that the creation of the model frame associated with
+  \code{newdata} is fragile. Factors may not be created
+  properly. If a variable is binary then its best for it
+  to be straightforward and have only 0 and 1 as values.
+
+
+
+
   }
   \item{type}{ What type of result to be returned.
     The first are the calibrated latent variables or site scores.
@@ -285,6 +296,21 @@ A joint publication is being prepared on this subject.
   integer-valued response values.)
 
 
+
+% 20190208:
+
+
+  Maximum likelihood calibration for
+  Gaussian logit regression models may be performed by
+  \pkg{rioja} but this applies to a single environmental variable
+  such as \code{pH} in \code{data("SWAP", package = "rioja")}.
+  In \pkg{VGAM} \code{calibrate()} estimates values of the
+  \emph{latent variable} rather than individual explanatory variables,
+  hence the setting is more on ordination.
+
+  
+
+  
 
 % Despite the name of this function, UQO and CAO models are handled
 

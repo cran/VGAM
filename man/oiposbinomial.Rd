@@ -9,7 +9,7 @@
 
 }
 \usage{
-oiposbinomial(lpstr1 = "logit", lprob = "logit",
+oiposbinomial(lpstr1 = "logitlink", lprob = "logitlink",
               type.fitted = c("mean", "prob", "pobs1", "pstr1", "onempstr1"),
               iprob = NULL, gpstr1 = ppoints(9), gprob  = ppoints(9),
               multiple.responses = FALSE, zero = NULL)
@@ -178,12 +178,12 @@ oiposbinomial(lpstr1 = "logit", lprob = "logit",
 \examples{
 size <- 10  # Number of trials; N in the notation above
 nn <- 200
-odata <- data.frame(pstr1  = logit( 0, inverse = TRUE),  # 0.50
-                    mubin1 = logit(-1, inverse = TRUE),  # Mean of usual binomial
+odata <- data.frame(pstr1  = logitlink( 0, inverse = TRUE),  # 0.50
+                    mubin1 = logitlink(-1, inverse = TRUE),  # Mean of usual binomial
                     svec   = rep(size, length = nn),
                     x2     = runif(nn))
 odata <- transform(odata,
-                   mubin2 = logit(-1 + x2, inverse = TRUE))
+                   mubin2 = logitlink(-1 + x2, inverse = TRUE))
 odata <- transform(odata,
                    y1 = roiposbinom(nn, svec, pr = mubin1, pstr1 = pstr1),
                    y2 = roiposbinom(nn, svec, pr = mubin2, pstr1 = pstr1))

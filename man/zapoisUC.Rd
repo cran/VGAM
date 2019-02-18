@@ -57,6 +57,7 @@ rzapois(n, lambda, pobs0 = 0)
 
 \seealso{
     \code{\link{zapoisson}},
+    \code{\link{dgenapois}},
     \code{\link{dzipois}}.
 
 

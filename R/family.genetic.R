@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -13,7 +13,7 @@
 
 
 
- A1A2A3 <- function(link = "logit",
+ A1A2A3 <- function(link = "logitlink",
                     inbreeding = FALSE,  # HWE assumption is the default
                     ip1 = NULL, ip2 = NULL, iF = NULL) {
 
@@ -155,11 +155,10 @@
     okay1 <- all(is.finite(p1)) && all(0 < p1 & p1 < 1) &&
              all(is.finite(p2)) && all(0 < p2 & p2 < 1) &&
              all(is.finite(p3)) && all(0 < p3 & p3 < 1)
-    okay2 <- TRUE
-    if ( .inbreeding ) {
+    okay2 <- if ( .inbreeding ) {
       f <- eta2theta(eta[, 3], link = .link , earg = .earg )
-      okay2 <- all(is.finite(f)) && all(0 <= f)  # && all(f < 1)
-    }
+      all(is.finite(f)) && all(0 <= f)  # && all(f < 1)
+    } else TRUE
     okay1 && okay2
   }, list( .link = link, .earg = earg, .inbreeding = inbreeding) )),
   deriv = eval(substitute(expression({
@@ -173,8 +172,8 @@
                   0, -2*(1-f)*p2, -f - 2*p3*(1-f))
       dP2 <- cbind(0, 2*p1*(1-f), -2*(1-f)*p1, f+2*p2*(1-f),
                    2*(1-f)*(1-p1-2*p2), -f - 2*p3*(1-f))
-      dP3 <- cbind(p1*(1-p1), -2*p1*p2, -2*p1*p3, p2*(1-p2), -2*p2*p3,
-                   p3*(1-p3))
+      dP3 <- cbind(p1*(1-p1), -2*p1*p2, -2*p1*p3, p2*(1-p2),
+                   -2*p2*p3, p3*(1-p3))
       dl1 <- rowSums(y * dP1 / mu)
       dl2 <- rowSums(y * dP2 / mu)
       dl3 <- rowSums(y * dP3 / mu)
@@ -184,10 +183,10 @@
                    dPP.deta[, 2] * dl2,
                    dPP.deta[, 3] * dl3)
     } else {
-      dl.dp1 <- (2*y[, 1]+y[, 2]+y[, 4])/p1 -
-                (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
-      dl.dp2 <- (2*y[, 3]+y[, 2]+y[,5])/p2 -
-                (2*y[,6]+y[, 4]+y[,5])/(1-p1-p2)
+      dl.dp1 <- (2*y[, 1] + y[, 2] + y[, 4]) / p1 -
+                (2*y[,6] + y[, 4] + y[,5]) / (1-p1-p2)
+      dl.dp2 <- (2*y[, 3] + y[, 2] + y[,5]) / p2 -
+                (2*y[,6] + y[, 4] + y[,5]) / (1-p1-p2)
 
       dp1.deta <- dtheta.deta(p1, link = .link , earg = .earg )
       dp2.deta <- dtheta.deta(p2, link = .link , earg = .earg )
@@ -228,7 +227,7 @@
 
 
 
- MNSs <- function(link = "logit",
+ MNSs <- function(link = "logitlink",
                   imS = NULL, ims = NULL, inS = NULL) {
 
   link <- as.list(substitute(link))
@@ -355,7 +354,7 @@
 
 
 
- ABO <- function(link.pA = "logit", link.pB = "logit",
+ ABO <- function(link.pA = "logitlink", link.pB = "logitlink",
                  ipA = NULL, ipB = NULL, ipO = NULL,
                  zero = NULL) {
   link.pA <- as.list(substitute(link.pA))
@@ -514,7 +513,7 @@
 
 
 
- AB.Ab.aB.ab <- function(link = "logit", init.p = NULL) {
+ AB.Ab.aB.ab <- function(link = "logitlink", init.p = NULL) {
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -620,8 +619,8 @@
 
 
  AA.Aa.aa <-
-  function(linkp = "logit",
-           linkf = "logit",
+  function(linkp = "logitlink",
+           linkf = "logitlink",
            inbreeding = FALSE,  # HWE assumption is the default
            ipA = NULL,
            ifp = NULL,

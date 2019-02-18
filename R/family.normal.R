@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -40,6 +40,69 @@ VGAM.weights.function <- function(w, M, n) {
 
 
 
+
+
+ gaussianff <- function(
+      lmean = "identitylink", lsd = "loglink", lvar = "loglink",
+    var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE, 
+    smallno = 1e-05, zero = if (var.arg) "var" else "sd") {
+
+
+  if (FALSE) {
+  .Deprecated(new = "uninormal",
+              msg = "Calling uninormal() instead")
+  } else {
+    warning("gaussianff() is deprecated. ",
+      "Please modify your code to call uninormal() instead ",
+      "(the model will be similar but different internally). ",
+      "Returning uninormal() instead.")
+
+
+
+
+  lmean <- as.list(substitute(lmean))
+  emean <- link2list(lmean)
+  lmean <- attr(emean, "function.name")
+  lsdev <- as.list(substitute(lsd))
+  esdev <- link2list(lsdev)
+  lsdev <- attr(esdev, "function.name")
+  lvare <- as.list(substitute(lvar))
+  evare <- link2list(lvare)
+  lvare <- attr(evare, "function.name")
+
+
+    my.call <- eval(substitute(expression({ paste0(
+  "uninormal(lmean = '", .lmean , "', ",
+            "lsd = '", .lsd , "', ",
+            "lvar = '", .lvar , "', ",
+            "var.arg = ", .var.arg, ", ",
+            "imethod = ", .imethod, ", ",
+            "isd = ", .isd, ", ",
+            "parallel = ", .parallel , ", ",
+            "smallno = ", .smallno , ", ",
+            if (is.null( .zero ))
+              "zero = NULL" else
+            if (is.character( .zero ))
+              paste0("zero = '", .zero , "'") else
+              paste("zero = ", .zero ),
+             ")"
+             )  # paste0
+               }),
+  list( .lmean = lmean,
+        .lsd = lsd,
+        .lvar = lvar,
+        .var.arg = var.arg,
+        .imethod = imethod,
+        .isd = isd,
+        .parallel = parallel,
+        .smallno = smallno,
+        .zero = zero
+    )))
+     emc <- eval(my.call)
+     famfun <- eval(parse(text = emc))
+     famfun
+  }
+}
 
 
 
@@ -312,7 +375,7 @@ if (FALSE)
 
 
 
- posnormal <- function(lmean = "identitylink", lsd = "loge",
+ posnormal <- function(lmean = "identitylink", lsd = "loglink",
                        eq.mean = FALSE, eq.sd = FALSE,
                        gmean = exp((-5:5)/2), gsd = exp((-1:5)/2),
                        imean = NULL, isd = NULL, probs.y = 0.10,
@@ -910,7 +973,7 @@ rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
 
 
 
- tikuv <- function(d, lmean = "identitylink", lsigma = "loge",
+ tikuv <- function(d, lmean = "identitylink", lsigma = "loglink",
                    isigma = NULL, zero = "sigma") {
 
 
@@ -1191,7 +1254,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
 
 
 
- foldnormal <- function(lmean = "identitylink", lsd = "loge",
+ foldnormal <- function(lmean = "identitylink", lsd = "loglink",
                         imean = NULL,       isd = NULL,
                         a1 = 1, a2 = 1,
                         nsimEIM = 500, imethod = 1, zero = NULL) {
@@ -1680,7 +1743,7 @@ rtobit <- function(n, mean = 0, sd = 1, Lower = 0, Upper = Inf) {
 
  tobit <-
   function(Lower = 0, Upper = Inf,  # See the trick described below.
-           lmu = "identitylink",  lsd = "loge",
+           lmu = "identitylink",  lsd = "loglink",
            imu = NULL,        isd = NULL,
            type.fitted = c("uncensored", "censored", "mean.obs"),
            byrow.arg = FALSE,
@@ -2205,7 +2268,7 @@ moment.millsratio2 <- function(zedd) {
 
 
  uninormal <-
-  function(lmean = "identitylink", lsd = "loge", lvar = "loge",
+  function(lmean = "identitylink", lsd = "loglink", lvar = "loglink",
            var.arg = FALSE,
            imethod = 1,
            isd = NULL,
@@ -2388,7 +2451,7 @@ moment.millsratio2 <- function(zedd) {
       sdev.init <- mean.init <- matrix(0, n, ncoly)
       for (jay in 1:ncoly) {
         jfit <- lm.wfit(x = x,  y = y[, jay], w = w[, jay])
-        mean.init[, jay] <- if ( .lmean == "loge")
+        mean.init[, jay] <- if ( .lmean == "loglink")
                             pmax(1/1024, y[, jay]) else
           if ( .imethod == 1) median(y[, jay]) else
           if ( .imethod == 2) weighted.mean(y[, jay], w = w[, jay]) else
@@ -2616,10 +2679,8 @@ moment.millsratio2 <- function(zedd) {
     okay1 <- all(is.finite(mymu)) &&
              all(is.finite(sdev)) && all(0 < sdev) &&
              all(is.finite(Varm)) && all(0 < Varm)
-    okay2 <- TRUE
-    if ( .lmean == "explink") {
-      okay2 <- all(0 < eta[, M1*(1:ncoly) - 1])
-    }
+    okay2 <- if ( .lmean == "explink") all(0 < eta[, M1*(1:ncoly) - 1]) else
+             TRUE
     okay1 && okay2
   }, list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
            .emean = emean, .esdev = esdev, .evare = evare,
@@ -2740,7 +2801,7 @@ moment.millsratio2 <- function(zedd) {
  normal.vcm <-
   function(link.list = list("(Default)" = "identitylink"),
            earg.list = list("(Default)" = list()),
-           lsd = "loge", lvar = "loge",
+           lsd = "loglink", lvar = "loglink",
            esd = list(), evar = list(),
            var.arg = FALSE,
            imethod = 1,
@@ -2888,14 +2949,14 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-    if (any(is.multilogit <-
-       (unlist(link.list.ordered) == "multilogit"))) {
-      if (sum(is.multilogit) < 2)
-        stop("at least two 'multilogit' links need to be specified, ",
+    if (any(is.multilogitlink <-
+       (unlist(link.list.ordered) == "multilogitlink"))) {
+      if (sum(is.multilogitlink) < 2)
+        stop("at least two 'multilogitlink' links need to be specified, ",
              "else none")
-      col.index.is.multilogit <- (seq_along(is.multilogit))[is.multilogit]
-      extra$col.index.is.multilogit <- col.index.is.multilogit
-      extra$is.multilogit <- is.multilogit
+      col.index.is.multilogitlink <- (seq_along(is.multilogitlink))[is.multilogitlink]
+      extra$col.index.is.multilogitlink <- col.index.is.multilogitlink
+      extra$is.multilogitlink <- is.multilogitlink
     }
 
 
@@ -2915,7 +2976,7 @@ moment.millsratio2 <- function(zedd) {
 
     extra$ncoly <- ncoly <- ncol(y)
     extra$M <- M <- ncol(Xm2) + 1 -
-                    (length(extra$is.multilogit) > 0)
+                    (length(extra$is.multilogitlink) > 0)
     M1 <- NA  # Since this cannot be determined apriori.
 
     extra$M1 <- M1
@@ -2936,8 +2997,8 @@ moment.millsratio2 <- function(zedd) {
     }
     extra$all.mynames1 <- all.mynames1 <- mynames1
 
-    if (LLL <- length(extra$is.multilogit)) {
-      mynames1 <- mynames1[-max(extra$col.index.is.multilogit)]
+    if (LLL <- length(extra$is.multilogitlink)) {
+      mynames1 <- mynames1[-max(extra$col.index.is.multilogitlink)]
     }
 
     mynames2 <- param.names(if ( .var.arg ) "var" else "sd",
@@ -2966,38 +3027,38 @@ moment.millsratio2 <- function(zedd) {
       if (!icoefficients.given)
       for (jlocal in seq_along(nasgn2)) {
         if (link.list[[jlocal]] %in%
-            c("cauchit", "probit", "cloglog", "logit",
-              "logc", "golf", "polf", "nbolf") &&
+            c("cauchitlink", "probitlink", "clogloglink", "logitlink",
+              "logclink", "gordlink", "pordlink", "nbordlink") &&
             abs(jfit.coeff[jlocal] - 0.5) >= 0.5)
           jfit.coeff[jlocal] <- 0.5 +
             sign(jfit.coeff[jlocal] - 0.5) * 0.25
 
-        if (link.list[[jlocal]] %in% c("rhobit", "fisherz") &&
+        if (link.list[[jlocal]] %in% c("rhobitlink", "fisherzlink") &&
             abs(jfit.coeff[jlocal]) >= 1)
           jfit.coeff[jlocal] <- sign(jfit.coeff[jlocal]) * 0.5
 
-        if (link.list[[jlocal]] == "loglog" &&
+        if (link.list[[jlocal]] == "logloglink" &&
             abs(jfit.coeff[jlocal]) <= 1)
           jfit.coeff[jlocal] <- 1 + 1/8
 
-        if (link.list[[jlocal]] == "logoff" &&
+        if (link.list[[jlocal]] == "logofflink" &&
             is.numeric(LLL <- (earg.list[[jlocal]])$offset) &&
             jfit.coeff[jlocal] <= -LLL) {
           jfit.coeff[jlocal] <- max((-LLL) * 1.05,
                                     (-LLL) * 0.95, -LLL + 1)
         }
 
-        if (link.list[[jlocal]] == "loge" &&
+        if (link.list[[jlocal]] == "loglinklink" &&
             jfit.coeff[jlocal] <= 0.001)
           jfit.coeff[jlocal] <- 1/8
       }
 
 
       if (!icoefficients.given) {
-        if (LLL <- length(extra$is.multilogit)) {
-          raw.coeffs <- jfit.coeff[extra$col.index.is.multilogit]
+        if (LLL <- length(extra$is.multilogitlink)) {
+          raw.coeffs <- jfit.coeff[extra$col.index.is.multilogitlink]
         possum1 <- (0.01 + abs(raw.coeffs)) / sum(0.01 + abs(raw.coeffs))
-          jfit.coeff[extra$is.multilogit] <- possum1
+          jfit.coeff[extra$is.multilogitlink] <- possum1
         }
       }
 
@@ -3012,17 +3073,17 @@ moment.millsratio2 <- function(zedd) {
           extra$earg.list[[jlocal]]
         }
 
-        if (length(extra$is.multilogit) && !extra$is.multilogit[jlocal])
+        if (length(extra$is.multilogitlink) && !extra$is.multilogitlink[jlocal])
           etamat.init[, jlocal] <-
             theta2eta(thetamat.init[, jlocal],
                       link = extra$link.list[[jlocal]],
                       earg = earg.use)
       }
 
-      if (LLL <- length(extra$col.index.is.multilogit)) {
-        etamat.init[, extra$col.index.is.multilogit[-LLL]] <-
-          multilogit(thetamat.init[, extra$col.index.is.multilogit])
-        etamat.init <- etamat.init[, -max(extra$col.index.is.multilogit)]
+      if (LLL <- length(extra$col.index.is.multilogitlink)) {
+        etamat.init[, extra$col.index.is.multilogitlink[-LLL]] <-
+          multilogitlink(thetamat.init[, extra$col.index.is.multilogitlink])
+        etamat.init <- etamat.init[, -max(extra$col.index.is.multilogitlink)]
       }
 
 
@@ -3074,7 +3135,7 @@ moment.millsratio2 <- function(zedd) {
     sdev <- eta2theta(eta[, M1*(1:NOS)  , drop = FALSE],
                       .lsd , earg = .esd )
 
-    okay1 <- all(is.finite(sdev))  && all(0 < sdev) &&
+    okay1 <- all(is.finite(sdev)) && all(0 < sdev) &&
              all(is.finite(eta))
     okay1
   }, list( .link.list = link.list,
@@ -3090,10 +3151,10 @@ moment.millsratio2 <- function(zedd) {
 
   coffs <- eta[, -M, drop = FALSE]
 
-  if (LLL <- length(extra$col.index.is.multilogit)) {
-    last.one <- extra$col.index.is.multilogit[LLL]
+  if (LLL <- length(extra$col.index.is.multilogitlink)) {
+    last.one <- extra$col.index.is.multilogitlink[LLL]
     coffs <- cbind(coffs[, 1:(last.one-1)],
-                   probs.last.multilogit = 0,
+                   probs.last.multilogitlink = 0,
                    if (last.one == M) NULL else
                    coffs[, last.one:ncol(coffs)])
     colnames(coffs) <- extra$all.mynames1
@@ -3107,8 +3168,8 @@ moment.millsratio2 <- function(zedd) {
       extra$earg.list[[jlocal]]
     }
 
-    if (length(extra$is.multilogit) && !extra$is.multilogit[jlocal]) {
-      iskip <- (jlocal > max(extra$col.index.is.multilogit))
+    if (length(extra$is.multilogitlink) && !extra$is.multilogitlink[jlocal]) {
+      iskip <- (jlocal > max(extra$col.index.is.multilogitlink))
       coffs[, jlocal] <- eta2theta(eta[, jlocal - iskip],
                                    link = extra$link.list[[jlocal]],
                                    earg = earg.use)
@@ -3116,9 +3177,9 @@ moment.millsratio2 <- function(zedd) {
   }
 
 
-    if (LLL <- length(extra$col.index.is.multilogit)) {
-      coffs[, extra$col.index.is.multilogit] <-
-     multilogit(eta[, extra$col.index.is.multilogit[-LLL], drop = FALSE],
+    if (LLL <- length(extra$col.index.is.multilogitlink)) {
+      coffs[, extra$col.index.is.multilogitlink] <-
+     multilogitlink(eta[, extra$col.index.is.multilogitlink[-LLL], drop = FALSE],
                inverse = TRUE)
     }
 
@@ -3202,16 +3263,16 @@ moment.millsratio2 <- function(zedd) {
 
     coffs <- eta[, -M, drop = FALSE]  # Exclude log(sdev) or log(var)
 
-    if (LLL <- length(extra$is.multilogit)) {
-      last.one <- max(extra$col.index.is.multilogit)
+    if (LLL <- length(extra$is.multilogitlink)) {
+      last.one <- max(extra$col.index.is.multilogitlink)
       coffs <- cbind(coffs[, 1:(last.one-1)],
-                     probsLastmultilogit = 0,
+                     probsLastmultilogitlink = 0,
                      if (last.one == M) NULL else
                      coffs[, last.one:ncol(coffs)])
       colnames(coffs) <- extra$all.mynames1
     }
 
-    dcoffs.deta <- coffs  # Includes any last "multilogit"
+    dcoffs.deta <- coffs  # Includes any last "multilogitlink"
 
     for (jlocal in 1:ncol(coffs)) {
       earg.use <- if (!length(extra$earg.list[[jlocal]])) {
@@ -3220,27 +3281,27 @@ moment.millsratio2 <- function(zedd) {
         extra$earg.list[[jlocal]]
       }
 
-      if (!length(extra$is.multilogit) ||
-          !extra$is.multilogit[jlocal]) {
-        iskip <- length(extra$is.multilogit) &&
-                 (jlocal  > max(extra$col.index.is.multilogit))
+      if (!length(extra$is.multilogitlink) ||
+          !extra$is.multilogitlink[jlocal]) {
+        iskip <- length(extra$is.multilogitlink) &&
+                 (jlocal  > max(extra$col.index.is.multilogitlink))
         coffs[, jlocal] <- eta2theta(eta[, jlocal - iskip],
                                      link = extra$link.list[[jlocal]],
                                      earg = earg.use)
       }
     }
 
-    if (LLL <- length(extra$col.index.is.multilogit)) {
-      coffs[, extra$col.index.is.multilogit] <-
-        multilogit(eta[, extra$col.index.is.multilogit[-LLL],
+    if (LLL <- length(extra$col.index.is.multilogitlink)) {
+      coffs[, extra$col.index.is.multilogitlink] <-
+        multilogitlink(eta[, extra$col.index.is.multilogitlink[-LLL],
                        drop = FALSE],
                inverse = TRUE)
     }
 
 
   for (jlocal in 1:ncol(coffs)) {
-    if (!length(extra$is.multilogit) ||
-        !extra$is.multilogit[jlocal]) {
+    if (!length(extra$is.multilogitlink) ||
+        !extra$is.multilogitlink[jlocal]) {
       earg.use <- if (!length(extra$earg.list[[jlocal]])) {
         list(theta = NULL)
       } else {
@@ -3269,13 +3330,13 @@ moment.millsratio2 <- function(zedd) {
 
 
     dMu.deta <- dmu.dcoffs * dcoffs.deta  # n x pLM, but may change below
-    if (LLL <- length(extra$col.index.is.multilogit)) {
-      dMu.deta[, extra$col.index.is.multilogit[-LLL]] <-
-         coffs[, extra$col.index.is.multilogit[-LLL]] *
-        (dmu.dcoffs[, extra$col.index.is.multilogit[-LLL]] -
-         rowSums(dmu.dcoffs[, extra$col.index.is.multilogit]  *
-                      coffs[, extra$col.index.is.multilogit]))
-      dMu.deta <- dMu.deta[, -extra$col.index.is.multilogit[LLL]]
+    if (LLL <- length(extra$col.index.is.multilogitlink)) {
+      dMu.deta[, extra$col.index.is.multilogitlink[-LLL]] <-
+         coffs[, extra$col.index.is.multilogitlink[-LLL]] *
+        (dmu.dcoffs[, extra$col.index.is.multilogitlink[-LLL]] -
+         rowSums(dmu.dcoffs[, extra$col.index.is.multilogitlink]  *
+                      coffs[, extra$col.index.is.multilogitlink]))
+      dMu.deta <- dMu.deta[, -extra$col.index.is.multilogitlink[LLL]]
     }
 
 
@@ -3308,8 +3369,8 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-    if (length(extra$col.index.is.multilogit)) {
-      LLL <- max(extra$col.index.is.multilogit)
+    if (length(extra$col.index.is.multilogitlink)) {
+      LLL <- max(extra$col.index.is.multilogitlink)
       dmu.dcoffs <- dmu.dcoffs[, -LLL]
       dcoffs.deta <- dcoffs.deta[, -LLL]
     }
@@ -3324,10 +3385,10 @@ moment.millsratio2 <- function(zedd) {
 
 
 
-    if ((LLL <- length(extra$col.index.is.multilogit))) {
-       dmu.dcoffs[, extra$col.index.is.multilogit[-LLL]] <-
-         dMu.deta[, extra$col.index.is.multilogit[-LLL]]
-      dcoffs.deta[, extra$col.index.is.multilogit[-LLL]] <- 1
+    if ((LLL <- length(extra$col.index.is.multilogitlink))) {
+       dmu.dcoffs[, extra$col.index.is.multilogitlink[-LLL]] <-
+         dMu.deta[, extra$col.index.is.multilogitlink[-LLL]]
+      dcoffs.deta[, extra$col.index.is.multilogitlink[-LLL]] <- 1
      }
 
     twz  <- crossprod(dmu.dcoffs * sqrt(c(w))) / sum(w)
@@ -3361,7 +3422,7 @@ moment.millsratio2 <- function(zedd) {
 
 
 
- lognormal <- function(lmeanlog = "identitylink", lsdlog = "loge",
+ lognormal <- function(lmeanlog = "identitylink", lsdlog = "loglink",
                        zero = "sdlog") {
 
 

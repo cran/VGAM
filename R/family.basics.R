@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2018 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -11,6 +11,34 @@
 
 
 
+
+
+
+getarg <- function(a) {
+
+
+
+  b <- unlist(strsplit(a, "(", fixed = TRUE))
+
+  if (length(b) == 2) {  # Usual case
+    d <- unlist(strsplit(b[2], ")", fixed = TRUE))
+    d[1]
+  } else if (length(b) == 1) {  # identitylink
+    b
+  } else if (length(b) == 3) {  # nbcanlink
+    d <- unlist(strsplit(b[2], ",", fixed = TRUE))
+    d[1]
+  } else {
+    a
+  }
+}
+
+
+
+
+
+
+    
 
 subsetcol <-
 Select <-
@@ -501,6 +529,15 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
  cm.zero.VGAM <- function(constraints, x, zero = NULL, M = 1,
                           predictors.names, M1 = 1) {
+
+
+
+  if (is.character(predictors.names)) {
+    for (ii in 1:length(predictors.names))
+      predictors.names[ii] <- getarg(predictors.names[ii])
+  }
+
+
 
 
   dotzero <- zero  # Transition
@@ -1433,7 +1470,9 @@ negzero.expression.VGAM <- expression({
                NULL else
                unique(sort(c(zneg.index, zpos.index)))
 
-  constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M = M)
+  constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M = M,
+                              predictors.names = predictors.names,
+                              M1 = M1)
 })
 
 

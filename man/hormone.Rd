@@ -128,22 +128,22 @@ coef(fit2, matrix = TRUE)
 plot(Y ~ X, hormone, col = "blue")
 lines(fitted(fit2) ~ X, hormone, col = "red")
 # Add +- 2 SEs
-lines(fitted(fit2) + 2 * exp(predict(fit2)[, "loge(sd)"]) ~ X,
+lines(fitted(fit2) + 2 * exp(predict(fit2)[, "loglink(sd)"]) ~ X,
       hormone, col = "orange")
-lines(fitted(fit2) - 2 * exp(predict(fit2)[, "loge(sd)"]) ~ X,
+lines(fitted(fit2) - 2 * exp(predict(fit2)[, "loglink(sd)"]) ~ X,
       hormone, col = "orange")
 
 # Equation (3)
-# Does not fit well because the loge link for the mean is not good.
+# Does not fit well because the loglink link for the mean is not good.
 fit3 <- rrvglm(Y ~ 1 + X, maxit = 300, data = hormone, trace = TRUE,
-               uninormal(lmean = "loge", zero = NULL))
+               uninormal(lmean = "loglink", zero = NULL))
 coef(fit3, matrix = TRUE)
 plot(Y ~ X, hormone, col = "blue")  # Does not look okay.
 lines(exp(predict(fit3)[, 1]) ~ X, hormone, col = "red")
 # Add +- 2 SEs
-lines(fitted(fit3) + 2 * exp(predict(fit3)[, "loge(sd)"]) ~ X,
+lines(fitted(fit3) + 2 * exp(predict(fit3)[, "loglink(sd)"]) ~ X,
       hormone, col = "orange")
-lines(fitted(fit3) - 2 * exp(predict(fit3)[, "loge(sd)"]) ~ X,
+lines(fitted(fit3) - 2 * exp(predict(fit3)[, "loglink(sd)"]) ~ X,
       hormone, col = "orange")
 }
 }

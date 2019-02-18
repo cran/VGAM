@@ -9,7 +9,7 @@ by maximum likelihood estimation.
 
 }
 \usage{
-levy(location = 0, lscale = "loge", iscale = NULL)
+levy(location = 0, lscale = "loglink", iscale = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

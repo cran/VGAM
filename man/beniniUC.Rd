@@ -30,7 +30,7 @@ rbenini(n, y0, shape)
 
 
   }
-  \item{shape}{the shape parameter \eqn{b}.
+  \item{shape}{the positive shape parameter \eqn{b}.
 
 
   }

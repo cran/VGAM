@@ -10,7 +10,7 @@
 
 }
 \usage{
-gumbelII(lscale = "loge", lshape = "loge", iscale = NULL, ishape = NULL,
+gumbelII(lscale = "loglink", lshape = "loglink", iscale = NULL, ishape = NULL,
          probs.y = c(0.2, 0.5, 0.8), perc.out = NULL, imethod = 1,
          zero = "shape", nowarning = FALSE)
 }

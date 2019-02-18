@@ -168,11 +168,8 @@ added to the package.
 
 }
 \author{
-Thomas W. Yee, \email{t.yee@auckland.ac.nz}.
-
-
+Thomas W. Yee, \email{t.yee@auckland.ac.nz}.\cr
 Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
-
 }
 
 
@@ -187,7 +184,7 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
   and slot names.
   For example, all link functions may be renamed so that they
   end in \code{"link"},
-  e.g., \code{loglink()} instead of \code{loge()}.
+  e.g., \code{loglink()} instead of \code{loglink()}.
   Some future pain can be avoided by using good programming
   techniques, e.g., using extractor/accessor functions such as
   \code{coef()}, \code{weights()}, \code{vcov()},
@@ -259,8 +256,9 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-Yee, T. W. (2018)
-Detecting the Hauck-Donner effect in Wald tests
+Yee, T. W. (2019)
+On the Hauck-Donner effect in Wald tests:
+Detection and parameter space characterization
 (\emph{in preparation}).
 
 
@@ -325,7 +323,7 @@ hdeff(fit1)  # Check for any Hauck-Donner effect
 # Example 2; zero-inflated Poisson model
 zdata <- data.frame(x2 = runif(nn <- 2000))
 zdata <- transform(zdata, pstr0  = logit(-0.5 + 1*x2, inverse = TRUE),
-                          lambda = loge(  0.5 + 2*x2, inverse = TRUE))
+                          lambda = loglink(  0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y = rzipois(nn, lambda, pstr0 = pstr0))
 with(zdata, table(y))
 fit2 <- vglm(y ~ x2, zipoisson, data = zdata, trace = TRUE)

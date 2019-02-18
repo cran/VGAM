@@ -6,7 +6,7 @@
   Fits a 1-inflated positive Poisson distribution.
 }
 \usage{
-oipospoisson(lpstr1 = "logit", llambda = "loge",
+oipospoisson(lpstr1 = "logitlink", llambda = "loglink",
    type.fitted = c("mean", "lambda", "pobs1", "pstr1", "onempstr1"),
    ilambda = NULL, gpstr1 = (1:19)/20, gprobs.y = (1:19)/20,
    imethod = 1, zero = NULL)
