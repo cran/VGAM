@@ -3,7 +3,7 @@
 \alias{hypersecant01}
 \alias{nef.hs}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Hyperbolic Secant Distribution Family Function }
+\title{ Hyperbolic Secant Regression Family Function }
 \description{
   Estimation of the parameter of the hyperbolic secant
   distribution.

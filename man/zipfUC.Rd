@@ -51,7 +51,8 @@ rzipf(n, N, shape)
 %
 %}
 \seealso{
-  \code{\link{zipf}}.
+  \code{\link{zipf}},
+  \code{\link{Zipfmb}}.
 
 
 

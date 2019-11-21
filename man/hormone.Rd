@@ -31,9 +31,12 @@
 \details{
 %%  ~~ If necessary, more details than the __description__ above ~~
 
+
+
 The data is given in Table 2.4 of
 Carroll and Ruppert (1988), and was downloaded
-from \url{http://www.stat.tamu.edu/~carroll}.
+from \code{http://www.stat.tamu.edu/~carroll}
+prior to 2019.
 The book describes the data as follows.
 The data are the results of two assay methods for hormone
 data; the scale of the data as presented is not
@@ -46,6 +49,10 @@ The overall goal is to see whether we can reproduce
 the test-method measurements with the reference-method
 measurements.
 Thus calibration might be of interest for the data.
+
+
+
+% from \url{http://www.stat.tamu.edu/~carroll}.
 
 
 

@@ -1,7 +1,7 @@
 \name{gamma1}
 \alias{gamma1}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ 1-parameter Gamma Distribution }
+\title{ 1-parameter Gamma Regression Family Function }
 \description{
   Estimates the 1-parameter gamma distribution
   by maximum likelihood estimation.

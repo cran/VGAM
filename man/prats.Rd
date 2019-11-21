@@ -41,7 +41,7 @@ data(prats)
   the subjects are fetuses from
   two randomized groups of 16 pregnant rats each,
   and they were given a placebo or chemical treatment.
-  The number with birth defects andn the litter size were recorded.
+  The number with birth defects and the litter size were recorded.
   Half the rats were fed a control diet during pregnancy and
   lactation, and the diet of the other half was treated with a
   chemical. For each litter the number of pups alive at 4 days

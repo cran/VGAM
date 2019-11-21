@@ -6,6 +6,71 @@
 
 useDynLib(VGAM, .registration = TRUE)
 
+
+
+
+export(gatnbinomial.mix)
+export(moments.nbin.gait, moments.pois.gait)
+export(gatpoisson.mix)
+export(dgaitnbinom.mix, pgaitnbinom.mix, pgaitnbinom.mix, rgaitnbinom.mix)
+export(dgaitpois.mix, pgaitpois.mix, pgaitpois.mix, rgaitpois.mix)
+  export(gatnbinomial.mlm, EIM.GATNB.speciald, GATNB.deriv012)
+export(gait.errorcheck)
+export(is.Numeric2)
+export(dgaitnbinom.mlm)
+export(pgaitnbinom.mlm)
+export(qgaitnbinom.mlm)
+export(rgaitnbinom.mlm)
+export(gatpoisson.mlm)
+export(dgaitpois.mlm)
+export(pgaitpois.mlm)
+export(qgaitpois.mlm)
+export(rgaitpois.mlm)
+export(dgaitbinom.mlm)
+export(pgaitbinom.mlm)
+export(qgaitbinom.mlm)
+export(rgaitbinom.mlm)
+export(dzipfmb, pzipfmb, qzipfmb, rzipfmb)
+
+
+
+
+exportMethods(rootogram4)
+export(rootogram4vglm)
+
+
+importFrom("stats", "xtabs", "na.omit")
+importFrom("grDevices", "n2mfrow")
+
+
+export(
+  "rootogram0",
+  "rootogram0.default")
+importFrom("graphics", "abline", "axis", "box", "hist", "lines",
+                       "par", "plot", "points", "polygon", "rect")
+S3method("rootogram0", "default")
+S3method("plot", "rootogram0")
+
+
+
+
+
+export(add1.vglm)
+export(drop1.vglm)
+export(fitmodel.VGAM.expression)
+export(assign2assign, findterms, subsetassign)
+importFrom("stats", "add1", "drop1", "factor.scope", "update.default")
+exportMethods(step4)
+export(step4vglm)
+importFrom("stats", "add.scope", "drop.scope", "extractAIC")
+S3method(add1, vglm, add1.vglm)
+S3method(drop1, vglm, drop1.vglm)
+S3method(extractAIC, vglm, extractAIC.vglm)
+export(extractAIC.vglm)
+exportMethods(dfterms)
+export(dftermsvglm)
+export(gabinomial.mlm)
+export(wz.merge)
 export(getarg)
 export(rainbow.sky)
 export(loglink, logneglink, logofflink, negidentitylink, logitlink)
@@ -18,16 +83,8 @@ export(stieltjes)
 export(loglogloglink)
 importFrom("graphics", "legend")
 export(hdeffsev, seglines)
-export(pgenapois)
-export(pgenipois)
-export(pgentpois)
-export(pgentbinom)
-export(dgenabinom, pgenabinom, rgenabinom)
-export(dgenibinom, pgenibinom, rgenibinom)
-export(dgenapois, rgenapois, genapoisson)
-export(dgenipois, rgenipois, genipoisson)
-export(dgentpois, rgentpois, gentpoisson)
-export(dgentbinom, rgentbinom, gentbinomial)
+  export(gipoisson.mlm)
+  export(gtbinomial)
 export(bell, bellff, dbell, rbell)
 exportMethods(calibrate)
 export(fnumat2R)

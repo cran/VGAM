@@ -93,7 +93,8 @@ Build.terms.vlm <-
       ones <- rep_len(1, nrow(x))
       fit[, simple] <- x[, asss] * outer(ones, coefs[asss])
       if (cov.true)
-        se[, simple] <- abs(x[, asss]) * outer(ones, sqrt(diag(cov))[asss])
+        se[, simple] <- abs(x[, asss]) *
+                        outer(ones, sqrt(diag(cov))[asss])
     }
     if (any(complex)) {
       assign <- assign[complex]

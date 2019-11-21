@@ -1,7 +1,7 @@
 \name{gamma2}
 \alias{gamma2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ 2-parameter Gamma Distribution }
+\title{ 2-parameter Gamma Regression Family Function }
 \description{
   Estimates the 2-parameter gamma distribution
   by maximum likelihood estimation.
@@ -103,7 +103,7 @@ gamma2(lmu = "loglink", lshape = "loglink",
   If \eqn{a=1}{shape=1} then this corresponds to the exponential
   distribution.  If \eqn{a>1}{shape>1} then the density is zero at the
   origin and is unimodal with mode at \eqn{y = \mu - \mu / a}{y =
-  mu - mu / shape}; this can be achieved with \code{lshape="loglog"}.
+  mu - mu / shape}; this can be achieved with \code{lshape="logloglink"}.
 
 
   By default, the two linear/additive predictors are

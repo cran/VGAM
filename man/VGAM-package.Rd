@@ -256,14 +256,14 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-Yee, T. W. (2019)
+Yee, T. W. (2018)
 On the Hauck-Donner effect in Wald tests:
-Detection and parameter space characterization
-(\emph{in preparation}).
+Detection, and parameter space characterization
+(\emph{under review}).
 
 
 
-Yee, T. W. and Somchit, C. and Wild, C. J. (2018)
+Yee, T. W. and Somchit, C. and Wild, C. J. (2019)
 Penalized vector generalized additive models.
 Manuscript in preparation.
 
@@ -322,7 +322,7 @@ hdeff(fit1)  # Check for any Hauck-Donner effect
 
 # Example 2; zero-inflated Poisson model
 zdata <- data.frame(x2 = runif(nn <- 2000))
-zdata <- transform(zdata, pstr0  = logit(-0.5 + 1*x2, inverse = TRUE),
+zdata <- transform(zdata, pstr0  = logitlink(-0.5 + 1*x2, inverse = TRUE),
                           lambda = loglink(  0.5 + 2*x2, inverse = TRUE))
 zdata <- transform(zdata, y = rzipois(nn, lambda, pstr0 = pstr0))
 with(zdata, table(y))

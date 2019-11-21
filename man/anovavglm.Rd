@@ -243,13 +243,18 @@ deleting variables from the latter effect.
   \code{\link[car]{Anova.glm}} if \pkg{car} is installed,
   \code{\link{vglm}},
   \code{\link{lrtest}},
+  \code{\link{add1.vglm}},
+  \code{\link{drop1.vglm}},
   \code{\link{lrt.stat.vlm}},
   \code{\link{score.stat.vlm}},
-  \code{\link{wald.stat.vlm}}.
+  \code{\link{wald.stat.vlm}},
+  \code{\link{backPain2}},
+  \code{\link[stats]{update}}.
 
 
 
-%  \code{\link{score.stat.vlm}},
+% \code{\link{score.stat.vlm}},
+% \code{\link{step4vglm}},
 
 
 }
@@ -266,13 +271,10 @@ anova(fit2)
 anova(fit2, type = "I")
 anova(fit2, type = "III")
 
-# Example 2: a proportional odds model fitted to backPain.
-data("backPain", package = "VGAM")
-backPain$x1 <- factor(backPain$x1)
-backPain$x2 <- factor(backPain$x2)
-backPain$x3 <- factor(backPain$x3)
-summary(backPain)
-fitlogit <- vglm(pain ~ x1 * x2 * x3, propodds, data = backPain)
+# Example 2: a proportional odds model fitted to backPain2.
+data("backPain2", package = "VGAM")
+summary(backPain2)
+fitlogit <- vglm(pain ~ x2 * x3 * x4, propodds, data = backPain2)
 coef(fitlogit)
 anova(fitlogit)
 anova(fitlogit, type = "I")

@@ -195,21 +195,23 @@ predict.vlm <-
       sigma <- if (is.numeric(fit.summary@sigma))
         fit.summary@sigma else
         sqrt(deviance(object) / object@df.residual)  # was @ResSS
-      pred <- Build.terms.vlm(x = X_vlm, coefs = coefs,
-                              cov = sigma^2 * fit.summary@cov.unscaled,
-                              assign = vasgn,
-                              collapse = type != "terms", M = M,
-                              dimname = list(dx1, dname2),
-                              coefmat = coefvlm(object, matrix.out = TRUE))
+      pred <-
+        Build.terms.vlm(x = X_vlm, coefs = coefs,
+                        cov = sigma^2 * fit.summary@cov.unscaled,
+                        assign = vasgn,
+                        collapse = type != "terms", M = M,
+                        dimname = list(dx1, dname2),
+                        coefmat = coefvlm(object, matrix.out = TRUE))
       pred$df <- object@df.residual
       pred$sigma <- sigma
     } else {
-      pred <- Build.terms.vlm(x = X_vlm, coefs = coefs,
-                              cov = NULL,  # Only this line differs from above
-                              assign = vasgn,
-                              collapse = type != "terms", M = M,
-                              dimname = list(dx1, dname2),
-                              coefmat = coefvlm(object, matrix.out = TRUE))
+      pred <-
+        Build.terms.vlm(x = X_vlm, coefs = coefs,
+                    cov = NULL,  # Only this line differs from above
+                        assign = vasgn,
+                        collapse = type != "terms", M = M,
+                        dimname = list(dx1, dname2),
+                        coefmat = coefvlm(object, matrix.out = TRUE))
     }  # !se.fit
 
     constant  <- attr(pred, "constant")

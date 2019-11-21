@@ -105,10 +105,10 @@ rposbinom(n, size, prob)
 \seealso{
   \code{\link{posbinomial}},
   \code{\link{dposbern}},
-  \code{\link{dgentbinom}},
+  \code{\link{Gaitbinom.mlm}},
   \code{\link{zabinomial}},
   \code{\link{zibinomial}},
-  \code{\link[stats:Binomial]{rbinom}}.
+  \code{\link[stats:Binomial]{Binomial}}.
 
 
 }

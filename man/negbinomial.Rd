@@ -646,7 +646,7 @@ Reduced-rank vector generalized linear models with two linear predictors.
   \code{\link{nbcanlink}} (NB-C),
   \code{\link{posnegbinomial}},
   \code{\link{inv.binomial}},
-  \code{\link[stats:NegBinomial]{rnbinom}},
+  \code{\link[stats:NegBinomial]{NegBinomial}},
   \code{\link{nbordlink}},
   \code{\link{rrvglm}},
   \code{\link{cao}},
@@ -654,9 +654,10 @@ Reduced-rank vector generalized linear models with two linear predictors.
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}},
   \code{\link[stats:ppoints]{ppoints}},
-  \code{\link[stats:NegBinomial]{qnbinom}}.
 
 
+% \code{\link[stats:NegBinomial]{rnbinom}},
+% \code{\link[stats:NegBinomial]{qnbinom}}.
 % \code{\link[MASS]{rnegbin}}.
 % \code{\link{quasipoissonff}},
 
@@ -714,7 +715,7 @@ summary(nb1)
 # Obtain a 95 percent confidence interval for phi0:
 myvec <- rbind(-1, 1, 0, 0)
 (se.mydiff <- sqrt(t(myvec) \%*\%  vcov(nb1) \%*\%  myvec))
-ci.mydiff <- mydiff + c(-1.96, 1.96) * se.mydiff
+ci.mydiff <- mydiff + c(-1.96, 1.96) * c(se.mydiff)
 ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
 (ci.phi0 <- 1 + 1 / rev(ci.delta0))  # The 95 percent conf. interval for phi0
 

@@ -614,7 +614,7 @@ Manuscript in preparation.
 \examples{
 # Example 1
 cumulative()
-cumulative(link = "probit", reverse = TRUE, parallel = TRUE)
+cumulative(link = "probitlink", reverse = TRUE, parallel = TRUE)
 
 # Example 2
 wdata <- data.frame(x2 = runif(nn <- 1000))

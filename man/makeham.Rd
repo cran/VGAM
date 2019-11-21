@@ -1,7 +1,7 @@
 \name{makeham}
 \alias{makeham}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Makeham Distribution Family Function }
+\title{ Makeham Regression Family Function }
 \description{
   Maximum likelihood estimation of the 3-parameter
   Makeham distribution.

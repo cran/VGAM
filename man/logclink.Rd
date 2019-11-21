@@ -1,6 +1,6 @@
 \name{logclink}
 \alias{logclink}
-\alias{logc}
+% \alias{logc}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Complementary-log Link Function }
 \description{

@@ -4,7 +4,7 @@
 %\alias{gumbelII.lsh}
 %\alias{gumbelII3}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Gumbel-II Distribution Family Function }
+\title{ Gumbel-II Regression Family Function }
 \description{
   Maximum likelihood estimation of the 2-parameter Gumbel-II distribution.
 

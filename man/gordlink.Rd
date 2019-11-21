@@ -1,7 +1,7 @@
 \name{gordlink}
 %\name{golf}
 \alias{gordlink}
-\alias{golf}
+% \alias{golf}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Gamma-Ordinal Link Function }
 \description{

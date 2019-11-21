@@ -79,7 +79,12 @@ dollars deflated by \eqn{P_2}.
 }
 \seealso{
   \code{\link[VGAM:SURff]{SURff}},
-  \url{http://statmath.wu.ac.at/~zeileis/grunfeld}.
+  \code{http://statmath.wu.ac.at/~zeileis/grunfeld}
+  (the link might now be stale).
+
+
+
+% orig.: \url{http://statmath.wu.ac.at/~zeileis/grunfeld}.
 
 
 }

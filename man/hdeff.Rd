@@ -247,10 +247,10 @@ Corrigenda: JASA, \bold{75}, 482.
 
 
 
-Yee, T. W. (2019)
+Yee, T. W. (2018)
 On the Hauck-Donner effect in Wald tests:
-Detection and parameter space characterization
-(\emph{in preparation}).
+Detection, and parameter space characterization
+(\emph{submitted for publication}).
 
 
 
@@ -305,6 +305,17 @@ Detection and parameter space characterization
   This function is currently under development
   and may change a little in the short future.
   For HDE severity measures see \code{\link{hdeffsev}}.
+
+
+  
+  Yee (2018) gives details about HDE detection for the
+  entire VGLM class, and proves a tipping point theorem with
+  tipping points 1/4 and 3/5. The HDE severity measures
+  allow partitioning of the parameter space into 6 regions
+  from the interior and going outwards towards the boundary edges.
+  It is also shown that with 1-parameter binary regression
+  the HDE cannot occur unless the log odds ratio is at least 2.40,
+  which corresponds to an odds ratio of 11.0 or more.
 
 
 

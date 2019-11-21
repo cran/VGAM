@@ -1,6 +1,6 @@
 \name{fisherzlink}
 \alias{fisherzlink}
-\alias{fisherz}
+% \alias{fisherz}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Fisher's Z Link Function }
 \description{

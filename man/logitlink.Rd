@@ -1,8 +1,8 @@
 \name{logitlink}
 \alias{logitlink}
-\alias{logit}
+%\alias{logit}
 \alias{extlogitlink}
-\alias{extlogit}
+%\alias{extlogit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Logit Link Function }
 \description{

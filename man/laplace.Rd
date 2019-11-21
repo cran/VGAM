@@ -1,7 +1,7 @@
 \name{laplace}
 \alias{laplace}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Laplace Distribution }
+\title{ Laplace Regression Family Function }
 \description{
    Maximum likelihood estimation of
    the 2-parameter classical Laplace distribution.
@@ -86,9 +86,12 @@ Boston: Birkhauser.
 \author{ T. W. Yee }
 \section{Warning}{
   This family function has not been fully tested.
-  The MLE regularity conditions do not hold for this distribution,
+  The MLE regularity conditions do \emph{not} hold for this distribution,
   therefore misleading inferences may result,
   e.g., in the \code{summary} and \code{vcov} of the object.
+  Hence this family function might be withdrawn from \pkg{VGAM}
+  in the future.
+
 
 
 }

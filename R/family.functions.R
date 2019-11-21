@@ -111,7 +111,8 @@ get.arg <- function(string) {
 
 
 
-tapplymat1 <- function(mat, function.arg = c("cumsum", "diff", "cumprod")) {
+tapplymat1 <-
+  function(mat, function.arg = c("cumsum", "diff", "cumprod")) {
 
 
   if (!missing(function.arg))

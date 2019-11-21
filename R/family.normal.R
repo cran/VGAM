@@ -375,12 +375,13 @@ if (FALSE)
 
 
 
- posnormal <- function(lmean = "identitylink", lsd = "loglink",
-                       eq.mean = FALSE, eq.sd = FALSE,
-                       gmean = exp((-5:5)/2), gsd = exp((-1:5)/2),
-                       imean = NULL, isd = NULL, probs.y = 0.10,
-                       imethod = 1,
-                       nsimEIM = NULL, zero = "sd") {
+ posnormal <-
+  function(lmean = "identitylink", lsd = "loglink",
+           eq.mean = FALSE, eq.sd = FALSE,
+           gmean = exp((-5:5)/2), gsd = exp((-1:5)/2),
+           imean = NULL, isd = NULL, probs.y = 0.10,
+           imethod = 1,
+           nsimEIM = NULL, zero = "sd") {
 
 
 
@@ -431,6 +432,9 @@ if (FALSE)
     M1 <- 2
     NOS <- M / M1
 
+
+  if (is.null(constraints.orig)) {
+
     cm1.m <-
     cmk.m <- kronecker(diag(NOS), rbind(1, 0))
     con.m <- cm.VGAM(kronecker(matrix(1, NOS, 1), rbind(1, 0)),
@@ -457,14 +461,21 @@ if (FALSE)
     for (klocal in seq_along(con.m)) {
 
 
-      con.use[[klocal]] <- interleave.cmat(con.m[[klocal]], con.s[[klocal]])
+      con.use[[klocal]] <- interleave.cmat(con.m[[klocal]],
+                                           con.s[[klocal]])
 
-    }
+    }  # klocal
     constraints <- con.use
 
+
+
+    
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
                                 predictors.names = predictors.names,
                                 M1 = 2)
+
+
+}  # (is.null(constraints.orig)
 
 
   }), list( .zero    = zero,
@@ -2954,7 +2965,8 @@ moment.millsratio2 <- function(zedd) {
       if (sum(is.multilogitlink) < 2)
         stop("at least two 'multilogitlink' links need to be specified, ",
              "else none")
-      col.index.is.multilogitlink <- (seq_along(is.multilogitlink))[is.multilogitlink]
+      col.index.is.multilogitlink <-
+        (seq_along(is.multilogitlink))[is.multilogitlink]
       extra$col.index.is.multilogitlink <- col.index.is.multilogitlink
       extra$is.multilogitlink <- is.multilogitlink
     }
@@ -3073,7 +3085,8 @@ moment.millsratio2 <- function(zedd) {
           extra$earg.list[[jlocal]]
         }
 
-        if (length(extra$is.multilogitlink) && !extra$is.multilogitlink[jlocal])
+        if (length(extra$is.multilogitlink) &&
+            !extra$is.multilogitlink[jlocal])
           etamat.init[, jlocal] <-
             theta2eta(thetamat.init[, jlocal],
                       link = extra$link.list[[jlocal]],
@@ -3168,7 +3181,8 @@ moment.millsratio2 <- function(zedd) {
       extra$earg.list[[jlocal]]
     }
 
-    if (length(extra$is.multilogitlink) && !extra$is.multilogitlink[jlocal]) {
+    if (length(extra$is.multilogitlink) &&
+        !extra$is.multilogitlink[jlocal]) {
       iskip <- (jlocal > max(extra$col.index.is.multilogitlink))
       coffs[, jlocal] <- eta2theta(eta[, jlocal - iskip],
                                    link = extra$link.list[[jlocal]],
@@ -3179,7 +3193,8 @@ moment.millsratio2 <- function(zedd) {
 
     if (LLL <- length(extra$col.index.is.multilogitlink)) {
       coffs[, extra$col.index.is.multilogitlink] <-
-     multilogitlink(eta[, extra$col.index.is.multilogitlink[-LLL], drop = FALSE],
+     multilogitlink(eta[, extra$col.index.is.multilogitlink[-LLL],
+                        drop = FALSE],
                inverse = TRUE)
     }
 

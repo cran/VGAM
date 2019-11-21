@@ -1129,27 +1129,36 @@ skellam.control <- function(save.weights = TRUE, ...) {
 
 
 
+
 dyules <- function(x, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
-  if ( log.arg ) {
-    ans <- log(shape) + lbeta(abs(x), shape+1)
-    ans[(x != round(x)) | (x < 1)] <- log(0)
-  } else {
-    ans <- shape * beta(x, shape+1)
-    ans[(x != round(x)) | (x < 1)] <- 0
+  LLL <- max(length(x), length(shape))
+  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  
+  bad0 <- !is.finite(shape) | shape <= 0
+  bad <- bad0 | !is.finite(x) | x < 1 | x != round(x)
+
+  logpdf <- x + shape
+  if (any(!bad)) {
+    logpdf[!bad] <- log(shape[!bad]) + lbeta(x[!bad], shape[!bad] + 1)
   }
-  ans[!is.finite(shape) | (shape <= 0)] <- NaN
-  ans
+
+  logpdf[!bad0 & is.infinite(x)] <- log(0)
+  logpdf[!bad0 & x < 1         ] <- log(0)
+  logpdf[!bad0 & x != round(x) ] <- log(0)
+  logpdf[ bad0] <- NaN
+
+  if (log.arg) logpdf else exp(logpdf)
 }
 
 
 
 
 pyules <- function(q, shape, lower.tail = TRUE, log.p = FALSE) {
-
 
   tq <- trunc(q)
 
@@ -1171,37 +1180,54 @@ pyules <- function(q, shape, lower.tail = TRUE, log.p = FALSE) {
 
 
  qyules <- function(p, shape) {
-
   LLL <- max(length(p), length(shape))
   if (length(p)     != LLL) p     <- rep_len(p,     LLL)
   if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  ans <- rep_len(0, LLL)
+  ans <- p + shape
 
-  lo <- rep_len(1, LLL)
+  bad0 <- !is.finite(shape) | shape <= 0
+  bad <- bad0 | !is.finite(p) | p <= 0 | 1 <= p
+
+  lo <- rep_len(1, LLL) - 0.5
   approx.ans <- lo  # True at lhs
-  hi <- 2 * lo + 10
-  dont.iterate <- p == 1 | shape <= 0
-  done <- p <= pyules(hi, shape) | dont.iterate
-  while (!all(done)) {
-    hi.save <- hi[!done]
-    hi[!done] <- 2 * lo[!done] + 10
-    lo[!done] <- hi.save
-    done[!done] <- (p[!done] <= pyules(hi[!done], shape[!done]))
+  hi <- 2 * lo + 10.5
+  dont.iterate <- bad
+  done <- dont.iterate | p <= pyules(hi, shape)
+  iter <- 0
+  max.iter <- round(log2(.Machine$double.xmax)) - 2
+  max.iter <- round(log2(1e300)) - 2
+  while (!all(done) && iter < max.iter) {
+    lo[!done] <- hi[!done]
+    hi[!done] <- 2 * hi[!done] + 10.5  # Bug fixed
+    done[!done] <- (p[!done] <= pyules(hi[!done],
+                                       shape = shape[!done]))
+    iter <- iter + 1
   }
+
 
   foo <- function(q, shape, p)
     pyules(q, shape) - p
 
-  lhs <- (p <= dyules(1, shape)) | dont.iterate
+  lhs <- dont.iterate | (p <= dyules(1, shape))
 
   approx.ans[!lhs] <- bisection.basic(foo, lo[!lhs], hi[!lhs], tol = 1/16,
                                       shape = shape[!lhs], p = p[!lhs])
-  faa <- floor(approx.ans)
-  ans <- ifelse(pyules(faa, shape) < p & p <= pyules(faa+1, shape), faa+1, faa)
+  faa <- floor(approx.ans[!lhs])
+  tmp <-
+    ifelse(pyules(faa, shape = shape[!lhs]) < p[!lhs] &
+           p[!lhs] <= pyules(faa+1, shape = shape[!lhs]),
+           faa+1, faa)
+  ans[!lhs] <- tmp
 
-  ans[p == 1] <- Inf
-  ans[shape <= 0] <- NaN
+  vecTF <- !bad0 & !is.na(p) &
+           p <= dyules(1, shape)
+  ans[vecTF] <- 1
 
+  ans[!bad0 & !is.na(p) & p == 0] <- 1
+  ans[!bad0 & !is.na(p) & p == 1] <- Inf
+  ans[!bad0 & !is.na(p) & p <  0] <- NaN
+  ans[!bad0 & !is.na(p) & p >  1] <- NaN
+  ans[ bad0] <- NaN
   ans
 }  # qyules
 
@@ -1383,6 +1409,11 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
     c(w) * dl.dshape * dshape.deta
   }), list( .lshape = lshape, .eshape = eshape ))),
   weight = eval(substitute(expression({
+
+
+
+
+
 
     run.var <- 0
     for (ii in 1:( .nsimEIM )) {
@@ -3476,6 +3507,8 @@ if (FALSE) {
                      apply.int = TRUE,
                      cm.default           = cmk.S,
                      cm.intercept.default = cmk.S)
+ print("con.s")
+ print( con.s )
 
 
 
@@ -3488,24 +3521,40 @@ if (FALSE) {
                      apply.int = TRUE,
                      cm.default           = cmk.P,
                      cm.intercept.default = cmk.P)
+ print("con.p")
+ print( con.p )
 
     con.use <- con.s
     for (klocal in seq_along(con.s)) {
+ print("klocal")
+ print( klocal )
       con.use[[klocal]] <-
         cbind(con.s[[klocal]], con.p[[klocal]])
+ print("con.use")
+ print( con.use )
  # Delete rows that are not needed:
       if (!cind0[1]) {
+ print("hi1a")
+        vec.use <- rep_len(c(TRUE, TRUE, FALSE, TRUE),
+                           nrow(con.use[[klocal]]))
         con.use[[klocal]] <-
-       (con.use[[klocal]])[c(TRUE, TRUE, FALSE, TRUE), ]
+       (con.use[[klocal]])[vec.use, ]
       }
       if (!cind1[1]) {
+ print("hi1b")
+        vec.use <- rep_len(c(TRUE, TRUE, TRUE, FALSE),
+                           nrow(con.use[[klocal]]))
         con.use[[klocal]] <-
-       (con.use[[klocal]])[c(TRUE, TRUE, TRUE, FALSE), ]
+       (con.use[[klocal]])[vec.use, ]
       }
       col.delete <- apply(con.use[[klocal]], 2,
                           function(HkCol) all(HkCol == 0))
+ print("col.delete")
+ print( col.delete )
       con.use[[klocal]] <- (con.use[[klocal]])[, !col.delete]
     }
+ print("con.use1")
+ print( con.use )
 
 
     constraints <- con.use
@@ -3561,6 +3610,8 @@ if (FALSE) {
            "some responses and 1-inflation in other responses")
     M1 <- 2 + cind0[1] + cind1[1]  # 4 when there is both 0 & 1-inflation
     M <- M1 * NOS
+ print("c(cind0, cind1)")
+ print( c(cind0, cind1) )
 
     mynames1 <- param.names("shape1", ncoly, skip1 = TRUE)
     mynames2 <- param.names("shape2", ncoly, skip1 = TRUE)
@@ -3851,14 +3902,14 @@ ned2l.dshape1probb1 <- 0
 ned2l.dshape1probb0 <- 0
     wz <- array(c(c(w) * ned2l.dshape12 * dshape1.deta^2,
                   c(w) * ned2l.dshape22 * dshape2.deta^2,
-   if (cind0[1])  c(w) * ned2l.dprobb02 * dprobb0.deta^2 else NULL,
-   if (cind1[1])  c(w) * ned2l.dprobb12 * dprobb1.deta^2 else NULL,
-                  c(w) * ned2l.dshape1shape2 * dshape1.deta * dshape2.deta,
-   if (cind0[1])  c(w) * ned2l.dshape2probb0 * dshape2.deta * dprobb0.deta,
-                  c(w) * ned2l.dprobb0probb1 * dprobb0.deta * dprobb1.deta,
-   if (cind0[1])  c(w) * ned2l.dshape1probb0 * dshape1.deta * dprobb0.deta,
-   if (cind1[1])  c(w) * ned2l.dshape2probb1 * dshape2.deta * dprobb1.deta,
-   if (cind1[1])  c(w) * ned2l.dshape1probb1 * dshape1.deta * dprobb1.deta),
+ if (cind0[1])  c(w) * ned2l.dprobb02 * dprobb0.deta^2 else NULL,
+ if (cind1[1])  c(w) * ned2l.dprobb12 * dprobb1.deta^2 else NULL,
+                c(w) * ned2l.dshape1shape2 * dshape1.deta * dshape2.deta,
+ if (cind0[1])  c(w) * ned2l.dshape2probb0 * dshape2.deta * dprobb0.deta,
+                c(w) * ned2l.dprobb0probb1 * dprobb0.deta * dprobb1.deta,
+ if (cind0[1])  c(w) * ned2l.dshape1probb0 * dshape1.deta * dprobb0.deta,
+ if (cind1[1])  c(w) * ned2l.dshape2probb1 * dshape2.deta * dprobb1.deta,
+if (cind1[1])  c(w) * ned2l.dshape1probb1 * dshape1.deta * dprobb1.deta),
                 dim = c(n, M / M1, M1*(M1+1)/2))
 
     wz <- arwz2wz(wz, M = M, M1 = M1) # tridiagonal but unexploited here

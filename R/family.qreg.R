@@ -2688,7 +2688,7 @@ dclogloglap <- function(x, location.ald = 0, scale.ald = 1, tau = 0.5,
 
 
 qclogloglap <- function(p, location.ald = 0, scale.ald = 1,
-                       tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                        tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   qqq <- qalap(p = p, location = location.ald, scale = scale.ald,
               tau = tau, kappa = kappa)
   ans <- clogloglink(qqq, inverse = TRUE)  # , earg = earg
@@ -2701,7 +2701,7 @@ qclogloglap <- function(p, location.ald = 0, scale.ald = 1,
 
 
 pclogloglap <- function(q, location.ald = 0, scale.ald = 1,
-                       tau = 0.5, kappa = sqrt(tau/(1-tau))) {
+                        tau = 0.5, kappa = sqrt(tau/(1-tau))) {
   NN <- max(length(q), length(location.ald), length(scale.ald),
             length(kappa))
   location.ald <- rep_len(location.ald, NN)

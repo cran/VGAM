@@ -3,6 +3,68 @@
 %
 %
 %
+% 201909, 201910, 201911
+  \alias{moments.nbin.gait}
+  \alias{moments.pois.gait}
+%\alias{dgaitpois.mix}
+%\alias{pgaitpois.mix}
+  \alias{EIM.GATNB.speciald}
+  \alias{GATNB.deriv012}
+  \alias{gait.errorcheck}
+% 201908
+% part a is based on \pkg{vcd}:
+%\alias{vcdrootogram}
+%\alias{vcdrootogram.default}
+%
+%
+%
+%
+% part a is based on \pkg{countreg}:
+\alias{rootogram0}
+\alias{rootogram0.default}
+% \alias{rootogram4vglm}
+% 201906
+% \alias{Step}
+% \alias{Stepvglm}
+% \alias{drop1.vglm}
+\alias{fitmodel.VGAM.expression}
+\alias{subsetassign}
+\alias{findterms}
+\alias{assign2assign}
+\alias{extractAIC.vglm}
+\alias{dfterms}
+\alias{dftermsvglm}
+% 201904; to stop hdeff() working on them, by default:
+\alias{wz.merge}
+%\alias{gabinomial.control}
+%\alias{gibinomial.control}
+%\alias{gapoisson.control}
+\alias{gipoisson.control}
+% 201902; these old link function names are put here to deemphasize them.
+% They do not appear at all when help.start() is used, so thats good.
+% Typing ?loge sees absolutely minimal about it (undocumented).
+\alias{loge}
+\alias{negloge}
+\alias{logneg}
+\alias{logit}
+\alias{extlogit}
+\alias{cauchit}
+\alias{probit}
+\alias{cloglog}
+\alias{multilogit}
+\alias{fisherz}
+\alias{rhobit}
+\alias{logoff}
+\alias{polf}
+\alias{golf}
+\alias{reciprocal}
+\alias{negreciprocal}
+\alias{negidentity}
+\alias{logc}
+\alias{foldsqrt}
+\alias{nbolf}
+%
+%
 % 201901
 \alias{getarg}
 \alias{rainbow.sky}
@@ -226,10 +288,10 @@
 % 20121105;
 % \alias{posbernoulli.b.control}
 \alias{N.hat.posbernoulli}
-\alias{Rank}
-\alias{Rank.rrvglm}
-\alias{Rank.qrrvglm}
-\alias{Rank.rrvgam}
+%\alias{Rank}
+%\alias{Rank.rrvglm}
+%\alias{Rank.qrrvglm}
+%\alias{Rank.rrvgam}
 % 20121015; delete this later
 %\alias{huggins91.old}
 %
@@ -435,9 +497,9 @@
 % \alias{add.arg}
 % \alias{add.constraints}
 % \alias{add.hookey}
-\alias{add1}
-\alias{add1.vgam}
-\alias{add1.vglm}
+%%%%%%\alias{add1}
+%%%%%%\alias{add1.vgam}
+%%%%%%\alias{add1.vglm}
 % \alias{adjust.Dmat.expression}
 \alias{alaplace1.control}
 \alias{alaplace2.control}
@@ -561,6 +623,7 @@
 % \alias{inv.binomial}
 \alias{inverse.gaussianff}
 \alias{is.Numeric}
+\alias{is.Numeric2}
 \alias{is.bell}
 \alias{is.bell.rrvgam}
 \alias{is.bell.qrrvglm}

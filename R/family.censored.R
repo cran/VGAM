@@ -16,9 +16,10 @@
 
 
 
-cens.poisson <- function(link = "loglink", imu = NULL,
-                         biglambda = 10,
-                         smallno = 1e-10) {
+ cens.poisson <-
+  function(link = "loglink", imu = NULL,
+           biglambda = 10,
+           smallno = 1e-10) {
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -31,7 +32,6 @@ cens.poisson <- function(link = "loglink", imu = NULL,
             "Variance: mu"),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
-         Q1 = 1,
          expected = FALSE,
          multipleResponses = FALSE,
          parameters.names = c("mu"),
@@ -78,13 +78,16 @@ cens.poisson <- function(link = "loglink", imu = NULL,
       extra$rightcensored <- ifelse(temp == 0, TRUE, FALSE)
       extra$leftcensored <- ifelse(temp == 2, TRUE, FALSE)
       extra$intervalcensored <- ifelse(temp == 3, TRUE, FALSE)
-      init.mu <- pmax((y[, 1] + y[, 2])/2, 1/8)  # for intervalcensored
+      init.mu <- pmax((y[, 1] + y[, 2])/2, 1/8)  # intervalcensored
       if (any(extra$uncensored))
-      init.mu[extra$uncensored] <- pmax(y[extra$uncensored, 1], 1/8)
+        init.mu[extra$uncensored] <-
+          pmax(y[extra$uncensored, 1], 1/8)
       if (any(extra$rightcensored))
-     init.mu[extra$rightcensored] <- pmax(y[extra$rightcensored, 1], 1/8)
+        init.mu[extra$rightcensored] <-
+          pmax(y[extra$rightcensored, 1], 1/8)
       if (any(extra$leftcensored))
-      init.mu[extra$leftcensored] <- pmax(y[extra$leftcensored, 1], 1/8)
+        init.mu[extra$leftcensored] <-
+          pmax(y[extra$leftcensored, 1], 1/8)
     } else
     if (centype == "counting") {
       stop("type == 'counting' not compatible with cens.poisson()")
@@ -242,7 +245,7 @@ cens.poisson <- function(link = "loglink", imu = NULL,
   }), list( .link = link, .earg = earg,
             .biglambda = biglambda ,
             .smallno = smallno ))))
-}
+}  # cens.poisson
 
 
 
@@ -282,8 +285,8 @@ if (FALSE)
     } else if (type == "interval") {
       temp <- y[, 3]
       mu <- ifelse(temp == 3,
-                   y[, 2] + (abs(y[, 2] - extra$location) < 0.001) / 8,
-                   y[, 1] + (abs(y[, 1] - extra$location) < 0.001) / 8)
+            y[, 2] + (abs(y[, 2] - extra$location) < 0.001) / 8,
+            y[, 1] + (abs(y[, 1] - extra$location) < 0.001) / 8)
     }
     if (!length(etastart))
       etastart <- theta2eta(1/(mu-extra$location), .link , .earg )
@@ -361,7 +364,7 @@ if (FALSE)
     cenI <- extra$interval
     dl.drate <- 1/rate - (y[, 1]-extra$location)  # uncensored
     tmp200 <- exp(-rate*(y[, 1]-extra$location))
-    tmp200b <- exp(-rate*(y[, 2]-extra$location))  # for interval censored
+    tmp200b <- exp(-rate*(y[, 2]-extra$location))  # interval censored
     if (any(cenL))
       dl.drate[cenL] <- (y[cenL, 1]-extra$location) *
                         tmp200[cenL] / (1 - tmp200[cenL])
@@ -369,8 +372,8 @@ if (FALSE)
       dl.drate[cenU] <- -(y[cenU, 1]-extra$location)
     if (any(cenI))
       dl.drate[cenI] <- ((y[cenI, 2] - extra$location) *
-                        tmp200b[cenI] - (y[cenI, 1] - extra$location) *
-                        tmp200[cenI]) / (-tmp200b[cenI] + tmp200[cenI])
+                    tmp200b[cenI] - (y[cenI, 1] - extra$location) *
+                    tmp200[cenI]) / (-tmp200b[cenI] + tmp200[cenI])
 
     drate.deta <- dtheta.deta(rate, .link , .earg )
 
@@ -390,12 +393,12 @@ if (FALSE)
     d2l.drate2[ind50] <- (Lowpt[ind50]-extra$location)^2 *
                         tmp300[ind50] / (1-tmp300[ind50])
     d2l.drate2 <- d2l.drate2 + (exp(-rate*(Lowpt-extra$location)) -
-                               exp(-rate*(Upppt-extra$location))) * A123
+                  exp(-rate*(Upppt-extra$location))) * A123
 
     wz <- c(w) * (drate.deta^2) * d2l.drate2
     wz
     }), list( .link = link ))))
-}
+}  # cens.exponential
 
 
 
@@ -499,7 +502,8 @@ if (FALSE)
 
     Lower <- ifelse(cenL, y, -Inf)
     Upper <- ifelse(cenU, y,  Inf)
-    ell1 <- -log(sdv[cen0]) - 0.5 * ((y[cen0] - mum[cen0])/sdv[cen0])^2
+    ell1 <- -log(sdv[cen0]) -
+            0.5 * ((y[cen0] - mum[cen0])/sdv[cen0])^2
     ell2 <- log1p(-pnorm((mum[cenL] - Lower[cenL]) / sdv[cenL]))
     ell3 <- log1p(-pnorm(( Upper[cenU] -  mum[cenU]) / sdv[cenU]))
     if (residuals) stop("loglikelihood residuals not ",
@@ -589,7 +593,8 @@ if (FALSE)
     tmp8 <- (1-PhiU)*temp21U
     wzcenU11 <- phiU * (phiU - tmp8) / temp31U
     tmp9 <- (1-PhiU) * (2 - temp21U^2)
-    wzcenU22 <- mumU * phiU * (tmp9 + mumU * phiU / sdv) / (sdv * temp31U)
+    wzcenU22 <- mumU * phiU * (tmp9 +
+                mumU * phiU / sdv) / (sdv * temp31U)
     wzcenU12 <- -phiU * ((1-PhiU)*(temp21U^2 - 1) -
                  temp21U*phiU) / temp31U
     wzcenU11[!is.finite(wzcenU11)] <- 0  # Needed when Upper==Inf
@@ -603,7 +608,9 @@ if (FALSE)
     wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] * dmu.deta * dsd.deta
     c(w) * wz
   }), list( .lmu = lmu, .lsd = lsd ))))
-}
+}  # cens.normal
+
+
 
 
 
@@ -695,7 +702,8 @@ if (FALSE)
 
     if ( .oim ) {
       d2l.dScale2 <- 3 * (y[cenU])^2 / (Scale[cenU])^4
-      d2Scale.deta2 <- d2theta.deta2(Scale[cenU], .lscale , earg = .escale )
+      d2Scale.deta2 <- d2theta.deta2(Scale[cenU], .lscale ,
+                                     earg = .escale )
       wz[cenU] <- (dScale.deta[cenU])^2 * d2l.dScale2 -
                    dl.dScale[cenU] * d2Scale.deta2
     } else {
@@ -706,7 +714,7 @@ if (FALSE)
     c(w) * wz
   }), list( .lscale = lscale, .escale = escale,
             .oim = oim ))))
-}
+}  # cens.rayleigh
 
 
 
@@ -875,8 +883,8 @@ if (FALSE)
       warning("MLE regularity conditions are violated",
               "(shape == 2) at the final iteration: ",
               "MLEs exist and are normal and asymptotically ",
-              "efficient but with a slower convergence rate than when ",
-              "shape > 2")
+              "efficient but with a slower convergence rate than ",
+              "when shape > 2")
     }
 
 
@@ -973,7 +981,7 @@ if (FALSE)
 
     wz
   }), list( .eshape = eshape ))))
-}
+}  # weibull.mean
 
 
 
@@ -1276,7 +1284,7 @@ if (FALSE)
     wz
   }), list( .eshape = eshape, .nrfs = nrfs,
             .scale.12 = scale.12, .scale.TF = scale.TF, .lss = lss ))))
-}
+}  # weibullR
 
 
 
@@ -1371,7 +1379,7 @@ function (time, time2, event, type = c("right", "left", "interval",
   attr(ss, "type") <- type
   class(ss) <- "SurvS4"
   ss
-}
+}  # SurvS4
 
 
 
@@ -1410,7 +1418,7 @@ as.character.SurvS4 <- function (x, ...) {
         ", ", format(x[, 2]), sep = ""), format(x[, 1]))
     ifelse(is.na(stat), as.character(NA), paste(temp2, temp, sep = ""))
   }
-}
+}  # as.character.SurvS4
 
 
 
@@ -1428,12 +1436,15 @@ as.character.SurvS4 <- function (x, ...) {
         class(x) <- NULL
         NextMethod("[")
     }
-}
+}  # "[.SurvS4"
+
 
 
 is.na.SurvS4 <- function(x) {
   as.vector( (1* is.na(unclass(x)))%*% rep(1, ncol(x)) >0)
 }
+
+
 
 
 
@@ -1463,7 +1474,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
 
 
-  gam0 <- exp(lgamma(shape) + pgamma(q = q, shape = shape, log.p = TRUE))
+  gam0 <- exp(lgamma(shape) + pgamma(q = q, shape = shape,
+                                     log.p = TRUE))
 
   I.sq <- pgamma(q = q, shape = shape)
 
@@ -1482,7 +1494,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
   cbind("0" = gam0,
         "1" = gam1,
         "2" = gam2)
-}
+}  # pgamma.deriv.unscaled
 
 
 
@@ -1684,7 +1696,7 @@ pgamma.deriv.unscaled <- function(q, shape) {
       warning("MLE regularity conditions are violated",
               "(Betaa == 2) at the final iteration: ",
               "MLEs exist and are normal and asymptotically ",
-              "efficient but with a slower convergence rate than when ",
+         "efficient but with a slower convergence rate than when ",
               "Betaa > 2")
     }
 
@@ -1809,7 +1821,8 @@ pgamma.deriv.unscaled <- function(q, shape) {
     wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
   }), list( .nrfs = nrfs ))))
-}
+}  # truncweibull
+
 
 
 

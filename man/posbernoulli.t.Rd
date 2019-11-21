@@ -17,7 +17,8 @@
 }
 \usage{
 posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
-               p.small = 1e-4, no.warning = FALSE)
+               p.small = 1e-4, no.warning = FALSE,
+               type.fitted = c("probs", "onempall0"))
 }
 %- maybe also 'usage' for other objects documented here.
 %apply.parint = FALSE,
@@ -41,6 +42,21 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
   reciprocal of such probabilities, therefore any probability that
   is too close to 0 will result in an unstable estimate.
 
+
+
+  }
+  \item{type.fitted}{
+  See \code{\link{CommonVGAMffArguments}} for information.
+  The default is to return a matrix of probabilities.
+  If \code{"onempall0"} is chosen then the
+  the probability that each animal is captured at least once
+  in the course of the study is returned.
+  The abbreviation stands for
+  one minus the probability of all 0s, and
+  the quantity appears in the denominator of the usual formula.
+
+
+% 20190503
 
 
   }

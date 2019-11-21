@@ -180,8 +180,7 @@ eyesdata <- transform(eyesdata,
     leye = rbinom(nn, size = 1, prob = logitlink(eta1, inverse = TRUE)),
     reye = rbinom(nn, size = 1, prob = logitlink(eta2, inverse = TRUE)))
 
-# Example 1
-# All effects are linear
+# Example 1. All effects are linear.
 fit1 <- vglm(cbind(leye,reye) ~ op + age,
              family = binom2.or(exchangeable = TRUE, zero = 3),
              data = eyesdata, trace = TRUE,
@@ -199,31 +198,12 @@ plotvgam(fit1, se = TRUE)  # Wrong, e.g., because it plots against op, not lop.
 # So set op = lop in the above for a correct plot.
 }
 
-
-
-# Example 2
-# Model OR as a linear function of mop
-fit2 <- vglm(cbind(leye,reye) ~ op + age, data = eyesdata, trace = TRUE,
-            binom2.or(exchangeable = TRUE, zero = NULL),
-            xij   = list(op ~ lop + rop + mop),
-            form2 =    ~ op + lop + rop + mop + age)
-head(model.matrix(fit2, type = "lm"))   # LM model matrix
-head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
-coef(fit2)
-coef(fit2, matrix = TRUE)  # Unchanged with 'xij'
-max(abs(predict(fit2) - predict(fit2, new = eyesdata)))  # Predicts correctly
-summary(fit2)
-\dontrun{
-plotvgam(fit2, se = TRUE)  # Wrong because it plots against op, not lop.
-}
-
-
-# Example 3. This model uses regression splines on ocular pressure.
+# Example 2. This model uses regression splines on ocular pressure.
 # It uses a trick to ensure common basis functions.
 BS <- function(x, ...)
   sm.bs(c(x,...), df = 3)[1:length(x), , drop = FALSE]  # trick
 
-fit3 <- vglm(cbind(leye,reye) ~ BS(lop,rop) + age,
+fit2 <- vglm(cbind(leye,reye) ~ BS(lop,rop) + age,
              family = binom2.or(exchangeable = TRUE, zero = 3),
              data = eyesdata, trace = TRUE,
              xij = list(BS(lop,rop) ~ BS(lop,rop) +
@@ -231,22 +211,21 @@ fit3 <- vglm(cbind(leye,reye) ~ BS(lop,rop) + age,
                                       fill(BS(lop,rop))),
              form2 = ~  BS(lop,rop) + BS(rop,lop) + fill(BS(lop,rop)) +
                         lop + rop + age)
-head(model.matrix(fit3, type =  "lm"))  # LM model matrix
-head(model.matrix(fit3, type = "vlm"))  # Big VLM model matrix
-coef(fit3)
-coef(fit3, matrix = TRUE)
-summary(fit3)
-fit3@smart.prediction
-max(abs(predict(fit3) - predict(fit3, new = eyesdata)))  # Predicts correctly
-predict(fit3, new = head(eyesdata))  # Note the 'scalar' OR, i.e., zero=3
-max(abs(head(predict(fit3)) -
-             predict(fit3, new = head(eyesdata))))  # Should be 0
+head(model.matrix(fit2, type =  "lm"))  # LM model matrix
+head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
+coef(fit2)
+coef(fit2, matrix = TRUE)
+summary(fit2)
+fit2@smart.prediction
+max(abs(predict(fit2) - predict(fit2, new = eyesdata)))  # Predicts correctly
+predict(fit2, new = head(eyesdata))  # Note the 'scalar' OR, i.e., zero=3
+max(abs(head(predict(fit2)) -
+             predict(fit2, new = head(eyesdata))))  # Should be 0
 \dontrun{
-plotvgam(fit3, se = TRUE, xlab = "lop")  # Correct
+plotvgam(fit2, se = TRUE, xlab = "lop")  # Correct
 }
 
-
-# Example 4. Capture-recapture model with ephemeral and enduring
+# Example 3. Capture-recapture model with ephemeral and enduring
 # memory effects. Similar to Yang and Chao (2005), Biometrics.
 deermice <- transform(deermice, Lag1 = y1)
 M.tbh.lag1 <-
@@ -283,4 +262,32 @@ coef(M.tbh.lag1)
 
 % Models using the \code{xij} argument may or may not predict correctly,
 % and inference obtained using \code{summary} may be incorrect.
+
+
+
+
+% 20191104; put this here, as it does not use fill() and this .Rd expensive:
+%# Example 2. Model OR as a linear function of mop.
+%fit2 <- vglm(cbind(leye, reye) ~ op + age, data = eyesdata, trace = TRUE,
+%            binom2.or(exchangeable = TRUE, zero = NULL),
+%            xij   = list(op ~ lop + rop + mop),
+%            form2 =    ~ op + lop + rop + mop + age)
+%head(model.matrix(fit2, type = "lm"))   # LM model matrix
+%head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
+%coef(fit2)
+%coef(fit2, matrix = TRUE)  # Unchanged with 'xij'
+%max(abs(predict(fit2) - predict(fit2, new = eyesdata)))  # Predicts correctly
+%summary(fit2)
+%\ dontrun {
+%plotvgam(fit2, se = TRUE)  # Wrong because it plots against op, not lop.
+% }
+
+
+
+
+
+
+
+
+
 

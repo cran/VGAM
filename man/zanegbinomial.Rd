@@ -251,6 +251,8 @@ for counts with extra zeros.
 \seealso{
   \code{\link{dzanegbin}},
   \code{\link{posnegbinomial}},
+  \code{\link{gatnbinomial.mlm}},
+  \code{\link{Gaitnbinom.mlm}},
   \code{\link{negbinomial}},
   \code{\link{binomialff}},
   \code{\link{rposnegbin}},

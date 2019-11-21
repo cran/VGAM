@@ -21,7 +21,7 @@
 }
 \usage{
 vcov(object, \dots)
-vcovvlm(object, dispersion = NULL, untransform = FALSE)
+vcovvlm(object, dispersion = NULL, untransform = FALSE, complete = TRUE)
 vcovqrrvglm(object, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -51,7 +51,15 @@ vcovqrrvglm(object, \dots)
 
 
   }
+ \item{complete}{An argument that is currently ignored.
+   Added only so that \code{\link[car]{linearHypothesis}}
+   can be called.
+
+
+
+ }
  \item{\dots}{Same as \code{\link[stats]{vcov}}.
+
  }
 }
 \details{

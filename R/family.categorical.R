@@ -732,7 +732,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
          refLevel = .refLevel ,  # original
          M1 = -1,
          link = "multilogitlink",
-         link1parameter = FALSE,  # The link is multiparameter
+         link1parameter = FALSE,  # The link is multiparameter, but
+         mixture.links = FALSE,  # the link is not a mixture.
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = as.character(NA),

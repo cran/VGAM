@@ -241,7 +241,7 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
 }
 
 \seealso{
-  \code{\link{genapoisson}},
+  \code{\link{gatpoisson.mlm}},
   \code{\link{zapoisson}},
   \code{\link{Zipois}},
   \code{\link{yip88}},

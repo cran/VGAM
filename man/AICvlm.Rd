@@ -5,6 +5,7 @@
 \alias{AICrrvglm}
 \alias{AICqrrvglm}
 \alias{AICrrvgam}
+\alias{AICc,vglm-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Akaike's Information Criterion }
 \description{
@@ -138,7 +139,17 @@ Regression and time series model selection in small samples,
   RR-VGLMs are described in \code{\link{rrvglm-class}};
   \code{\link[stats]{AIC}},
   \code{\link{BICvlm}},
-  \code{\link{TICvlm}}.
+  \code{\link{TICvlm}},
+  \code{\link{drop1.vglm}},
+  \code{\link{extractAIC.vglm}}.
+
+
+
+% 20190410
+% One day
+% \code{\link{AICc,vglm-method}} for \code{AICc()} applied to
+% \code{"vglm"} objects.
+
 
 
 }

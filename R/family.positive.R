@@ -528,7 +528,7 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
         df02.dkmat2 <- df02.dkmat2[1]
       }
 
-      y.min <- 0  # Same as negbinomial() actually. A fixed const really
+      y.min <- 0  # Same as negbinomial(). A fixed const really
 
       if (!is.numeric(y.max)) {
         eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
@@ -542,15 +542,21 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
   neff.row <- ifelse(intercept.only, 1, nrow(Y.mat))
   neff.col <- ifelse(intercept.only, length(Y.mat), ncol(Y.mat))
 
-      if (FALSE) {
+    if (TRUE) {
       Y.mat2 <- Y.mat + 1
       trigg.term0 <- if (intercept.only) {
-         dposnegbin(Y.mat2, size=size, munb=munb) %*% trigamma(Y.mat2+size)
+         dposnegbin(Y.mat2, size=size, munb=munb) %*%
+             trigamma(Y.mat2 + size)
       } else {
          rowSums(dposnegbin(Y.mat2, size = size, munb = munb) *
                  trigamma(Y.mat2 + size))
       }
-      }
+    }  # FALSE
+
+
+
+
+ 
 
 
   trigg.term <-
@@ -568,8 +574,8 @@ rposnegbin <- function(n, size, prob = NULL, munb = NULL) {
 
 
       mymu <- munb / (1 - prob0)  # E(Y)
-      ned2l.dk2 <- trigg.term -
-         munb / (size * (size + munb)) - (mymu - munb) / (munb + size)^2
+      ned2l.dk2 <- trigg.term - munb / (size * (size + munb)) -
+        (mymu - munb) / (munb + size)^2
 
       if (second.deriv)
         ned2l.dk2 <- ned2l.dk2 - df02.dkmat2 / (1 - prob0) -
@@ -1144,7 +1150,6 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 
     save.weights <- !all(ind2)
 
-
     ned2l.dmunb2 <- mymu / munb^2 -
         ((1 + mymu/kmat) / kmat) / (1 + munb/kmat)^2 -
         df02.dmunb2 / oneminusf0 -
@@ -1155,7 +1160,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     ned2l.dmunbsize <- (munb - mymu) / (munb + kmat)^2 -
       df02.dkmat.dmunb / oneminusf0 -
       df0.dmunb * df0.dkmat / oneminusf0^2
-    wz[, M + M1*(1:NOS) - 1] <- ned2l.dmunbsize * dmunb.deta * dsize.deta
+     wz[, M + M1*(1:NOS) - 1] <- ned2l.dmunbsize *
+                                 dmunb.deta * dsize.deta
 
 
 
@@ -1166,7 +1172,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
             .max.chunk.MB = max.chunk.MB,
             .nsimEIM = nsimEIM ))))
 
-}
+}  # posnegbinomial
 
 
 
@@ -1874,12 +1880,16 @@ rposbinom <- function(n, size, prob) {
 
            iprob = NULL,
 
-           p.small = 1e-4, no.warning = FALSE) {
+           p.small = 1e-4, no.warning = FALSE,
+           type.fitted = c("probs", "onempall0")) {
 
 
 
 
 
+
+  type.fitted <- match.arg(type.fitted,
+                           c("probs", "onempall0"))[1]
 
 
   apply.parint <- FALSE
@@ -1928,12 +1938,14 @@ rposbinom <- function(n, size, prob) {
          multipleResponses = TRUE,
          parameters.names = c("prob"),
          p.small    = .p.small ,
+         type.fitted  = .type.fitted ,
          no.warning = .no.warning ,
          apply.parint = .apply.parint ,
          parallel.t = .parallel.t )
   }, list( .parallel.t   = parallel.t,
-           .p.small    = p.small,
-           .no.warning = no.warning,
+           .p.small      = p.small,
+           .no.warning   = no.warning,
+           .type.fitted  = type.fitted,
            .apply.parint = apply.parint ))),
 
   initialize = eval(substitute(expression({
@@ -1942,13 +1954,15 @@ rposbinom <- function(n, size, prob) {
     mustart.orig <- mustart
     y <- as.matrix(y)
     M <- ncoly <- ncol(y)
-    extra$ncoly       <- ncoly <- ncol(y)
+    extra$ncoly      <- ncoly <- ncol(y)
     extra$tau <- tau <- ncol(y)
     extra$orig.w <- w
 
     extra$p.small    <- .p.small
     extra$no.warning <- .no.warning
 
+    extra$type.fitted <- .type.fitted
+    extra$colnames.y  <- colnames(y)
 
     w <- matrix(w, n, ncoly)
     mustart <- matrix(colSums(y) / colSums(w),
@@ -1994,10 +2008,20 @@ rposbinom <- function(n, size, prob) {
     }
     mustart <- NULL
   }), list( .link = link, .earg = earg,
-            .p.small    = p.small,
-            .no.warning = no.warning
+            .p.small      = p.small,
+            .type.fitted  = type.fitted,
+            .no.warning   = no.warning
            ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
+   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+                     warning("cannot find 'type.fitted'. ",
+                             "Returning the 'probs'.")
+                     "probs"
+                   }
+
+    type.fitted <- match.arg(type.fitted,
+                     c("probs", "onempall0"))[1]
+
     tau <- extra$ncoly
     probs <- eta2theta(eta, .link , earg = .earg )
     logAA0 <- rowSums(log1p(-probs))
@@ -2007,8 +2031,11 @@ rposbinom <- function(n, size, prob) {
 
 
     fv <- probs / AAA
-    fv
-  }, list( .link = link, .earg = earg ))),
+   ans <- switch(type.fitted,
+                  "probs"      = fv,
+                  "onempall0"  = AAA)
+    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
+}, list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     extra$w   <- NULL   # Kill it off
 
@@ -2980,7 +3007,6 @@ setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.tb"),
     confint.N <- object@extra$N.hat +
         c(Lower = -1, Upper = 1) * qnorm(0.975) * object@extra$SE.N.hat
     cat("\nApproximate 95 percent confidence interval for N:\n")
-    print(round(confint.N, digits = 2))
   }
 })
 

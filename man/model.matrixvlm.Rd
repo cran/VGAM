@@ -22,15 +22,26 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
 
   }
   \item{linpred.index}{
-    Single integer.
+    Vector of integers.
     The index for a linear/additive predictor,
-    it must have a value from the set \code{1:M},
-    and \code{type = "lm"}  must be assigned.
+    it must have values from the set \code{1:M}.
+    Also, if \code{length(linpred.index) == 1}
+    then \code{type = "lm"} must be assigned,
+    whereas
+    if \code{length(linpred.index) > 1}
+    then \code{type = "vlm"} must be assigned,
     Then it returns a subset of the VLM matrix corresponding to
-    the \code{linpred.index}th linear/additive predictor;
-    this is a LM-type matrix.
+    the \code{linpred.index}th linear/additive predictor(s);
+    this is a LM-type matrix when it is of unit length.
+    Currently some attributes are returned, but these may
+    change in value
+    in the future because of ongoing development work.
 
 
+
+
+
+%    Single integer: 20190625; this is no longer true.
   }
   \item{\dots}{further arguments passed to or from other methods.
     These include \code{data} (which
@@ -69,13 +80,31 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
   \code{"X"} and \code{"Xm2"}.
 
 
+
+  Sometimes
+  (especially if \code{x = TRUE} when calling \code{\link{vglm}})
+  the model matrix has attributes:
+  \code{"assign"} (\code{"lm"}-type) and
+  \code{"vassign"} (\code{"vlm"}-type) and
+  \code{"orig.assign.lm"} (\code{"lm"}-type).
+  These are used internally a lot for bookkeeping,
+  especially regarding
+  the columns of both types of model matrices.
+  In particular, constraint matrices and variable selection
+  relies on this information a lot.
+  The \code{"orig.assign.lm"} is the ordinary \code{"assign"}
+  attribute for \code{\link[stats]{lm}}
+  and \code{\link[stats]{glm}} objects.
+  
+
+
 }
 \references{
 
-Yee, T. W. and Hastie, T. J. (2003)
-Reduced-rank vector generalized linear models.
-\emph{Statistical Modelling},
-\bold{3}, 15--41.
+%Yee, T. W. and Hastie, T. J. (2003)
+%Reduced-rank vector generalized linear models.
+%\emph{Statistical Modelling},
+%\bold{3}, 15--41.
 
 
   Chambers, J. M. (1992)
@@ -89,16 +118,22 @@ Reduced-rank vector generalized linear models.
   \code{\link[stats]{model.matrix}},
   \code{\link{model.framevlm}},
   \code{\link{predictvglm}},
-  \code{\link{smartpred}}.
+  \code{\link{smartpred}},
+  \code{\link{constraints.vlm}},
+  \code{\link{add1.vglm}},
+  \code{\link{drop1.vglm}},
+  \code{\link{step4vglm}}.
 
 
 }
 \examples{
-# Illustrates smart prediction
+# (I) Illustrates smart prediction ,,,,,,,,,,,,,,,,,,,,,,,
 pneumo <- transform(pneumo, let = log(exposure.time))
-fit <- vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
+fit <- vglm(cbind(normal, mild, severe) ~
+            sm.poly(c(sm.scale(let)), 2),
             multinomial, data = pneumo, trace = TRUE, x = FALSE)
 class(fit)
+fit@smart.prediction  # Data-dependent parameters
 fit@x # Not saved on the object
 model.matrix(fit)
 model.matrix(fit, linpred.index = 1, type = "lm")
@@ -106,12 +141,19 @@ model.matrix(fit, linpred.index = 2, type = "lm")
 
 (Check1 <- head(model.matrix(fit, type = "lm")))
 (Check2 <- model.matrix(fit, data = head(pneumo), type = "lm"))
-all.equal(c(Check1), c(Check2))
+all.equal(c(Check1), c(Check2))  # Should be TRUE
 
 q0 <- head(predict(fit))
 q1 <- head(predict(fit, newdata = pneumo))
 q2 <- predict(fit, newdata = head(pneumo))
 all.equal(q0, q1)  # Should be TRUE
 all.equal(q1, q2)  # Should be TRUE
+
+# (II) Attributes ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+fit2 <- vglm(cbind(normal, mild, severe) ~ let,  # x = TRUE
+             multinomial, data = pneumo, trace = TRUE)
+fit2@x  # "lm"-type; saved on the object; note the attributes
+model.matrix(fit2, type = "lm")  # Note the attributes
+model.matrix(fit2, type = "vlm")  # Note the attributes
 }
 \keyword{models}

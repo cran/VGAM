@@ -1,7 +1,7 @@
 \name{leipnik}
 \alias{leipnik}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Leipnik Distribution Family Function}
+\title{Leipnik Regression Family Function}
 \description{
   Estimates the two parameters of a (transformed) Leipnik distribution
   by maximum likelihood estimation.

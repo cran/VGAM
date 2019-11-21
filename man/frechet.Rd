@@ -18,7 +18,7 @@ frechet(location = 0, lscale = "loglink", lshape = logofflink(offset = -2),
         iscale = NULL, ishape = NULL, nsimEIM = 250, zero = NULL)
 }
 %frechet3(anchor = NULL, ldifference = "loglink", lscale = "loglink",
-%         lshape = "loglog",
+%         lshape = "logloglink",
 %         ilocation = NULL, iscale = NULL, ishape = NULL,
 %         zero = NULL, effpos = .Machine$double.eps^0.75)
 %- maybe also 'usage' for other objects documented here.
@@ -96,7 +96,7 @@ frechet(location = 0, lscale = "loglink", lshape = logofflink(offset = -2),
   The working weights are estimated by simulated Fisher scoring.
 
 
-% Note that the \code{\link{loglog}} link ensures \eqn{s > 1}.
+% Note that the \code{\link{logloglink}} link ensures \eqn{s > 1}.
 
 
 % whereas \code{frechet3} estimates it.

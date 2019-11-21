@@ -14,7 +14,6 @@
 
 
 
-
 hdeff.vglm <-
   function(object,
            derivative = NULL,
@@ -69,7 +68,8 @@ hdeff.vglm <-
 
   link1parameter <- Fam.infos$link1parameter
   if (is.null(link1parameter))
-    link1parameter <- TRUE  # The default really
+    link1parameter <- TRUE  # The default, for ordinary 1-par links
+
 
 
 
@@ -152,20 +152,70 @@ hdeff.vglm <-
       Der2 <- D2thetas.Detas2
     }  # !fd.use
   } else {
+    mixture.links <- is.logical(Fam.infos$mixture.links) &&
+                     Fam.infos$mixture.links
     Param.mat <- eta2theta(eta.mat, mylinks,
-                           earg = object@misc$earg)
+                           earg = object@misc$earg,
+                           delete.coln = !mixture.links)
 
 
 
-    myearg <- object@misc$earg[[1]]
-    build.list <- list(theta = Param.mat, inverse = TRUE, deriv = 1)
-    build.list <- c(build.list, myearg)  # Hopefully no dups arg names
-    build.list$all.derivs <- TRUE  # For multinomial, etc.
-    Der1 <- do.call(what = mylinks, args = build.list)
+
+
+
+
+
+    if (mixture.links) {
+
+
+      myrle <- rle(mylinks)
+      if (length(myrle$value) != 2)
+        stop("can only handle two types of links in two chunks")
+
+ 
+      M.1 <- myrle$length[1]
+      myearg1 <- object@misc$earg[[1]]
+      build.list1 <- list(theta = Param.mat[, 1:(1 + M.1)],
+                          inverse = TRUE, deriv = 1)
+      build.list1 <- c(build.list1, myearg1)  # No dups arg names..
+      build.list1$all.derivs <- TRUE  # For "multilogitlink".
+      Der11 <- do.call(mylinks[1], build.list1)
+
+ 
+      M.2 <- 1  # Corresponding to, e.g., loglink("lambda")
+      lastone <- length(object@misc$earg)
+      tmp5 <- ncol(Param.mat)
+      myearg2 <- object@misc$earg[[lastone]]
+
+      myearg2$theta <- Param.mat[, (2 + M.1):tmp5]
+      myearg2$inverse <- TRUE
+      myearg2$deriv <- 1
+
+      Der12 <- do.call(mylinks[lastone], myearg2)
+      Der1 <- wz.merge(Der11, Der12, M.1, M.2)  # Combine them
+    } else {
+ # Handle multinomial, etc.
+      myearg <- object@misc$earg[[1]]  # Only ONE anyway
+      build.list <- list(theta = Param.mat,
+                    inverse = TRUE, deriv = 1)  # This line is important
+      build.list <- c(build.list, myearg)  # Hopefully no dups arg names
+      build.list$all.derivs <- TRUE  # For "multilogitlink".
+      Der1 <- do.call(mylinks, build.list)  # n x MM12 for multinomial
+    }  # mixture.links & !mixture.links
+
+ 
     if (type == "derivatives" && derivative == 2) {
+    if (mixture.links) {
+      build.list1$deriv <- 2
+      Der21 <- do.call(mylinks[1], build.list1)
+      myearg2$deriv <- 2
+      Der22 <- do.call(mylinks[lastone], myearg2)
+      Der2 <- wz.merge(Der21, Der22, M.1, M.2)  # Combine them
+    } else {
       build.list$deriv <- 2
-      Der2 <- do.call(what = mylinks, args = build.list)
-    }
+      Der2 <- do.call(mylinks, build.list)  # n x M for multinomial
+     } # mixture.links & !mixture.links
+   }  # derivative == 2
   }  # if (link1parameter) and (!link1parameter)
 
 
@@ -240,7 +290,7 @@ hdeff.vglm <-
         for (uuu in 1:M)
           wz[, iam(jay, uuu, M = M)] <- (1 + (jay == uuu)) * nxM[, uuu]
         wz
-      }
+      }  # write.into.wz
 
       wz.lhs <- write.into.wz(jay, D1thetas.Detas1)
       if (use.ncol < NCOL(wz.lhs))
@@ -270,7 +320,7 @@ hdeff.vglm <-
           dfun1 * Der1[, iam(uuu, jay, M = M)]
       }  # for uuu
       dwz.dbetakk <- dwz.dbetakk * bix.jk
-    }
+    }  # link1parameter and !link1parameter
 
     if (!is.matrix(dwz.dbetakk))
       dwz.dbetakk <- as.matrix(dwz.dbetakk)

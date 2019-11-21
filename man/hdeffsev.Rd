@@ -115,10 +115,12 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
 %\references{
 
 
-%Yee, T. W. (2019)
+%Yee, T. W. (2018)
 %On the Hauck-Donner effect in Wald tests:
-%Detection and parameter space characterization
-%(\emph{in preparation}).
+%Detection, and parameter space characterization
+%(\emph{under review}).
+
+
 
 
 %}
@@ -136,7 +138,15 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
   Improvements are intended.
 
 
+  
+  See \code{\link{hdeff}}; Yee (2018) gives details on VGLM
+  HDE detection, severity measures, two tipping points (1/4 and 3/5),
+  parameter space partitioning into several regions, and
+  a bound for the HDE for 1-parameter binary regression, etc.
 
+
+
+  
 }
 \seealso{
   \code{\link{seglines}},
@@ -150,7 +160,7 @@ deg <- 4  # myfun is a function that approximates the HDE
 myfun <- function(x, deriv = 0) switch(as.character(deriv),
   '0' = x^deg * exp(-x),
   '1' = (deg * x^(deg-1) - x^deg) * exp(-x),
-  '2' = (deg * (deg-1) * x^(deg-2) - 2*deg * x^(deg-1) + x^deg) * exp(-x))
+  '2' = (deg*(deg-1)*x^(deg-2) - 2*deg*x^(deg-1) + x^deg)*exp(-x))
 
 xgrid <- seq(0, 10, length = 101)
 ansm <- hdeffsev(xgrid, myfun(xgrid), myfun(xgrid, deriv = 1),

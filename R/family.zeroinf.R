@@ -46,16 +46,18 @@ dzanegbin <- function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
 
   if (log.arg) {
     ans[ index0] <- log(pobs0[index0])
-    ans[!index0] <- log1p(-pobs0[!index0]) +
-                    dposnegbin(x[!index0], prob = prob[!index0],
-                               size = size[!index0], log = TRUE)
+    if (any(!index0))
+      ans[!index0] <- log1p(-pobs0[!index0]) +
+                      dposnegbin(x[!index0], prob = prob[!index0],
+                                 size = size[!index0], log = TRUE)
   } else {
     ans[ index0] <- pobs0[index0]
-    ans[!index0] <- (1 - pobs0[!index0]) * dposnegbin(x[!index0],
-                      prob = prob[!index0], size = size[!index0])
+    if (any(!index0))
+      ans[!index0] <- (1 - pobs0[!index0]) * dposnegbin(x[!index0],
+                        prob = prob[!index0], size = size[!index0])
   }
   ans
-}
+}  # dzanegbin
 
 
 
@@ -86,7 +88,7 @@ pzanegbin <- function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
   ans <- pmin(1, ans)
 
   ans
-}
+}  # pzanegbin
 
 
 qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
@@ -113,7 +115,7 @@ qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
                prob = prob[pindex],
                size = size[pindex])
   ans
-}
+}  # qzanegbin
 
 
 
@@ -136,7 +138,7 @@ rzanegbin <- function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
     stop("argument 'pobs0' must be between 0 and 1 inclusive")
 
   ifelse(runif(use.n) < pobs0, 0, ans)
-}
+}  # rzanegbin
 
 
 
@@ -496,8 +498,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
   blurb = c("Zero-altered Poisson ",
             "(Bernoulli and positive-Poisson conditional model)\n\n",
             "Links:    ",
-          namesof("pobs0",  lpobs.0, earg = epobs.0, tag = FALSE), ", ",
-          namesof("lambda", llambda, earg = elambda, tag = FALSE), "\n",
+        namesof("pobs0",  lpobs.0, earg = epobs.0, tag = FALSE), ", ",
+        namesof("lambda", llambda, earg = elambda, tag = FALSE), "\n",
             "Mean:     (1 - pobs0) * lambda / (1 - exp(-lambda))"),
 
   constraints = eval(substitute(expression({
@@ -549,8 +551,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
           interleave.VGAM(M1*NOS, M1 = M1)]
 
     if (!length(etastart)) {
-      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,  # x = x,
-                             imu = .ilambda ,
+      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,
+                             imu = .ilambda ,  # x = x,
                              ishrinkage = .ishrinkage ,
                              pos.only = TRUE,
                              probs.y = .probs.y )
@@ -569,7 +571,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
             .imethod = imethod,
             .type.fitted = type.fitted ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+   type.fitted <- if (length(extra$type.fitted))
+                  extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning the 'mean'.")
                      "mean"
@@ -589,8 +592,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
     ans <- switch(type.fitted,
-                  "mean"      = (1 - pobs.0) * lambda / (-expm1(-lambda)),
-                  "lambda"    = lambda,
+                  "mean"   = (1 - pobs.0) * lambda / (-expm1(-lambda)),
+                  "lambda" = lambda,
                   "pobs0"     =      pobs.0,  # P(Y=0)
                   "onempobs0" =  1 - pobs.0)  # P(Y>0)
     label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
@@ -625,8 +628,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dzapois(x = y, pobs0 = pobs0, lambda = lambda,
-                                log = TRUE)
+      ll.elts <- c(w) * dzapois(x = y, pobs0 = pobs0,
+                                lambda = lambda, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -695,7 +698,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
     temp3 <- if ( .lpobs.0 == "logitlink") {
       c(w) * (y0 - mu.phi0)
     } else {
-      c(w) * dtheta.deta(mu.phi0, link = .lpobs.0 , earg = .epobs.0 ) *
+      c(w) * dtheta.deta(mu.phi0, .lpobs.0 , earg = .epobs.0 ) *
              dl.dphimat
     }
 
@@ -718,11 +721,12 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
     tmp100 <- mu.phi0 * (1 - mu.phi0)
-    tmp200 <- if ( .lpobs.0 == "logitlink" && is.empty.list( .epobs.0 )) {
+    tmp200 <- if ( .lpobs.0 == "logitlink" &&
+                   is.empty.list( .epobs.0 )) {
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
-            dtheta.deta(mu.phi0, link = .lpobs.0 , earg = .epobs.0 )^2)
+            dtheta.deta(mu.phi0, .lpobs.0 , earg = .epobs.0 )^2)
     }
 
 
@@ -769,7 +773,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
   lonempobs0 <- attr(eonempobs0, "function.name")
 
   type.fitted <- match.arg(type.fitted,
-                           c("mean", "lambda", "pobs0", "onempobs0"))[1]
+                 c("mean", "lambda", "pobs0", "onempobs0"))[1]
 
 
   new("vglmff",
@@ -832,8 +836,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
        interleave.VGAM(M1*NOS, M1 = M1)]
 
     if (!length(etastart)) {
-      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,  # x = x,
-                             imu = .ilambda,
+      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,
+                             imu = .ilambda,  # x = x,
                              ishrinkage = .ishrinkage,
                              pos.only = TRUE,
                              probs.y = .probs.y )
@@ -852,14 +856,15 @@ rzipois <- function(n, lambda, pstr0 = 0) {
             .type.fitted = type.fitted,
             .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning the 'mean'.")
-                     "mean"
-                   }
+   type.fitted <- if (length(extra$type.fitted))
+                    extra$type.fitted else {
+                      warning("cannot find 'type.fitted'. ",
+                              "Returning the 'mean'.")
+                      "mean"
+                  }
 
     type.fitted <- match.arg(type.fitted,
-                             c("mean", "lambda", "pobs0", "onempobs0"))[1]
+                   c("mean", "lambda", "pobs0", "onempobs0"))[1]
 
     M1 <- 2
     NOS <- ncol(eta) / M1
@@ -954,7 +959,8 @@ rzipois <- function(n, lambda, pstr0 = 0) {
                            earg = .elambda    )
     onempobs0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempobs0 ,
                            earg = .eonempobs0 )
-    rzapois(nsim * length(lambda), lambda = lambda, pobs0 = 1 - onempobs0)
+    rzapois(nsim * length(lambda), lambda = lambda,
+            pobs0 = 1 - onempobs0)
   }, list( .lonempobs0 = lonempobs0, .llambda = llambda,
            .eonempobs0 = eonempobs0, .elambda = elambda ))),
 
@@ -985,7 +991,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
     temp3 <- if ( FALSE && .lonempobs0 == "logitlink") {
     } else {
- c(w) * dtheta.deta(mu.phi0, link = .lonempobs0 , earg = .eonempobs0 ) *
+ c(w) * dtheta.deta(mu.phi0, .lonempobs0 , earg = .eonempobs0 ) *
         dl.dPHImat
     }
 
@@ -1042,7 +1048,7 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 zanegbinomial.control <-
   function(save.weights = TRUE,
-           summary.HDEtest = FALSE,  # Overwrites the summary() default.
+           summary.HDEtest = FALSE,  # Overwrites summary() default.
            ...) {
   list(save.weights = save.weights,
        summary.HDEtest = summary.HDEtest)
@@ -1493,9 +1499,10 @@ zanegbinomial.control <-
       c(w) * dl.dphi0 * dphi0.deta
     }
 
-
     ans <- cbind(dl.deta1, dl.deta23)
     ans <- ans[, interleave.VGAM(ncol(ans), M1 = M1)]
+
+
     ans
   }), list( .lpobs0 = lpobs0 , .lmunb = lmunb , .lsize = lsize ,
             .epobs0 = epobs0 , .emunb = emunb , .esize = esize,
@@ -1518,7 +1525,7 @@ zanegbinomial.control <-
         cbind(c(w) * tmp100)
     } else {
       cbind(c(w) * (1 / tmp100) *
-            dtheta.deta(mu.phi0, link = .lpobs0 , earg = .epobs0 )^2)
+            dtheta.deta(mu.phi0, .lpobs0 , earg = .epobs0 )^2)
     }
 
 
@@ -1534,7 +1541,7 @@ zanegbinomial.control <-
       df02.dkmat.dmunb / oneminusf0 -
       df0.dmunb * df0.dkmat / oneminusf0^2
     wz[, M + M1*(1:NOS) - 1] <- c(w) * (1 - phi0) *
-                              ned2l.dmunbsize * dmunb.deta * dsize.deta
+      ned2l.dmunbsize * dmunb.deta * dsize.deta
 
 
 
@@ -1572,7 +1579,7 @@ zanegbinomial.control <-
         while (lwr.ptr <= NN) {
           upr.ptr <- min(upr.ptr + chunk.rows, NN)
           sind2 <- wind2[lwr.ptr:upr.ptr]
-
+          aaa <-
           wz[sind2, M1*jay] <-
             EIM.posNB.specialp(munb        = munb[sind2, jay],
                                size        = kmat[sind2, jay],
@@ -1634,7 +1641,8 @@ zanegbinomial.control <-
         }  # end of for loop
 
         run.varcov <- c(run.varcov / .nsimEIM )
-        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else run.varcov
+        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else
+                     run.varcov
 
         wz[ii.TF, M1*jay] <- ned2l.dk2  # * (dsize.deta[ii.TF, jay])^2
       }
@@ -1663,7 +1671,7 @@ zanegbinomial.control <-
             .max.support = max.support,
             .max.chunk.MB = max.chunk.MB,
             .nsimEIM = nsimEIM ))))
-}  # End of zanegbinomial()
+}  # zanegbinomial()
 
 
 
@@ -6447,7 +6455,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
 
     phi.init <- if (length( .ipobs0 )) .ipobs0 else {
         prob0.est <- sum(Size[y == 0]) / sum(Size)
@@ -6484,7 +6492,8 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- ncol(eta) / c(M1 = 2)
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+    type.fitted <- if (length(extra$type.fitted))
+                     extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning the 'mean'.")
                      "mean"
@@ -6497,12 +6506,12 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     prob  <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
 
     ans <- switch(type.fitted,
-                  "mean"      = (1 - phi0) * prob / (1 - (1 - prob)^Size),
-                  "prob"      = prob,
-                  "pobs0"     = phi0)  # P(Y=0)
+                  "mean"  = (1-phi0) * prob / (1 - (1-prob)^Size),
+                  "prob"  = prob,
+                  "pobs0" = phi0)  # P(Y=0)
     label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
   }, list( .lprob = lprob, .lpobs0 = lpobs0,
            .eprob = eprob, .epobs0 = epobs0 ))),
@@ -6525,16 +6534,17 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
              summation = TRUE) {
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
     pobs0 <- eta2theta(eta[, 1], .lpobs0 , earg = .epobs0 )
     prob  <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <-
-        orig.w * dzabinom(x = round(y * Size), size = Size,
-                          prob = prob, pobs0 = pobs0,
-                          log = TRUE)
+        c(orig.w) * dzabinom(x = round(y * Size),
+                             size = Size,
+                             prob = prob, pobs0 = pobs0,
+                             log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -6562,7 +6572,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
 
     phi0 <- eta2theta(eta[, 1], .lpobs0 , earg = .epobs0 )
     prob <- eta2theta(eta[, 2], .lprob  , earg = .eprob  )
@@ -6759,7 +6769,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
 
     phi.init <- if (length( .ionempobs0 )) 1 - .ionempobs0 else {
         prob0.est <- sum(Size[y == 0]) / sum(Size)
@@ -6808,7 +6818,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
     onempobs0 <- eta2theta(eta[, 2], .lonempobs0 , earg = .eonempobs0 )
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
 
     ans <- switch(type.fitted,
                   "mean"      = onempobs0 * prob / (1 - (1 - prob)^Size),
@@ -6837,7 +6847,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
              summation = TRUE) {
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
     prob      <- eta2theta(eta[, 1], .lprob      , earg = .eprob      )
     onempobs0 <- eta2theta(eta[, 2], .lonempobs0 , earg = .eonempobs0 )
     if (residuals) {
@@ -6879,7 +6889,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
     orig.w <- if (length(extra$orig.w)) extra$orig.w else 1
     new.w  <- if (length(extra$new.w))  extra$new.w  else 1
-    Size <- new.w / orig.w
+    Size <- round(new.w / orig.w)
 
     prob      <- eta2theta(eta[, 1], .lprob      , earg = .eprob      )
     onempobs0 <- eta2theta(eta[, 2], .lonempobs0 , earg = .eonempobs0 )

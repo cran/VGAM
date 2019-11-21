@@ -157,7 +157,6 @@
 
 
       extra$multiple.responses <- TRUE
-
     } else {
 
       if (!all(w == 1))
@@ -203,7 +202,7 @@
         }
         predictors.names <-
           namesof(new.name, .link , earg = .earg , short = TRUE)
-    }
+    }  # Not multiple.responses.
 
 
     if ( .bred ) {
@@ -758,9 +757,8 @@ dinv.gaussian <- function(x, mu, lambda, log = FALSE) {
   logdensity <- rep_len(log(0), L)
 
   xok <- (x > 0)
-  logdensity[xok] = 0.5 * log(lambda[xok] / (2 * pi * x[xok]^3)) -
-                    lambda[xok] *
-                    (x[xok]-mu[xok])^2 / (2*mu[xok]^2 * x[xok])
+  logdensity[xok] <- 0.5 * log(lambda[xok] / (2 * pi * x[xok]^3)) -
+     lambda[xok] * (x[xok]-mu[xok])^2 / (2*mu[xok]^2 * x[xok])
   logdensity[mu     <= 0] <- NaN
   logdensity[lambda <= 0] <- NaN
   if (log.arg) logdensity else exp(logdensity)

@@ -112,7 +112,6 @@ fit <- vglm(SurvS4(cy, status) ~ 1, cens.poisson, data = cdata,
 coef(fit, matrix = TRUE)
 table(print(depvar(fit)))  # Another check; U+ means >= U
 
-
 # Example 2: left censored data
 L <- 15
 cdata <- transform(cdata,
@@ -125,7 +124,6 @@ with(cdata, table(print(SurvS4(cY, status, type = "left"))))  # Check
 fit <- vglm(SurvS4(cY, status, type = "left") ~ 1, cens.poisson,
             data = cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
-
 
 # Example 3: interval censored data
 cdata <- transform(cdata, Lvec = rep(L, len = N),
@@ -147,12 +145,10 @@ cdata$Lvec[with(cdata, lcensored)] <- cdata$Lvec[with(cdata, lcensored)]
 cdata$Lvec[with(cdata, rcensored)] <- cdata$Uvec[with(cdata, rcensored)]
 with(cdata,  # Check
  table(ii <- print(SurvS4(Lvec, Uvec, status, type = "interval"))))
-
 fit <- vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
             cens.poisson, data = cdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 table(print(depvar(fit)))  # Another check
-
 
 # Example 4: Add in some uncensored observations
 index <- (1:N)[with(cdata, icensored)]
@@ -161,7 +157,6 @@ cdata$status[index] <- 1  # actual or uncensored value
 cdata$Lvec[index] <- cdata$y[index]
 with(cdata, table(ii <- print(SurvS4(Lvec, Uvec, status,
                                      type = "interval"))))  # Check
-
 fit <- vglm(SurvS4(Lvec, Uvec, status, type = "interval") ~ 1,
             cens.poisson, data = cdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)

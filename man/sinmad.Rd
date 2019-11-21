@@ -141,8 +141,9 @@ if (FALSE) {
   Coef(fit1)
 }
 # Try this remedy:
-fit2 <- vglm(y1 ~ 1, sinmad(lss = FALSE, ishape3.q = 3, lshape3.q = "loglog"),
-             data = sdata, trace = TRUE, stepsize = 0.05, maxit = 99)
+fit2 <- vglm(y1 ~ 1, data = sdata, trace = TRUE, stepsize = 0.05, maxit = 99,
+             sinmad(lss = FALSE, ishape3.q = 3, lshape3.q = "logloglink"))
+             
 coef(fit2, matrix = TRUE)
 Coef(fit2)
 }

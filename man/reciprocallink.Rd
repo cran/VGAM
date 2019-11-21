@@ -1,8 +1,8 @@
 \name{reciprocallink}
 \alias{reciprocallink}
-\alias{reciprocal}
+%\alias{reciprocal}
 \alias{negreciprocallink}
-\alias{negreciprocal}
+%\alias{negreciprocal}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Reciprocal Link Function }
 \description{

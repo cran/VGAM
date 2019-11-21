@@ -1,6 +1,6 @@
 \name{probitlink}
 \alias{probitlink}
-\alias{probit}
+%\alias{probit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Probit Link Function }
 \description{

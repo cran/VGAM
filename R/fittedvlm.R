@@ -91,6 +91,8 @@ setMethod("fitted",  "vglm",
 
 
 
+
+
 predictors.vglm <- function(object, matrix = TRUE, ...) {
   answer <- if (matrix) {
     object@predictors

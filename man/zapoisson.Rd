@@ -202,7 +202,7 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 \seealso{
   \code{\link{rzapois}},
   \code{\link{zipoisson}},
-  \code{\link{genapoisson}},
+  \code{\link{gatpoisson.mlm}},
   \code{\link{pospoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{binomialff}},

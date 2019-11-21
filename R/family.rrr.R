@@ -3668,7 +3668,7 @@ setMethod("is.bell","Coef.qrrvglm",
 
  if (!isGeneric("Rank"))
     setGeneric("Rank",
-  function(object, ...) standardGeneric("Rank"))
+  function(object, ...) standardGeneric("Rank"), package = "VGAM")
 
 setMethod("Rank",  "rrvglm",
   function(object, ...) Rank.rrvglm(object, ...))

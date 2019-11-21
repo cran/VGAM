@@ -191,6 +191,8 @@ Set \code{trace = TRUE} to monitor convergence.
 }
 
 \seealso{
+  \code{\link{gatnbinomial.mlm}},
+  \code{\link{Gaitnbinom.mlm}},
   \code{\link{rposnegbin}},
   \code{\link{pospoisson}},
   \code{\link{negbinomial}},

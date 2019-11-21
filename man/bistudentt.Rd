@@ -100,7 +100,7 @@ with help from Thibault Vatter.
 }
 \examples{
 nn <- 1000
-mydof <- loglog(1, inverse = TRUE)
+mydof <- logloglink(1, inverse = TRUE)
 ymat <- cbind(rt(nn, df = mydof), rt(nn, df = mydof))
 bdata <- data.frame(y1 = ymat[, 1], y2 = ymat[, 2],
                     y3 = ymat[, 1], y4 = ymat[, 2], x2 = runif(nn))

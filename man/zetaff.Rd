@@ -81,7 +81,7 @@ pp.527-- of Chapter 11 of
 
 Knight, K. (2000)
 \emph{Mathematical Statistics}.
-Boca Raton: Chapman & Hall/CRC Press.
+Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 
 
 

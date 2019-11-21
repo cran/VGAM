@@ -1,7 +1,7 @@
 \name{pordlink}
 %\name{polf}
 \alias{pordlink}
-\alias{polf}
+% \alias{polf}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Poisson-Ordinal Link Function }
 \description{

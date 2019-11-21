@@ -1,14 +1,14 @@
-\name{gentbinomial}
-\alias{gentbinomial}
+\name{gtbinomial}
+\alias{gtbinomial}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generally-Truncated Binomial Distribution Family Function }
 \description{
   Fits a generally-truncated binomial distribution.
 }
 \usage{
-gentbinomial(truncate = 0, zero = NULL, link = "logitlink",
-             type.fitted = c("mean", "prob", "prob.t"),
-             multiple.responses = FALSE, parallel = FALSE)
+gtbinomial(truncate = 0, zero = NULL, link = "logitlink",
+           type.fitted = c("mean", "prob", "prob.t"),
+           multiple.responses = FALSE, parallel = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -100,7 +100,7 @@ gentbinomial(truncate = 0, zero = NULL, link = "logitlink",
 
 }
 \seealso{
-  \code{\link{Gentbinom}},
+  \code{\link{Gaitbinom.mlm}},
   \code{\link{rposbinom}},
   \code{\link{posbinomial}},
   \code{\link{binomialff}},
@@ -112,22 +112,20 @@ gentbinomial(truncate = 0, zero = NULL, link = "logitlink",
 nnn <- 1000; tvec <- c(2, 3, 6); size <- 10
 pdata <- data.frame(x2 = runif(nnn), x3 = runif(nnn))
 pdata <- transform(pdata,
-     y1  = rgentbinom(nnn, prob = logitlink(-1, inverse = TRUE),
-                      truncate = tvec,
-                      size = size),
-     y2  = rgentbinom(nnn, prob = logitlink(-1 + x2 + x3, inverse = TRUE),
-                      truncate = tvec,
-                      size = size))
+     y1  = rgaitbinom.mlm(nnn, prob = logitlink(-1, inverse = TRUE),
+                          truncate = tvec, size = size),
+     y2  = rgaitbinom.mlm(nnn, prob = logitlink(-1 + x2 + x3, inverse = TRUE),
+                          truncate = tvec, size = size))
 with(pdata, table(y1))
 with(pdata, table(y2))
 head(pdata)
 fit1 <- vglm(cbind(y1, size - y1) ~ 1,
-              gentbinomial(truncate = tvec), trace = TRUE, data = pdata)
+             gtbinomial(truncate = tvec), trace = TRUE, data = pdata)
 coef(fit1, matrix = TRUE)
 summary(fit1)
 
 fit2 <- vglm(cbind(y2, size - y2) ~ x2 + x3, crit = "coef",
-              gentbinomial(truncate = tvec), trace = TRUE, data = pdata)
+             gtbinomial(truncate = tvec), trace = TRUE, data = pdata)
 coef(fit2, matrix = TRUE)
 summary(fit2)
 }

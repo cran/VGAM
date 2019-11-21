@@ -42,8 +42,8 @@
   earg[["deriv"]] <- 1  # New
 
 
-  do.call(what = function.name, args = earg)
-}
+  do.call(function.name, earg)
+}  # dtheta.deta 
 
 
 
@@ -75,8 +75,9 @@
 
   earg[["deriv"]] <- 2  # New
 
-  do.call(what = function.name, args = earg)
-}
+  do.call(function.name, earg)
+}  # d2theta.deta2
+
 
 
 
@@ -99,8 +100,8 @@
     earg$inverse <- TRUE
 
   earg[["deriv"]] <- 3  # New
-  do.call(what = function.name, args = earg)
-}
+  do.call(function.name, earg)
+}  # d3theta.deta3
 
 
 
@@ -120,8 +121,10 @@
 
   earg[["theta"]] <- theta  # New data
 
-  do.call(what = function.name, args = earg)
-}
+  do.call(function.name, earg)
+}  # theta2eta
+
+
 
 
 
@@ -129,8 +132,10 @@
  eta2theta <-
   function(theta,  # This is really eta.
            link = "identitylink",
-           earg = list(theta = NULL)) {
-
+           earg = list(theta = NULL),
+           special.fun = "multilogitlink",
+           delete.coln = TRUE  # Only for "multilogitlink"
+           ) {
 
   orig.earg <- earg
   if (!is.list(earg))
@@ -148,7 +153,6 @@
 
 
 
-
   llink <- length(link)
 
   if (llink != length(earg))
@@ -156,51 +160,65 @@
          "length of argument 'earg'")
   if (llink == 0)
     stop("length(earg) == 0 not allowed")
-
-
   if (llink == 1) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
     if (is.list(earg[[1]]))
       earg <- earg[[1]]
 
-    function.name  <- link
+    function.name  <- link  # First chance
 
     function.name2 <- attr(earg, "function.name")  # May be, e.g., NULL
     if (length(function.name2) && function.name != function.name2)
       warning("apparent conflict in name of link function")
 
-
     earg[["theta"]] <- theta  # New data
 
     earg[["inverse"]] <- TRUE  # New
-
-    return(do.call(what = function.name, args = earg))
-  }
-
+    return(do.call(function.name, earg))
+  }  # llink == 1
 
 
 
 
 
+  if (!is.matrix(theta) &&
+      length(theta) == length(earg))
+    theta <- rbind(theta)
 
-
-
- if (!is.matrix(theta) &&
-     length(theta) == length(earg))
-   theta <- rbind(theta)
-
-
+  vecTF <- link == special.fun 
   ans <- NULL
-  for (iii in 1:llink) {
-    use.earg <- earg[[iii]]
-    use.earg[["inverse"]] <- TRUE  # New
-    use.earg[["theta"]] <- theta[, iii]  # New
-    use.function.name <- link[iii]
+  iii <- 1
+  while (iii <= llink) {
+    first.index <- last.index <- iii  # Ordinary case
+    special.case <- vecTF[iii]  # && sum(vecTF) < length(vecTF)
 
-    ans <- cbind(ans, do.call(what = use.function.name,
-                              args = use.earg))
-  }
+    if (special.case) {
+      next.i <- iii+1
+      while (next.i <= llink) {
+        if (vecTF[next.i]) {
+          last.index <- next.i
+          next.i <- next.i + 1
+        } else {
+          break
+        }
+      }  # while
+    }  # special.case
+
+    iii <- iii + last.index - first.index + 1  # For next time
+
+    use.earg <- earg[[first.index]]
+    use.earg[["inverse"]] <- TRUE  # New
+    use.earg[["theta"]] <- theta[, first.index:last.index]  # New
+    use.function.name <- link[first.index]  # "multilogitlink"
+
+    ans2 <- do.call(use.function.name, use.earg)
+    if (special.case && special.fun == "multilogitlink" &&
+        delete.coln)
+      ans2 <- ans2[, -use.earg$refLevel]
+
+    ans <- cbind(ans, ans2)
+  }  # while (iii <= llink)
 
   if (length(orig.earg) == ncol(ans) &&
       length(names(orig.earg)) > 0 &&
@@ -208,7 +226,7 @@
     colnames(ans) <- names(orig.earg)
 
   ans
-}
+}  # eta2theta
 
 
 
@@ -231,8 +249,8 @@
   earg[["short"]] <- short
 
 
-  do.call(link, args = earg)
-}
+  do.call(link, earg)
+}  # namesof
 
 
 
@@ -248,7 +266,7 @@ if (FALSE)
   earg[["theta"]] <- as.character(theta)
   earg[["tag"]] <- tag
   earg[["short"]] <- short
-  do.call(link, args = earg)
+  do.call(link, earg)
 }
 
 
@@ -292,7 +310,7 @@ link2list <- function(link
 
 
   Big.list
-}
+}  # link2list
 
 
 

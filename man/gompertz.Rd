@@ -1,7 +1,7 @@
 \name{gompertz}
 \alias{gompertz}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Gompertz Distribution Family Function }
+\title{ Gompertz Regression Family Function }
 \description{
   Maximum likelihood estimation of the 2-parameter
   Gompertz distribution.

@@ -1,7 +1,7 @@
 \name{maxwell}
 \alias{maxwell}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Maxwell Distribution Family Function }
+\title{ Maxwell Regression Family Function }
 \description{
  Estimating the parameter of the Maxwell  distribution by
  maximum likelihood estimation.
@@ -61,7 +61,7 @@ maxwell(link = "loglink", zero = NULL, parallel = FALSE,
 
   von Seggern, D. H. (1993)
   \emph{CRC Standard Curves and Surfaces},
-  Boca Raton, FL.: CRC Press.
+  Boca Raton, FL, USA: CRC Press.
 
 
 }

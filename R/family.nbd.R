@@ -472,8 +472,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       if ( .lmunb == "nbcanlink") {
         etastart[is.na(etastart)] <- -0.1
         for (j1 in 1:(M/M1)) {
-          cond1 <- etastart[, 2 * j1 - 1] >= 0
-          etastart[cond1, 2 * j1 - 1] <- -0.1
+          cond1 <- etastart[, j1] >= 0
+          etastart[cond1, j1] <- -0.1
         }
       }
 
@@ -719,17 +719,17 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
     if (control$criterion != "coefficients" &&
         control$half.step)
       warning("Argument 'criterion' should be 'coefficients' or ",
-               "'half.step' should be 'FALSE' when 'deviance.arg = TRUE'")
+        "'half.step' should be 'FALSE' when 'deviance.arg = TRUE'")
 
+     nconstraints <- names(constraints)
 
-    low.index <- ifelse(names(constraints)[1] == "(Intercept)", 2, 1)
-    if (low.index <= length(constraints))
-    for (iii in low.index:length(constraints)) {
+    for (iii in seq_len(length(constraints))) {
       conmat <- constraints[[iii]]
-      if (any(conmat[c(FALSE, TRUE), ] != 0))
-        stop("argument 'deviance.arg' should only be TRUE for NB-2 ",
-             "models; ",
-             "non-zero elements detected for the 'size' parameter." )
+      if (nconstraints[iii] != "(Intercept)" &&
+          any(conmat[c(FALSE, TRUE), ] != 0))
+        stop("argument 'deviance.arg' should only be TRUE for",
+             " NB-2 models; non-zero ",
+             "elements detected for the 'size' parameter." )
     }  # for iii
   }  # (iter == 1 && .deviance.arg )
 

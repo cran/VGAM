@@ -579,7 +579,8 @@ vcov.vlm <- function(object, ...) {
 
 
  vcovvlm <-
-function(object, dispersion = NULL, untransform = FALSE) {
+function(object, dispersion = NULL, untransform = FALSE,
+         complete = TRUE) {
 
 
 

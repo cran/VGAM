@@ -114,10 +114,7 @@ care.exp2 <- function(x) {
 
 
 
-
-
  loglink <-
- loge <-
   function(theta,
            bvalue = NULL,  # .Machine$double.xmin is an alternative
            inverse = FALSE, deriv = 0,
@@ -161,7 +158,6 @@ care.exp2 <- function(x) {
 
 
  logneglink <-
- logneg <-
   function(theta,
            bvalue = NULL,  # .Machine$double.xmin is an alternative
            inverse = FALSE, deriv = 0,
@@ -205,7 +201,6 @@ care.exp2 <- function(x) {
 
 
  logofflink <-
- logoff <-
   function(theta,
            offset = 0,
            inverse = FALSE, deriv = 0,
@@ -282,7 +277,6 @@ care.exp2 <- function(x) {
 
 
  negidentitylink <-
- negidentity <-
   function(theta,
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
@@ -310,7 +304,6 @@ care.exp2 <- function(x) {
 
 
  logitlink <-
- logit <-
   function(theta,
            bvalue = NULL,
            inverse = FALSE, deriv = 0,
@@ -360,7 +353,6 @@ care.exp2 <- function(x) {
 
 
  logloglink <-
- loglog <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
@@ -469,7 +461,6 @@ care.exp2 <- function(x) {
 
 
  clogloglink <-
- cloglog <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
@@ -524,7 +515,6 @@ care.exp2 <- function(x) {
 
 
  probitlink <-
- probit <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
@@ -663,7 +653,6 @@ care.exp2 <- function(x) {
 
 
  reciprocallink <-
- reciprocal <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
@@ -704,7 +693,6 @@ care.exp2 <- function(x) {
 
 
  negloglink <-
- negloge <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
@@ -746,7 +734,6 @@ care.exp2 <- function(x) {
 
 
  negreciprocallink <-
- negreciprocal <-
   function(theta,
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE,
@@ -825,7 +812,6 @@ care.exp2 <- function(x) {
 
 
  rhobitlink <-
- rhobit <-
   function(theta,
            bminvalue = NULL,
            bmaxvalue = NULL,
@@ -874,7 +860,6 @@ care.exp2 <- function(x) {
 
 
  fisherzlink <-
- fisherz <-
   function(theta,
            bminvalue = NULL,
            bmaxvalue = NULL,
@@ -921,7 +906,6 @@ care.exp2 <- function(x) {
 
 
  multilogitlink <-
- multilogit <-
   function(theta,
            refLevel = "(Last)",
            M = NULL,  # stop("argument 'M' not specified"),
@@ -930,6 +914,8 @@ care.exp2 <- function(x) {
            inverse = FALSE, deriv = 0,
            all.derivs = FALSE,
            short = TRUE, tag = FALSE) {
+
+
 
 
   fillerChar <- ifelse(whitespace, " ", "")
@@ -1049,7 +1035,7 @@ care.exp2 <- function(x) {
             },
       "1" = if (all.derivs) {
               index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-              theta <- theta[, -use.refLevel, drop = FALSE]
+              theta <- theta[, -use.refLevel, drop = FALSE]  # n x M
               wz <- -theta[, index$row, drop = FALSE] *
                      theta[, index$col, drop = FALSE]
               wz[, 1:M] <- wz[, 1:M] + theta
@@ -1097,8 +1083,7 @@ care.exp2 <- function(x) {
 
 
 
-foldsqrtlink <-
-foldsqrt <-
+ foldsqrtlink <-
   function(theta,  #  = NA  , = NULL,
            min = 0, max = 1, mux = sqrt(2),
            inverse = FALSE, deriv = 0,
@@ -1216,7 +1201,6 @@ foldsqrt <-
 
 
  extlogitlink <-
- extlogit <-
   function(theta,
            min = 0, max = 1,
            bminvalue = NULL,
@@ -1284,7 +1268,6 @@ foldsqrt <-
 
 
  logclink <-
- logc <-
   function(theta,
            bvalue = NULL,  # .Machine$double.xmin is an alternative
            inverse = FALSE, deriv = 0,
@@ -1331,7 +1314,6 @@ foldsqrt <-
 
 
  cauchitlink <-
- cauchit <-
   function(theta,
            bvalue = .Machine$double.eps,
            inverse = FALSE, deriv = 0,
@@ -1391,7 +1373,6 @@ foldsqrt <-
 
 
  gordlink <-
- golf <-
   function(theta,
            lambda = 1,
            cutpoint = NULL,
@@ -1515,7 +1496,6 @@ foldsqrt <-
 
 
  pordlink <-
- polf <-
   function(theta,  # = 1,
            cutpoint = NULL,
            inverse = FALSE, deriv = 0,
@@ -1637,7 +1617,6 @@ foldsqrt <-
 
 
  nbordlink <-
- nbolf <-
   function(theta,
            cutpoint = NULL,
            k = NULL,
@@ -1779,7 +1758,6 @@ foldsqrt <-
 
 
  nbord2link <-
- nbolf2 <-
   function(theta,
            cutpoint = NULL,
            k = NULL,

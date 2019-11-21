@@ -2347,6 +2347,165 @@ AR1.gammas <- function(x, y = NULL, lags = 1) {
 
 
 
+dzipfmb <- function(x, shape, start = 1, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  LLL <- max(length(x), length(start), length(shape))
+  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
+  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  
+  bad0 <- !is.finite(shape) | !is.finite(start) |
+          shape <= 0 | 1 <= shape |
+          start != round(start) | start < 1
+  bad <- bad0 | !is.finite(x) | x < start | x != round(x)
+
+  logpdf <- x + shape + start
+  
+  if (any(!bad)) {
+    logpdf[!bad] <- lbeta(    x[!bad] - shape[!bad], shape[!bad] + 1) - 
+                    lbeta(start[!bad] - shape[!bad], shape[!bad])
+  }
+  
+  logpdf[!bad0 & is.infinite(x)] <- log(0)
+  logpdf[!bad0 & x < start     ] <- log(0)
+  logpdf[!bad0 & x != round(x) ] <- log(0)
+  logpdf[ bad0] <- NaN
+
+  if (log.arg) logpdf else exp(logpdf)
+} # dzipfmb()
+
+
+
+pzipfmb <-
+  function(q, shape, start = 1, lower.tail = TRUE, log.p = FALSE) {
+
+  if (!is.logical(lower.tail) || length(lower.tail) != 1)
+    stop("bad input for argument 'lower.tail'")
+  if (!is.logical(log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log'")
+  
+  LLL <- max(length(shape), length(q), length(start))
+  if (length(q)     != LLL) q     <- rep_len(q,     LLL)
+  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(start) != LLL) start <- rep_len(start, LLL)
+  
+  q.use <- pmax(start, floor(q + 1))
+  
+  bad0 <- !is.finite(shape) | !is.finite(start) |
+          shape <= 0 | 1 <= shape |
+          start != round(start) | start < 1
+  bad <- bad0 | !is.finite(q.use)
+
+  ans <- q + shape + start
+
+  log.S.short <- lgamma(start[!bad]) + lgamma(q.use[!bad] - shape[!bad]) -
+                 lgamma(q.use[!bad]) - lgamma(start[!bad] - shape[!bad])
+  
+  ans[!bad] <-
+  if (lower.tail) {
+    if (log.p) { # lower.tail = T, log.p = T
+      log1p(-exp(log.S.short))
+    } else {  # lower.tail = T, log.p = F
+      -expm1(log.S.short)
+    }
+  } else { 
+    if (log.p) {  # lower.tail = F, log.p = T
+      log.S.short
+    } else {      # lower.tail = F, log.p = F
+      exp(log.S.short)
+    }
+  }
+
+  ans[!bad0 & is.infinite(q.use) & start < q.use] <-
+    if (lower.tail) {if (log.p) log(1) else 1} else
+    {if (log.p) log(0) else 0}
+
+  ans[bad0] <- NaN
+  ans
+}  # pzipfmb()
+
+
+
+
+qzipfmb <- function(p, shape, start = 1) {
+
+  LLL <- max(length(p), length(shape), length(start))
+  if (length(p)     != LLL) p     <- rep_len(p,     LLL)
+  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(start) != LLL) start <- rep_len(start, LLL)
+  ans <- p + shape + start
+
+  bad0 <- !is.finite(shape) | !is.finite(start) |
+          shape <= 0 | 1 <= shape |
+          start != round(start) | start < 1
+  bad <- bad0 | !is.finite(p) | p <= 0 | 1 <= p
+
+  lo <- rep_len(start, LLL) - 0.5
+  approx.ans <- lo  # True at lhs
+  hi <- 2 * lo + 10.5
+  dont.iterate <- bad
+  done <- dont.iterate | p <= pzipfmb(hi, shape, start = start)
+  iter <- 0
+  max.iter <- round(log2(.Machine$double.xmax)) - 2
+  max.iter <- round(log2(1e300)) - 2
+  while (!all(done) && iter < max.iter) {
+    lo[!done] <- hi[!done]
+    hi[!done] <- 2 * hi[!done] + 10.5  # Bug fixed
+    done[!done] <- (p[!done] <= pzipfmb(hi[!done],
+                    shape = shape[!done], start[!done]))
+    iter <- iter + 1
+  }
+
+  foo <- function(q, shape, start, p)
+    pzipfmb(q, shape = shape, start) - p
+
+  lhs <- dont.iterate |
+         p <= dzipfmb(start, shape = shape, start)
+  
+  approx.ans[!lhs] <-
+    bisection.basic(foo, lo[!lhs], hi[!lhs], tol = 1/16,
+                    shape = shape[!lhs],
+                    start = start[!lhs], p = p[!lhs])
+  faa <- floor(approx.ans[!lhs])
+  tmp <-
+    ifelse(pzipfmb(faa, shape = shape[!lhs], start[!lhs]) < p[!lhs] &
+           p[!lhs] <= pzipfmb(faa+1, shape = shape[!lhs], start[!lhs]),
+           faa+1, faa)
+  ans[!lhs] <- tmp
+
+  vecTF <- !bad0 & !is.na(p) &
+           p <= dzipfmb(start, shape = shape, start)
+  ans[vecTF] <- start[vecTF]
+
+  ans[!bad0 & !is.na(p) & p == 0] <- start[!bad0 & !is.na(p) & p == 0]
+  ans[!bad0 & !is.na(p) & p == 1] <- Inf
+  ans[!bad0 & !is.na(p) & p <  0] <- NaN
+  ans[!bad0 & !is.na(p) & p >  1] <- NaN
+  ans[ bad0] <- NaN
+  ans
+}  # qzipfmb
+
+
+
+rzipfmb <- function(n, shape, start = 1) {
+  qzipfmb(runif(n), shape, start = start)
+}  # rzipfmb
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

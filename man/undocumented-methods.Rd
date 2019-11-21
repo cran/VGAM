@@ -4,6 +4,17 @@
 %\alias{ccoef-method}
 %
 %
+% 201908
+\alias{rootogram4,ANY-method}
+\alias{rootogram4,vglm-method}
+% 201906
+\alias{step4,ANY-method}
+\alias{step4,vglm-method}
+\alias{add1,vglm-method}
+\alias{drop1,vglm-method}
+\alias{extractAIC,vglm-method}
+\alias{dfterms,ANY-method}
+\alias{dfterms,vglm-method}
 % 201802
 \alias{ordsup,ANY-method}
 \alias{ordsup,vglm-method}
@@ -193,7 +204,7 @@
 \alias{AIC,qrrvglm-method}
 \alias{AIC,rrvgam-method}
 \alias{AICc,vlm-method}
-\alias{AICc,vglm-method}
+% \alias{AICc,vglm-method}  % 20190410
 %\alias{AICc,vgam-method}
 %\alias{AICc,rrvglm-method}
 %\alias{AICc,qrrvglm-method}

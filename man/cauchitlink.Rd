@@ -1,6 +1,6 @@
 \name{cauchitlink}
 \alias{cauchitlink}
-\alias{cauchit}
+%\alias{cauchit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Cauchit Link Function }
 \description{

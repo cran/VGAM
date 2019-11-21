@@ -1,6 +1,6 @@
 \name{multilogitlink}
 \alias{multilogitlink}
-\alias{multilogit}
+% \alias{multilogit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Multi-logit Link Function }
 \description{
@@ -55,7 +55,7 @@ multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 
 }
 \details{
-  The \code{multilogit()} link function is a generalization of the
+  The \code{multilogitlink()} link function is a generalization of the
   \code{\link{logitlink}} link to \eqn{M} levels/classes.
   It forms the basis of the \code{\link{multinomial}} logit model.
   It is sometimes called the \emph{multi-logit} link

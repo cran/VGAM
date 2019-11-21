@@ -9,6 +9,7 @@
 
 
 
+
 is.Numeric <- function(x, length.arg = Inf,
                        integer.valued = FALSE, positive = FALSE)
     if (all(is.numeric(x)) && all(is.finite(x)) &&
@@ -16,6 +17,29 @@ is.Numeric <- function(x, length.arg = Inf,
        length(x) == length.arg else TRUE) &&
     (if (integer.valued) all(x == round(x)) else TRUE) &&
     (if (positive) all(x>0) else TRUE)) TRUE else FALSE
+
+
+
+
+
+
+is.Numeric2 <- function(x, length.arg = Inf,
+                       integer.valued = FALSE, positive = FALSE)
+    if (all(is.numeric(x)) && all(!is.na(x)) &&
+    (if (is.finite(length.arg))
+       length(x) == length.arg else TRUE) &&
+    (if (integer.valued) all(x == round(x)) else TRUE) &&
+    (if (positive) all(x>0) else TRUE)) TRUE else FALSE
+
+
+
+
+
+
+
+
+
+
 
 
 VGAMenv <- new.env()
@@ -633,6 +657,17 @@ if (!isGeneric("predictvglmS4VGAM"))
                         VGAMff,
                         ...)
                  standardGeneric("predictvglmS4VGAM"),
+               package = "VGAM")
+
+
+
+
+
+if (!isGeneric("Rank"))
+    setGeneric("Rank",
+               function(object,
+                        ...)
+                 standardGeneric("Rank"),
                package = "VGAM")
 
 

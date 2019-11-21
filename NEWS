@@ -1,4 +1,57 @@
-                CHANGES IN VGAM VERSION 1.1-0
+                CHANGES IN VGAM VERSION 1.1-2
+
+NEW FEATURES
+
+    o   New generic and/or methods functions: add1.vglm(),
+        dfterms(), drop1.vglm(), extractAIC.vglm(),
+        rootogram4vglm() [based on \pkg{countreg}],
+        step4vglm().
+    o   New family functions: gabinomial.mlm(), gatnegbinomial.mix(dpqr),
+        gatpoisson.mix(dpqr).
+    o   New functions: [dpqr]zipfmb(),
+        [dpqr]gaitbinom.mlm(), [dpqr]gaitnbinom.mlm(),
+        [dpqr]gaitpois.mlm(),  [dpqr]gaitnbinom.mix(),
+        [dpqr]gaitpois.mix().
+        Note that the naming conventions have changed somewhat, especially
+        regarding the negative binomial distribution.
+    o   Decommissioned functions:
+        gapoisson(), gtpoisson(),
+        [dpqr]gabinom(), [dpqr]gapois(),
+        [dpqr]gibinom(), [dpqr]gipois(),
+        [dpqr]gtbinom(), [dpqr]gtpois().
+    o   eta2theta() should be able to handle links for, e.g.,
+        gatpoisson(), gibinomial().
+    o   posbernoulli.t() has a 'type.fitted' argument.
+    o   gtpoisson.mlm() supports type.fitted = "Pobs.a",
+        gipoisson.mlm() supports type.fitted = "Pstr.i".
+    o   New data set: backPain2.
+    o   Cleve Moler added to DESCRIPTION as a contributor, to reflect
+        the use of LINPACK.
+    o   Tested okay on R 3.6.1.
+
+
+
+BUG FIXES and CHANGES
+
+    o   Use of old link function names now result in a call to
+        .Deprecated(), except for a selected few such as logit() and
+        probitlink()---this will only be allowed for a limited time.
+    o   negbinomial()@initialize bug fixed for "nbcanlink()" and
+        multiple responses; thanks to Victor Miranda.
+    o   cens.poisson() gave a warning upon a summary().
+        Thanks to Jens Heumann for picking this up.
+    o   bisection.basic() returns a warning, not an error, if
+        it cannot find an interval which covers the root.
+    o   Rank() has an improved implementation and documentation.
+    o   anova.vglm() had some bugs---thanks to Thamron Keowmani for
+        finding them.
+    o   posnormal() failed when 'constraints' was inputted---thanks
+        to Michael Zamo for picking this up.
+    o   Improvements to yules(dq).
+
+
+
+                CHANGES IN VGAM VERSION 1.1-1
 
 NEW FEATURES
 
@@ -15,7 +68,7 @@ NEW FEATURES
         (quantile link functions in \pkg{VGAMextra}),
         e.g., benini1(), gamma1(), exponential(), maxwell(), rayleigh(),
         topple().
-    o   Tested okay on R 3.5.2.
+    o   Tested okay on R 3.5.3.
 
 
 

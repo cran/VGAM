@@ -1,6 +1,6 @@
 \name{foldsqrtlink}
 \alias{foldsqrtlink}
-\alias{foldsqrt}
+% \alias{foldsqrt}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Folded Square Root Link Function }
 \description{

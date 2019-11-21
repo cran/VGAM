@@ -1,7 +1,7 @@
 \name{kumar}
 \alias{kumar}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Kumaraswamy Distribution Family Function}
+\title{Kumaraswamy Regression Family Function}
 \description{
   Estimates the two parameters of the Kumaraswamy distribution
   by maximum likelihood estimation.

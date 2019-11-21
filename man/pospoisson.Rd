@@ -85,7 +85,7 @@ The equilibrium size distribution of freely-forming groups.
 }
 \seealso{
   \code{\link{Pospois}},
-  \code{\link{gentpoisson}},
+  \code{\link{gatpoisson.mlm}},
   \code{\link{posnegbinomial}},
   \code{\link{poissonff}},
   \code{\link{otpospoisson}},

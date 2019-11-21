@@ -1,6 +1,6 @@
 \name{logofflink}
 \alias{logofflink}
-\alias{logoff}
+% \alias{logoff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log Link Function with an Offset }
 \description{

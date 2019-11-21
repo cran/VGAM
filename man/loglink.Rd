@@ -1,11 +1,11 @@
 \name{loglink}
 %\name{loge}
 \alias{loglink}
-\alias{loge}
+%\alias{loge}
 \alias{negloglink}
-\alias{negloge}
+%\alias{negloge}
 \alias{logneglink}
-\alias{logneg}
+%\alias{logneg}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log Link Function, and Variants }
 \description{

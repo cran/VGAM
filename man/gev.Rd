@@ -2,7 +2,7 @@
 \alias{gev}
 \alias{gevff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generalized Extreme Value Distribution Family Function }
+\title{ Generalized Extreme Value Regression Family Function }
 \description{
   Maximum likelihood estimation of the
   3-parameter generalized extreme value (GEV) distribution.

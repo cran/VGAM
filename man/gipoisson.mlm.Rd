@@ -1,6 +1,6 @@
-\name{genipoisson}
-\alias{genipoisson}
-%\alias{genipoissonff}
+\name{gipoisson.mlm}
+\alias{gipoisson.mlm}
+%\alias{gipoisson.mlmff}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Generally-Inflated Poisson Distribution Family Function}
 \description{
@@ -13,10 +13,10 @@
   
 }
 \usage{
-genipoisson(inflate = 0, zero = NULL, llambda = "loglink",
-           type.fitted = c("mean", "lambda", "pstr.i", "onempstr.i"),
-           imethod = 1, mux.inflate = 0.5, ipstr0 = NULL,
-           ilambda = NULL, ishrinkage = 0.95, probs.y = 0.35)
+gipoisson.mlm(inflate = 0, zero = NULL, llambda = "loglink",
+  type.fitted = c("mean", "lambda", "pstr.i", "onempstr.i", "Pstr.i"),
+  imethod = 1, mux.inflate = 0.5, ipstr0 = NULL,
+  ilambda = NULL, ishrinkage = 0.95, probs.y = 0.35)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,7 +41,8 @@ genipoisson(inflate = 0, zero = NULL, llambda = "loglink",
   See \code{\link{CommonVGAMffArguments}} for information.
   The choice \code{"pstr.i"} is the sum of the structural probabilities
   and \code{"onempstr.i"} is its complement.
-  
+  See below for more details.
+
 
   }
 
@@ -101,7 +102,7 @@ genipoisson(inflate = 0, zero = NULL, llambda = "loglink",
   Deflation or very little inflation will result in numerical problems.
   The \code{inflate} argument should not be assigned a vector
   having too many values.
-  Probably \code{\link{genapoisson}} is recommended in general
+  Probably \code{\link{gatpoisson.mlm}} is recommended in general
   instead as it handles deflation and inflation.
 
   
@@ -123,6 +124,8 @@ genipoisson(inflate = 0, zero = NULL, llambda = "loglink",
   returns the mean (default).
   The choice \code{type.fitted = "pstr.i"} returns the sum of all
   the inflated probabilities.
+  The choice \code{type.fitted = "Pstr.i"} returns the individual
+  inflated probabilities, as a matrix.
 
 
 
@@ -175,9 +178,8 @@ genipoisson(inflate = 0, zero = NULL, llambda = "loglink",
 }
 
 \seealso{
-  \code{\link{Genipois}},
-  \code{\link{genapoisson}},
-  \code{\link{gentpoisson}},
+  \code{\link{Gaitpois.mlm}},
+  \code{\link{gatpoisson.mlm}},
   \code{\link{zipoisson}},
   \code{\link{zipoissonff}},
   \code{\link{multinomial}},
@@ -185,7 +187,7 @@ genipoisson(inflate = 0, zero = NULL, llambda = "loglink",
   \code{\link{simulate.vlm}}.
 
 
-% \code{\link{rgenipois}},
+% \code{\link{rgaitpois.mlm}},
 
 
 
@@ -199,18 +201,18 @@ gdata <- transform(gdata, lambda1   = exp(1 + 2 * x2 + 0.5 * x3),
                           lambda2   = exp(1 - 1 * x2 + 0.5 * x3),
                           lambda3   = exp(1))
 gdata <- transform(gdata,
-  y1 = rgenipois(nn, lambda1, pstr.i = c(0.2, 0.3), byrow = TRUE,
-                 inflate = ivec),
-  y2 = rgenipois(nn, lambda2, pstr.i = c(0.2, 0.3), byrow = TRUE,
-                 inflate = ivec),
-  y3 = rgenipois(nn, lambda3, pstr.i = c(0.2, 0.3), byrow = TRUE,
-                 inflate = ivec))
-genipoisson(inflate = ivec)
+  y1 = rgaitpois.mlm(nn, lambda1, pstr.i = c(0.2, 0.3), byrow = TRUE,
+                     inflate = ivec),
+  y2 = rgaitpois.mlm(nn, lambda2, pstr.i = c(0.2, 0.3), byrow = TRUE,
+                     inflate = ivec),
+  y3 = rgaitpois.mlm(nn, lambda3, pstr.i = c(0.2, 0.3), byrow = TRUE,
+                     inflate = ivec))
+gipoisson.mlm(inflate = ivec)
 with(gdata, table(y1))
 with(gdata, table(y2))
 with(gdata, table(y3))
 
-fit1 <- vglm(y1 ~ x2 + x3, genipoisson(inflate = ivec),
+fit1 <- vglm(y1 ~ x2 + x3, gipoisson.mlm(inflate = ivec),
              crit = "coef", trace = TRUE, data = gdata)
 head(fitted(fit1))
 head(predict(fit1))
@@ -218,16 +220,16 @@ coef(fit1, matrix = TRUE)
 # summary(fit1)  # Currently does not work!!
 
 # Another example ------------------------------
-fit3 <- vglm(y3 ~ 1, genipoisson(inflate = ivec), gdata, trace = TRUE)
+fit3 <- vglm(y3 ~ 1, gipoisson.mlm(inflate = ivec), gdata, trace = TRUE)
 coef(fit3, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}
 
 
-%genipoisson(lpobs0 = "logitlink", llambda = "loglink",
+%gipoisson.mlm(lpobs0 = "logitlink", llambda = "loglink",
 %   type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
-%genipoissonff(llambda = "loglink", lonempobs0 = "logitlink",
+%gipoisson.mlmff(llambda = "loglink", lonempobs0 = "logitlink",
 %   type.fitted = c("mean", "pobs0", "onempobs0"), zero = "onempobs0")
 
 

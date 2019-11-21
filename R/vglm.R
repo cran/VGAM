@@ -48,7 +48,9 @@ vglm <-
   y <- model.response(mf, "any")  # model.extract(mf, "response")
   x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
        matrix(, NROW(y), 0)
+  oasgn <- attr(x, "assign")
   attr(x, "assign") <- attrassigndefault(x, mt)
+  attr(x, "orig.assign.lm") <- oasgn  # May be useful for add1.vglm().
 
 
 

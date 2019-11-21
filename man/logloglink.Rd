@@ -68,7 +68,7 @@ loglogloglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 
 }
 \value{
-  For \code{loglog()}:
+  For \code{logloglink()}:
   for \code{deriv = 0}, the log of \code{log(theta)}, i.e.,
   \code{log(log(theta))} when \code{inverse = FALSE},
   and if \code{inverse = TRUE} then
@@ -124,7 +124,7 @@ logloglink(x, bvalue = 1.0 + .Machine$double.eps)  # Has no NAs
 
 x <- seq(1.01, 10, len = 100)
 logloglink(x)
-max(abs(logloglink(loglog(x), inverse = TRUE) - x))  # Should be 0
+max(abs(logloglink(logloglink(x), inverse = TRUE) - x))  # Should be 0
 }
 \keyword{math}
 \keyword{models}

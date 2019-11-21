@@ -187,7 +187,7 @@ Agresti, A. (2010)
 
 Dobson, A. J. and Barnett, A. (2008)
 \emph{An Introduction to Generalized Linear Models},
-3rd ed. Boca Raton: Chapman & Hall/CRC Press.
+3rd ed. Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 
 
 McCullagh, P. and Nelder, J. A. (1989)

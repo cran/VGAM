@@ -357,6 +357,7 @@ setMethod("AIC", "rrvgam",
 
 
 
+
 if (!isGeneric("AICc"))
   setGeneric("AICc", function(object, ..., k = 2)
              standardGeneric("AICc"),

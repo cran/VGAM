@@ -1,7 +1,7 @@
 \name{nakagami}
 \alias{nakagami}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Nakagami Distribution Family Function }
+\title{ Nakagami Regression Family Function }
 \description{
   Estimation of the two parameters of the
   Nakagami distribution by maximum likelihood estimation.

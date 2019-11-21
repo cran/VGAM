@@ -1,7 +1,7 @@
 \name{gpd}
 \alias{gpd}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generalized Pareto Distribution Family Function }
+\title{ Generalized Pareto Distribution Regression Family Function }
 \description{
   Maximum likelihood estimation of the 2-parameter
   generalized  Pareto distribution (GPD).

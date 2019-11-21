@@ -2,7 +2,7 @@
 \alias{rayleigh}
 \alias{cens.rayleigh}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Rayleigh Distribution Family Function }
+\title{Rayleigh Regression Family Function }
 \description{
   Estimating the parameter of the Rayleigh distribution by maximum
   likelihood estimation. Right-censoring is allowed.

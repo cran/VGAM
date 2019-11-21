@@ -1,7 +1,7 @@
 \name{nbordlink}
 %\name{nbolf}
 \alias{nbordlink}
-\alias{nbolf}
+% \alias{nbolf}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Negative Binomial-Ordinal Link Function }
 \description{

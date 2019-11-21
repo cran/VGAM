@@ -110,6 +110,8 @@ for counts with extra zeros.
 %}
 
 \seealso{
+  \code{\link{gatnbinomial.mlm}},
+  \code{\link{Gaitnbinom.mlm}},
   \code{\link{posnegbinomial}},
   \code{\link{zanegbinomial}},
   \code{\link{zinegbinomial}},

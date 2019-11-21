@@ -221,7 +221,7 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
     \code{\link{cqo}},
     \code{\link{cao}},
     \code{\link{betabinomial}},
-    \code{\link{gentbinomial}},
+    \code{\link{gtbinomial}},
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
     \code{\link{double.expbinomial}},
@@ -254,9 +254,10 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
   The maximum likelihood estimate will not exist if the data is
   \emph{completely separable} or \emph{quasi-completely separable}.
   See Chapter 10 of Altman et al. (2004) for more details,
-  and \pkg{safeBinaryRegression}.
-  Yet to do: add a \code{sepcheck = TRUE}, say, argument to detect this
-  problem and give an appropriate warning.
+  and \pkg{safeBinaryRegression}
+  and \code{\link{hdeff.vglm}}.
+  Yet to do: add a \code{sepcheck = TRUE}, say, argument to
+  further detect this problem and give an appropriate warning.
 
 
 }
@@ -270,14 +271,12 @@ plot(agaaus ~ jitter(altitude), shunua, ylab = "Pr(Agaaus = 1)",
      main = "Presence/absence of Agathis australis", col = 4, las = 1)
 with(shunua, lines(altitude, fitted(fit), col = "orange", lwd = 2)) }
 
-
 # Fit two species simultaneously
 fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude),
              binomialff(multiple.responses = TRUE), data = shunua)
 \dontrun{
 with(shunua, matplot(altitude, fitted(fit2), type = "l",
      main = "Two species response curves", las = 1)) }
-
 
 # Shows that Fisher scoring can sometime fail. See Ridout (1990).
 ridout <- data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = rep(5, 3))
@@ -290,7 +289,6 @@ coef(glm.fail)
 vglm.ok <- vglm(cbind(r, n-r) ~ offset(logv) + 1,
                binomialff(link = clogloglink), ridout, trace = TRUE)
 coef(vglm.ok)
-
 
 # Separable data
 set.seed(123)
@@ -319,6 +317,6 @@ abline(v = threshold, col = "gray", lty = "dashed") }
 
 
 %quasibinomialff()
-%quasibinomialff(link = "probit")
+%quasibinomialff(link = "probitlink")
 
 

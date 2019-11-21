@@ -503,11 +503,13 @@ The \code{VGAM} Package.
   \code{\link{rrvglm}},
   \code{\link{vgam}}.
   Methods functions include
+  \code{\link{add1.vglm}},
   \code{\link{anova.vglm}},
   \code{\link{AICvlm}},
   \code{\link{coefvlm}},
   \code{\link{confintvglm}},
   \code{\link{constraints.vlm}},
+  \code{\link{drop1.vglm}},
   \code{\link{fittedvlm}},
   \code{\link{hatvaluesvlm}},
   \code{\link{hdeff.vglm}},
@@ -520,8 +522,10 @@ The \code{VGAM} Package.
   \code{\link{plotvglm}},
   \code{\link{predictvglm}},
   \code{\link{residualsvglm}},
+  \code{\link{step4vglm}},
   \code{\link{summaryvglm}},
   \code{\link{lrtest_vglm}},
+  \code{\link[stats]{update}},
   etc.
 
 
@@ -566,8 +570,8 @@ eyesdat <- round(data.frame(lop = runif(nn),
 eyesdat <- transform(eyesdat, eta1 = -1 + 2 * lop,
                               eta2 = -1 + 2 * lop)
 eyesdat <- transform(eyesdat,
-           leye = rbinom(nn, size = 1, prob = logit(eta1, inverse = TRUE)),
-           reye = rbinom(nn, size = 1, prob = logit(eta2, inverse = TRUE)))
+           leye = rbinom(nn, size = 1, prob = logitlink(eta1, inverse = TRUE)),
+           reye = rbinom(nn, size = 1, prob = logitlink(eta2, inverse = TRUE)))
 head(eyesdat)
 fit5 <- vglm(cbind(leye, reye) ~ op,
              binom2.or(exchangeable = TRUE, zero = 3),
