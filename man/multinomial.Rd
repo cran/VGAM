@@ -119,48 +119,48 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 }
 \references{
 
-Yee, T. W. (2010)
+Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-McCullagh, P. and Nelder, J. A. (1989)
+McCullagh, P. and Nelder, J. A. (1989).
 \emph{Generalized Linear Models}, 2nd ed.
 London: Chapman & Hall.
 
 
-Agresti, A. (2013)
+Agresti, A. (2013).
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
 
 
-Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009)
+Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009).
 \emph{The Elements of Statistical Learning: Data Mining,
       Inference and Prediction},
 2nd ed.
 New York, USA: Springer-Verlag.
 
 
-Simonoff, J. S. (2003)
+Simonoff, J. S. (2003).
 \emph{Analyzing Categorical Data},
 New York, USA: Springer-Verlag.
 
 
-Anderson, J. A. (1984)
+Anderson, J. A. (1984).
 Regression and ordered categorical variables.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{46}, 1--30.
 
 
-Tutz, G. (2012)
+Tutz, G. (2012).
 \emph{Regression for Categorical Data},
 Cambridge University Press.
 
@@ -240,6 +240,7 @@ Cambridge University Press.
 
 }
 \seealso{
+    \code{\link{multilogitlink}},
     \code{\link{margeff}},
     \code{\link{cumulative}},
     \code{\link{acat}},
@@ -250,10 +251,14 @@ Cambridge University Press.
     \code{\link{rrvglm}},
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
-    \code{\link{multilogitlink}},
+    \code{\link{Gaitpois}},
+    \code{\link{gatnbinomial.mlm}},
     \code{\link[datasets]{iris}}.
-  The author's homepage has further documentation about
-  categorical data analysis using \pkg{VGAM}.
+
+
+
+% The author's homepage has further documentation about
+% categorical data analysis using \pkg{VGAM}.
 
 
 }

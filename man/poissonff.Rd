@@ -128,7 +128,7 @@ poissonff(link = "loglink", imu = NULL,
 }
 \references{
 
- McCullagh, P. and Nelder, J. A. (1989)
+ McCullagh, P. and Nelder, J. A. (1989).
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
@@ -170,7 +170,8 @@ poissonff(link = "loglink", imu = NULL,
     \code{\link{hdeff.vglm}},
     \code{\link{negbinomial}},
     \code{\link{genpoisson}},
-    \code{\link{gatpoisson.mlm}},
+    \code{\link{gaitpoisson.mix}},
+    \code{\link{gaitpoisson.mlm}},
     \code{\link{zipoisson}},
     \code{\link{pospoisson}},
     \code{\link{oipospoisson}},
@@ -193,6 +194,7 @@ poissonff(link = "loglink", imu = NULL,
     \code{\link{poisson.points}},
     \code{\link{ruge}},
     \code{\link{V1}},
+    \code{\link{V2}},
     \code{\link{residualsvglm}}.
 
 

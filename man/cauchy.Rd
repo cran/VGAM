@@ -95,25 +95,25 @@ cauchy1(scale.arg = 1, llocation = "identitylink", ilocation = NULL,
 
 \references{
 
-Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011).
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
-Barnett, V. D. (1966)
+Barnett, V. D. (1966).
 Evaluation of the maximum-likehood estimator where the
 likelihood equation has multiple roots.
 \emph{Biometrika},
 \bold{53}, 151--165.
 
 
-Copas, J. B. (1975)
+Copas, J. B. (1975).
 On the unimodality of the likelihood for the Cauchy distribution.
 \emph{Biometrika},
 \bold{62}, 701--704.
 
 
-Efron, B. and Hinkley, D. V. (1978)
+Efron, B. and Hinkley, D. V. (1978).
 Assessing the accuracy of the maximum likelihood estimator:
 Observed versus expected Fisher information.
 \emph{Biometrika},

@@ -66,7 +66,7 @@ yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
 }
 \references{
 
-    Simon, H. A. (1955)
+    Simon, H. A. (1955).
     On a class of skew distribution functions.
     \emph{Biometrika},
     \bold{42},

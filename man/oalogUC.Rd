@@ -54,6 +54,7 @@ roalog(n, shape, pobs1 = 0)
 }
 
 \seealso{
+  \code{\link{Gaitlog}},
     \code{\link{oalog}},
     \code{\link{oilog}},
     \code{\link{Otlog}}.

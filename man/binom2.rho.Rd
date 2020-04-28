@@ -136,17 +136,17 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
 }
 
 \references{
-Ashford, J. R. and Sowden, R. R. (1970)
+Ashford, J. R. and Sowden, R. R. (1970).
     Multi-variate probit analysis.
     \emph{Biometrics}, \bold{26}, 535--546.
 
 
-Freedman, D. A. (2010)
+Freedman, D. A. (2010).
 \emph{Statistical Models and Causal Inference: a Dialogue with
       the Social Sciences}, Cambridge: Cambridge University Press.
 
 
-Freedman, D. A. and Sekhon, J. S. (2010)
+Freedman, D. A. and Sekhon, J. S. (2010).
   Endogeneity in probit response models.
   \emph{Political Analysis},
   \bold{18}, 138--150.

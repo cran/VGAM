@@ -65,9 +65,9 @@ rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
 \references{
 
 
-  pp.146--152 of
-  Gupta, A. K. and Nadarajah, S. (2004)
+  Gupta, A. K. and Nadarajah, S. (2004).
   \emph{Handbook of Beta Distribution and Its Applications},
+  pp.146--152.
   New York: Marcel Dekker.
 
 

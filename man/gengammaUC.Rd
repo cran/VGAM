@@ -61,7 +61,7 @@ rgengamma.stacy(n, scale = 1, d, k)
 }
 \references{
 
-Stacy, E. W. and Mihram, G. A. (1965)
+Stacy, E. W. and Mihram, G. A. (1965).
 Parameter estimation for a generalized gamma distribution.
 \emph{Technometrics}, \bold{7}, 349--358.
 

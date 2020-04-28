@@ -48,7 +48,7 @@ rmaxwell(n, rate)
 }
 \references{
 
-  Balakrishnan, N. and Nevzorov, V. B. (2003)
+  Balakrishnan, N. and Nevzorov, V. B. (2003).
   \emph{A Primer on Statistical Distributions}.
   Hoboken, New Jersey: Wiley.
 

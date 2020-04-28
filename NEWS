@@ -1,3 +1,45 @@
+                CHANGES IN VGAM VERSION 1.1-3
+
+NEW FEATURES
+
+    o   New functions: [dpqr]gaitpois(), [dpqr]gaitlog(), [dpqr]gaitzeta(),
+        dextlogF().
+    o   New family functions: gatnbinomial.mix(dpqr),
+        gaitlog.mix(dpqr), gaitpoisson.mix(dpqr), gaitpoisson.mlm(dpqr),
+        extlogF1(d).
+    o   New generic and/or methods functions: altered(),
+        inflated(), truncated(), specialsvglm(),
+        fix.crossing(), is.crossing().
+    o   Coef.vlm() handles models with contiguous "multilogitlink"s,
+        e.g., gaitpoisson.mlm().
+    o   get.offset() is now defined as a generic function (returns the
+        n x M matrix of offsets by default).
+    o   Some .f files have been pruned of unnecessary code.
+    o   New data set: V2.
+    o   Tested okay on R 4.0.0.
+
+
+
+BUG FIXES and CHANGES
+
+    o   Another attempt to .Deprecated()  all link function names
+        which do not end in "link", e.g., loglink() replaces loge(),
+        logitlink() replaces logit().
+    o   gatpoisson.mix() (now merged into gaitpoisson.mix())
+        reorders its linear/additive predictors and now handles
+        length(alter) == 0 (default, so equivalent to poissonff())
+        and length(alter) == 1.
+        Ditto for gatnbinomial.mlm(), etc.
+    o   Three argument mismatches found in .f and .c code.
+    o   qlog() and qyules() buggy wrt interval selection prior to
+        applying bisection.
+    o   'Rank mismatches' flagged by gfortran10 fixed, by not
+        calling two subroutines.
+    o   [dpqr]gaitpois.mlm() and [dpqr]gaitpois.mix() have been combined into
+        [dpqr]gaitpois().
+
+
+
                 CHANGES IN VGAM VERSION 1.1-2
 
 NEW FEATURES
@@ -6,8 +48,8 @@ NEW FEATURES
         dfterms(), drop1.vglm(), extractAIC.vglm(),
         rootogram4vglm() [based on \pkg{countreg}],
         step4vglm().
-    o   New family functions: gabinomial.mlm(), gatnegbinomial.mix(dpqr),
-        gatpoisson.mix(dpqr).
+    o   New family functions: gabinomial.mlm(), gatnbinomial.mlm(dpqr),
+        gatpoisson.mix(dpqr), gatpoisson.mlm(dpqr).
     o   New functions: [dpqr]zipfmb(),
         [dpqr]gaitbinom.mlm(), [dpqr]gaitnbinom.mlm(),
         [dpqr]gaitpois.mlm(),  [dpqr]gaitnbinom.mix(),
@@ -20,7 +62,7 @@ NEW FEATURES
         [dpqr]gibinom(), [dpqr]gipois(),
         [dpqr]gtbinom(), [dpqr]gtpois().
     o   eta2theta() should be able to handle links for, e.g.,
-        gatpoisson(), gibinomial().
+        gatpoisson.mlm(), gibinomial().
     o   posbernoulli.t() has a 'type.fitted' argument.
     o   gtpoisson.mlm() supports type.fitted = "Pobs.a",
         gipoisson.mlm() supports type.fitted = "Pstr.i".

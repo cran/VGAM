@@ -57,7 +57,7 @@ rlgamma(n, location = 0, scale = 1, shape = 1)
 }
 \references{
 
-Kotz, S. and Nadarajah, S. (2000)
+Kotz, S. and Nadarajah, S. (2000).
 \emph{Extreme Value Distributions: Theory and Applications},
 pages 48--49,
 London: Imperial College Press.

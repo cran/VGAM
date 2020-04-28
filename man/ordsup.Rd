@@ -123,7 +123,7 @@ number of specific models.
 }
 \references{
 
-  Agresti, A. and Kateri, M., 2017.
+  Agresti, A. and Kateri, M. (2017).
   Ordinal probability effect measures for group
   comparisons in multinomial cumulative link models.
   \emph{Biometrics}, \bold{73}, 214--219.

@@ -17,10 +17,12 @@ data(leukemia)
   }
 }
 \source{
-  Rupert G. Miller (1997),
+  Rupert G. Miller (1997).
   \emph{Survival Analysis}.
   John Wiley & Sons.
-  ISBN: 0-471-25218-2.
+
+
+% ISBN: 0-471-25218-2.
 
 
 }

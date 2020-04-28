@@ -222,17 +222,17 @@ gpd(threshold = 0, lscale = "loglink", lshape = logofflink(offset = 0.5),
 
 }
 \references{
-  Yee, T. W. and Stephenson, A. G. (2007)
+  Yee, T. W. and Stephenson, A. G. (2007).
   Vector generalized linear and additive extreme value models.
   \emph{Extremes}, \bold{10}, 1--19.
 
 
-  Coles, S. (2001)
+  Coles, S. (2001).
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.
 
 
-  Smith, R. L. (1985)
+  Smith, R. L. (1985).
   Maximum likelihood estimation in a class of nonregular cases.
   \emph{Biometrika}, \bold{72}, 67--90.
 

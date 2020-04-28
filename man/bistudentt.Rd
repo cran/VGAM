@@ -65,7 +65,7 @@ bistudentt(ldf = "logloglink", lrho = "rhobitlink",
 
 \references{
 
-Schepsmeier, U. and Stober, J. (2013)
+Schepsmeier, U. and Stober, J. (2013).
 Derivatives and Fisher information of bivariate copulas.
 \emph{Statistical Papers}.
 

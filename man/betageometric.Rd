@@ -88,7 +88,7 @@ betageometric(lprob = "logitlink", lshape = "loglink",
 
 }
 \references{
-  Paul, S. R. (2005)
+  Paul, S. R. (2005).
   Testing goodness of fit of the geometric distribution:
   an application to human fecundability data.
   \emph{Journal of Modern Applied Statistical Methods}, \bold{4}, 425--433.

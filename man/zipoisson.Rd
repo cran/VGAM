@@ -155,24 +155,24 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
 }
 \references{
 
-  Thas, O. and Rayner, J. C. W. (2005)
+  Thas, O. and Rayner, J. C. W. (2005).
   Smooth tests for the zero-inflated Poisson distribution.
   \emph{Biometrics},
   \bold{61}, 808--815.
 
 
-  Data: Angers, J-F. and Biswas, A. (2003)
+  Data: Angers, J-F. and Biswas, A. (2003).
   A Bayesian analysis of zero-inflated generalized Poisson model.
   \emph{Computational Statistics & Data Analysis},
   \bold{42}, 37--46.
 
 
-  Cameron, A. C. and Trivedi, P. K. (1998)
+  Cameron, A. C. and Trivedi, P. K. (1998).
   \emph{Regression Analysis of Count Data}.
   Cambridge University Press: Cambridge.
 
 
-  Yee, T. W. (2014)
+  Yee, T. W. (2014).
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis},
   \bold{71}, 889--902.
@@ -241,7 +241,8 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
 }
 
 \seealso{
-  \code{\link{gatpoisson.mlm}},
+  \code{\link{gaitpoisson.mix}},
+  \code{\link{gaitpoisson.mlm}},
   \code{\link{zapoisson}},
   \code{\link{Zipois}},
   \code{\link{yip88}},

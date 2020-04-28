@@ -66,7 +66,7 @@ cardioid(lmu = extlogitlink(min = 0, max = 2*pi),
 }
 \references{
 
-Jammalamadaka, S. R. and SenGupta, A. (2001)
+Jammalamadaka, S. R. and SenGupta, A. (2001).
 \emph{Topics in Circular Statistics},
 Singapore: World Scientific.
 

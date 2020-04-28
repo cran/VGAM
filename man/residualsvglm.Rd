@@ -161,18 +161,18 @@ leverage.
 }
 \references{
 
-  Agresti, A. (2007)
+  Agresti, A. (2007).
   \emph{An Introduction to Categorical Data Analysis, 2nd ed.},
   New York: John Wiley & Sons.
   Page 38.
 
 
-  Agresti, A. (2013)
+  Agresti, A. (2013).
   \emph{Categorical Data Analysis, 3rd ed.},
   New York: John Wiley & Sons.
 
 
-  Agresti, A. (2018)
+  Agresti, A. (2018).
   \emph{An Introduction to Categorical Data Analysis, 3rd ed.},
   New York: John Wiley & Sons.
 

@@ -63,14 +63,14 @@ triangle(lower = 0, upper = 1,
 \references{
 
 
-Kotz, S. and van Dorp, J. R. (2004)
+Kotz, S. and van Dorp, J. R. (2004).
 Beyond Beta: Other Continuous Families of Distributions
 with Bounded Support and Applications.
 Chapter 1.
 World Scientific: Singapore.
 
 
-Nguyen, H. D. and McLachlan, G. J. (2016)
+Nguyen, H. D. and McLachlan, G. J. (2016).
 Maximum likelihood estimation of triangular and polygon distributions.
 \emph{Computational Statistics and Data Analysis},
 \bold{102}, 23--36.

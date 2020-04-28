@@ -78,7 +78,7 @@ calibrate.qrrvglm.control(object, trace = FALSE, method.optim = "BFGS",
 }
 \references{
 
-Yee, T. W. (2018)
+Yee, T. W. (2020).
 On constrained and unconstrained quadratic ordination.
 \emph{Manuscript in preparation}.
 

@@ -49,7 +49,7 @@ See \code{\link{cqo}} for details.
 \references{
 
 
-Van der Aart, P. J. M. and Smeek-Enserink, N. (1975)
+Van der Aart, P. J. M. and Smeek-Enserink, N. (1975).
 Correlations between distributions of hunting spiders
 (Lycosidae, Ctenidae) and environmental characteristics
 in a dune area.

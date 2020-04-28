@@ -74,12 +74,12 @@ brat(refgp = "last", refvalue = 1, ialpha = 1)
 
 }
 \references{
-Agresti, A. (2013)
+Agresti, A. (2013).
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
 
 
-Stigler, S. (1994)
+Stigler, S. (1994).
 Citation patterns in the journals of statistics and probability.
 \emph{Statistical Science},
 \bold{9}, 94--108.

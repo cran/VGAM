@@ -153,16 +153,16 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
 
 }
 \references{
-  McCullagh, P. and Nelder, J. A. (1989)
+  McCullagh, P. and Nelder, J. A. (1989).
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
-  Altman, M. and Gill, J. and McDonald, M. P. (2004)
+  Altman, M. and Gill, J. and McDonald, M. P. (2004).
   \emph{Numerical Issues in Statistical Computing for the Social
         Scientist}, Hoboken, NJ, USA: Wiley-Interscience.
 
 
-  Ridout, M. S. (1990)
+  Ridout, M. S. (1990).
   Non-convergence of Fisher's method of scoring---a simple example.
   \emph{GLIM Newsletter}, 20(6).
 

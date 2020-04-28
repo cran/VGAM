@@ -149,27 +149,27 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
 \references{
 
 
-Huggins, R. M. (1991)
+Huggins, R. M. (1991).
 Some practical aspects of a conditional likelihood
 approach to capture experiments.
 \emph{Biometrics},
 \bold{47}, 725--732.
 
 
-Huggins, R. M. and Hwang, W.-H. (2011)
+Huggins, R. M. and Hwang, W.-H. (2011).
 A review of the use of conditional likelihood in
 capture--recapture experiments.
 \emph{International Statistical Review},
 \bold{79}, 385--400.
 
 
-  Otis, D. L. and Burnham, K. P. and White, G. C. and Anderson, D. R. (1978)
+  Otis, D. L. and Burnham, K. P. and White, G. C. and Anderson, D. R. (1978).
   Statistical inference from capture data on closed animal populations,
   \emph{Wildlife Monographs},
   \bold{62}, 3--135.
 
 
-Yee, T. W. and Stoklosa, J. and Huggins, R. M. (2015)
+Yee, T. W. and Stoklosa, J. and Huggins, R. M. (2015).
 The \pkg{VGAM} package for capture--recapture data using the
 conditional likelihood.
   \emph{Journal of Statistical Software},

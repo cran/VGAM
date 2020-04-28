@@ -55,13 +55,13 @@ lindley(link = "loglink", itheta = NULL, zero = NULL)
 }
 \references{
 
-Lindley, D. V. (1958)
+Lindley, D. V. (1958).
 Fiducial distributions and Bayes' theorem.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{20}, 102--107.
 
 
-Ghitany, M. E. and Atieh, B. and Nadarajah, S. (2008)
+Ghitany, M. E. and Atieh, B. and Nadarajah, S. (2008).
 Lindley distribution and its application.
 \emph{Math. Comput. Simul.},
 \bold{78}, 493--506.

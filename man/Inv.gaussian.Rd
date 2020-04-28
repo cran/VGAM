@@ -42,14 +42,14 @@ rinv.gaussian(n, mu, lambda)
 
 }
 \references{
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994).
 \emph{Continuous Univariate Distributions},
 2nd edition,
 Volume 1,
 New York: Wiley.
 
 
-  Taraldsen, G. and Lindqvist, B. H. (2005)
+  Taraldsen, G. and Lindqvist, B. H. (2005).
   The multiple roots simulation algorithm,
   the inverse Gaussian distribution, and the
   sufficient conditional Monte Carlo method.

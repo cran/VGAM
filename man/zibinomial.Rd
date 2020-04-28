@@ -128,7 +128,7 @@ zibinomialff(lprob = "logitlink", lonempstr0 = "logitlink",
 \references{
 
 
-Welsh, A. H., Lindenmayer, D. B. and Donnelly, C. F. (2013)
+Welsh, A. H., Lindenmayer, D. B. and Donnelly, C. F. (2013).
 Fitting and interpreting occupancy models.
 \emph{PLOS One},
 \bold{8},

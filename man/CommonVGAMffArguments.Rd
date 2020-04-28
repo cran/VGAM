@@ -558,7 +558,7 @@ In the future, most \pkg{VGAM} family functions might be converted
 
 
 
-Yee, T. W. (2015)
+Yee, T. W. (2015).
 Vector Generalized Linear and Additive Models:
 With an Implementation in R.
 New York, USA: \emph{Springer}.
@@ -566,20 +566,20 @@ New York, USA: \emph{Springer}.
 
 
 
-Kosmidis, I. and Firth, D. (2009)
+Kosmidis, I. and Firth, D. (2009).
 Bias reduction in exponential family nonlinear models.
 \emph{Biometrika},
 \bold{96}(4), 793--804.
 
 
-%Kosmidis, I. and Firth, D. (2010)
+%Kosmidis, I. and Firth, D. (2010).
 %A generic algorithm for reducing bias in parametric estimation.
 %\emph{Electronic Journal of Statistics},
 %\bold{4}, 1097--1112.
 
 
 
-Miranda-Soberanis, V. F. and Yee, T. W. (2018)
+Miranda-Soberanis, V. F. and Yee, T. W. (2018).
 New link functions for distribution--specific
 quantile regression based on vector generalized linear and
 additive models.
@@ -593,8 +593,7 @@ Manuscript in preparation.
 \seealso{
   \code{\link{Links}},
   \code{\link{vglmff-class}},
-  \code{\link{UtilitiesVGAM}},
-  \code{\link{normal.vcm}},
+  \code{\link{UtilitiesVGAM}}, \code{\link{normal.vcm}},
   \code{\link{multilogitlink}},
   \pkg{VGAMextra}.
 

@@ -93,7 +93,7 @@ double.expbinomial(lmean = "logitlink", ldispersion = "logitlink",
 }
 \references{
 
-  Efron, B. (1986)
+  Efron, B. (1986).
   Double exponential families and their use in generalized linear regression.
   \emph{Journal of the American Statistical Association},
   \bold{81}, 709--721.

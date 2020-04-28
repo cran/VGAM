@@ -87,7 +87,7 @@ expexpff(lrate = "loglink", lshape = "loglink",
 
 }
 \references{
-  Gupta, R. D. and Kundu, D. (2001)
+  Gupta, R. D. and Kundu, D. (2001).
   Exponentiated exponential family: an alternative to
   gamma and Weibull distributions,
   \emph{Biometrical Journal},
@@ -95,7 +95,7 @@ expexpff(lrate = "loglink", lshape = "loglink",
   117--130.
 
 
-  Gupta, R. D. and Kundu, D. (2006)
+  Gupta, R. D. and Kundu, D. (2006).
   On the comparison of Fisher information of the
   Weibull and GE distributions,
   \emph{Journal of Statistical Planning and Inference},

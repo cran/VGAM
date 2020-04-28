@@ -76,7 +76,7 @@ betaprime(lshape = "loglink", ishape1 = 2, ishape2 = NULL, zero = NULL)
 %% zz not sure about the JKB reference.
 \references{
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995).
 Chapter 25 of:
 \emph{Continuous Univariate Distributions},
 2nd edition,

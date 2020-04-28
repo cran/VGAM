@@ -138,7 +138,7 @@ predictvglm(object, newdata = NULL,
 }
 \references{
 
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.

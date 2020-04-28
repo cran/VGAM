@@ -58,7 +58,7 @@ nbordlink(theta, cutpoint = NULL, k = NULL,
 
 }
 \references{
-  Yee, T. W. (2018)
+  Yee, T. W. (2020).
   \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 

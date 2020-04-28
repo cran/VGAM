@@ -41,14 +41,14 @@
 }
 
 \references{
-  Efron, B. (1978)
+  Efron, B. (1978).
   Regression and ANOVA With zero-one data: measures of
   residual variation.
   \emph{Journal of the American Statistical Association},
   \bold{73}, 113--121.
 
 
-  Efron, B. (1986)
+  Efron, B. (1986).
   Double exponential families and their use in generalized linear regression.
   \emph{Journal of the American Statistical Association},
   \bold{81}, 709--721.

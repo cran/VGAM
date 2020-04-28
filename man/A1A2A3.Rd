@@ -50,7 +50,7 @@ A1A2A3(link = "logitlink", inbreeding = FALSE, ip1 = NULL, ip2 = NULL, iF = NULL
 }
 \references{
 
-Lange, K. (2002)
+Lange, K. (2002).
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed. New York: Springer-Verlag.
 

@@ -69,23 +69,23 @@ amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 
 }
 \references{
-  Efron, B. (1991)
+  Efron, B. (1991).
   Regression percentiles using asymmetric squared error loss.
   \emph{Statistica Sinica},
   \bold{1}, 93--125.
 
-  Efron, B. (1992)
+  Efron, B. (1992).
   Poisson overdispersion estimates based on the method of
   asymmetric maximum likelihood.
   \emph{Journal of the American Statistical Association},
   \bold{87}, 98--107.
 
-  Koenker, R. and Bassett, G. (1978)
+  Koenker, R. and Bassett, G. (1978).
   Regression quantiles.
   \emph{Econometrica},
   \bold{46}, 33--50.
 
-  Newey, W. K. and Powell, J. L. (1987)
+  Newey, W. K. and Powell, J. L. (1987).
   Asymmetric least squares estimation and testing.
   \emph{Econometrica},
   \bold{55}, 819--847.
@@ -136,6 +136,7 @@ amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 \seealso{
   \code{\link{amlnormal}},
   \code{\link{amlbinomial}},
+  \code{\link{extlogF1}},
   \code{\link{alaplace1}}.
 
 }

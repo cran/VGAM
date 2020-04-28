@@ -59,7 +59,7 @@ levy(location = 0, lscale = "loglink", iscale = NULL)
 
 }
 \references{
-  Nolan, J. P. (2005)
+  Nolan, J. P. (2005).
   \emph{Stable Distributions: Models for Heavy Tailed Data}.
 
 

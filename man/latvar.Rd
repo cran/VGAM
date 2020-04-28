@@ -46,20 +46,20 @@ latvar(object, ...)
 
 }
 \references{
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
 
-Yee, T. W. (2006)
+Yee, T. W. (2006).
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 

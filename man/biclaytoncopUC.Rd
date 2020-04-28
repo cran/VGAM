@@ -55,7 +55,7 @@ rbiclaytoncop(n, apar = 0)
 % A Model for Association in Bivariate Survival Data
 
 
-Clayton, D. (1982)
+Clayton, D. (1982).
 A model for association in bivariate survival data.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{44}, 414--422.

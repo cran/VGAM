@@ -67,7 +67,7 @@ AA.Aa.aa(linkp = "logitlink", linkf = "logitlink", inbreeding = FALSE,
 \references{
 
 
-Weir, B. S. (1996)
+Weir, B. S. (1996).
 \emph{Genetic Data Analysis II: Methods for Discrete Population
       Genetic Data},
 Sunderland, MA: Sinauer Associates, Inc.

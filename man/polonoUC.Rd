@@ -72,7 +72,7 @@ rpolono(n, meanlog = 0, sdlog = 1)
 
 }
 \references{
-  Bulmer, M. G. (1974)
+  Bulmer, M. G. (1974).
   On fitting the Poisson lognormal distribution to species-abundance data.
   \emph{Biometrics},
   \bold{30},

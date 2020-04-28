@@ -85,13 +85,13 @@ lgamma3(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
 }
 \references{
 
-Kotz, S. and Nadarajah, S. (2000)
+Kotz, S. and Nadarajah, S. (2000).
 \emph{Extreme Value Distributions: Theory and Applications},
 pages 48--49,
 London: Imperial College Press.
 
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995).
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 2, p.89,
 New York: Wiley.

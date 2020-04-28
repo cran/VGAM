@@ -48,14 +48,14 @@ bell(n)
 \references{
 
 
-Bell, E. T. (1934)
+Bell, E. T. (1934).
 Exponential polynomials.
 \emph{Ann. Math.},
 \bold{35}, 258--277.
 
 
 
-Bell, E. T. (1934)
+Bell, E. T. (1934).
 Exponential numbers.
 \emph{Amer. Math. Monthly},
 \bold{41}, 411--419.

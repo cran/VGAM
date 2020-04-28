@@ -62,7 +62,7 @@ dgenbetaII(x, scale = 1, shape1.a, shape2.p, shape3.q, log = FALSE)
 }
 \references{
 
-Kleiber, C. and Kotz, S. (2003)
+Kleiber, C. and Kotz, S. (2003).
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.

@@ -165,7 +165,8 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   giving class information about the family function. Although
   not developed at this stage, more flexible classes are planned
   in the future. For example, family functions
-  \code{sratio}, \code{cratio}, \code{cumulative}, and \code{acat}
+  \code{\link{sratio}}, \code{\link{cratio}},
+  \code{\link{cumulative}}, and \code{\link{acat}}
   all operate on categorical data, therefore will have a special class
   called \code{"VGAMcat"}, say. Then if \code{fit} was
   a \code{vglm} object, then \code{coef(fit)} would print
@@ -226,7 +227,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
 }
 \references{
 
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.

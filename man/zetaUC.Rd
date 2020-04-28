@@ -48,19 +48,19 @@ rzeta(n, shape)
 \references{
 
 
-Johnson N. L., Kotz S., and Balakrishnan N. (1993)
+Johnson N. L., Kotz S., and Balakrishnan N. (1993).
 \emph{Univariate Discrete Distributions},
 2nd ed.
 New York: Wiley.
 
 
 
-% Lindsey, J. K. (2002zz)
+% Lindsey, J. K. (2002zz).
 % \emph{Applied Statistical Modelling}, 2nd ed.
 % London: Chapman & Hall.zz
 
 
-% Knight, K. (2002zz)
+% Knight, K. (2002zz).
 % Theory book.
 % London: Chapman & Hall.zz
 

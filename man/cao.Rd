@@ -254,7 +254,7 @@ cao(formula, family = stop("argument 'family' needs to be assigned"),
 }
 
 \references{
-Yee, T. W. (2006)
+Yee, T. W. (2006).
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 

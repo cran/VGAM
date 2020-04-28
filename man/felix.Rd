@@ -50,7 +50,7 @@ felix(lrate = extlogitlink(min = 0, max = 0.5), imethod = 1)
 }
 \references{
 
-Consul, P. C. and Famoye, F. (2006)
+Consul, P. C. and Famoye, F. (2006).
 \emph{Lagrangian Probability Distributions},
 Boston, USA: Birkhauser.
 

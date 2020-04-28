@@ -54,7 +54,7 @@ pordlink(theta, cutpoint = NULL,
 
 }
 \references{
-  Yee, T. W. (2012)
+  Yee, T. W. (2020).
   \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 

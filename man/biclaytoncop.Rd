@@ -62,13 +62,13 @@ biclaytoncop(lapar = "loglink", iapar = NULL, imethod = 1,
 %A Model for Association in Bivariate Survival Data.
 
 
-Clayton, D. (1982)
+Clayton, D. (1982).
 A model for association in bivariate survival data.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{44}, 414--422.
 
 
-Stober, J. and Schepsmeier, U. (2013)
+Stober, J. and Schepsmeier, U. (2013).
 Derivatives and Fisher information of bivariate copulas.
 \emph{Statistical Papers}.
 

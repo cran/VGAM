@@ -43,7 +43,7 @@
 %%}
 \references{
 
-  Fisher, R. A., Corbet, A. S. and Williams, C. B. (1943)
+  Fisher, R. A., Corbet, A. S. and Williams, C. B. (1943).
   The Relation Between the Number of Species and
      the Number of Individuals in a Random Sample of an Animal
      Population.

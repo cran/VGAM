@@ -111,13 +111,13 @@ meplot.vlm(object, ...)
 
 }
 \references{
-Davison, A. C. and Smith, R. L. (1990)
+Davison, A. C. and Smith, R. L. (1990).
 Models for exceedances over high thresholds (with discussion).
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{52}, 393--442.
 
 
-Coles, S. (2001)
+Coles, S. (2001).
 \emph{An Introduction to Statistical Modeling of Extreme Values}.
 London: Springer-Verlag.
 

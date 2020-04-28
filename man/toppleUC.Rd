@@ -48,7 +48,7 @@ rtopple(n, shape)
 }
 \references{
 
-  Topp, C. W. and F. C. Leone (1955)
+  Topp, C. W. and F. C. Leone (1955).
   A family of J-shaped frequency functions.
   \emph{Journal of the American Statistical Association},
   \bold{50}, 209--219.

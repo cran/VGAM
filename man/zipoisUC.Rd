@@ -76,7 +76,7 @@ rzipois(n, lambda, pstr0 = 0)
 
 \seealso{
     \code{\link{zipoisson}},
-    \code{\link{Gaitpois.mlm}},
+    \code{\link{Gaitpois}},
     \code{\link[stats:Poisson]{dpois}},
     \code{\link{rzinegbin}}.
 

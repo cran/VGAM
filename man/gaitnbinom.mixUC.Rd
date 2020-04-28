@@ -5,7 +5,7 @@
 \alias{qgaitnbinom.mix}
 \alias{rgaitnbinom.mix}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally-Altered, -Inflated and -Truncated
+\title{ Generally--Altered, --Inflated and --Truncated
   Negative Binomial Distribution
   (GAIT--NB--NB--NB mixture)
 }
@@ -14,10 +14,10 @@
   distribution function,
   quantile function
   and random generation
-  for the generally-altered, -inflated and -truncated
+  for the generally--altered, --inflated and --truncated
   negative binomial (NB) distribution,
   based on mixtures of NB distributions
-  having different support.
+  having different and/or nested support.
   This distribution is sometimes abbreviated as
   GAIT--NB--NB--NB.
 
@@ -91,7 +91,7 @@ rgaitnbinom.mix(n, size.p, prob.p = NULL, munb.p = NULL,
 % Must be sorted and have unique values only.
   }
   \item{pobs.a, pstr.i}{
-    See \code{\link{Gaitpois.mix}}.
+    See \code{\link{Gaitpois}}.
 
 
   }
@@ -102,20 +102,22 @@ rgaitnbinom.mix(n, size.p, prob.p = NULL, munb.p = NULL,
   }
 }
 \details{
-  These functions are an alternative to \code{\link{Gaitnbinom.mlm}},
-  and are to \code{\link{Gaitnbinom.mlm}} what
-  \code{\link{Gaitpois.mix}} are to \code{\link{Gaitpois.mlm}}.
-  See \code{\link{Gaitpois.mix}} for parallel information.
+  These functions will be combined soon.
+  See \code{\link{Gaitpois}} for parallel information.
   This distribution may be suitable for heaped data whose parent
   distribution is overdispersed with respect to the Poisson.
 
 
 
+% are an alternative to \code{\link{Gaitnbinom.mlm}},
+% and are to \code{\link{Gaitnbinom.mlm}} what
+% \code{\link{Gaitpois.mix}} are to \code{\link{Gaitpois.mlm}}.
 
 
-In the notation of Yee and Ma (2019)
-these functions concern the GAIT-NB-NB-NB distribution.
-For information on the GAIT-NB-MLM-MLM distribution
+
+In the notation of Yee and Ma (2020)
+these functions concern the GAIT--NB--NB--NB distribution.
+For information on the GAIT--NB--MLM--MLM distribution
 see \code{\link{Gaitnbinom.mlm}}.
 
 
@@ -151,9 +153,9 @@ see \code{\link{Gaitnbinom.mlm}}.
 
 }
 %\references{
-%Yee, T. W. and Ma, C. C. (2019)
-%Generally-altered, -inflated and -truncated count regression,
-%with application to heaped and seeped data.
+%Yee, T. W. and Ma, C. (2020).
+%Generally--altered, --inflated and --truncated regression,
+%with application to heaped and seeped count data.
 %\emph{In preparation}.
 
 
@@ -179,7 +181,7 @@ see \code{\link{Gaitnbinom.mlm}}.
 
 \seealso{
   \code{\link{Gaitnbinom.mlm}}
-  for the GAIT-NB-MLM-MLM distribution,
+  for the GAIT--NB--MLM--MLM distribution,
   \code{\link[stats]{NegBinomial}}.
 
 

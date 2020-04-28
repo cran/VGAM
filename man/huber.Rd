@@ -62,7 +62,7 @@ huber2(llocation = "identitylink", lscale = "loglink",
 
 }
 \references{
-  Huber, P. J. and Ronchetti, E. (2009)
+  Huber, P. J. and Ronchetti, E. (2009).
   \emph{Robust Statistics}, 2nd ed. New York: Wiley.
 
 

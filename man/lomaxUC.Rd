@@ -47,7 +47,7 @@ rlomax(n, scale = 1, shape3.q)
 \references{
 
 
-Kleiber, C. and Kotz, S. (2003)
+Kleiber, C. and Kotz, S. (2003).
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.

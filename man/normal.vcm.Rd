@@ -148,7 +148,7 @@ of such models have been named \emph{varying-coefficient models} (VCMs).
 }
 \references{
 
-  Hastie, T. and Tibshirani, R. (1993)
+  Hastie, T. and Tibshirani, R. (1993).
   Varying-coefficient models.
   \emph{J. Roy. Statist. Soc. Ser. B},
   \bold{55}, 757--796.

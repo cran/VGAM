@@ -8,6 +8,7 @@
 
 
 
+
 rootogram0 <- function(object, ...) {
   UseMethod("rootogram0")
 }
@@ -23,7 +24,7 @@ rootogram0.default <-
            style = c("hanging", "standing", "suspended"),
            scale = c("sqrt", "raw"), plot = TRUE,
            width = NULL, xlab = NULL, ylab = NULL, main = NULL,
-           ...) {
+           lowsup = 0L, ...) {
 
 
   ## rectangle style
@@ -31,8 +32,8 @@ rootogram0.default <-
   style <- match.arg(style)
 
   ## default annotation
-  if(is.null(xlab)) {
-    xlab <- if(is.null(names(dimnames(object)))) {
+  if (is.null(xlab)) {
+    xlab <- if (is.null(names(dimnames(object)))) {
       deparse(substitute(object))
     } else {
       names(dimnames(object))[1L]
@@ -44,20 +45,20 @@ rootogram0.default <-
   if(is.null(main)) main <- deparse(substitute(fitted))
   
   ## breaks, midpoints, widths
-  if(is.null(breaks)) {
-    x <- as.numeric(names(object))
-    if(length(x) < 1L) x <- 0L:(length(object) - 1L)
+  if (is.null(breaks)) {
+    x <- as.numeric(names(object)) + lowsup
+    if(length(x) < 1L) x <- lowsup:(length(object) - 1L)
     breaks <- (head(x, -1L) + tail(x, -1L))/2
     breaks <- c(2 * head(x, 1L) - head(breaks, 1L), breaks,
       2 * tail(x, 1L) - tail(breaks, 1L))
     if(is.null(width)) width <- 0.9
   } else {
-    x <- (head(breaks, -1L) + tail(breaks, -1L))/2
+    x <- (head(breaks, -1L) + tail(breaks, -1L)) / 2
     if(is.null(width)) width <- 1
   }
 
   ## raw vs. sqrt scale
-  if(scale == "sqrt") {
+  if (scale == "sqrt") {
     obsrvd <- sqrt(as.vector(object))
     expctd <- sqrt(as.vector(fitted))
   } else {
@@ -82,7 +83,7 @@ rootogram0.default <-
   class(rval) <- c("rootogram0", "data.frame")
   
   ## also plot by default
-  if(plot) plot(rval, ...)
+  if (plot) plot(rval, ...)
   
   ## return invisibly
   invisible(rval)

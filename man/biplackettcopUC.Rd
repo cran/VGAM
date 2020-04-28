@@ -39,7 +39,7 @@ rbiplackcop(n, oratio)
 \references{
 
 
-Mardia, K. V. (1967)
+Mardia, K. V. (1967).
 Some contributions to contingency-type distributions.
 \emph{Biometrika},
 \bold{54}, 235--249.

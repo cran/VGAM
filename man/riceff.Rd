@@ -72,7 +72,7 @@ riceff(lsigma = "loglink", lvee = "loglink", isigma = NULL,
 }
 \references{
 
-Rice, S. O. (1945)
+Rice, S. O. (1945).
 Mathematical Analysis of Random Noise.
 \emph{Bell System Technical Journal},
 \bold{24}, 46--156.

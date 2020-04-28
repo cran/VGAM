@@ -57,7 +57,7 @@ are accounted for.
 
 }
 \references{
-   Shepard, T. H., Mackler, B. and Finch, C. A. (1980)
+   Shepard, T. H., Mackler, B. and Finch, C. A. (1980).
    Reproductive studies in the iron-deficient rat.
    \emph{Teratology}, \bold{22}, 329--334.
 

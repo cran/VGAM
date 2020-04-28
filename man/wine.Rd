@@ -62,6 +62,8 @@ grouped using equal lengths into five ordered categories 1, 2, 3, 4 and 5.
 
 
 % September 30, 2013
+
+
 Christensen, R. H. B. (2013)
 Analysis of ordinal data with cumulative link models---estimation
 with the R-package \pkg{ordinal}.
@@ -73,15 +75,16 @@ R Package Version 2013.9-30.
 
 
 
-  Randall, J. H. (1989)
+  Randall, J. H. (1989).
   The analysis of sensory data by generalized linear model.
   \emph{Biometrical Journal} \bold{31}(7), 781--793.
 
 
-  Kosmidis, I. (2014)
+  Kosmidis, I. (2014).
   Improved estimation in cumulative link models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
-\bold{76}, in press.
+\bold{76}(1): 169--196.
+
 
 
 }

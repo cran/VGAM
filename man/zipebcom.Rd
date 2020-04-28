@@ -181,7 +181,7 @@ zipebcom(lmu12 = "clogloglink", lphi12 = "logitlink", loratio = "loglink",
 }
 \references{
 
-  Yee, T. W. and Dirnbock, T. (2009)
+  Yee, T. W. and Dirnbock, T. (2009).
   Models for analysing species' presence/absence data
   at two time points.
   Journal of Theoretical Biology, \bold{259}(4), 684--694.

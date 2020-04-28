@@ -83,19 +83,19 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 
 }
 \references{
-  Seber, G. A. F. and Wild, C. J. (1989)
+  Seber, G. A. F. and Wild, C. J. (1989).
   \emph{Nonlinear Regression},
   New York: Wiley.
 
 
-  Wedderburn, R. W. M. (1974)
+  Wedderburn, R. W. M. (1974).
   Quasi-likelihood functions, generalized linear models,
   and the Gauss-Newton method.
   \emph{Biometrika},
   \bold{61}, 439--447.
 
 
-  Bates, D. M. and Watts, D. G. (1988)
+  Bates, D. M. and Watts, D. G. (1988).
   \emph{Nonlinear Regression Analysis and Its Applications},
   New York: Wiley.
 

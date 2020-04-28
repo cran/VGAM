@@ -85,7 +85,7 @@ then \eqn{X = -Z} has a Gompertz distribution.
 }
 \references{
 
-Lenart, A. (2012)
+Lenart, A. (2012).
 The moments of the Gompertz distribution
 and maximum likelihood estimation of its parameters.
 \emph{Scandinavian Actuarial Journal}, in press.

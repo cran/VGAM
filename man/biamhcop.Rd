@@ -74,11 +74,11 @@ biamhcop(lapar = "rhobitlink", iapar = NULL, imethod = 1, nsimEIM = 250)
 
 \references{
 
-%Hutchinson, T. P. and Lai, C. D. (1990)
+%Hutchinson, T. P. and Lai, C. D. (1990).
 %\emph{Continuous Bivariate Distributions, Emphasising Applications},
 %Adelaide, South Australia: Rumsby Scientific Publishing.
 
-Balakrishnan, N. and Lai, C.-D. (2009)
+Balakrishnan, N. and Lai, C.-D. (2009).
 \emph{Continuous Bivariate Distributions},
 2nd ed.
 New York: Springer.

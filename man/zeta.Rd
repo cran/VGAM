@@ -89,24 +89,24 @@ zeta(x, deriv = 0, shift = 1)
 \references{
 
 
-Riemann, B. (1859)
+Riemann, B. (1859).
 Ueber die Anzahl der Primzahlen unter einer gegebenen Grosse.
 \emph{Monatsberichte der Berliner Akademie, November 1859}.
 
 
-Edwards, H. M. (1974)
+Edwards, H. M. (1974).
 \emph{Riemann's Zeta Function}.
 Academic Press: New York.
 
 
-Markman, B. (1965)
+Markman, B. (1965).
 The Riemann zeta function.
 \emph{BIT},
 \bold{5},
 138--141.
 
 
-Abramowitz, M. and Stegun, I. A. (1972)
+Abramowitz, M. and Stegun, I. A. (1972).
 \emph{Handbook of Mathematical Functions with Formulas, Graphs, and
 Mathematical Tables},
 New York: Dover Publications Inc.
@@ -157,12 +157,25 @@ zeta(4) - pi^4 / 90    # Should be 0
 zeta(6) - pi^6 / 945   # Should be 0
 zeta(8) - pi^8 / 9450  # Should be 0
 zeta(0, deriv = 1) + 0.5 * log(2*pi)  # Should be 0
+gamma0 <-  0.5772156649
+gamma1 <- -0.07281584548
+zeta(0, deriv = 2) -
+  gamma1 + 0.5 * (log(2*pi))^2 + pi^2/24 - gamma0^2 / 2  # Should be 0
+zeta(0.5, deriv = 1) + 3.92264613  # Should be 0
+zeta(2.0, deriv = 1) + 0.93754825431  # Should be 0
 }
 \keyword{math}
 
 % curve(zeta, -13, 0.8, xlim = c(-12, 10), ylim = c(-1, 4), col = "orange")
 % curve(zeta, 1.2,  12, add = TRUE, col = "orange")
 % abline(v = 0, h = c(0,1), lty = "dashed")
+
+
+
+
+
+
+
 
 
 

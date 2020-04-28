@@ -18,7 +18,7 @@ extern void mux111ccc(void *, void *, void *, void *, void *, void *, void *, vo
 extern void mux15ccc(void *, void *, void *, void *, void *);
 extern void mux2ccc(void *, void *, void *, void *, void *, void *);
 extern void mux22ccc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
-extern void mux5ccc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void mux5ccc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void mux55ccc(void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void mux7ccc(void *, void *, void *, void *, void *, void *, void *);
 extern void pnorm2ccc(void *, void *, void *, void *, void *, void *);

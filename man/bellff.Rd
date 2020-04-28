@@ -50,7 +50,7 @@ bellff(lshape = "loglink", zero = NULL, gshape = expm1(1.6 * ppoints(7)))
 
 }
 \references{
-  Castellares, F. and Ferrari, S. L. P. and Lemonte, A. J. (2018)
+  Castellares, F. and Ferrari, S. L. P. and Lemonte, A. J. (2018).
   On the Bell distribution and its associated regression model for count data.
   \emph{Applied Mathematical Modelling},
   \bold{56}, 172--185.

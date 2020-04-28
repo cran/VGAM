@@ -60,7 +60,7 @@ trips, were counted.
 }
 \references{
 
-  Danaher, P. J. and Hardie, B. G. S. (2005)
+  Danaher, P. J. and Hardie, B. G. S. (2005).
   Bacon with Your Eggs?
   Applications of a New Bivariate Beta-Binomial Distribution.
   \emph{American Statistician},

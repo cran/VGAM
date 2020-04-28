@@ -74,19 +74,19 @@ bigamma.mckay(lscale = "loglink", lshape1 = "loglink", lshape2 = "loglink",
 \references{
 
 
-McKay, A. T. (1934)
+McKay, A. T. (1934).
 Sampling from batches.
 \emph{Journal of the Royal Statistical Society---Supplement},
 \bold{1}, 207--216.
 
 
-Kotz, S. and Balakrishnan, N. and Johnson, N. L. (2000)
+Kotz, S. and Balakrishnan, N. and Johnson, N. L. (2000).
 \emph{Continuous Multivariate Distributions Volume 1: Models and Applications},
 2nd edition,
 New York: Wiley.
 
 
-Balakrishnan, N. and Lai, C.-D. (2009)
+Balakrishnan, N. and Lai, C.-D. (2009).
 \emph{Continuous Bivariate Distributions},
 2nd edition.
 New York: Springer.

@@ -385,34 +385,34 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 \references{
 
 
-Yee, T. W. (2015)
+Yee, T. W. (2015).
 Vector Generalized Linear and Additive Models:
 With an Implementation in R.
 New York, USA: \emph{Springer}.
 
 
 
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
 
 
-Yee, T. W. (2014)
+Yee, T. W. (2014).
 Reduced-rank vector generalized linear models with two linear predictors.
 \emph{Computational Statistics and Data Analysis},
 \bold{71}, 889--902.
 
 
 
-Yee, T. W. (2008)
+Yee, T. W. (2008).
 The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 

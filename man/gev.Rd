@@ -242,23 +242,23 @@ gevff(llocation = "identitylink", lscale = "loglink",
 
 }
 \references{
-  Yee, T. W. and Stephenson, A. G. (2007)
+  Yee, T. W. and Stephenson, A. G. (2007).
   Vector generalized linear and additive extreme value models.
   \emph{Extremes}, \bold{10}, 1--19.
 
 
-  Tawn, J. A. (1988)
+  Tawn, J. A. (1988).
   An extreme-value theory model for dependent observations.
   \emph{Journal of Hydrology}, \bold{101}, 227--250.
 
 
-  Prescott, P. and Walden, A. T. (1980)
+  Prescott, P. and Walden, A. T. (1980).
   Maximum likelihood estimation of the parameters of the
   generalized extreme-value distribution.
   \emph{Biometrika}, \bold{67}, 723--724.
 
 
-  Smith, R. L. (1985)
+  Smith, R. L. (1985).
   Maximum likelihood estimation in a class of nonregular cases.
   \emph{Biometrika}, \bold{72}, 67--90.
 

@@ -91,7 +91,7 @@ dollars deflated by \eqn{P_2}.
 
 \references{
 
-  Zellner, A. (1962)
+  Zellner, A. (1962).
   An efficient method of estimating seemingly unrelated regressions
   and tests for aggregation bias.
   \emph{Journal of the American Statistical Association},

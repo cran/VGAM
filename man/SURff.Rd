@@ -107,14 +107,14 @@ a warning or an error will result.
 }
 \references{
 
-  Zellner, A. (1962)
+  Zellner, A. (1962).
   An Efficient Method of Estimating Seemingly Unrelated
   Regressions and Tests for Aggregation Bias.
   \emph{J. Amer. Statist. Assoc.},
   \bold{57}(298), 348--368.
 
 
-  Kmenta, J. and Gilbert, R. F. (1968)
+  Kmenta, J. and Gilbert, R. F. (1968).
   Small Sample Properties of Alternative Estimators
   of Seemingly Unrelated Regressions.
   \emph{J. Amer. Statist. Assoc.},

@@ -47,10 +47,10 @@ diffzeta(start = 1, lshape = "loglink", ishape = NULL)
 }
 
 \references{
-Moreno-Sanchez, I. and Font-Clos, F. and Corral, A.
+
+Moreno-Sanchez, I., Font-Clos, F. and Corral, A. (2016).
 Large-Scale Analysis of Zipf's Law in English Texts,
-2016.
-PLoS ONE, \bold{11}(1), 1--19.
+\emph{PLoS ONE}, \bold{11}(1), 1--19.
 
 
 

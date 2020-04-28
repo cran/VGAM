@@ -72,6 +72,7 @@ oilog(lpstr1 = "logitlink", lshape = "logitlink",
 %\note{
 %}
 \seealso{
+  \code{\link{Gaitlog}},
   \code{\link{Oilog}},
   \code{\link{logff}},
   \code{\link{Oizeta}}.

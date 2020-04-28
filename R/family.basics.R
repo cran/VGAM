@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1863,8 +1863,21 @@ bisection.basic <-
 
 
 
+
+      
+
+  if (any(is.infinite(b))) {
+    warning("replacing 'b' values of Inf by a large value")
+    b[is.infinite(b)] <- .Machine$double.xmax / 4
+  }
+
+ 
+
+
   if (is.null(nmax)) {
     nmax <- round(log2(max(b - a)) - log2(min(tol))) + 4
+    if (!is.finite(nmax))
+      nmax <- log2(.Machine$double.xmax) - 5
   }
   signtest <- (sign(f(a, ...)) * sign(f(b, ...)) <= 0)
 

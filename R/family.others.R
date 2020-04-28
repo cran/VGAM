@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -59,7 +59,8 @@ qexppois<- function(p, rate = 1, shape,
   if (lower.tail) {
     if (log.p) {
       ln.p <- p
-      ans <- -log(log(exp(ln.p) * (-expm1(shape)) + exp(shape)) / shape) / rate
+      ans <- -log(log(exp(ln.p) *
+                      (-expm1(shape)) + exp(shape)) / shape) / rate
       ans[ln.p > 0] <- NaN
     } else {
       ans <- -log(log(p * (-expm1(shape)) + exp(shape)) / shape) / rate
@@ -69,7 +70,8 @@ qexppois<- function(p, rate = 1, shape,
   } else {
     if (log.p) {
       ln.p <- p
-      ans <- -log(log(expm1(ln.p) * expm1(shape) + exp(shape)) / shape) / rate
+      ans <- -log(log(expm1(ln.p) *
+                      expm1(shape) + exp(shape)) / shape) / rate
       ans[ln.p > 0] <- NaN
     } else {
       ans <- -log(log(p * expm1(shape) + 1) / shape) / rate
@@ -2201,8 +2203,8 @@ pzoibetabinom <- function(q, size, prob, rho,
       psi      <- matrix(0, nrow = nn, ncol = length(the1) + 2)
       psi[1, ] <- cbind(s0[1], s1[1], s2[1]) / r[1]
 
-      u0   <- rep(1/(1 - sign(the1v[1]) * min(0.975, abs(the1v[1]))), nn )
-      u1   <- rep(drift.p/(1 - the1)^2, nn)
+      u0  <- rep(1/(1 - sign(the1v[1]) * min(0.975, abs(the1v[1]))), nn )
+      u1  <- rep(drift.p/(1 - the1)^2, nn)
       uMat <- cbind(u0, rep(0, nn), u1)
 
       aux1 <- matrix(sMat[1, ],
@@ -2493,6 +2495,675 @@ qzipfmb <- function(p, shape, start = 1) {
 rzipfmb <- function(n, shape, start = 1) {
   qzipfmb(runif(n), shape, start = start)
 }  # rzipfmb
+
+
+
+
+
+
+
+
+
+
+
+
+dextlogF <- function(x, lambda, tau,
+                   location = 0, scale = 1, log = FALSE) {
+  if (!is.logical(log.arg <- log) || length(log) != 1)
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  LLL <- max(length(x), length(lambda), length(tau),
+             length(location), length(scale))
+  if (length(x)        != LLL) x        <- rep_len(x,        LLL)
+  if (length(lambda)   != LLL) lambda   <- rep_len(lambda,   LLL)
+  if (length(tau)      != LLL) tau      <- rep_len(tau,      LLL)
+  if (length(location) != LLL) location <- rep_len(location, LLL)
+  if (length(scale)    != LLL) scale    <- rep_len(scale,    LLL)
+  
+  bad0 <- !is.finite(lambda) | !is.finite(tau) | 
+          !is.finite(location) | !is.finite(scale) | 
+          lambda <= 0 | tau < 0 | 1 < tau | scale <= 0
+  bad <- bad0 | !is.finite(x)
+
+  logpdf <- x + lambda + tau + location + scale
+  
+  if (any(!bad)) {
+    zedd <- (x[!bad] - location[!bad]) / scale[!bad]
+    logpdf[!bad] <- (1 - tau[!bad]) * zedd -
+      lambda[!bad] * log1p(exp(zedd / lambda[!bad])) -
+      lbeta((1 - tau[!bad]) * lambda[!bad],
+                 tau[!bad]  * lambda[!bad]) -
+      log(lambda[!bad] * scale[!bad])
+  }
+  
+  logpdf[!bad0 & is.infinite(x)] <- log(0)
+  logpdf[ bad0] <- NaN
+
+  if (log.arg) logpdf else exp(logpdf)
+} # dextlogf()
+
+
+
+
+
+
+
+
+
+extlogF1.control <-
+  function(stepsize = 0.5,
+           maxit = 100,
+           ...) {
+  list(stepsize = stepsize,
+       maxit    = maxit)
+}
+
+
+
+ extlogF1 <-
+  function(tau = c(0.25, 0.5, 0.75),  # NULL,  # \in (0, 1)
+           parallel = TRUE ~ 0,  # FALSE,
+           seppar = 0,
+           tol0 = -0.001,  # Negative means relative, + means absolute
+           llocation = "identitylink",
+           ilocation = NULL,
+           lambda.arg = NULL,  # 0.1,  # NULL means an adaptive value
+           scale.arg = 1,  # Best to leave this alone
+           ishrinkage = 0.95,
+           digt = 4,
+           idf.mu = 3,
+           imethod = 1) {
+
+
+  apply.parint.locat <- FALSE
+
+
+  if (!is.Numeric(seppar, length.arg = 1) || seppar < 0)
+    stop("bad input for argument 'seppar'")
+  if (!is.Numeric(tol0, length.arg = 1))  # || tol0 < 0
+    stop("bad input for argument 'tol0'")
+
+  if (!is.Numeric(tau, positive = TRUE))
+    stop("bad input for argument 'tau'")
+  if (any(1 <= tau))
+    stop("argument 'tau' must have values in (0, 1)")
+  if (length(tau) > 1 && any(diff(tau) <= 0))
+    stop("argument 'tau' must be an increasing sequence")
+
+  if (!is.Numeric(imethod, length.arg = 1,
+                  integer.valued = TRUE, positive = TRUE) ||
+      imethod > 4)
+    stop("argument 'imethod' must be 1, 2 or ... 4")
+
+
+  llocation <- llocation
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  ilocat <- ilocation
+
+
+  if (!is.Numeric(ishrinkage, length.arg = 1) ||
+     ishrinkage < 0 ||
+     ishrinkage > 1)
+    stop("bad input for argument 'ishrinkage'")
+  if (!is.Numeric(scale.arg, positive = TRUE))
+    stop("bad input for argument 'scale.arg'")
+
+
+
+
+  new("vglmff",
+  blurb = c("One-parameter extended log-F distribution\n\n",
+            "Links:      ",
+            namesof("location", llocat, earg = elocat),
+            "\n", "\n",
+            "Quantiles:  location(tau)"),
+
+  constraints = eval(substitute(expression({
+
+    onemat <- matrix(1, M, 1)
+    constraints.orig <- constraints
+
+
+    cm1.locat <- diag(M)
+    cmk.locat <- onemat
+    con.locat <- cm.VGAM(cmk.locat,
+                         x = x, bool = .parallel ,
+                         constraints = constraints.orig,
+                         apply.int   = .apply.parint.locat ,
+                         cm.default           = cm1.locat,
+                         cm.intercept.default = cm1.locat)
+    
+    constraints <- con.locat
+
+  }), list( .parallel = parallel, .seppar = seppar, .tol0 = tol0,
+            .apply.parint.locat = apply.parint.locat ))),
+
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = NA,  # 1,
+         Q1 = NA,  # 1,
+         tau        = .tau ,
+         scale.arg  = .scale.arg ,
+         lambda.arg = .lambda.arg ,
+         seppar     = .seppar ,
+         tol0.arg   = as.vector( .tol0 ),  # Could be negative
+         digt       = .digt ,
+         expected   = TRUE,
+         multipleResponses = TRUE,
+         parameters.names  = "location")
+  }, list( .lambda.arg = lambda.arg, .scale.arg = scale.arg,
+           .digt = digt,
+           .tau = tau, .seppar = seppar, .tol0 = tol0 ))),
+  initialize = eval(substitute(expression({
+
+    temp5 <-
+    w.y.check(w = w, y = y,
+              ncol.w.max = if (length( .tau ) > 1) 1 else Inf,
+              ncol.y.max = if (length( .tau ) > 1) 1 else Inf,
+              out.wy = TRUE,
+              maximize = TRUE)
+    w <- temp5$w
+    y <- temp5$y
+
+
+
+    extra$ncoly <- ncoly <- ncol(y)
+    if ((ncoly > 1) && (length( .tau ) > 1 ||
+        length( .scale.arg ) > 1))
+      stop("response must be a vector if 'tau' or 'scale.arg' ",
+           "has a length greater than one")
+
+
+
+    if ((midspread <- diff(quantile(y, probs = c(0.25, 0.75)))) == 0)
+      stop("could not work out an adaptive 'lambda'") else                
+    lambda <- if (is.null( .lambda.arg )) {
+    muxfactor <- 25
+    extra$midspread <- midspread
+         as.vector((midspread / .scale.arg) / muxfactor)
+    } else {
+      as.vector( .lambda.arg )
+    }
+    extra$lambda.arg <- lambda
+    tol0 <- as.vector( .tol0 )  # A negative value means relative
+    if (tol0 < 0)
+      tol0 <- as.vector(abs(tol0) * midspread)
+    extra$tol0 <- tol0  # A positive value means absolute
+
+    extra$M <- M <- max(length( .scale.arg ),
+                        ncoly,
+                        length( .tau ))  # Recycle
+    extra$scale.arg <- rep_len( .scale.arg , M)
+    extra$tau       <- rep_len( .tau       , M)
+    extra$n <- n
+
+
+    extra$tau.names <- tau.names <-
+      paste("(tau = ", round(extra$tau, digits = .digt), ")", sep = "")
+    extra$Y.names <- Y.names <- if (ncoly > 1) dimnames(y)[[2]] else "y"
+    if (is.null(Y.names) || any(Y.names == ""))
+      extra$Y.names <- Y.names <- paste("y", 1:ncoly, sep = "")
+    extra$y.names <- y.names <-
+      if (ncoly > 1) paste(Y.names, tau.names, sep = "") else tau.names
+
+    extra$individual <- FALSE
+
+    mynames1 <- param.names("location", M, skip1 = TRUE)
+    predictors.names <-
+        c(namesof(mynames1, .llocat , earg = .elocat , tag = FALSE))
+
+    seppar <- as.vector( .seppar )
+    if (seppar > 0 && M > 1) {
+    }  # seppar
+
+    locat.init <- matrix(0, n, M)
+    if (!length(etastart)) {
+
+      for (jay in 1:M) {
+        y.use <- if (ncoly > 1) y[, jay] else y
+        locat.init[, jay] <- if ( .imethod == 1) {
+           quantile(y.use, probs = extra$tau[jay])
+        } else if ( .imethod == 2) {
+          weighted.mean(y.use, w[, min(jay, ncol(w))])
+        } else if ( .imethod == 3) {
+          median(y.use)
+        } else if ( .imethod == 4) {
+          Fit5 <- vsmooth.spline(x = x[, min(ncol(x), 2)],
+                                 y = y.use, w = w, df = .idf.mu )
+          c(predict(Fit5, x = x[, min(ncol(x), 2)])$y)
+        } else {
+          use.this <- weighted.mean(y.use, w[, min(jay, ncol(w))])
+          (1 - .ishrinkage ) * y.use + .ishrinkage * use.this
+        }
+
+        if (length( .ilocat )) {
+          locat.init <- matrix( .ilocat , n, M, byrow = TRUE)
+        }
+
+        if ( .llocat == "loglink") locat.init <- abs(locat.init)
+        etastart <-
+          cbind(theta2eta(locat.init, .llocat , earg = .elocat ))
+      }
+    }
+    }), list( .imethod = imethod, .seppar = seppar, .tol0 = tol0,
+              .idf.mu = idf.mu, .lambda.arg = lambda.arg,
+              .ishrinkage = ishrinkage, .digt = digt,
+              .elocat = elocat, .scale.arg = scale.arg,
+              .llocat = llocat, .tau = tau,
+              .ilocat = ilocat ))),
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    locat <- eta2theta(eta, .llocat , earg = .elocat )
+    if (length(locat) > extra$n)
+      dimnames(locat) <- list(dimnames(eta)[[1]], extra$y.names)
+    locat
+  }, list( .elocat = elocat,
+           .llocat = llocat, .scale.arg = scale.arg,
+           .tau = tau, .lambda.arg = lambda.arg ))),
+  last = eval(substitute(expression({
+    misc$link <- setNames(rep_len( .llocat , M), mynames1)
+
+    misc$earg <- vector("list", M)
+    names(misc$earg) <- names(misc$link)
+    for (ii in 1:M) {
+      misc$earg[[ii]] <- ( .elocat )
+    }
+
+    extra$eCDF <- numeric(M)
+    locat <- as.matrix(locat)
+    for (ii in 1:M) {
+      y.use <- if (ncoly > 1) y[, ii] else y
+      extra$eCDF[ii] <-
+        100 * weighted.mean(y.use <= locat[, ii], w[, min(ii, ncol(w))])
+    }
+    names(extra$eCDF) <- y.names
+
+
+    extra$scale.arg <- ( .scale.arg )
+    }), list( .elocat = elocat,
+              .llocat = llocat, .scale.arg = scale.arg, .tau = tau ))),
+
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta,
+             extra = NULL, summation = TRUE) {
+    ymat <- matrix(y, extra$n, extra$M)
+    locat <- eta2theta(eta, .llocat , earg = .elocat )
+    taumat <- matrix(extra$tau,       extra$n, extra$M, byrow = TRUE)
+    Scale  <- matrix(extra$scale.arg, extra$n, extra$M, byrow = TRUE)
+    lambda  <- extra$lambda.arg
+
+    Ans <- if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * dextlogF(x = c(ymat), location = c(locat),
+                                 scale = c(Scale), tau = c(taumat),
+                                 lambda = lambda, log = TRUE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+
+    n <- nrow(eta)
+    M <- NCOL(eta)
+    seppar <- as.vector( .seppar )
+    tol0 <- extra$tol0  # Absolute
+    if (seppar > 0 && M > 1) {
+      negdiffmat <- as.matrix(locat[, -ncol(locat)] - locat[, -1])
+      negdiffmat <- matrix(pmax(0, tol0 + negdiffmat)^3, n, M-1)
+      Adjustment <- seppar * sum(negdiffmat)
+      Ans <- Ans - Adjustment
+    }  # seppar
+
+    Ans 
+  }, list( .elocat = elocat, .scale.arg = scale.arg, .tau = tau,
+           .llocat = llocat, .seppar = seppar ))),
+  vfamily = c("extlogF1"),
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    locat <- eta2theta(eta, .llocat , earg = .elocat )
+    okay1 <- all(is.finite(locat))
+    okay1
+  }, list( .elocat = elocat, .scale.arg = scale.arg, .tau = tau,
+           .llocat = llocat ))),
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (any(pwts != 1))
+      warning("ignoring prior weights")
+    eta <- predict(object)
+    extra  <- object@extra
+    locat  <- eta2theta(eta, .llocat , .elocat )
+    Scale  <- matrix(extra$scale.arg, extra$n, extra$M, byrow = TRUE)
+    taumat <- matrix(extra$tau,       extra$n, extra$M, byrow = TRUE)
+    lambda <- extra$lambda.arg
+    relogF(nsim * length(Scale), location = c(locat),
+           lambda = lambda, scale = c(Scale), tau = c(taumat))
+  }, list( .elocat = elocat, .scale.arg = scale.arg, .tau = tau,
+           .llocat = llocat ))),
+
+  deriv = eval(substitute(expression({
+    seppar <- as.vector( .seppar )
+    tol0 <- extra$tol0  # Absolute
+    locat <- eta2theta(eta, .llocat , earg = .elocat )
+
+    ymat <- matrix(y, n, M)
+    Scale <- matrix(extra$scale.arg, n, M, byrow = TRUE)
+
+    lambda <- extra$lambda.arg
+
+    taumat <- matrix(extra$tau, n, M, byrow = TRUE)
+    zedd <- (ymat - locat) / Scale
+
+    dl.dlocat <- (taumat - 1 + plogis(zedd / lambda)) / Scale
+    dlocat.deta <- dtheta.deta(locat, .llocat , earg = .elocat )
+
+    sep.penalize <- seppar > 0 && M > 1
+    if (sep.penalize) {
+      dl.dlocat[, 1] <- dl.dlocat[, 1] - 3 * seppar *
+                        pmax(0, tol0 + locat[, 1] - locat[, 2])^2
+      dl.dlocat[, M] <- dl.dlocat[, M] + 3 * seppar *
+                        pmax(0, tol0 + locat[, M-1] - locat[, M])^2
+      if (M > 2)
+      for (jay in 2:(M-1))
+        dl.dlocat[, jay] <- dl.dlocat[, jay] - 3 * seppar * (
+          pmax(0, tol0 + locat[, jay  ] - locat[, jay+1])^2 -
+          pmax(0, tol0 + locat[, jay-1] - locat[, jay  ])^2)
+    }  # seppar
+
+    c(w) * cbind(dl.dlocat * dlocat.deta)
+  }), list( .elocat = elocat, .seppar = seppar,
+            .llocat = llocat, .scale.arg = scale.arg, .tau = tau ))),
+
+  weight = eval(substitute(expression({
+    ned2l.dlocat2 <- taumat * (1 - taumat) / ((1 + lambda) * Scale^2)
+
+    if (sep.penalize) {
+      ned2l.dlocat2[, 1] <- ned2l.dlocat2[, 1] + 6 * seppar *
+                            pmax(0, tol0 + locat[,   1] - locat[, 2])
+      ned2l.dlocat2[, M] <- ned2l.dlocat2[, M] + 6 * seppar *
+                            pmax(0, tol0 + locat[, M-1] - locat[, M])
+      if (M > 2)
+        for (jay in 2:(M-1))
+          ned2l.dlocat2[, jay] <-
+          ned2l.dlocat2[, jay] + 6 * seppar * (
+            pmax(0, tol0 + locat[, jay  ] - locat[, jay+1]) +
+            pmax(0, tol0 + locat[, jay-1] - locat[, jay  ]))
+      rhs.mat <- -6 * seppar * pmax(0, tol0 + locat[, -M] - locat[, -1])
+      rhs.mat <- matrix(c(rhs.mat), n, M-1)  # Right dimension
+    }  # seppar
+
+    rhs.mat <- if (sep.penalize)
+      rhs.mat * dlocat.deta[, -M] * dlocat.deta[, -1] else NULL
+    wz <- cbind(ned2l.dlocat2 * dlocat.deta^2,
+                rhs.mat)
+    c(w) * wz
+  }), list( .elocat = elocat, .scale.arg = scale.arg,
+            .llocat = llocat ))))
+}  # extlogF1()
+
+
+
+
+
+
+
+
+ setClass("extlogF1",                 contains = "vglmff")
+
+
+
+setMethod("showvglmS4VGAM",
+          signature(VGAMff = "extlogF1"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("\nQuantiles:\n")
+  print(eCDF(as(object, "vglm")))
+  invisible(object)
+  })
+
+
+
+
+setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "extlogF1"),
+  function(object,
+           VGAMff,
+           ...) {
+  cat("Quantiles:\n")
+  print(eCDF(as(object, "vglm"), all = TRUE))
+  cat("\n")
+
+  invisible(object)
+})
+
+
+
+
+
+
+
+
+is.crossing.vglm <- function(object, ...) {
+  if (!is(object, "vglm"))
+    stop("the object is not a VGLM")
+  if (any(object@family@vfamily == "lms.bcn"))
+    return(FALSE)
+  if (!any(object@family@vfamily == "extlogF1"))
+    stop("the object does not have a 'extlogF1' family function")
+  locat <- fitted(object)
+  if (ncol(locat) == 1) {
+    TRUE
+  } else {
+    diffmat <- locat[, -1] - locat[, -ncol(locat)]
+    crossq <- any(diffmat < 0)
+    crossq
+  }
+}  # is.crossing.vglm
+
+
+
+if (!isGeneric("is.crossing"))
+  setGeneric("is.crossing", function(object, ...)
+             standardGeneric("is.crossing"),
+             package = "VGAM")
+
+
+setMethod("is.crossing",  "vglm", function(object, ...)
+    is.crossing.vglm(object, ...))
+
+
+
+
+
+
+
+ fix.crossing.vglm <-
+     function(object, maxit = 100, trace = FALSE,  # etastart = NULL,
+              ...) {
+  if (!is.crossing(object) ||
+      any(object@family@vfamily == "lms.bcn"))
+    return(object)
+
+  if (!any(object@family@vfamily == "extlogF1"))
+    stop("the object does not have a 'extlogF1' family function")
+
+  object.save <- object
+  M <- npred(object.save)
+  if (M > 1 &
+      !all(is.parallel(object.save)) &
+      nrow(coef(object.save, matrix = TRUE)) > 1) {
+    if (!has.intercept(object.save))
+      stop("the object must have an intercept term")
+    for (jay in 1:M) {  # M is an upperbound
+      Hlist <- constraints(object, type = "term")
+      locat <- fitted(object) 
+      diffmat <- locat[,           -1, drop = FALSE] -
+                 locat[, -ncol(locat), drop = FALSE]
+      crossq <- any(diffmat < 0)
+      if (crossq) {
+        min.index <- which.min(apply(diffmat, 2, min))
+        Hk <- Hlist[[2]]  # Next covariate past the intercept
+        use.min.index <- 1 + which(cumsum(colSums(Hk)) == min.index)
+        if (ncol(Hk) == 1) break
+        Hk[, use.min.index - 1] <- Hk[, use.min.index - 1] +
+                                   Hk[, use.min.index]
+        Hk <- Hk[, -use.min.index, drop = FALSE]
+        for (kay in 2:length(Hlist)) {  # Omit the intercept
+          Hlist[[kay]] <- Hk
+        }  # kay
+      } else {  # crossq
+        break
+      }
+      if (is.numeric(maxit))
+        object@control$maxit <- maxit  # Overwrite this possibly
+      if (is.logical(trace))
+        object@control$trace <- trace  # Overwrite this possibly
+      object <-
+        vglm(formula = as.formula(formula(object)),
+             family = extlogF1(tau = object.save@extra$tau,
+                             lambda.arg = object.save@extra$lambda.arg,
+                             scale.arg = object.save@extra$scale.arg,
+                             llocation = linkfun(object.save)[1],
+                             parallel = FALSE),
+             data = get(object.save@misc$dataname),
+             control = object@control,  # maxit, trace, etc.
+             constraints = Hlist)  # New constraints; new object too
+    }  # jay
+  }  # M > 1 and Hk not all parallel
+
+  object  # A new object without any crossing quantiles
+}  # fix.crossing
+
+
+
+if (!isGeneric("fix.crossing"))
+  setGeneric("fix.crossing", function(object, ...)
+             standardGeneric("fix.crossing"),
+             package = "VGAM")
+
+
+setMethod("fix.crossing",  "vglm", function(object, ...)
+    fix.crossing.vglm(object, ...))
+
+
+
+
+
+
+
+if (FALSE)
+qtplot.extlogF1 <- function(lambda,
+                          tau = c(0.25, 0.5, 0.75),
+                          location = 0, scale = 1,
+                          eta = NULL) {
+
+    
+  lp <- length(tau)
+  lambda <- rep(lambda, length = lp)
+  answer <- matrix(NA_real_, nrow(eta), lp,
+                   dimnames = list(dimnames(eta)[[1]],
+                                   as.character(tau)))
+  for (ii in 1:lp) {
+    answer[, ii] <- qtlogF(tau      = tau[ii],
+                           lambda   = lambda[ii],
+                           location = location,  # eta[, ii],
+                           scale    = scale)
+  }
+  answer
+}
+
+
+
+
+
+
+
+
+ eCDF.vglm <-
+     function(object, all = FALSE,
+              ...) {
+
+  okayfuns <- c("lms.bcn", "extlogF1")
+  if (!any(object@family@vfamily %in% okayfuns))
+    stop("the object does not have an empirical CDF defined on it")
+
+  
+  if (any(object@family@vfamily == "extlogF1")) {
+    Ans <- object@extra$eCDF / 100
+    if (all) {
+      Ans <- cbind(Ans, object@extra$tau)
+      rownames(Ans) <- rep(" ", NROW(Ans))  # NULL  #
+      colnames(Ans) <- c("ecdf", "tau")
+    }
+  }  # "extlogF1"
+
+
+  if (any(object@family@vfamily == "lms.bcn")) {
+    Ans <- numeric(length(object@extra$percentiles))
+    locat <- as.matrix(fitted(object))
+    M <- npred(object)
+    y <- depvar(object)
+    w <- weights(object, type = "prior")
+    for (ii in 1:M) {
+      y.use <- if (ncol(y) > 1) y[, ii] else y
+      Ans[ii] <- 1 *  # Was 100, but now 1
+        weighted.mean(y.use <= locat[, ii], w[, min(ii, ncol(w))])
+    }
+    if (all) {
+      Ans <- cbind(Ans, object@extra$percentiles / 100)  # tau, really
+      rownames(Ans) <- rep(" ", NROW(Ans))  # NULL  #
+      colnames(Ans) <- c("ecdf", "tau")
+    } else {
+      digt <- 4  # extlogF1() default
+      tau.names <-
+        paste("(tau = ", round(object@extra$percentiles / 100,
+                               digits = digt), ")",
+            sep = "")
+      Y.names <- if (ncol(y) > 1) dimnames(y)[[2]] else "y"
+      if (is.null(Y.names) || any(Y.names == ""))
+        Y.names <- paste("y", 1:ncol(y), sep = "")
+      y.names <- if (ncol(y) > 1)
+        paste(Y.names, tau.names, sep = "") else tau.names
+      names(Ans) <- y.names
+    }
+  }  # "lms.bcn"
+
+  Ans
+}  # eCDF.vglm
+
+
+
+if (!isGeneric("eCDF"))
+  setGeneric("eCDF", function(object, ...)
+             standardGeneric("eCDF"),
+             package = "VGAM")
+
+
+setMethod("eCDF",  "vglm", function(object, ...)
+    eCDF.vglm(object, ...))
+
+
+
+
+         
+
+
+
+
+
+
+
+
+
+
 
 
 

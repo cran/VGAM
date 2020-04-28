@@ -85,7 +85,7 @@ truncweibull(lower.limit = 1e-5,
 
 }
 \references{
-  Wingo, D. R. (1989)
+  Wingo, D. R. (1989).
   The left-truncated Weibull distribution: theory and computation.
   \emph{Statistical Papers},
   \bold{30}(1), 39--48.

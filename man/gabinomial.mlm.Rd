@@ -42,7 +42,7 @@ gabinomial.mlm(alter = 0, zero = NULL, lprob = "logitlink",
   \item{type.fitted}{
   See \code{\link{CommonVGAMffArguments}} for information.
   The choice \code{"pobs.a"} is the probability of an altered value.
-  See \code{\link{gatpoisson.mlm}} for more details.
+  See \code{\link{gaitpoisson.mlm}} for more details.
 
 % and \code{"onempobs.a"} is its complement.
 
@@ -113,7 +113,7 @@ gabinomial.mlm(alter = 0, zero = NULL, lprob = "logitlink",
   returns the mean \eqn{\mu}{mu} (default).
   The choice \code{type.fitted = "pobs.a"} returns the sum of all
   the altered probabilities.
-  See \code{\link{gatpoisson.mlm}} for more details.
+  See \code{\link{gaitpoisson.mlm}} for more details.
 
 
 

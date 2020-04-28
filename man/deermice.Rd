@@ -60,14 +60,14 @@
 \references{
 
 
-Huggins, R. M. (1991)
+Huggins, R. M. (1991).
 Some practical aspects of a conditional likelihood
 approach to capture experiments.
 \emph{Biometrics},
 \bold{47}, 725--732.
 
 
-  Otis, D. L. et al. (1978)
+  Otis, D. L. et al. (1978).
   Statistical inference from capture data on closed animal populations,
   \emph{Wildlife Monographs},
   \bold{62}, 3--135.

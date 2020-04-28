@@ -132,20 +132,20 @@ paretoII(location = 0, lscale = "loglink", lshape = "loglink",
 \references{
 
 
-Johnson N. L., Kotz S., and Balakrishnan N. (1994)
+Johnson N. L., Kotz S., and Balakrishnan N. (1994).
 \emph{Continuous Univariate Distributions, Volume 1},
 2nd ed.
 New York: Wiley.
 
 
 
-Brazauskas, V. (2003)
+Brazauskas, V. (2003).
 Information matrix for Pareto(IV), Burr, and related distributions.
 \emph{Comm. Statist. Theory and Methods}
 \bold{32}, 315--325.
 
 
-Arnold, B. C. (1983)
+Arnold, B. C. (1983).
 \emph{Pareto Distributions}.
 Fairland, Maryland: International Cooperative Publishing House.
 

@@ -62,20 +62,20 @@ R2latvar(object)
 }
 \references{
 
-% Agresti, A. (2007)
+% Agresti, A. (2007).
 % \emph{An Introduction to Categorical Data Analysis, 2nd ed.},
 % New York: John Wiley & Sons.
 % Page 38.
 
 
 
-  Agresti, A. (2018)
+  Agresti, A. (2018).
   \emph{An Introduction to Categorical Data Analysis, 3rd ed.},
   New York: John Wiley & Sons.
 
 
   
-  McKelvey, R. D. and W. Zavoina (1975)
+  McKelvey, R. D. and W. Zavoina (1975).
   A statistical model for the analysis of
   ordinal level dependent variables.
   \emph{The Journal of Mathematical Sociology}, \bold{4},

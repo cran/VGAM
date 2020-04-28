@@ -59,7 +59,7 @@ rec.normal(lmean = "identitylink", lsd = "loglink",
 
 }
 \references{
-    Arnold, B. C. and Balakrishnan, N. and Nagaraja, H. N. (1998)
+    Arnold, B. C. and Balakrishnan, N. and Nagaraja, H. N. (1998).
     \emph{Records},
     New York: John Wiley & Sons.
 

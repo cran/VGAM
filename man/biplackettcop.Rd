@@ -79,7 +79,7 @@ biplackettcop(link = "loglink", ioratio = NULL, imethod = 1, nsimEIM = 200)
 \references{
 
 
-Plackett, R. L. (1965)
+Plackett, R. L. (1965).
 A class of bivariate distributions.
 \emph{Journal of the American Statistical Association},
 \bold{60}, 516--522.

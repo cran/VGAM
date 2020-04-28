@@ -137,6 +137,7 @@ rootogram4vglm(object, newdata = NULL, breaks = NULL, max = NULL,
   \code{rootogram} in \pkg{countreg}.
 
 
+
 %  \code{rootogram} in \pkg{vcd}.
 
 
@@ -147,10 +148,10 @@ rootogram4vglm(object, newdata = NULL, breaks = NULL, max = NULL,
 
 }
 \references{
-  Friendly, M. and Meyer, D. (2016)
+  Friendly, M. and Meyer, D. (2016).
   \emph{Discrete Data Analysis with R: Visualization and
-    Modeling Techniques for Categorical and Count Data},
-Boca Raton, FL, USA: Chapman & Hall/CRC Press.
+  Modeling Techniques for Categorical and Count Data},
+  Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 
 
 
@@ -190,6 +191,15 @@ Kleiber, C. and Zeileis, A. (2016)
   C. Kleiber.
   Function \code{rootogram4()} is based very heavily
   on \pkg{countreg}.
+  T. W. Yee wrote code to unpack variables from many various models
+  and feed them into the appropriate \code{d}-type function.
+
+
+
+
+
+
+
 
 
 % and \pkg{vcd}.

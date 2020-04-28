@@ -77,7 +77,7 @@ rloglap(n, location.ald = 0, scale.ald = 1,
 }
 \references{
 
-Kozubowski, T. J. and Podgorski, K. (2003)
+Kozubowski, T. J. and Podgorski, K. (2003).
 Log-Laplace distributions.
 \emph{International Mathematical Journal},
 \bold{3}, 467--495.

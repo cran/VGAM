@@ -127,7 +127,7 @@ freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
 
 \references{
 
-Freund, J. E. (1961)
+Freund, J. E. (1961).
 A bivariate extension of the exponential distribution.
 \emph{Journal of the American Statistical Association},
 \bold{56}, 971--977.

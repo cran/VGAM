@@ -84,12 +84,12 @@ dirichlet(link = "loglink", parallel = FALSE, zero = NULL, imethod = 1)
 }
 \references{
 
-Lange, K. (2002)
+Lange, K. (2002).
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed. New York: Springer-Verlag.
 
 
-Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011).
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 

@@ -219,22 +219,22 @@ dfbetavlm(model, maxit.new = 1,
 
 }
 %\references{
-%  Belsley, D. A., Kuh, E. and Welsch, R. E. (1980)
+%  Belsley, D. A., Kuh, E. and Welsch, R. E. (1980).
 %  \emph{Regression Diagnostics}.
 %  New York: Wiley.
 %
-%  Cook, R. D. and Weisberg, S. (1982)
+%  Cook, R. D. and Weisberg, S. (1982).
 %  \emph{Residuals and Influence in Regression}.
 %  London: Chapman and Hall.
 %
-%  Williams, D. A. (1987)
+%  Williams, D. A. (1987).
 %  Generalized linear model diagnostics using the deviance and single
 %  case deletions. \emph{Applied Statistics} \bold{36}, 181--191.
 %
-%  Fox, J. (1997)
+%  Fox, J. (1997).
 %  \emph{Applied Regression, Linear Models, and Related Methods}. Sage.
 %
-%  Fox, J. (2002)
+%  Fox, J. (2002).
 %  \emph{An R and S-Plus Companion to Applied Regression}.
 %  Sage Publ.; \url{http://www.socsci.mcmaster.ca/jfox/Books/Companion/}.
 %

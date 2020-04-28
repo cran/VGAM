@@ -83,23 +83,23 @@ logistic(llocation = "identitylink", lscale = "loglink",
 }
 \references{
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994).
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 1, New York: Wiley.  Chapter 15.
 
 
-Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011).
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
+Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience, p.130.
 
 
-deCani, J. S. and Stine, R. A. (1986)
+deCani, J. S. and Stine, R. A. (1986).
 A Note on Deriving the Information Matrix for a Logistic Distribution,
 \emph{The American Statistician},
 \bold{40}, 220--222.

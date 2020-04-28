@@ -5,7 +5,7 @@
 \alias{qgaitbinom.mlm}
 \alias{rgaitbinom.mlm}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally-Altered, -Inflated and -Truncated
+\title{ Generally--Altered, --Inflated and --Truncated
   Binomial Distribution
   (GAIT--binom--MLM--MLM)
 
@@ -16,7 +16,7 @@
   distribution function,
   quantile function
   and random generation
-  for the generally-altered, -inflated and -truncated
+  for the generally--altered, --inflated and --truncated
   binomial distribution
   based on the multinomial logit model (MLM).
   This distribution is sometimes abbreviated as
@@ -105,7 +105,7 @@ rgaitbinom.mlm(n, size, prob, alter = NULL, inflate = NULL,
   }
 }
 \details{
-  See \code{\link{Gaitpois.mlm}} for generic details applying
+  See \code{\link{Gaitpois}} for generic details applying
   to both distributions.
 
 

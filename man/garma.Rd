@@ -118,19 +118,19 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
 
 }
 \references{
-  Benjamin, M. A., Rigby, R. A. and Stasinopoulos, M. D. (1998)
+  Benjamin, M. A., Rigby, R. A. and Stasinopoulos, M. D. (1998).
   Fitting Non-Gaussian Time Series Models. Pages 191--196 in:
   \emph{Proceedings in Computational Statistics COMPSTAT 1998} by
   Payne, R. and P. J. Green. Physica-Verlag.
 
 
-  Benjamin, M. A., Rigby, R. A. and Stasinopoulos, M. D. (2003)
+  Benjamin, M. A., Rigby, R. A. and Stasinopoulos, M. D. (2003).
   Generalized Autoregressive Moving Average Models.
   \emph{Journal of the American Statistical Association},
   \bold{98}: 214--223.
 
 
-  Zeger, S. L. and Qaqish, B. (1988)
+  Zeger, S. L. and Qaqish, B. (1988).
   Markov regression models for time series: a quasi-likelihood approach.
   \emph{Biometrics},
   \bold{44}: 1019--1031.

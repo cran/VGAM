@@ -1,14 +1,12 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
 
-
 coef.vlm <- function(object, ...) {
-
   coefvlm(object, ...)
 }
 
@@ -16,8 +14,7 @@ coef.vlm <- function(object, ...) {
 
 coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
                     colon = FALSE) {
-
-  ans <- object@coefficients
+  Ans <- object@coefficients
 
   if (colon) {
     if (matrix.out)
@@ -30,16 +27,14 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
     M <- object@misc$M
     ncolHlist <- unlist(lapply(Hlist, ncol))
     new.labs <- vlabel(xn = d1, ncolHlist, M = M, colon = colon)
-    names(ans) <- new.labs
-    return(ans)
+    names(Ans) <- new.labs
+    return(Ans)
   }
 
-
   if (!label)
-    names(ans) <- NULL
+    names(Ans) <- NULL
   if (!matrix.out)
-    return(ans)
-
+    return(Ans)
 
 
   ncolx <- object@misc$p  # = length(object@constraints)
@@ -47,12 +42,12 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
 
   Hlist <- object@constraints
   if (all(trivial.constraints(Hlist) == 1)) {
-    Bmat <- matrix(ans, nrow = ncolx, ncol = M, byrow = TRUE)
+    Bmat <- matrix(Ans, nrow = ncolx, ncol = M, byrow = TRUE)
   } else {
     Bmat <- matrix(NA_real_, nrow = ncolx, ncol = M)
 
     if (!matrix.out)
-      return(ans)
+      return(Ans)
 
     ncolHlist <- unlist(lapply(Hlist, ncol))
     nasgn <- names(Hlist)
@@ -60,7 +55,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
     for (ii in seq_along(nasgn)) {
       index <- (temp[ii] + 1):temp[ii + 1]
       cmat <- Hlist[[nasgn[ii]]]
-      Bmat[ii,] <- cmat %*% ans[index]
+      Bmat[ii, ] <- cmat %*% Ans[index]
     }
   }
 
@@ -71,8 +66,7 @@ coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
   }
 
   Bmat
-}  # end of coefvlm
-
+}  # coefvlm
 
 
 
@@ -88,8 +82,6 @@ setMethod("coef", "vglm", function(object, ...)
 
 
 
-
-
 setMethod("coefficients", "summary.vglm", function(object, ...)
           object@coef3)
 setMethod("coef",         "summary.vglm", function(object, ...)
@@ -98,17 +90,10 @@ setMethod("coef",         "summary.vglm", function(object, ...)
 
 
 
-
-
-
-
-
 Coef.vlm <- function(object, ...) {
-
 
   LL <- length(object@family@vfamily)
   funname <- paste("Coef.", object@family@vfamily[LL], sep = "")
-
 
   if (exists(funname)) {
     newcall <- paste("Coef.", object@family@vfamily[LL],
@@ -117,49 +102,42 @@ Coef.vlm <- function(object, ...) {
     return(eval(newcall))
   }
 
-
-  answer <-
-  if (length(tmp2 <- object@misc$link) != 0 &&
-    object@misc$intercept.only &&
-   all(as.logical(trivial.constraints(object@constraints)))) {
-
-
-
+  Answer <-
+    if (length(tmp2 <- object@misc$link) != 0 &&
+        object@misc$intercept.only &&
+        all(as.logical(trivial.constraints(object@constraints)))) {
 
 
 
     if (!is.list(use.earg <- object@misc$earg))
       use.earg <- list()
 
-    answer <-
-      eta2theta(rbind(coefvlm(object)),
-                link = object@misc$link,
-                earg = use.earg)
+    Answer <- eta2theta(rbind(coefvlm(object)),
+                        link = object@misc$link, earg = use.earg)
 
-
-    answer <- c(answer)
-    if (length(ntmp2 <- names(tmp2)) == object@misc$M)
-      names(answer) <- ntmp2
-    answer
+    Answer <- c(Answer)
+    if (length(ntmp2 <- names(tmp2)) == object@misc$M) {
+      special.case <- sum(object@misc$link == "multilogitlink") > 0
+      try.this <- object@family@infos()$parameters.names
+      names(Answer) <- if (special.case &&
+                           length(try.this) == length(Answer))
+        try.this else ntmp2
+    }
+    Answer
   } else {
     coefvlm(object, ... )
   }
 
-
-
   if (length(tmp3 <- object@misc$parameter.names) != 0 &&
-    object@misc$intercept.only &&
-    all(as.logical(trivial.constraints(object@constraints)))) {
-    answer <- c(answer)
-    if (length(tmp3) == object@misc$M &&
-        is.character(tmp3))
-      names(answer) <- tmp3
+      object@misc$intercept.only &&
+      all(as.logical(trivial.constraints(object@constraints)))) {
+    Answer <- c(Answer)
+    if (length(tmp3) == object@misc$M && is.character(tmp3))
+      names(Answer) <- tmp3
   }
 
-  answer
-}
-
-
+  Answer
+}  # Coef.vlm
 
 
 
@@ -172,11 +150,9 @@ setMethod("Coef", "vlm", function(object, ...)
 
 
 
-
 coefvgam <-
   function(object, type = c("linear", "nonlinear"), ...) {
   type <- match.arg(type, c("linear", "nonlinear"))[1]
-
 
   if (type == "linear") {
     coefvlm(object, ...)
@@ -184,7 +160,6 @@ coefvgam <-
     object@Bspline
   }
 }
-
 
 
 setMethod("coefficients", "vgam",
@@ -195,10 +170,6 @@ setMethod("coefficients", "vgam",
 setMethod("coef", "vgam",
           function(object, ...)
           coefvgam(object, ...))
-
-
-
-
 
 
 

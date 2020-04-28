@@ -48,12 +48,12 @@
 %
 %}
 \references{
-  Bickel, P. J., Hammel, E. A. and O'Connell, J. W. (1975)
+  Bickel, P. J., Hammel, E. A. and O'Connell, J. W. (1975).
   Sex bias in graduate admissions: data from Berkeley.
   \emph{Science}, \bold{187}(4175): 398--404.
 
 
-  Freedman, D., Pisani, R. and Purves, R. (1998)
+  Freedman, D., Pisani, R. and Purves, R. (1998).
   Chapter 2 of \emph{Statistics}, 3rd. ed.,
   W. W. Norton & Company.
 

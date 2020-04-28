@@ -78,7 +78,7 @@ plotqtplot.lmscreg(fitted.values, object, newdata = NULL,
 }
 \references{
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine}, \bold{23}, 2295--2315.
 

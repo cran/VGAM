@@ -179,7 +179,7 @@ AR1(ldrift = "identitylink", lsd  = "loglink", lvar = "loglink", lrho = "rhobitl
 
 }
 \references{
-  Porat, B. and Friedlander, B. (1987)
+  Porat, B. and Friedlander, B. (1987).
   The Exact Cramer-Rao Bond for Gaussian Autoregressive Processes.
   \emph{IEEE Transactions on Aerospace and Electronic Systems},
   \bold{AES-23(4)}, 537--542.

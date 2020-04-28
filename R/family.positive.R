@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1297,10 +1297,12 @@ rpospois <- function(n, lambda) {
 
 
 
- pospoisson <- function(link = "loglink",
-                        type.fitted = c("mean", "lambda", "prob0"),
-                        expected = TRUE,
-                        ilambda = NULL, imethod = 1, zero = NULL) {
+ pospoisson <-
+  function(link = "loglink",
+           type.fitted = c("mean", "lambda", "prob0"),
+           expected = TRUE,
+           ilambda = NULL, imethod = 1, zero = NULL,
+           gt.1 = FALSE) {
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
@@ -1368,21 +1370,22 @@ rpospois <- function(n, lambda) {
                                 tag = FALSE)
 
     if (!length(etastart)) {
-      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,
-                             imu = .ilambda )
-
-      etastart <- theta2eta(lambda.init, .link , earg = .earg)
+      lambda.init <- if (length( .ilambda ))
+        rep( .ilambda , length = n) else
+        Init.mu(y = y, w = w, imethod = .imethod ,
+               imu = .ilambda )
+      etastart <- theta2eta(lambda.init, .link , earg = .earg )
     }
   }), list( .link = link, .earg = earg,
             .ilambda = ilambda, .imethod = imethod,
             .type.fitted = type.fitted ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- NCOL(eta) / c(M1 = 1)
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning the 'mean'.")
-                     "mean"
-                   }
+   type.fitted <- if (length(extra$type.fitted))
+     extra$type.fitted else {
+     warning("cannot find 'type.fitted'. Returning the 'mean'.")
+     "mean"
+   }
 
     type.fitted <- match.arg(type.fitted,
                      c("mean", "lambda", "prob0"))[1]
@@ -1409,13 +1412,12 @@ rpospois <- function(n, lambda) {
   }), list( .link = link, .earg = earg, .expected = expected ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
+             extra = NULL, summation = TRUE) {
     lambda <- eta2theta(eta, .link , earg = .earg )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dpospois(x = y, lambda = lambda, log = TRUE)
+      ll.elts <- c(w) * dpospois(y, lambda, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1426,9 +1428,11 @@ rpospois <- function(n, lambda) {
   vfamily = c("pospoisson"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     lambda <- eta2theta(eta, .link , earg = .earg )
-    okay1 <- all(is.finite(lambda)) && all(0 < lambda)
+    lower.bound <- if ( .gt.1 ) 1 else 0
+    okay1 <- all(is.finite(lambda)) &&
+             all(lower.bound < lambda)
     okay1
-  }, list( .link = link, .earg = earg ))),
+  }, list( .link = link, .earg = earg, .gt.1 = gt.1 ))),
 
 
   simslot = eval(substitute(
@@ -1453,7 +1457,6 @@ rpospois <- function(n, lambda) {
     dl.dlambda <- y / lambda - 1 - 1 / temp6
 
     dlambda.deta <- dtheta.deta(lambda, .link , earg = .earg )
-
     c(w) * dl.dlambda * dlambda.deta
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
@@ -1463,7 +1466,8 @@ rpospois <- function(n, lambda) {
     } else {
       d2l.dlambda2 <- y / lambda^2 - (1 + 1 / temp6 + 1) / temp6
       d2lambda.deta2 <- d2theta.deta2(lambda, .link , earg = .earg)
-      wz <- (dlambda.deta^2) * d2l.dlambda2 - dl.dlambda * d2lambda.deta2
+      wz <- (dlambda.deta^2) * d2l.dlambda2 -
+            dl.dlambda * d2lambda.deta2
     }
     c(w) * wz
   }), list( .link = link, .earg = earg, .expected = expected ))))

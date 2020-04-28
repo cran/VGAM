@@ -116,12 +116,12 @@ mix2normal(lphi = "logitlink", lmu = "identitylink", lsd = "loglink",
 \references{
 
 
-McLachlan, G. J. and Peel, D. (2000)
+McLachlan, G. J. and Peel, D. (2000).
 \emph{Finite Mixture Models}.
 New York: Wiley.
 
 
-Everitt, B. S. and Hand, D. J. (1981)
+Everitt, B. S. and Hand, D. J. (1981).
 \emph{Finite Mixture Distributions}.
 London: Chapman & Hall.
 

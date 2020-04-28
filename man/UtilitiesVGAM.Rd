@@ -104,7 +104,7 @@ interleave.VGAM(.M, M1, inverse = FALSE)
 
 
 
-Yee, T. W. (2015)
+Yee, T. W. (2015).
 Vector Generalized Linear and Additive Models:
 With an Implementation in R.
 New York, USA: \emph{Springer}.

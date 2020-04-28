@@ -47,7 +47,7 @@ data(Huggins89.t1)
 %}
 \references{
 
-Huggins, R. M. (1989)
+Huggins, R. M. (1989).
 On the statistical analysis of capture experiments.
 \emph{Biometrika},
 \bold{76}, 133--140.

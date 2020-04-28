@@ -138,18 +138,18 @@ Qvar(object, factorname = NULL, which.linpred = 1,
 \references{
 
 
-  Firth, D. (2003)
+  Firth, D. (2003).
   Overcoming the reference category problem in the
   presentation of statistical models.
   \emph{Sociological Methodology} \bold{33}, 1--18.
 
 
-  Firth, D. and de Menezes, R. X. (2004)
+  Firth, D. and de Menezes, R. X. (2004).
   Quasi-variances.
   \emph{Biometrika} \bold{91}, 65--80.
 
 
-Yee, T. W. and Hadi, A. F. (2014)
+Yee, T. W. and Hadi, A. F. (2014).
 Row-column interaction models, with an R implementation.
 \emph{Computational Statistics},
 \bold{29}, 1427--1445.

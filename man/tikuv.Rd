@@ -86,12 +86,12 @@ tikuv(d, lmean = "identitylink", lsigma = "loglink", isigma = NULL,
 }
 \references{
 
-  Akkaya, A. D. and Tiku, M. L. (2008)
+  Akkaya, A. D. and Tiku, M. L. (2008).
   Short-tailed distributions and inliers.
   \emph{Test}, \bold{17}, 282--296.
 
 
-  Tiku, M. L. and Vaughan, D. C. (1999)
+  Tiku, M. L. and Vaughan, D. C. (1999).
   A family of short-tailed symmetric distributions.
   \emph{Technical report, McMaster University, Canada}.
 

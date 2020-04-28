@@ -89,7 +89,7 @@ else \eqn{q < 0} is right skew.
 
 }
 \references{
-  Prentice, R. L. (1974)
+  Prentice, R. L. (1974).
   A log gamma model and its maximum likelihood estimation.
   \emph{Biometrika}, \bold{61}, 539--544.
 

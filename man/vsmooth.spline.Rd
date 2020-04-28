@@ -150,7 +150,7 @@ See \code{\link[stats]{smooth.spline}}.
 
 }
 \references{
-Yee, T. W. (2000)
+Yee, T. W. (2000).
 Vector Splines and Other Vector Smoothers.
 Pages 529--534.
 In: Bethlehem, J. G. and van der Heijde, P. G. M.

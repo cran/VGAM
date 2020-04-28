@@ -119,18 +119,18 @@ gumbelff(llocation = "identitylink", lscale = "loglink",
 
 }
 \references{
-  Yee, T. W. and Stephenson, A. G. (2007)
+  Yee, T. W. and Stephenson, A. G. (2007).
   Vector generalized linear and additive extreme value models.
   \emph{Extremes}, \bold{10}, 1--19.
 
 
-  Smith, R. L. (1986)
+  Smith, R. L. (1986).
   Extreme value theory based on the \emph{r} largest annual events.
   \emph{Journal of Hydrology},
   \bold{86}, 27--43.
 
 
-  Rosen, O. and Cohen, A. (1996)
+  Rosen, O. and Cohen, A. (1996).
   Extreme percentile regression.
   In: Haerdle, W. and Schimek, M. G. (eds.),
   \emph{Statistical Theory and Computational Aspects of Smoothing:
@@ -139,7 +139,7 @@ gumbelff(llocation = "identitylink", lscale = "loglink",
   Heidelberg: Physica-Verlag.
 
 
-  Coles, S. (2001)
+  Coles, S. (2001).
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.
 

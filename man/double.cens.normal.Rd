@@ -53,7 +53,7 @@ double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loglink",
 
 }
 \references{
-  Harter, H. L. and Moore, A. H. (1966)
+  Harter, H. L. and Moore, A. H. (1966).
   Iterative maximum-likelihood estimation of the parameters of
   normal populations from singly and doubly censored samples.
   \emph{Biometrika}, \bold{53}, 205--213.

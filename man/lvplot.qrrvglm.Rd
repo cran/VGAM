@@ -284,7 +284,7 @@ For rank-2 models, points are the optimums.
 }
 \references{
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},

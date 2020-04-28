@@ -75,12 +75,12 @@ simplex(lmu = "logitlink", lsigma = "loglink", imu = NULL, isigma = NULL,
 
 }
 \references{
-  Jorgensen, B. (1997)
+  Jorgensen, B. (1997).
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall
 
 
-  Song, P. X.-K. (2007)
+  Song, P. X.-K. (2007).
   \emph{Correlated Data Analysis: Modeling, Analytics, and Applications}.
   Springer.
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1467,7 +1467,6 @@ zanegbinomial.control <-
 
 
     mymu <- munb / oneminusf0  # E(Y) of Pos-NBD
-
 
 
     dl.dphi0 <- -1 / (1 - phi0)

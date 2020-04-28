@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,6 +35,7 @@ ToString <- function(x)
            short = TRUE, tag = FALSE) {
 
 
+  .Deprecated("loglink")
 
       
   if (is.character(theta)) {
@@ -126,6 +127,7 @@ ToString <- function(x)
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
 
+  .Deprecated("logofflink")
 
       
   if (!is.Numeric(offset))
@@ -234,6 +236,7 @@ if (FALSE)
            bvalue = NULL,
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
+  .Deprecated("logitlink")
 
       
   if (is.character(theta)) {
@@ -287,9 +290,8 @@ if (FALSE)
            short = TRUE, tag = FALSE) {
 
 
-  print("please use logloglink() instead, not loglog().")
-  warning("please use logloglink() instead, not loglog().")
 
+  .Deprecated("logloglink")
 
       
   if (is.character(theta)) {
@@ -400,6 +402,7 @@ if (FALSE)
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
+  .Deprecated("clogloglink")
 
       
   if (is.character(theta)) {
@@ -456,6 +459,7 @@ if (FALSE)
            bvalue = NULL,  # .Machine$double.eps is an alternative
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
+  .Deprecated("probitlink")
 
       
   if (is.character(theta)) {
@@ -766,6 +770,7 @@ if (FALSE)
            bmaxvalue = NULL,
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
+  .Deprecated("rhobitlink")
 
       
   if (is.character(theta)) {

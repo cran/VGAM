@@ -83,7 +83,7 @@ uninormal(lmean = "identitylink", lsd = "loglink", lvar = "loglink",
 }
 \references{
 
-Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011).
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 

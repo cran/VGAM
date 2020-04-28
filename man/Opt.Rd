@@ -51,14 +51,14 @@ Opt(object, ...)
 }
 \references{
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
 
-Yee, T. W. (2006)
+Yee, T. W. (2006).
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 

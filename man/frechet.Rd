@@ -120,7 +120,7 @@ frechet(location = 0, lscale = "loglink", lshape = logofflink(offset = -2),
 }
 \references{
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
+Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications
       in Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.

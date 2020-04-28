@@ -329,19 +329,19 @@ rcqo(n, p, S, Rank = 1,
 }
 \references{
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
 
-Yee, T. W. (2006)
+Yee, T. W. (2006).
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
 
-ter Braak, C. J. F. and Prentice, I. C. (1988)
+ter Braak, C. J. F. and Prentice, I. C. (1988).
 A theory of gradient analysis.
 \emph{Advances in Ecological Research},
 \bold{18}, 271--317.

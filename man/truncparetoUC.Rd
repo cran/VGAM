@@ -49,7 +49,7 @@ rtruncpareto(n, lower, upper, shape)
 }
 \references{
 
-  Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006)
+  Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006).
   Parameter estimation for the truncated Pareto distribution,
   \emph{Journal of the American Statistical Association},
   \bold{101}(473),

@@ -99,12 +99,12 @@ fraud detection in accounting  and the design computers.
 }
 \references{
 
-Benford, F. (1938)
+Benford, F. (1938).
 The Law of Anomalous Numbers.
 \emph{Proceedings of the American Philosophical Society},
 \bold{78}, 551--572.
 
-Newcomb, S. (1881)
+Newcomb, S. (1881).
 Note on the Frequency of Use of the Different Digits in Natural Numbers.
 \emph{American Journal of Mathematics},
 \bold{4}, 39--40.

@@ -48,7 +48,7 @@ rec.exp1(lrate = "loglink", irate = NULL, imethod = 1)
 
 }
 \references{
-    Arnold, B. C. and Balakrishnan, N. and Nagaraja, H. N. (1998)
+    Arnold, B. C. and Balakrishnan, N. and Nagaraja, H. N. (1998).
     \emph{Records},
     New York: John Wiley & Sons.
 

@@ -3,6 +3,18 @@
 %
 %
 %
+% 202004
+\alias{extlogF1.control}
+% 202003
+\alias{gaitzeta.mix}
+%\alias{dgaitzeta}
+%\alias{pgaitzeta}
+%\alias{qgaitzeta}
+%\alias{rgaitzeta}
+% 202002
+\alias{get.offset}
+\alias{get.offset.vglm}
+  \alias{y.gait.check}
 % 201909, 201910, 201911
   \alias{moments.nbin.gait}
   \alias{moments.pois.gait}
@@ -10,7 +22,7 @@
 %\alias{pgaitpois.mix}
   \alias{EIM.GATNB.speciald}
   \alias{GATNB.deriv012}
-  \alias{gait.errorcheck}
+  \alias{semigait.errorcheck}
 % 201908
 % part a is based on \pkg{vcd}:
 %\alias{vcdrootogram}

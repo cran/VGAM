@@ -191,7 +191,7 @@ zanegbinomialff(lmunb = "loglink", lsize = "loglink", lonempobs0 = "logitlink",
 \references{
 
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and Lindenmayer,
-D. B. (1996)
+D. B. (1996).
 Modelling the abundances of rare species: statistical models
 for counts with extra zeros.
 \emph{Ecological Modelling},
@@ -199,7 +199,7 @@ for counts with extra zeros.
 297--308.
 
 
-  Yee, T. W. (2014)
+  Yee, T. W. (2014).
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis},
   \bold{71}, 889--902.

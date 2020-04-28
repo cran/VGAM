@@ -105,12 +105,12 @@ truncpareto(lower, upper, lshape = "loglink", ishape = NULL, imethod = 1)
 
 }
 \references{
-Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011).
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
-  Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006)
+  Aban, I. B., Meerschaert, M. M. and Panorska, A. K. (2006).
   Parameter estimation for the truncated Pareto distribution,
   \emph{Journal of the American Statistical Association},
   \bold{101}(473),

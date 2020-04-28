@@ -83,6 +83,7 @@ rotlog(n, shape)
 }
 
 \seealso{
+  \code{\link{Gaitlog}},
   \code{\link{otlog}},
   \code{\link{rlog}},
   \code{\link{Oilog}}.

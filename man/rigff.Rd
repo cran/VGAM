@@ -39,7 +39,7 @@ rigff(lmu = "identitylink", llambda = "loglink", imu = NULL, ilambda = 1)
 }
 \references{
 
-Jorgensen, B. (1997)
+Jorgensen, B. (1997).
 \emph{The Theory of Dispersion Models}.
 London: Chapman & Hall
 

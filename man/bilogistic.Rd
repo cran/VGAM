@@ -109,13 +109,13 @@ bilogistic(llocation = "identitylink", lscale = "loglink",
 }
 \references{
 
-Gumbel, E. J. (1961)
+Gumbel, E. J. (1961).
 Bivariate logistic distributions.
 \emph{Journal of the American Statistical Association},
 \bold{56}, 335--349.
 
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
+Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.

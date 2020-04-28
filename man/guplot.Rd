@@ -65,12 +65,12 @@ guplot.vlm(object, ...)
 %% zz not sure about the reference
 \references{
 
-  Coles, S. (2001)
+  Coles, S. (2001).
   \emph{An Introduction to Statistical Modeling of Extreme Values}.
   London: Springer-Verlag.
 
 
-  Gumbel, E. J. (1958)
+  Gumbel, E. J. (1958).
   \emph{Statistics of Extremes}.
   New York, USA: Columbia University Press.
 

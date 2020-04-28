@@ -158,14 +158,14 @@ Set \code{trace = TRUE} to monitor convergence.
 
 }
 \references{
-  Barry, S. C. and Welsh, A. H. (2002)
+  Barry, S. C. and Welsh, A. H. (2002).
   Generalized additive modelling and zero inflated count data.
   \emph{Ecological Modelling},
   \bold{157},
   179--188.
 
 
-  Williamson, E. and Bretherton, M. H. (1964)
+  Williamson, E. and Bretherton, M. H. (1964).
   Tables of the logarithmic series distribution.
   \emph{Annals of Mathematical Statistics},
   \bold{35},

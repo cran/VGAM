@@ -94,17 +94,17 @@ Also the log-normal distribution corresponds to when \code{k = Inf}.
 
 }
 \references{
-  Stacy, E. W. (1962)
+  Stacy, E. W. (1962).
   A generalization of the gamma distribution.
   \emph{Annals of Mathematical Statistics}, \bold{33}(3), 1187--1192.
 
 
-  Stacy, E. W. and Mihram, G. A. (1965)
+  Stacy, E. W. and Mihram, G. A. (1965).
   Parameter estimation for a generalized gamma distribution.
   \emph{Technometrics}, \bold{7}, 349--358.
 
 
-  Prentice, R. L. (1974)
+  Prentice, R. L. (1974).
   A log gamma model and its maximum likelihood estimation.
   \emph{Biometrika}, \bold{61}, 539--544.
 

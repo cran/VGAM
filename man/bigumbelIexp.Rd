@@ -73,7 +73,7 @@ bigumbelIexp(lapar = "identitylink", iapar = NULL, imethod = 1)
 
 
 
-Gumbel, E. J. (1960)
+Gumbel, E. J. (1960).
 Bivariate Exponential Distributions.
 \emph{Journal of the American Statistical Association},
 \bold{55}, 698--707.

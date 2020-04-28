@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -22,7 +23,6 @@ hdeff.vglm <-
            hstep = 0.005,  # Formerly 'Delta', recycled to length 2
            fd.only = FALSE,
            ...) {
-
 
   if (is.Numeric(hstep, positive = TRUE)) {
       if (length(hstep) > 2)
@@ -168,11 +168,11 @@ hdeff.vglm <-
     if (mixture.links) {
 
 
+
+if (FALSE) {  ###################################################
       myrle <- rle(mylinks)
       if (length(myrle$value) != 2)
         stop("can only handle two types of links in two chunks")
-
- 
       M.1 <- myrle$length[1]
       myearg1 <- object@misc$earg[[1]]
       build.list1 <- list(theta = Param.mat[, 1:(1 + M.1)],
@@ -180,19 +180,79 @@ hdeff.vglm <-
       build.list1 <- c(build.list1, myearg1)  # No dups arg names..
       build.list1$all.derivs <- TRUE  # For "multilogitlink".
       Der11 <- do.call(mylinks[1], build.list1)
-
- 
       M.2 <- 1  # Corresponding to, e.g., loglink("lambda")
       lastone <- length(object@misc$earg)
       tmp5 <- ncol(Param.mat)
       myearg2 <- object@misc$earg[[lastone]]
-
       myearg2$theta <- Param.mat[, (2 + M.1):tmp5]
       myearg2$inverse <- TRUE
       myearg2$deriv <- 1
-
       Der12 <- do.call(mylinks[lastone], myearg2)
       Der1 <- wz.merge(Der11, Der12, M.1, M.2)  # Combine them
+}  # if (FALSE)  ###################################################
+
+
+
+
+  llink <- length(mylinks)  # length(link)
+  vecTF <- mylinks == "multilogitlink"
+  Ans <- NULL  # Growing matrix data structure
+  M.1 <- 0
+  offset.Param.mat <- 0  # Coz rowSums(Param.mat)==1 for multilogitlink
+  iii <- 1
+  while (iii <= llink) {
+    first.index <- last.index <- iii  # Ordinary case
+    special.case <- vecTF[iii]  # && sum(vecTF) < length(vecTF)
+
+    if (special.case) {
+      next.i <- iii+1
+      while (next.i <= llink) {
+        if (vecTF[next.i]) {
+          last.index <- next.i
+          next.i <- next.i + 1
+        } else {
+          break
+        }
+      }  # while
+    }  # special.case
+
+    iii <- iii + last.index - first.index + 1  # For next time
+
+    myearg2 <- object@misc$earg[[first.index]]  # Only one will do
+    if (special.case) {
+      build.list2 <-  # rowSums of Param.mat subset are all == 1:
+        list(theta = Param.mat[, first.index:(last.index+1)],
+             inverse = TRUE, deriv = 1)
+      offset.Param.mat <- offset.Param.mat + 1
+      myearg2 <- c(build.list2, myearg2)  # No dups arg names..
+      myearg2$all.derivs <- TRUE  # For "multilogitlink".
+      myearg2$M <- last.index - first.index  + 1
+    }  # special.case
+
+    use.earg <- myearg2
+    use.earg[["inverse"]] <- TRUE  # New
+    if (!special.case)
+      use.earg[["theta"]] <-
+        Param.mat[, offset.Param.mat + (first.index:last.index)]
+    use.earg$deriv <- 1
+    use.function.name <- mylinks[first.index]  # e.g., "multilogitlink"
+
+    Ans2 <- do.call(use.function.name, use.earg)
+    delete.coln <- FALSE
+    if (special.case && delete.coln)
+      Ans2 <- Ans2[, -use.earg$refLevel]
+
+    M.2 <- last.index - first.index + 1
+    Ans <- if (length(Ans)) wz.merge(Ans, Ans2, M.1, M.2) else Ans2
+    M.1 <- M.1 + M.2
+  }  # while (iii <= llink)
+
+
+
+
+
+
+
     } else {
  # Handle multinomial, etc.
       myearg <- object@misc$earg[[1]]  # Only ONE anyway

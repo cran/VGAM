@@ -112,13 +112,13 @@ provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.
 }
 \references{
 
-Kleiber, C. and Kotz, S. (2003)
+Kleiber, C. and Kotz, S. (2003).
 \emph{Statistical Size Distributions in Economics and
              Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
-Brazauskas, V. (2002)
+Brazauskas, V. (2002).
 Fisher information matrix for the Feller-Pareto distribution.
 \emph{Statistics & Probability Letters},
 \bold{59}, 159--167.

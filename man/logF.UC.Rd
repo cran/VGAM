@@ -63,7 +63,9 @@ dlogF(x, shape1, shape2, log = FALSE)
 %}
 
 \seealso{
-  \code{\link{hypersecant}}.
+  \code{\link{hypersecant}},
+  \code{\link{dextlogF}}.
+
 
 
 % \code{\link{simulate.vlm}}.

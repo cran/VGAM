@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -9,23 +11,32 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
-export(gatnbinomial.mix)
-export(moments.nbin.gait, moments.pois.gait)
-export(gatpoisson.mix)
+  export(eCDF)
+exportMethods(eCDF)
+  export(dextlogF, extlogF1, extlogF1.control)
+  export(is.crossing, fix.crossing)
+exportMethods(is.crossing, fix.crossing)
+  export(dgaitzeta, pgaitzeta, qgaitzeta, rgaitzeta, gaitzeta.mix)
+  export(dgaitpois, pgaitpois, qgaitpois, rgaitpois, gaitpoisson.mix)
+  export(dgaitlog , pgaitlog , qgaitlog , rgaitlog,   gaitlog.mix)
+exportMethods(specials, altered, inflated, truncated)
+export(specialsvglm)
+export(get.offset)
+export(get.offset.vglm)
+exportMethods(get.offset)
+export(y.gait.check)
+  export(gaitpoisson.mlm)
+  export(gatnbinomial.mix)
+  export(moments.nbin.gait, moments.pois.gait)
+
 export(dgaitnbinom.mix, pgaitnbinom.mix, pgaitnbinom.mix, rgaitnbinom.mix)
-export(dgaitpois.mix, pgaitpois.mix, pgaitpois.mix, rgaitpois.mix)
   export(gatnbinomial.mlm, EIM.GATNB.speciald, GATNB.deriv012)
-export(gait.errorcheck)
+export(semigait.errorcheck)
 export(is.Numeric2)
 export(dgaitnbinom.mlm)
 export(pgaitnbinom.mlm)
 export(qgaitnbinom.mlm)
 export(rgaitnbinom.mlm)
-export(gatpoisson.mlm)
-export(dgaitpois.mlm)
-export(pgaitpois.mlm)
-export(qgaitpois.mlm)
-export(rgaitpois.mlm)
 export(dgaitbinom.mlm)
 export(pgaitbinom.mlm)
 export(qgaitbinom.mlm)
@@ -83,7 +94,6 @@ export(stieltjes)
 export(loglogloglink)
 importFrom("graphics", "legend")
 export(hdeffsev, seglines)
-  export(gipoisson.mlm)
   export(gtbinomial)
 export(bell, bellff, dbell, rbell)
 exportMethods(calibrate)
@@ -181,8 +191,8 @@ export(as.char.expression)
 
 
 export(predictvglmS4VGAM)
-export(EIM.posNB.speciald, EIM.NB.speciald,
-       EIM.posNB.specialp, EIM.NB.specialp)
+  export(EIM.posNB.speciald, EIM.NB.speciald,
+         EIM.posNB.specialp, EIM.NB.specialp)
 export(.min.criterion.VGAM)
 export(pzoibetabinom, pzoibetabinom.ab,
        rzoibetabinom, rzoibetabinom.ab,

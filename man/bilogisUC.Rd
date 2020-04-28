@@ -41,7 +41,7 @@ rbilogis(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1)
 }
 \references{
 
-Gumbel, E. J. (1961)
+Gumbel, E. J. (1961).
 Bivariate logistic distributions.
 \emph{Journal of the American Statistical Association},
 \bold{56}, 335--349.

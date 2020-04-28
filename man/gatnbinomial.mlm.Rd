@@ -25,7 +25,7 @@
 \usage{
 gatnbinomial.mlm(alter = NULL, truncate = NULL, zero = "size",
    lmunb = "loglink", lsize = "loglink", type.fitted = c("mean",
-   "pobs.a", "Pobs.a", "prob.a", "prob.t"),
+   "pobs.a", "Pobs.a", "prob.a", "prob.i", "prob.t", "lhs.prob"),
    imethod = 1, imunb = NULL, isize = exp(1), ishrinkage = 0.95,
    probs.y = 0.35, cutoff.prob = 0.999, eps.trig = 1e-7,
    max.chunk.MB = 30)
@@ -34,7 +34,7 @@ gatnbinomial.mlm(alter = NULL, truncate = NULL, zero = "size",
 % ipobs0 = NULL,
 \arguments{
   \item{alter, truncate}{
-    Same as \code{\link{gatpoisson.mlm}}.
+    Same as \code{\link{gaitpoisson.mlm}}.
 
 
 
@@ -49,7 +49,7 @@ gatnbinomial.mlm(alter = NULL, truncate = NULL, zero = "size",
 
   \item{type.fitted, zero}{
     See \code{\link{CommonVGAMffArguments}} and
-    \code{\link{gatpoisson.mlm}}
+    \code{\link{gaitpoisson.mlm}}
     for information.
 
 
@@ -136,7 +136,7 @@ equivalent to \code{\link{negbinomial}}.
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
   and \code{\link{vgam}}.
-  See \code{\link{gatpoisson.mlm}} for more information.
+  See \code{\link{gaitpoisson.mlm}} for more information.
 
 
 }
@@ -163,13 +163,13 @@ equivalent to \code{\link{negbinomial}}.
 
 
 
-  Compared to \code{\link{gatpoisson.mlm}}
+  Compared to \code{\link{gaitpoisson.mlm}}
   this family function is even more difficult to fit because
   it is more flexible and involves approximating an infinite
   series when computing the expected information matrix.
 
     
-% See \code{\link{gatpoisson.mlm}} for more information;
+% See \code{\link{gaitpoisson.mlm}} for more information;
 
 
 
@@ -179,7 +179,7 @@ equivalent to \code{\link{negbinomial}}.
 
 \author{ T. W. Yee }
 \note{
-  See \code{\link{gatpoisson.mlm}} for more information
+  See \code{\link{gaitpoisson.mlm}} for more information
   about robustness.
 
 
@@ -230,12 +230,14 @@ or
 
 \seealso{
   \code{\link{Gaitnbinom.mlm}},
-  \code{\link{gatpoisson.mlm}},
+  \code{\link{gaitpoisson.mlm}},
   \code{\link{gatnbinomial.mix}},
-  \code{\link{zanegbinomial}},
   \code{\link{multinomial}},
-  \code{\link{Posnegbin}},
+  \code{\link{negbinomial}},
+  \code{\link{posnegbinomial}},
+  \code{\link{zanegbinomial}},
   \code{\link{CommonVGAMffArguments}},
+  \code{\link{rootogram4}},
   \code{\link{simulate.vlm}}.
 
 
@@ -251,8 +253,9 @@ avec <- c(10, 20, 30)    # Alter these values
 tvec <- 0  # Truncate this value
 pobs.a <- logitlink(-(2:4), inverse = TRUE)  # Between 0.02 and 0.12
 size1 <- exp(1)
+set.seed(1)
 gdata <- data.frame(x2 = runif(nn <- 1000))
-gdata <- transform(gdata, lambda1 = exp(2 + 0.5 * x2))
+gdata <- transform(gdata, lambda1 = exp(2))
 gdata <- transform(gdata,
   y1 = rgaitnbinom.mlm(nn, size1, mu = lambda1, pobs.a = pobs.a,
                        truncate = tvec, byrow = TRUE, alter = avec))
@@ -262,9 +265,8 @@ propn1 <- c(ty1) / sum(ty1)
 plot(as.numeric(names(ty1)), propn1, las = 1, xlab = "y",
      yaxs = "i", ylim = c(0, max(propn1) * 1.1), main = "Heaped data",
      ylab = "Proportion", lwd = 3, type = "h", col = "blue")
-fit1 <- vglm(y1 ~ x2, trace = TRUE, data = gdata, crit = "coef",
-             gatnbinomial.mlm(alter = avec, truncate = tvec,
-                              zero = c("size", "pobs")))
+fit1 <- vglm(y1 ~ 1, trace = TRUE, data = gdata, crit = "coef",
+             gatnbinomial.mlm(alter = avec, truncate = tvec))
 head(fitted(fit1))
 head(predict(fit1))
 coef(fit1, matrix = TRUE)

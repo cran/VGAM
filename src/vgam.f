@@ -877,408 +877,42 @@ C Output from Public domain Ratfor, version 1.01
 23299 continue
       return
       end
-      subroutine vbfa( n,wy1vqfzu,psdvgce3, he7mqnvy,tlgduey8,wmat,wbkq9
-     *zyi,dof, ezlgm2up,nef,which, ub4xioar,kispwgx3,m0ibglfx,s0, beta,c
-     *ov,zpcqv3uj, vc6hatuj,fasrkub3, ges1xpkr, xbig, wpuarq2m, hjm2ktyr
-     *, jnxpuym2, hnpt1zym, fzm1ihwj, iz2nbfjc, work1, wk2, wkmm, work3,
-     * sgdub, bmb, ifys6woa, mwk, twk, rpyis2kc, zv2xfhei, resss, nbzjkp
-     *i3, acpios9q, itwk, jwbkl9fp)
-      implicit logical (a-z)
-      integer irhm4cfa, n, wy1vqfzu, psdvgce3(15), ezlgm2up(*),nef(*),wh
-     *ich(*), ges1xpkr(*)
-      integer jnxpuym2(*), hnpt1zym(*), fzm1ihwj(*), iz2nbfjc(*), nbzjkp
-     *i3(*), acpios9q(*), itwk(*), jwbkl9fp(*)
-      double precision he7mqnvy(*),tlgduey8(*),wmat(*),wbkq9zyi(*),dof(*
-     *), ub4xioar(*),kispwgx3(*), m0ibglfx(*), s0(wy1vqfzu), beta(*),cov
-     *(*),zpcqv3uj, vc6hatuj(*),fasrkub3(*)
-      double precision xbig(*), wpuarq2m(*), hjm2ktyr(*), work1(*), wk2(
-     *n,wy1vqfzu,3), wkmm(wy1vqfzu,wy1vqfzu,16), work3(*), sgdub(*), bmb
-     *(*), ifys6woa(*), mwk(*), twk(*), rpyis2kc(*), zv2xfhei(*), resss
-      integer p,q,yzoe1rsp,niter,gtrlbz3e, rutyk8mg, xjc4ywlh, lyma1kwc,
-     * dimw, dimu, fbd5yktj,ldk
-      integer iter
-      integer xs4wtvlg
-      integer ayfnwr1v, imk5wjxg, qemj9asg
-      irhm4cfa = 0
-      imk5wjxg = wy1vqfzu*(wy1vqfzu+1)/2
-      p=psdvgce3(2)
-      q=psdvgce3(3)
-      yzoe1rsp= 0
-      if(psdvgce3(4) .eq. 1)then
-      yzoe1rsp = 1
-      endif
-      gtrlbz3e=psdvgce3(6)
-      qemj9asg=psdvgce3(7)
-      rutyk8mg=psdvgce3(9)
-      xjc4ywlh=psdvgce3(10)
-      lyma1kwc=psdvgce3(11)
-      dimw=psdvgce3(12)
-      dimu=psdvgce3(13)
-      fbd5yktj = 0
-      ldk=psdvgce3(15)
-      xs4wtvlg = 1
-      if(lyma1kwc .gt. 0)then
-      do23304 ayfnwr1v=1,lyma1kwc 
-      work1(ayfnwr1v) = dof(ayfnwr1v)
-      work1(ayfnwr1v+lyma1kwc) = wbkq9zyi(ayfnwr1v)
-      work1(ayfnwr1v+2*lyma1kwc) = dof(ayfnwr1v)
-23304 continue
-23305 continue
-      endif
-      iter = 0
-23306 if(xs4wtvlg .ne. 0)then
-      iter = iter+1
-      if(iter .gt. 1)then
-      if(lyma1kwc .gt. 0)then
-      do23312 ayfnwr1v=1,lyma1kwc 
-      if(work1(ayfnwr1v+lyma1kwc).eq.0.0d0 .and. (dabs(work1(ayfnwr1v+2*
-     *lyma1kwc)-dof(ayfnwr1v))/dof(ayfnwr1v).gt.0.05d0))then
-      work1(ayfnwr1v+2*lyma1kwc) = dof(ayfnwr1v)
-      dof(ayfnwr1v)=work1(ayfnwr1v)
-      wbkq9zyi(ayfnwr1v)=0.0d0
-      else
-      work1(ayfnwr1v+2*lyma1kwc) = dof(ayfnwr1v)
-      endif
-23312 continue
-23313 continue
-      endif
-      endif
-      call vbfa1(irhm4cfa,n,wy1vqfzu, he7mqnvy,tlgduey8,wmat,wbkq9zyi,do
-     *f, ezlgm2up,nef,which, ub4xioar,kispwgx3,m0ibglfx,s0, beta,cov,zpc
-     *qv3uj, vc6hatuj,fasrkub3, qemj9asg,ges1xpkr, xbig, wpuarq2m, hjm2k
-     *tyr, jnxpuym2, hnpt1zym, fzm1ihwj(1), fzm1ihwj(1 + imk5wjxg), iz2n
-     *bfjc, work1(1+3*lyma1kwc), wkmm, work3, sgdub, bmb, ifys6woa, mwk,
-     * twk, rpyis2kc, zv2xfhei, resss, nbzjkpi3, acpios9q, itwk, jwbkl9f
-     *p, p,q,yzoe1rsp,niter,gtrlbz3e, wk2(1,1,1), wk2(1,1,2), wk2(1,1,3)
-     *, rutyk8mg, xjc4ywlh, lyma1kwc, dimw, dimu, fbd5yktj, ldk)
-      if(irhm4cfa .ne. 0)then
-      call vcall2(xs4wtvlg,w,y,m0ibglfx,beta,wpuarq2m)
-      else
-      xs4wtvlg = 0
-      endif
-      if(xs4wtvlg .ne. 0)then
-      qemj9asg=0
-      endif
-      goto 23306
-      endif
-23307 continue
-      psdvgce3(7) = qemj9asg
-      psdvgce3(5) = niter
-      psdvgce3(14) = fbd5yktj
-      return
-      end
-      subroutine vbfa1(irhm4cfa,kuzxj1lo,wy1vqfzu, he7mqnvy,tlgduey8,wma
-     *t,wbkq9zyi,dof, ezlgm2up,nef,which, ub4xioar,kispwgx3,m0ibglfx,s0,
-     * beta,cov,zpcqv3uj, vc6hatuj,fasrkub3, qemj9asg,ges1xpkr, xbig, wp
-     *uarq2m, hjm2ktyr, jnxpuym2, hnpt1zym, tgiyxdw1, dufozmt7, iz2nbfjc
-     *, work1, wkmm, work3, sgdub, bmb, ifys6woa, mwk, twk, rpyis2kc, zv
-     *2xfhei, resss, nbzjkpi3, acpios9q, itwk, jwbkl9fp, p, q, yzoe1rsp,
-     * niter, gtrlbz3e, ghz9vuba, oldmat, wk2, rutyk8mg, xjc4ywlh, lyma1
-     *kwc, dimw, dimu, fbd5yktj, ldk)
-      implicit logical (a-z)
-      integer qemj9asg
-      integer dufozmt7(*), tgiyxdw1(*)
-      integer p, q, yzoe1rsp, niter, gtrlbz3e, rutyk8mg, xjc4ywlh, lyma1
-     *kwc, dimw, dimu, fbd5yktj, ldk
-      integer irhm4cfa, kuzxj1lo, wy1vqfzu, ezlgm2up(kuzxj1lo,q),nef(q),
-     *which(q), ges1xpkr(xjc4ywlh)
-      integer jnxpuym2(q), hnpt1zym(q), iz2nbfjc(q), nbzjkpi3(q+1), acpi
-     *os9q(q), itwk(*), jwbkl9fp(q+1)
-      double precision he7mqnvy(kuzxj1lo,p), tlgduey8(kuzxj1lo,wy1vqfzu)
-     *, wmat(kuzxj1lo,dimw), wbkq9zyi(lyma1kwc), dof(lyma1kwc)
-      double precision ub4xioar(wy1vqfzu,kuzxj1lo), kispwgx3(kuzxj1lo,ly
-     *ma1kwc), m0ibglfx(wy1vqfzu,kuzxj1lo), s0(wy1vqfzu), beta(xjc4ywlh)
-     *, cov(kuzxj1lo,lyma1kwc), zpcqv3uj, vc6hatuj(rutyk8mg,xjc4ywlh), f
-     *asrkub3(xjc4ywlh)
-      double precision xbig(rutyk8mg,xjc4ywlh), wpuarq2m(dimu,kuzxj1lo),
-     * hjm2ktyr(wy1vqfzu,lyma1kwc), work1(*), wk2(kuzxj1lo,wy1vqfzu), wk
-     *mm(wy1vqfzu,wy1vqfzu,16), work3(*), sgdub(*), bmb(*), ifys6woa(*),
-     * mwk(*), twk(*), rpyis2kc(*), zv2xfhei(*), resss
-      double precision ghz9vuba(kuzxj1lo,wy1vqfzu), oldmat(kuzxj1lo,wy1v
-     *qfzu)
-      integer job,info,nefk
-      integer ayfnwr1v, yq6lorbx, gp1jxzuh, wg1xifdy
-      double precision vo4mtexk, rd9beyfk,ratio, deltaf, z4vrscot,pvofyg
-     *8z
-      pvofyg8z = 1.0d-7
-      job = 101
-      info = 1
-      if(q .eq. 0)then
-      gtrlbz3e = 1
-      endif
-      if(irhm4cfa .ne. 0)then
-      do23324 yq6lorbx=1,xjc4ywlh 
-      do23326 ayfnwr1v=1,rutyk8mg 
-      vc6hatuj(ayfnwr1v,yq6lorbx)=xbig(ayfnwr1v,yq6lorbx)
-23326 continue
-23327 continue
-23324 continue
-23325 continue
-      endif
-      if(qemj9asg.eq.0)then
-      call qpsedg8xf(tgiyxdw1,dufozmt7,wy1vqfzu)
-      call mux17f(wpuarq2m, vc6hatuj, wy1vqfzu, xjc4ywlh, kuzxj1lo, wkmm
-     *(1,1,1), wkmm(1,1,2), tgiyxdw1, dufozmt7, dimu, rutyk8mg)
-      do23330 gp1jxzuh=1,xjc4ywlh 
-      ges1xpkr(gp1jxzuh) = gp1jxzuh
-23330 continue
-23331 continue
-      call vqrdca(vc6hatuj,rutyk8mg,rutyk8mg,xjc4ywlh,fasrkub3,ges1xpkr,
-     *twk,qemj9asg,pvofyg8z)
-      endif
-      do23332 yq6lorbx=1,wy1vqfzu 
-      do23334 ayfnwr1v=1,kuzxj1lo 
-      m0ibglfx(yq6lorbx,ayfnwr1v)=0.0d0
-23334 continue
-23335 continue
-      if(q .gt. 0)then
-      do23338 gp1jxzuh=1,q 
-      if(iz2nbfjc(gp1jxzuh).eq.1)then
-      do23342 ayfnwr1v=1,kuzxj1lo 
-      m0ibglfx(yq6lorbx,ayfnwr1v) = m0ibglfx(yq6lorbx,ayfnwr1v) + kispwg
-     *x3(ayfnwr1v,hnpt1zym(gp1jxzuh)+yq6lorbx-1)
-23342 continue
-23343 continue
-      else
-      do23344 wg1xifdy=1,jnxpuym2(gp1jxzuh) 
-      do23346 ayfnwr1v=1,kuzxj1lo 
-      m0ibglfx(yq6lorbx,ayfnwr1v) = m0ibglfx(yq6lorbx,ayfnwr1v) + hjm2kt
-     *yr(yq6lorbx,hnpt1zym(gp1jxzuh)+wg1xifdy-1) * kispwgx3(ayfnwr1v,hnp
-     *t1zym(gp1jxzuh)+wg1xifdy-1)
-23346 continue
-23347 continue
-23344 continue
-23345 continue
-      endif
-23338 continue
-23339 continue
-      endif
-23332 continue
-23333 continue
-      niter = 0
-      ratio = 1.0d0
-23348 if((ratio .gt. zpcqv3uj ) .and. (niter .lt. gtrlbz3e))then
-      niter = niter + 1
-      deltaf = 0.0d0
-      do23350 yq6lorbx=1,wy1vqfzu 
-      do23352 ayfnwr1v=1,kuzxj1lo 
-      ghz9vuba(ayfnwr1v,yq6lorbx)=tlgduey8(ayfnwr1v,yq6lorbx)-m0ibglfx(y
-     *q6lorbx,ayfnwr1v)
-23352 continue
-23353 continue
-23350 continue
-23351 continue
-      call qpsedg8xf(tgiyxdw1,dufozmt7,wy1vqfzu)
-      call mux22f(wpuarq2m,ghz9vuba, twk, dimu,tgiyxdw1,dufozmt7,kuzxj1l
-     *o,wy1vqfzu,wkmm)
-      call vdqrsl(vc6hatuj,rutyk8mg,rutyk8mg,qemj9asg,fasrkub3, twk, wk2
-     *,wk2, beta, wk2,ub4xioar,job,info)
-      resss=0.0d0
-      do23354 ayfnwr1v=1,kuzxj1lo 
-      do23356 yq6lorbx=1,wy1vqfzu 
-      vo4mtexk = twk((ayfnwr1v-1)*wy1vqfzu+yq6lorbx) - ub4xioar(yq6lorbx
-     *,ayfnwr1v)
-      resss = resss + vo4mtexk * vo4mtexk
-23356 continue
-23357 continue
-23354 continue
-23355 continue
-      call vbksf(wpuarq2m,ub4xioar,wy1vqfzu,kuzxj1lo,wkmm,tgiyxdw1,dufoz
-     *mt7,dimu)
-      if(q .gt. 0)then
-      do23360 gp1jxzuh=1,q 
-      do23362 yq6lorbx=1,wy1vqfzu 
-      if(iz2nbfjc(gp1jxzuh).eq.1)then
-      do23366 ayfnwr1v=1,kuzxj1lo 
-      oldmat(ayfnwr1v,yq6lorbx)=kispwgx3(ayfnwr1v,hnpt1zym(gp1jxzuh)+yq6
-     *lorbx-1)
-      ghz9vuba(ayfnwr1v,yq6lorbx) = tlgduey8(ayfnwr1v,yq6lorbx) - ub4xio
-     *ar(yq6lorbx,ayfnwr1v) - m0ibglfx(yq6lorbx,ayfnwr1v) + oldmat(ayfnw
-     *r1v,yq6lorbx)
-23366 continue
-23367 continue
-      else
-      do23368 ayfnwr1v=1,kuzxj1lo 
-      oldmat(ayfnwr1v,yq6lorbx)=0.0d0
-      do23370 wg1xifdy=1,jnxpuym2(gp1jxzuh) 
-      oldmat(ayfnwr1v,yq6lorbx)=oldmat(ayfnwr1v,yq6lorbx) + hjm2ktyr(yq6
-     *lorbx,hnpt1zym(gp1jxzuh)+wg1xifdy-1) * kispwgx3(ayfnwr1v,hnpt1zym(
-     *gp1jxzuh)+wg1xifdy-1)
-23370 continue
-23371 continue
-      ghz9vuba(ayfnwr1v,yq6lorbx) = tlgduey8(ayfnwr1v,yq6lorbx) - ub4xio
-     *ar(yq6lorbx,ayfnwr1v) - m0ibglfx(yq6lorbx,ayfnwr1v) + oldmat(ayfnw
-     *r1v,yq6lorbx)
-23368 continue
-23369 continue
-      endif
-23362 continue
-23363 continue
-      nefk = nef(gp1jxzuh)
-      call ewg7qruh(he7mqnvy(1,which(gp1jxzuh)),ghz9vuba,wmat, kuzxj1lo,
-     *wy1vqfzu,ezlgm2up(1,gp1jxzuh),nefk, wbkq9zyi(hnpt1zym(gp1jxzuh)), 
-     *dof(hnpt1zym(gp1jxzuh)), kispwgx3(1,hnpt1zym(gp1jxzuh)), cov(1,hnp
-     *t1zym(gp1jxzuh)), s0, mwk(1), mwk(1+nefk), mwk(1+nefk*(wy1vqfzu+1)
-     *), mwk(1+nefk*(2*wy1vqfzu+1)), work1, work3, dimw, fbd5yktj, ldk, 
-     *info, yzoe1rsp, sgdub, rpyis2kc(nbzjkpi3(gp1jxzuh)), zv2xfhei(jwbk
-     *l9fp(gp1jxzuh)), acpios9q(gp1jxzuh),tgiyxdw1, dufozmt7, bmb, ifys6
-     *woa, wkmm, iz2nbfjc(gp1jxzuh),jnxpuym2(gp1jxzuh),itwk, hjm2ktyr(1,
-     *hnpt1zym(gp1jxzuh)), twk(1), twk(1+2*jnxpuym2(gp1jxzuh)), twk(1+4*
-     *jnxpuym2(gp1jxzuh)), twk(1+(4+nefk)*jnxpuym2(gp1jxzuh)), twk(1+(4+
-     *2*nefk)*jnxpuym2(gp1jxzuh)), twk(1+(4+3*nefk)*jnxpuym2(gp1jxzuh)),
-     * twk(1+(4+4*nefk)*jnxpuym2(gp1jxzuh)))
-      do23372 yq6lorbx=1,wy1vqfzu 
-      if(iz2nbfjc(gp1jxzuh).eq.1)then
-      do23376 ayfnwr1v=1,kuzxj1lo 
-      m0ibglfx(yq6lorbx,ayfnwr1v) = m0ibglfx(yq6lorbx,ayfnwr1v) + kispwg
-     *x3(ayfnwr1v,hnpt1zym(gp1jxzuh)+yq6lorbx-1)
-23376 continue
-23377 continue
-      else
-      do23378 wg1xifdy=1,jnxpuym2(gp1jxzuh) 
-      do23380 ayfnwr1v=1,kuzxj1lo 
-      m0ibglfx(yq6lorbx,ayfnwr1v)=m0ibglfx(yq6lorbx,ayfnwr1v) + hjm2ktyr
-     *(yq6lorbx,hnpt1zym(gp1jxzuh)+wg1xifdy-1) * kispwgx3(ayfnwr1v,hnpt1
-     *zym(gp1jxzuh)+wg1xifdy-1)
-23380 continue
-23381 continue
-23378 continue
-23379 continue
-      endif
-      do23382 ayfnwr1v=1,kuzxj1lo 
-      m0ibglfx(yq6lorbx,ayfnwr1v) = m0ibglfx(yq6lorbx,ayfnwr1v) - oldmat
-     *(ayfnwr1v,yq6lorbx)
-23382 continue
-23383 continue
-23372 continue
-23373 continue
-      do23384 yq6lorbx=1,wy1vqfzu 
-      if(iz2nbfjc(gp1jxzuh) .eq. 1)then
-      deltaf = deltaf + rd9beyfk(kuzxj1lo,oldmat(1,yq6lorbx),kispwgx3(1,
-     *hnpt1zym(gp1jxzuh)+yq6lorbx-1), wmat(1,yq6lorbx))
-      else
-      do23388 ayfnwr1v=1,kuzxj1lo 
-      twk(ayfnwr1v) = 0.0d0
-      do23390 wg1xifdy=1,jnxpuym2(gp1jxzuh) 
-      twk(ayfnwr1v) = twk(ayfnwr1v) + hjm2ktyr(yq6lorbx,hnpt1zym(gp1jxzu
-     *h)+wg1xifdy-1) * kispwgx3(ayfnwr1v,hnpt1zym(gp1jxzuh)+wg1xifdy-1)
-23390 continue
-23391 continue
-23388 continue
-23389 continue
-      deltaf = deltaf + rd9beyfk(kuzxj1lo, oldmat(1,yq6lorbx), twk, wmat
-     *(1,yq6lorbx))
-      endif
-23384 continue
-23385 continue
-      do23392 yq6lorbx=1,wy1vqfzu 
-      do23394 ayfnwr1v=1,kuzxj1lo 
-      ghz9vuba(ayfnwr1v,yq6lorbx)=tlgduey8(ayfnwr1v,yq6lorbx)-m0ibglfx(y
-     *q6lorbx,ayfnwr1v)
-23394 continue
-23395 continue
-23392 continue
-23393 continue
-      call qpsedg8xf(tgiyxdw1,dufozmt7,wy1vqfzu)
-      call mux22f(wpuarq2m,ghz9vuba, twk, dimu,tgiyxdw1,dufozmt7,kuzxj1l
-     *o,wy1vqfzu,wkmm)
-      call vdqrsl(vc6hatuj,rutyk8mg,rutyk8mg,qemj9asg,fasrkub3, twk, wk2
-     *,wk2, beta, wk2,ub4xioar,job,info)
-      call vbksf(wpuarq2m,ub4xioar,wy1vqfzu,kuzxj1lo,wkmm,tgiyxdw1,dufoz
-     *mt7,dimu)
-23360 continue
-23361 continue
-      endif
-      if(q .gt. 0)then
-      z4vrscot=0.0d0
-      do23398 yq6lorbx=1,wy1vqfzu 
-      do23400 ayfnwr1v=1,kuzxj1lo 
-      z4vrscot = z4vrscot + wmat(ayfnwr1v,yq6lorbx) * m0ibglfx(yq6lorbx,
-     *ayfnwr1v)**2
-23400 continue
-23401 continue
-23398 continue
-23399 continue
-      if(z4vrscot .gt. 0.0d0)then
-      ratio = dsqrt(deltaf/z4vrscot)
-      else
-      ratio = 0.0d0
-      endif
-      endif
-      if(niter .eq. 1)then
-      ratio = 1.0d0
-      endif
-      goto 23348
-      endif
-23349 continue
-      do23406 yq6lorbx=1,xjc4ywlh 
-      twk(yq6lorbx)=beta(yq6lorbx)
-23406 continue
-23407 continue
-      do23408 yq6lorbx=1,xjc4ywlh 
-      beta(ges1xpkr(yq6lorbx))=twk(yq6lorbx)
-23408 continue
-23409 continue
-      do23410 ayfnwr1v=1,kuzxj1lo 
-      do23412 yq6lorbx=1,wy1vqfzu 
-      m0ibglfx(yq6lorbx,ayfnwr1v) = m0ibglfx(yq6lorbx,ayfnwr1v) + ub4xio
-     *ar(yq6lorbx,ayfnwr1v)
-23412 continue
-23413 continue
-23410 continue
-23411 continue
-      if((yzoe1rsp .ne. 0) .and. (q .gt. 0))then
-      do23416 gp1jxzuh=1,q 
-      do23418 wg1xifdy=1,jnxpuym2(gp1jxzuh) 
-      call shm8ynte(kuzxj1lo,nef(gp1jxzuh),ezlgm2up(1,gp1jxzuh), cov(1,h
-     *npt1zym(gp1jxzuh)+wg1xifdy-1),oldmat)
-      do23420 ayfnwr1v=1,kuzxj1lo 
-      cov(ayfnwr1v,hnpt1zym(gp1jxzuh)+wg1xifdy-1) = oldmat(ayfnwr1v,1)
-23420 continue
-23421 continue
-23418 continue
-23419 continue
-23416 continue
-23417 continue
-      endif
-      return
-      end
       subroutine x6kanjdh(he7mqnvy, xout, kuzxj1lo, wy1vqfzu)
       implicit logical (a-z)
       integer kuzxj1lo, wy1vqfzu
       double precision he7mqnvy(kuzxj1lo), xout(*)
       integer ayfnwr1v, yq6lorbx, gp1jxzuh, iptr
       iptr=1
-      do23422 yq6lorbx=1,wy1vqfzu 
-      do23424 ayfnwr1v=1,kuzxj1lo 
-      do23426 gp1jxzuh=1,wy1vqfzu 
+      do23300 yq6lorbx=1,wy1vqfzu 
+      do23302 ayfnwr1v=1,kuzxj1lo 
+      do23304 gp1jxzuh=1,wy1vqfzu 
       if(yq6lorbx .eq. gp1jxzuh)then
       xout(iptr) = 1.0d0
       else
       xout(iptr) = 0.0d0
       endif
       iptr=iptr+1
-23426 continue
-23427 continue
-23424 continue
-23425 continue
-23422 continue
-23423 continue
-      do23430 yq6lorbx=1,wy1vqfzu 
-      do23432 ayfnwr1v=1,kuzxj1lo 
-      do23434 gp1jxzuh=1,wy1vqfzu 
+23304 continue
+23305 continue
+23302 continue
+23303 continue
+23300 continue
+23301 continue
+      do23308 yq6lorbx=1,wy1vqfzu 
+      do23310 ayfnwr1v=1,kuzxj1lo 
+      do23312 gp1jxzuh=1,wy1vqfzu 
       if(yq6lorbx .eq. gp1jxzuh)then
       xout(iptr) = he7mqnvy(ayfnwr1v)
       else
       xout(iptr) = 0.0d0
       endif
       iptr=iptr+1
-23434 continue
-23435 continue
-23432 continue
-23433 continue
-23430 continue
-23431 continue
+23312 continue
+23313 continue
+23310 continue
+23311 continue
+23308 continue
+23309 continue
       return
       end
       double precision function rd9beyfk(kuzxj1lo, bhcji9gl, m0ibglfx, p
@@ -1290,12 +924,12 @@ C Output from Public domain Ratfor, version 1.01
       double precision lm9vcjob, rxeqjn0y, work
       rxeqjn0y = 0.0d0
       lm9vcjob = 0.0d0
-      do23438 ayfnwr1v=1,kuzxj1lo 
+      do23316 ayfnwr1v=1,kuzxj1lo 
       work = bhcji9gl(ayfnwr1v) - m0ibglfx(ayfnwr1v)
       rxeqjn0y = rxeqjn0y + po8rwsmy(ayfnwr1v)*work*work
       lm9vcjob = lm9vcjob + po8rwsmy(ayfnwr1v)
-23438 continue
-23439 continue
+23316 continue
+23317 continue
       if(lm9vcjob .gt. 0.0d0)then
       rd9beyfk=rxeqjn0y/lm9vcjob
       else
@@ -1313,11 +947,11 @@ C Output from Public domain Ratfor, version 1.01
       integer ayfnwr1v
       lm9vcjob = 0.0d0
       rxeqjn0y = 0.0d0
-      do23442 ayfnwr1v=1,kuzxj1lo 
+      do23320 ayfnwr1v=1,kuzxj1lo 
       rxeqjn0y = rxeqjn0y + bhcji9gl(ayfnwr1v) * po8rwsmy(ayfnwr1v)
       lm9vcjob = lm9vcjob + po8rwsmy(ayfnwr1v)
-23442 continue
-23443 continue
+23320 continue
+23321 continue
       if(lm9vcjob .gt. 0.0d0)then
       lfu2qhid = rxeqjn0y / lm9vcjob
       else
@@ -1340,23 +974,23 @@ C Output from Public domain Ratfor, version 1.01
       call pitmeh0q(kuzxj1lo,x,w,pygsw6ko, lm9vcjob)
       nsum = 0.0d0
       q6zdcwxk = 0.0d0
-      do23446 ayfnwr1v=1,kuzxj1lo 
+      do23324 ayfnwr1v=1,kuzxj1lo 
       hofjnx2e = x(ayfnwr1v)-pygsw6ko
       nsum = nsum + hofjnx2e * (bhcji9gl(ayfnwr1v)-pasjmo8g) * w(ayfnwr1
      *v)
       hofjnx2e = hofjnx2e * hofjnx2e
       q6zdcwxk = q6zdcwxk + hofjnx2e * w(ayfnwr1v)
-23446 continue
-23447 continue
+23324 continue
+23325 continue
       eck8vubt = nsum/q6zdcwxk
       interc = pasjmo8g - eck8vubt * pygsw6ko
-      do23448 ayfnwr1v=1,kuzxj1lo 
+      do23326 ayfnwr1v=1,kuzxj1lo 
       ub4xioar(ayfnwr1v) = interc + eck8vubt * x(ayfnwr1v)
-23448 continue
-23449 continue
+23326 continue
+23327 continue
       bzmd6ftv = interc + eck8vubt * x(1)
       if(yzoe1rsp .ne. 0)then
-      do23452 ayfnwr1v=1,kuzxj1lo 
+      do23330 ayfnwr1v=1,kuzxj1lo 
       hofjnx2e = x(ayfnwr1v)-pygsw6ko
       if(w(ayfnwr1v) .gt. 0.0d0)then
       cov(ayfnwr1v,1) = cov(ayfnwr1v,1) - 1.0d0/lm9vcjob - hofjnx2e * ho
@@ -1364,8 +998,8 @@ C Output from Public domain Ratfor, version 1.01
       else
       cov(ayfnwr1v,1) = 0.0d0
       endif
-23452 continue
-23453 continue
+23330 continue
+23331 continue
       endif
       return
       end
@@ -1374,10 +1008,10 @@ C Output from Public domain Ratfor, version 1.01
       integer kuzxj1lo, p, ezlgm2up(kuzxj1lo)
       double precision pygsw6ko(p), x(kuzxj1lo)
       integer ayfnwr1v
-      do23456 ayfnwr1v=1,kuzxj1lo 
+      do23334 ayfnwr1v=1,kuzxj1lo 
       x(ayfnwr1v) = pygsw6ko(ezlgm2up(ayfnwr1v))
-23456 continue
-23457 continue
+23334 continue
+23335 continue
       return
       end
       subroutine vankcghz2l2(x, kuzxj1lo, ankcghz2, rvy1fpli, ukgwt7na)
@@ -1389,24 +1023,24 @@ C Output from Public domain Ratfor, version 1.01
       if(kuzxj1lo .le. 40)then
       ndk = kuzxj1lo
       else
-      ndk = 40 + dexp(0.25d0 * dlog(kuzxj1lo-40.0d0))
+      ndk = 40 + nint(dexp(0.25d0 * dlog(kuzxj1lo-40.0d0)))
       endif
       else
       ndk = rvy1fpli - 6
       endif
       rvy1fpli = ndk + 6
-      do23462 yq6lorbx = 1,3 
+      do23340 yq6lorbx = 1,3 
       ankcghz2(yq6lorbx) = x(1) 
-23462 continue
-23463 continue
-      do23464 yq6lorbx = 1,ndk 
+23340 continue
+23341 continue
+      do23342 yq6lorbx = 1,ndk 
       ankcghz2(yq6lorbx+3) = x( 1 + (yq6lorbx-1)*(kuzxj1lo-1)/(ndk-1) ) 
-23464 continue
-23465 continue
-      do23466 yq6lorbx = 1,3 
+23342 continue
+23343 continue
+      do23344 yq6lorbx = 1,3 
       ankcghz2(ndk+3+yq6lorbx) = x(kuzxj1lo) 
-23466 continue
-23467 continue
+23344 continue
+23345 continue
       return
       end
       subroutine pankcghz2l2(ankcghz2, kuzxj1lo, zo8wpibx, tol)
@@ -1414,12 +1048,12 @@ C Output from Public domain Ratfor, version 1.01
       integer kuzxj1lo, zo8wpibx(kuzxj1lo)
       double precision ankcghz2(kuzxj1lo), tol
       integer ayfnwr1v, cjop5bwm
-      do23468 ayfnwr1v=1,4 
+      do23346 ayfnwr1v=1,4 
       zo8wpibx(ayfnwr1v) = 1
-23468 continue
-23469 continue
+23346 continue
+23347 continue
       cjop5bwm = 4
-      do23470 ayfnwr1v=5,(kuzxj1lo-4) 
+      do23348 ayfnwr1v=5,(kuzxj1lo-4) 
       if((ankcghz2(ayfnwr1v) - ankcghz2(cjop5bwm) .ge. tol) .and. (ankcg
      *hz2(kuzxj1lo) - ankcghz2(ayfnwr1v) .ge. tol))then
       zo8wpibx(ayfnwr1v) = 1
@@ -1427,11 +1061,11 @@ C Output from Public domain Ratfor, version 1.01
       else
       zo8wpibx(ayfnwr1v) = 0
       endif
-23470 continue
-23471 continue
-      do23474 ayfnwr1v=(kuzxj1lo-3),kuzxj1lo 
+23348 continue
+23349 continue
+      do23352 ayfnwr1v=(kuzxj1lo-3),kuzxj1lo 
       zo8wpibx(ayfnwr1v) = 1
-23474 continue
-23475 continue
+23352 continue
+23353 continue
       return
       end

@@ -165,20 +165,20 @@ viz. \code{zero = c(1, 3)}.
 
 }
 \references{
-Cole, T. J. and Green, P. J. (1992)
+Cole, T. J. and Green, P. J. (1992).
 Smoothing Reference Centile Curves: The LMS Method and
 Penalized Likelihood.
 \emph{Statistics in Medicine},
 \bold{11}, 1305--1319.
 
 
-Green, P. J. and Silverman, B. W. (1994)
+Green, P. J. and Silverman, B. W. (1994).
 \emph{Nonparametric Regression and Generalized Linear Models: A
 Roughness Penalty Approach},
 London: Chapman & Hall.
 
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine},
 \bold{23}, 2295--2315.
@@ -244,6 +244,8 @@ Quantile regression via vector generalized additive models.
   \code{\link{qtplot.lmscreg}},
   \code{\link{deplot.lmscreg}},
   \code{\link{cdf.lmscreg}},
+  \code{\link{eCDF}},
+  \code{\link{extlogF1}},
   \code{\link{alaplace1}},
   \code{\link{amlnormal}},
   \code{\link{denorm}},

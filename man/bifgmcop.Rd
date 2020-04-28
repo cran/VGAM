@@ -50,12 +50,12 @@ bifgmcop(lapar = "rhobitlink", iapar = NULL, imethod = 1)
 
 \references{
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
+Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications in Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
-Smith, M. D. (2007)
+Smith, M. D. (2007).
 Invariance theorems for Fisher information.
 \emph{Communications in Statistics---Theory and Methods},
 \bold{36}(12), 2213--2222.

@@ -84,7 +84,7 @@ sc.studentt2(percentile = 50, llocation = "identitylink", lscale = "loglink",
 }
 \references{
 
-Koenker, R. (1993)
+Koenker, R. (1993).
 When are expectiles percentiles? (solution)
 \emph{Econometric Theory},
 \bold{9}, 526--527.

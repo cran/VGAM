@@ -57,6 +57,16 @@ data(V1)
   is consistent with a Poisson distribution (random).
 
 
+  Compared to Clarke (1946),
+  the more modern analysis of Shaw and Shaw (2019).
+  shows a higher density of hits in south London,
+  hence the distribution is not really uniform over the
+  entire region.
+
+
+
+
+
 
 }
 \source{
@@ -70,10 +80,21 @@ data(V1)
 }
 \references{
 
-Feller, W. (1970).
-\emph{An Introduction to Probability Theory and Its Applications},
-Vol. 1, Third Edition.
-John Wiley and Sons: New York, USA.
+%Feller, W. (1970).
+%\emph{An Introduction to Probability Theory and Its Applications},
+%Vol. 1, Third Edition.
+%John Wiley and Sons: New York, USA.
+
+
+
+Shaw, L. P. and Shaw, L. F. (2019).
+The flying bomb and the actuary.
+\emph{Significance}, \bold{16}(5): 12--17.
+
+
+
+
+
 
 
 % p.160--1
@@ -81,6 +102,7 @@ John Wiley and Sons: New York, USA.
 
 }
 \seealso{
+  \code{\link[VGAM]{V2}},
   \code{\link[VGAM]{poissonff}}.
 
 

@@ -5,7 +5,7 @@
 \alias{qgaitnbinom.mlm}
 \alias{rgaitnbinom.mlm}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally-Altered, -Inflated and -Truncated
+\title{ Generally--Altered, --Inflated and --Truncated
   Negative Binomial Distribution
   (GAIT--NB--MLM--MLM)
 
@@ -18,7 +18,7 @@
   distribution function,
   quantile function
   and random generation
-  for the generally-altered, -inflated and -truncated
+  for the generally--altered, --inflated and --truncated
   negative binomial distribution,
   based on the multinomial logit model (MLM).
   This distribution is sometimes abbreviated as
@@ -62,7 +62,7 @@ rgaitnbinom.mlm(n, size, prob = NULL, munb = NULL, alter = NULL,
 
   }
   \item{alter, inflate, truncate}{
-  Same as in \code{\link{Gaitpois.mlm}}.
+  Se \code{\link{Gaitpois}}.
 
 
   
@@ -70,19 +70,19 @@ rgaitnbinom.mlm(n, size, prob = NULL, munb = NULL, alter = NULL,
 % Must be sorted and have unique values only.
   }
   \item{pstr.i, byrow.arg}{
-  Same as in \code{\link{Gaitpois.mlm}}.
+  See \code{\link{Gaitpois}}.
 
 
   }
   \item{pobs.a, max.support}{
-  Same as in \code{\link{Gaitpois.mlm}}.
+  See \code{\link{Gaitpois}}.
 
   
   
   }
 }
 \details{
-  Largely the same as \code{\link{Gaitpois.mlm}} except a
+  Largely similar to \code{\link{Gaitpois}} except a
   negative binomial distribution replaces the Poisson distribution.
   Special cases of these functions include
   \code{\link{dposnegbin}},
@@ -164,7 +164,7 @@ rgaitnbinom.mlm(n, size, prob = NULL, munb = NULL, alter = NULL,
 % \code{\link{gaitnegbinomial.mix}},
 \seealso{
   \code{\link{gatnbinomial.mlm}},
-  \code{\link{Gaitpois.mlm}},
+  \code{\link{Gaitpois}},
   \code{\link[stats:NegBinomial]{NegBinomial}}.
 
 

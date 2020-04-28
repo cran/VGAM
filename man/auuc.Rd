@@ -32,7 +32,7 @@ status (SES) of their fathers
 }
 \references{
 
-  Wild, C. J. and Seber, G. A. F. (2000)
+  Wild, C. J. and Seber, G. A. F. (2000).
   \emph{Chance Encounters: A First Course in Data Analysis and Inference},
   New York: Wiley.
 

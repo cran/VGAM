@@ -83,7 +83,7 @@ bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01, imethod = 1)
 \references{
 
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
+Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.

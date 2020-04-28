@@ -207,7 +207,7 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 
 }
 \references{
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.

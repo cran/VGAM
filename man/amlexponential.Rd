@@ -1,10 +1,11 @@
 \name{amlexponential}
 \alias{amlexponential}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Exponential Regression by Asymmetric Maximum Likelihood Estimation }
+\title{ Exponential Regression by Asymmetric Maximum
+  Likelihood Estimation }
 \description{
-  Exponential expectile regression estimated by maximizing an asymmetric
-  likelihood function.
+  Exponential expectile regression estimated by maximizing an
+  asymmetric likelihood function.
 
 }
 \usage{
@@ -52,7 +53,8 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   is given in Efron (1992) and full details can be obtained there.
 % Equation numbers below refer to that article.
   This model is essentially an exponential regression model
-  (see \code{\link{exponential}}) but the usual deviance is replaced by an
+  (see \code{\link{exponential}}) but the usual deviance is
+  replaced by an
   asymmetric squared error loss function; it is multiplied by
   \eqn{w.aml} for positive residuals.
   The solution is the set of regression coefficients that minimize the
@@ -71,7 +73,7 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 }
 \references{
 
-  Efron, B. (1992)
+  Efron, B. (1992).
   Poisson overdispersion estimates based on the method of
   asymmetric maximum likelihood.
   \emph{Journal of the American Statistical Association},
@@ -82,15 +84,15 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 
 \author{ Thomas W. Yee }
 \note{
-  On fitting, the \code{extra} slot has list components \code{"w.aml"} and
-  \code{"percentile"}. The latter is the percent of observations below
-  the ``w-regression plane'', which is the fitted values.
-  Also, the individual deviance values corresponding to each element of
-  the argument \code{w.aml} is stored in the \code{extra} slot.
+  On fitting, the \code{extra} slot has list components \code{"w.aml"}
+  and \code{"percentile"}. The latter is the percent of observations
+  below the ``w-regression plane'', which is the fitted values.  Also,
+  the individual deviance values corresponding to each element of the
+  argument \code{w.aml} is stored in the \code{extra} slot.
 
 
-  For \code{amlexponential} objects, methods functions for the generic functions
-  \code{qtplot} and \code{cdf} have not been written yet.
+  For \code{amlexponential} objects, methods functions for the generic
+  functions \code{qtplot} and \code{cdf} have not been written yet.
 
 
   See \code{\link{amlpoisson}} about comments on the jargon, e.g.,
@@ -113,8 +115,7 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 
   If \code{w.aml} has more than one value then the value returned by
   \code{deviance} is the sum of all the (weighted) deviances taken over
-  all the \code{w.aml} values.
-  See Equation (1.6) of Efron (1992).
+  all the \code{w.aml} values.  See Equation (1.6) of Efron (1992).
 
 
 }
@@ -123,6 +124,7 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   \code{\link{amlbinomial}},
   \code{\link{amlpoisson}},
   \code{\link{amlnormal}},
+  \code{\link{extlogF1}},
   \code{\link{alaplace1}},
   \code{\link{lms.bcg}},
   \code{\link{deexp}}.
@@ -133,29 +135,31 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
 \examples{
 nn <- 2000
 mydat <- data.frame(x = seq(0, 1, length = nn))
-mydat <- transform(mydat, mu = loglink(-0 + 1.5*x + 0.2*x^2, inverse = TRUE))
+mydat <- transform(mydat,
+                   mu = loglink(-0 + 1.5*x + 0.2*x^2, inverse = TRUE))
 mydat <- transform(mydat, mu = loglink(0 - sin(8*x), inverse = TRUE))
 mydat <- transform(mydat,  y = rexp(nn, rate = 1/mu))
-(fit  <- vgam(y ~ s(x,df = 5), amlexponential(w = c(0.001, 0.1, 0.5, 5, 60)),
-              mydat, trace = TRUE))
+(fit <- vgam(y ~ s(x, df=5), amlexponential(w=c(0.001, 0.1, 0.5, 5, 60)),
+             mydat, trace = TRUE))
 fit@extra
 
 \dontrun{ # These plots are against the sqrt scale (to increase clarity)
 par(mfrow = c(1,2))
 # Quantile plot
 with(mydat, plot(x, sqrt(y), col = "blue", las = 1, main =
-     paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
+     paste(paste(round(fit@extra$percentile, digits = 1), collapse=", "),
            "percentile-expectile curves")))
-with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty = 1))
+with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty=1))
 
 # Compare the fitted expectiles with the quantiles
 with(mydat, plot(x, sqrt(y), col = "blue", las = 1, main =
-     paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
+     paste(paste(round(fit@extra$percentile, digits = 1), collapse=", "),
            "percentile curves are orange")))
-with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty = 1))
+with(mydat, matlines(x, sqrt(fitted(fit)), lwd = 2, col = "blue", lty=1))
 
 for (ii in fit@extra$percentile)
-  with(mydat, matlines(x, sqrt(qexp(p = ii/100, rate = 1/mu)), col = "orange")) }
+  with(mydat, matlines(x, sqrt(qexp(p = ii/100, rate = 1/mu)),
+                       col = "orange")) }
 }
 \keyword{models}
 \keyword{regression}

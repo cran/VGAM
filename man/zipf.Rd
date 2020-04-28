@@ -70,7 +70,7 @@ zipf(N = NULL, lshape = "loglink", ishape = NULL)
 \references{
 
   pp.526-- of Chapter 11 of
-  Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+  Johnson N. L., Kemp, A. W. and Kotz S. (2005).
   \emph{Univariate Discrete Distributions},
   3rd edition,
   Hoboken, New Jersey, USA: Wiley.

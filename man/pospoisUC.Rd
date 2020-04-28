@@ -83,7 +83,7 @@ rpospois(n, lambda)
 }
 
 \seealso{
-  \code{\link{Gaitpois.mlm}},
+  \code{\link{Gaitpois}},
   \code{\link{pospoisson}},
   \code{\link{zapoisson}},
   \code{\link{zipoisson}},

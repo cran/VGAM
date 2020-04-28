@@ -101,14 +101,14 @@ Simulated Fisher scoring is used and multiple responses are handled.
 \references{
 
 
-Perks, W. (1932)
+Perks, W. (1932).
 On some experiments in the graduation of mortality statistics.
 \emph{Journal of the Institute of Actuaries},
 \bold{63}, 12--40.
 
 
 
-Richards, S. J. (2012)
+Richards, S. J. (2012).
 A handbook of parametric survival models for actuarial use.
 \emph{Scandinavian Actuarial Journal}.
 1--25.

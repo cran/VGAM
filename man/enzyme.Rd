@@ -24,7 +24,7 @@
 
 }
 \references{
-Watts, D. G. (1981)
+Watts, D. G. (1981).
     An introduction to nonlinear least squares.
     In: L. Endrenyi (Ed.),
     \emph{Kinetic Data Analysis: Design and Analysis of Enzyme and

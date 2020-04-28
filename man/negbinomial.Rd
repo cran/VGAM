@@ -402,6 +402,20 @@ respect to the \code{size} parameter.
 
 
 
+Conlisk, et al. (2007) show that fitting the NBD to
+presence-absence data will result in identifiability problems.
+However, the model is identifiable if the response values include
+0, 1 and 2.
+
+
+
+
+% Solow and Smith (2010)
+
+
+
+
+
 }
 \section{Warning}{
   Poisson regression corresponds to \eqn{k} equalling
@@ -491,28 +505,51 @@ Set \code{trace = TRUE} to monitor convergence.
 
 }
 \references{
-Lawless, J. F. (1987)
+Lawless, J. F. (1987).
 Negative binomial and mixed Poisson regression.
 \emph{The Canadian Journal of Statistics}
 \bold{15}, 209--225.
 
 
-Hilbe, J. M. (2011)
+Hilbe, J. M. (2011).
 \emph{Negative Binomial Regression},
 2nd Edition.
 Cambridge: Cambridge University Press.
 
 
-Bliss, C. and Fisher, R. A. (1953)
+Bliss, C. and Fisher, R. A. (1953).
 Fitting the negative binomial distribution to biological data.
 \emph{Biometrics}
 \bold{9}, 174--200.
 
 
-Yee, T. W. (2014)
+Conlisk, E. and Conlisk, J. and Harte, J. (2007).
+The impossibility of estimating a negative binomial
+clustering parameter from presence-absence data:
+A comment on He and Gaston.
+\emph{The American Naturalist}
+\bold{170},
+651--654.
+
+%   number = {4},
+
+
+
+
+Yee, T. W. (2014).
 Reduced-rank vector generalized linear models with two linear predictors.
 \emph{Computational Statistics and Data Analysis},
 \bold{71}, 889--902.
+
+
+
+
+
+Yee, T. W. (2020).
+The \pkg{VGAM} package for negative binomial regression.
+\emph{Australian \& New Zealand Journal of Statistics},
+\bold{61},
+  in press.
 
 
 

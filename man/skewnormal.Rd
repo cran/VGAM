@@ -57,13 +57,13 @@ skewnormal(lshape = "identitylink", ishape = NULL, nsimEIM = NULL)
 }
 \references{
 
-  Azzalini, A. A. (1985)
+  Azzalini, A. A. (1985).
   A class of distributions which include the normal.
   \emph{Scandinavian Journal of Statistics},
   \bold{12}, 171--178.
 
 
-  Azzalini, A. and Capitanio, A. (1999)
+  Azzalini, A. and Capitanio, A. (1999).
   Statistical applications of the multivariate skew-normal distribution.
   \emph{Journal of the Royal Statistical Society, Series B, Methodological},
   \bold{61}, 579--602.

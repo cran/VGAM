@@ -70,13 +70,13 @@ precision parameter, respectively.
 \references{
 
 
-McCullagh, P. (1989)
+McCullagh, P. (1989).
 Some statistical properties of a family of continuous univariate distributions.
 \emph{Journal of the American Statistical Association},
 \bold{84}, 125--129.
 
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995).
 \emph{Continuous Univariate Distributions},
 2nd edition,
 Volume 2,

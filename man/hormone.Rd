@@ -66,12 +66,12 @@ Thus calibration might be of interest for the data.
 
 \references{
 
-  Carroll, R. J. and Ruppert, D. (1988)
+  Carroll, R. J. and Ruppert, D. (1988).
   \emph{Transformation and Weighting in Regression}.
   New York, USA: Chapman & Hall.
 
 
-  Leurgans, S. (1980)
+  Leurgans, S. (1980).
   Evaluating laboratory measurement techniques.
   \emph{Biostatistics Casebook}.
   Eds.: Miller, R. G. Jr., and Efron, B. and
@@ -79,7 +79,7 @@ Thus calibration might be of interest for the data.
   New York, USA: Wiley.
 
 
-  Yee, T. W. (2014)
+  Yee, T. W. (2014).
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis},
   \bold{71}, 889--902.

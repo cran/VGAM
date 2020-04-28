@@ -111,30 +111,30 @@ weibullR(lscale = "loglink", lshape = "loglink",
 
 }
 \references{
-Kleiber, C. and Kotz, S. (2003)
+Kleiber, C. and Kotz, S. (2003).
 \emph{Statistical Size Distributions in Economics and Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994).
 \emph{Continuous Univariate Distributions},
 2nd edition, Volume 1, New York: Wiley.
 
 
-Lawless, J. F. (2003)
+Lawless, J. F. (2003).
 \emph{Statistical Models and Methods for Lifetime Data},
 2nd ed.
 {Hoboken, NJ, USA: John Wiley & Sons}.
 
 
 
-Rinne, Horst. (2009)
+Rinne, Horst. (2009).
 \emph{The Weibull Distribution: A Handbook}.
 Boca Raton, FL, USA: CRC Press.
 
 
 
-Gupta, R. D. and Kundu, D. (2006)
+Gupta, R. D. and Kundu, D. (2006).
 On the comparison of Fisher information of the
 Weibull and GE distributions,
 \emph{Journal of Statistical Planning and Inference},
@@ -142,7 +142,7 @@ Weibull and GE distributions,
 3130--3144.
 
 
-Harper, W. V. and Eschenbach, T. G. and James, T. R. (2011)
+Harper, W. V. and Eschenbach, T. G. and James, T. R. (2011).
 Concerns about Maximum Likelihood Estimation for
               the Three-Parameter {W}eibull Distribution:
               Case Study of Statistical Software,
@@ -151,12 +151,12 @@ Concerns about Maximum Likelihood Estimation for
 {44--54}.
 
 
-  Smith, R. L. (1985)
+  Smith, R. L. (1985).
   Maximum likelihood estimation in a class of nonregular cases.
   \emph{Biometrika}, \bold{72}, 67--90.
 
 
-  Smith, R. L. and Naylor, J. C. (1987)
+  Smith, R. L. and Naylor, J. C. (1987).
   A comparison of maximum likelihood and Bayesian estimators
   for the three-parameter Weibull distribution.
   \emph{Applied Statistics}, \bold{36}, 358--369.

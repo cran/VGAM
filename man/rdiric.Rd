@@ -62,7 +62,7 @@ rdiric(n, shape, dimension = NULL, is.matrix.shape = FALSE)
 
 \references{
 
-Lange, K. (2002)
+Lange, K. (2002).
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed.
 New York: Springer-Verlag.

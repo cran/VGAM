@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -404,6 +404,7 @@ if (FALSE) {
 
 
 
+
 if (!isGeneric("Coef"))
   setGeneric("Coef", function(object, ...) standardGeneric("Coef"),
              package = "VGAM")
@@ -669,6 +670,36 @@ if (!isGeneric("Rank"))
                         ...)
                  standardGeneric("Rank"),
                package = "VGAM")
+
+
+
+
+
+if (!isGeneric("get.offset"))
+  setGeneric("get.offset", function(object, ...)
+             standardGeneric("get.offset"),
+             package = "VGAM")
+
+
+ get.offset.vglm <-
+  function(object, as.is = FALSE, ...) {
+  ooo <- object@offset  # May be matrix(0, 1, 1) to conserve memory
+  if (as.is)
+    return(ooo)
+
+  nn <- nobs(object)
+  M <- npred(object)
+  if (nn != nrow(ooo) || M != ncol(ooo)) {
+    ooo <- matrix(c(ooo), nn, M)
+  }
+  ooo
+}
+
+
+setMethod("get.offset", "vglm",
+          function(object, as.is = FALSE, ...) {
+  get.offset.vglm(object, as.is = as.is, ...)
+})
 
 
 

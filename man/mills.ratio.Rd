@@ -41,7 +41,7 @@ mills.ratio2(x)
 }
 \references{
 
-Mills, J. P. (1926)
+Mills, J. P. (1926).
 Table of the ratio: area to bounding ordinate, for any portion of normal curve.
 \emph{Biometrika}.
 \bold{18}(3/4),

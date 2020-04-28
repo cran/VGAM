@@ -26,9 +26,9 @@ alaplace2(tau = NULL,  llocation = "identitylink", lscale = "loglink",
           parallel.scale = FALSE ~ 0,
           digt = 4, idf.mu = 3, imethod = 1, zero = "scale")
 
-alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
-          ilocation = NULL, iscale = NULL, ikappa = 1,
-          imethod = 1, zero = c("scale", "kappa"))
+alaplace3(llocation = "identitylink", lscale = "loglink",
+          lkappa = "loglink", ilocation = NULL, iscale = NULL,
+          ikappa = 1, imethod = 1, zero = c("scale", "kappa"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -221,13 +221,13 @@ alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
 
 }
 \references{
-  Koenker, R. and Bassett, G. (1978)
+  Koenker, R. and Bassett, G. (1978).
   Regression quantiles.
   \emph{Econometrica},
   \bold{46}, 33--50.
 
 
-  Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
+  Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001).
   \emph{The Laplace distribution and generalizations:
   a revisit with applications to communications,
   economics, engineering, and finance},
@@ -235,9 +235,12 @@ alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
 
 
 
-%  Yee, T. W. (2014)
+%  Yee, T. W. (2020)  %  2014
 %  Quantile regression for counts and proportions.
 %  In preparation.
+
+
+
 
 
 }
@@ -248,7 +251,9 @@ alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
   The usual MLE regularity conditions do \emph{not} hold for this
   distribution so that misleading inferences may result,
   e.g., in the \code{summary} and \code{vcov} of the object.
-
+  The 1-parameter ALD can be approximated by \code{\link{extlogF1}}
+  which has continuous derivatives and is recommended over
+  \code{\link{alaplace1}}.
 
 
 
@@ -277,8 +282,11 @@ alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
   Often the iterations slowly crawl towards the solution so
   monitoring the convergence (set \code{trace = TRUE}) is highly
   recommended.
+  Instead, \code{\link{extlogF1}} is recommended.
 
+  
 
+  
   For large data sets it is a very good idea to keep the length of
   \code{tau}/\code{kappa} low to avoid large memory requirements.
   Then
@@ -290,6 +298,7 @@ alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
   using offsets and an intercept-only model.
 
 
+  
   A second method for solving the noncrossing quantile problem is
   illustrated below in Example 3.
   This is called the \emph{accumulative quantile method} (AQM)
@@ -297,15 +306,18 @@ alaplace3(llocation = "identitylink", lscale = "loglink", lkappa = "loglink",
   It does not make the strong parallelism assumption.
 
 
+  
   The functions \code{alaplace2()} and \code{\link{laplace}}
   differ slightly in terms of the parameterizations.
 
 
+  
 }
 
 \seealso{
   \code{\link{ralap}},
   \code{\link{laplace}},
+  \code{\link{extlogF1}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{lms.bcn}},
   \code{\link{amlnormal}},
@@ -327,11 +339,11 @@ mymu <- function(x) exp(-2 + 6*sin(2*x-0.2) / (x+0.5)^2)
 adata <- transform(adata, y = rpois(n, lambda = mymu(x2)))
 mytau <- c(0.25, 0.75); mydof <- 4
 
-fit <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
+fit <- vgam(y ~ s(x2, df = mydof), data=adata, trace=TRUE, maxit = 900,
             alaplace2(tau = mytau, llocat = "loglink",
                       parallel.locat = FALSE))
-fitp <- vgam(y ~ s(x2, df = mydof), data = adata, trace = TRUE, maxit = 900,
-             alaplace2(tau = mytau, llocat = "loglink", parallel.locat = TRUE))
+fitp <- vgam(y ~ s(x2, df = mydof), data = adata, trace=TRUE, maxit=900,
+     alaplace2(tau = mytau, llocat = "loglink", parallel.locat = TRUE))
 
 par(las = 1); mylwd <- 1.5
 with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
@@ -356,7 +368,7 @@ fitp2 <- vglm(y ~ sm.bs(x2, df = mydof), data = adata, trace = TRUE,
 
 newtau <- 0.5  # Want to refit the model with this tau value
 fitp3 <- vglm(y ~ 1 + offset(predict(fitp2)[, 1]),
-              alaplace1(tau = newtau, llocation = "loglink"), data = adata)
+              alaplace1(tau = newtau, llocation = "loglink"), adata)
 with(adata, plot(x2, jitter(y, factor = 0.5), col = "orange",
                pch = "o", cex = 0.75, ylab = "y",
                main = "Example 2; parallel.locat = TRUE"))
@@ -379,7 +391,6 @@ for (ii in 1:length(mytau)) {
   adata <- transform(adata, usey = y-offsety)
   iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0)  # Well-chosen!
   mydf <- ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
-# lloc <- ifelse(ii == 1, "loglink", "loglink")  # 2nd value must be "loglink"
   fit3 <- vglm(usey ~ sm.ns(x2, df = mydf), data = adata, trace = TRUE,
                alaplace2(tau = usetau[ii], lloc = "loglink", iloc = iloc))
   answer[, ii] <- (if(ii == 1) 0 else answer[, ii-1]) + fitted(fit3)
@@ -402,3 +413,8 @@ with(adata, matlines(x2, answer, col = "orange", lty = 1))
 \keyword{models}
 \keyword{regression}
 
+
+
+
+% # 2nd value must be "loglink":
+% # lloc <- ifelse(ii == 1, "loglink", "loglink")

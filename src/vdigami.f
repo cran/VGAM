@@ -41,7 +41,12 @@ C
       INTEGER          I, I2
       DOUBLE PRECISION PN(6), D(6), DP(6), DPP(6), ZERO, ONE, TWO
 C     DATA TMAX/100.0/
-      DATA E, OFLO, VSMALL/1.D-6, 1.D30, 1.D-30/
+C
+C
+C
+C 20200410; originally:
+C     DATA E, OFLO, VSMALL/1.D-6, 1.D30, 1.D-30/
+      DATA E, OFLO, VSMALL/1.E-6, 1.E30, 1.E-30/
       DATA ZERO/0.0/, ONE/1.0/, TWO/2.0/
 C
       IFAULT = 0

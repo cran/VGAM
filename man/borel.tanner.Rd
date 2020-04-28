@@ -76,12 +76,12 @@ borel.tanner(Qsize = 1, link = "logitlink", imethod = 1)
 
 }
 \references{
-Tanner, J. C. (1953)
+Tanner, J. C. (1953).
 A problem of interference between two queues.
 \emph{Biometrika}, \bold{40}, 58--69.
 
 
-Borel, E. (1942)
+Borel, E. (1942).
 Sur l'emploi du theoreme de Bernoulli pour faciliter le
 calcul d'une infinite de coefficients.
 Application au probleme de l'attente a un guichet.
@@ -89,14 +89,14 @@ Application au probleme de l'attente a un guichet.
 \bold{214}, 452--456.
 
 
-    Page 328 of
-    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005).
     \emph{Univariate Discrete Distributions},
     3rd edition,
+    p.328.
     Hoboken, New Jersey: Wiley.
 
 
-Consul, P. C. and Famoye, F. (2006)
+Consul, P. C. and Famoye, F. (2006).
 \emph{Lagrangian Probability Distributions},
 Boston, MA, USA: Birkhauser.
 

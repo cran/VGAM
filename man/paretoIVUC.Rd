@@ -89,14 +89,14 @@ rparetoI(n, scale = 1, shape = 1)
 }
 \references{
 
-Brazauskas, V. (2003)
+Brazauskas, V. (2003).
 Information matrix for Pareto(IV), Burr, and related
 distributions.
 \emph{Comm. Statist. Theory and Methods}
 \bold{32}, 315--325.
 
 
-Arnold, B. C. (1983)
+Arnold, B. C. (1983).
 \emph{Pareto Distributions}.
 Fairland, Maryland: International Cooperative Publishing House.
 

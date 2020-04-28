@@ -33,7 +33,7 @@ is to use Abbott's formula.
 %}
 \references{
 
-  Finney, D. J., 1944.
+  Finney, D. J. (1944).
   The application of the probit method to toxicity test
   data adjusted for mortality in the controls.
   \emph{Annals of Applied Biology}, \bold{31}, 68--74.

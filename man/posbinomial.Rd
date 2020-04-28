@@ -79,13 +79,13 @@ posbinomial(link = "logitlink", multiple.responses = FALSE, parallel = FALSE,
 }
 \references{
 
-  Otis, D. L. et al. (1978)
+  Otis, D. L. et al. (1978).
   Statistical inference from capture data on closed animal populations,
   \emph{Wildlife Monographs},
   \bold{62}, 3--135.
 
 
-Patil, G. P. (1962)
+Patil, G. P. (1962).
 Maximum likelihood estimation for
 generalised power series distributions and its application to a
 truncated binomial distribution.
@@ -93,7 +93,7 @@ truncated binomial distribution.
 \bold{49}, 227--237.
 
 
-Pearson, K. (1913)
+Pearson, K. (1913).
 \emph{A Monograph on Albinism in Man}.
 Drapers Company Research Memoirs.
 

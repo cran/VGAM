@@ -227,7 +227,7 @@ does not suffer from the HDE.
 \references{
 
 
-Hauck, J. W. W. and A. Donner (1977)
+Hauck, J. W. W. and A. Donner (1977).
 Wald's test as applied to hypotheses in logit analysis. 
 \emph{Journal of the American Statistical Association},
 \bold{72}, 851--853.
@@ -238,7 +238,7 @@ Corrigenda: JASA, \bold{75}, 482.
 % \textit{JASA 72(360): 851--3}] 75 (370), 482
 
 
-%Whitehead, J. (1980)
+%Whitehead, J. (1980).
 %Fitting Cox's regression model to survival data using GLIM.
 %\emph{Journal of the Royal Statistical Society.
 %Series C (Applied Statistics)},

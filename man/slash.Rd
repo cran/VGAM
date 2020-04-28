@@ -83,12 +83,12 @@ f(y) = 1/(2*sigma*sqrt(2*pi)) if y=mu
 
 }
 \references{
-  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
+  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994).
   \emph{Continuous Univariate Distributions},
   2nd edition, Volume 1, New York: Wiley.
 
 
-  Kafadar, K. (1982)
+  Kafadar, K. (1982).
   A Biweight Approach to the One-Sample Problem
   \emph{Journal of the American Statistical Association},
   \bold{77}, 416--424.

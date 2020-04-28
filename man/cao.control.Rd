@@ -284,12 +284,12 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 \references{
 
 
-Yee, T. W. (2006)
+Yee, T. W. (2006).
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
 
-Green, P. J. and Silverman, B. W. (1994)
+Green, P. J. and Silverman, B. W. (1994).
 \emph{Nonparametric Regression and Generalized Linear Models:
       A Roughness Penalty Approach},
 London: Chapman & Hall.

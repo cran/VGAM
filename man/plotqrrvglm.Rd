@@ -40,7 +40,7 @@ plotqrrvglm(object, rtype = c("response", "pearson", "deviance", "working"),
 \references{
 
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},

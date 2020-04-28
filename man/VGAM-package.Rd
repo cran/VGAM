@@ -201,7 +201,7 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 \references{
 
 
-Yee, T. W. (2015)
+Yee, T. W. (2015).
 Vector Generalized Linear and Additive Models:
 With an Implementation in R.
 New York, USA: \emph{Springer}.

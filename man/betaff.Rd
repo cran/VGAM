@@ -95,7 +95,7 @@ betaff(A = 0, B = 1, lmu = "logitlink", lphi = "loglink",
 
 }
 \references{
-  Ferrari, S. L. P. and Francisco C.-N. (2004)
+  Ferrari, S. L. P. and Francisco C.-N. (2004).
   Beta regression for modelling rates and proportions.
   \emph{Journal of Applied Statistics},
   \bold{31}, 799--815.

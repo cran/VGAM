@@ -42,7 +42,7 @@ trplot(object, ...)
 \references{
 
 
-Yee, T. W. (2012)
+Yee, T. W. (2020).
 On constrained and unconstrained
 quadratic ordination.
 \emph{Manuscript in preparation}.

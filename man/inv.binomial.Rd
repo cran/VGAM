@@ -65,19 +65,19 @@ inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
 
 }
 \references{
-  Yanagimoto, T. (1989)
+  Yanagimoto, T. (1989).
   The inverse binomial distribution as a statistical model.
   \emph{Communications in Statistics: Theory and Methods},
   \bold{18}, 3625--3633.
 
 
-  Jain, G. C. and Consul, P. C. (1971)
+  Jain, G. C. and Consul, P. C. (1971).
   A generalized negative binomial distribution.
   \emph{SIAM Journal on Applied Mathematics},
   \bold{21}, 501--513.
 
 
-  Jorgensen, B. (1997)
+  Jorgensen, B. (1997).
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall
 

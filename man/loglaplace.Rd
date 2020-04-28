@@ -142,20 +142,20 @@ logitlaplace1(tau = NULL, llocation = "logitlink",
 }
 \references{
 
-Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
+Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001).
 \emph{The Laplace distribution and generalizations:
 a revisit with applications to communications,
 economics, engineering, and finance},
 Boston: Birkhauser.
 
 
-Kozubowski, T. J. and Podgorski, K. (2003)
+Kozubowski, T. J. and Podgorski, K. (2003).
 Log-Laplace distributions.
 \emph{International Mathematical Journal},
 \bold{3}, 467--495.
 
 
-  Yee, T. W. (2012)
+  Yee, T. W. (2020).
   Quantile regression for counts and proportions.
   In preparation.
 

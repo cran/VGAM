@@ -108,6 +108,7 @@ oalog(lpobs1 = "logitlink", lshape = "logitlink",
 }
 
 \seealso{
+  \code{\link{Gaitlog}},
   \code{\link{Oalog}},
   \code{\link{logff}},
   \code{\link{oilog}},

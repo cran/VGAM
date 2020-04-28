@@ -68,7 +68,7 @@ data(prats)
 }
 \references{
 
-  Williams, D. A. (1975)
+  Williams, D. A. (1975).
   The Analysis of Binary Responses From Toxicological
             Experiments Involving Reproduction and Teratogenicity.
   \emph{Biometrics},

@@ -76,14 +76,14 @@ hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = N
 }
 \references{
 
-  Jorgensen, B. (1997)
+  Jorgensen, B. (1997).
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall.
 % p.101, Eqn (3.37) for hypersecant().
 % p.101, Eqn (3.38) for hypersecant01().
 
 
-Morris, C. N. (1982)
+Morris, C. N. (1982).
 Natural exponential families with quadratic variance functions.
 \emph{The Annals of Statistics},
 \bold{10}(1), 65--80.

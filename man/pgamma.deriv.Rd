@@ -69,7 +69,7 @@ pgamma.deriv(q, shape, tmax = 100)
 }
 \references{
 
-  Moore, R. J. (1982)
+  Moore, R. J. (1982).
   Algorithm AS 187: Derivatives of the Incomplete Gamma Integral.
   \emph{Journal of the Royal Statistical Society, Series C}
   \emph{(Applied Statistics)},

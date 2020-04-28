@@ -53,10 +53,10 @@ hzeta(lshape = "logloglink", ishape = NULL, nsimEIM = 100)
 }
 \references{
 
-    Pages 533--4 of
-    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005).
     \emph{Univariate Discrete Distributions},
     3rd edition,
+    pp.533--4.
     Hoboken, New Jersey: Wiley.
 
 }

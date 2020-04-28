@@ -141,7 +141,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loglink",
 
 }
 \references{
-  Tobin, J. (1958)
+  Tobin, J. (1958).
   Estimation of relationships for limited dependent variables.
   \emph{Econometrica} \bold{26}, 24--36.
 

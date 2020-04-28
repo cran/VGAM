@@ -81,7 +81,7 @@ very close to 0 or 1.
 
 %\references{
 %
-%Jones, M. C. (1994)
+%Jones, M. C. (1994).
 %Expectiles and M-quantiles are quantiles.
 %\emph{Statistics and Probability Letters},
 %\bold{20}, 149--153.

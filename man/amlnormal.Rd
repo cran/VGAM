@@ -74,7 +74,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 
 }
 \references{
-  Efron, B. (1991)
+  Efron, B. (1991).
   Regression percentiles using asymmetric squared error loss.
   \emph{Statistica Sinica},
   \bold{1}, 93--125.
@@ -133,6 +133,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
   \code{\link{amlbinomial}},
   \code{\link{amlexponential}},
   \code{\link{bmi.nz}},
+  \code{\link{extlogF1}},
   \code{\link{alaplace1}},
   \code{\link{denorm}},
   \code{\link{lms.bcn}} and similar variants are alternative

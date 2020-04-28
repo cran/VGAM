@@ -97,7 +97,7 @@ data(venice90)
 \references{
 
 
-  Smith, R. L. (1986)
+  Smith, R. L. (1986).
   Extreme value theory based on the \emph{r} largest annual events.
   \emph{Journal of Hydrology},
   \bold{86}, 27--43.

@@ -101,13 +101,13 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
 }
 \references{
 
-%Yee, T. W. and Hastie, T. J. (2003)
+%Yee, T. W. and Hastie, T. J. (2003).
 %Reduced-rank vector generalized linear models.
 %\emph{Statistical Modelling},
 %\bold{3}, 15--41.
 
 
-  Chambers, J. M. (1992)
+  Chambers, J. M. (1992).
   \emph{Data for models.}
   Chapter 3 of \emph{Statistical Models in S}
   eds J. M. Chambers and T. J. Hastie, Wadsworth & Brooks/Cole.

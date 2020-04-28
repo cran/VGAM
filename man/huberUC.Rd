@@ -69,11 +69,12 @@ edhuber(x, k = 0.862, mu = 0, sigma = 1, log = FALSE)
 
 }
 %\references{
-%  Huber, P. J. and Ronchetti, E. (2009)
+%  Huber, P. J. and Ronchetti, E. (2009).
 %  \emph{Robust Statistics}, 2nd ed. New York: Wiley.
 %
 %
-%  Huber, P. J. and Ronchetti, E. (2009) Robust Statistics
+%  Huber, P. J. and Ronchetti, E. (2009).
+%  Robust Statistics
 %  (2nd ed.). Wiley, New York.
 %
 %

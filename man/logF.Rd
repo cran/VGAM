@@ -7,7 +7,7 @@
 }
 \description{
    Maximum likelihood estimation of
-   the 1-parameter log F distribution.
+   the 2-parameter log F distribution.
 
 
 }
@@ -85,7 +85,12 @@
 
 \seealso{
   \code{\link{dlogF}},
+  \code{\link{extlogF1}},
   \code{\link{logff}}.
+
+
+
+
 
 
 % \code{\link{simulate.vlm}}.

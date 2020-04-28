@@ -4,6 +4,28 @@
 %\alias{ccoef-method}
 %
 %
+% 202004
+\alias{showsummaryvglmS4VGAM,ANY,extlogF1-method}
+\alias{showvglmS4VGAM,ANY,extlogF1-method}
+\alias{showvgamS4VGAM,ANY,extlogF1-method}
+\alias{eCDF,vglm-method}
+\alias{eCDF,ANY-method}
+\alias{fix.crossing,vglm-method}
+\alias{fix.crossing,ANY-method}
+\alias{is.crossing,vglm-method}
+\alias{is.crossing,ANY-method}
+% 202003
+\alias{altered,ANY-method}
+\alias{altered,vglm-method}
+\alias{inflated,ANY-method}
+\alias{inflated,vglm-method}
+\alias{truncated,ANY-method}
+\alias{truncated,vglm-method}
+\alias{specials,ANY-method}
+\alias{specials,vglm-method}
+% 202002
+\alias{get.offset,ANY-method}
+\alias{get.offset,vglm-method}
 % 201908
 \alias{rootogram4,ANY-method}
 \alias{rootogram4,vglm-method}

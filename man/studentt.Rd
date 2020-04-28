@@ -110,12 +110,12 @@ studentt3(llocation = "identitylink", lscale = "loglink", ldf = "logloglink",
 \references{
 
 
-Student (1908)
+Student (1908).
 The probable error of a mean.
 \emph{Biometrika}, \bold{6}, 1--25.
 
 
-Zhu, D. and Galbraith, J. W. (2010)
+Zhu, D. and Galbraith, J. W. (2010).
 A generalized asymmetric Student-\emph{t} distribution with
 application to financial econometrics.
 \emph{Journal of Econometrics}, \bold{157}, 297--305.

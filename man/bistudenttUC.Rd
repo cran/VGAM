@@ -80,7 +80,7 @@ dbistudentt(x1, x2, df, rho = 0, log = FALSE)
 }
 \references{
 
-Schepsmeier, U. and Stober, J. (2013)
+Schepsmeier, U. and Stober, J. (2013).
 Derivatives and Fisher information of bivariate copulas.
 \emph{Statistical Papers}.
 

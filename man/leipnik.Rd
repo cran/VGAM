@@ -60,12 +60,12 @@ leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
 
 }
 \references{
-  Jorgensen, B. (1997)
+  Jorgensen, B. (1997).
   \emph{The Theory of Dispersion Models}.
   London: Chapman & Hall
 
 
-  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995).
   \emph{Continuous Univariate Distributions},
   2nd edition,
   Volume 2,

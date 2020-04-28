@@ -124,13 +124,13 @@ dirmultinomial(lphi = "logitlink", iphi = 0.10, parallel = FALSE, zero = "M")
 \references{
 
 
-Paul, S. R., Balasooriya, U. and Banerjee, T. (2005)
+Paul, S. R., Balasooriya, U. and Banerjee, T. (2005).
 Fisher information matrix of the Dirichlet-multinomial distribution.
 \emph{Biometrical Journal}, \bold{47}, 230--236.
 
 
 
-Tvedebrink, T. (2010)
+Tvedebrink, T. (2010).
 Overdispersion in allelic counts and \eqn{\theta}-correction in
 forensic genetics.
 \emph{Theoretical Population Biology}, \bold{78}, 200--210.

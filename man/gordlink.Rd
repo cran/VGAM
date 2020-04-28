@@ -66,7 +66,7 @@ gordlink(theta, lambda = 1, cutpoint = NULL,
 
 }
 \references{
-  Yee, T. W. (2019)
+  Yee, T. W. (2020).
   \emph{Ordinal ordination with normalizing link functions for count data},
   (in preparation).
 

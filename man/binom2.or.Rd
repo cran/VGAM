@@ -133,23 +133,23 @@ binom2.or(lmu = "logitlink", lmu1 = lmu, lmu2 = lmu, loratio = "loglink",
 
 }
 \references{
-  McCullagh, P. and Nelder, J. A. (1989)
+  McCullagh, P. and Nelder, J. A. (1989).
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
-  le Cessie, S. and van Houwelingen, J. C. (1994)
+  le Cessie, S. and van Houwelingen, J. C. (1994).
   Logistic regression for correlated binary data.
   \emph{Applied Statistics},
   \bold{43}, 95--108.
 
 
-  Palmgren, J. (1989)
+  Palmgren, J. (1989).
   \emph{Regression Models for Bivariate Binary Responses}.
   Technical Report no. 101, Department of Biostatistics,
   University of Washington, Seattle.
 
 
-  Yee, T. W. and Dirnbock, T. (2009)
+  Yee, T. W. and Dirnbock, T. (2009).
   Models for analysing species' presence/absence data
   at two time points.
   Journal of Theoretical Biology, \bold{259}(4), 684--694.

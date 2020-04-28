@@ -38,7 +38,7 @@ erfc(x, inverse = FALSE)
 \references{
 
 
-Abramowitz, M. and Stegun, I. A. (1972)
+Abramowitz, M. and Stegun, I. A. (1972).
 \emph{Handbook of Mathematical Functions with Formulas,
   Graphs, and Mathematical Tables},
 New York: Dover Publications Inc.

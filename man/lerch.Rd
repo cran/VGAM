@@ -66,7 +66,7 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
   \code{http://aksenov.freeshell.org/lerchphi/source/lerchphi.c}.
 
 
-  Bateman, H. (1953)
+  Bateman, H. (1953).
   \emph{Higher Transcendental Functions}.
   Volume 1. McGraw-Hill, NY, USA.
 

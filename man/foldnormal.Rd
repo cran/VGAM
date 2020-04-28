@@ -93,14 +93,14 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
 
 }
 \references{
-  Lin, P. C. (2005)
+  Lin, P. C. (2005).
   Application of the generalized folded-normal distribution to the process
   capability measures.
   \emph{International Journal of Advanced Manufacturing Technology},
   \bold{26}, 825--830.
 
 
-  Johnson, N. L. (1962)
+  Johnson, N. L. (1962).
   The folded normal distribution:
   accuracy of estimation by maximum likelihood.
   \emph{Technometrics},

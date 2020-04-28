@@ -73,13 +73,13 @@ Multiple responses are handled.
 
 
 pp.527-- of Chapter 11 of
-    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+    Johnson N. L., Kemp, A. W. and Kotz S. (2005).
     \emph{Univariate Discrete Distributions},
     3rd edition,
     Hoboken, New Jersey: Wiley.
 
 
-Knight, K. (2000)
+Knight, K. (2000).
 \emph{Mathematical Statistics}.
 Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 

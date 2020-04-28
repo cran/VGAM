@@ -90,7 +90,7 @@ rposnegbin(n, size, prob = NULL, munb = NULL)
 \references{
 
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and Lindenmayer,
-D. B. (1996)
+D. B. (1996).
 Modelling the abundances of rare species: statistical models
 for counts with extra zeros.
 \emph{Ecological Modelling},

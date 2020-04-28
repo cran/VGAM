@@ -75,22 +75,22 @@ The (posterior) mean is
 
 }
 \references{
-Lange, K. (2002)
+Lange, K. (2002).
 \emph{Mathematical and Statistical Methods for Genetic Analysis},
 2nd ed.  New York: Springer-Verlag.
 
 
-Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011)
+Forbes, C., Evans, M., Hastings, N. and Peacock, B. (2011).
 \emph{Statistical Distributions},
 Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
-Paul, S. R., Balasooriya, U. and Banerjee, T. (2005)
+Paul, S. R., Balasooriya, U. and Banerjee, T. (2005).
 Fisher information matrix of the Dirichlet-multinomial distribution.
 \emph{Biometrical Journal}, \bold{47}, 230--236.
 
 
-Tvedebrink, T. (2010)
+Tvedebrink, T. (2010).
 Overdispersion in allelic counts and \eqn{\theta}-correction in forensic genetics.
 \emph{Theoretical Population Biology}, \bold{78}, 200--210.
 

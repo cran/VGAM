@@ -109,16 +109,16 @@ lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
 
 }
 \references{
-Yeo, I.-K. and Johnson, R. A. (2000)
+Yeo, I.-K. and Johnson, R. A. (2000).
 A new family of power transformations to improve normality or symmetry.
 \emph{Biometrika},
 \bold{87}, 954--959.
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine}, \bold{23}, 2295--2315.
 
-Yee, T. W. (2002)
+Yee, T. W. (2002).
 An Implementation for Regression Quantile Estimation.
 Pages 3--14.
 In: Haerdle, W. and Ronz, B.,

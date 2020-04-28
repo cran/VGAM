@@ -265,19 +265,19 @@ and tolerance matrix.
 }
 \references{
 
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-Yee, T. W. and Hadi, A. F. (2014)
+Yee, T. W. and Hadi, A. F. (2014).
 Row-column interaction models, with an R implementation.
 \emph{Computational Statistics},
 \bold{29}, 1427--1445.
 
 
-Goodman, L. A. (1981)
+Goodman, L. A. (1981).
 Association models and canonical correlation in the analysis
 of cross-classifications having ordered categories.
 \emph{Journal of the American Statistical Association},

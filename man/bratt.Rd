@@ -86,7 +86,7 @@ bratt(refgp = "last", refvalue = 1, ialpha = 1, i0 = 0.01)
 }
 \references{
 
-  Torsney, B. (2004)
+  Torsney, B. (2004).
   Fitting Bradley Terry models using a multiplicative algorithm.
   In: Antoch, J. (ed.)
   \emph{Proceedings in Computational Statistics COMPSTAT 2004},

@@ -115,7 +115,7 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
 %\references{
 
 
-%Yee, T. W. (2018)
+%Yee, T. W. (2018).
 %On the Hauck-Donner effect in Wald tests:
 %Detection, and parameter space characterization
 %(\emph{under review}).

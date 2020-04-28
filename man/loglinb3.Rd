@@ -65,7 +65,7 @@ loglinb3(exchangeable = FALSE, zero = c("u12", "u13", "u23"))
 
 \references{
 
-Yee, T. W. and Wild, C. J. (2001)
+Yee, T. W. and Wild, C. J. (2001).
 Discussion to: ``Smoothing spline ANOVA for multivariate Bernoulli
 observations, with application to ophthalmology data (with discussion)''
 by Gao, F., Wahba, G., Klein, R., Klein, B.
@@ -73,7 +73,7 @@ by Gao, F., Wahba, G., Klein, R., Klein, B.
 \bold{96}, 127--160.
 
 
-McCullagh, P. and Nelder, J. A. (1989)
+McCullagh, P. and Nelder, J. A. (1989).
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 

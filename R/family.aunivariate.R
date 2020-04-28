@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -2253,7 +2253,8 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
          lshape1 = .lshape1 ,
          lshape2 = .lshape2 ,
          imethod = .imethod )
-  }, list( .imethod = imethod, .lshape1 = lshape1, .lshape2 = lshape2 ))),
+  }, list( .lshape1 = lshape1, .imethod = imethod,
+           .lshape2 = lshape2 ))),
 
   initialize = eval(substitute(expression({
 
@@ -2301,8 +2302,20 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
            .eshape1 = eshape1, .eshape2 = eshape2 ))),
   last = eval(substitute(expression({
     misc$link <-    c(shape1 = .lshape1 , shape2 = .lshape2 )
-
     misc$earg <- list(shape1 = .eshape1 , shape2 = .eshape2 )
+
+
+
+    extra$percentile <- numeric(ncol(y))
+    locat <- cbind(digamma(shape1) - digamma(shape2))  # zz not sure
+    for (ii in 1:ncol(y)) {
+      y.use <- if (ncol(y) > 1) y[, ii] else y
+      extra$percentile[ii] <-
+        100 * weighted.mean(y.use <= locat[, ii], w[, min(ii, ncol(w))])
+    }
+
+
+
 
     misc$expected <- TRUE
     misc$imethod <- .imethod
@@ -2311,8 +2324,7 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
             .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
+             extra = NULL, summation = TRUE) {
     shape1 <- eta2theta(eta[, 1], .lshape1 , earg = .eshape1 )
     shape2 <- eta2theta(eta[, 2], .lshape2 , earg = .eshape2 )
     if (residuals) {
@@ -2374,12 +2386,13 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
     wz <- matrix(0, n, dimm(M))
     wz[, iam(1, 1, M = M)] <- ned2l.dshape12 * dshape1.deta^2
     wz[, iam(2, 2, M = M)] <- ned2l.dshape22 * dshape2.deta^2
-    wz[, iam(1, 2, M = M)] <- ned2l.dshape1shape2 * dshape1.deta * dshape2.deta
+    wz[, iam(1, 2, M = M)] <- ned2l.dshape1shape2 *
+                              dshape1.deta * dshape2.deta
 
     c(w) * wz
   }), list( .lshape1 = lshape1, .lshape2 = lshape2,
             .eshape1 = eshape1, .eshape2 = eshape2 ))))
-}
+}  # logF
 
 
 
@@ -4455,8 +4468,8 @@ dzeta <- function(x, shape, log = FALSE) {
   ans <- rep_len(if (log.arg) log(0) else 0, LLL)
   if (any(!zero)) {
     if (log.arg) {
-      ans[!zero] <- (-shape[!zero]-1)*log(x[!zero]) -
-                    log(zeta(shape[!zero]+1))
+      ans[!zero] <- (-shape[!zero]-1) * log(x[!zero]) -
+                    log(zeta(shape[!zero] + 1))
     } else {
       ans[!zero] <- x[!zero]^(-shape[!zero]-1) / zeta(shape[!zero]+1)
     }
@@ -4505,15 +4518,16 @@ dzeta <- function(x, shape, log = FALSE) {
   if (length(shape) != LLL) shape <- rep_len(shape, LLL)
   ans <- rep_len(0, LLL)
 
-  lo <- rep_len(1, LLL)
+  # First, bracket the solution between 'lo' and 'hi'.
+  lowsup <- 1
+  lo <- rep_len(lowsup - 0.5, LLL)
   approx.ans <- lo  # True at lhs
-  hi <- 2 * lo + 10
+  hi <- 2 * lo + 10.5
   dont.iterate <- p == 1 | shape <= 0
   done <- p <= pzeta(hi, shape) | dont.iterate
   while (!all(done)) {
-    hi.save <- hi[!done]
-    hi[!done] <- 2 * lo[!done] + 10
-    lo[!done] <- hi.save
+    lo[!done] <- hi[!done]
+    hi[!done] <- 2 * hi[!done] + 10.5  # Bug fixed
     done[!done] <- (p[!done] <= pzeta(hi[!done], shape[!done]))
   }
 
@@ -4691,22 +4705,20 @@ rzeta <- function(n, shape) {
   deriv = eval(substitute(expression({
     shape <- eta2theta(eta, .lshape , earg = .eshape )
 
-
-    fred0 <- zeta(shape+1)
-    fred1 <- zeta(shape+1, deriv = 1)
+    fred0 <- zeta(shape + 1)
+    fred1 <- zeta(shape + 1, deriv = 1)
     dl.dshape <- -log(y) - fred1 / fred0
-
     dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
-
     c(w) * dl.dshape * dshape.deta
   }), list( .lshape = lshape, .eshape = eshape ))),
   weight = expression({
     NOS <- NCOL(y)
-    nd2l.dshape2 <- zeta(shape + 1, deriv = 2) / fred0 - (fred1/fred0)^2
-    wz <- nd2l.dshape2 * dshape.deta^2
+    ned2l.dshape2 <- zeta(shape + 1, deriv = 2) / fred0 -
+                     (fred1 / fred0)^2
+    wz <- ned2l.dshape2 * dshape.deta^2
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = NOS)
   }))
-}
+}  # zetaff
 
 
 
@@ -6097,15 +6109,14 @@ ddiffzeta <- function(x, shape, start = 1, log = FALSE) {
 
   lo <- rep_len(start, LLL)
   approx.ans <- lo  # True at lhs
-  hi <- 2 * lo + 10
+  hi <- 2 * lo + 10.5
   dont.iterate <- p == 1 | shape <= 0 | start != round(start) | start < 1
   done <- p <= pdiffzeta(hi, shape, start = start) | dont.iterate
   max.iter <- 100
   iter <- 0
   while (!all(done) && iter < max.iter) {
-    hi.save <- hi[!done]
-    hi[!done] <- 2 * lo[!done] + 10
-    lo[!done] <- hi.save
+    lo[!done] <- hi[!done]
+    hi[!done] <- 2 * hi[!done] + 10.5  # Bug fixed
     done[!done] <- is.infinite(hi[!done]) |
                    (p[!done] <= pdiffzeta(hi[!done], shape[!done],
                                           start[!done]))

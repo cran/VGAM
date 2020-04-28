@@ -264,7 +264,7 @@ AR1EIM(x = NULL, var.arg = NULL, p.drift = NULL,
 
 }
 \references{
-  Porat, B. and Friedlander, B. (1986)
+  Porat, B. and Friedlander, B. (1986).
   Computation of the Exact Information Matrix of Gaussian Time Series
   with Stationary Random Components.
   \emph{IEEE Transactions on Acoustics, Speech, and Signal Processing},

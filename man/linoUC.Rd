@@ -47,13 +47,13 @@ rlino(n, shape1, shape2, lambda = 1)
 
 }
 %\references{
-%  Libby, D. L. and Novick, M. R. (1982)
+%  Libby, D. L. and Novick, M. R. (1982).
 %  Multivariate generalized beta distributions with applications to
 %  utility assessment.
 %  \emph{Journal of Educational Statistics},
 %  \bold{7}, 271--294.
 %
-%  Gupta, A. K. and Nadarajah, S. (2004)
+%  Gupta, A. K. and Nadarajah, S. (2004).
 %  \emph{Handbook of Beta Distribution and Its Applications},
 %  NY: Marcel Dekker, Inc.
 %

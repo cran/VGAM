@@ -70,7 +70,14 @@
 }
 \item{rtype, ctype, rsub, csub}{
   See the \code{type} and \code{sub} arguments of
-  \code{\link[graphics:plot]{plot}}.
+  \code{\link[base:plot]{plot}}.
+
+
+
+% 20200427; all \code{\link[graphics:plot]{plot}} changed to
+% \code{\link[base:plot]{plot}}, because  of R.4.0.0.
+
+
 
 
 }
@@ -79,7 +86,7 @@
 %  Currently not functioning properly.
 %  zz.
 %  See \code{labels} argument of
-%  \code{\link[graphics:plot]{plot}}.
+%  \code{\link[base:plot]{plot}}.
 %
 %}
 \item{rxlab, rylab, cxlab, cylab}{
@@ -138,11 +145,11 @@
 %
 %}
 %\item{type}{
-%  Fed into \code{type} of \code{\link[graphics:plot]{plot}}.
+%  Fed into \code{type} of \code{\link[base:plot]{plot}}.
 %
 %}
 \item{...}{
-  Arguments fed into both \code{\link[graphics:plot]{plot}} calls.
+  Arguments fed into both \code{\link[base:plot]{plot}} calls.
 
 }
 

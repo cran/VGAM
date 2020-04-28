@@ -7,7 +7,7 @@
 }
 \usage{
 pospoisson(link = "loglink", type.fitted = c("mean", "lambda", "prob0"),
-           expected = TRUE, ilambda = NULL, imethod = 1, zero = NULL)
+    expected = TRUE, ilambda = NULL, imethod = 1, zero = NULL, gt.1 = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,7 +31,13 @@ pospoisson(link = "loglink", type.fitted = c("mean", "lambda", "prob0"),
 
 
   }
+  \item{gt.1}{
+  Logical.
+  Enforce \code{lambda > 1}? The default is to
+  enforce \code{lambda > 0}.
 
+
+  }
 }
 \details{
   The positive Poisson  distribution is the ordinary Poisson
@@ -61,7 +67,7 @@ pospoisson(link = "loglink", type.fitted = c("mean", "lambda", "prob0"),
 
 }
 \references{
-Coleman, J. S. and James, J. (1961)
+Coleman, J. S. and James, J. (1961).
 The equilibrium size distribution of freely-forming groups.
 \emph{Sociometry}, \bold{24}, 36--45.
 
@@ -85,7 +91,8 @@ The equilibrium size distribution of freely-forming groups.
 }
 \seealso{
   \code{\link{Pospois}},
-  \code{\link{gatpoisson.mlm}},
+  \code{\link{gaitpoisson.mix}},
+  \code{\link{gaitpoisson.mlm}},
   \code{\link{posnegbinomial}},
   \code{\link{poissonff}},
   \code{\link{otpospoisson}},

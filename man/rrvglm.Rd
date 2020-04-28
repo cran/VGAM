@@ -128,26 +128,26 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
 }
 \references{
 
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
 
-Anderson, J. A. (1984)
+Anderson, J. A. (1984).
 Regression and ordered categorical variables.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{46}, 1--30.
 
 
-  Yee, T. W. (2014)
+  Yee, T. W. (2014).
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis},
   \bold{71}, 889--902.

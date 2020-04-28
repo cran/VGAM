@@ -97,7 +97,7 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
   wrote a wrapper function.
 
 
-  Donnelly, T. G. (1973)
+  Donnelly, T. G. (1973).
   Algorithm 462: Bivariate Normal Distribution.
   \emph{Communications of the ACM},
   \bold{16}, 638.

@@ -41,7 +41,7 @@ MNSs(link = "logitlink", imS = NULL, ims = NULL, inS = NULL)
 
 }
 \references{
-  Elandt-Johnson, R. C. (1971)
+  Elandt-Johnson, R. C. (1971).
   \emph{Probability Models and Statistical Methods in Genetics},
   New York: Wiley.
 

@@ -79,7 +79,7 @@ f(y;mu1,mu2) =
 
 \references{
 
-Skellam, J. G. (1946)
+Skellam, J. G. (1946).
 The frequency distribution of the difference between
 two Poisson variates belonging to different populations.
 \emph{Journal of the Royal Statistical Society, Series A},

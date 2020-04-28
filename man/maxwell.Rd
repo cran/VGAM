@@ -59,7 +59,7 @@ maxwell(link = "loglink", zero = NULL, parallel = FALSE,
 }
 \references{
 
-  von Seggern, D. H. (1993)
+  von Seggern, D. H. (1993).
   \emph{CRC Standard Curves and Surfaces},
   Boca Raton, FL, USA: CRC Press.
 

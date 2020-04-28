@@ -72,19 +72,19 @@ sratio(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 }
 \references{
-Agresti, A. (2013)
+Agresti, A. (2013).
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
 
-Simonoff, J. S. (2003)
+Simonoff, J. S. (2003).
 \emph{Analyzing Categorical Data},
 New York, USA: Springer-Verlag.
 
-McCullagh, P. and Nelder, J. A. (1989)
+McCullagh, P. and Nelder, J. A. (1989).
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
-Yee, T. W. (2010)
+Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.

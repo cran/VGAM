@@ -65,7 +65,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 }
 %\references{
-%  McCullagh, P. and Nelder, J. A. (1989)
+%  McCullagh, P. and Nelder, J. A. (1989).
 %  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 %
 %}

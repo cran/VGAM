@@ -42,19 +42,19 @@ propodds(reverse = TRUE, whitespace = FALSE)
 }
 \references{
 
-Agresti, A. (2010)
+Agresti, A. (2010).
 \emph{Analysis of Ordinal Categorical Data},
 2nd ed. Hoboken, NJ, USA: Wiley.
 
 
-Yee, T. W. (2010)
+Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.

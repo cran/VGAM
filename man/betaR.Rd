@@ -87,13 +87,13 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 
 }
 \references{
-  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+  Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995).
   Chapter 25 of:
   \emph{Continuous Univariate Distributions},
   2nd edition, Volume 2, New York: Wiley.
 
 
-  Gupta, A. K. and Nadarajah, S. (2004)
+  Gupta, A. K. and Nadarajah, S. (2004).
   \emph{Handbook of Beta Distribution and Its Applications},
   New York: Marcel Dekker.
 

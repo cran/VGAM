@@ -132,7 +132,7 @@ gamma2(lmu = "loglink", lshape = "loglink",
   2-parameter gamma distribution described in the monograph
 
 
-McCullagh, P. and Nelder, J. A. (1989)
+McCullagh, P. and Nelder, J. A. (1989).
   \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 

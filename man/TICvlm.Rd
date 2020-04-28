@@ -111,7 +111,7 @@
 
 \references{
 
-Takeuchi, K. (1976)
+Takeuchi, K. (1976).
 Distribution of informational statistics and a criterion of model
 fitting.  (In Japanese).
 \emph{Suri-Kagaku} (Mathematic Sciences),
@@ -122,7 +122,7 @@ fitting.  (In Japanese).
 %Suri-Kagaku (Mathematic Sciences) 153, 12--18. (In Japanese).
 
 
-Burnham, K. P. and Anderson, D. R. (2002)
+Burnham, K. P. and Anderson, D. R. (2002).
 \emph{Model Selection and Multi-Model Inference: A Practical
       Information-Theoretic Approach},
 2nd ed. New York, USA: Springer.

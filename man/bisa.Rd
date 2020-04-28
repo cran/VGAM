@@ -93,29 +93,29 @@ bisa(lscale = "loglink", lshape = "loglink", iscale = 1,
 \references{
 
 
-Lemonte, A. J. and Cribari-Neto, F. and Vasconcellos, K. L. P. (2007)
+Lemonte, A. J. and Cribari-Neto, F. and Vasconcellos, K. L. P. (2007).
 Improved statistical inference for the two-parameter
 Birnbaum-Saunders distribution.
 \emph{Computational Statistics \& Data Analysis}, \bold{51}, 4656--4681.
 
 
-Birnbaum, Z. W. and Saunders, S. C. (1969)
+Birnbaum, Z. W. and Saunders, S. C. (1969).
 A new family of life distributions.
 \emph{Journal of Applied Probability}, \bold{6}, 319--327.
 
 
-Birnbaum, Z. W. and Saunders, S. C. (1969)
+Birnbaum, Z. W. and Saunders, S. C. (1969).
 Estimation for a family of life distributions with applications to fatigue.
 \emph{Journal of Applied Probability}, \bold{6}, 328--347.
 
 
-Engelhardt, M. and Bain, L. J. and Wright, F. T. (1981)
+Engelhardt, M. and Bain, L. J. and Wright, F. T. (1981).
 Inferences on the parameters of the Birnbaum-Saunders fatigue
 life distribution based on maximum likelihood estimation.
 \emph{Technometrics}, \bold{23}, 251--256.
 
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1995).
 \emph{Continuous Univariate Distributions},
 2nd edition,
 Volume 2,

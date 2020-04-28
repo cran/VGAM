@@ -120,14 +120,14 @@ betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
 }
 \references{
 
-  Moore, D. F. and Tsiatis, A. (1991)
+  Moore, D. F. and Tsiatis, A. (1991).
   Robust estimation of the variance in moment methods for
   extra-binomial and extra-Poisson variation.
   \emph{Biometrics},
   \bold{47}, 383--401.
 
 
-  Prentice, R. L. (1986)
+  Prentice, R. L. (1986).
     Binary regression using an extended beta-binomial distribution,
     with discussion of correlation induced by
     covariate measurement errors.

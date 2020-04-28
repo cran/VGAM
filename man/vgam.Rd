@@ -245,20 +245,20 @@ for generalized additive models.
 
 
 
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.
 
 
 
-Yee, T. W. (2008)
+Yee, T. W. (2008).
 The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
 
 
-Yee, T. W. (2015)
+Yee, T. W. (2015).
 Vector Generalized Linear and Additive Models:
 With an Implementation in R.
 New York, USA: \emph{Springer}.

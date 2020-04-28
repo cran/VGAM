@@ -56,7 +56,7 @@ rhzeta(n, shape)
 %\references{
 %
 %    Pages 533--4 of
-%    Johnson N. L., Kemp, A. W. and Kotz S. (2005)
+%    Johnson N. L., Kemp, A. W. and Kotz S. (2005).
 %    \emph{Univariate Discrete Distributions},
 %    3rd edition,
 %    Hoboken, New Jersey: Wiley.

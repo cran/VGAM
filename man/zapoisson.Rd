@@ -133,7 +133,7 @@ zapoissonff(llambda = "loglink", lonempobs0 = "logitlink", type.fitted =
 \references{
 
 Welsh, A. H., Cunningham, R. B., Donnelly, C. F. and
-Lindenmayer, D. B. (1996)
+Lindenmayer, D. B. (1996).
 Modelling the abundances of rare species: statistical models
 for counts with extra zeros.
 \emph{Ecological Modelling},
@@ -141,13 +141,13 @@ for counts with extra zeros.
 297--308.
 
 
-Angers, J-F. and Biswas, A. (2003)
+Angers, J-F. and Biswas, A. (2003).
 A Bayesian analysis of zero-inflated generalized Poisson model.
 \emph{Computational Statistics & Data Analysis},
 \bold{42}, 37--46.
 
 
-  Yee, T. W. (2014)
+  Yee, T. W. (2014).
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis},
   \bold{71}, 889--902.
@@ -202,7 +202,8 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 \seealso{
   \code{\link{rzapois}},
   \code{\link{zipoisson}},
-  \code{\link{gatpoisson.mlm}},
+  \code{\link{gaitpoisson.mix}},
+  \code{\link{gaitpoisson.mlm}},
   \code{\link{pospoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{binomialff}},

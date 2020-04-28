@@ -51,7 +51,7 @@ rrar(Ranks = 1, coefstart = NULL)
 }
 \references{
 
-Ahn, S. and Reinsel, G. C. (1988)
+Ahn, S. and Reinsel, G. C. (1988).
 Nested reduced-rank autoregressive models for multiple
 time series.
 \emph{Journal of the American Statistical Association},

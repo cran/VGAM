@@ -1,7 +1,8 @@
 \name{amlbinomial}
 \alias{amlbinomial}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Binomial Logistic Regression by Asymmetric Maximum Likelihood Estimation }
+\title{ Binomial Logistic Regression by Asymmetric Maximum
+  Likelihood Estimation }
 \description{
   Binomial quantile regression estimated by maximizing an asymmetric
   likelihood function.
@@ -45,7 +46,8 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
   The general methodology behind this \pkg{VGAM} family function
   is given in Efron (1992) and full details can be obtained there.
   This model is essentially a logistic regression model
-  (see \code{\link{binomialff}}) but the usual deviance is replaced by an
+  (see \code{\link{binomialff}}) but the usual deviance is
+  replaced by an
   asymmetric squared error loss function; it is multiplied by
   \eqn{w.aml} for positive residuals.
   The solution is the set of regression coefficients that minimize the
@@ -67,7 +69,7 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
 }
 \references{
 
-  Efron, B. (1992)
+  Efron, B. (1992).
   Poisson overdispersion estimates based on the method of
   asymmetric maximum likelihood.
   \emph{Journal of the American Statistical Association},
@@ -79,15 +81,15 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
 
 \author{ Thomas W. Yee }
 \note{
-  On fitting, the \code{extra} slot has list components \code{"w.aml"} and
-  \code{"percentile"}. The latter is the percent of observations below
-  the ``w-regression plane'', which is the fitted values.
-  Also, the individual deviance values corresponding to each element of
-  the argument \code{w.aml} is stored in the \code{extra} slot.
+  On fitting, the \code{extra} slot has list components \code{"w.aml"}
+  and \code{"percentile"}. The latter is the percent of observations
+  below the ``w-regression plane'', which is the fitted values.  Also,
+  the individual deviance values corresponding to each element of the
+  argument \code{w.aml} is stored in the \code{extra} slot.
 
 
-  For \code{amlbinomial} objects, methods functions for the generic functions
-  \code{qtplot} and \code{cdf} have not been written yet.
+  For \code{amlbinomial} objects, methods functions for the generic
+  functions \code{qtplot} and \code{cdf} have not been written yet.
 
 
   See \code{\link{amlpoisson}} about comments on the jargon, e.g.,
@@ -104,14 +106,15 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
 \section{Warning }{
   If \code{w.aml} has more than one value then the value returned by
   \code{deviance} is the sum of all the (weighted) deviances taken over
-  all the \code{w.aml} values.
-  See Equation (1.6) of Efron (1992).
+  all the \code{w.aml} values.  See Equation (1.6) of Efron (1992).
 
+  
 }
 \seealso{
   \code{\link{amlpoisson}},
   \code{\link{amlexponential}},
   \code{\link{amlnormal}},
+  \code{\link{extlogF1}},
   \code{\link{alaplace1}},
   \code{\link{denorm}}.
 
@@ -122,7 +125,8 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
 set.seed(1234)
 sizevec <- rep(100, length = (nn <- 200))
 mydat <- data.frame(x = sort(runif(nn)))
-mydat <- transform(mydat, prob = logitlink(-0 + 2.5*x + x^2, inverse = TRUE))
+mydat <- transform(mydat,
+                   prob = logitlink(-0 + 2.5*x + x^2, inverse = TRUE))
 mydat <- transform(mydat, y = rbinom(nn, size = sizevec, prob = prob))
 (fit <- vgam(cbind(y, sizevec - y) ~ s(x, df = 3),
              amlbinomial(w = c(0.01, 0.2, 1, 5, 60)),
@@ -135,8 +139,7 @@ par(mfrow = c(1,2))
 with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =
      paste(paste(round(fit@extra$percentile, digits = 1), collapse = ", "),
            "percentile-expectile curves")))
-with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty = 1))
-
+with(mydat, matlines(x, 100 * fitted(fit), lwd = 2, col = "blue", lty=1))
 
 # Compare the fitted expectiles with the quantiles
 with(mydat, plot(x, jitter(y), col = "blue", las = 1, main =

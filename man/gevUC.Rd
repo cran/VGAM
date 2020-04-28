@@ -81,7 +81,7 @@ rgev(n, location = 0, scale = 1, shape = 0)
 
 }
 \references{
-Coles, S. (2001)
+Coles, S. (2001).
 \emph{An Introduction to Statistical Modeling of Extreme Values}.
 London: Springer-Verlag.
 

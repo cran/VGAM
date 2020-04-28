@@ -108,17 +108,17 @@ and the variance is \eqn{\theta / (1 - \lambda)^3}.
 }
 \references{
 
-Consul, P. C. and Famoye, F. (2006)
+Consul, P. C. and Famoye, F. (2006).
 \emph{Lagrangian Probability Distributions},
 Boston, USA: Birkhauser.
 
 
-Jorgensen, B. (1997)
+Jorgensen, B. (1997).
 \emph{The Theory of Dispersion Models}.
 London: Chapman & Hall
 
 
-Consul, P. C. (1989)
+Consul, P. C. (1989).
 \emph{Generalized Poisson Distributions: Properties and Applications}.
 New York, USA: Marcel Dekker.
 

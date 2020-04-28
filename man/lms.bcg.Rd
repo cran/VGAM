@@ -59,11 +59,11 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
 }
 \references{
 
-Lopatatzidis A. and Green, P. J. (unpublished manuscript)
+Lopatatzidis A. and Green, P. J. (unpublished manuscript).
 Semiparametric quantile regression using the gamma distribution.
 
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine}, \bold{23}, 2295--2315.
 

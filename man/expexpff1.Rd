@@ -53,7 +53,7 @@ expexpff1(lrate = "loglink", irate = NULL, ishape = 1)
 }
 \references{
 
-  Gupta, R. D. and Kundu, D. (2001)
+  Gupta, R. D. and Kundu, D. (2001).
   Exponentiated exponential family: an alternative to
   gamma and Weibull distributions,
   \emph{Biometrical Journal},

@@ -111,7 +111,7 @@ AICqrrvglm(object, \dots, k = 2)
 
 \references{
 
-Hurvich, C. M. and Tsai, C.-L. (1989)
+Hurvich, C. M. and Tsai, C.-L. (1989).
 Regression and time series model selection in small samples,
 \emph{Biometrika},
 \bold{76}, 297--307.

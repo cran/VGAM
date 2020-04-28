@@ -78,7 +78,7 @@ bifrankcop(lapar = "loglink", iapar = 2, nsimEIM = 250)
 %% improve the references
 \references{
 
-Genest, C. (1987)
+Genest, C. (1987).
 Frank's family of bivariate distributions.
 \emph{Biometrika},
 \bold{74}, 549--555.

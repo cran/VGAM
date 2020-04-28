@@ -45,7 +45,7 @@ waldff(llambda = "loglink", ilambda = NULL)
 }
 \references{
 
-Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994)
+Johnson, N. L. and Kotz, S. and Balakrishnan, N. (1994).
 \emph{Continuous Univariate Distributions},
 2nd edition,
 Volume 1,

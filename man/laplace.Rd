@@ -75,7 +75,7 @@ laplace(llocation = "identitylink", lscale = "loglink",
 }
 \references{
 
-Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001)
+Kotz, S., Kozubowski, T. J. and Podgorski, K. (2001).
 \emph{The Laplace distribution and generalizations:
 a revisit with applications to communications,
 economics, engineering, and finance},

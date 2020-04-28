@@ -81,7 +81,7 @@ fittedvlm(object, drop = FALSE, type.fitted = NULL,
 
 }
 \references{
-Chambers, J. M. and T. J. Hastie (eds) (1992)
+Chambers, J. M. and T. J. Hastie (eds) (1992).
   \emph{Statistical Models in S}.
   Wadsworth & Brooks/Cole.
 

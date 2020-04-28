@@ -86,11 +86,11 @@ citEntry(entry = "Manual",
 
          textVersion =
          paste("Thomas W. Yee",
-   	       sprintf("(%s).", year),	 
+               sprintf("(%s).", year),   
                "VGAM: Vector Generalized Linear and Additive Models.",
-	       paste(note, ".", sep = ""),
+               paste(note, ".", sep = ""),
                "URL https://CRAN.R-project.org/package=VGAM"),
-	 header = "and/or"
+         header = "and/or"
 )
 
 
@@ -128,8 +128,23 @@ citEntry(entry = "Article",
   paste("Thomas W. Yee, Jakub Stoklosa, Richard M. Huggins (2015).",
         "The VGAM Package for Capture-Recapture Data Using the Conditional Likelihood.",
         "Journal of Statistical Software, 65(5), 1-33.",
-        "URL http://www.jstatsoft.org/v65/i05/.")
+        "URL http://www.jstatsoft.org/v65/i05/."),
+  header = "and/or"
 )
 
+
+citEntry(entry = "Article",
+  title        = "The {VGAM} package for negative binomial regression",
+  author       = personList(as.person("Thomas W. Yee")),
+  journal      = "Australian and New Zealand Journal of Statistics",
+  year         = "2020",
+  volume       = "61",
+
+  textVersion  =
+  paste("Thomas W. Yee (2020).",
+        "The VGAM package for negative binomial regression.",
+        "Australian and New Zealand Journal of Statistics."),
+  header = "and/or"
+)
 
 

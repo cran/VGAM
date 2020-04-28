@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2019 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -919,7 +919,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
       ned2l.dmunb.dsize <- 1 / (munb + kmat)
-      wzoffdiag <- ned2l.dmunb.dsize * dmunb.deta1 * dsize.deta2
+      wzoffdiag <- (munb / kmat) * dsize.deta2  # 20200416
       wz <- if (M > M1) {
         wzoffdiag <- kronecker(wzoffdiag, cbind(1, 0))
         cbind(wz, wzoffdiag[, -ncol(wzoffdiag)])

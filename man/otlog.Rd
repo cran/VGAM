@@ -42,6 +42,7 @@ otlog(lshape = "logitlink", gshape = ppoints(8), zero = NULL)
 %}
 
 \seealso{
+  \code{\link{Gaitlog}},
   \code{\link{Otlog}},
   \code{\link{logff}},
   \code{\link{oalog}},

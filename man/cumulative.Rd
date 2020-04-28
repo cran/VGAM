@@ -175,38 +175,38 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 }
 \references{
 
-Agresti, A. (2013)
+Agresti, A. (2013).
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
 
 
-Agresti, A. (2010)
+Agresti, A. (2010).
 \emph{Analysis of Ordinal Categorical Data},
 2nd ed. Hoboken, NJ, USA: Wiley.
 
 
-Dobson, A. J. and Barnett, A. (2008)
+Dobson, A. J. and Barnett, A. (2008).
 \emph{An Introduction to Generalized Linear Models},
 3rd ed. Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 
 
-McCullagh, P. and Nelder, J. A. (1989)
+McCullagh, P. and Nelder, J. A. (1989).
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
-Simonoff, J. S. (2003)
+Simonoff, J. S. (2003).
 \emph{Analyzing Categorical Data},
 New York: Springer-Verlag.
 
 
-Yee, T. W. (2010)
+Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
 \url{http://www.jstatsoft.org/v32/i10/}.
 
 
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society, Series B, Methodological},
 \bold{58}, 481--493.

@@ -62,7 +62,7 @@ yip88(link = "loglink", n.arg = NULL, imethod = 1)
 \references{
 
 
-Yip, P. (1988)
+Yip, P. (1988).
 Inference about the mean of a Poisson distribution in the
 presence of a nuisance parameter.
 \emph{The Australian Journal of Statistics},
@@ -70,7 +70,7 @@ presence of a nuisance parameter.
 299--306.
 
 
-Angers, J-F. and Biswas, A. (2003)
+Angers, J-F. and Biswas, A. (2003).
 A Bayesian analysis of zero-inflated generalized Poisson
 model.
 \emph{Computational Statistics & Data Analysis},
