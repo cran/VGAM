@@ -197,19 +197,31 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
   e.g., more than one species.
 
 
+
+  It is recommended that \code{\link{Gaitpois}} be used, e.g.,
+  \code{rgaitpois(nn, lambda, pobs.mlm = pobs0, alt.mlm = 0)}
+  instead of
+  \code{rzapois(nn, lambda, pobs0 = pobs0)}.
+
+
+
+
 }
 
 \seealso{
+  \code{\link{Gaitpois}},
   \code{\link{rzapois}},
   \code{\link{zipoisson}},
-  \code{\link{gaitpoisson.mix}},
-  \code{\link{gaitpoisson.mlm}},
+  \code{\link{gaitpoisson}},
   \code{\link{pospoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{binomialff}},
-  \code{\link{rpospois}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}}.
+
+
+% \code{\link{rpospois}},
+
 
 
 }
@@ -218,7 +230,8 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 zdata <- data.frame(x2 = runif(nn <- 1000))
 zdata <- transform(zdata, pobs0  = logitlink( -1 + 1*x2, inverse = TRUE),
                           lambda = loglink(-0.5 + 2*x2, inverse = TRUE))
-zdata <- transform(zdata, y = rzapois(nn, lambda, pobs0 = pobs0))
+zdata <- transform(zdata, y = rgaitpois(nn, lambda, pobs.mlm = pobs0,
+                                        alt.mlm = 0))
 
 with(zdata, table(y))
 fit <- vglm(y ~ x2, zapoisson, data = zdata, trace = TRUE)

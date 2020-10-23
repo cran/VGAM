@@ -7,7 +7,8 @@
 
 }
 \usage{
-zetaff(lshape = "loglink", ishape = NULL, gshape = exp(-3:4)/4, zero = NULL)
+zetaff(lshape = "loglink", ishape = NULL, gshape = 1 + exp(-seq(7)),
+       zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -92,13 +93,15 @@ Boca Raton, FL, USA: Chapman & Hall/CRC Press.
   of the zeta function.
 
 
+
 }
 
 \seealso{
   \code{\link{zeta}},
-  \code{\link{oazeta}},
-  \code{\link{oizeta}},
-  \code{\link{otzeta}},
+  \code{\link{gaitzeta}},
+  \code{\link[VGAMdata]{oazeta}},
+  \code{\link[VGAMdata]{oizeta}},
+  \code{\link[VGAMdata]{otzeta}},
   \code{\link{diffzeta}},
   \code{\link{dzeta}},
   \code{\link{hzeta}},

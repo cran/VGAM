@@ -84,8 +84,8 @@ rzibinom(n, size, prob, pstr0 = 0)
 
 \seealso{
   \code{\link{zibinomial}},
-  \code{\link{Gaitbinom.mlm}},
-  \code{\link[stats:Binomial]{Binomial}}.
+  \code{\link{Gaitbinom}},
+  \code{\link[stats]{Binomial}}.
 
 
 }

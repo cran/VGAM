@@ -883,6 +883,53 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
+
+if (FALSE)
+ miam <- function(j, k, M1,  # M1 used to be called M
+                  NOS = 1,  # This argument is new
+                  both = FALSE, diag = TRUE) {
+
+  if (NOS == 1)
+    return(iam(j = j, k = k, M = M1, both = both, diag = diag))
+
+  M <- M1 * NOS
+
+
+  jay <- j
+  kay <- k
+
+  if (M == 1)
+    if (!diag) stop("cannot handle this")
+
+  if (M == 1)
+    if (both) return(list(row.index = 1, col.index = 1)) else
+    return(1)
+
+  upper <- if (diag) M else M - 1
+  i2 <- as.list(upper:1)
+  i2 <- lapply(i2, seq)
+  i2 <- unlist(i2)
+
+  i1 <- matrix(1:M, M, M)
+  i1 <- if (diag) c(i1[row(i1) >= col(i1)]) else
+                  c(i1[row(i1) >  col(i1)])
+
+  if (both) {
+    list(row.index = i2, col.index = i1)
+  } else {
+    if (jay > M || kay > M || jay < 1 || kay < 1)
+      stop("range error in j or k")
+    both <- (i1 == jay & i2 == kay) |
+            (i1 == kay & i2 == jay)
+    (seq_along(i2))[both]
+  }
+}  # miam
+
+
+
+
+
+
  dimm <- function(M, hbw = M) {
 
   if (!is.numeric(hbw))
@@ -935,33 +982,31 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- a2m <- function(a, hbw = M) {
+ a2m <- function(a, trim = FALSE) {
 
-
-
+     
   if (is.matrix(a) && ncol(a) == nrow(a))
     a <- array(a, c(nrow(a), ncol(a), 1))
   if (!is.array(a))
-    dim(a) <- c(1,1,length(a))
+    dim(a) <- c(1, 1, length(a))
 
   M <- dim(a)[1]
+  if (M != dim(a)[2])
+    stop("argument 'a' does not contain square matrices")
   n <- dim(a)[3]
-  dimm.value <- dimm(M, hbw)
+  dimm.value <- dimm(M)
   index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
 
+  mat <- matrix(0, n, dimm.value)
+  for (jay in seq(dimm.value))
+    mat[, jay] <- a[index$row[jay], index$col[jay], ]
 
-  fred <- .C("a2mccc",
-             as.double(a), m = double(dimm.value * n),
-      as.integer(dimm.value),
-      as.integer(index$row-1),  as.integer(index$col-1),
-      as.integer(n),  as.integer(M), NAOK = TRUE)
-  dim(fred$m) <- c(dimm.value,n)
-  fred$m <- t(fred$m)
+  if (trim)
+    for (jay in dimm.value:1) {
+      if (all(mat[, jay] == 0)) mat <- mat[, -jay] else break
+    }
 
-  if (hbw != M)
-    attr(fred$m, "hbw") <- hbw
-  if (length(lpn <- dimnames(a)[[1]]) != 0)
-    attr(fred$m, "predictors.names") <- lpn
+  mat
 }  # a2m
 
 
@@ -1006,7 +1051,6 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
-
   if (length(wz <- object@weights) && !ignore.slot && !deriv.arg) {
     return(wz)
   }
@@ -1042,6 +1086,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   y <- object@y
   if (!length(y))
     y <- depvar(object)
+
+    offset <- object@offset  # Could be cbind(0)
+    if (all(dim(offset) == 1)) offset <- c(offset)  # 0 (not a matrix)
 
 
   X.vlm.save <- model.matrixvlm(object, type = "vlm")
@@ -1741,7 +1788,7 @@ arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
 
 
 
-wz.merge <- function(wz1, wz2, M1, M2, rm.trailing.cols = TRUE) {
+ wz.merge <- function(wz1, wz2, M1, M2, rm.trailing.cols = TRUE) {
 
 
   if (!is.matrix(wz1))

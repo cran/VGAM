@@ -78,7 +78,7 @@ rdiffzeta(n, shape, start = 1)
   \code{\link{diffzeta}},
   \code{\link{zetaff}},
   \code{\link{zipf}},
-  \code{\link{Oizeta}}.
+  \code{\link[VGAMdata]{Oizeta}}.
 
 
 }

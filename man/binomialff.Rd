@@ -221,7 +221,6 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
     \code{\link{cqo}},
     \code{\link{cao}},
     \code{\link{betabinomial}},
-    \code{\link{gtbinomial}},
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
     \code{\link{double.expbinomial}},
@@ -235,6 +234,7 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
 
 
 
+%   \code{\link{gtbinomial}},
 %   \code{\link{quasibinomialff}},
 %   \code{\link{matched.binomial}},
 

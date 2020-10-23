@@ -1005,17 +1005,19 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
 
 
 
- lms.yjn <- function(percentiles = c(25, 50, 75),
-                    zero = c("lambda", "sigma"),
-                    llambda = "identitylink",
-                    lsigma = "loglink",
-                    idf.mu = 4,
-                    idf.sigma = 2,
-                    ilambda = 1.0,
-                    isigma = NULL,
-                    rule = c(10, 5),
-                    yoffset = NULL,
-                    diagW = FALSE, iters.diagW = 6) {
+
+ lms.yjn <-
+  function(percentiles = c(25, 50, 75),
+           zero = c("lambda", "sigma"),
+           llambda = "identitylink",
+           lsigma = "loglink",
+           idf.mu = 4,
+           idf.sigma = 2,
+           ilambda = 1.0,
+           isigma = NULL,
+           rule = c(10, 5),
+           yoffset = NULL,
+           diagW = FALSE, iters.diagW = 6) {
 
 
 
@@ -1165,8 +1167,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
             .llambda = llambda, .lsigma = lsigma))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
+             extra = NULL, summation = TRUE) {
 
     lambda <- eta2theta(eta[, 1], .llambda , earg = .elambda )
     mu <- eta[, 2]
@@ -1224,7 +1225,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
         wz[,iam(3, 3, M)] <- 2 * wz[,iam(2, 2, M)]   # 2 / sigma^2
 
 
-    if (.rule == 10) {
+    if ( .rule == 10) {
     glag.abs = c(0.13779347054,0.729454549503,
                  1.80834290174,3.40143369785,
                  5.55249614006,8.33015274676,
@@ -1243,7 +1244,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
                  3.611758679927785e-03, 2.336997238583738e-05)
     }
 
-    if (.rule == 10) {
+    if ( .rule == 10) {
     sgh.abs = c(0.03873852801690856, 0.19823332465268367,
                   0.46520116404433082,
                 0.81686197962535023, 1.23454146277833154,
@@ -1267,7 +1268,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
             0.0332466603513424663, 0.0008248533445158026)
     }
 
-    if (.rule == 10) {
+    if ( .rule == 10) {
         gleg.abs = c(-0.973906528517, -0.865063366689, -0.679409568299,
                      -0.433395394129, -0.148874338982)
         gleg.abs = c(gleg.abs, rev(-gleg.abs))
@@ -1311,8 +1312,8 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
                  as.double(gleg.abs), as.double(gleg.wts), as.integer(n),
                  as.integer(length(gleg.abs)), as.double(lambda),
                  as.double(mymu), as.double(sigma), answer = double(3*n),
-                     eps=as.double(1.0e-5))$ans
-      dim(temp9) <- c(3,n)
+                 eps = as.double(1.0e-5))$ans
+      dim(temp9) <- c(3, n)
       wz[,iam(1, 1, M)] <- temp9[1,]
       wz[,iam(1, 2, M)] <- temp9[2,]
       wz[,iam(1, 3, M)] <- temp9[3,]
@@ -1361,15 +1362,13 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
     }
     wz[, iam(2, 3, M)] <- wz[, iam(2, 3, M)] * dsigma.deta
     wz[, iam(3, 3, M)] <- wz[, iam(3, 3, M)] * dsigma.deta^2
-
         c(w) * wz
-  }), list(.lsigma = lsigma,
-           .esigma = esigma, .elambda = elambda,
-           .rule = rule,
-           .diagW = diagW,
-           .iters.diagW = iters.diagW,
-           .llambda = llambda))))
-}
+  }), list( .lsigma = lsigma, .llambda = llambda,
+            .esigma = esigma, .elambda = elambda,
+            .rule = rule, .diagW = diagW,
+            .iters.diagW = iters.diagW ))))
+}  # lms.yjn
+
 
 
 

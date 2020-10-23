@@ -4,6 +4,22 @@
 %\alias{ccoef-method}
 %
 %
+% 202010
+\alias{plotdgait,vglm-method}
+% 202008
+\alias{is.altered,ANY-method}
+\alias{is.altered,vglm-method}
+\alias{is.inflated,ANY-method}
+\alias{is.inflated,vglm-method}
+\alias{is.truncated,ANY-method}
+\alias{is.truncated,vglm-method}
+\alias{Influence,ANY-method}
+\alias{Influence,vgam-method}
+\alias{Influence,vglm-method}
+\alias{Influence,rrvglm-method}
+% 202007
+\alias{hdeff,numeric-method}
+\alias{hdeff,matrix-method}
 % 202004
 \alias{showsummaryvglmS4VGAM,ANY,extlogF1-method}
 \alias{showvglmS4VGAM,ANY,extlogF1-method}

@@ -17,8 +17,8 @@
 \usage{
 wald.stat(object, ...)
 wald.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
-          all.out = FALSE, iterate = TRUE, trace = FALSE,
-          as.summary = FALSE, ...)
+          all.out = FALSE, orig.SE = FALSE, iterate.SE = TRUE,
+          trace = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,17 +61,44 @@ wald.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
 
 
 }
-\item{iterate}{
-  Logical. If \code{TRUE} then IRLS iterations are performed to
+\item{orig.SE}{
+  Logical. If \code{TRUE} then
+  the standard errors are computed at the MLE
+  (of the original object).
+  In practice, the (usual or unmodified)
+  Wald statistics etc. are extracted from \code{summary(object)}
+  because it was computed there.
+  These may suffer from the HDE since
+  \emph{all} the SEs are evaluated
+  at the MLE of the original object.
+  If \code{TRUE} then argument \code{iterate.SE} may
+  be ignored or overwritten.
+  If \code{orig.SE = FALSE} then the \eqn{k}th SE uses
+  the \eqn{k}th value of \code{values0} in its computation and
+  \code{iterate.SE} specifies the choice of the other coefficients.
+
+
+
+This argument was previously called \code{as.summary} because
+if \code{TRUE} then the Wald statistics are the same
+as \code{summary(glm())}.
+% 20190112; 20200714.
+
+
+
+}
+\item{iterate.SE}{
+  Logical, for the standard error computations.
+  If \code{TRUE} then IRLS iterations are performed to
   get MLEs of the \emph{other} regression coefficients, subject
-  to that one coefficient equal to the appropriate
+  to one coefficient being equal to the appropriate
   \code{values0} value.
   If \code{FALSE} then the other regression coefficients have
   values obtained at the original fit.
   It is recommended that a \code{TRUE} be used as the answer
   tends to be more accurate.
-  If the large model matrix only has one column and
-  \code{iterate = TRUE} then an error will occur because
+  If the large (VLM) model matrix only has one column and
+  \code{iterate.SE = TRUE} then an error will occur because
   there are no \emph{other} regression coefficients to estimate.
 
 
@@ -88,25 +115,6 @@ wald.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
 
 
 }
-\item{as.summary}{
-  Logical. If \code{TRUE} then the usual (or unmodified)
-  Wald statistics etc. are extracted from \code{summary(object)}.
-  These may suffer from the HDE; and the SEs are evaluated
-  at the MLE of the original object so that effectively
-  \code{iterate = FALSE}.
-  If \code{TRUE} then most other arguments will
-  be ignored or overwritten.
-
-
-
-This argument may be renamed to \code{as.glm} because
-the Wald statistics will be computed in the same way
-as \code{summary(glm())}.
-% 20190112.
-
-
-
-}
 \item{\dots}{
   Ignored for now.
 
@@ -116,10 +124,11 @@ as \code{summary(glm())}.
 \details{
   By default, \code{\link{summaryvglm}} and most regression
   modelling functions such as \code{\link[stats]{summary.glm}}
-  compute the standard errors (SEs) of the estimates at the MLE and
-  not at 0.
-  This make it vulnerable to the Hauck-Donner effect (HDE)
-  (see \code{\link{hdeff}}).
+  compute all the standard errors (SEs) of the estimates at
+  the MLE and not at 0.
+  This corresponds to \code{orig.SE = TRUE} and
+  it is vulnerable to the Hauck-Donner effect (HDE;
+  see \code{\link{hdeff}}).
   One solution is to compute the SEs
   at 0 (or more generally, at the values of
   the argument \code{values0}).
@@ -135,15 +144,16 @@ as \code{summary(glm())}.
   hence the degrees of freedom is always unity.
 For a factor with more than 2 levels one can use
 \code{\link{anova.vglm}} to test for the significance of the factor.
-  If \code{iterate = FALSE} then
+  If \code{orig.SE = FALSE} and \code{iterate.SE = FALSE} then
   one retains the MLEs of the original fit for the values of
   the other coefficients, and replaces one coefficient at a
   time by the value 0 (or whatever specified by \code{values0}).
 One alternative would be to recompute the MLEs of the other
 coefficients after replacing one of the values;
-this is the default because \code{iterate = TRUE}.
-Just like the original IRLS iterations,
-note that the iterations here are not guaranteed to converge.
+this is the default because \code{iterate.SE = TRUE}
+and \code{orig.SE = FALSE}.
+Just like with the original IRLS iterations,
+the iterations here are not guaranteed to converge.
 
 
 
@@ -172,10 +182,17 @@ setting \code{wald0.arg = TRUE} in \code{\link{summaryvglm}}.
   \code{wald.stat} the Wald statistic,
   \code{SE0} the standard error of that coefficient,
   \code{values0} the null values.
-  Approximately, the default Wald statistics output are standard normal
-  random variates if each null hypothesis is true.
+  Approximately, the default Wald statistics output are standard
+  normal random variates if each null hypothesis is true.
 
 
+  
+  Altogether,
+  by the four combinations of \code{iterate.SE} and \code{orig.SE},
+  there are three different variants of the Wald statistic
+  that can be returned.
+
+  
 
 }
 %\references{
@@ -188,7 +205,7 @@ setting \code{wald0.arg = TRUE} in \code{\link{summaryvglm}}.
 
 
 \section{Warning }{
-  This function has not yet been thoroughly tested.
+  This function has been tested but not thoroughly.
   Convergence failure is possible for some models applied to
   certain data sets; it is a good idea to set \code{trace = TRUE}
   to monitor convergence.
@@ -220,12 +237,11 @@ setting \code{wald0.arg = TRUE} in \code{\link{summaryvglm}}.
 set.seed(1)
 pneumo <- transform(pneumo, let = log(exposure.time),
                             x3 = rnorm(nrow(pneumo)))
-(fit <- vglm(cbind(normal, mild, severe) ~ let + x3,
-             propodds, data = pneumo))
+(fit <- vglm(cbind(normal, mild, severe) ~ let + x3, propodds, pneumo))
 wald.stat(fit)  # No HDE here
 summary(fit, wald0 = TRUE)  # See them here
 coef(summary(fit))  # Usual Wald statistics evaluated at the MLE
-wald.stat(fit, as.summary = TRUE)  # Same as previous line
+wald.stat(fit, orig.SE = TRUE)  # Same as previous line
 }
 \keyword{models}
 \keyword{regression}

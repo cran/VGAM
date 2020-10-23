@@ -47,14 +47,20 @@
     Note that \code{\link[stats]{anova.glm}}
     has \code{1} or \code{"I"}
     as its default;
-    and that \code{\link[car]{Anova.glm}}
+    and that \code{Anova.glm()} in \pkg{car}
     has \code{2} or \code{"II"} as its default
     (and allows for \code{type = "III"}), so
     one can think of this function as
     a combination of \code{\link[stats]{anova.glm}}
-    and \code{\link[car]{Anova.glm}},
+    and \code{Anova.glm()} in \pkg{car},
     but with the default of the latter.
     See Details below for more information.
+
+
+%   and that \code{\link[car]{Anova.glm}}
+%   and \code{\link[car]{Anova.glm}},
+
+
 
 
 %   The default is the first, which corresponds
@@ -148,7 +154,7 @@ deleting variables from the latter effect.
 
 
   As in \code{\link[stats]{anova.glm}}, but not as
-  \code{\link[car]{Anova.glm}},
+  \code{Anova.glm()} in \pkg{car},
   if more than one object is specified, then
   the table has a row for the
   residual degrees of freedom and deviance for each model.
@@ -158,6 +164,9 @@ deleting variables from the latter effect.
   smallest to largest, but this is up to the user.
   It is necessary to have \code{type = 1} with more than one objects
   are specified.
+
+
+% \code{\link[car]{Anova.glm}},
 
 
 
@@ -182,10 +191,14 @@ deleting variables from the latter effect.
 
   The code was adapted
   directly from \code{\link[stats]{anova.glm}}
-  and \code{\link[car]{Anova.glm}}
+  and \code{Anova.glm()} in \pkg{car}
   by T. W. Yee.
   Hence the Type II and Type III tests do \emph{not}
   correspond precisely with the SAS definition.
+
+
+
+% and \code{\link[car]{Anova.glm}}
 
 
 
@@ -240,7 +253,7 @@ deleting variables from the latter effect.
   \code{\link[stats]{anova.glm}},
   \code{\link[stats]{stat.anova}},
   \code{stats:::print.anova},
-  \code{\link[car]{Anova.glm}} if \pkg{car} is installed,
+  \code{Anova.glm()} in \pkg{car} if \pkg{car} is installed,
   \code{\link{vglm}},
   \code{\link{lrtest}},
   \code{\link{add1.vglm}},
@@ -253,6 +266,7 @@ deleting variables from the latter effect.
 
 
 
+% \code{\link[car]{Anova.glm}} if \pkg{car} is installed,
 % \code{\link{score.stat.vlm}},
 % \code{\link{step4vglm}},
 

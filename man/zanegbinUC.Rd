@@ -62,10 +62,14 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 }
 
 \seealso{
-  \code{\link{gatnbinomial.mlm}},
-  \code{\link{Gaitnbinom.mlm}},
-    \code{\link{zanegbinomial}},
-    \code{\link{rposnegbin}}.
+  \code{\link{Gaitnbinom}},
+  \code{\link{zanegbinomial}}.
+
+
+
+%   \code{\link{rposnegbin}}.
+% \code{\link{gatnbinomial.mlm}},
+
 
 
 

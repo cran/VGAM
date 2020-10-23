@@ -1,3 +1,45 @@
+                CHANGES IN VGAM VERSION 1.1-4
+
+NEW FEATURES
+
+    o   Functions score.stat() and wald.stat() offer greater flexibility
+        by some new arguments, and 'as.summary' changed to 'orig.SE'.
+    o   Influence() computes the influence functions of a "vglm" object.
+    o   Methods functions hdeff.matrix() and hdeff.numeric() are new.
+    o   Family function slot genpoisson()@ weight was updated with
+        the EIM derived by Easton Huch, and after major changes,
+        genpoisson() was renamed to genpoisson0().
+    o   New functions: [dpqr]gaitnbinom(), [dpqr]gaitgenpois[012](),
+        [dpqr]gaitbinom(), dgaitplot(), plotdgait.vglm(), Trunc().
+    o   New family functions: genpoisson[12](dpqr), gaitpoisson()
+        so that gaitpoisson.mix() and gaitpoisson.mlm() were removed,
+        gaitlog() so that gaitlog.mix() was removed,
+        gaitzeta() so that gaitzeta.mix() was removed.
+    o   Tested okay on R 4.0.2.
+
+
+
+BUG FIXES and CHANGES
+
+    o   Deprecated: dgenpois(), genpoisson(), [dpqr]gaitnbinom.m[ix,lm]().
+        gatnbinomial.m[ix,lm](dpqr), [dpqr]gaitbinom.mlm(),
+        gaitpoisson.mix(), gaitpoisson.mlm(), gabinomial.mlm(),
+        gtbinomial().
+    o   'lhs.prob' changed to 'cdf.max.s'.
+    o   Argument changes for all GAIT code, e.g., 'alter' changed to
+        'alt.mix' or 'alt.mlm', 'byrow.arg' to 'byrow.ai', etc.
+    o   Functions moved to VGAMdata 1.1-4: oalog, oilog, otlog,
+        oapospois, oipospois, otpospois, oazeta, oizeta, otzeta, oizipf,
+        oiposbinomial(dpqr), [dpqr]posbinom, [dpqr]pospois, [dpqr]posnegbin.
+    o   Pearson residuals no longer printed by default in a summary
+        of a "vglm" object: presid = FALSE.
+    o   Some changes made to plot(vgam()) code for changes in R 4.0.0,
+        especially if the covariate is a character/factor.
+        Now avoids "coercing argument of type 'double' to logical" warning.
+    o   negbinomial(lmu = "nbcanlink") had an error relating to "newemu".
+
+
+
                 CHANGES IN VGAM VERSION 1.1-3
 
 NEW FEATURES

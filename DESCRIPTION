@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 1.1-3
-Date: 2020-04-27
+Version: 1.1-4
+Date: 2020-10-20
 Title: Vector Generalized Linear and Additive Models
 Authors@R: c(person("Thomas", "Yee", role = c("aut", "cre"),
                     email = "t.yee@auckland.ac.nz"),
@@ -10,7 +10,8 @@ Author: Thomas Yee [aut, cre],
   Cleve Moler [ctb] (author of several LINPACK routines)
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
 Depends: R (>= 3.4.0), methods, stats, stats4, splines
-Suggests: VGAMdata, MASS, mgcv
+Suggests: VGAMextra, MASS, mgcv
+Enhances: VGAMdata
 Description: An implementation of about 6 major classes of
     statistical regression models. The central algorithm is
     Fisher scoring and iterative reweighted least squares.
@@ -28,14 +29,15 @@ Description: An implementation of about 6 major classes of
     RCIMs (row-column interaction models)---these classes perform
     constrained and unconstrained quadratic ordination (CQO/UQO)
     models in ecology, as well as constrained additive ordination
-    (CAO). Note that these functions are subject to change;
+    (CAO). Hauck-Donner effect detection is implemented.
+    Note that these functions are subject to change;
     see the NEWS and ChangeLog files for latest changes.
 License: GPL-3
-URL: https://www.stat.auckland.ac.nz/~yee/VGAM
+URL: https://www.stat.auckland.ac.nz/~yee/VGAM/
 NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2020-04-27 08:02:58 UTC; tyee001
+Packaged: 2020-10-20 09:25:16 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2020-04-28 12:20:02 UTC
+Date/Publication: 2020-10-23 07:30:02 UTC

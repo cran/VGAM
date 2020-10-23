@@ -41,9 +41,9 @@ inv.gaussianff(lmu = "loglink", llambda = "loglink",
   inverse Gaussian distribution has a density
   that can be written as
   \deqn{f(y;\mu,\lambda) = \sqrt{\lambda/(2\pi y^3)}
-       \exp\left(-\lambda (y-\mu)^2/(2 \mu^2 y)\right)}{%
+       \exp\left(-\lambda (y-\mu)^2/(2 y \mu^2)\right)}{%
        f(y;mu,lambda) = sqrt(lambda/(2*pi*y^3)) *
-       exp(-lambda*(y-mu)^2/(2*mu^2*y))
+       exp(-lambda*(y-mu)^2/(2*y*mu^2))
   }
   where \eqn{y>0},
   \eqn{\mu>0}{mu>0}, and

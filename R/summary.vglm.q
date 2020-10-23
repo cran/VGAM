@@ -16,7 +16,7 @@
 summaryvglm <-
   function(object, correlation = FALSE,
            dispersion = NULL, digits = NULL,
-           presid = TRUE,
+           presid = FALSE,  # TRUE,
            HDEtest = TRUE,  # Added 20180203
            hde.NA = TRUE,
            threshold.hde = 0.001,
@@ -257,7 +257,7 @@ show.summary.vglm <-
            digits = max(3L, getOption("digits") - 3L),  # Same as glm()
            quote = TRUE,
            prefix = "",
-           presid = TRUE,
+           presid = length(x@pearson.resid) > 0,  # FALSE,  # TRUE,
            HDEtest = TRUE,
            hde.NA = TRUE,
            threshold.hde = 0.001,
@@ -449,12 +449,13 @@ show.summary.vglm <-
     ncrit <- names(x@criterion)
     for (ii in ncrit)
       if (ii != "loglikelihood" && ii != "deviance")
-        cat(paste(ii, ":", sep = ""), yformat(x@criterion[[ii]], digits),
-            "\n")
+        cat(paste(ii, ":", sep = ""),
+            yformat(x@criterion[[ii]], digits), "\n")
   }
 
 
-  cat("\nNumber of Fisher scoring iterations:", format(trunc(x@iter)), "\n\n")
+  cat("\nNumber of Fisher scoring iterations:",
+      format(trunc(x@iter)), "\n\n")
 
 
   if (!is.null(correl)) {

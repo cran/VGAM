@@ -98,9 +98,7 @@ ox <- expand.grid(x, x)
 zedd <- dbiclaytoncop(ox[, 1], ox[, 2], apar = Rho, log = TRUE)
 par(mfrow = c(1, 2))
 contour(x, x, matrix(zedd, N, N), col = "blue", labcex = 1.5, las = 1)
-plot(rbiclaytoncop(1000, 2), col = "blue", las = 1)
-}
-}
+plot(rbiclaytoncop(1000, 2), col = "blue", las = 1)  }}
 \keyword{distribution}
 
 

@@ -249,19 +249,20 @@ for counts with extra zeros.
 }
 
 \seealso{
-  \code{\link{dzanegbin}},
   \code{\link{posnegbinomial}},
-  \code{\link{gatnbinomial.mlm}},
-  \code{\link{Gaitnbinom.mlm}},
+  \code{\link{Gaitnbinom}},
   \code{\link{negbinomial}},
   \code{\link{binomialff}},
-  \code{\link{rposnegbin}},
   \code{\link{zinegbinomial}},
   \code{\link{zipoisson}},
   \code{\link[stats:NegBinomial]{dnbinom}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}}.
 
+
+% \code{\link{dzanegbin}},
+% \code{\link{rposnegbin}},
+% \code{\link{gatnbinomial.mlm}},
 
 
 }

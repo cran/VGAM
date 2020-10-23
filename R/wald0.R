@@ -17,29 +17,36 @@
 
 
 
+
  wald.stat.vlm <-
   function(object,
            values0 = 0,
            subset = NULL,  # Useful for Cox model as a poissonff().
            omit1s = TRUE,
            all.out = FALSE,  # If TRUE then lots of output returned
-           iterate = TRUE,  # If FALSE then other coeffs at MLE
+           orig.SE = FALSE,  # Same as 'as.summary' now
+           iterate.SE = TRUE,  # == iterate.EIM if renamed
            trace = FALSE,  # NULL,
-           as.summary = FALSE,  # If TRUE then ordinary Wald statistic
            ...) {
 
+  checkfun <- function(as.summary = NULL, ...) as.summary
+  if (length(checkfun(...)))
+    stop("argument 'as.summary' now renamed to 'orig.SE'")
 
-  foo1 <- function(score.really = FALSE, ...)
-    score.really
-  score.really <- foo1(...)
+  foo1 <- function(RS.really = FALSE, iterate.score = TRUE, ...)
+    list(RS.really     = RS.really,
+         iterate.score = iterate.score)
+  RS.really <- foo1(...)$RS.really
 
-  foo2 <- function(lrt.really = FALSE, ...)
-    lrt.really
-  lrt.really <- foo2(...)
+  foo2 <- function(LR.really = FALSE, ...)
+    LR.really
+  LR.really <- foo2(...)
 
-  if (score.really && lrt.really)
-    stop("cannot have both 'score.really' and 'lrt.really'")
+  if (RS.really && LR.really)
+    stop("cannot have both 'RS.really' and 'LR.really'")
+  Wd.really <- !RS.really && !LR.really  # Only one .really is TRUE
 
+  iterate.score <- if (RS.really) foo1(...)$iterate.score else FALSE
 
   M <- npred(object)  # Some constraints span across responses
   all.Hk <- constraints(object, matrix = TRUE)
@@ -49,7 +56,8 @@
   n.LM <- NROW(eta.mat.orig)
   p.VLM <- ncol(all.Hk)
 
-  vc2 <- vcov(object)
+  if (orig.SE)
+    vc2 <- vcov(object)
   cobj <- coef(object)
   signed.Lrt.0 <-
   Lrt.0 <-
@@ -82,10 +90,8 @@
 
 
 
-
-
-    if (is.logical(trace))
-      object@control$trace <- trace
+  if (is.logical(trace))
+    object@control$trace <- trace
   mf <- model.frame(object)
   Y <- model.response(mf)
   if (!is.factor(Y))
@@ -103,7 +109,7 @@
     stop("Currently can only handle dispersion parameters ",
          "that are equal to 1")
   Fam <- object@family
-  if (lrt.really) {
+  if (LR.really) {
     Original.de <- deviance(object)  # Could be NULL
     if (!(use.de <- is.Numeric(Original.de)))
       Original.ll <- logLik(object)
@@ -113,10 +119,7 @@
     if (quasi.type)
       stop("currently this function cannot handle quasi-type",
            " models or models with an estimated dispersion parameter")
-  }  # lrt.really
-
-
-
+  }  # LR.really
 
 
 
@@ -126,7 +129,8 @@
   values0.use <- cobj * NA  # A vector of NAs of length == p.VLM
   values0.use[kvec.use] <- values0  # Recycle and put in right place
 
-  if (as.summary) {  # For Wald-type statistics only
+
+  if (orig.SE && Wd.really) { # Wald stat already done
     csobj <- coef(summary(object))[kvec.use, , drop = FALSE]
     wald.stat <- csobj[, "z value"]
     SE0 <- csobj[, "Std. Error"]
@@ -140,7 +144,7 @@
            SE0        = SE0,
            values0    = values0.use)) else
       return(wald.stat)
-  }  # as.summary
+  }  # orig.SE && Wd.really
 
 
 
@@ -149,13 +153,11 @@
 
 
 
-    if (iterate) {
+    if (iterate.SE || iterate.score || LR.really) {
       if (NCOL(X.vlm.save) == 1)
         stop("The large model matrix only has one column")
       X.vlm.mk <- X.vlm.save[, -kay, drop = FALSE]
- # This is needed by vglm.fit():
       attr(X.vlm.mk, "assign") <- attr(X.vlm.save, "assign")  # zz wrong!
-    
       ooo <- if (values0.use[kay] == 0) OOO.orig else
              OOO.orig + matrix(X.vlm.save[, kay] * values0.use[kay],
                                n.LM, M, byrow = TRUE)
@@ -167,73 +169,80 @@
                      etastart = eta.mat.orig,
                      offset = ooo, family = Fam,
                      control = object@control)
-    }  # iterate
+    }  # iterate.SE || iterate.score || LR.really
 
 
-    if (lrt.really) {  # +++++++++++++++++++++++++++++++++++++
-
-        zee <- if (use.de) {
-          fm$crit.list[["deviance"]] - Original.de
-        } else {
-          2 * (Original.ll - fm$crit.list[["loglikelihood"]])
-        }
-        if (zee > -1e-3) {
-          zee <- max(zee, 0)
-        } else {
-          warning("omitting 1 column has found a better solution, ",
-                  "so the original fit had not converged")
-        }
-        zedd <- zee  # sgn * sqrt(zee)
+    if (LR.really) {  # +++++++++++++++++++++++++++++++++++++
+      zee <- if (use.de) {
+        fm$crit.list[["deviance"]] - Original.de
+      } else {
+        2 * (Original.ll - fm$crit.list[["loglikelihood"]])
+      }
+      if (zee > -1e-3) {
+        zee <- max(zee, 0)
+      } else {
+        warning("omitting 1 column has found a better solution, ",
+                "so the original fit had not converged")
+      }
+      zedd <- zee  # sgn * sqrt(zee)
       signed.Lrt.0[kay] <- sqrt(zedd) *
                            sign(cobj[kay] - values0.use[kay])
       Lrt.0[kay] <- zedd
     } else {  # +++++++++++++++++++++++++++++++++++++
 
-    eta.mat.use <- if (iterate) {
-      if (is.matrix(fm$predictors))
-        fm$predictors else as.matrix(fm$predictors)
-    } else {
-      eta.mat.orig +
-      matrix(X.vlm.save[, kay] * (values0.use[kay] - cobj[kay]),
-             n.LM, M, byrow = TRUE)
-    }
+      done.early <- RS.really && !orig.SE && iterate.SE == iterate.score
+      if (RS.really) {
+        U.eta.mat.use <- if (iterate.score) {
+          as.matrix(fm$predictors)
+        } else {  # \theta_{k0} replaces \widehat{\theta}_k
+          eta.mat.orig +
+          matrix(X.vlm.save[, kay] * (values0.use[kay] - cobj[kay]),
+                 n.LM, M, byrow = TRUE)  # GGGG
+        }
+        temp1@predictors <- U.eta.mat.use
+        temp1@fitted.values <- cbind(
+          temp1@family@linkinv(eta = temp1@predictors,
+                               extra = temp1@extra))  # Make sure a matrix
+        wwt.both <- weights(temp1, type = "working", ignore.slot = TRUE,
+                            deriv.arg = RS.really)  # TRUE
+        Score.0[kay] <- sum(wwt.both$deriv * matrix(X.vlm.save[, kay],
+                                                    n.LM, M, byrow = TRUE))
+        if (done.early)
+          wwt.new <- wwt.both$weights  # Assigned early, dont do later
+      }  # RS.really
 
+      if (orig.SE) {
+        SE2.0[kay] <- diag(vc2)[kay]  # Because orig.SE == TRUE
+      } else {
+      if (!done.early) {  # Not already assigned early
+        SE.eta.mat.use <- if (orig.SE) {
+          eta.mat.orig
+        } else {
+          if (iterate.SE) 
+            as.matrix(fm$predictors) else
+            eta.mat.orig +
+            matrix(X.vlm.save[, kay] * (values0.use[kay] - cobj[kay]),
+                   n.LM, M, byrow = TRUE)  # GGGG but with iterate.SE
+        }
+        temp1@predictors <- SE.eta.mat.use
+        temp1@fitted.values <- cbind(
+          temp1@family@linkinv(eta = temp1@predictors,
+                               extra = temp1@extra))  # Must be a matrix
+        wwt.new <- weights(temp1, type = "working", ignore.slot = TRUE,
+                           deriv.arg = FALSE)  # For RS.really&Wd.really
 
-    temp1@predictors <- eta.mat.use
-    temp1@fitted.values <- cbind(
-      temp1@family@linkinv(eta = temp1@predictors,
-                           extra = temp1@extra))  # Make sure a matrix
-    wwt.both <- weights(temp1, type = "working", ignore.slot = TRUE,
-                        deriv.arg = score.really)
-    if (score.really) {
-      deriv.new <- wwt.both$deriv
-      wwt.new <- wwt.both$weights
-    } else {
-      wwt.new <- wwt.both
-    }
+      }  # !done.early
 
-
-    U <- vchol(wwt.new, M = M, n = n.LM, silent = TRUE)
-    w12X.vlm <- mux111(U, X.vlm.save, M = M)
-
-
-    qrstr <- qr(w12X.vlm)
-    if (!all(qrstr$pivot == 1:length(qrstr$pivot)))
-      stop("cannot handle pivoting just yet")
-    R <- qr.R(qrstr)  # dim(R) == ncol(w12X.vlm); diags may be negative
-
-
-    covun <- chol2inv(R)  # This is for (t(X.vlm) %*% W %*% X.vlm)^{-1}
-
-    SE2.0[kay] <- diag(covun)[kay]
-
-    if (score.really)
-      Score.0[kay] <-
-        sum(deriv.new * matrix(X.vlm.save[, kay], n.LM, M, byrow = TRUE))
-
-    }  # !lrt.really +++++++++++++++++++++++++++++++++++++
-
-
+        U <- vchol(wwt.new, M = M, n = n.LM, silent = TRUE)
+        w12X.vlm <- mux111(U, X.vlm.save, M = M)
+        qrstr <- qr(w12X.vlm)
+        if (!all(qrstr$pivot == 1:length(qrstr$pivot)))
+          stop("cannot handle pivoting just yet")
+        R <- qr.R(qrstr)  # dim(R) == ncol(w12X.vlm); diags may be < 0
+        covun <- chol2inv(R)  # This is 4 (t(X.vlm) %*% W %*% X.vlm)^{-1}
+        SE2.0[kay] <- diag(covun)[kay]
+      }
+    }  # !LR.really +++++++++++++++++++++++++++++++++++++
   }  # for (kay in kvec.use)  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
@@ -248,7 +257,7 @@
   names(values0.use) <- names(cobj)
 
 
-  if (lrt.really) {
+  if (LR.really) {
     Lrt.0 <- Lrt.0[kvec.use]
     names(Lrt.0) <- names(cobj)
     signed.Lrt.0 <- signed.Lrt.0[kvec.use]
@@ -259,7 +268,7 @@
            pvalues    = pchisq(Lrt.0, df = 1, lower.tail = FALSE),
            values0    = values0.use) else
       signed.Lrt.0
-  } else if (score.really) {
+  } else if (RS.really) {
     Score.0 <- Score.0[kvec.use]
     names(Score.0) <- names(cobj)
     score.stat <- Score.0 * SE0
@@ -268,11 +277,11 @@
            SE0        = SE0,  # Same as Wald
            values0    = values0.use) else
       score.stat
-  } else {
+  } else {  # Wd.really
     wald.stat <- (cobj - values0.use) / SE0
     if (all.out)
       list(wald.stat  = wald.stat,
-           SE0        = SE0,
+           SE0        = SE0,  # Same as RS
            values0    = values0.use) else
       wald.stat
   }
@@ -305,24 +314,23 @@ setMethod("wald.stat", "vlm", function(object, ...)
 
 
 
-
 score.stat.vlm <-
   function(object,
            values0 = 0,
            subset = NULL,  # Useful for Cox model as a poissonff().
            omit1s = TRUE,
            all.out = FALSE,  # If TRUE then lots of output returned
-           iterate = TRUE,  # If FALSE then other coeffs at MLE
-           trace = FALSE,  # NULL,
-           ...) {
-
-
+           orig.SE       = FALSE,  # New
+           iterate.SE    = TRUE,  #
+           iterate.score = TRUE,  # New
+           trace = FALSE, ...) {
   wald.stat.vlm(object, values0 = values0,
                 subset = subset, omit1s = omit1s, all.out = all.out,
-                iterate = iterate,
-                trace = trace,
-                as.summary = FALSE,  # Does not make sense if TRUE
-                score.really = TRUE, ...)
+                iterate.SE    = iterate.SE,
+                iterate.score = iterate.score,  # Secret argument
+                orig.SE = orig.SE,  # as.summary,  # FALSE,
+                RS.really = TRUE,  # Secret argument
+                trace = trace, ...)
 }  # score.stat.vlm
 
 

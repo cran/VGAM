@@ -4,7 +4,7 @@
 \alias{pgompertz}
 \alias{qgompertz}
 \alias{rgompertz}
-\title{The Gompertz Distribution}
+\title{Gompertz Distribution}
 \description{
   Density, cumulative distribution function,
   quantile function

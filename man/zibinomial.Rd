@@ -195,8 +195,11 @@ Fitting and interpreting occupancy models.
   \code{\link{rzibinom}},
   \code{\link{binomialff}},
   \code{\link{posbinomial}},
-  \code{\link{gtbinomial}},
   \code{\link[stats:Binomial]{Binomial}}.
+
+
+% \code{\link{gtbinomial}},
+
 
 
 }

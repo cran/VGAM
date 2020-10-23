@@ -8,6 +8,7 @@
 
 
 
+
 predict.vlm <-
   function(object,
            newdata = NULL,
@@ -232,6 +233,12 @@ predict.vlm <-
     if (hasintercept)
       ncolHlist <- ncolHlist[-1]
 
+    if (!length(ncolHlist)) {
+      warning("seems an intercept-only model. Returning NULL")
+      return(NULL)
+    }
+
+
     cs <- cumsum(c(1, ncolHlist))  # Like a pointer
     for (ii in 1:(length(cs)-1))
       if (cs[ii+1] - cs[ii] > 1)
@@ -328,12 +335,9 @@ predict.vlm <-
 
 
 
-
-
 setMethod("predict", "vlm",
           function(object, ...)
           predict.vlm(object, ...))
-
 
 
 

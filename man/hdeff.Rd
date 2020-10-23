@@ -1,12 +1,14 @@
 \name{hdeff}
 \alias{hdeff}
 \alias{hdeff.vglm}
+\alias{hdeff.matrix}
+\alias{hdeff.numeric}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Hauck-Donner Effects: A Detection Test for Wald Tests }
 \description{
   A detection test for the
   Hauck-Donner effect on each regression coefficient
-  of a VGLM regression.
+  of a VGLM regression or 2 x 2 table.
 
 
 }
@@ -14,11 +16,13 @@
 hdeff(object, ...)
 hdeff.vglm(object, derivative = NULL, se.arg = FALSE,
            subset = NULL, hstep = 0.005, fd.only = FALSE, ...)
+hdeff.numeric(object, byrow = FALSE, ...)
+hdeff.matrix(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-  A \code{\link{vglm}} object.
+  Usually a \code{\link{vglm}} object.
   Although only a limited number of family functions have
   an analytical solution to
   the HDE detection test 
@@ -37,6 +41,24 @@ hdeff.vglm(object, derivative = NULL, se.arg = FALSE,
   hopefully some more will be implemented in the short future!)
   the finite-differences (FDs) method can be applied to almost all
   \pkg{VGAM} family functions to get a numerical solution.
+
+
+
+  Alternatively \code{object} may represent a 2 x 2 table of
+  \emph{positive} counts.
+  If so, then the first row corresponds to \eqn{x2=0} (baseline group)
+  and the second row \eqn{x2=1}. The first column
+  corresponds to \eqn{y=0} (failure) and
+  the second column \eqn{y=1} (success).
+
+
+
+  Another alternative is that \code{object} is a numerical vector
+  of length 4, representing a 2 x 2 table of \emph{positive} counts.
+  If so then it is fed into \code{hdeff.matrix} using
+  the argument \code{byrow}, which matches \code{\link[base]{matrix}}.
+  See the examples below.
+
 
 
 
@@ -106,6 +128,19 @@ hdeff.vglm(object, derivative = NULL, se.arg = FALSE,
     the derivatives even if an analytical solution has been coded,
     By default, finite-differences will be used
     when an analytical solution has not been implemented.
+
+
+%   as the last resort
+
+
+    
+  }
+  \item{byrow}{
+    Logical;
+    fed into \code{\link[base]{matrix}} if \code{object} is a
+    vector of length 4 so that there are two choices in
+    the order of the elements.
+
 
 
 %   as the last resort
@@ -331,6 +366,10 @@ Detection, and parameter space characterization
   \code{\link{profilevglm}}.
 
 
+% \code{\link{step4vglm}}. Not needed since LRT is used, not WT.
+% \code{\link{step.glm}} must have been based on the Wald test (WT).
+
+
 
 % \code{\link{multinomial}},
 % \code{\link{cumulative}},
@@ -350,6 +389,14 @@ hdeff(fit, deriv = 1)  # Analytical solution
 hdeff(fit, deriv = 2)  # It is a partial analytical solution
 hdeff(fit, deriv = 2, se.arg = TRUE,
       fd.only = TRUE)  # All derivatives solved numerically by FDs
+
+# 2 x 2 table of counts
+R0 <- 25; N0 <- 100  # Hauck Donner (1977) data set
+mymat <- c(N0-R0, R0, 8, 92)  # HDE present
+(mymat <- matrix(mymat, 2, 2, byrow = TRUE))
+hdeff(mymat)
+hdeff(c(mymat))  # Input is a vector
+hdeff(c(t(mymat)), byrow = TRUE)  # Reordering of the data
 }
 
 

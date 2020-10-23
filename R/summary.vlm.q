@@ -13,10 +13,11 @@
 
 
 
+
 summaryvlm <-
   function(object, correlation = FALSE, dispersion = NULL,
            Colnames = c("Estimate", "Std. Error", "z value", "Pr(>|z|)"),
-           presid = TRUE,
+           presid = TRUE,  # FALSE
            lrt0.arg = FALSE,
            score0.arg = FALSE,
            wald0.arg = FALSE,

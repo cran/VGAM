@@ -46,13 +46,13 @@ citEntry(entry = "Article",
   volume       = "32",
   number       = "10",
   pages        = "1--34",
-  url          = "http://www.jstatsoft.org/v32/i10/",
+  url          = "https://www.jstatsoft.org/v32/i10/",
 
   textVersion  =
   paste("Thomas W. Yee (2010).",
         "The VGAM Package for Categorical Data Analysis.",
         "Journal of Statistical Software, 32(10), 1-34.",
-        "URL http://www.jstatsoft.org/v32/i10/."),
+        "URL https://www.jstatsoft.org/v32/i10/."),
   header = "and/or"
 )
 
@@ -100,13 +100,13 @@ citEntry(entry = "Article",
   author       = personList(as.person("Thomas W. Yee")),
   journal      = "Computational Statistics and Data Analysis",
   year         = "2013",
-  url          = "http://ees.elsevier.com/csda",
+  url          = "https://ees.elsevier.com/csda",
 
   textVersion  =
   paste("Thomas W. Yee (2013).",
         "Two-parameter reduced-rank vector generalized linear models.",
         "Computational Statistics and Data Analysis.",
-        "URL http://ees.elsevier.com/csda."),
+        "URL https://ees.elsevier.com/csda."),
   header = "and/or"
 )
 
@@ -122,13 +122,13 @@ citEntry(entry = "Article",
   volume       = "65",
   number       = "5",
   pages        = "1--33",
-  url          = "http://www.jstatsoft.org/v65/i05/",
+  url          = "https://www.jstatsoft.org/v65/i05/",
 
   textVersion  =
   paste("Thomas W. Yee, Jakub Stoklosa, Richard M. Huggins (2015).",
         "The VGAM Package for Capture-Recapture Data Using the Conditional Likelihood.",
         "Journal of Statistical Software, 65(5), 1-33.",
-        "URL http://www.jstatsoft.org/v65/i05/."),
+        "URL https://www.jstatsoft.org/v65/i05/."),
   header = "and/or"
 )
 

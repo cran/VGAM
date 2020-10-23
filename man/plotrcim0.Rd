@@ -70,8 +70,11 @@
 }
 \item{rtype, ctype, rsub, csub}{
   See the \code{type} and \code{sub} arguments of
-  \code{\link[base:plot]{plot}}.
+  \code{\link[graphics]{plot.default}}.
 
+
+
+% 20201020; trying \code{\link[graphics]{plot.default}}.
 
 
 % 20200427; all \code{\link[graphics:plot]{plot}} changed to

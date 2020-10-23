@@ -9,7 +9,7 @@
 summaryvgam <-
   function(object, dispersion = NULL,
            digits = options()$digits-2,
-           presid = TRUE,
+           presid = TRUE,  # FALSE
            nopredictors = FALSE) {
 
 

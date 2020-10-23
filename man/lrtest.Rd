@@ -71,12 +71,19 @@
   in \code{\dots}. Instead of passing the fitted model
   objects in \code{\dots}, several other specifications
   are possible. The updating mechanism is the same as for
-  \code{\link[lmtest]{waldtest}}: the models in \code{\dots}
+  \code{waldtest()} in \pkg{lmtest}:
+  the models in \code{\dots}
   can be specified as integers, characters (both for terms
   that should be eliminated from the previous model),
   update formulas or fitted model objects. Except for
   the last case, the existence of an \code{\link[stats]{update}}
-  method is assumed. See \code{\link[lmtest]{waldtest}} for details.
+  method is assumed.
+  See \code{waldtest()} in \pkg{lmtest} for details.
+
+
+% \code{\link[lmtest]{waldtest}}:
+% See \code{\link[lmtest]{waldtest}} for details.
+
 
 
   Subsequently, an asymptotic likelihood ratio test for each

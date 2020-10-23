@@ -40,7 +40,7 @@
 
 
 
-  Q1.infos <- M.infos <- M1.infos <- 1  # Default really
+  Q1.infos <- M.infos <- M1.infos <- npred(object)  # Default really
   infos.fun <- object@family@infos
   infos.list <- infos.fun()
   if (is.list(infos.list) && length(infos.list$M))
@@ -78,33 +78,80 @@
   lowsup <- 0L  # Default (at least for count distributions)
 
       
+
+
   GAITffs <-
-      c("gatpoisson.mix", "gatpoisson.mlm",
-        "gitpoisson.mix", "gitpoisson.mlm",
-        "gaitlog.mix",
-        "gaitpoisson.mix", "gaitpoisson.mlm",
-        "gatnbinomial.mix", "gatnbinomial.mlm",
-        "gitnbinomial.mix", "gitnbinomial.mlm")
+      c("gaitpoisson", "gaitlog",
+        "gaitzeta")
+
+
+
+
+      
   if (vfamily %in% GAITffs) {
-    alter <- infos.list$alter
-    inflate <- infos.list$inflate
-    truncate <- infos.list$truncate
-    if (is.numeric(tmp9 <- infos.list$lowsup))
-      lowsup <- tmp9
-    max.support <- infos.list$max.support  # Often Inf but never NULL
+    spvals <- specials(object)
+    alt.mix  <- spvals$alt.mix  # Might be NULL
+    alt.mlm  <- spvals$alt.mlm  # Might be NULL
+    inf.mix  <- spvals$inf.mix  # Might be NULL
+    inf.mlm  <- spvals$inf.mlm  # Might be NULL
+    truncate <- spvals$truncate  # Might be NULL
+    max.support <- spvals$max.support  # Often Inf
+    if (length(tmp9 <- infos.list$Support) >= 3)
+      lowsup <- tmp9[1]  # Replace lowsup
+
+
+    if (infos.list$MM1 > 2)
+      stop("can only handle 1 & 2-parameter distributions currently")
+
+
+
+
     if ((M1 <- ncol(eta.mat)) != M1.infos)
       stop("confused about the variable 'M1'")
-    pobs.a <- pstr.i <- 0  # Initialize; maybe NULL would be safer
-    if (length(alter))
-      pobs.a <- fitted(object, type.fitted = "pobs.a")
-    if (length(inflate))
-      pstr.i <- fitted(object, type.fitted = "pstr.i")
+    pobs.mix <- pstr.mix <-
+    pobs.mlm <- pstr.mlm <- 0  # Initialize; maybe NULL would be safer
+    if (lalt.mix <- length(alt.mix))
+      pobs.mix <- fitted(object, type.fitted = "pobs.mix")
+    if (lalt.mlm <- length(alt.mlm))
+      pobs.mlm <- fitted(object, type.fitted = "pobs.mlm")
+    if (linf.mix <- length(inf.mix))
+      pstr.mix <- fitted(object, type.fitted = "pstr.mix")
+    if (linf.mlm <- length(inf.mlm))
+      pstr.mlm <- fitted(object, type.fitted = "pstr.mlm")
+
+
+
+
+    thetanames <- infos.list$baseparams.argnames
+    Thetas.z <- fitted(object, type.fitted = paste0(thetanames[1], "s"))
+    Theta.p1 <- Thetas.z[, 1]  # Always
+    Theta.a1 <- Theta.i1 <- Theta.p1  # Needed; and answer not corrupted
+
+    tmp3.TF <- !is.na(rowSums(object@extra$indeta))
+    if (tmp3.TF[3])
+      Theta.a1 <- Thetas.z[, paste0(thetanames[1], ".a")]
+    if (tmp3.TF[5])
+      Theta.i1 <- Thetas.z[, paste0(thetanames[1], ".i")]
+
+
+
+    if (infos.list$MM1 == 2) {
+      Thetas.z <- fitted(object, type.fitted = paste0(thetanames[2], "s"))
+      Theta.p2 <- Thetas.z[, 2]  # Always
+      Theta.a2 <- Theta.i2 <- Theta.p2  # Needed; and answer not corrupted
+      if (tmp3.TF[3])
+        Theta.a2 <- Thetas.z[, paste0(thetanames[2], ".a")]
+      if (tmp3.TF[5])
+        Theta.i2 <- Thetas.z[, paste0(thetanames[2], ".i")]
+    }
   }  # GAITffs
 
 
+      
 
-      if (!mixture.links &&  # !multipleResponses && 
-          link1parameter) {
+
+  if (!mixture.links &&  # !multipleResponses && 
+      link1parameter) {
     for (jay in 1:M) {      # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
       Param.mat[, jay] <-
       Param.vec <- eta2theta(eta.mat[, jay], mylinks[jay],
@@ -145,131 +192,74 @@
       pmat[, i + 1L] <- ddiffzeta(i, shape = Param.mat[, 1],
                                   start = object@misc$start)
   }
-  if (vfamily == "genpoisson") {
+
+
+      
+  if (vfamily %in% GAITffs) {
+
+
+
+      
+
+    baseparams.argnames <- infos.list$baseparams.argnames
+    if (!length(baseparams.argnames))
+      stop("cannot determine any base parameter argument name")
+    if (infos.list$MM1 > 2)
+      stop("cannot handle MM1 > 2")
+    alist <- list(  # x = xx,  # theta.p,
+                  alt.mix = alt.mix, alt.mlm = alt.mlm,
+                  inf.mix = inf.mix, inf.mlm = inf.mlm,
+                  truncate = truncate, max.support = max.support,
+                  byrow.ai = FALSE,  # Because of reconstruction
+                  pobs.mix = pobs.mix, pobs.mlm = pobs.mlm,
+                  pstr.mix = pstr.mix, pstr.mlm = pstr.mlm)
+    alist[[paste0(baseparams.argnames[1], ".p")]] <- Theta.p1
+    alist[[paste0(baseparams.argnames[1], ".a")]] <- Theta.a1
+    alist[[paste0(baseparams.argnames[1], ".i")]] <- Theta.i1
+    if (infos.list$MM1 == 2) {
+      alist[[paste0(baseparams.argnames[2], ".p")]] <- Theta.p2
+      alist[[paste0(baseparams.argnames[2], ".a")]] <- Theta.a2
+      alist[[paste0(baseparams.argnames[2], ".i")]] <- Theta.i2
+    }
+    dlist <- alist
+    dlist$log <- FALSE
+    dfun <- paste0("dgait", infos.list$parent.name[2])
+
+    for (i in seq_along(At)) {
+      dlist$x <- At[i]
+      pmat[, i] <- do.call(dfun, dlist)  # i + lowsup - 1L
+    }
+  }  # vfamily %in% GAITffs
+
+
+
+
+      
+
+
+
+
+
+
+
+  if (vfamily == "genpoisson0") {
     for (i in At)
-      pmat[, i + 1L] <- dgenpois(i, theta = Param.mat[, 2],
-                                 lambda = Param.mat[, 1])
+      pmat[, i + 1L] <- dgenpois0(i, theta = Param.mat[, 1],
+                                  lambda = Param.mat[, 2])
   }
-  if (vfamily == "gatnbinomial.mix") {
+  if (vfamily == "genpoisson1") {
     for (i in At)
-      pmat[, i + 1L] <- dgaitnbinom.mix(i, alter = alter,
-                                        truncate = truncate,
-                                        max.support = max.support,
-                                        size.p = Param.mat[, 2],
-                                        munb.p = Param.mat[, 1],
-                                        size.a = Param.mat[, 5],
-                                        munb.a = Param.mat[, 4],
-                                        pobs.a = Param.mat[, 3])
+      pmat[, i + 1L] <- dgenpois1(i, mean = Param.mat[, 1],
+                                  dispind = Param.mat[, 2])
   }
-  if (vfamily == "gatnbinomial.mlm") {
-    munb <- eta2theta(eta.mat[, 1], mylinks[1],
-                      earg = object@misc$earg[[1]])
-    size <- eta2theta(eta.mat[, 2], mylinks[2],
-                      earg = object@misc$earg[[2]])
+  if (vfamily == "genpoisson2") {
     for (i in At)
-      pmat[, i + 1L] <- dgaitnbinom.mlm(i, alter = alter,
-                                        truncate = truncate,
-                                        max.support = max.support,
-                                        munb = munb, size = size,
-                                        pobs.a = pobs.a[, -ncol(pobs.a)],
-                                        byrow.arg = FALSE)
+      pmat[, i + 1L] <- dgenpois2(i, mean = Param.mat[, 1],
+                                  disppar = Param.mat[, 2])
   }
-  if (vfamily == "gaitlog.mix") {
-    is.altered <- as.logical(length(alter))
-    is.inflated <- as.logical(length(inflate))
-    index.a <- which(infos.list$parameters.names == "shape.a")
-    index.i <- which(infos.list$parameters.names == "shape.i")
-    shape.a <- Param.mat[, if (is.altered)  index.a else 1]
-    shape.i <- Param.mat[, if (is.inflated) index.i else 1]
-    for (i in At)
-      pmat[, i + 0L] <-
-        dgaitlog(i, alter.mix = alter, inflate.mix = inflate,
-                 truncate = truncate,
-                 shape.p = Param.mat[, 1],
-                 pobs.mix.a = pobs.a,
-                 pstr.mix.i = pstr.i,
-                 shape.a = shape.a,
-                 shape.i = shape.i)
-  }
-  if (vfamily == "gaitpoisson.mix") {
-    is.altered <- as.logical(length(alter))
-    is.inflated <- as.logical(length(inflate))
-    index.a <- which(infos.list$parameters.names == "lambda.a")
-    index.i <- which(infos.list$parameters.names == "lambda.i")
-    lambda.a <- Param.mat[, if (is.altered)  index.a else 1]
-    lambda.i <- Param.mat[, if (is.inflated) index.i else 1]
-    for (i in At)
-      pmat[, i + 1L] <-
-        dgaitpois(i, alter.mix = alter, inflate.mix = inflate,
-                  truncate = truncate,
-                  max.support = max.support,
-                  lambda.p = Param.mat[, 1],
-                  pobs.mix.a = pobs.a,
-                  pstr.mix.i = pstr.i,
-                  lambda.a = lambda.a,
-                  lambda.i = lambda.i)
-  }
-  if (vfamily == "gaitpoisson.mlm") {
-    is.altered <- as.logical(length(alter))
-    is.inflated <- as.logical(length(inflate))
-    Pobs.a <- if (is.altered)
-      fitted(object, type.fitted = "Pobs.a") else 0
-    Pstr.i <- if (is.inflated)
-      fitted(object, type.fitted = "Pstr.i") else 0
- # Param.mat is almost all NAs, so dont use it at all.
-    lambda.p <- eta2theta(eta.mat[, 1], mylinks[1],
-                          earg = object@misc$earg[[1]])
-    for (i in At) aaa <-
-      pmat[, i + 1L] <-
-        dgaitpois(i, alter.mlm = alter, inflate.mlm = inflate,
-                  truncate = truncate,  # byrow.arg = F,
-                  max.support = max.support,
-                  lambda.p = lambda.p,  # There are 2 twists:
-                  pobs.mlm.a = if (is.altered)
-                    Pobs.a[, -NCOL(Pobs.a)] else 0,
-                  pstr.mlm.i = if (is.inflated)
-                    Pstr.i[, -NCOL(Pstr.i)] else 0)
-  }
-  if (vfamily == "gatpoisson.mix") {
-    for (i in At)
-      pmat[, i + 1L] <- dgaitpois(i, alter.mix = alter,
-                                  truncate = truncate,
-                                  max.support = max.support,
-                                  lambda.p   = Param.mat[, 1],
-                                  pobs.mix.a = Param.mat[, 2],
-                                  lambda.a   = Param.mat[, 3])
-  }
-  if (vfamily == "gatpoisson.mlm") {
-    lambda <- eta2theta(eta.mat[, 1], mylinks[1],
-                        earg = object@misc$earg[[1]])
-    for (i in At)
-      pmat[, i + 1L] <- dgaitpois(i, alter.mlm = alter,
-                                  truncate = truncate,
-                                  max.support = max.support,
-                                  lambda.p = lambda,
-                                  pobs.mlm.a = pobs.a[, -ncol(pobs.a)],
-                                  byrow.arg = FALSE)
-  }
-  if (vfamily == "gitpoisson.mix") {
-    for (i in At)
-      pmat[, i + 1L] <- dgaitpois(i, inflate.mix = inflate,
-                                  truncate = truncate,
-                                  max.support = max.support,
-                                  lambda.p   = Param.mat[, 1],
-                                  pstr.mix.i = Param.mat[, 2],
-                                  lambda.i   = Param.mat[, 3])
-  }
-  if (vfamily == "gitpoisson.mlm") {
-    lambda <- eta2theta(eta.mat[, 1], mylinks[1],
-                        earg = object@misc$earg[[1]])
-    for (i in At)
-      pmat[, i + 1L] <- dgaitpois(i, inflate.mlm = inflate,
-                                  truncate = truncate,
-                                  max.support = max.support,
-                                  lambda.p = lambda,
-                                  pstr.mlm.i = pstr.i[, -ncol(pstr.i)],
-                                  byrow.arg = FALSE)
-  }
+
+
+
   if (vfamily == "geometric") {
     for (i in At)
       pmat[, i + 1L] <- dgeom(i, prob = Param.mat[, 1])
@@ -307,8 +297,8 @@
   }
   if (vfamily == "posnegbinomial") {
     for (i in At)
-      pmat[, i + 1L] <- dposnegbin(i, size = Param.mat[, 2],
-                                   munb = Param.mat[, 1])
+      pmat[, i + 1L] <- dgaitnbinom(i, Param.mat[, 2],
+                                    munb.p = Param.mat[, 1])
   }
   if (vfamily == "truncgeometric") {
     upper.limit <- object@extra$upper.limit
@@ -451,10 +441,14 @@
     obsrvd <- as.vector(xtabs(w ~ factor(y[, 1L], levels = At)))
     pmat <- matrix(NA, length(mu), length(At))
     for (i in At)
-      pmat[, i + 1L] <- dposbinom(i, prob = Param.mat[, 1],
-                                  size = size)
+      pmat[, i + 1L] <- dgaitbinom(i, size, Param.mat[, 1],
+                                   truncate = 0)
     expctd <- colSums(pmat * w)
   }
+
+
+
+
 
  if (vfamily %in% c("zabinomial", "zabinomialff")) {
     if (NCOL(y) < 2L) 

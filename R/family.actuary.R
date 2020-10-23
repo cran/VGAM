@@ -3947,14 +3947,14 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
     sha2.names  <- param.names("shape2.p",  NOS, skip1 = TRUE)
 
     predictors.names <- c(
-      if ( .lss ) {
-        c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
-          namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
-      } else {
-        c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
-          namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
-      },
-      namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE))
+    if ( .lss ) {
+    c(namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE),
+      namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE))
+    } else {
+    c(namesof(sha1.names , .lshape1.a , earg = .eshape1.a , tag = FALSE),
+      namesof(scaL.names , .lscale    , earg = .escale    , tag = FALSE))
+    },
+    namesof(sha2.names , .lshape2.p , earg = .eshape2.p , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     if (!length(etastart)) {

@@ -191,9 +191,7 @@ Set \code{trace = TRUE} to monitor convergence.
 }
 
 \seealso{
-  \code{\link{gatnbinomial.mlm}},
-  \code{\link{Gaitnbinom.mlm}},
-  \code{\link{rposnegbin}},
+  \code{\link{Gaitnbinom}},
   \code{\link{pospoisson}},
   \code{\link{negbinomial}},
   \code{\link{zanegbinomial}},
@@ -204,6 +202,8 @@ Set \code{trace = TRUE} to monitor convergence.
   \code{\link{simulate.vlm}}.
 
 
+% \code{\link{rposnegbin}},
+% \code{\link{gatnbinomial.mlm}},
 % \code{\link[MASS]{rnegbin}}.
 
 
@@ -211,8 +211,9 @@ Set \code{trace = TRUE} to monitor convergence.
 
 \examples{
 pdata <- data.frame(x2 = runif(nn <- 1000))
-pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1)),
-                          y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
+pdata <- transform(pdata,
+  y1 = rgaitnbinom(nn, exp(1), munb.p = exp(0+2*x2), truncate = 0),
+  y2 = rgaitnbinom(nn, exp(3), munb.p = exp(1+2*x2), truncate = 0))
 fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 dim(depvar(fit))  # Using dim(fit@y) is not recommended
@@ -220,7 +221,8 @@ dim(depvar(fit))  # Using dim(fit@y) is not recommended
 
 # Another artificial data example
 pdata2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
-pdata2 <- transform(pdata2, y3 = rposnegbin(nn, munb = munb, size = size))
+pdata2 <- transform(pdata2,
+                    y3 = rgaitnbinom(nn, size, munb.p = munb, truncate = 0))
 with(pdata2, table(y3))
 fit <- vglm(y3 ~ 1, posnegbinomial, data = pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
@@ -235,15 +237,13 @@ fit <- vglm(ofreq ~ 1, posnegbinomial, weights = species, data = corbet)
 coef(fit, matrix = TRUE)
 Coef(fit)
 (khat <- Coef(fit)["size"])
-pdf2 <- dposnegbin(x = with(corbet, ofreq), mu = fitted(fit), size = khat)
+pdf2 <- dgaitnbinom(with(corbet, ofreq), khat, munb.p = fitted(fit), truncate = 0)
 print(with(corbet, cbind(ofreq, species, fitted = pdf2*sum(species))), dig = 1)
-\dontrun{
-with(corbet,
+\dontrun{ with(corbet,
 matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
         xlab = "Observed frequency (of individual butterflies)",
         type = "b", ylab = "Number of species", col = c("blue", "orange"),
-        main = "blue 1s = observe; orange 2s = fitted"))
-}
+        main = "blue 1s = observe; orange 2s = fitted")) }
 
 \dontrun{
 # This data (courtesy of Maxim Gerashchenko) causes posbinomial() to fail
@@ -270,6 +270,9 @@ fit.fail <- vglm(y1 ~ 1, weights = ofreq, posnegbinomial,
 %               probs.y = 0.75, cutoff.prob = 0.999,
 %               max.support = 2000, max.chunk.MB = 30,
 %               gsize = exp((-4):4), ishrinkage = 0.95, imethod = 1)
+% pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1)),
+%                           y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
+% pdf2 <- dposnegbin(x = with(corbet, ofreq), mu = fitted(fit), size = khat)
 
 
 

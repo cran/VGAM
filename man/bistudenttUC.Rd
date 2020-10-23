@@ -78,14 +78,16 @@ dbistudentt(x1, x2, df, rho = 0, log = FALSE)
 
 
 }
-\references{
+%\references{
 
-Schepsmeier, U. and Stober, J. (2013).
-Derivatives and Fisher information of bivariate copulas.
-\emph{Statistical Papers}.
+%Schepsmeier, U. and Stober, J. (2014).
+%Derivatives and Fisher information of bivariate copulas.
+%\emph{Statistical Papers}
+%\bold{55}, 525--542.
 
 
-}
+
+%}
 
 
 %\section{Warning}{
@@ -115,10 +117,7 @@ Derivatives and Fisher information of bivariate copulas.
 \dontrun{ N <- 101; x <- seq(-4, 4, len = N); Rho <- 0.7; mydf <- 10
 ox <- expand.grid(x, x)
 zedd <- dbistudentt(ox[, 1], ox[, 2], df = mydf, rho = Rho, log = TRUE)
-contour(x, x, matrix(zedd, N, N), col = "blue", labcex = 1.5)
-}
-}
-
+contour(x, x, matrix(zedd, N, N), col = "blue", labcex = 1.5) } }
 \keyword{distribution}
 
 

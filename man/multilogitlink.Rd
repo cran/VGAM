@@ -59,9 +59,11 @@ multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
   \code{\link{logitlink}} link to \eqn{M} levels/classes.
   It forms the basis of the \code{\link{multinomial}} logit model.
   It is sometimes called the \emph{multi-logit} link
-  or the \emph{multinomial logit} link.
+  or the \emph{multinomial logit} link;
+  some people use \emph{softmax} too.
   When its inverse function is computed it returns values which
   are positive and add to unity.
+
 
 
 }
@@ -105,7 +107,7 @@ multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
     \code{\link{Links}},
     \code{\link{multinomial}},
     \code{\link{logitlink}},
-    \code{\link{gaitpoisson.mlm}},
+    \code{\link{gaitpoisson}},
     \code{\link{normal.vcm}},
     \code{\link{CommonVGAMffArguments}}.
 

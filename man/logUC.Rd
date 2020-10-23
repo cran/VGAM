@@ -16,13 +16,13 @@
 }
 \usage{
 dlog(x, shape, log = FALSE)
-plog(q, shape, log.p = FALSE)
+plog(q, shape, lower.tail = TRUE, log.p = FALSE)
 qlog(p, shape)
 rlog(n, shape)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x, q, p, n}{
+  \item{x, q, p, n, lower.tail}{
   Same interpretation as in \code{\link[stats]{runif}}.
 
 
@@ -84,8 +84,9 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 \seealso{
   \code{\link{logff}},
-  \code{\link{Oilog}}.
-  \code{\link{Otlog}}.
+  \code{\link{Gaitlog}},
+  \code{\link[VGAMdata]{Oilog}}.
+  \code{\link[VGAMdata]{Otlog}}.
 
 
 }

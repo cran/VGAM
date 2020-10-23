@@ -123,7 +123,7 @@ Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
-\url{http://www.jstatsoft.org/v32/i10/}.
+\url{https://www.jstatsoft.org/v32/i10/}.
 
 
 Yee, T. W. and Hastie, T. J. (2003).
@@ -252,11 +252,11 @@ Cambridge University Press.
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
     \code{\link{Gaitpois}},
-    \code{\link{gatnbinomial.mlm}},
     \code{\link[datasets]{iris}}.
 
 
 
+%   \code{\link{gatnbinomial.mlm}},
 % The author's homepage has further documentation about
 % categorical data analysis using \pkg{VGAM}.
 

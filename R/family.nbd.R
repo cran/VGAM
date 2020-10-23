@@ -459,7 +459,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
 
-      newemu <- .emunb
+      newemu <- ( .emunb )
       if ( .lmunb == "nbcanlink") {
         newemu$size <- size.init
       }
@@ -500,7 +500,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
     munb <- if ( .lmunb == "nbcanlink") {
 
-      newemu <- .emunb
+      newemu <- ( .emunb )
       kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                         .lsize , earg = .esize )
 
@@ -550,6 +550,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
     if (exists("CQO.FastAlgorithm", envir = VGAMenv))
         rm("CQO.FastAlgorithm", envir = VGAMenv)
 
+    newemu <- ( .emunb )
 
     if (function.name == "cao")
       ind2 <- FALSE
@@ -587,7 +588,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
   linkfun = eval(substitute(function(mu, extra = NULL) {
     M1 <- 2
 
-    newemu <- .emunb
+    newemu <- ( .emunb )
 
 
     if ( .lmunb == "nbcanlink") {

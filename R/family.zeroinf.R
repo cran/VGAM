@@ -48,13 +48,14 @@ dzanegbin <- function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
     ans[ index0] <- log(pobs0[index0])
     if (any(!index0))
       ans[!index0] <- log1p(-pobs0[!index0]) +
-                      dposnegbin(x[!index0], prob = prob[!index0],
-                                 size = size[!index0], log = TRUE)
+                      dgaitnbinom(x[!index0], size[!index0], truncate = 0,
+                                  prob.p = prob[!index0], log = TRUE)
   } else {
     ans[ index0] <- pobs0[index0]
     if (any(!index0))
-      ans[!index0] <- (1 - pobs0[!index0]) * dposnegbin(x[!index0],
-                        prob = prob[!index0], size = size[!index0])
+      ans[!index0] <- (1 - pobs0[!index0]) *
+                      dgaitnbinom(x[!index0], size[!index0], truncate = 0,
+                                  prob.p = prob[!index0])
   }
   ans
 }  # dzanegbin
@@ -79,8 +80,8 @@ pzanegbin <- function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
     stop("argument 'pobs0' must be in [0,1]")
   qindex <- (q >  0)
   ans[ qindex] <- pobs0[qindex] + (1 - pobs0[qindex]) *
-                  pposnegbin(q[qindex], size = size[qindex],
-                                        prob = prob[qindex])
+                  pgaitnbinom(q[qindex], size[qindex], truncate = 0,
+                              prob.p = prob[qindex])
   ans[q <  0] <- 0
   ans[q == 0] <- pobs0[q == 0]
 
@@ -111,9 +112,8 @@ qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
   ans[p <= pobs0] <- 0
   pindex <- (p > pobs0)
   ans[pindex] <-
-    qposnegbin((p[pindex] - pobs0[pindex]) / (1 - pobs0[pindex]),
-               prob = prob[pindex],
-               size = size[pindex])
+    qgaitnbinom((p[pindex] - pobs0[pindex]) / (1 - pobs0[pindex]),
+                size[pindex], prob.p = prob[pindex], truncate = 0)
   ans
 }  # qzanegbin
 
@@ -131,7 +131,7 @@ rzanegbin <- function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
     prob <- 1 / (1 + munb/size)
   }
 
-  ans <- rposnegbin(n = use.n, prob = prob, size = size)
+  ans <- rgaitnbinom(n = use.n, size, prob, truncate = 0)
   if (length(pobs0) != use.n)
     pobs0 <- rep_len(pobs0, use.n)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -164,11 +164,11 @@ dzapois <- function(x, lambda, pobs0 = 0, log = FALSE) {
   if (log.arg) {
     ans[ index0] <- log(pobs0[index0])
     ans[!index0] <- log1p(-pobs0[!index0]) +
-                    dpospois(x[!index0], lambda[!index0], log = TRUE)
+       dgaitpois(x[!index0], lambda[!index0], log = TRUE, truncate = 0)
   } else {
     ans[ index0] <- pobs0[index0]
     ans[!index0] <- (1 - pobs0[!index0]) *
-                    dpospois(x[!index0], lambda[!index0])
+                    dgaitpois(x[!index0], lambda[!index0], truncate = 0)
   }
   ans
 }
@@ -185,7 +185,7 @@ pzapois <- function(q, lambda, pobs0 = 0) {
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
   ans[q >  0] <-    pobs0[q > 0] +
-                 (1-pobs0[q > 0]) * ppospois(q[q > 0], lambda[q > 0])
+    (1-pobs0[q > 0]) * pgaitpois(q[q > 0], lambda[q > 0], truncate = 0)
   ans[q <  0] <- 0
   ans[q == 0] <- pobs0[q == 0]
 
@@ -208,10 +208,12 @@ qzapois <- function(p, lambda, pobs0 = 0) {
   ans <- p
   ind4 <- (p > pobs0)
   ans[!ind4] <- 0
-  ans[ ind4] <- qpospois((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
-                         lambda = lambda[ind4])
+  ans[ ind4] <- qgaitpois((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
+                          lambda[ind4], truncate = 0)
   ans
 }
+
+
 
 
 rzapois <- function(n, lambda, pobs0 = 0) {
@@ -220,7 +222,7 @@ rzapois <- function(n, lambda, pobs0 = 0) {
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  ans <- rpospois(use.n, lambda)
+  ans <- rgaitpois(use.n, lambda, truncate = 0)
   if (length(pobs0) != use.n)
     pobs0 <- rep_len(pobs0, use.n)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -1551,9 +1553,8 @@ zanegbinomial.control <-
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <-      qposnegbin(p     = eff.p[2] ,
-                                munb = munb[, jay],
-                                size  = kmat[, jay]) + 10
+      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,  # prob = phi0,
+                            kmat[, jay], munb.p = munb[, jay]) + 10
 
 
       eps.trig <- .eps.trig
@@ -2185,9 +2186,9 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <-      qposnegbin(p     = eff.p[2] ,
-                                munb = munb[, jay],
-                                size  = kmat[, jay]) + 10
+      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,  # prob = phi0,
+                            kmat[, jay], munb.p = munb[, jay]) + 10
+
 
 
 
@@ -3841,9 +3842,8 @@ qzibinom <- function(p, size, prob, pstr0 = 0
     ans[p[ind0] <= pobs0] <- 0
     pindex <- (1:LLL)[ind0 & (p > pobs0)]
     Pobs0 <- pstr0[pindex] + (1 - pstr0[pindex]) * prob0[pindex]
-    ans[pindex] <- qposbinom((p[pindex] - Pobs0) / (1 - Pobs0),
-                             size = size[pindex],
-                             prob = prob[pindex])
+    ans[pindex] <- qgaitbinom((p[pindex] - Pobs0) / (1 - Pobs0),
+                              size[pindex], prob[pindex], truncate = 0)
   }
 
   ans[pstr0 < deflat.limit] <- NaN
@@ -4496,9 +4496,8 @@ zinegbinomial.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <-      qposnegbin(p    = eff.p[2] ,
-                                munb = munb[, jay],
-                                size = kmat[, jay]) + 10
+      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,
+                            kmat[, jay], munb.p = munb[, jay]) + 10
 
 
 
@@ -5171,9 +5170,8 @@ zinegbinomialff.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <-      qposnegbin(p    = eff.p[2] ,
-                                munb = munb[, jay],
-                                size = kmat[, jay]) + 10
+      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,
+                            kmat[, jay], munb.p = munb[, jay]) + 10
 
 
 
@@ -6246,13 +6244,13 @@ dzabinom <- function(x, size, prob, pobs0 = 0, log = FALSE) {
   if (log.arg) {
     ans[ index0] <- log(pobs0[index0])
     ans[!index0] <- log1p(-pobs0[!index0]) +
-                   dposbinom(x[!index0], size = size[!index0],
-                             prob = prob[!index0], log = TRUE)
+                    dgaitbinom(x[!index0], size[!index0], prob[!index0],
+                               truncate = 0, log = TRUE)
   } else {
     ans[ index0] <- pobs0[index0]
     ans[!index0] <- (1-pobs0[!index0]) *
-                   dposbinom(x[!index0], size = size[!index0],
-                             prob = prob[!index0])
+                    dgaitbinom(x[!index0], size[!index0], prob[!index0],
+                               truncate = 0)
   }
   ans
 }
@@ -6273,7 +6271,7 @@ pzabinom <- function(q, size, prob, pobs0 = 0) {
 
   ans[q >  0] <- pobs0[q > 0] +
       (1 - pobs0[q > 0]) *
-      pposbinom(q[q > 0], size = size[q > 0], prob = prob[q > 0])
+      pgaitbinom(q[q > 0], size[q > 0], prob[q > 0], truncate = 0)
   ans[q <  0] <- 0
   ans[q == 0] <- pobs0[q == 0]
 
@@ -6298,9 +6296,8 @@ qzabinom <- function(p, size, prob, pobs0 = 0) {
   ans <- p
   ind4 <- (p > pobs0)
   ans[!ind4] <- 0.0
-  ans[ ind4] <- qposbinom((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
-                         size = size[ind4],
-                         prob = prob[ind4])
+  ans[ ind4] <- qgaitbinom((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
+                           size[ind4], prob[ind4], truncate = 0)
   ans
 }
 
@@ -6311,7 +6308,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
                            length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
-  ans <- rposbinom(use.n, size, prob)
+  ans <- rgaitbinom(use.n, size, prob, truncate = 0)
   if (length(pobs0) != use.n)
     pobs0 <- rep_len(pobs0, use.n)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -7590,883 +7587,6 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 }  # End of zageometricff
 
 
-
-
-
-
-
-deflat.limit.oipospois  <- function(lambda) {
-  if (any(lambda < 0))
-    stop("argument 'lambda' cannot be negative")
-  ans <- -lambda / (expm1(lambda) - lambda)
-  ans[is.infinite(lambda)] <- 0
-  ans
-}
-
-
-doipospois <- function(x, lambda, pstr1 = 0, log = FALSE) {
-
-
-
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
-
-  LLL <- max(length(x), length(lambda), length(pstr1))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pstr1)  != LLL) pstr1  <- rep_len(pstr1,  LLL)
-
-  ans <- rep(NA_real_, LLL)
-  index1 <- (x == 1)
-  if (log.arg) {
-    ans[ index1] <- log(pstr1[ index1] + (1 - pstr1[ index1]) *
-                        dpospois(x[ index1], lambda[ index1]))
-    ans[!index1] <- log1p(-pstr1[!index1]) +
-                    dpospois(x[!index1], lambda[!index1], log = TRUE)
-  } else {
-    ans[ index1] <-      pstr1[ index1] + (1 - pstr1[ index1]) *
-                       dpospois(x[ index1], lambda[ index1])
-    ans[!index1] <- (1 - pstr1[!index1]) *
-                    dpospois(x[!index1], lambda[!index1])
-  }
-
-
-  deflat.limit <- deflat.limit.oipospois(lambda)
-  ans[pstr1 < deflat.limit] <- NaN
-  ans[pstr1 > 1] <- NaN
-
-  ans
-}  # doipospois
-
-
-
-
-
-
-poipospois <- function(q, lambda, pstr1 = 0) {
-
-  LLL <- max(length(q), length(lambda), length(pstr1))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pstr1)  != LLL) pstr1  <- rep_len(pstr1,  LLL)
-  ans <- rep_len(NA_real_, LLL)
-  deflat.limit <- deflat.limit.oipospois(lambda)
-
-  ans <- ppospois(q, lambda)  #, lower.tail = lower.tail, log.p = log.p
-  ans <- ifelse(q < 1, 0, pstr1 + (1 - pstr1) * ans)
-
-  ans[pstr1 < deflat.limit] <- NaN
-  ans[1 < pstr1] <- NaN
-  ans[lambda <= 0] <- NaN
-
-  ans
-}  # poipospois
-
-
-
-
-qoipospois <- function(p, lambda, pstr1 = 0) {
-
-  LLL <- max(length(p), length(lambda), length(pstr1))
-  if (length(p)      != LLL) p      <- rep_len(p,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pstr1)  != LLL) pstr1  <- rep_len(pstr1,  LLL)
-  ans <- rep_len(NA_real_, LLL)
-  deflat.limit <- deflat.limit.oipospois(lambda)
-
-  ans[p <= pstr1] <- 1
-  pindex <- (deflat.limit <= pstr1) & (pstr1 < p)
-  ans[pindex] <-
-    qpospois((p[pindex] - pstr1[pindex]) / (1 - pstr1[pindex]),
-             lambda = lambda[pindex])
-
-  ans[pstr1 < deflat.limit] <- NaN
-  ans[1 < pstr1] <- NaN
-
-  ans[p < 0] <- NaN
-  ans[1 < p] <- NaN
-  ans[lambda <= 0] <- NaN
-
-  ans
-}  # qoipospois
-
-
-
-roipospois <- function(n, lambda, pstr1 = 0) {
-
-  ans <- qoipospois(runif(n), lambda, pstr1 = pstr1)
-  ans
-}  # roipospois
-
-
-
-
-
-
- oipospoisson <-
-  function(lpstr1 = "logitlink", llambda = "loglink",
-           type.fitted = c("mean", "lambda", "pobs1", "pstr1", "onempstr1"),
-           ilambda = NULL,
-           gpstr1 = (1:19)/20,
-           gprobs.y = (1:19)/20,  # 20160518; grid for finding lambd.init
-           imethod = 1,
-           zero = NULL) {
-
-  if (!is.Numeric(imethod, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE) ||
-      imethod > 2)
-    stop("argument 'imethod' must be 1 or 2")
-
-
-  gpstr10 <- gpstr1
-
-
-  lpstr10 <- as.list(substitute(lpstr1))
-  epstr10 <- link2list(lpstr10)
-  lpstr10 <- attr(epstr10, "function.name")
-
-  llambda <- as.list(substitute(llambda))
-  elambda <- link2list(llambda)
-  llambda <- attr(elambda, "function.name")
-
-
-
-  type.fitted <- match.arg(type.fitted,
-                   c("mean", "lambda", "pobs1", "pstr1", "onempstr1"))[1]
-
-
-  if (length(ilambda))
-    if (!is.Numeric(ilambda, positive = TRUE))
-      stop("argument 'ilambda' values must be positive")
-
-
-  new("vglmff",
-  blurb = c("One-inflated positive Poisson\n\n",
-            "Links:    ",
-            namesof("pstr1",  lpstr10, earg = epstr10 ), ", ",
-            namesof("lambda", llambda, earg = elambda ), "\n",
-            "Mean:     pstr1 + (1 - pstr1) * lambda / (1 - exp(-lambda))"),
-
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
-  }), list( .zero = zero ))),
-
-  infos = eval(substitute(function(...) {
-    list(M1 = 2,
-         Q1 = 1,
-         expected = TRUE,
-         imethod = .imethod ,
-         multipleResponses = TRUE,
-         parameters.names = c("pstr1", "lambda"),
-         type.fitted  = .type.fitted ,
-         zero = .zero )
-  }, list( .zero = zero,
-           .imethod = imethod,
-           .type.fitted = type.fitted
-         ))),
-  initialize = eval(substitute(expression({
-    M1 <- 2
-
-    temp5 <-
-    w.y.check(w = w, y = y,
-              Is.positive.y = TRUE,
-              Is.nonnegative.y = TRUE,
-              Is.integer.y = TRUE,
-              ncol.w.max = Inf,
-              ncol.y.max = Inf,
-              out.wy = TRUE,
-              colsyperw = 1,
-              maximize = TRUE)
-    w <- temp5$w
-    y <- temp5$y
-
-
-
-    NOS <- ncoly <- ncol(y)
-    extra$ncoly <- ncoly
-    M <- M1 * ncoly
-    extra$type.fitted <- .type.fitted
-    extra$colnames.y  <- colnames(y)
-
-    mynames1 <- param.names("pstr1",  ncoly, skip1 = TRUE)
-    mynames2 <- param.names("lambda", ncoly, skip1 = TRUE)
-    predictors.names <-
-        c(namesof(mynames1, .lpstr10 , earg = .epstr10 , tag = FALSE),
-          namesof(mynames2, .llambda , earg = .elambda , tag = FALSE))[
-          interleave.VGAM(M, M1 = M1)]
-
-
-    if (!length(etastart)) {
-
-      lambd.init <-
-      pstr1.init <- matrix(NA_real_, n, NOS)
-      gpstr10 <- .gpstr10
-      gprobs.y  <- .gprobs.y
-      ilambda <- .ilambda
-
-      oipospois.Loglikfun <- function(pstr1, lambda, y, x, w, extraargs) {
-        sum(c(w) * doipospois(x = y, pstr1 = pstr1,
-                              lambda = lambda, log = TRUE))
-      }
-
-
-      for (jay in 1:NOS) {  # For each response 'y_jay'... do:
-        TFvec <- y[, jay] > 1  # Important to exclude the 1s
-        posyvec <- y[TFvec, jay]  # Variable name unchanged (lazy)
-        lambd.init.jay <- if ( .imethod == 1) {
-          quantile(posyvec, probs = gprobs.y) - 1/2  # + 1/16
-        } else if ( .imethod == 2) {
-          weighted.mean(posyvec, w = w[TFvec, jay]) - 1/2
-        } else {
-          warning("argument 'imethod' should have the value 1 or 2")
-        }
-        if (length(ilambda)) { # zz
-          lambd.init.jay <- ilambda[jay]
-        } else {
-        }
-
-
-
-        try.this <-
-          grid.search2(gpstr10, lambd.init.jay,
-                       objfun = oipospois.Loglikfun,
-                       y = y[, jay],  # x = x[TFvec, , drop = FALSE],
-                       w = w[, jay],
-                       ret.objfun = TRUE)  # Last value is the loglik
-        pstr1.init[, jay] <-  try.this["Value1"]
-        lambd.init[, jay] <- (try.this["Value2"] + y[, jay]) / 2
-        lambd.init[, jay] <-  try.this["Value2"]
-      }  # for (jay ...)
-
-      etastart <- cbind(theta2eta(pstr1.init, .lpstr10 , earg = .epstr10 ),
-                        theta2eta(lambd.init, .llambda , earg = .elambda ))[,
-                        interleave.VGAM(M, M1 = M1)]
-      mustart <- NULL  # Since etastart has been computed.
-    }  # End of !length(etastart)
-  }), list( .lpstr10 = lpstr10, .llambda = llambda,
-            .epstr10 = epstr10, .elambda = elambda,
-                                .ilambda = ilambda,
-            .gpstr10 = gpstr10,
-            .gprobs.y = gprobs.y,
-            .imethod = imethod,  # .probs.y = probs.y,
-            .type.fitted = type.fitted ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    NOS <- ncol(eta) / c(M1 = 2)
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning the 'mean'.")
-                     "mean"
-                   }
-
-    type.fitted <- match.arg(type.fitted,
-                     c("mean", "lambda", "pobs1", "pstr1", "onempstr1"))[1]
-
-    phimat <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr10 , earg = .epstr10 )
-    lambda <- eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
-
-    ans <-
-      switch(type.fitted,
-      "mean"      = phimat - (1 - phimat) * lambda / expm1(-lambda),
-      "lambda"    = lambda,
-      "pobs1"     = doipospois(1, lambda = lambda, pstr1 = phimat), # Pr(Y=1)
-      "pstr1"     =     phimat,
-      "onempstr1" = 1 - phimat)
-    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
-  }, list( .lpstr10 = lpstr10, .llambda = llambda,
-           .epstr10 = epstr10, .elambda = elambda
-         ))),
-  last = eval(substitute(expression({
-    misc$link <-
-      c(rep_len( .lpstr10 , NOS),
-        rep_len( .llambda , NOS))[interleave.VGAM(M, M1 = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
-    names(misc$link) <- temp.names
-
-    misc$earg <- vector("list", M)
-    names(misc$earg) <- temp.names
-    for (ii in 1:ncoly) {
-      misc$earg[[M1*ii-1]] <- .epstr10
-      misc$earg[[M1*ii  ]] <- .elambda
-    }
-  }), list( .lpstr10 = lpstr10, .llambda = llambda,
-            .epstr10 = epstr10, .elambda = elambda ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    phimat <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr10 , earg = .epstr10 )
-    lambda <- eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * doipospois(x = y, pstr1 = phimat, lambda = lambda,
-                                   log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .lpstr10 = lpstr10, .llambda = llambda,
-           .epstr10 = epstr10, .elambda = elambda ))),
-  vfamily = c("oipospoisson"),
-
-
-
-  simslot = eval(substitute(
-  function(object, nsim) {
-    pwts <- if (length(pwts <- object@prior.weights) > 0)
-              pwts else weights(object, type = "prior")
-    if (any(pwts != 1))
-      warning("ignoring prior weights")
-    eta <- predict(object)
-    phimat <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr10 , earg = .epstr10 )
-    lambda <- eta2theta(eta[, c(FALSE, TRUE)], .llambda , earg = .elambda )
-    roipospois(nsim * length(lambda), lambda = lambda, pstr1 = phimat)
-  }, list( .lpstr10 = lpstr10, .llambda = llambda,
-           .epstr10 = epstr10, .elambda = elambda ))),
-
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    phimat <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr10 ,
-                        earg = .epstr10 )
-    lambda <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .llambda ,
-                        earg = .elambda )
-    okay1 <- all(is.finite(lambda)) && all(0 < lambda) &&
-             all(is.finite(phimat)) && all(phimat < 1)
-    deflat.limit <- deflat.limit.oipospois(lambda)
-    okay2.deflat <- TRUE
-    if (okay1 && !(okay2.deflat <- all(deflat.limit < phimat)))
-      warning("parameter 'pstr1' is too negative even allowing for ",
-              "0-deflation.")
-    okay1 && okay2.deflat
-  }, list( .lpstr10 = lpstr10, .llambda = llambda,
-           .epstr10 = epstr10, .elambda = elambda ))),
-
-
-
-
-
-
-  deriv = eval(substitute(expression({
-    M1 <- 2
-    NOS <- M / M1
-    phimat <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr10 ,
-                        earg = .epstr10 )
-    lambda <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .llambda ,
-                        earg = .elambda )
-
-    pmf1 <- -lambda * exp(-lambda) / expm1(-lambda)
-    onempmf1 <- 1 - pmf1  # doipospois(1, lambda = lambda, pstr1 = phimat)
-    pobs1 <- phimat + (1 - phimat) * pmf1
-    index1 <- as.matrix(y == 1)
-
-    dl.dphimat <- onempmf1 / pobs1
-    dl.dphimat[!index1] <- -1 / (1 - phimat[!index1])
-
-    dpmf1.dlambda <- exp(-lambda) *
-        (1 - lambda - exp(-lambda)) / (expm1(-lambda))^2
-
-    d3 <- deriv3( ~ exp(-lambda) * lambda / (1 - exp(-lambda)),
-                  c("lambda"), hessian = TRUE)
-    eval.d3 <- eval(d3)
-    d2pmf1.dlambda2 <- attr(eval.d3, "hessian")
-    dim(d2pmf1.dlambda2) <- c(n, NOS)  # Matrix it, even for NOS==1
-
-    dl.dlambda <- (1 - phimat) * dpmf1.dlambda / pobs1  #
-    dl.dlambda[!index1] <- y[!index1] / lambda[!index1] - 1 -
-                           1 / expm1(lambda[!index1])
-
-    dphimat.deta <- dtheta.deta(phimat, .lpstr10 , earg = .epstr10 )
-    dlambda.deta <- dtheta.deta(lambda, .llambda , earg = .elambda )
-
-    myderiv <- c(w) * cbind(dl.dphimat * dphimat.deta,
-                            dl.dlambda * dlambda.deta)
-    myderiv[, interleave.VGAM(M, M1 = M1)]
-  }), list( .lpstr10 = lpstr10, .llambda = llambda,
-            .epstr10 = epstr10, .elambda = elambda ))),
-  weight = eval(substitute(expression({
-
-    ned2l.dphimat2 <- onempmf1 / ((1 - phimat) * pobs1)  #
-    ned2l.dphimatlambda <- dpmf1.dlambda / pobs1  #
-    ned2l.dlambda2 <-
-     (((1 - phimat) * dpmf1.dlambda)^2) / pobs1 -
-       (1 - phimat) * d2pmf1.dlambda2 +
-       (1 - phimat) * (1/lambda - exp(-lambda) *
-       (1 - exp(-lambda) - lambda * exp(-lambda)) / (expm1(-lambda))^3)
-
-    wz <- array(c(c(w) * ned2l.dphimat2 * dphimat.deta^2,
-                  c(w) * ned2l.dlambda2 * dlambda.deta^2,
-                  c(w) * ned2l.dphimatlambda * dphimat.deta * dlambda.deta),
-                dim = c(n, M / M1, 3))
-    wz <- arwz2wz(wz, M = M, M1 = M1)
-    wz
-  }), list( .llambda = llambda, .elambda = elambda ))))
-}  # oipospoisson
-
-
-
-
-
-
-
-doiposbinom <- function(x, size, prob, pstr1 = 0, log = FALSE) {
-
-
-
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
-
-  LLL <- max(length(x), length(size), length(prob), length(pstr1))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr1)  != LLL) pstr1  <- rep_len(pstr1,  LLL)
-
-  ans <- x  # + prob + pstr1
-  index1 <- (x == 1)
-  if (log.arg) {
-    ans[ index1] <- log(pstr1[ index1] + (1 - pstr1[ index1]) *
-                        dposbinom(x[ index1], size[ index1],
-                                  prob[ index1]))
-    ans[!index1] <- log1p(-pstr1[!index1]) +
-                    dposbinom(x[!index1], size[!index1],
-                              prob[!index1], log = TRUE)
-  } else {
-    ans[ index1] <-      pstr1[ index1] + (1 - pstr1[ index1]) *
-                        dposbinom(x[ index1], size[ index1], prob[ index1])
-    ans[!index1] <- (1 - pstr1[!index1]) *
-                        dposbinom(x[!index1], size[!index1], prob[!index1])
-  }
-
-
-  deflat.limit <- size * prob / (1 + (size-1) * prob -
-                                 1 / (1-prob)^(size-1))
-  ans[pstr1 < deflat.limit] <- NaN
-  ans[1 < pstr1] <- NaN
-
-  ans
-}  # doiposbinom
-
-
-
-poiposbinom <- function(q, size, prob, pstr1 = 0) {
-
-  LLL <- max(length(q), length(size), length(prob), length(pstr1))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr1)  != LLL) pstr1  <- rep_len(pstr1,  LLL)
-  ans <- rep_len(NA_real_, LLL)
-
-  ans <- pposbinom(q, size, prob)  # lower.tail=lower.tail, log.p=log.p
-  ans <- ifelse(q < 1, 0, pstr1 + (1 - pstr1) * ans)
-
-  deflat.limit <- size * prob / (1 + (size-1) * prob -
-                                 1 / (1-prob)^(size-1))
-  ans[pstr1 < deflat.limit] <- NaN
-  ans[1 < pstr1] <- NaN
-
-  ans
-}
-
-
-
-
-qoiposbinom <- function(p, size, prob, pstr1 = 0) {
-
-  LLL <- max(length(p), length(size), length(prob), length(pstr1))
-  if (length(p)      != LLL) p      <- rep_len(p,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr1)  != LLL) pstr1  <- rep_len(pstr1,  LLL)
-  ans <- rep_len(NA_real_, LLL)
-  deflat.limit <- size * prob / (1 + (size-1) * prob -
-                                 1 / (1-prob)^(size-1))
-
-  ans[p <= pstr1] <- 1
-  pindex <- (deflat.limit <= pstr1) & (pstr1 < p)
-  ans[pindex] <-
-    qposbinom((p[pindex] - pstr1[pindex]) / (1 - pstr1[pindex]),
-               size = size[pindex],
-               prob = prob[pindex])
-
-  ans[p == 0] <- 1
-  ans[prob == 0] <- NaN
-
-  ans[pstr1 < deflat.limit] <- NaN
-  ans[1 < pstr1] <- NaN
-
-  ans[p < 0] <- NaN
-  ans[1 < p] <- NaN
-  ans
-}  # qoiposbinom
-
-
-
-roiposbinom <- function(n, size, prob, pstr1 = 0) {
-
-  qoiposbinom(runif(n), size, prob, pstr1 = pstr1)
-}  # roiposbinom
-
-
-
- oiposbinomial <-
-  function(lpstr1 = "logitlink", lprob = "logitlink",
-           type.fitted = c("mean", "prob", "pobs1", "pstr1", "onempstr1"),
-           iprob = NULL,
-    gpstr1 = ppoints(9),  # (1:19)/20,
-    gprob  = ppoints(9),  # (1:19)/20,  # 20160613; grid for finding prob
-           multiple.responses = FALSE,
-           zero = NULL) {
-
-  gprobb <- gprob
-
-  lpstr1 <- as.list(substitute(lpstr1))
-  epstr1 <- link2list(lpstr1)
-  lpstr1 <- attr(epstr1, "function.name")
-
-  lprobb <- as.list(substitute(lprob))
-  eprobb <- link2list(lprobb)
-  lprobb <- attr(eprobb, "function.name")
-
-
-
-  type.fitted <- match.arg(type.fitted,
-                   c("mean", "prob", "pobs1", "pstr1", "onempstr1"))[1]
-
-  iprobb <- iprob
-  if (length(iprobb))
-    if (!is.Numeric(iprobb, positive = TRUE) ||
-        any(iprobb >= 1))
-      stop("argument 'iprob' values must be in (0, 1)")
-
-
-  new("vglmff",
-  blurb = c("One-inflated positive binomial\n\n",
-            "Links:    ",
-            namesof("pstr1", lpstr1, earg = epstr1 ), ", ",
-            namesof("prob",  lprobb, earg = eprobb ), "\n",
-            "Mean:     pstr1 + (1 - pstr1) * ",
-                      "size * prob / (1 - (1-prob)^size)"),
-
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
-  }), list( .zero = zero ))),
-
-  infos = eval(substitute(function(...) {
-    list(M1 = 2,
-         Q1 = 1,
-         expected = TRUE,
-         multipleResponses = .multiple.responses ,  # FALSE,  # TRUE,
-         parameters.names = c("pstr1", "prob"),
-         type.fitted  = .type.fitted ,
-         zero = .zero )
-  }, list( .zero = zero,
-           .multiple.responses = multiple.responses,
-           .type.fitted = type.fitted
-         ))),
-  initialize = eval(substitute(expression({
-    M1 <- 2
-    multiple.responses <- .multiple.responses
-    y <- as.matrix(y)
-    w.orig <- as.matrix(w)  # zz this may be of a weird dimension
-
-    temp5 <-
-    w.y.check(w = w, y = y,
-              Is.positive.y = TRUE,
-              Is.integer.y =  if (multiple.responses) FALSE else FALSE,
-              ncol.w.max =  if (multiple.responses) ncol(y) else 1,
-              ncol.y.max =  if (multiple.responses) ncol(y) else ncol(y),
-              out.wy = TRUE,
-              colsyperw = if (multiple.responses) 1 else ncol(y),
-              maximize = TRUE)
-    w <- temp5$w
-    y <- temp5$y
-
-
-    if (multiple.responses) {
-      if (!all(w == round(w)))
-        stop("the 'weights' argument must be integer valued")
-      if (min(y) < 0 || max(y) > 1)
-        stop("the response must be a proportion")
-      Nvec <- w
-    } else {
-      if (ncol(y) > 1) {
-        Nvec <- rowSums(y)
-        y[, 1] <- y[, 1] / Nvec
-        y <- y[, 1, drop = FALSE]
-        w[, 1] <- w[, 1] * Nvec  # == w.orig * Nvec
-        w <- w[, 1, drop = FALSE]
-      } else {
-        Nvec <- w  # rep_len(1, nrow(x))
-        if (!all(Nvec == round(Nvec)))
-          stop("number of trials is not integer-valued")
-      }
-    }
-    extra$Nvec <- Nvec
-    w.orig <- matrix(w.orig, n, ncol(y))
-
-
-
-    NOS <- ncoly <- ncol(y)
-    extra$ncoly <- ncoly
-    M <- M1 * ncoly
-    extra$type.fitted <- .type.fitted
-    extra$colnames.y  <- colnames(y)
-
-    mynames1 <- param.names("pstr1", ncoly, skip1 = TRUE)
-    mynames2 <- param.names("prob",  ncoly, skip1 = TRUE)
-    predictors.names <-
-        c(namesof(mynames1, .lpstr1 , earg = .epstr1 , tag = FALSE),
-          namesof(mynames2, .lprobb , earg = .eprobb , tag = FALSE))[
-          interleave.VGAM(M, M1 = M1)]
-
-
-    if (!length(etastart)) {
-      probb.init <-
-      pstr1.init <- matrix(NA_real_, n, NOS)
-      gpstr1 <- .gpstr1
-      gprobb <- .gprobb
-      iprobb <- .iprobb
-      if (length(iprobb))
-        gprobb <- iprobb
-
-      oiposbinom.Loglikfun <- function(pstr1, prob, y, x, w, extraargs) {
-      sum(c(w) * doiposbinom(x = y, pstr1 = pstr1, size = extraargs$size,
-                             prob = prob, log = TRUE))
-      }
-
-
-      for (jay in 1:NOS) {  # For each response 'y_jay'... do:
-
-
-        try.this <-
-          grid.search2(gpstr1, gprobb,
-                       objfun = oiposbinom.Loglikfun,
-                       y = round(y[, jay] * Nvec[, jay]),
-                     w = 1,  # w.orig[, jay], or 1, or w[, jay], possibly
-                       extraargs = list(size = Nvec),
-                       ret.objfun = TRUE)  # Last value is the loglik
-        pstr1.init[, jay] <-  try.this["Value1"]
-        probb.init[, jay] <-  try.this["Value2"]
-      }  # for (jay ...)
-
-      etastart <- cbind(theta2eta(pstr1.init, .lpstr1 , earg = .epstr1 ),
-                        theta2eta(probb.init, .lprobb , earg = .eprobb ))[,
-                        interleave.VGAM(M, M1 = M1)]
-      mustart <- NULL  # Since etastart has been computed.
-    }  # End of !length(etastart)
-  }), list( .lpstr1 = lpstr1, .lprobb = lprobb,
-            .epstr1 = epstr1, .eprobb = eprobb,
-                              .iprobb = iprobb,
-            .gpstr1 = gpstr1, .gprobb = gprobb,
-            .multiple.responses = multiple.responses,
-            .type.fitted = type.fitted ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    NOS <- ncol(eta) / c(M1 = 2)
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning the 'mean'.")
-                     "mean"
-                   }
-
-    type.fitted <- match.arg(type.fitted,
-                     c("mean", "prob", "pobs1", "pstr1", "onempstr1"))[1]
-
-    pstr1 <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr1 , earg = .epstr1 )
-    probb <- eta2theta(eta[, c(FALSE, TRUE)], .lprobb , earg = .eprobb )
-    Nvec  <- extra$Nvec
-    if (!is.numeric(Nvec))
-      stop("something gone wrong with 'Nvec'")
-
-    ans <-
-      switch(type.fitted,
-             "mean"      = pstr1 + (1 - pstr1) * Nvec *
-                           probb / (1 - (1-probb)^Nvec),
-             "prob"      = probb,
-             "pobs1"     = doiposbinom(1, prob = probb,
-                                   size = Nvec, pstr1 = pstr1), # Pr(Y=1)
-             "pstr1"     =     pstr1,
-             "onempstr1" = 1 - pstr1)
-    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = NOS)
-  }, list( .lpstr1 = lpstr1, .lprobb = lprobb,
-           .epstr1 = epstr1, .eprobb = eprobb
-         ))),
-  last = eval(substitute(expression({
-    misc$link <-
-      c(rep_len( .lpstr1 , NOS),
-        rep_len( .lprobb , NOS))[interleave.VGAM(M, M1 = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
-    names(misc$link) <- temp.names
-
-    misc$earg <- vector("list", M)
-    names(misc$earg) <- temp.names
-    for (ii in 1:ncoly) {
-      misc$earg[[M1*ii-1]] <- .epstr1
-      misc$earg[[M1*ii  ]] <- .eprobb
-    }
-  }), list( .lpstr1 = lpstr1, .lprobb = lprobb,
-            .epstr1 = epstr1, .eprobb = eprobb ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    pstr1 <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr1 , earg = .epstr1 )
-    probb <- eta2theta(eta[, c(FALSE, TRUE)], .lprobb , earg = .eprobb )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * doiposbinom(x = round(extra$Nvec * y),
-                                    size = extra$Nvec,  # w,
-                                    pstr1 = pstr1, prob = probb,
-                                    log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .lpstr1 = lpstr1, .lprobb = lprobb,
-           .epstr1 = epstr1, .eprobb = eprobb ))),
-  vfamily = c("oiposbinomial"),
-
-
-
-  simslot = eval(substitute(
-  function(object, nsim) {
-    pwts <- if (length(pwts <- object@prior.weights) > 0)
-              pwts else weights(object, type = "prior")
-    if (any(pwts != 1))
-      warning("ignoring prior weights")
-    eta <- predict(object)
-    pstr1 <- eta2theta(eta[, c(TRUE, FALSE)], .lpstr1 , earg = .epstr1 )
-    probb <- eta2theta(eta[, c(FALSE, TRUE)], .lprobb , earg = .eprobb )
-    Nvec <- object@extra$Nvec
-    roiposbinom(nsim * length(probb), size = Nvec,
-                probb = probb, pstr1 = pstr1)
-  }, list( .lpstr1 = lpstr1, .lprobb = lprobb,
-           .epstr1 = epstr1, .eprobb = eprobb ))),
-
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    pstr1 <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr1 ,
-                        earg = .epstr1 )
-    probb <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .lprobb ,
-                        earg = .eprobb )
-    size <- extra$Nvec
-    okay1 <- all(is.finite(pstr1)) && all(pstr1 < 1) &&
-             all(is.finite(probb)) && all(0 < probb & probb < 1)
-    deflat.limit <- size * probb / (1 + (size-1) * probb -
-                                    1 / (1-probb)^(size-1))
-    okay2.deflat <- TRUE
-    if (okay1 && !(okay2.deflat <- all(deflat.limit < pstr1)))
-      warning("parameter 'pstr1' is too negative even allowing for ",
-              "1-deflation.")
-    okay1 && okay2.deflat
-  }, list( .lpstr1 = lpstr1, .lprobb = lprobb,
-           .epstr1 = epstr1, .eprobb = eprobb ))),
-
-
-
-
-
-
-  deriv = eval(substitute(expression({
-    M1 <- 2
-    NOS <- M / M1
-    pstr1 <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE], .lpstr1 ,
-                       earg = .epstr1 )
-    probb <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE], .lprobb ,
-                       earg = .eprobb )
-
-    size <- extra$Nvec
-
-    Qn <- function(n, prob) (1 - prob)^n
-    pmf1 <- size * probb * Qn(size-1, probb) / (1 - Qn(size, probb))
-
-
-    onempmf1 <- 1 - pmf1  # doiposbinom(1, probb = probb, pstr1 = pstr1)
-    pobs1 <- pstr1 + (1 - pstr1) * pmf1
-    index1 <- as.matrix(round(w * y) == 1)
-
-    dl.dpstr1 <- onempmf1 / pobs1
-    dl.dpstr1[!index1] <- -1 / (1 - pstr1[!index1])
-
-
-    d3 <- deriv3( ~ size * probb * ((1 - probb)^(size-1))
-                    / (1 - (1 - probb)^size),
-                  c("probb"), hessian = TRUE)
-    eval.d3 <- eval(d3)
-    dpmf1.dprobb   <- attr(eval.d3, "gradient")  # For checking only
-    d2pmf1.dprobb2 <- attr(eval.d3, "hessian")   #
-    dim(dpmf1.dprobb)   <- c(n, NOS)  # Matrix it, even for NOS==1
-    dim(d2pmf1.dprobb2) <- c(n, NOS)  # Matrix it, even for NOS==1
-
-
-
-    dl.dprobb <-  size *
-      (      y  /      probb   -
-       (1  - y) / (1 - probb)  -
-       Qn(size-1, probb) / (1 - Qn(size, probb)))
-    dl.dprobb[index1] <- (1 - pstr1[index1]) *
-                         dpmf1.dprobb[index1] / pobs1[index1]
-
-    dpstr1.deta <- dtheta.deta(pstr1, .lpstr1 , earg = .epstr1 )
-    dprobb.deta <- dtheta.deta(probb, .lprobb , earg = .eprobb )
-
-    myderiv <- cbind(dl.dpstr1 * dpstr1.deta,  # * c(w),
-                     dl.dprobb * dprobb.deta)
-    myderiv[, interleave.VGAM(M, M1 = M1)]
-  }), list( .lpstr1 = lpstr1, .lprobb = lprobb,
-            .epstr1 = epstr1, .eprobb = eprobb ))),
-
-
-
-
-  weight = eval(substitute(expression({
-
-
-    d4 <- deriv3( ~ size * ((1 - probb)^(size-1)) /
-                    (1 - (1 - probb)^size),
-                 c("probb"), hessian = FALSE)
-    eval.d4 <- eval(d4)
-    d2logonempmf0.dprobb2 <- attr(eval.d4, "gradient")
-    dim(d2logonempmf0.dprobb2) <- c(n, NOS)  # Matrix it, even for NOS==1
-
-
-    E2 <- function(size, prob) {
-      size *
-      prob * (1 - Qn(size-1, prob)) /
-     (1 - Qn(size, prob) - size * prob * Qn(size-1, prob))
-    }
-
-    E2mat <- E2(size, probb)
-    RHS <- onempmf1 * (        E2mat  /    probb^2 +
-                       (size - E2mat) / (1-probb)^2 +
-                       d2logonempmf0.dprobb2)
-
-
-    LHS <- -d2pmf1.dprobb2 + ((1-pstr1) / pobs1) * dpmf1.dprobb^2
-
-
-    ned2l.dpstr12 <- onempmf1 / ((1 - pstr1) * pobs1)
-    ned2l.dpstr1probb <- dpmf1.dprobb / pobs1
-    ned2l.dprobb2 <- (1 - pstr1) * (LHS + RHS)
-
-
-    wz <- array(c(ned2l.dpstr12 * dpstr1.deta^2,
-                  ned2l.dprobb2 * dprobb.deta^2,
-                  ned2l.dpstr1probb * dpstr1.deta * dprobb.deta),
-                dim = c(n, M / M1, 3))
-    wz <- arwz2wz(wz, M = M, M1 = M1)
-    wz
-  }), list( .lprobb = lprobb, .eprobb = eprobb ))))
-}  # oiposbinomial
 
 
 

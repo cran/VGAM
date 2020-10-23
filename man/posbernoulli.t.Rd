@@ -174,7 +174,7 @@ The \pkg{VGAM} package for capture--recapture data using the
 conditional likelihood.
   \emph{Journal of Statistical Software},
   \bold{65}, 1--33.
-  \url{http://www.jstatsoft.org/v65/i05/}.
+  \url{https://www.jstatsoft.org/v65/i05/}.
 
 % \bold{65}(5), 1--33.
 

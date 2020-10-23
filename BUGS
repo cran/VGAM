@@ -1,10 +1,17 @@
 Here is a list of known bugs.
 
 
+2020-10
+
+rrvglm() does not do half stepping so one iteration can be worse
+than the previous. It seems the latest estimate of A and/or C
+does not translate into an improvement in the next IRLS iteration.
+
+
+
 2016-06
 
 lrtest(zipoissonff.object, poissonff.object) fails.
-
 
 
 

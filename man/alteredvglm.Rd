@@ -2,13 +2,17 @@
 \alias{altered}
 \alias{inflated}
 \alias{truncated}
+\alias{is.altered}
+\alias{is.inflated}
+\alias{is.truncated}
 \title{
 Altered, Inflated and Truncated Values in GAIT Regression
 
 }
 \description{
   Return the altered, inflated and truncated values
-  in a GAIT regression from a fitted object
+  in a GAIT regression object,
+  else test whether the model is altered, inflated or truncated
 
 
   
@@ -17,11 +21,16 @@ Altered, Inflated and Truncated Values in GAIT Regression
 altered(object, \dots)
 inflated(object, \dots)
 truncated(object, \dots)
+is.altered(object, \dots)
+is.inflated(object, \dots)
+is.truncated(object, \dots)
 }
 %#           constraints = NULL,
 \arguments{
   \item{object}{
     an object of class \code{"vglm"}.
+    Currently only a GAIT regression object returns
+    valid results of these functions.
 
 
   }
@@ -32,7 +41,7 @@ truncated(object, \dots)
   }
 }
 \value{
-  Returns one type of `special' sets assoicated with GAIT regression.
+  Returns one type of `special' sets associated with GAIT regression.
   This is a vector, else a list for truncation.
   All three sets are returned by \code{\link{specialsvglm}}.
 
@@ -60,26 +69,39 @@ truncated(object, \dots)
 %\note{
 
 %}
-%\section{Warning}{
-%}
+\section{Warning}{
+  Some of these functions are subject to change.
+  Only family functions beginning with \code{"gait"} will
+  work with these functions, hence
+  \code{\link{zipoisson}} fits will return \code{FALSE} or empty
+  values.
+
+
+
+}
 \seealso{
   \code{\link{vglm}},
   \code{\link{vglm-class}},
   \code{\link{specialsvglm}},
-  \code{\link{gaitpoisson.mix}},
-  \code{\link{gaitlog.mix}}.
+  \code{\link{gaitpoisson}},
+  \code{\link{gaitlog}},
+  \code{\link{gaitzeta}},
+  \code{\link{Gaitpois}}.
 
 
+
+% \code{\link{gaitzeta.mix}},
 
 
 }
 \references{
 Yee, T. W. and Ma, C. (2020).
 Generally--altered, --inflated and --truncated regression,
-with application to heaped and seeped count data.
+with application to heaped and seeped counts.
 \emph{In preparation}.
 
 
+% with application to heaped and seeped count data.
 
 }
 
@@ -93,12 +115,15 @@ with application to heaped and seeped count data.
 
 \examples{
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
-fit1 <- vglm(y ~ 1, gaitpoisson.mix(inflate = 1), abdata, weight = w,
-             subset = w > 0)
-altered(fit1)
-inflated(fit1)
-truncated(fit1)
+fit1 <- vglm(y ~ 1, gaitpoisson(alt.mix = 0),
+             abdata, weight = w, subset = w > 0)
 specials(fit1)  # All three sets
+altered(fit1)  # Subject to change
+inflated(fit1)  # Subject to change
+truncated(fit1)  # Subject to change
+is.altered(fit1)
+is.inflated(fit1)
+is.truncated(fit1)
 }
 \keyword{models}
 

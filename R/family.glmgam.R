@@ -14,6 +14,18 @@
 
 
 
+hdeffminp <-
+  function(object, ...) {
+  derivs5 <- hdeff(object, deriv = 2, se = FALSE)
+  
+  coef(object) - derivs5[, "deriv1"] / derivs5[, "deriv2"]
+} # hdeffminp
+
+
+
+
+
+
  binomialff <-
   function(link = "logitlink",
            multiple.responses = FALSE,

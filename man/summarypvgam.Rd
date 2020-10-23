@@ -87,6 +87,8 @@ summarypvgam(object, dispersion = NULL, digits = options()$digits - 2,
   \code{\link[stats]{summary.lm}},
   \code{\link[mgcv]{summary.gam}} from \pkg{mgcv}, % A core R package
   \code{\link{summaryvgam}} for G1-VGAMs.
+
+
 % \code{\link[gam]{summary.gam}}.  % May not be installed.
 
 

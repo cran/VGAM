@@ -4,7 +4,7 @@
 \alias{prayleigh}
 \alias{qrayleigh}
 \alias{rrayleigh}
-\title{The Rayleigh Distribution}
+\title{Rayleigh Distribution}
 \description{
   Density, distribution function, quantile function and random
   generation for the Rayleigh distribution with parameter

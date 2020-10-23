@@ -490,6 +490,15 @@ Set \code{trace = TRUE} to monitor convergence.
 
 
 
+  An alternative to the NBD is the generalized Poisson distribution,
+  \code{\link{genpoisson1}},
+  \code{\link{genpoisson2}} and
+  \code{\link{genpoisson0}},
+  since that also handles overdispersion wrt Poisson.
+  It has one advantage in that its EIM can be computed straightforwardly.
+
+
+
   Yet to do: write a family function which uses the methods
   of moments estimator for \eqn{k}.
 
@@ -682,6 +691,9 @@ The \pkg{VGAM} package for negative binomial regression.
   \code{\link{negbinomial.size}} (e.g., NB-G),
   \code{\link{nbcanlink}} (NB-C),
   \code{\link{posnegbinomial}},
+  \code{\link{genpoisson1}},
+  \code{\link{genpoisson2}},
+  \code{\link{genpoisson0}},
   \code{\link{inv.binomial}},
   \code{\link[stats:NegBinomial]{NegBinomial}},
   \code{\link{nbordlink}},

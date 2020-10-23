@@ -138,9 +138,9 @@ plot.rootogram0 <- function(x,
     plot(0, 0, type = "n", xlim = xlim, ylim = ylim,
          xlab = xlab[j], ylab = ylab[j], main = main[j],
          axes = FALSE, ...)
-    if(axes) {
-      axis(1)
-      axis(2)
+    if (axes) {
+      axis(1, ...)
+      axis(2, ...)
     }
     rect(xleft, ybottom, xright, ytop, border = border, col = fill)
     abline(h = 0, col = border)

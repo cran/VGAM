@@ -990,8 +990,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       if (M == 1)
         wz[atiny] <- wz[atiny] * (1 + .Machine$double.eps^0.5) +
                                  .Machine$double.eps else
-        wz[atiny, 1:M] <- wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5) +
-                          .Machine$double.eps
+        wz[atiny, 1:M] <- .Machine$double.eps +
+        wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5)
     }
     c(w) * wz
   }), list( .refLevel = refLevel ))))

@@ -446,7 +446,7 @@ The \code{VGAM} Package.
   \code{\link{poissonff}}.
   This is because \pkg{VGAM} family
   functions are incompatible with \code{\link[stats]{glm}}
-  (and also \code{\link[gam]{gam}} in the \pkg{gam} library and
+  (and also \code{gam()} in \pkg{gam} and
   \code{\link[mgcv]{gam}} in the \pkg{mgcv} library).
 
 

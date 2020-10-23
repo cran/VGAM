@@ -24,42 +24,48 @@
   and the multinomial logit model (MLM) respectively.
   Altogether it can be abbreviated as
   GAAIIT--Pois(lambda.p)--Pois(lambda.a)--MLM--Pois(lambda.i)--MLM,
-  and it is also known as the GAIT-Pois PNP combo.
+  and it is also known as the GAIT-Pois PNP combo where
+  PNP stands for parametric and nonparametric.
 
 
 }
 \usage{
-dgaitpois(x, lambda.p, alter.mix = NULL, alter.mlm = NULL,
-          inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-          max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-          pstr.mix.i = 0, pstr.mlm.i = 0, lambda.a = lambda.p,
-          lambda.i = lambda.p, byrow.arg = FALSE, deflation = FALSE,
-          log.arg = FALSE)
-pgaitpois(q, lambda.p, alter.mix = NULL, alter.mlm = NULL,
-          inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-          max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-          pstr.mix.i = 0, pstr.mlm.i = 0, lambda.a = lambda.p,
-          lambda.i = lambda.p, byrow.arg = FALSE)
-qgaitpois(p, lambda.p, alter.mix = NULL, alter.mlm = NULL,
-          inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-          max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-          pstr.mix.i = 0, pstr.mlm.i = 0, lambda.a = lambda.p,
-          lambda.i = lambda.p, byrow.arg = FALSE)
-rgaitpois(n, lambda.p, alter.mix = NULL, alter.mlm = NULL,
-          inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-          max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-          pstr.mix.i = 0, pstr.mlm.i = 0, lambda.a = lambda.p,
-          lambda.i = lambda.p, byrow.arg = FALSE)
+dgaitpois(x, lambda.p, alt.mix = NULL, alt.mlm = NULL,
+          inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+          max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+          pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+          lambda.a = lambda.p, lambda.i = lambda.p,
+          deflation = FALSE, log = FALSE)
+pgaitpois(q, lambda.p, alt.mix = NULL, alt.mlm = NULL,
+          inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+          max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+          pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+          lambda.a = lambda.p, lambda.i = lambda.p, lower.tail = TRUE)
+qgaitpois(p, lambda.p, alt.mix = NULL, alt.mlm = NULL,
+          inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+          max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+          pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+          lambda.a = lambda.p, lambda.i = lambda.p)
+rgaitpois(n, lambda.p, alt.mix = NULL, alt.mlm = NULL,
+          inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+          max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+          pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+          lambda.a = lambda.p, lambda.i = lambda.p)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x, q, p, n, log.arg}{
-  Same meaning as in \code{\link[stats]{rpois}}.
+  \item{x, q, p, n}{
+  Same meaning as in \code{\link[stats]{Poisson}}.
+
+  }
+  \item{log, lower.tail}{
+  Same meaning as in \code{\link[stats]{Poisson}}.
+
 
   }
 
   \item{lambda.p, lambda.a, lambda.i}{
-  Same meaning as in \code{\link[stats]{rpois}},
+  Same meaning as in \code{\link[stats]{Poisson}},
   i.e., for an ordinary Poisson distribution.
   The first is for the main \emph{p}arent (inner) distribution.
   The other two concern the parametric variant and
@@ -85,19 +91,19 @@ rgaitpois(n, lambda.p, alter.mix = NULL, alter.mlm = NULL,
   
 
   }
-  \item{alter.mix, inflate.mix}{
+  \item{alt.mix, inf.mix}{
   Vectors of nonnegative integers;
   the altered, inflated and truncated values for the
   parametric variant.
   Each argument must have unique values only.
-  Assigning argument \code{alter.mix}
-  means that \code{pobs.mix.a} will be used.
-  Assigning argument \code{inflate.mix}
-  means that \code{pstr.mix.i} will be used.
-    If \code{alter.mix} is of unit length
+  Assigning argument \code{alt.mix}
+  means that \code{pobs.mix} will be used.
+  Assigning argument \code{inf.mix}
+  means that \code{pstr.mix} will be used.
+    If \code{alt.mix} is of unit length
     then the default probability mass function (PMF)
-    evaluated at \code{alter.mix} will be \code{pobs.mix.a}.
-    So having \code{alter.mix = 0} corresponds to the
+    evaluated at \code{alt.mix} will be \code{pobs.mix}.
+    So having \code{alt.mix = 0} corresponds to the
     zero-inflated Poisson distribution (see \code{\link{Zipois}}).
 
 
@@ -105,12 +111,12 @@ rgaitpois(n, lambda.p, alter.mix = NULL, alter.mlm = NULL,
 % Must be sorted and have unique values only.
   }
 
-  \item{alter.mlm, inflate.mlm}{
+  \item{alt.mlm, inf.mlm}{
   Similar to the above, but for the nonparametric (MLM) variant.
-  Assigning argument \code{alter.mlm}
-  means that \code{pobs.mlm.a} will be used.
-  Assigning argument \code{inflate.mlm}
-  means that \code{pstr.mlm.i} will be used.
+  Assigning argument \code{alt.mlm}
+  means that \code{pobs.mlm} will be used.
+  Assigning argument \code{inf.mlm}
+  means that \code{pstr.mlm} will be used.
   Collectively, the above 6 arguments represent
   5 disjoint sets of
   special values and they are a proper subset of the support of the
@@ -122,18 +128,19 @@ rgaitpois(n, lambda.p, alter.mix = NULL, alter.mlm = NULL,
 
 
   
-  \item{pobs.mlm.a, pstr.mlm.i, byrow.arg}{
-    These arguments are coerced into a matrix of probabilities
-    using \code{byrow.arg} to determine the order of the elements
- (similar to \code{\link[base]{matrix}}).
+  \item{pobs.mlm, pstr.mlm, byrow.ai}{
+    The first two arguments are coerced into a matrix of probabilities
+    using \code{byrow.ai} to determine the order of the elements
+ (similar to \code{byrow} in \code{\link[base]{matrix}}, and
+  the \code{.ai} reinforces the behaviour that it applies to both
+  altered and inflated cases).
   The first argument is recycled if necessary to become
-  \code{n x length(alter.mlm)}.
+  \code{n x length(alt.mlm)}.
   The second argument becomes
-  \code{n x length(inflate.mlm)}.
+  \code{n x length(inf.mlm)}.
   Thus these arguments are not used unless
-  \code{alter.mlm} and \code{inflate.mlm} are assigned.
-  If \code{deflation = TRUE} then \code{pstr.mlm.i} may be
-  negative.
+  \code{alt.mlm} and \code{inf.mlm} are assigned.
+  If \code{deflation = TRUE} then \code{pstr.mlm} may be negative.
 
 
 
@@ -152,21 +159,21 @@ rgaitpois(n, lambda.p, alter.mix = NULL, alter.mlm = NULL,
 
   }
   
-  \item{pobs.mix.a, pstr.mix.i}{
+  \item{pobs.mix, pstr.mix}{
     Vectors of probabilities that are recycled if necessary to
     length \eqn{n}.
-  The first  argument is used when \code{alter.mix}   is not \code{NULL}.
-  The second argument is used when \code{inflate.mix} is not \code{NULL}.
+  The first  argument is used when \code{alt.mix}   is not \code{NULL}.
+  The second argument is used when \code{inf.mix} is not \code{NULL}.
   
   
   }
   \item{deflation}{
-  Logical. If \code{TRUE} then \code{pstr.mlm.i} is allowed to have
+  Logical. If \code{TRUE} then \code{pstr.mlm} is allowed to have
   negative values,
   however, not too negative so that the final PMF becomes negative.
   Of course, if the values are negative then they cannot be
   interpreted as probabilities.
-  In theory, one could also allow \code{pstr.mix.i} to be negative,
+  In theory, one could also allow \code{pstr.mix} to be negative,
   but currently this is disallowed.
 
 
@@ -182,11 +189,11 @@ This order minimizes the potential interference among the operators.
 Loosely, a set of probabilities is set to 0 by truncation
 and the remaining probabilities are scaled up.
 Then a different set of probabilities are set to some
-values \code{pobs.mix.a} and/or \code{pobs.mlm.a}
+values \code{pobs.mix} and/or \code{pobs.mlm}
 and the remaining probabilities are rescaled up.
 Then another different set of probabilities is inflated by
-an amount \code{pstr.mlm.i} and/or proportional
-to \code{pstr.mix.i}
+an amount \code{pstr.mlm} and/or proportional
+to \code{pstr.mix}
 so that individual elements in this set have two sources.
 Then all the probabilities are
 rescaled so that they sum to unity.
@@ -198,7 +205,8 @@ Both parametric and nonparametric variants are implemented.
 They usually have arguments with suffix
 \code{.mix} and \code{.mlm} respectively.
 The MLM is a loose coupling that effectively separates
-the parent distribution from the altered values.
+the \emph{parent} (or \emph{base}) distribution from
+the altered values.
 Values inflated nonparametrically effectively have
 their spikes shaved off.
 The \code{.mix} variant has associated with it
@@ -216,6 +224,13 @@ increases or decreases relative to the parent distribution.
 An inflated special value means that its probability has
 increased, provided alteration elsewhere has not made it decrease
 in the first case.
+There are five types of special values and they are represented by
+\code{alt.mix},
+\code{alt.mlm},
+\code{inf.mix},
+\code{inf.mlm},
+\code{truncate}.
+
 
 
 
@@ -228,7 +243,7 @@ in the first case.
   These functions do what
   \code{\link{Zapois}},
   \code{\link{Zipois}},
-  \code{\link{Pospois}}
+  \code{\link[VGAMdata]{Pospois}}
   collectively did plus much more.
 
   
@@ -236,10 +251,10 @@ in the first case.
 In the notation of Yee and Ma (2020)
 these functions allow for the special cases:
 (i) GAIT--Pois(\code{lambda.p})--Pois(\code{lambda.a},
-\code{alter.mix}, \code{pobs.mix.a})--Pois(\code{lambda.i},
-\code{inflate.mix}, \code{pstr.mix.i});
-(ii) GAIT--Pois(\code{lambda.p})--MLM(\code{alter.mlm},
-\code{pobs.mlm.a})--MLM(\code{inflate.mlm}, \code{pstr.mlm.i}).
+\code{alt.mix}, \code{pobs.mix})--Pois(\code{lambda.i},
+\code{inf.mix}, \code{pstr.mix});
+(ii) GAIT--Pois(\code{lambda.p})--MLM(\code{alt.mlm},
+\code{pobs.mlm})--MLM(\code{inf.mlm}, \code{pstr.mlm}).
 Model (i) is totally parametric while model (ii) is the most
 nonparametric possible.
 
@@ -352,14 +367,33 @@ nonparametric possible.
 
 Yee, T. W. and Ma, C. (2020).
 Generally--altered, --inflated and --truncated regression,
-with application to heaped and seeped count data.
+with application to heaped and seeped counts.
 \emph{In preparation}.
+
+
+% count data.
 
 
 }
 
 \author{ T. W. Yee. }
-%\note{
+\note{
+  Functions \code{\link[VGAMdata]{Pospois}} and those similar
+  have been moved to \pkg{VGAMdata}.
+  It is better to use
+  \code{dgaitpois(x, lambda, truncate = 0)} instead of
+  \code{dposbinom(x, lambda)}, etc.
+
+
+
+
+
+
+
+
+
+
+
 % This is repeated info:
 %  The MLM variant is called nonparametric while the
 %  parent mixture variant is called parametric.
@@ -370,26 +404,30 @@ with application to heaped and seeped count data.
 
 
 
-%}
+}
 
 
 
-
-% \code{\link{gaitpoisson.mlm}},
-% \code{\link{gaitpoisson.mix}},
 
 
 
 \seealso{
+  \code{\link{gaitpoisson}},
   \code{\link{multinomial}},
-  \code{\link{gaitpoisson.mlm}},
-  \code{\link{gaitpoisson.mix}},
+  \code{\link{specials}},
   \code{\link{Zapois}},
   \code{\link{Zipois}},
-  \code{\link{Pospois}}
+  \code{\link[VGAMdata]{Pospois}}
   \code{\link[stats:Poisson]{Poisson}};
+  \code{\link{Gaitbinom}},
+  \code{\link{Gaitnbinom}},
   \code{\link{Gaitlog}},
   \code{\link{Gaitzeta}}.
+
+
+% \code{\link{Gaitnbinom}},
+
+
 
 
   
@@ -411,20 +449,20 @@ with application to heaped and seeped count data.
 ivec <- c(6, 14); avec <- c(8, 11); lambda <- 10; xgrid <- 0:25
 tvec <- 15; max.support <- 20; pobs.a <- 0.05; pstr.i <- 0.25
 (ddd <- dgaitpois(xgrid, lambda, lambda.a = lambda + 5,
-   truncate = tvec, max.support = max.support, pobs.mix.a = pobs.a,
-   pobs.mlm.a = pobs.a, alter.mlm = avec,
-   pstr.mix.i = pstr.i, inflate.mix = ivec))
+   truncate = tvec, max.support = max.support, pobs.mix = pobs.a,
+   pobs.mlm = pobs.a, alt.mlm = avec,
+   pstr.mix = pstr.i, inf.mix = ivec))
 \dontrun{plot(xgrid, ddd, type = "n", ylab = "Probability", xlab = "x",
               main = "GAIT PNP Combo PMF---Poisson Parent")
-mylwd <- 0.5
-abline(v = avec, col = 'green', lwd = mylwd)
-abline(v = ivec, col = 'red', lwd = mylwd)
+mylwd <- 1
+abline(v = avec, col = 'blue', lwd = mylwd)
+abline(v = ivec, col = 'purple', lwd = mylwd)
 abline(v = tvec, col = 'tan', lwd = mylwd)
 abline(v = max.support, col = 'magenta', lwd = mylwd)
 abline(h = c(pobs.a, pstr.i, 0:1), col = 'gray', lty = "dashed")
 lines(xgrid, dpois(xgrid, lambda), col = 'gray', lty = "dashed")  # f_{\pi}
-lines(xgrid, ddd, type = "h", col = "blue", lwd = 3)  # GAIT PNP combo PMF
-points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16)  }
+lines(xgrid, ddd, type = "h", col = "pink", lwd = 7)  # GAIT PNP combo PMF
+points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16, col = 'tan', cex = 2)  }
 }
 \keyword{distribution}
 

@@ -293,8 +293,8 @@ Vector generalized additive models.
 
 \section{Warning }{
   \pkg{VGAM} family functions are not compatible with
-  \code{\link[stats]{glm}}, nor \code{gam} (from either
-  \pkg{gam} or \pkg{mgcv} packages).
+  \code{\link[stats]{glm}}, nor \code{gam()}
+  (from either \pkg{gam} or \pkg{mgcv}).
 
 
 }

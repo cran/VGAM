@@ -70,13 +70,15 @@ TypicalVGAMfamilyFunction(lsigma = "loglink",
   These two arguments allow many such links and extra arguments
   to be inputted more easily.
   One has something like
-  \code{link.list = list("(Default)" = "identitylink", x2 = "loglink", x3 = "logofflink")}
+  \code{link.list = list}
+\code{("(Default)" = "identitylink", x2 = "loglink", x3 = "logofflink")}
   and
-  \code{earg.list = list("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
+  \code{earg.list = list}
+  \code{("(Default)" = list(), x2 = list(), x3 = "list(offset = -1)")}.
   Then any unnamed terms will have the default link with its
   corresponding extra argument.
-  Note: the \code{\link{multilogitlink}} link is also possible, and if so,
-  at least two instances of it are necessary.
+  Note: the \code{\link{multilogitlink}} link is also possible,
+  and if so, at least two instances of it are necessary.
   Then the last term is the baseline/reference group.
 
 
@@ -225,6 +227,14 @@ except for \eqn{X_2}.
   to a model or distribution that is relatively hard to fit successfully,
   therefore care is needed to ensure the global solution is obtained.
   So using all possible values that this argument supplies is a good idea.
+
+
+
+  \pkg{VGAM} family functions such \code{\link{genpoisson2}} recycle
+  \code{imethod} to be of length 2 corresponding to the 2
+  parameters. In the future, this feature will be extended to
+  other family functions to confer more flexibility.
+
 
 
   }

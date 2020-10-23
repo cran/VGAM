@@ -86,9 +86,9 @@ New York: Wiley.
 \seealso{
     \code{\link{zeta}},
     \code{\link{zetaff}},
-    \code{\link{Oazeta}},
-    \code{\link{Oizeta}},
-    \code{\link{Otzeta}}.
+    \code{\link[VGAMdata]{Oazeta}},
+    \code{\link[VGAMdata]{Oizeta}},
+    \code{\link[VGAMdata]{Otzeta}}.
 
 
 }

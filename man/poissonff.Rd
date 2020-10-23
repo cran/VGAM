@@ -2,7 +2,7 @@
 %\alias{poisson}
 \alias{poissonff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Poisson Family Function }
+\title{ Poisson Regression }
 \description{
   Family function for a generalized linear model fitted to
   Poisson responses.
@@ -169,13 +169,14 @@ poissonff(link = "loglink", imu = NULL,
     \code{\link{Links}},
     \code{\link{hdeff.vglm}},
     \code{\link{negbinomial}},
-    \code{\link{genpoisson}},
-    \code{\link{gaitpoisson.mix}},
-    \code{\link{gaitpoisson.mlm}},
+    \code{\link{genpoisson1}},
+    \code{\link{genpoisson2}},
+    \code{\link{genpoisson0}},
+    \code{\link{gaitpoisson}},
     \code{\link{zipoisson}},
     \code{\link{pospoisson}},
-    \code{\link{oipospoisson}},
-    \code{\link{otpospoisson}},
+    \code{\link[VGAMdata]{oipospoisson}},
+    \code{\link[VGAMdata]{otpospoisson}},
     \code{\link{skellam}},
     \code{\link{mix2poisson}},
     \code{\link{cens.poisson}},

@@ -3,10 +3,19 @@
 %
 %
 %
+% 202010
+% 'gabinomial.mlm' 'gtbinomial' 'moments.nbin.gait' 'semigait.errorcheck'
+% 202009
+%\alias{gaitpoisson}
+% 202006
+\alias{moments.gaitcombo}
+\alias{moments.gaitcombo.pois}
+\alias{moments.gaitcombo.log}
+\alias{moments.gaitcombo.zeta}
 % 202004
 \alias{extlogF1.control}
 % 202003
-\alias{gaitzeta.mix}
+%\alias{gaitzeta.mix}
 %\alias{dgaitzeta}
 %\alias{pgaitzeta}
 %\alias{qgaitzeta}
@@ -14,15 +23,16 @@
 % 202002
 \alias{get.offset}
 \alias{get.offset.vglm}
-  \alias{y.gait.check}
+  \alias{y.gaitcombo.check}
 % 201909, 201910, 201911
-  \alias{moments.nbin.gait}
-  \alias{moments.pois.gait}
+% \alias{moments.nbin.gait}
+% \alias{moments.pois.gait}  % obsolete 20200619
 %\alias{dgaitpois.mix}
 %\alias{pgaitpois.mix}
   \alias{EIM.GATNB.speciald}
   \alias{GATNB.deriv012}
-  \alias{semigait.errorcheck}
+  \alias{gait.errorcheck}
+% \alias{semigait.errorcheck}
 % 201908
 % part a is based on \pkg{vcd}:
 %\alias{vcdrootogram}
@@ -141,7 +151,7 @@
 %\alias{vpairs.profile}
 %\alias{vplot.profile}
 % 201609
-\alias{prob.munb.size.VGAM}
+% \alias{prob.munb.size.VGAM}
 \alias{negbinomial.initialize.yj}
 % 201607, 201608
 \alias{mroot2}

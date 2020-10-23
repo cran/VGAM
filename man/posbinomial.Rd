@@ -129,10 +129,13 @@ Drapers Company Research Memoirs.
   \code{\link{posbernoulli.b}},
   \code{\link{posbernoulli.t}},
   \code{\link{posbernoulli.tb}},
-  \code{\link{gtbinomial}},
   \code{\link{binomialff}},
   \code{\link{AICvlm}}, \code{\link{BICvlm}},
   \code{\link{simulate.vlm}}.
+
+
+% \code{\link{gtbinomial}},
+
 
 
 }

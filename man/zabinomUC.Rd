@@ -63,9 +63,11 @@ rzabinom(n, size, prob, pobs0 = 0)
 
 \seealso{
     \code{\link{zibinomial}},
-    \code{\link{rposbinom}}.
+    \code{\link{Gaitbinom}}.
 
 
+
+%   \code{\link{rposbinom}}.
 %   \code{\link{zabinomial}},
 
 

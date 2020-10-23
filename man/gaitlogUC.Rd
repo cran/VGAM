@@ -29,31 +29,31 @@
 
 }
 \usage{
-dgaitlog(x, shape.p, alter.mix = NULL, alter.mlm = NULL,
-         inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-         max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-         pstr.mix.i = 0, pstr.mlm.i = 0, shape.a = shape.p,
-         shape.i = shape.p, byrow.arg = FALSE, deflation = FALSE,
-         log.arg = FALSE)
-pgaitlog(q, shape.p, alter.mix = NULL, alter.mlm = NULL,
-         inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-         max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-         pstr.mix.i = 0, pstr.mlm.i = 0, shape.a = shape.p,
-         shape.i = shape.p, byrow.arg = FALSE)
-qgaitlog(p, shape.p, alter.mix = NULL, alter.mlm = NULL,
-         inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-         max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-         pstr.mix.i = 0, pstr.mlm.i = 0, shape.a = shape.p,
-         shape.i = shape.p, byrow.arg = FALSE)
-rgaitlog(n, shape.p, alter.mix = NULL, alter.mlm = NULL,
-         inflate.mix = NULL, inflate.mlm = NULL, truncate = NULL,
-         max.support = Inf, pobs.mix.a = 0, pobs.mlm.a = 0,
-         pstr.mix.i = 0, pstr.mlm.i = 0, shape.a = shape.p,
-         shape.i = shape.p, byrow.arg = FALSE)
+dgaitlog(x, shape.p, alt.mix = NULL, alt.mlm = NULL,
+         inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+         max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+         pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+         shape.a = shape.p, shape.i = shape.p, deflation = FALSE,
+         log = FALSE)
+pgaitlog(q, shape.p, alt.mix = NULL, alt.mlm = NULL,
+         inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+         max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+         pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+         shape.a = shape.p, shape.i = shape.p, lower.tail = TRUE)
+qgaitlog(p, shape.p, alt.mix = NULL, alt.mlm = NULL,
+         inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+         max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+         pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+         shape.a = shape.p, shape.i = shape.p)
+rgaitlog(n, shape.p, alt.mix = NULL, alt.mlm = NULL,
+         inf.mix = NULL, inf.mlm = NULL, truncate = NULL,
+         max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
+         pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
+         shape.a = shape.p, shape.i = shape.p)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x, q, p, n, log.arg}{
+  \item{x, q, p, n, log, lower.tail}{
   Same meaning as in \code{\link{dlog}}.
 
   }
@@ -71,7 +71,7 @@ rgaitlog(n, shape.p, alter.mix = NULL, alter.mlm = NULL,
   
 
   }
-  \item{alter.mix, inflate.mix}{
+  \item{alt.mix, inf.mix}{
   See \code{\link{Gaitpois}} for generic information.
 
 
@@ -79,7 +79,7 @@ rgaitlog(n, shape.p, alter.mix = NULL, alter.mlm = NULL,
 
   }
 
-  \item{alter.mlm, inflate.mlm}{
+  \item{alt.mlm, inf.mlm}{
   See \code{\link{Gaitpois}} for generic information.
 
 
@@ -89,13 +89,13 @@ rgaitlog(n, shape.p, alter.mix = NULL, alter.mlm = NULL,
 
 
   
-  \item{pobs.mlm.a, pstr.mlm.i, byrow.arg}{
+  \item{pobs.mlm, pstr.mlm, byrow.ai}{
   See \code{\link{Gaitpois}} for generic information.
 
 
   }
   
-  \item{pobs.mix.a, pstr.mix.i}{
+  \item{pobs.mix, pstr.mix}{
   See \code{\link{Gaitpois}} for generic information.
   
   
@@ -108,26 +108,27 @@ rgaitlog(n, shape.p, alter.mix = NULL, alter.mlm = NULL,
   }
 }
 \details{
-  These functions allow any combination of 3 operator types:
-  truncation, alteration and inflation.
-  See \code{\link{Gaitpois}} for generic information.
+  These functions for the logarithmic distribution
+  are analogous to the Poisson,
+  hence most details have been put in
+  \code{\link[VGAM]{Gaitpois}}.
   These functions do what
-  \code{\link{Oalog}},
-  \code{\link{Oilog}},
-  \code{\link{Otlog}}
+  \code{\link[VGAMdata]{Oalog}},
+  \code{\link[VGAMdata]{Oilog}},
+  \code{\link[VGAMdata]{Otlog}}
   collectively did plus much more.
 
   
 
-In the notation of Yee and Ma (2020)
-these functions allow for the special cases:
-(i) GAIT--Log(\code{shape.p})--Log(\code{shape.a},
-\code{alter.mix}, \code{pobs.mix.a})--Log(\code{shape.i},
-\code{inflate.mix}, \code{pstr.mix.i});
-(ii) GAIT--Log(\code{shape.p})--MLM(\code{alter.mlm},
-\code{pobs.mlm.a})--MLM(\code{inflate.mlm}, \code{pstr.mlm.i}).
-Model (i) is totally parametric while model (ii) is the most
-nonparametric possible.
+%In the notation of Yee and Ma (2020)
+%these functions allow for the special cases:
+%(i) GAIT--Log(\code{shape.p})--Log(\code{shape.a},
+%\code{alt.mix}, \code{pobs.mix})--Log(\code{shape.i},
+%\code{inf.mix}, \code{pstr.mix});
+%(ii) GAIT--Log(\code{shape.p})--MLM(\code{alt.mlm},
+%\code{pobs.mlm})--MLM(\code{inf.mlm}, \code{pstr.mlm}).
+%Model (i) is totally parametric while model (ii) is the most
+%nonparametric possible.
 
 
 
@@ -171,7 +172,7 @@ nonparametric possible.
 
 %Yee, T. W. and Ma, C. (2020).
 %Generally--altered, --inflated and --truncated regression,
-%with application to heaped and seeped count data.
+%with application to heaped and seeped counts.  % count data.
 %\emph{In preparation}.
 
 
@@ -182,6 +183,15 @@ nonparametric possible.
   See \code{\link{Gaitpois}} for general information also relevant
   to this parent distribution.
   
+
+% Functions \code{\link[VGAMdata]{Posbinom}} have been moved
+% to \pkg{VGAMdata}.
+% It is better to use
+% \code{dgaitbinom(x, size, prob, truncate = 0)} instead of
+% \code{dposbinom(x, size, prob)}, etc.
+
+
+
 
 
 
@@ -194,12 +204,12 @@ nonparametric possible.
 
 
 \seealso{
+  \code{\link{gaitlog}},
   \code{\link{Gaitpois}},
   \code{\link{multinomial}},
-  \code{\link{gaitlog.mix}},
-  \code{\link{Oalog}},
-  \code{\link{Oilog}},
-  \code{\link{Otlog}}.
+  \code{\link[VGAMdata]{Oalog}},
+  \code{\link[VGAMdata]{Oilog}},
+  \code{\link[VGAMdata]{Otlog}}.
 
 
 
@@ -211,19 +221,19 @@ nonparametric possible.
 ivec <- c(2, 10); avec <- ivec + 4; shape <- 0.95; xgrid <- 0:29
 tvec <- 15; max.support <- 25; pobs.a <- 0.10; pstr.i <- 0.15
 (ddd <- dgaitlog(xgrid, shape, truncate = tvec,
-   max.support = max.support, pobs.mix.a = pobs.a,
-   alter.mix = avec, pstr.mix.i = pstr.i, inflate.mix = ivec))
+   max.support = max.support, pobs.mix = pobs.a,
+   alt.mix = avec, pstr.mix = pstr.i, inf.mix = ivec))
 \dontrun{plot(xgrid, ddd, type = "n", ylab = "Probability", xlab = "x",
               main = "GAIT PMF---Logarithmic Parent")
 mylwd <- 0.5
-abline(v = avec, col = 'green', lwd = mylwd)
-abline(v = ivec, col = 'red', lwd = mylwd)
+abline(v = avec, col = 'blue', lwd = mylwd)
+abline(v = ivec, col = 'purple', lwd = mylwd)
 abline(v = tvec, col = 'tan', lwd = mylwd)
 abline(v = max.support, col = 'magenta', lwd = mylwd)
 abline(h = c(pobs.a, pstr.i, 0:1), col = 'gray', lty = "dashed")
 lines(xgrid, dlog(xgrid, shape), col = 'gray', lty = "dashed")  # f_{\pi}
-lines(xgrid, ddd, type = "h", col = "blue", lwd = 3)  # GAIT PMF
-points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16)  }
+lines(xgrid, ddd, type = "h", col = "pink", lwd = 3)  # GAIT PMF
+points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16, col = 'tan', cex = 2)  }
 }
 \keyword{distribution}
 

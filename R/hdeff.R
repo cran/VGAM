@@ -560,12 +560,66 @@ if (FALSE) {  ###################################################
 
 
 
+
+
+
+hdeff.matrix <-
+  function(object,
+           ...) {
+  if (!is.matrix(object) || nrow(object) != 2 || ncol(object) != 2) 
+    stop("argument 'object' is not a 2 x 2 matrix")
+  if (any(c(object) <= 0))
+    stop("some cells are not positive valued")
+  is.wholenumber <-
+    function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
+  if (!all(is.wholenumber(c(object))))
+    stop("some cells are not integer-valued")
+
+  N0 <- sum(object[1, ])
+  N1 <- sum(object[2, ])
+  p0 <- object[1, 2] / N0
+  p1 <- object[2, 2] / N1
+  oratio <- object[1, 1] * object[2, 2] / (object[1, 2] * object[2, 1])
+  beta2 <- log(oratio)
+  lhs <- 1 + N1 * p1 * (1 - p1) / (N0 * p0 * (1 - p0))
+  rhs <- beta2 * (p1 - 0.5)
+  1 + N1 * p1 * (1 - p1) / (N0 * p0 * (1 - p0)) < beta2 * (p1 - 0.5)
+}  # hdeff.matrix
+
+
+
+
+hdeff.numeric <-
+  function(object,
+           byrow = FALSE,
+           ...) {
+  if (length(c(object)) > 4)
+    stop("length of argument 'object' greater than 4")
+  if (length(c(object)) < 4)
+    warning("length of argument 'object' less than 4, so recycling")
+  hdeff(matrix(c(object), 2, 2, byrow = byrow))  # Recycles if needed
+}  # hdeff.numeric
+
+
+
+
+
+
+
  if (!isGeneric("hdeff"))
     setGeneric("hdeff", function(object, ...) standardGeneric("hdeff"))
 
 
 setMethod("hdeff", "vglm", function(object, ...)
           hdeff.vglm(object, ...))
+
+
+setMethod("hdeff", "matrix", function(object, ...)
+          hdeff.matrix(object, ...))
+
+setMethod("hdeff", "numeric", function(object, ...)
+          hdeff.numeric(object, ...))
+
 
 
 
@@ -721,6 +775,8 @@ seglines <-
     return(severity)
   }
 }  # seglines
+
+
 
 
 

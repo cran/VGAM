@@ -48,7 +48,7 @@ lrt.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
   parameterization.
   By default, this function returns p-values based on the LRT by
   deleting one column at a time from the big VLM matrix
-  and then starting up IRLS to convergence (hopefully).
+  and then restarting IRLS to obtain convergence (hopefully).
   Twice the difference between the log-likelihoods
   (or equivalently, the difference in the deviances if they are defined)
   is asymptotically chi-squared with 1 degree of freedom.
@@ -140,8 +140,10 @@ lrt.stat.vlm(object, values0 = 0, subset = NULL, omit1s = TRUE,
 }
 
 \examples{
-pneumo <- transform(pneumo, let = log(exposure.time))
-fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo)
+set.seed(1)
+pneumo <- transform(pneumo, let = log(exposure.time),
+                            x3 = rnorm(nrow(pneumo)))
+fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 cbind(coef(summary(fit)),
       "signed LRT stat" = lrt.stat(fit, omit1s = FALSE))
 summary(fit, lrt0 = TRUE)  # Easy way to get it

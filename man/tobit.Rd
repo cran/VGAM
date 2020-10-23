@@ -1,9 +1,9 @@
 \name{tobit}
 \alias{tobit}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Tobit Model }
+\title{ Tobit Regression }
 \description{
-  Fits a Tobit model.
+  Fits a Tobit regression model.
 
 }
 \usage{
@@ -129,6 +129,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loglink",
   testing \code{y[1:10] == Lower[1:10]} is numerically fraught.
   Currently, if any \code{y < Lower} or \code{y > Upper} then
   a warning is issued.
+  The function \code{\link{round2}} may be useful.
 
 
 }
@@ -194,6 +195,7 @@ tobit(Lower = 0, Upper = Inf, lmu = "identitylink", lsd = "loglink",
   \code{\link{double.cens.normal}},
   \code{\link{posnormal}},
   \code{\link{CommonVGAMffArguments}},
+  \code{\link{round2}},
   \code{\link{mills.ratio}},
   \code{\link{margeff}},
   \code{\link[stats:Normal]{rnorm}}.

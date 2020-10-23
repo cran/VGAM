@@ -4,7 +4,7 @@
 \alias{pgengamma.stacy}
 \alias{qgengamma.stacy}
 \alias{rgengamma.stacy}
-\title{The Generalized Gamma Distribution }
+\title{Generalized Gamma Distribution }
 \description{
   Density, distribution function, quantile function and random
   generation for the generalized  gamma distribution with

@@ -2432,6 +2432,8 @@ pzipfmb <-
 
 
 
+
+
 qzipfmb <- function(p, shape, start = 1) {
 
   LLL <- max(length(p), length(shape), length(start))

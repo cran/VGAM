@@ -114,10 +114,11 @@ step4vglm(object, scope, direction = c("both", "backward", "forward"),
 \value{
   The results are placed in the \code{post} slot of the
   stepwise-selected model that is returned.
-There are up to two additional components.  There is an \code{"anova"}
-  component corresponding to the steps taken in the search, as well as a
-  \code{"keep"} component if the \code{keep=} argument was supplied in
-  the call.
+  There are up to two additional components.
+  There is an \code{"anova"}
+  component corresponding to the steps taken in the search,
+  as well as a \code{"keep"} component if the \code{keep=} argument
+  was supplied in the call.
 
 
 
@@ -207,6 +208,11 @@ There are up to two additional components.  There is an \code{"anova"}
   apply here.
 
 
+  
+  This function
+
+  
+  
 
 %  The model fitting must apply the models to the same dataset. This
 %  may be a problem if there are missing values and \R's default of

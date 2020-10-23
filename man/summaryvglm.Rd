@@ -10,7 +10,7 @@
 \title{Summarizing Vector Generalized Linear Model Fits}
 \usage{
 summaryvglm(object, correlation = FALSE, dispersion = NULL,
-            digits = NULL, presid = TRUE,
+            digits = NULL, presid = FALSE,
             HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
             signif.stars = getOption("show.signif.stars"),
             nopredictors = FALSE,
@@ -18,7 +18,7 @@ summaryvglm(object, correlation = FALSE, dispersion = NULL,
             values0 = 0, subset = NULL, omit1s = TRUE,
             ...)
 \method{show}{summary.vglm}(x, digits = max(3L, getOption("digits") - 3L),
-           quote = TRUE, prefix = "", presid = TRUE,
+           quote = TRUE, prefix = "", presid = length(x@pearson.resid) > 0,
            HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
            signif.stars = NULL, nopredictors = NULL,
            top.half.only = FALSE, ...)
@@ -40,8 +40,10 @@ summaryvglm(object, correlation = FALSE, dispersion = NULL,
     if \code{TRUE}, \sQuote{significance stars}
     are printed for each coefficient. }
 % \item{\dots}{further arguments passed to or from other methods.}
-  \item{presid}{Pearson residuals; print out some summary statistics
-                of these? 
+  \item{presid}{Pearson residuals;
+  print out some summary statistics of these? 
+
+
   }
   \item{HDEtest}{logical;
     if \code{TRUE} (the default) then a test for the HDE is performed,

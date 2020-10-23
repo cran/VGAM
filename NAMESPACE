@@ -9,38 +9,49 @@
 useDynLib(VGAM, .registration = TRUE)
 
 
-
-
+ importFrom("graphics", "title")
+ export(Trunc)
+ export(dgaitplot)
+ export(plotdgait, plotdgait.vglm)
+ export(round2)
+ export(gaitpoisson)
+ export(gaitlog)
+ export(gaitzeta)
+exportMethods(is.altered, is.inflated, is.truncated)
+export(dgaitbinom, pgaitbinom, qgaitbinom, rgaitbinom)
+export(dgaitnbinom, pgaitnbinom, qgaitnbinom, rgaitnbinom)
+export(gait.errorcheck)
+export(genpoisson1, genpoisson2)
+export(dgenpois0, pgenpois0, qgenpois0, rgenpois0)
+export(dgenpois1, pgenpois1, qgenpois1, rgenpois1)
+export(dgenpois2, pgenpois2, qgenpois2, rgenpois2)
+exportMethods(Influence)
+export(Influence.vglm)
+export(hdeff.numeric, hdeff.matrix)
+  export(moments.gaitcombo)
+  export(moments.gaitcombo.pois)
+  export(moments.gaitcombo.log)
+  export(moments.gaitcombo.zeta)
   export(eCDF)
 exportMethods(eCDF)
   export(dextlogF, extlogF1, extlogF1.control)
   export(is.crossing, fix.crossing)
 exportMethods(is.crossing, fix.crossing)
-  export(dgaitzeta, pgaitzeta, qgaitzeta, rgaitzeta, gaitzeta.mix)
-  export(dgaitpois, pgaitpois, qgaitpois, rgaitpois, gaitpoisson.mix)
-  export(dgaitlog , pgaitlog , qgaitlog , rgaitlog,   gaitlog.mix)
+  export(dgaitzeta, pgaitzeta, qgaitzeta, rgaitzeta)  # gaitzeta.mix
+  export(dgaitpois, pgaitpois, qgaitpois, rgaitpois)  # gaitpoisson.mix
+  export(dgaitlog , pgaitlog , qgaitlog , rgaitlog)  # gaitlog.mix
 exportMethods(specials, altered, inflated, truncated)
 export(specialsvglm)
 export(get.offset)
 export(get.offset.vglm)
 exportMethods(get.offset)
-export(y.gait.check)
-  export(gaitpoisson.mlm)
-  export(gatnbinomial.mix)
-  export(moments.nbin.gait, moments.pois.gait)
+export(y.gaitcombo.check)
 
-export(dgaitnbinom.mix, pgaitnbinom.mix, pgaitnbinom.mix, rgaitnbinom.mix)
-  export(gatnbinomial.mlm, EIM.GATNB.speciald, GATNB.deriv012)
-export(semigait.errorcheck)
+
+
+
+
 export(is.Numeric2)
-export(dgaitnbinom.mlm)
-export(pgaitnbinom.mlm)
-export(qgaitnbinom.mlm)
-export(rgaitnbinom.mlm)
-export(dgaitbinom.mlm)
-export(pgaitbinom.mlm)
-export(qgaitbinom.mlm)
-export(rgaitbinom.mlm)
 export(dzipfmb, pzipfmb, qzipfmb, rzipfmb)
 
 
@@ -80,7 +91,6 @@ S3method(extractAIC, vglm, extractAIC.vglm)
 export(extractAIC.vglm)
 exportMethods(dfterms)
 export(dftermsvglm)
-export(gabinomial.mlm)
 export(wz.merge)
 export(getarg)
 export(rainbow.sky)
@@ -94,7 +104,6 @@ export(stieltjes)
 export(loglogloglink)
 importFrom("graphics", "legend")
 export(hdeffsev, seglines)
-  export(gtbinomial)
 export(bell, bellff, dbell, rbell)
 exportMethods(calibrate)
 export(fnumat2R)
@@ -126,7 +135,6 @@ importFrom("utils", "tail")
 importFrom("stats", ".nknots.smspl")
 export(sm.os)
 export(label.cols.y)
-export(prob.munb.size.VGAM)
 export(negbinomial.initialize.yj)
 export(mroot2)
 export(psint)
@@ -144,26 +152,17 @@ importFrom("graphics", "polygon")
 export(model.matrixpvgam)
 S3method(model.matrix, pvgam, model.matrixpvgam)
 importFrom("stats", "ppoints")
-export(doazeta, poazeta, qoazeta, roazeta, oazeta)
-export(doapospois, poapospois, qoapospois, roapospois, oapospoisson)
-export(doalog, poalog, qoalog, roalog, oalog)
 export(ddiffzeta, pdiffzeta, qdiffzeta, rdiffzeta, diffzeta)
-export(dotzeta, potzeta, qotzeta, rotzeta, otzeta)
-export(dotpospois, potpospois, qotpospois, rotpospois, otpospoisson)
-export(dotlog, potlog, qotlog, rotlog, otlog)
-export(doilog, poilog, qoilog, roilog, oilog)
-export(doizipf, poizipf, qoizipf, roizipf, oizipf)
+
+
+
 export(gharmonic, gharmonic2)
 export(pzeta, qzeta, rzeta)
 export(qzipf)
-export(doizeta, poizeta, qoizeta, roizeta, oizeta)
 export(bisection.basic)
-export(Zeta.aux, deflat.limit.oizeta)
+export(Zeta.aux)
 export(topple, dtopple, ptopple, qtopple, rtopple)
 
-export(oiposbinomial, doiposbinom, poiposbinom, qoiposbinom, roiposbinom)
-export(doipospois, poipospois, qoipospois, roipospois, oipospoisson)
-export(deflat.limit.oipospois)
 export(zoabetaR)
 
 
@@ -191,8 +190,8 @@ export(as.char.expression)
 
 
 export(predictvglmS4VGAM)
-  export(EIM.posNB.speciald, EIM.NB.speciald,
-         EIM.posNB.specialp, EIM.NB.specialp)
+  export(EIM.posNB.speciald, EIM.posNB.specialp)
+
 export(.min.criterion.VGAM)
 export(pzoibetabinom, pzoibetabinom.ab,
        rzoibetabinom, rzoibetabinom.ab,
@@ -272,7 +271,6 @@ export(confintvgam)  # For S4, not S3
 exportMethods(confint)  # For S4, not S3
 
 
-export(dgenpois)
 export(AR1)
 export(dAR1)
 export(param.names)
@@ -836,7 +834,7 @@ export(dgengamma.stacy, pgengamma.stacy, qgengamma.stacy, rgengamma.stacy)
 export(
 dbenf, pbenf, qbenf, rbenf,
 genbetaII.Loglikfun4, genbetaII, dgenbetaII,
-genpoisson,
+genpoisson0,
 geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino,
 grc,
@@ -888,11 +886,11 @@ plotvgam.control, plotvgam,
 plot.vgam,
 cens.poisson,
 poissonff,
-dposbinom, pposbinom, qposbinom, rposbinom, posbinomial,
+posbinomial,
 dposgeom, pposgeom, qposgeom, rposgeom, # posgeometric,
-dposnegbin, pposnegbin, qposnegbin, rposnegbin, posnegbinomial,
+posnegbinomial,
 dposnorm, pposnorm, qposnorm, rposnorm, posnormal,
-dpospois, ppospois, qpospois, rpospois, pospoisson,
+pospoisson,
 qtplot.lmscreg,
 rdiric, rigff,
 rrar, rrvglm.control,

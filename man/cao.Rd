@@ -326,12 +326,13 @@ Constrained additive ordination.
   \code{\link{negbinomial}},
   \code{\link{gamma2}},
   \code{\link[base:Random]{set.seed}},
-  \code{\link[gam]{gam}},
+  \code{gam()} in \pkg{gam},
   \code{\link[VGAMdata]{trapO}}.
 
 
 
 % \code{\link{gaussianff}},
+% \code{\link[gam]{gam}},
 
 
 

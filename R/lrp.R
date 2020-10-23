@@ -24,10 +24,10 @@ lrt.stat.vlm <-
 
   wald.stat.vlm(object, values0 = values0,
                 subset = subset, omit1s = omit1s, all.out = all.out,
-                iterate = TRUE,
+                iterate.SE = TRUE,
                 trace = trace,
-                as.summary = FALSE,  # Does not make sense if TRUE
-                lrt.really = TRUE, ...)
+                orig.SE = FALSE,  # Does not make sense if TRUE
+                LR.really = TRUE, ...)
 }  # lrt.stat.vlm
 
 

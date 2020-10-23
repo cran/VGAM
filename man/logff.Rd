@@ -87,10 +87,11 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 
 \seealso{
-  \code{\link{rlog}},
-  \code{\link{oalog}},
-  \code{\link{oilog}},
-  \code{\link{otlog}},
+  \code{\link{Log}},
+  \code{\link{gaitlog}},
+  \code{\link[VGAMdata]{oalog}},
+  \code{\link[VGAMdata]{oilog}},
+  \code{\link[VGAMdata]{otlog}},
   \code{\link[base:Log]{log}},
   \code{\link{loglink}},
   \code{\link{logofflink}},

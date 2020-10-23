@@ -314,9 +314,10 @@ by Wood, S. N. and Pya, N. and Safken, N.,
   to avoid interference with other functions, e.g.,
   \code{\link{binomialff}}, \code{\link{poissonff}}.
   This is because \pkg{VGAM} family functions are incompatible with
-  \code{\link[stats]{glm}} (and also \code{\link[gam]{gam}}
-  in the \pkg{gam} library and \code{\link[mgcv]{gam}}
-  in the \pkg{mgcv} library).
+  \code{\link[stats]{glm}} (and also
+  \code{gam()} in \pkg{gam} and
+  \code{\link[mgcv]{gam}} in \pkg{mgcv}).
+
 
 
 % \code{\link{gaussianff}},
@@ -371,7 +372,7 @@ by Wood, S. N. and Pya, N. and Safken, N.,
   \code{\link{sm.os}},
   \code{\link{sm.ps}},
   \code{\link[VGAM]{s}},
-  \code{\link[mgcv]{magic}}.
+  \code{\link[mgcv]{magic}},
   \code{\link{vglm}},
   \code{\link{vsmooth.spline}},
   \code{\link{cao}}.

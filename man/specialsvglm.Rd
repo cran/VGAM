@@ -19,7 +19,8 @@ specialsvglm(object, \dots)
 %#           constraints = NULL,
 \arguments{
   \item{object}{
-    an object of class \code{"vglm"}.
+    an object of class \code{"vglm"} whose family function
+    begins with \code{"gait"}.
 
 
   }
@@ -66,7 +67,9 @@ specialsvglm(object, \dots)
   \code{\link{vglm-class}},
   \code{\link{inflated}},
   \code{\link{altered}},
-  \code{\link{truncated}}.
+  \code{\link{truncated}},
+  \code{\link{Gaitpois}},
+  \code{\link{gaitpoisson}}.
 
 
 
@@ -75,8 +78,12 @@ specialsvglm(object, \dots)
 \references{
 Yee, T. W. and Ma, C. (2020).
 Generally--altered, --inflated and --truncated regression,
-with application to heaped and seeped count data.
+with application to heaped and seeped counts.
 \emph{In preparation}.
+
+
+
+% count data.
 
 
 
@@ -92,7 +99,7 @@ with application to heaped and seeped count data.
 
 \examples{
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
-fit1 <- vglm(y ~ 1, gaitpoisson.mix(inflate  = 1), abdata,
+fit1 <- vglm(y ~ 1, gaitpoisson(alt.mix = 0), abdata,
              weight = w, subset = w > 0)
 specials(fit1)
 }

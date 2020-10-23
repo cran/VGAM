@@ -12,6 +12,28 @@
 
 
 
+
+ round2 <- function(x, digits10 = 0) {
+  if (length(digits10) != 1 || !is.finite(digits10) ||
+      round(digits10) != digits10)
+    stop("bad input for argument 'digits10'")
+
+  if (digits10 <= 0)
+    return(round(x, digits10))
+
+  two.exponent <- 2^ceiling(log2(10) * digits10 + 1)
+  round(x * two.exponent) / two.exponent
+}  # round2
+
+
+
+
+
+
+
+
+
+
 if (FALSE)
 log1pexp <- function(x) {
 

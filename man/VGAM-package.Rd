@@ -246,7 +246,7 @@ Yee, T. W. (2010)
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
-\url{http://www.jstatsoft.org/v32/i10/}.
+\url{https://www.jstatsoft.org/v32/i10/}.
 
 
   Yee, T. W. (2014)
@@ -270,17 +270,12 @@ Manuscript in preparation.
 
 
 My website for the \pkg{VGAM} package and book is at
-\url{https://www.stat.auckland.ac.nz/~yee}.
+\url{https://www.stat.auckland.ac.nz/~yee/}.
 There are some resources there,
 especially as relating to my book and new features
 added to \pkg{VGAM}.
 
 
-
-
-%(Oldish) documentation accompanying the \pkg{VGAM} package at
-%\url{http://www.stat.auckland.ac.nz/~yee/VGAM}
-%contains some further information and examples.
 
 
 

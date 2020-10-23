@@ -129,9 +129,8 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
 
   nHlist <- names(Hlist)
   for (ii in length(nHlist):1) {
-    if (!any(nHlist[ii] == nwhich)) {
+    if (!any(nHlist[ii] == nwhich))
       Hlist[[ii]] <- NULL
-    }
   }
   trivc <- trivial.constraints(Hlist)
 
@@ -235,11 +234,11 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
                           (smooth.frame$bindex[ii + 1] - 1)]
     b.coefs <- matrix(b.coefs, ncol = ncolHlist[nwhich[ii]])
     Bspline[[ii]] <-
-        new("vsmooth.spline.fit",
-            "Bcoefficients" = b.coefs,
-            "xmax"          = smooth.frame$xmax[ii],
-            "xmin"          = smooth.frame$xmin[ii],
-            "knots"         = as.vector(smooth.frame$knots[[ii]]))
+      new("vsmooth.spline.fit",
+          "Bcoefficients" = b.coefs,
+          "xmax"          = smooth.frame$xmax[ii],
+          "xmin"          = smooth.frame$xmin[ii],
+          "knots"         = as.vector(smooth.frame$knots[[ii]]))
   }
 
 
@@ -287,6 +286,7 @@ s.vam <- function(x, zedd, wz, smomat, which, smooth.frame, bf.maxit = 10,
   }
 
   c(list(smooth.frame = smooth.frame), retlist)
-}
+}  # s.vam
+
 
 

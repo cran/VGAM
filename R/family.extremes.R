@@ -98,7 +98,6 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
 
 
 
-
 pgev <- function(q, location = 0, scale = 1, shape = 0,
                  lower.tail = TRUE, log.p = FALSE) {
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
@@ -107,7 +106,8 @@ pgev <- function(q, location = 0, scale = 1, shape = 0,
   if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
     stop("bad input for argument 'log.p'")
 
-  use.n <- max(length(q), length(location), length(scale), length(shape))
+  use.n <- max(length(q), length(location),
+               length(scale), length(shape))
   if (length(shape)    != use.n) shape    <- rep_len(shape,    use.n)
   if (length(location) != use.n) location <- rep_len(location, use.n)
   if (length(scale)    != use.n) scale    <- rep_len(scale,    use.n)
@@ -151,7 +151,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
 
 
 
-  use.n <- max(length(p), length(location), length(scale), length(shape))
+    use.n <- max(length(p), length(location),
+                 length(scale), length(shape))
   if (length(shape)    != use.n) shape    <- rep_len(shape,    use.n)
   if (length(location) != use.n) location <- rep_len(location, use.n)
   if (length(scale)    != use.n) scale    <- rep_len(scale,    use.n)
@@ -172,7 +173,8 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   } else {
     if (log.p) {
       ln.p <- p
-      ans <- location + scale*((-log1p(-exp(ln.p)))^(-shape) - 1) / shape
+      ans <- location + scale *
+             ((-log1p(-exp(ln.p)))^(-shape) - 1) / shape
       ans[ln.p > 0] <- NaN
     } else {
       ans <- location + scale * ((-log1p(-p))^(-shape) - 1) / shape
@@ -1136,7 +1138,7 @@ dgammadx <- function(x, deriv.arg = 1) {
     wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
   }), list( .eshape = eshape, .tolshape0 = tolshape0 ))))
-}
+}  # gevff
 
 
 
@@ -1457,7 +1459,9 @@ pgumbel <- function(q, location = 0, scale = 1,
     wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] * dsigma.deta^2
     c(w) * wz
   }), list( .lscale = lscale ))))
-}
+}  # gumbel
+
+
 
 
 
@@ -1536,7 +1540,7 @@ dgpd <- function(x, location = 0, scale = 1, shape = 0, log = FALSE,
 
   logdensity[scale <= 0] <- NaN
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dgpd
 
 
 
@@ -1579,7 +1583,7 @@ pgpd <- function(q, location = 0, scale = 1, shape = 0,
   } else {
     if (log.p) log1p(-ans) else 1-ans
   }
-}
+}  # dgpd
 
 
 
@@ -1598,7 +1602,8 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
     p <- if (log.arg) -expm1(p) else 1 - p
   }
 
-  use.n <- max(length(p), length(location), length(scale), length(shape))
+  use.n <- max(length(p), length(location),
+               length(scale), length(shape))
 
   ans <- numeric(use.n)
   if (length(shape)    != use.n) shape    <- rep_len(shape,    use.n)
@@ -1627,7 +1632,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
 
   ans[scale <= 0] <- NaN
   ans
-}
+}  # qgpd
 
 
 
@@ -2036,11 +2041,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
 
     wz
   }), list( .lscale = lscale ))))
-}
-
-
-
-
+}  # gpd
 
 
 
@@ -2145,6 +2146,8 @@ setMethod("guplot", "numeric",
 setMethod("guplot", "vlm",
          function(object, ...)
          guplot.vlm(object, ...))
+
+
 
 
 
@@ -2408,7 +2411,7 @@ setMethod("guplot", "vlm",
     wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
   }))
-}
+}  # gumbelff
 
 
 
@@ -2437,8 +2440,8 @@ setMethod("guplot", "vlm",
   new("vglmff",
   blurb = c("Censored Gumbel distribution\n\n",
             "Links:    ",
-            namesof("location", llocat, earg = elocat, tag = TRUE), ", ",
-            namesof("scale",    lscale, earg = escale, tag = TRUE), "\n",
+          namesof("location", llocat, earg = elocat, tag = TRUE), ", ",
+          namesof("scale",    lscale, earg = escale, tag = TRUE), "\n",
             "Mean:     location + scale*0.5772..\n",
             "Variance: pi^2 * scale^2 / 6"),
   constraints = eval(substitute(expression({
@@ -2518,7 +2521,7 @@ setMethod("guplot", "vlm",
   last = eval(substitute(expression({
         misc$link <- c(location= .llocat,  scale = .lscale)
         misc$earg <- list(location= .elocat, scale= .escale )
-        misc$true.mu <- .mean    # if FALSE then @fitted is not a true mu
+        misc$true.mu <- .mean  # if FALSE then @fitted is not a true mu
         misc$percentiles = .percentiles
   }), list( .lscale = lscale, .mean=mean,
             .llocat = llocat,
@@ -2591,19 +2594,24 @@ setMethod("guplot", "vlm",
     d2l.dloc2 <- -ezedd / sc^2
     d2l.dsc2 <- (2 - zedd) * zedd * ezedd / sc^2
     d2l.dlocsc <- (1 - zedd) * ezedd / sc^2
-  wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)]-A1^2 * d2l.dloc2 * dloc.deta^2
-    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)]-A1^2 * d2l.dsc2 * dsc.deta^2
-    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)]-A1^2 * d2l.dlocsc *
+    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] -
+        A1^2 * d2l.dloc2 * dloc.deta^2
+    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] - A1^2 * d2l.dsc2 *
+                                                      dsc.deta^2
+    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] - A1^2 * d2l.dlocsc *
                         dloc.deta * dsc.deta
     d2Fy.dloc2 <- dFy.dloc * dl.dloc + Fy * d2l.dloc2
     d2Fy.dsc2 <- dFy.dsc * dl.dsc + Fy * d2l.dsc2
     d2Fy.dlocsc <- dFy.dsc * dl.dloc + Fy * d2l.dlocsc
     d2l.dloc2 <- -((1-Fy) * d2Fy.dloc2 - dFy.dloc^2) / (1-Fy)^2
     d2l.dsc2 <- -((1-Fy) * d2Fy.dsc2 - dFy.dsc^2) / (1-Fy)^2
-  d2l.dlocsc  <- -((1-Fy) * d2Fy.dlocsc - dFy.dloc * dFy.dsc) / (1-Fy)^2
-  wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)]-A3^2 * d2l.dloc2 * dloc.deta^2
-    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)]-A3^2 * d2l.dsc2 * dsc.deta^2
-    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)]-A3^2 * d2l.dlocsc *
+    d2l.dlocsc  <- -((1-Fy) * d2Fy.dlocsc -
+                     dFy.dloc * dFy.dsc) / (1-Fy)^2
+    wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] - A3^2 * d2l.dloc2 *
+                                                      dloc.deta^2
+    wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] - A3^2 * d2l.dsc2 *
+                                                      dsc.deta^2
+    wz[, iam(1, 2, M)] <- wz[, iam(1, 2, M)] - A3^2 * d2l.dlocsc *
                           dloc.deta * dsc.deta
     c(w) * wz
   }))
@@ -2612,7 +2620,9 @@ setMethod("guplot", "vlm",
 
 
 
-dfrechet <- function(x, location = 0, scale = 1, shape, log = FALSE) {
+
+dfrechet <-
+  function(x, location = 0, scale = 1, shape, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -2747,7 +2757,8 @@ frechet.control <- function(save.weights = TRUE, ...) {
 
 
 
-  stopifnot(nsimEIM > 10, length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
+  stopifnot(nsimEIM > 10,
+            length(nsimEIM) == 1, nsimEIM == round(nsimEIM))
 
 
   new("vglmff",
@@ -2943,7 +2954,7 @@ frechet.control <- function(save.weights = TRUE, ...) {
 
     wz
   }), list( .nsimEIM = nsimEIM ))))
-}
+}  # frechet
 
 
 
@@ -3108,13 +3119,15 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
     }
     wznew
   }))
-}
+}  #  rec.normal
+
 
 
 
 rec.exp1.control <- function(save.weights = TRUE, ...) {
   list(save.weights = save.weights)
 }
+
 
 
  rec.exp1 <- function(lrate = "loglink", irate = NULL, imethod = 1) {
@@ -3206,7 +3219,8 @@ rec.exp1.control <- function(save.weights = TRUE, ...) {
     wz <- drate.deta^2 * ed2l.drate2
     c(w) * wz
   }))
-}
+}  # rec.exp1 
+
 
 
 
@@ -3401,7 +3415,13 @@ dpois.points <- function(x, lambda, ostatistic,
   }), list( .link = link, .earg = earg,
             .ostatistic = ostatistic,
             .dimension = dimension ))))
-}
+}  # poisson.points
+
+
+
+
+
+
 
 
 
