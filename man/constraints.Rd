@@ -149,7 +149,8 @@ Reduced-rank vector generalized linear models.
 
 \seealso{
   \code{\link{is.parallel}},
-  \code{\link{is.zero}}.
+  \code{\link{is.zero}},
+  \code{\link{trim.constraints}}.
   VGLMs are described in \code{\link{vglm-class}};
   RR-VGLMs are described in \code{\link{rrvglm-class}}.
 

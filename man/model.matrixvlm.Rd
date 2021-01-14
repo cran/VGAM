@@ -120,6 +120,7 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
   \code{\link{predictvglm}},
   \code{\link{smartpred}},
   \code{\link{constraints.vlm}},
+  \code{\link{trim.constraints}},
   \code{\link{add1.vglm}},
   \code{\link{drop1.vglm}},
   \code{\link{step4vglm}}.

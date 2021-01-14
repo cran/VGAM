@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -406,10 +406,11 @@
   bad0 <- !is.finite(shape.p) | shape.p <= 0
   bad <- bad0 | !is.finite(p) | p <= 0 | 1 <= p
 
+  use.base <- 2  # bbbb
   Lo <- rep_len(min.support.use - 0.5, LLL)
   approx.ans <- Lo  # True at lhs
   Hi <- if (is.finite(max.support))
-    rep(max.support + 0.5, LLL) else 2 * Lo + 10.5
+    rep(max.support + 0.5, LLL) else use.base * Lo + 10.5
   dont.iterate <- bad
   done <- dont.iterate |
     p <= pgaitzeta(Hi, shape.p,
@@ -422,10 +423,10 @@
                    byrow.ai = FALSE)
 
   iter <- 0
-  max.iter <- round(log2(.Machine$double.xmax)) - 3
+  max.iter <- round(log(.Machine$double.xmax, base = use.base)) - 3
   while (!all(done) && iter < max.iter) {
     Lo[!done] <- Hi[!done]
-    Hi[!done] <- 2 * Hi[!done] + 10.5  # Bug fixed
+    Hi[!done] <- use.base * Hi[!done] + 10.5  # Bug fixed bbbb
     Hi <- pmin(max.support + 0.5, Hi)  # 20190924
     done[!done] <-
       (p[!done] <= pgaitzeta(Hi[!done], shape.p[!done],
@@ -441,7 +442,7 @@
                        shape.i = shape.i[!done],
                        byrow.ai = FALSE))
     iter <- iter + 1
-  }
+  }  # while
 
       foo <- function(q, shape.p,
                       alt.mix = NULL, alt.mlm = NULL,

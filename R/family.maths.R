@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -354,19 +354,19 @@ expint.E1 <- function(x) {
 
   B2 <- c(1/6, -1/30, 1/42, -1/30, 5/66, -691/2730, 7/6, -3617/510)
   kk <- length(B2)  # 8
-  ans <- 1 / ((shape-1) * (shift + aa)^(shape-1)) +
+  ans <- 1 / ((shape - 1) * (shift + aa)^(shape - 1)) +
          0.5 / (shift + aa)^shape
 
-  term <- (shape/2) / (shift + aa)^(shape+1)
+  term <- (shape / 2) / (shift + aa)^(shape+1)
   ans <- ans + term * B2[1]
 
   for (mm in 2:kk) {
-    term <- term * (shape+2*mm-3) *
-            (shape+2*mm-2) / ((2*mm-1) * 2 * mm * (shift + aa)^2)
+    term <- term * (shape + 2 * mm - 3) * (shape + 2 * mm - 2) / (
+            (2 * mm - 1) * 2 * mm * (shift + aa)^2)
     ans <- ans + term * B2[mm]
   }
   ifelse(aa - 1 <= qq, ans, rep(0, length(ans)))  # Handled above
-}
+}  # Zeta.aux
 
 
 

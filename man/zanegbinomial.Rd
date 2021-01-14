@@ -255,6 +255,7 @@ for counts with extra zeros.
   \code{\link{binomialff}},
   \code{\link{zinegbinomial}},
   \code{\link{zipoisson}},
+  \code{\link{spikeplot}},
   \code{\link[stats:NegBinomial]{dnbinom}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}}.

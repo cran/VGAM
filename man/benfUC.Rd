@@ -55,7 +55,6 @@ rbenf(n, ndigits = 1)
   }
 }
 \details{
-
 Benford's Law (aka \emph{the significant-digit law}) is the
 empirical observation that in many naturally occuring tables of
 numerical data, the leading significant (nonzero) digit
@@ -68,6 +67,7 @@ for \eqn{d=1,\ldots,9}.
 This means
 the probability the first significant digit is 1 is
 approximately \eqn{0.301}, etc.
+
 
 
 Benford's Law was apparently first discovered in 1881
@@ -83,9 +83,16 @@ numerical data from \emph{Reader's Digest},
 and drainage areas of rivers.
 
 
+
 Applications of Benford's Law has been as diverse as
 to the area of
-fraud detection in accounting  and the design computers.
+fraud detection in accounting and the design computers.
+
+
+Benford's distribution has been called
+``a'' logarithmic distribution;
+see \code{\link{logff}}.
+
 
 
 }
@@ -116,6 +123,8 @@ Note on the Frequency of Use of the Different Digits in Natural Numbers.
 %  The first two leading digits would be the next simple extension.
 %
 %}
+
+
 
 %\seealso{
 %    \code{\link{logff}}.

@@ -3,6 +3,8 @@
 %
 %
 %
+% 202012
+% \alias{spikeplot}
 % 202010
 % 'gabinomial.mlm' 'gtbinomial' 'moments.nbin.gait' 'semigait.errorcheck'
 % 202009

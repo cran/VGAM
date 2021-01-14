@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,6 +9,11 @@
 useDynLib(VGAM, .registration = TRUE)
 
 
+
+
+  export(spikeplot)
+  export(trim.constraints)
+ export(meangait)
  importFrom("graphics", "title")
  export(Trunc)
  export(dgaitplot)
@@ -104,7 +109,7 @@ export(stieltjes)
 export(loglogloglink)
 importFrom("graphics", "legend")
 export(hdeffsev, seglines)
-export(bell, bellff, dbell, rbell)
+export(bell)
 exportMethods(calibrate)
 export(fnumat2R)
 export(dtrinorm, rtrinorm, trinormal)
@@ -909,7 +914,7 @@ cqo,
 qrrvglm.control,
 vgam.control, vgam, vglm.control, vglm,
 vsmooth.spline,
-weibull.mean, weibullR, yip88,
+weibull.mean, weibullR,
 dzabinom, pzabinom, qzabinom, rzabinom, zabinomial, zabinomialff,
 dzageom, pzageom, qzageom, rzageom, zageometric, zageometricff,
 dzanegbin, pzanegbin, qzanegbin, rzanegbin, zanegbinomial, zanegbinomialff,
@@ -920,8 +925,7 @@ dzinegbin, pzinegbin, qzinegbin, rzinegbin, zinegbinomial, zinegbinomialff,
 dzipois, pzipois, qzipois, rzipois, zipoisson, zipoissonff,
 mix2exp, mix2normal, mix2poisson,
 mix2exp.control, mix2normal.control, mix2poisson.control,
-skewnormal, dskewnorm, rskewnorm,
-tikuv, dtikuv, ptikuv, qtikuv, rtikuv)
+skewnormal, dskewnorm, rskewnorm)
 
 
 

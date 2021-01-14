@@ -152,7 +152,16 @@
 %
 %}
 \item{...}{
-  Arguments fed into both \code{\link[base:plot]{plot}} calls.
+  Arguments fed into
+  \code{\link[graphics]{plot.default}}, etc.
+
+
+ 
+% 20201026: was
+% Arguments fed into both \code{\link[base:plot]{plot}} calls.
+
+
+
 
 }
 

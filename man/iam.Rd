@@ -14,8 +14,13 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{j}{
-  An integer from the set \{\code{1:M}\} giving the row number
+  Usually an integer from the set \{\code{1:M}\} giving the row number
   of an element.
+  However, the argument can also be a vector of length \code{M},
+  for selecting an entire row or column, e.g.,
+  \code{iam(1:M, 1, M)} or \code{iam(1, 1:M, M)}.
+
+
 
   }
   \item{k}{
@@ -61,7 +66,7 @@ iam(j, k, M, both = FALSE, diag = TRUE)
 }
 \value{
   This function has a dual purpose depending on the value of \code{both}.
-  If \code{both=FALSE} then the column number corresponding
+  If \code{both = FALSE} then the column number corresponding
   to the \code{j}-\code{k} element of the matrix is returned.
   If \code{both = TRUE} then \code{j} and \code{k} are ignored and a list
   with the following components are returned.

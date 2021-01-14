@@ -24,12 +24,12 @@ gaitpoisson(alt.mix = NULL, inf.mix = NULL, alt.mlm = NULL,
      inf.mlm = NULL, truncate = NULL, max.support = Inf,
      zero = c("pobs", "pstr"), eq.ap = FALSE, eq.ip = FALSE,
      parallel.ap = FALSE, parallel.ip = FALSE,
-     llambda.p = "loglink", llambda.a = "loglink", llambda.i = "loglink",
+     llambda.p = "loglink", llambda.a = llambda.p, llambda.i = llambda.p,
      type.fitted = c("mean", "lambdas", "pobs.mlm", "pstr.mlm",
      "pobs.mix", "pstr.mix", "Pobs.mix", "Pstr.mix", "nonspecial",
      "Numer", "Denom.p", "sum.mlm.i", "sum.mix.i", "ptrunc.p",
-     "cdf.max.s"), gpstr.mix = ppoints(9) / 2,
-     gpstr.mlm = ppoints(9) / (2 + length(inf.mlm)), imethod = 1,
+     "cdf.max.s"), gpstr.mix = ppoints(7) / 3,
+     gpstr.mlm = ppoints(7) / (3 + length(inf.mlm)), imethod = 1,
      imux = 0.5, ilambda.p = NULL, ilambda.a = ilambda.p,
      ilambda.i = ilambda.p, ipobs.mix = NULL, ipstr.mix = NULL,
      ipobs.mlm = NULL, ipstr.mlm = NULL, byrow.ai = FALSE,
@@ -467,8 +467,13 @@ gaitpoisson(alt.mix = NULL, inf.mix = NULL, alt.mlm = NULL,
 
 
   
-
-
+A good first step is to apply \code{\link{spikeplot}} for selecting
+candidate values for altering and inflating.  Deciding between
+parametrically or nonparametrically can also be determined from
+examining the spike plot.  Misspecified
+\code{alt.mix}/\code{alt.mlm}/\code{inf.mix}/\code{inf.mlm} will result
+in convergence problems (setting \code{trace = TRUE} is a \emph{very}
+good idea.)
   This function currently does not handle multiple responses.
   Further details are at \code{\link{Gaitpois}}.
 %  An alternative variant of this distribution,
@@ -590,7 +595,7 @@ as something like
   
 }
 \references{
-Yee, T. W. and Ma, C. (2020).
+Yee, T. W. and Ma, C. (2021).
 Generally--altered, --inflated and --truncated regression,
 with application to heaped and seeped counts.
 \emph{In preparation}.
@@ -744,6 +749,11 @@ with application to heaped and seeped counts.
 \seealso{
   \code{\link{Gaitpois}},
   \code{\link{multinomial}},
+  \code{\link{rootogram4}},
+  \code{\link{specials}},
+  \code{\link{plotdgait}},
+  \code{\link{spikeplot}},
+  \code{\link{meangait}},
   \code{\link{poissonff}},
   \code{\link{gaitlog}},
   \code{\link{gaitzeta}},
@@ -752,8 +762,6 @@ with application to heaped and seeped counts.
   \code{\link{zipoisson}},
   \code{\link{pospoisson}},
   \code{\link{CommonVGAMffArguments}},
-  \code{\link{rootogram4}},
-  \code{\link{specials}},
   \code{\link{simulate.vlm}}.
 
 
@@ -793,6 +801,7 @@ gdata <- transform(gdata,
                  truncate = tvec, max.support = max.support))
 gaitpoisson(alt.mix = a.mix, inf.mix = i.mix, inf.mlm = i.mlm)
 with(gdata, table(y1))
+\dontrun{ spikeplot(with(gdata, y1)) }
 gaitpfit <- vglm(y1 ~ x2, crit = "coef", trace = TRUE, data = gdata,
                  gaitpoisson(alt.mix = a.mix, inf.mix = i.mix,
                              parallel.ip = TRUE,

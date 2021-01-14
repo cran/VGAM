@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -849,15 +849,17 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
                  both = FALSE, diag = TRUE) {
 
 
+
   jay <- j
   kay <- k
 
   if (M == 1)
-    if (!diag) stop("cannot handle this")
+    if (!diag) stop("cannot handle M == 1 and diag = FALSE")
 
-  if (M == 1)
+  if (M == 1) {
     if (both) return(list(row.index = 1, col.index = 1)) else return(1)
-
+  }
+     
   upper <- if (diag) M else M - 1
   i2 <- as.list(upper:1)
   i2 <- lapply(i2, seq)
@@ -870,11 +872,21 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
   if (both) {
     list(row.index = i2, col.index = i1)
   } else {
-    if (jay > M || kay > M || jay < 1 || kay < 1)
-      stop("range error in j or k")
-    both <- (i1 == jay & i2 == kay) |
-            (i1 == kay & i2 == jay)
-    (seq_along(i2))[both]
+    if (any(jay > M) || any(kay > M) || any(jay < 1) || any(kay < 1))
+      stop("range error in argument 'j' or 'k'")
+
+    if (length(jay) < length(kay)) jay <- rep_len(jay, length(kay))
+    if (length(kay) < length(jay)) kay <- rep_len(kay, length(jay))
+
+    if (all(c(length(jay), length(kay)) == 1)) {
+      both <- (i1 == jay & i2 == kay) | (i1 == kay & i2 == jay)
+      return((seq_along(i2))[both])
+    } else {
+    vector.big <- 10000 * pmin(i1, i2) + pmax(i1, i2)
+    vector.sml <- 10000 * pmin(jay, kay) + pmax(jay, kay)
+      match.sml <- match(vector.sml, vector.big)
+      match.sml
+    }
   }
 }  # iam
 
@@ -1701,7 +1713,8 @@ w.y.check <- function(w, y,
          "at least ", ncol.y.max, " needed")
 
   if (min(w) <= 0)
-    stop("prior-weight variable 'w' must contain positive values only")
+    stop("prior-weight variable 'w' must contain positive ",
+         "values only")
 
   if (is.numeric(colsyperw) && ncol(y) %% colsyperw != 0)
     stop("number of columns of the response variable 'y' is not ",
@@ -2026,6 +2039,101 @@ attr.assign.x.vglm <- function(object) {
 
   attr.x.vglm
 }  # attr.assign.x.vglm
+
+
+
+
+
+
+
+muxtXAX <- function(A, X, M) {
+
+  if ((n <- nrow(X)) != nrow(A))
+    stop("arguments 'X' and 'A' are not conformable")
+
+  ans1 <- array(0, c(n, M, M))
+  for (eye in 1:M)
+    for (jay in 1:M)
+      for (kay in 1:M)
+        ans1[, eye, jay] <- ans1[, eye, jay] +
+          A[, iam(eye, kay, M)] * X[, iam(kay, jay, M)]
+
+  ans2 <- matrix(0, n, dimm(M))
+  for (eye in 1:M)
+    for (jay in eye:M)
+      for (kay in 1:M)
+        ans2[, iam(eye, jay, M)] <- ans2[, iam(eye, jay, M)] +
+        X[, iam(kay, eye, M)] * ans1[, kay, jay]
+  ans2
+}  # muxtXAX
+
+
+
+
+
+
+
+
+
+
+
+ trim.constraints <-
+   function(object, sig.level = 0.05,
+            max.num = Inf, ...) {
+
+
+
+
+
+  if (!is(object, "vlm"))
+    stop("argument 'object' should inherit from the 'vglm' class")
+
+
+  if (!is.finite(sig.level) || !is.numeric(sig.level) ||
+      min(sig.level) < 0 || max(sig.level) > 1)
+    stop("bad input for argument 'sig.level'")
+
+  csfit <- coef(summary(object, HDEtest = FALSE))
+  X.small <- model.matrix(object, type = "lm")
+  X.assign <- attr(X.small, "assign")
+  cmlist2 <-
+  cmlist1 <- constraints(object, type = "term")
+  ncolHlist <- sapply(cmlist1, ncol)
+  colsperterm <- sapply(X.assign, length)
+  endpts <- cumsum(colsperterm * ncolHlist)
+  sig.level <- rep_len(sig.level, max(endpts))
+
+
+  pvs.vec <- csfit[, "Pr(>|z|)"]
+  if (any(!is.finite(pvs.vec)))
+    stop("cannot handle any NAs, etc. as p-values")
+  if (is.finite(max.num)) {
+    if (!is.Numeric(max.num, positive = TRUE, integer.valued = TRUE))
+      stop("bad input for argument 'max.num'")
+    spvs.vec <- sort(pvs.vec, decreasing = TRUE)
+    one.more <- as.numeric(max.num < length(spvs.vec))
+    use.sig.level <- mean(spvs.vec[max.num + (0:one.more)])
+    sig.level[sig.level < use.sig.level] <- use.sig.level
+  }
+
+  for (kay in rev(seq(length(cmlist1)))) {
+    cm.kay0 <- cm.kay <- cmlist1[[kay]]
+    for (cay in rev(seq(ncol(cm.kay0)))) {
+      cptr <- (if (kay == 1) 0 else endpts[kay - 1]) +
+              (ncolHlist[kay]) * seq(colsperterm[kay]) +
+              cay - ncol(cm.kay0)
+      if (all(pvs.vec[cptr] > sig.level[cptr]))
+        cm.kay <- cm.kay[, -cay, drop = FALSE]
+    }  # cay
+    cmlist2[[kay]] <- if (length(cm.kay)) cm.kay else NULL
+  }
+
+
+
+
+  cmlist2
+}  # trim.constraints
+
 
 
 

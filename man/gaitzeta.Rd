@@ -23,13 +23,13 @@ gaitzeta(alt.mix = NULL, inf.mix = NULL, alt.mlm = NULL,
      inf.mlm = NULL, truncate = NULL, max.support = Inf,
      zero = c("pobs", "pstr"), eq.ap = FALSE, eq.ip = FALSE,
      parallel.ap = FALSE, parallel.ip = FALSE, lshape.p = "loglink",
-     lshape.a = "loglink", lshape.i = "loglink",
+     lshape.a = lshape.p, lshape.i = lshape.p,
      type.fitted = c("mean", "shapes", "pobs.mlm", "pstr.mlm",
      "pobs.mix", "pstr.mix", "Pobs.mix", "Pstr.mix", "nonspecial",
      "Numer", "Denom.p", "sum.mlm.i", "sum.mix.i", "ptrunc.p",
      "cdf.max.s"), gshape.p = 1 + exp(-seq(7)),
-     gpstr.mix = ppoints(9) / 2,
-     gpstr.mlm = ppoints(9) / (2 + length(inf.mlm)), imethod = 1,
+     gpstr.mix = ppoints(7) / 3,
+     gpstr.mlm = ppoints(7) / (3 + length(inf.mlm)), imethod = 1,
      imux = 0.5, ishape.p = NULL, ishape.a = ishape.p,
      ishape.i = ishape.p, ipobs.mix = NULL, ipstr.mix = NULL,
      ipobs.mlm = NULL, ipstr.mlm = NULL, byrow.ai = FALSE,
@@ -197,7 +197,7 @@ have been placed in \pkg{VGAMdata}.
 
 }
 % \references{
-% Yee, T. W. and Ma, C. (2020).
+% Yee, T. W. and Ma, C. (2021).
 % Generally--altered, --inflated and --truncated regression,
 % with application to heaped and seeped counts.  % count data.
 % \emph{In preparation}.
@@ -237,6 +237,7 @@ have been placed in \pkg{VGAMdata}.
   \code{\link{Gaitpois}},
   \code{\link{gaitpoisson}},
   \code{\link{gaitlog}},
+  \code{\link{spikeplot}},
   \code{\link[VGAMdata]{oazeta}},
   \code{\link[VGAMdata]{oizeta}},
   \code{\link[VGAMdata]{otzeta}},
@@ -266,6 +267,7 @@ gdata <- transform(gdata,
                  inf.mix = ivec, pstr.mix = pstr.mix, truncate = tvec))
 gaitzeta(alt.mix = avec, inf.mix = ivec, max.support = max.support)
 with(gdata, table(y1))
+spikeplot(with(gdata, y1), col = "pink2", log = "x")
 gaitzxfit <- vglm(y1 ~ x2, crit = "coef", trace = TRUE, data = gdata,
                   gaitzeta(inf.mix = ivec, truncate = tvec,
                            alt.mix = avec, eq.ap = TRUE, eq.ip = TRUE))

@@ -18,7 +18,7 @@ dgaitplot(theta.p, fam = "pois", alt.mix = NULL, inf.mix = NULL,
     max.support = Inf, pobs.mix = 0, pobs.mlm = 0,
     pstr.mix = 0, pstr.mlm = 0, byrow.ai = FALSE,
     theta.a = theta.p, theta.i = theta.p, deflation = FALSE,
-    plot.it = TRUE, new.plot = TRUE, offset.x = 0,
+    plot.it = TRUE, new.plot = TRUE, offset.x = ifelse(new.plot, 0, 0.25),
     type.plot = "h", xlim = c(0, min(100, max.support + 2)),
     ylim = NULL, xlab = "", ylab = "Probability", main = "",
     cex.main = 1.2, posn.main = NULL,
@@ -82,13 +82,13 @@ which case \code{fam = "genpois1"}.
 
 }
   \item{xlim, ylim, xlab, ylab}{
-    See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    See \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
     
 }
   \item{main, cex.main, posn.main}{
     Character, size and position of \code{main} for the title.
     See \code{\link[graphics]{title}},
-    \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
     The position is used if it is a 2-vector.
 
 
@@ -96,7 +96,7 @@ which case \code{fam = "genpois1"}.
 }
   \item{lty.p, lty.a.mix, lty.a.mlm, lty.i.mix, lty.i.mlm}{
     Line type for parent, altered and inflated.
-    See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    See \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
 
 
     
@@ -104,7 +104,7 @@ which case \code{fam = "genpois1"}.
   \item{col.p, col.a.mix, col.a.mlm, col.i.mix, col.i.mlm}{
     Line colour for parent (nonspecial), altered and inflated
     values.
-    See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    See \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
     Roughly, by default,
     the parent is pink, the altered are azure (blue)
     and the inflated are indigo (purplish/violet).
@@ -119,7 +119,7 @@ which case \code{fam = "genpois1"}.
     
 }
   \item{type.plot, cex.p}{
-    The former matches 'type' argument in \code{\link[base]{plot}}.
+    The former matches 'type' argument in \code{\link[graphics]{plot.default}}.
     The latter is the size of the point if \code{type.plot = "p"}
     or \code{type.plot = "b"}, etc.
 
@@ -128,7 +128,7 @@ which case \code{fam = "genpois1"}.
 }
   \item{lwd.p, lwd.a, lwd.i}{
     Line width for parent, altered and inflated.
-    See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    See \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
     By default \code{par()\$lwd} is used for all of them.
 
 
@@ -153,14 +153,14 @@ which case \code{fam = "genpois1"}.
 }
   \item{axes.x, axes.y}{
     Logical. Plot axes?
-    See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    See \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
 
     
 }
   \item{Plot.trunc, cex.t, pch.t}{
     Logical. Plot the truncated values?
     If so, then specify the size and plotting character.
-    See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+    See \code{\link[graphics]{par}} and \code{\link[graphics]{plot.default}}.
 
     
 }
@@ -238,6 +238,7 @@ This utility function may change a lot in the future.
 
 \seealso{
   \code{\link{plotdgait}},
+  \code{\link{meangait}},
   \code{\link{Gaitpois}},
   \code{\link{gaitpoisson}}.
 
@@ -273,5 +274,12 @@ dgaitplot(c(mean.p, dispind.p), fam = "genpois1",
 
 
 %   col.t = "tan", lwd.p = 1, lwd.a = 1, lwd.i = 1,
+
+
+% 20201026; lots of
+%   See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+
+
+
 
 

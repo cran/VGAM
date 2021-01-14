@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -607,7 +607,8 @@ if (TRUE) {
   if (!length(newdata))
     return(object@post$cdf)
 
-  eta0 <- if (length(newdata)) predict(object, newdata) else predict(object)
+  eta0 <- if (length(newdata)) predict(object, newdata) else
+          predict(object)
 
   if (!length(double.check.earg <- object@misc$earg))
     double.check.earg <- list(theta = NULL)
@@ -707,7 +708,8 @@ rlplot.gev <-
   function(object, show.plot = TRUE,
            probability = c((1:9)/100, (1:9)/10, 0.95, 0.99, 0.995, 0.999),
            add.arg = FALSE,
-           xlab = if(log.arg) "Return Period (log-scale)" else "Return Period",
+           xlab = if(log.arg) "Return Period (log-scale)" else
+                  "Return Period",
            ylab = "Return Level",
            main = "Return Level Plot",
            pch = par()$pch, pcol.arg = par()$col, pcex = par()$cex,

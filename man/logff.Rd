@@ -79,24 +79,50 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   Multiple responses are permitted.
 
 
-  The logarithmic distribution is sometimes confused with the log-series
-  distribution. The latter was used by Fisher et al. for species
-  abundance data and has two parameters.
+  The ``logarithmic distribution'' has various meanings in
+  the literature. Sometimes it is also called the
+  \emph{log-series distribution}.
+  Some others call some continuous distribution on \eqn{[a, b]}
+  by the name ``logarithmic distribution''.
 
+  
+
+% pre20201217:
+%  The logarithmic distribution is sometimes confused with the
+%  \emph{log-series distribution}.
+%  The latter was used by Fisher et al. for species
+%  abundance data and has two parameters.
+
+
+
+
+  
 
 }
 
 \seealso{
   \code{\link{Log}},
   \code{\link{gaitlog}},
-  \code{\link[VGAMdata]{oalog}},
-  \code{\link[VGAMdata]{oilog}},
-  \code{\link[VGAMdata]{otlog}},
+  \code{\link[VGAMdata:oalog]{oalog}},
+  \code{\link[VGAMdata:oilog]{oilog}},
+  \code{\link[VGAMdata:otlog]{otlog}},
   \code{\link[base:Log]{log}},
   \code{\link{loglink}},
   \code{\link{logofflink}},
   \code{\link{explogff}},
   \code{\link{simulate.vlm}}.
+
+
+
+
+% \code{\link[VGAMdata]{oalog}},
+% \code{\link[VGAMdata]{oilog}},
+% \code{\link[VGAMdata]{otlog}},
+
+
+
+
+
 
 
 }

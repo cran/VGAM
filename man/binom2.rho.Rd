@@ -2,7 +2,8 @@
 \alias{binom2.rho}
 \alias{binom2.Rho}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Bivariate Probit Model (Family Function) }
+\title{ Bivariate Probit Regression }
+% Bivariate Probit Model (Family Function)
 \description{
   Fits a bivariate probit model to two binary responses.
   The correlation parameter rho is the measure of dependency.

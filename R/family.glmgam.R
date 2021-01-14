@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -62,7 +62,7 @@ hdeffminp <-
 
   ans <-
   new("vglmff",
-  blurb = if (multiple.responses) c("Multiple binomial model\n\n",
+  blurb = if (multiple.responses) c("Multiple responses binomial model\n\n",
          "Link:     ", namesof("mu[,j]", link, earg = earg), "\n",
          "Variance: mu[,j]*(1-mu[,j])") else
          c("Binomial model\n\n",
@@ -454,8 +454,7 @@ hdeffminp <-
     } else if ( .link == "clogloglink") {
       cbind(c(w) * (1.0 - mu.use) * (log1p(-mu.use))^2 / mu.use)
     } else {
-      cbind(c(w) * dtheta.deta(mu, link = .link ,
-                               earg = .earg )^2 / tmp100)
+      cbind(c(w) * dtheta.deta(mu, .link , earg = .earg )^2 / tmp100)
     }
     for (ii in 1:M) {
       index500 <- !is.finite(ned2ldprob2[, ii]) |
@@ -1461,6 +1460,7 @@ if (FALSE)
 
 
 
+
  double.exppoisson <-
   function(lmean = "loglink",
            ldispersion = "logitlink",
@@ -1522,16 +1522,16 @@ if (FALSE)
         "mu"
     }
     predictors.names <-
-      c(namesof(dn2,          link = .lmean, earg = .emean, short = TRUE),
-        namesof("dispersion", link = .ldisp, earg = .edisp, short = TRUE))
+      c(namesof(dn2,          .lmean , earg = .emean, short = TRUE),
+        namesof("dispersion", .ldisp , earg = .edisp, short = TRUE))
 
     init.mu <- pmax(y, 1/8)
     tmp2 <- rep_len( .idisp , n)
 
     if (!length(etastart))
       etastart <-
-        cbind(theta2eta(init.mu, link = .lmean , earg = .emean ),
-              theta2eta(tmp2,    link = .ldisp , earg = .edisp ))
+        cbind(theta2eta(init.mu, .lmean , earg = .emean ),
+              theta2eta(tmp2,    .ldisp , earg = .edisp ))
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp, .edisp = edisp,
             .idisp = idisp ))),
@@ -1550,10 +1550,8 @@ if (FALSE)
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-      lambda <- eta2theta(eta[, 1], link = .lmean,
-                          earg = .emean )
-      Disper <- eta2theta(eta[, 2], link = .ldisp,
-                          earg = .edisp )
+      lambda <- eta2theta(eta[, 1], .lmean , earg = .emean )
+      Disper <- eta2theta(eta[, 2], .ldisp , earg = .edisp )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -1569,8 +1567,8 @@ if (FALSE)
            .ldisp = ldisp, .edisp = edisp ))),
   vfamily = "double.exppoisson",
   validparams = eval(substitute(function(eta, y, extra = NULL) {
-    lambda <- eta2theta(eta[, 1], link = .lmean , earg = .emean )
-    Disper <- eta2theta(eta[, 2], link = .ldisp , earg = .edisp )
+    lambda <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    Disper <- eta2theta(eta[, 2], .ldisp , earg = .edisp )
     okay1 <- all(is.finite(lambda)) && all(0 < lambda) &&
              all(is.finite(Disper)) && all(0 < Disper & Disper < 1)
     okay1
@@ -1579,16 +1577,14 @@ if (FALSE)
 
 
   deriv = eval(substitute(expression({
-    lambda <- eta2theta(eta[, 1], link = .lmean , earg = .emean )
-    Disper <- eta2theta(eta[, 2], link = .ldisp , earg = .edisp )
+    lambda <- eta2theta(eta[, 1], .lmean , earg = .emean )
+    Disper <- eta2theta(eta[, 2], .ldisp , earg = .edisp )
 
     dl.dlambda <- Disper * (y / lambda - 1)
     dl.dDisper <- y * log(lambda) + y - lambda + 0.5 / Disper
 
-    dlambda.deta <- dtheta.deta(theta = lambda, link = .lmean,
-                                earg = .emean)
-    dDisper.deta <- dtheta.deta(theta = Disper, link = .ldisp,
-                                earg = .edisp)
+    dlambda.deta <- dtheta.deta(theta = lambda, .lmean, earg = .emean)
+    dDisper.deta <- dtheta.deta(theta = Disper, .ldisp, earg = .edisp)
 
     c(w) * cbind(dl.dlambda * dlambda.deta,
                  dl.dDisper * dDisper.deta)
@@ -1603,7 +1599,7 @@ if (FALSE)
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp,
             .edisp = edisp ))))
-}
+}  # double.exppoisson
 
 
 
@@ -1785,7 +1781,7 @@ if (FALSE)
     wz
   }), list( .lmean = lmean, .emean = emean,
             .ldisp = ldisp, .edisp = edisp ))))
-}
+}  # double.expbinomial
 
 
 

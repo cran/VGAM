@@ -190,6 +190,7 @@ of terms.
   \code{\link{step4vglm}},
   \code{\link{vglm}},
   \code{\link{extractAIC.vglm}},
+  \code{\link{trim.constraints}},
   \code{\link{anova.vglm}},
   \code{\link{backPain2}},
   \code{\link[stats]{update}}.

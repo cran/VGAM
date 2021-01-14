@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -59,11 +59,11 @@ vgam.fit <-
   old.coeffs <- coefstart
 
   intercept.only <- ncol(x) == 1 && colnames(x) == "(Intercept)"
-  y.names <- predictors.names <- NULL  # May be overwritten in @initialize
+  y.names <- predictors.names <- NULL  # May be overwritten
 
   n.save <- n
   if (length(slot(family, "initialize")))
-    eval(slot(family, "initialize"))  # Initialize mu & M (& optionally w)
+    eval(slot(family, "initialize"))  # Initialize mu & M (& maybe w)
 
   if (length(etastart)) {
     eta <- etastart
@@ -185,7 +185,8 @@ vgam.fit <-
     deriv.mu <- eval(slot(family, "deriv"))
     wz <- eval(slot(family, "weight"))
     if (control$checkwz)
-      wz <- checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon)
+      wz <- checkwz(wz, M = M, trace = trace,
+                    wzepsilon = control$wzepsilon)
 
     U <- vchol(wz, M = M, n = n, silent = !trace)
     tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
@@ -310,7 +311,8 @@ vgam.fit <-
         deriv.mu <- eval(slot(family, "deriv"))
         wz <- eval(slot(family, "weight"))
         if (control$checkwz)
-          wz <- checkwz(wz, M = M, trace = trace, wzepsilon = control$wzepsilon)
+          wz <- checkwz(wz, M = M, trace = trace,
+                        wzepsilon = control$wzepsilon)
 
         U <- vchol(wz, M = M, n = n, silent = !trace)
         tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
@@ -442,7 +444,8 @@ vgam.fit <-
 
 
     NewHlist <- process.constraints(constraints, x, M,
-                                    specialCM = specialCM, by.col = FALSE)
+                                    specialCM = specialCM,
+                                    by.col = FALSE)
 
     misc <- list(
         colnames.x = xn,

@@ -1,7 +1,7 @@
 \name{bisa}
 \alias{bisa}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Birnbaum-Saunders Distribution Family Function }
+\title{ Birnbaum-Saunders Regression Family Function }
 \description{
   Estimates the shape and scale parameters of the
   Birnbaum-Saunders distribution by maximum likelihood estimation.

@@ -146,6 +146,7 @@ zigeometricff(lprob = "logitlink", lonempstr0 = "logitlink",
   \code{\link{rzigeom}},
   \code{\link{geometric}},
   \code{\link{zageometric}},
+  \code{\link{spikeplot}},
   \code{\link[stats]{rgeom}},
   \code{\link{simulate.vlm}}.
 

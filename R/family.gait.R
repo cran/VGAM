@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,6 +14,123 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ meangait <-
+   function(theta.p,
+            fam = c("pois", "log", "zeta"),  # "genpois0",
+            alt.mix = NULL, inf.mix = NULL,  # Unstructured probs are
+            alt.mlm = NULL, inf.mlm = NULL,  # contiguous
+            truncate = NULL, max.support = Inf,
+            pobs.mix = 0,  # scalar
+            pobs.mlm = 0,  # vector of length alt.mlm
+            pstr.mix = 0,  # scalar
+            pstr.mlm = 0,  # vector of length alt.mlm
+            byrow.ai = FALSE,  # Applies to 'pobs.mlm' & 'pstr.mlm'
+            theta.a = theta.p,  # scalar, else a 2-vector
+            theta.i = theta.p,  # scalar, else a 2-vector
+            deflation = FALSE,  # Single logical
+            ...
+           ) {  # ... ignored currently.
+
+
+  fam.choices <- c("pois", "log", "zeta")
+  fam <- match.arg(fam[1], fam.choices)[1]
+  baseparams.argnames <-
+    switch(fam, "pois" = "lambda", "log" = "shape", "zeta" = "shape")
+
+
+  gait.errorcheck(alt.mix, alt.mlm, inf.mix, inf.mlm,
+                  truncate, max.support)  #, min.support = lowsup
+
+  MM <- switch(fam, "pois" = 1, "log" = 1, "zeta" = 1)
+  if (MM != 1 && MM !=  2)
+    stop("can only handle 1 or 2 parameters")
+  
+  if (!length(alt.mix)) {
+    pobs.mix <- 0  # Make sure
+  }
+  if (!length(alt.mlm)) {
+    pobs.mlm <- 0  # Make sure
+  }
+  if (!length(inf.mix)) {
+    pstr.mix <- 0  # Make sure
+  }
+  if (!length(inf.mlm)) {
+    pstr.mlm <- 0  # Make sure
+  }
+
+  if (length(pobs.mix) != 1) stop("bad input for argument 'pobs.mix'")
+  if (length(pstr.mix) != 1) stop("bad input for argument 'pstr.mix'")
+  if (length(alt.mlm) && length(pobs.mlm) > length(alt.mlm))
+    warning("bad input for argument 'pobs.mlm'?")
+  if (length(inf.mlm) && length(pstr.mlm) > length(inf.mlm))
+    warning("bad input for argument 'pstr.mlm'?")
+
+  if (length(alt.mlm))
+    pobs.mlm <- matrix(pobs.mlm, 1,  # length(xx),
+                       length(alt.mlm), byrow = byrow.ai)
+  if (length(inf.mlm))
+    pstr.mlm <- matrix(pstr.mlm, 1,  # length(xx),
+                       length(inf.mlm), byrow = byrow.ai)
+
+      
+  alist <- list(  # x = xx,  # theta.p,
+            alt.mix = alt.mix, alt.mlm = alt.mlm,
+            inf.mix = inf.mix, inf.mlm = inf.mlm,
+            truncate = truncate, max.support = max.support,
+            pobs.mix = pobs.mix, pobs.mlm = pobs.mlm,
+            pstr.mix = pstr.mix, pstr.mlm = pstr.mlm,
+            byrow.ai = byrow.ai)
+
+
+    alist[[paste0(baseparams.argnames[1], ".p")]] <- theta.p[1]
+    alist[[paste0(baseparams.argnames[1], ".a")]] <- theta.a[1]
+    alist[[paste0(baseparams.argnames[1], ".i")]] <- theta.i[1]
+    if (MM == 2) {
+      alist[[paste0(baseparams.argnames[2], ".p")]] <- theta.p[2]
+      alist[[paste0(baseparams.argnames[2], ".a")]] <- theta.a[2]
+      alist[[paste0(baseparams.argnames[2], ".i")]] <- theta.i[2]
+    }
+
+  mlist <- alist
+  mlist$type.fitted <- "All"
+  mlist$moments2 <- TRUE
+  mom.fun <- paste0("moments.gaitcombo.", fam)
+  Bits <- do.call(mom.fun, mlist)
+
+
+  if (length(c(inf.mix, inf.mlm))) {  # Inflated mix or mlm
+
+    Denom.p <- as.vector(Bits[["cdf.max.s"]] - Bits[["SumT0.p"]] -
+                         Bits[["SumA0.mix.p"]] - Bits[["SumA0.mlm.p"]])
+    if (any(Denom.p == 0))
+      stop("0s found in the denominator (variable 'Denom.p')")
+    Numer <- as.vector(1 -
+               (if (length(alt.mix)) pobs.mix else 0) -
+               (if (length(inf.mix)) pstr.mix else 0) -
+               (if (length(alt.mlm)) rowSums(rbind(pobs.mlm)) else 0) -
+               (if (length(inf.mlm)) rowSums(rbind(pstr.mlm)) else 0))
+    if (any(Numer < 0) && !deflation)
+      warning("variable 'Numer' has negative values and ",
+              "'deflation = FALSE'")
+  }
+
+  c(Bits$mean)
+}  # meangait
 
 
 
@@ -73,8 +190,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
            parallel.ap = FALSE,  # TRUE applies to the intercept
            parallel.ip = FALSE,  # TRUE applies to the intercept
            lshape.p = "loglink",
-           lshape.a = "loglink",
-           lshape.i = "loglink",
+           lshape.a = lshape.p,  # "loglink", 20201117
+           lshape.i = lshape.p,  # "loglink", 20201117
            type.fitted = c("mean", "shapes",
                            "pobs.mlm", "pstr.mlm",
                            "pobs.mix", "pstr.mix",
@@ -83,8 +200,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
                            "sum.mlm.i", "sum.mix.i",
                            "ptrunc.p", "cdf.max.s"),
            gshape.p = 1 + exp(-seq(7)),
-           gpstr.mix = ppoints(9) / 2,
-           gpstr.mlm = ppoints(9) / (2 + length(inf.mlm)),
+           gpstr.mix = ppoints(7) / 3,  # ppoints(9) / 2,
+           gpstr.mlm = ppoints(7) / (3 + length(inf.mlm)),
            imethod = 1,
            imux = 0.5,  # General downward multiplier for init values
            ishape.p = NULL, ishape.a = ishape.p,
@@ -116,13 +233,11 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
 
   lpobs.mix <- "multilogitlink"  # \omega_p
   epobs.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
-  lshape.a <- as.list(substitute(lshape.a))
   eshape.a <- link2list(lshape.a)
   lshape.a <- attr(eshape.a, "function.name")
 
   lpstr.mix <- "multilogitlink"  # \phi_p
   epstr.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
-  lshape.i <- as.list(substitute(lshape.i))
   eshape.i <- link2list(lshape.i)
   lshape.i <- attr(eshape.i, "function.name")
 
@@ -1514,17 +1629,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
         if (tmp3.TF[4]) dl.dpstr.mix else NULL,
         if (tmp3.TF[6]) dl.dpobs.mlm else NULL,
         if (tmp3.TF[7]) dl.dpstr.mlm else NULL)
-
-      dl.deta.mlm4 <- matrix(0, n, ncol(all4.dldp))
-      ind.quad.mlm <- seq(ncol(all4.dldp))  # Contiguous & starts at 1
-
-      for (jay in ind.quad.mlm) {
-        for (sss in ind.quad.mlm) {  # Dont need all4probs, allprobs ok
-          dl.deta.mlm4[, jay] <- dl.deta.mlm4[, jay] +
-            allprobs[, sss] * ((sss == jay) - allprobs[, jay]) *
-            all4.dldp[, sss]
-        }  # sss
-      }  # jay
+      dl.deta.mlm4 <- allprobs[, -ncol(allprobs)] * (
+        all4.dldp - rowSums(allprobs[, -ncol(allprobs)] * all4.dldp))
     }  # lall.len
 
 
@@ -1978,21 +2084,7 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
                   length(offset) == 1 || all(offset[1] == offset))
 
       ind.mlm <- iam(NA, NA, lind.rc, both = TRUE, diag = TRUE)
-      n.use <- 2
-      bread <- if (speed.up)
-               -allprobs[1:n.use, ind.mlm$row, drop = FALSE] *
-                allprobs[1:n.use, ind.mlm$col, drop = FALSE] else
-               -allprobs[, ind.mlm$row, drop = FALSE] *
-                allprobs[, ind.mlm$col, drop = FALSE]
-      if (speed.up) {
-        bread[, 1:lind.rc] <-
-        bread[, 1:lind.rc] + allprobs[1:n.use, 1:lind.rc]
-      } else {
-        bread[, 1:lind.rc] <-
-        bread[, 1:lind.rc] + allprobs[, 1:lind.rc]  # -use.refLevel
-      }
-      bread <- m2a(bread, M = lind.rc)  # Half wasteful really
-
+      n.use <- if (speed.up) 2 else n  # for sandwich.mlm
 
       if (!length(extra$ind.wz.match)) {
         imat <- matrix(NA, lind.rc, lind.rc)
@@ -2013,11 +2105,37 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
       filling <- if (speed.up)
         wz[1:n.use, extra$ind.wz.match, drop = FALSE] else
         wz[, extra$ind.wz.match, drop = FALSE]
+      M.mlm <- lind.rc
+      if (!exists("iamlist")) {
+        iamlist <- iam(NA, NA, M = M.mlm, both = TRUE)
+        if (M.mlm > 1)  # Offdiagonal elts
+          iamlist.nod <- iam(NA, NA, M.mlm, both = TRUE, diag = FALSE)
+      }
+      MM12 <- M.mlm * (M.mlm + 1) / 2
 
-      wz.5 <- mux5(filling, bread, M = lind.rc, matrix.arg = TRUE)
+      Qf3 <- rowSums(filling[, 1:M.mlm] *  # Diagonal elts
+                     (allprobs[1:n.use, 1:M.mlm, drop = FALSE])^2)
+      if (M.mlm > 1)  # Offdiagonal elts
+        Qf3 <- Qf3 + 2 * rowSums(allprobs[1:n.use, iamlist.nod$row] *
+                     filling[, -(1:M.mlm), drop = FALSE] *  # n-vector
+                                 allprobs[1:n.use, iamlist.nod$col])
+      Qf3 <- matrix(Qf3, n.use, MM12)  # n x MM12; just a scalar
 
+      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored columnwise
+      for (want in seq(M.mlm)) {  # Want the equivalent of rowSums(Qf2a)
+        iamvec <- iam(want, 1:M.mlm, M = M.mlm)  # Diagonals included
+        Qf2rowsums[, want] <- rowSums(filling[, iamvec, drop = FALSE] *
+                                      allprobs[1:n.use, 1:M.mlm])
+      }
+      Qf2a <- Qf2rowsums[, iamlist$row]
+      Qf2b <- Qf2rowsums[, iamlist$col]
+
+      Qform <- filling - Qf2a - Qf2b + Qf3  # n x MM12
+      Qform <- Qform * allprobs[1:n.use, iamlist$row] *
+                       allprobs[1:n.use, iamlist$col]
+        
       wz.4[, extra$ind.wz.match] <- if (speed.up)
-        matrix(wz.5[1, ], n, ncol(wz.5), byrow = TRUE) else c(wz.5)
+        matrix(Qform[1, ], n, ncol(Qform), byrow = TRUE) else c(Qform)
 
 
 
@@ -2047,15 +2165,16 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
     }  # lall.len
 
 
-
-    mytiny <- (allprobs <       sqrt(.Machine$double.eps)) |
-              (allprobs > 1.0 - sqrt(.Machine$double.eps))
-    atiny <- rowSums(mytiny) > 0
-    if (any(atiny)) {
-      ind.diags <- setdiff(1:M, ind.shape.z)  # Exclude thetas
-      wz[atiny, ind.diags] <- .Machine$double.eps +
-      wz[atiny, ind.diags] * (1 + .Machine$double.eps^0.5)
-    }
+    if (lall.len) {
+      mytiny <- (allprobs <       sqrt(.Machine$double.eps)) |
+                (allprobs > 1.0 - sqrt(.Machine$double.eps))
+      atiny <- rowSums(mytiny) > 0
+      if (any(atiny)) {
+        ind.diags <- setdiff(1:M, ind.shape.z)  # Exclude thetas
+        wz[atiny, ind.diags] <- .Machine$double.eps +
+        wz[atiny, ind.diags] * (1 + .Machine$double.eps^0.5)
+      }
+    }  # lall.len
 
 
 
@@ -2084,8 +2203,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
            parallel.ap = FALSE,  # TRUE applies to the intercept
            parallel.ip = FALSE,  # TRUE applies to the intercept
            lshape.p = "logitlink",
-           lshape.a = "logitlink",
-           lshape.i = "logitlink",
+           lshape.a = lshape.p,  # "logitlink", 20201117
+           lshape.i = lshape.p,  # "logitlink", 20201117
            type.fitted = c("mean", "shapes",
                            "pobs.mlm", "pstr.mlm",
                            "pobs.mix", "pstr.mix",
@@ -2094,8 +2213,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
                            "sum.mlm.i", "sum.mix.i",
                            "ptrunc.p", "cdf.max.s"),
            gshape.p = -expm1(-7 * ppoints(12)),
-           gpstr.mix = ppoints(9) / 2,
-           gpstr.mlm = ppoints(9) / (2 + length(inf.mlm)),
+           gpstr.mix = ppoints(7) / 3,  # ppoints(9) / 2,
+           gpstr.mlm = ppoints(7) / (3 + length(inf.mlm)),
            imethod = 1,
            imux = 0.5,  # General downward multiplier for init values
            ishape.p = NULL, ishape.a = ishape.p,
@@ -2123,13 +2242,11 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
 
   lpobs.mix <- "multilogitlink"  # \omega_p
   epobs.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
-  lshape.a <- as.list(substitute(lshape.a))
   eshape.a <- link2list(lshape.a)
   lshape.a <- attr(eshape.a, "function.name")
 
   lpstr.mix <- "multilogitlink"  # \phi_p
   epstr.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
-  lshape.i <- as.list(substitute(lshape.i))
   eshape.i <- link2list(lshape.i)
   lshape.i <- attr(eshape.i, "function.name")
 
@@ -3544,17 +3661,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
         if (tmp3.TF[4]) dl.dpstr.mix else NULL,
         if (tmp3.TF[6]) dl.dpobs.mlm else NULL,
         if (tmp3.TF[7]) dl.dpstr.mlm else NULL)
-
-      dl.deta.mlm4 <- matrix(0, n, ncol(all4.dldp))
-      ind.quad.mlm <- seq(ncol(all4.dldp))  # Contiguous & starts at 1
-
-      for (jay in ind.quad.mlm) {
-        for (sss in ind.quad.mlm) {  # Dont need all4probs, allprobs ok
-          dl.deta.mlm4[, jay] <- dl.deta.mlm4[, jay] +
-            allprobs[, sss] * ((sss == jay) - allprobs[, jay]) *
-            all4.dldp[, sss]
-        }  # sss
-      }  # jay
+      dl.deta.mlm4 <- allprobs[, -ncol(allprobs)] * (
+        all4.dldp - rowSums(allprobs[, -ncol(allprobs)] * all4.dldp))
     }  # lall.len
 
 
@@ -4014,20 +4122,7 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
                   length(offset) == 1 || all(offset[1] == offset))
 
       ind.mlm <- iam(NA, NA, lind.rc, both = TRUE, diag = TRUE)
-      n.use <- 2
-      bread <- if (speed.up)
-               -allprobs[1:n.use, ind.mlm$row, drop = FALSE] *
-                allprobs[1:n.use, ind.mlm$col, drop = FALSE] else
-               -allprobs[, ind.mlm$row, drop = FALSE] *
-                allprobs[, ind.mlm$col, drop = FALSE]
-      if (speed.up) {
-        bread[, 1:lind.rc] <-
-        bread[, 1:lind.rc] + allprobs[1:n.use, 1:lind.rc]
-      } else {
-        bread[, 1:lind.rc] <-
-        bread[, 1:lind.rc] + allprobs[, 1:lind.rc]  # -use.refLevel
-      }
-      bread <- m2a(bread, M = lind.rc)  # Half wasteful really
+      n.use <- if (speed.up) 2 else n  # for sandwich.mlm
 
       if (!length(extra$ind.wz.match)) {
         imat <- matrix(NA, lind.rc, lind.rc)
@@ -4048,9 +4143,34 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
       filling <- if (speed.up)
         wz[1:n.use, extra$ind.wz.match, drop = FALSE] else
         wz[, extra$ind.wz.match, drop = FALSE]
-      wz.5 <- mux5(filling, bread, M = lind.rc, matrix.arg = TRUE)
+      M.mlm <- lind.rc
+      if (!exists("iamlist")) {
+        iamlist <- iam(NA, NA, M = M.mlm, both = TRUE)
+        if (M.mlm > 1)  # Offdiagonal elts
+          iamlist.nod <- iam(NA, NA, M.mlm, both = TRUE, diag = FALSE)
+      }
+      MM12 <- M.mlm * (M.mlm + 1) / 2
+      Qf3 <- rowSums(filling[, 1:M.mlm, drop = FALSE] *  # Diagonal elts
+                     (allprobs[1:n.use, 1:M.mlm, drop = FALSE])^2)
+      if (M.mlm > 1)  # Offdiagonal elts
+        Qf3 <- Qf3 + 2 * rowSums(allprobs[1:n.use, iamlist.nod$row] *
+                     filling[, -(1:M.mlm), drop = FALSE] *  # n-vector
+                                 allprobs[1:n.use, iamlist.nod$col])
+      Qf3 <- matrix(Qf3, n.use, MM12)  # n x MM12; just a scalar
+      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored columnwise
+      for (want in seq(M.mlm)) {  # Want the equivalent of rowSums(Qf2a)
+        iamvec <- iam(want, 1:M.mlm, M = M.mlm)  # Diagonals included
+        Qf2rowsums[, want] <- rowSums(filling[, iamvec, drop = FALSE] *
+                                      allprobs[1:n.use, 1:M.mlm])
+      }
+      Qf2a <- Qf2rowsums[, iamlist$row]
+      Qf2b <- Qf2rowsums[, iamlist$col]
+      Qform <- filling - Qf2a - Qf2b + Qf3  # n x MM12
+      Qform <- Qform * allprobs[1:n.use, iamlist$row] *
+                       allprobs[1:n.use, iamlist$col]
       wz.4[, extra$ind.wz.match] <- if (speed.up)
-        matrix(wz.5[1, ], n, ncol(wz.5), byrow = TRUE) else c(wz.5)
+        matrix(Qform[1, ], n, ncol(Qform), byrow = TRUE) else c(Qform)
+
 
 
 
@@ -4081,22 +4201,22 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
     }  # lall.len
 
 
-
-    mytiny <- (allprobs <       sqrt(.Machine$double.eps)) |
-              (allprobs > 1.0 - sqrt(.Machine$double.eps))
-    atiny <- rowSums(mytiny) > 0
-    if (any(atiny)) {
-      ind.diags <- setdiff(1:M, ind.shape.z)  # Exclude thetas
-      wz[atiny, ind.diags] <- .Machine$double.eps +
-      wz[atiny, ind.diags] * (1 + .Machine$double.eps^0.5)
-    }
+    if (lall.len) {
+      mytiny <- (allprobs <       sqrt(.Machine$double.eps)) |
+                (allprobs > 1.0 - sqrt(.Machine$double.eps))
+      atiny <- rowSums(mytiny) > 0
+      if (any(atiny)) {
+        ind.diags <- setdiff(1:M, ind.shape.z)  # Exclude thetas
+        wz[atiny, ind.diags] <- .Machine$double.eps +
+        wz[atiny, ind.diags] * (1 + .Machine$double.eps^0.5)
+      }
+    }  # lall.len
 
 
 
     c(w) * wz
   }), list( .truncate = truncate ))))
 }  # gaitlog
-
 
 
 
@@ -4118,8 +4238,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
            parallel.ap = FALSE,  # TRUE applies to the intercept
            parallel.ip = FALSE,  # TRUE applies to the intercept
            llambda.p = "loglink",
-           llambda.a = "loglink",
-           llambda.i = "loglink",
+           llambda.a = llambda.p,  # "loglink", 20201117
+           llambda.i = llambda.p,  # "loglink", 20201117
            type.fitted = c("mean", "lambdas",
                            "pobs.mlm", "pstr.mlm",
                            "pobs.mix", "pstr.mix",
@@ -4127,8 +4247,8 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
                            "nonspecial", "Numer", "Denom.p",
                            "sum.mlm.i", "sum.mix.i",
                            "ptrunc.p", "cdf.max.s"),
-           gpstr.mix = ppoints(9) / 2,
-           gpstr.mlm = ppoints(9) / (2 + length(inf.mlm)),
+           gpstr.mix = ppoints(7) / 3,  # ppoints(9) / 2,
+           gpstr.mlm = ppoints(7) / (3 + length(inf.mlm)),
            imethod = 1,
            imux = 0.5,  # General downward multiplier for init values
            ilambda.p = NULL, ilambda.a = ilambda.p,
@@ -4155,13 +4275,11 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
 
   lpobs.mix <- "multilogitlink"  # \omega_p
   epobs.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
-  llambda.a <- as.list(substitute(llambda.a))
   elambda.a <- link2list(llambda.a)
   llambda.a <- attr(elambda.a, "function.name")
 
   lpstr.mix <- "multilogitlink"  # \phi_p
   epstr.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
-  llambda.i <- as.list(substitute(llambda.i))
   elambda.i <- link2list(llambda.i)
   llambda.i <- attr(elambda.i, "function.name")
 
@@ -5550,16 +5668,14 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
         if (tmp3.TF[6]) dl.dpobs.mlm else NULL,
         if (tmp3.TF[7]) dl.dpstr.mlm else NULL)
 
-      dl.deta.mlm4 <- matrix(0, n, ncol(all4.dldp))
-      ind.quad.mlm <- seq(ncol(all4.dldp))  # Contiguous & starts at 1
 
-      for (jay in ind.quad.mlm) {
-        for (sss in ind.quad.mlm) {  # Dont need all4probs, allprobs ok
-          dl.deta.mlm4[, jay] <- dl.deta.mlm4[, jay] +
-            allprobs[, sss] * ((sss == jay) - allprobs[, jay]) *
-            all4.dldp[, sss]
-        }  # sss
-      }  # jay
+
+
+      dl.deta.mlm4 <- allprobs[, -ncol(allprobs)] * (
+        all4.dldp - rowSums(allprobs[, -ncol(allprobs)] * all4.dldp))
+
+
+
     }  # lall.len
 
 
@@ -6011,8 +6127,11 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
         for (sss in seq(M))
           wz.4[, iam(uuu, sss, M)] <- wz[, iam(uuu, sss, M)]
 
-       
-  if (FALSE) {
+ starttime1 <- proc.time()
+ 
+ 
+ 
+  if (FALSE) {  # algorithm.which
       for (uuu in seq(lind.rc)) {
         for (vvv in uuu:lind.rc) {
           for (sss in seq(lind.rc)) {
@@ -6043,21 +6162,25 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
 
 
       ind.mlm <- iam(NA, NA, lind.rc, both = TRUE, diag = TRUE)
-      n.use <- 2
-      bread <- if (speed.up)
-               -allprobs[1:n.use, ind.mlm$row, drop = FALSE] *
-                allprobs[1:n.use, ind.mlm$col, drop = FALSE] else
-               -allprobs[, ind.mlm$row, drop = FALSE] *
-                allprobs[, ind.mlm$col, drop = FALSE]
-      if (speed.up) {
-        bread[, 1:lind.rc] <-
-        bread[, 1:lind.rc] + allprobs[1:n.use, 1:lind.rc]
-      } else {
-        bread[, 1:lind.rc] <-
-        bread[, 1:lind.rc] + allprobs[, 1:lind.rc]  # -use.refLevel
-      }
-      bread <- m2a(bread, M = lind.rc)  # Half wasteful really
+      n.use <- if (speed.up) 2 else n  # for sandwich.mlm
 
+
+
+      if (FALSE) {  # algorithm.which
+        bread <- if (speed.up)
+                 -allprobs[1:n.use, ind.mlm$row, drop = FALSE] *
+                  allprobs[1:n.use, ind.mlm$col, drop = FALSE] else
+                 -allprobs[, ind.mlm$row, drop = FALSE] *
+                  allprobs[, ind.mlm$col, drop = FALSE]
+        if (speed.up) {
+          bread[, 1:lind.rc] <-
+          bread[, 1:lind.rc] + allprobs[1:n.use, 1:lind.rc]
+        } else {
+          bread[, 1:lind.rc] <-
+          bread[, 1:lind.rc] + allprobs[, 1:lind.rc]  # -use.refLevel
+        }
+        bread <- m2a(bread, M = lind.rc)  # Half wasteful really
+      }
 
 
       if (!length(extra$ind.wz.match)) {
@@ -6082,10 +6205,46 @@ Trunc <- function(Range, mux = 2, location = 0, omits = TRUE) {
 
 
 
-      wz.5 <- mux5(filling, bread, M = lind.rc, matrix.arg = TRUE)
+        
+
+
+
+
+
+
+
+      M.mlm <- lind.rc
+      if (!exists("iamlist")) {
+        iamlist <- iam(NA, NA, M = M.mlm, both = TRUE)
+        if (M.mlm > 1)  # Offdiagonal elts
+          iamlist.nod <- iam(NA, NA, M.mlm, both = TRUE, diag = FALSE)
+      }
+      MM12 <- M.mlm * (M.mlm + 1) / 2
+
+      Qf3 <- rowSums(filling[, 1:M.mlm, drop = FALSE] *  # Diagonal elts
+                     (allprobs[1:n.use, 1:M.mlm, drop = FALSE])^2)
+      if (M.mlm > 1)  # Offdiagonal elts
+        Qf3 <- Qf3 + 2 * rowSums(allprobs[1:n.use, iamlist.nod$row] *
+                     filling[, -(1:M.mlm), drop = FALSE] *  # n-vector
+                                 allprobs[1:n.use, iamlist.nod$col])
+      Qf3 <- matrix(Qf3, n.use, MM12)  # n x MM12; just a scalar
+
+      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored columnwise
+      for (want in seq(M.mlm)) {  # Want the equivalent of rowSums(Qf2a)
+        iamvec <- iam(want, 1:M.mlm, M = M.mlm)  # Diagonals included
+        Qf2rowsums[, want] <- rowSums(filling[, iamvec, drop = FALSE] *
+                                      allprobs[1:n.use, 1:M.mlm])
+      }
+      Qf2a <- Qf2rowsums[, iamlist$row]
+      Qf2b <- Qf2rowsums[, iamlist$col]
+
+      Qform <- filling - Qf2a - Qf2b + Qf3  # n x MM12
+      Qform <- Qform * allprobs[1:n.use, iamlist$row] *
+                       allprobs[1:n.use, iamlist$col]
+        
 
       wz.4[, extra$ind.wz.match] <- if (speed.up)
-        matrix(wz.5[1, ], n, ncol(wz.5), byrow = TRUE) else c(wz.5)
+        matrix(Qform[1, ], n, ncol(Qform), byrow = TRUE) else c(Qform)
 
 
 
@@ -8781,7 +8940,7 @@ setMethod("is.truncated", "vglm",
            theta.i = theta.p,  # scalar, else a 2-vector
            deflation = FALSE,  # Single logical
            plot.it = TRUE, new.plot = TRUE,
-           offset.x = 0,  # Allows multiple side-by-side plots
+           offset.x = ifelse(new.plot, 0, 0.25),
            type.plot = "h",  # Matches 'type' argument
            xlim = c(0, min(100, max.support + 2)),
            ylim = NULL,

@@ -73,16 +73,31 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
 
 
+% 20201215:
+
+  Currently the \code{weights} argument supports sampling
+  weights from complex sampling designs
+  via \pkg{svyVGAM}.
+  Some details can be found at
+  \url{https://CRAN.R-project.org/package=svyVGAM}.
+
+
+
+% Creates CRAN problems:
+% \url{https://cran.r-project.org/web/packages/svyVGAM/vignettes/theory.html}.
+
+
+
+
 
 % 20140507:
-
-  Currently the \code{weights} argument does not support sampling
-  weights from complex sampling designs.
-  And currently sandwich estimators are not computed in any
-  shape or form.
-  The present weights are multiplied by the corresponding
-  log-likelihood contributions and added to form the
-  overall log-likelihood.
+% Currently the \code{weights} argument does not support sampling
+% weights from complex sampling designs.
+% And currently sandwich estimators are not computed in any
+% shape or form.
+% The present weights are multiplied by the corresponding
+% log-likelihood contributions and added to form the
+% overall log-likelihood.
 
 
 

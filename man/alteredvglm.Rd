@@ -116,7 +116,7 @@ with application to heaped and seeped counts.
 \examples{
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 fit1 <- vglm(y ~ 1, gaitpoisson(alt.mix = 0),
-             abdata, weight = w, subset = w > 0)
+             data = abdata, weight = w, subset = w > 0)
 specials(fit1)  # All three sets
 altered(fit1)  # Subject to change
 inflated(fit1)  # Subject to change

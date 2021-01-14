@@ -76,8 +76,8 @@ T. W. Yee
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  \code{\link{bellff}},
-  \code{\link{rbell}}.
+  \code{\link[VGAMdata]{bellff}},
+  \code{\link[VGAMdata]{rbell}}.
 % \code{\link{lambertW}}.
 
 

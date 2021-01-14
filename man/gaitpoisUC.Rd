@@ -365,7 +365,7 @@ nonparametric possible.
 }
 \references{
 
-Yee, T. W. and Ma, C. (2020).
+Yee, T. W. and Ma, C. (2021).
 Generally--altered, --inflated and --truncated regression,
 with application to heaped and seeped counts.
 \emph{In preparation}.
@@ -415,6 +415,8 @@ with application to heaped and seeped counts.
   \code{\link{gaitpoisson}},
   \code{\link{multinomial}},
   \code{\link{specials}},
+  \code{\link{spikeplot}},
+  \code{\link{dgaitplot}},
   \code{\link{Zapois}},
   \code{\link{Zipois}},
   \code{\link[VGAMdata]{Pospois}}

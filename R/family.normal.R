@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -816,334 +816,6 @@ rbetanorm <- function(n, shape1, shape2, mean = 0, sd = 1) {
 
 
 
-dtikuv <- function(x, d, mean = 0, sigma = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
-    stop("bad input for argument 'log'")
-  rm(log)
-
-
-  if (!is.Numeric(d, length.arg = 1) ||
-      max(d) >= 2)
-    stop("bad input for argument 'd'")
-
-  L <- max(length(x), length(mean), length(sigma))
-  if (length(x)     != L) x     <- rep_len(x,     L)
-  if (length(mean)  != L) mean  <- rep_len(mean,  L)
-  if (length(sigma) != L) sigma <- rep_len(sigma, L)
-
-
-  hh <- 2 - d
-  KK <- 1 / (1 + 1/hh + 0.75/hh^2)
-  logden <- dnorm(x = x, mean = mean, sd = sigma, log = TRUE) +
-    log(KK) + 2 * log1p(((x-mean)/sigma)^2 / (2*hh))
-  logden[is.infinite(x)] <- log(0)  # 20141209 KaiH
-  if (log.arg) logden else exp(logden)
-}
-
-
-
-ptikuv <- function(q, d, mean = 0, sigma = 1,
-                   lower.tail = TRUE, log.p = FALSE) {
-  if (!is.Numeric(d, length.arg = 1) ||
-      max(d) >= 2)
-    stop("bad input for argument 'd'")
-
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
-    stop("bad input for argument 'lower.tail'")
-
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
-    stop("bad input for argument 'log.p'")
-  rm(log.p)  # 20141231 KaiH
-
-  L <- max(length(q), length(mean), length(sigma))
-  if (length(q)     != L) q     <- rep_len(q,     L)
-  if (length(mean)  != L) mean  <- rep_len(mean,  L)
-  if (length(sigma) != L) sigma <- rep_len(sigma, L)
-
-  zedd1 <- 0.5 * ((q - mean) / sigma)^2
-  ans <- q*0 + 0.5
-  hh <- 2 - d
-  KK <- 1 / (1 + 1/hh + 0.75/hh^2)
-  if (any(lhs <- q < mean)) {
-    ans[lhs] <- ( KK/(2*sqrt(pi))) * (
-    gamma(0.5) * (1 - pgamma(zedd1[lhs], 0.5)) +
-    2 * gamma(1.5) * (1 - pgamma(zedd1[lhs], 1.5)) / hh +
-    gamma(2.5) * (1 - pgamma(zedd1[lhs], 2.5)) / hh^2)
-  }
-  if (any(rhs <- q > mean)) {
-    ans[rhs] <- 1.0 - Recall(q = (2*mean[rhs] - q[rhs]), d = d,
-                             mean = mean[rhs], sigma = sigma[rhs])
-  }
-
-  if (lower.tail) {
-    if (log.arg) log(ans) else ans
-  } else {
-    if (log.arg) log1p(-ans) else 1 - ans
-  }
-}
-
-
-
-
-qtikuv <- function(p, d, mean = 0, sigma = 1,
-                   lower.tail = TRUE, log.p = FALSE, ...) {
-  if (!is.logical(log.p) || length(log.p) != 1)
-    stop("bad input for argument 'log.p'")
-
-  if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
-    stop("bad input for argument 'd'")
-
-  orig.p <- p
-  if (lower.tail) {
-    if (log.p) p <- exp(p)
-  } else {
-    p <- if (log.p) -expm1(p) else 1 - p
-  }
-
-  L <- max(length(p), length(mean), length(sigma))
-  if (length(p)     != L) p     <- rep_len(p,     L)
-  if (length(mean)  != L) mean  <- rep_len(mean,  L)
-  if (length(sigma) != L) sigma <- rep_len(sigma, L)
-  ans <- rep_len(0.0, L)
-
-
-  myfun <- function(x, d, mean = 0, sigma = 1, p)
-    ptikuv(q = x, d = d, mean = mean, sigma = sigma) - p
-
-  for (ii in 1:L) {
-    Lower <- ifelse(p[ii] <= 0.5, mean[ii] - 3 * sigma[ii], mean[ii])
-    while (ptikuv(q = Lower, d = d, mean = mean[ii],
-                  sigma = sigma[ii]) > p[ii])
-      Lower <- Lower - sigma[ii]
-    Upper <- ifelse(p[ii] >= 0.5, mean[ii] + 3 * sigma[ii], mean[ii])
-    while (ptikuv(q = Upper, d = d, mean = mean[ii],
-                  sigma = sigma[ii]) < p[ii])
-      Upper <- Upper + sigma[ii]
-    ans[ii] <- uniroot(f = myfun, lower = Lower, upper = Upper,
-                       d = d, p = p[ii],
-                       mean = mean[ii], sigma = sigma[ii], ...)$root
-  }
-
-
-  if (log.p) {
-    ans[orig.p > 0] <- NaN
-  } else {
-    ans[orig.p < 0] <- NaN
-    ans[orig.p > 1] <- NaN
-  }
-
-  ans
-}
-
-
-rtikuv <- function(n, d, mean = 0, sigma = 1, Smallno = 1.0e-6) {
-  use.n <- if ((length.n <- length(n)) > 1) length.n else
-           if (!is.Numeric(n, integer.valued = TRUE,
-                           length.arg = 1, positive = TRUE))
-            stop("bad input for argument 'n'") else n
-  if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
-    stop("bad input for argument 'd'")
-  if (!is.Numeric(mean, length.arg = 1))
-    stop("bad input for argument 'mean'")
-  if (!is.Numeric(sigma, length.arg = 1))
-    stop("bad input for argument 'sigma'")
-  if (!is.Numeric(Smallno, positive = TRUE, length.arg = 1) ||
-      Smallno > 0.01 ||
-      Smallno < 2 * .Machine$double.eps)
-      stop("bad input for argument 'Smallno'")
-  ans <- rep_len(0.0, use.n)
-
-  ptr1 <- 1; ptr2 <- 0
-  hh <- 2 - d
-  KK <- 1 / (1 + 1/hh + 0.75/hh^2)
-  ymax <- ifelse(hh < 2,
-                 dtikuv(x = mean + sigma*sqrt(4 - 2*hh),
-                        d = d, mean = mean, sigma = sigma),
-                 KK / (sqrt(2 * pi) * sigma))
-  while (ptr2 < use.n) {
-    Lower <- mean - 5 * sigma
-    while (ptikuv(q = Lower, d = d, mean = mean, sigma = sigma) > Smallno)
-      Lower <- Lower - sigma
-    Upper <- mean + 5 * sigma
-    while (ptikuv(q = Upper, d = d,
-                  mean = mean, sigma = sigma) < 1-Smallno)
-      Upper <- Upper + sigma
-    x <- runif(2*use.n, min = Lower, max = Upper)
-    index <- runif(2*use.n, max = ymax) <
-             dtikuv(x, d = d, mean = mean, sigma = sigma)
-    sindex <- sum(index)
-    if (sindex) {
-      ptr2 <- min(use.n, ptr1 + sindex - 1)
-      ans[ptr1:ptr2] <- (x[index])[1:(1+ptr2-ptr1)]
-      ptr1 <- ptr2 + 1
-    }
-  }
-  ans
-}
-
-
-
-
- tikuv <- function(d, lmean = "identitylink", lsigma = "loglink",
-                   isigma = NULL, zero = "sigma") {
-
-
-  lmean <- as.list(substitute(lmean))
-  emean <- link2list(lmean)
-  lmean <- attr(emean, "function.name")
-
-  lsigma <- as.list(substitute(lsigma))
-  esigma <- link2list(lsigma)
-  lsigma <- attr(esigma, "function.name")
-
-
-
-  if (!is.Numeric(d, length.arg = 1) || max(d) >= 2)
-      stop("bad input for argument 'd'")
-
-
-
-  new("vglmff",
-  blurb = c("Short-tailed symmetric [Tiku and Vaughan (1999)] ",
-            "distribution\n",
-          "Link:     ",
-          namesof("mean",  lmean,  earg = emean), ", ",
-          namesof("sigma", lsigma, earg = esigma),
-          "\n", "\n",
-          "Mean:     mean"),
-  constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
-  }), list( .zero = zero ))),
-
-  infos = eval(substitute(function(...) {
-    list(M1 = 2,
-         Q1 = 1,
-         expected = TRUE,
-         multipleResponses = FALSE,
-         parameters.names = c("mean", "sigma"),
-         zero = .zero )
-  }, list( .zero = zero ))),
-
-  initialize = eval(substitute(expression({
-
-    w.y.check(w = w, y = y)
-
-
-    predictors.names <-
-      c(namesof("mean",  .lmean  , earg = .emean  , tag = FALSE),
-        namesof("sigma", .lsigma , earg = .esigma , tag = FALSE))
-
-
-    if (!length(etastart)) {
-      sigma.init <- if (length( .isigma )) rep_len( .isigma , n) else {
-        hh <- 2 - .d
-        KK <- 1 / (1 + 1/hh + 0.75/hh^2)
-        K2 <- 1 + 3/hh + 15/(4*hh^2)
-        rep_len(sqrt(var(y) / (KK*K2)), n)
-      }
-      mean.init <- rep_len(weighted.mean(y, w), n)
-      etastart <-
-        cbind(theta2eta(mean.init,  .lmean  , earg = .emean  ),
-              theta2eta(sigma.init, .lsigma , earg = .esigma ))
-    }
-  }),list( .lmean = lmean, .lsigma = lsigma,
-                           .isigma = isigma, .d = d,
-           .emean = emean, .esigma = esigma ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta[, 1], .lmean , earg = .emean )
-  }, list( .lmean = lmean,
-           .emean = emean, .esigma = esigma ))),
-  last = eval(substitute(expression({
-      misc$link <-    c("mean" = .lmean , "sigma"= .lsigma )
-
-      misc$earg <- list("mean" = .emean , "sigma"= .esigma )
-
-      misc$expected <- TRUE
-      misc$d <- .d
-  }), list( .lmean = lmean, .lsigma = lsigma, .d = d,
-            .emean = emean, .esigma = esigma ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    mymu  <- eta2theta(eta[, 1], .lmean  , earg = .emean  )
-    sigma <- eta2theta(eta[, 2], .lsigma , earg = .esigma )
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * dtikuv(x = y, d = .d , mean = mymu,
-                               sigma = sigma, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .lmean = lmean, .lsigma = lsigma, .d = d,
-           .emean = emean, .esigma = esigma ))),
-  vfamily = c("tikuv"),
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    mymu  <- eta2theta(eta[, 1], .lmean  , earg = .emean  )
-    sigma <- eta2theta(eta[, 2], .lsigma , earg = .esigma )
-    dee   <- .d
-    okay1 <- all(is.finite(mymu )) &&
-             all(is.finite(sigma)) && all(0 < sigma) &&
-             all(is.finite(dee  )) && all(0 < dee & dee < 2)
-    okay1
-  }, list( .lmean = lmean, .lsigma = lsigma, .d = d,
-           .emean = emean, .esigma = esigma ))),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  deriv = eval(substitute(expression({
-    mymu  <- eta2theta(eta[, 1], .lmean  , earg = .emean  )
-    sigma <- eta2theta(eta[, 2], .lsigma , earg = .esigma )
-
-    dmu.deta <- dtheta.deta(mymu, .lmean , earg = .emean )
-    dsigma.deta <- dtheta.deta(sigma, .lsigma, earg = .esigma)
-
-    zedd <- (y - mymu) / sigma
-    hh <- 2 - .d
-    gzedd <- zedd / (1 + 0.5*zedd^2 / hh)
-
-    dl.dmu <- zedd / sigma - 2 * gzedd / (hh*sigma)
-    dl.dsigma <- (zedd^2 - 1 - 2 * zedd * gzedd / hh) / sigma
-
-    c(w) * cbind(dl.dmu    * dmu.deta,
-                 dl.dsigma * dsigma.deta)
-  }), list( .lmean = lmean, .lsigma = lsigma, .d = d,
-            .emean = emean, .esigma = esigma ))),
-  weight = eval(substitute(expression({
-    ayy <- 1 / (2*hh)
-    Dnos <- 1 - (2/hh) * (1 - ayy) / (1 + 2*ayy + 3*ayy^2)
-    Dstar <- -1 + 3 * (1 + 2*ayy + 11*ayy^2) / (1 + 2*ayy + 3*ayy^2)
-
-    ned2l.dmymu2 <- Dnos / sigma^2
-    ned2l.dnu2   <- Dstar / sigma^2
-
-    wz <- matrix(NA_real_, n, M)  # diagonal matrix
-    wz[, iam(1, 1, M)] <- ned2l.dmymu2 * dmu.deta^2
-    wz[, iam(2, 2, M)] <- ned2l.dnu2 * dsigma.deta^2
-    c(w) * wz
-  }), list( .lmean = lmean, .lsigma = lsigma,
-            .emean = emean, .esigma = esigma ))))
-}
-
-
 
 
 dfoldnorm <- function(x, mean = 0, sd = 1, a1 = 1, a2 = 1,
@@ -1153,15 +825,15 @@ dfoldnorm <- function(x, mean = 0, sd = 1, a1 = 1, a2 = 1,
   rm(log)
 
 
-  ans <- dnorm(x = x/(a1*sd) - mean/sd) / (a1*sd) +
-         dnorm(x = x/(a2*sd) + mean/sd) / (a2*sd)
+  ans <- dnorm(x = x / (a1 * sd) - mean / sd) / (a1 * sd) +
+         dnorm(x = x / (a2 * sd) + mean / sd) / (a2 * sd)
   ans[x < 0] <- 0
 
   ans[a1 <= 0 | a2 <= 0] <- NA
   ans[sd <= 0] <- NA
 
   if (log.arg) log(ans) else ans
-}
+}  # dfoldnorm
 
 
 
@@ -1203,11 +875,11 @@ pfoldnorm <- function(q, mean = 0, sd = 1, a1 = 1, a2 = 1,
   ans[a1 <= 0 | a2 <= 0] <- NaN
   ans[sd <= 0] <- NaN
   ans
-}
+}  # pfoldnorm
 
 
 
-qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
+ qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
                       lower.tail = TRUE, log.p = FALSE, ...) {
 
   if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
@@ -1220,7 +892,98 @@ qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
     p <- if (log.arg) -expm1(p) else 1 - p
   }
 
-  L <- max(length(p), length(mean), length(sd), length(a1), length(a2))
+  L <- max(length(p), length(mean), length(sd),
+           length(a1), length(a2))
+  if (length(p)    != L) p    <- rep_len(p,    L)
+  if (length(mean) != L) mean <- rep_len(mean, L)
+  if (length(sd)   != L) sd   <- rep_len(sd,   L)
+  if (length(a1)   != L) a1   <- rep_len(a1,   L)
+  if (length(a2)   != L) a2   <- rep_len(a2,   L)
+
+  ans <- p + mean + sd + a1 + a2
+
+  bad0 <- !is.finite(mean) | !is.finite(sd) | sd <= 0 |
+          !is.finite(a1)   | !is.finite(a2)
+  bad <- bad0 | !is.finite(p) | p <= 0 | 1 <= p
+
+
+
+     is.easy <- !bad & a1 == 1 & a2 == 1
+  if (FALSE && any(is.easy)) {
+  ans[is.easy] <- sqrt(qchisq(p[is.easy], 1,
+                              ncp = (mean[is.easy] / sd[is.easy])^2)) *
+                  sd[is.easy]
+  }
+
+
+
+  lo <- numeric(L) - 0.5
+  approx.ans <- lo  # True at lhs
+  hi <- 2 * sd + 10.5
+  dont.iterate <- bad  # | is.easy
+  done <- dont.iterate | p <= pfoldnorm(hi, mean, sd, a1, a2)
+  iter <- 0
+  max.iter <- round(log2(.Machine$double.xmax)) - 2
+  max.iter <- round(log2(1e300)) - 2
+  while (!all(done) && iter < max.iter) {
+    lo[!done] <- hi[!done]
+    hi[!done] <- 2 * hi[!done] + 10.5  # Bug fixed
+    done[!done] <-
+      (p[!done] <= pfoldnorm(hi[!done],
+                             mean = mean[!done], sd = sd[!done],
+                             a1 = a1[!done], a2 = a2[!done]))
+    iter <- iter + 1
+  }
+
+
+  foo <- function(q, mean, sd, a1, a2, p)
+    pfoldnorm(q, mean, sd, a1, a2) - p
+
+  lhs <- dont.iterate  # | (p <= dfoldnorm(0, mean, sd, a1, a2))
+
+  if (any(!lhs)) {
+    approx.ans[!lhs] <-
+      bisection.basic(foo, lo[!lhs], hi[!lhs],  # tol = 1e-8,
+                      mean = mean[!lhs], sd = sd[!lhs],
+                      a1 = a1[!lhs], a2 = a2[!lhs],
+                      p = p[!lhs])
+    ans[!lhs] <- approx.ans[!lhs]  # tmp
+  }
+
+
+  ans[!bad0 & !is.na(p) & p == 0] <- 0
+  ans[!bad0 & !is.na(p) & p == 1] <- Inf
+  ans[!bad0 & !is.na(p) & p <  0] <- NaN
+  ans[!bad0 & !is.na(p) & p >  1] <- NaN
+  ans[ bad0] <- NaN
+
+  ans
+}  # qfoldnorm
+
+
+
+
+qfoldnorm.old <-
+  function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
+           lower.tail = TRUE, log.p = FALSE, ...) {
+
+
+
+
+
+
+  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+    stop("bad input for argument 'log.p'")
+  rm(log.p)
+
+  if (lower.tail) {
+    if (log.arg) p <- exp(p)
+  } else {
+    p <- if (log.arg) -expm1(p) else 1 - p
+  }
+
+  L <- max(length(p), length(mean), length(sd),
+           length(a1), length(a2))
   if (length(p)    != L) p    <- rep_len(p,    L)
   if (length(mean) != L) mean <- rep_len(mean, L)
   if (length(sd)   != L) sd   <- rep_len(sd,   L)
@@ -1250,7 +1013,7 @@ qfoldnorm <- function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
   ans[sd <= 0] <- NaN
 
   ans
-}
+}  # qfoldnorm.old
 
 
 

@@ -162,6 +162,7 @@ zageometricff(lprob = "logitlink", lonempobs0 = "logitlink",
   \code{\link{dzageom}},
   \code{\link{geometric}},
   \code{\link{zigeometric}},
+  \code{\link{spikeplot}},
   \code{\link[stats:Geometric]{dgeom}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}}.

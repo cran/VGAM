@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -2400,9 +2400,8 @@ InverseBrat <-
     predictors.names <-
       namesof(mynames, .link , earg = .earg , tag = FALSE)
   }), list( .link = link, .countdata = countdata, .earg = earg,
-            .cutpoints=cutpoints, .NOS=NOS, .Levels=Levels,
-            .init.mu = init.mu
-          ))),
+            .cutpoints = cutpoints, .NOS = NOS, .Levels = Levels,
+            .init.mu = init.mu))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
     mu <- eta2theta(eta, link= .link , earg = .earg )  # Poisson means
     mu <- cbind(mu)
@@ -2646,7 +2645,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff ="multinomial"),
     temp3 <- pvec
     ans.mlm <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
                      dimnames = list(dimnames(Bmat)[[1]],
-                     dimnames(Bmat)[[2]], dimnames(fitted(object))[[1]]))
+                                     dimnames(Bmat)[[2]],
+                                     dimnames(fitted(object))[[1]]))
     return(subsetarray3(ans.mlm, subset = subset))
   })
 
@@ -3278,10 +3278,10 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
       temp3 <- pvec
       ans <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
                    dimnames = list(dimnames(B)[[1]],
-                   dimnames(B)[[2]], dimnames(fitted(object))[[1]]))
+                                   dimnames(B)[[2]],
+                                   dimnames(fitted(object))[[1]]))
       return(ans)
-    } else
-    if (is.numeric(ii) && length(ii) == 1) {
+    } else if (is.numeric(ii) && length(ii) == 1) {
         pvec  <- fitted(object)[ii, ]
         temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
         temp2 <- matrix(rowSums(temp1), ppp, M+1)

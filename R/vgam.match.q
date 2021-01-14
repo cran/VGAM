@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,8 +35,8 @@ vgam.match <- function(x, all.knots = FALSE, nk = NULL) {
     names(neffec) <- names(xmin) <- names(xmax) <- names(x)
     dimnames(ooo) <- list(NULL, names(x))
 
-    return(list(matcho = ooo, neffec = neffec, nknots = nknots, knots = knots,
-                xmin = xmin, xmax = xmax))
+    return(list(matcho = ooo, neffec = neffec, nknots = nknots,
+                knots = knots, xmin = xmin, xmax = xmax))
   }
 
   if (!is.null(attributes(x)$NAs) || anyNA(x))

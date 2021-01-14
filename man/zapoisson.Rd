@@ -178,16 +178,16 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 \author{ T. W. Yee }
 \note{
   There are subtle differences between this family function and
-  \code{\link{zipoisson}} and \code{\link{yip88}}.
+  \code{\link{zipoisson}} and \code{\link[VGAMdata]{yip88}}.
   In particular, \code{\link{zipoisson}} is a
-  \emph{mixture} model whereas \code{zapoisson()} and \code{\link{yip88}}
+  \emph{mixture} model whereas \code{zapoisson()} and \code{\link[VGAMdata]{yip88}}
   are \emph{conditional} models.
 
 
   Note this family function allows \eqn{p_0}{pobs0} to be modelled
   as functions of the covariates.
 % It can be thought of an extension
-% of \code{\link{yip88}}, which is also a  conditional model but its
+% of \code{\link[VGAMdata]{yip88}}, which is also a  conditional model but its
 % \eqn{\phi}{phi} parameter is a scalar only.
 
 
@@ -215,6 +215,7 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
   \code{\link{gaitpoisson}},
   \code{\link{pospoisson}},
   \code{\link{posnegbinomial}},
+  \code{\link{spikeplot}},
   \code{\link{binomialff}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}}.

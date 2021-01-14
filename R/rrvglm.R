@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -163,7 +163,8 @@ rrvglm <-
         slot(answer, "contrasts") = attr(x, "contrasts")
     if (length(fit$fitted.values))
         slot(answer, "fitted.values") = as.matrix(fit$fitted.values)
-    slot(answer, "na.action") = if (length(na.act)) list(na.act) else list()
+    slot(answer, "na.action") = if (length(na.act))
+                                  list(na.act) else list()
     if (length(offset))
         slot(answer, "offset") = as.matrix(offset)
     if (length(fit$weights))
@@ -180,8 +181,9 @@ rrvglm <-
     slot(answer, "control") = fit$control
     slot(answer, "extra") = if (length(fit$extra)) {
         if (is.list(fit$extra)) fit$extra else {
-            warning("\"extra\" is not a list, therefore placing \"extra\" into a list")
-            list(fit$extra)
+          warning("\"extra\" is not a list, therefore ",
+                  "placing \"extra\" into a list")
+          list(fit$extra)
         }
     } else list()  # R-1.5.0
 

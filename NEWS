@@ -1,3 +1,32 @@
+                CHANGES IN VGAM VERSION 1.1-5
+
+NEW FEATURES
+
+    o   New functions: meangait(), spikeplot(), trim.constraints().
+    o   iam(i, 1:M, M = M) now works, for selecting a whole row,
+        and similarly for a column.
+    o   Tested okay on R 4.0.3.
+
+
+
+BUG FIXES and CHANGES
+
+    o   gait[log,poisson,zeta](): arguments llambda.[ai] and lshape.[ai]
+        equal llambda.p and lshape.p by default. This means only one
+        argument needs be assigned in order to change them all.
+    o   [dpqr]genpois[12]() has argument 'mean' changed to 'meanpar'.
+    o   gait[log,zeta]() bug fixed wrt missing 'allprobs'.
+    o   qfoldnorm() now uses the bisection method. Thanks to
+        Mauricio Romero for a suggestion that led to this.
+    o   gait[log,poisson,zeta]() compute the sandwich formula
+        explicitly for the working weights; this has speed gains.
+        Their @deriv avoids nested for() loops too.
+        Their initial value grids have become coarser.
+    o   Functions moved to VGAMdata 1.1-5: yip88, bellff(dr), tikuv(dpqr).
+
+
+
+
                 CHANGES IN VGAM VERSION 1.1-4
 
 NEW FEATURES
@@ -15,7 +44,7 @@ NEW FEATURES
         so that gaitpoisson.mix() and gaitpoisson.mlm() were removed,
         gaitlog() so that gaitlog.mix() was removed,
         gaitzeta() so that gaitzeta.mix() was removed.
-    o   Tested okay on R 4.0.2.
+    o   Tested okay on R 4.0.3.
 
 
 

@@ -49,10 +49,10 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
   }
 }
 \details{
-  If a random variable has an ordinary univariate normal distribution then
-  the absolute value of that random variable has an ordinary \emph{folded
-  normal distribution}. That is, the sign has not been recorded; only
-  the magnitude has been measured.
+  If a random variable has an ordinary univariate normal distribution
+  then the absolute value of that random variable has an ordinary
+  \emph{folded normal distribution}. That is, the sign has not been
+  recorded; only the magnitude has been measured.
 
 
   More generally, suppose \eqn{X} is normal with mean \code{mean} and
@@ -61,12 +61,14 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
   where \eqn{a_1}{a1} and \eqn{a_2}{a2} are positive weights.
   This means that \eqn{Y = a_1 X}{Y = a1*X} for \eqn{X > 0}, and
   \eqn{Y = a_2 X}{Y = a2*X} for \eqn{X < 0}.
-  Then \eqn{Y} is said to have a \emph{generalized folded normal distribution}.
+  Then \eqn{Y} is said to have a
+  \emph{generalized folded normal distribution}.
   The ordinary folded normal distribution corresponds to the
   special case \eqn{a_1 = a_2 = 1}{a1 = a2 = 1}.
 
 
-  The probability density function of the ordinary folded normal distribution
+  The probability density function of the ordinary
+  folded normal distribution
   can be written
   \code{dnorm(y, mean, sd) + dnorm(y, -mean, sd)} for
   \eqn{y \ge 0}.

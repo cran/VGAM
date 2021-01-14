@@ -3,7 +3,8 @@
 \alias{dbinom2.or}
 \alias{rbinom2.or}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Bivariate Binary Regression with an Odds Ratio }
+\title{ Bivariate Odds Ratio Model }
+% Bivariate Binary Regression with an Odds Ratio
 \description{
   Density and random generation for a bivariate binary regression model
   using an odds ratio as the measure of dependency.

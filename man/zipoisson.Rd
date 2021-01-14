@@ -137,8 +137,8 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
         i.e., \code{onempstr0} is \code{1-pstr0};
   (iii) argument \code{zero} has a new default so that the \code{onempstr0}
         is intercept-only  by default.
-  Now \code{zipoissonff()} is generally recommended over
-  \code{zipoisson()} (and definitely recommended over \code{\link{yip88}}).
+  Now \code{zipoissonff()} is generally recommended over \code{zipoisson()}
+  (and definitely recommended over \code{\link[VGAMdata]{yip88}}).
   Both functions implement Fisher scoring and can handle
   multiple responses.
 
@@ -244,7 +244,8 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
   \code{\link{gaitpoisson}},
   \code{\link{zapoisson}},
   \code{\link{Zipois}},
-  \code{\link{yip88}},
+  \code{\link[VGAMdata]{yip88}},
+  \code{\link{spikeplot}},
   \code{\link{rrvglm}},
   \code{\link{zipebcom}},
   \code{\link[stats:Poisson]{rpois}},

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -337,28 +337,28 @@ rgenpois0 <-
 
 
 
-dgenpois1 <- function(x, mean, dispind = 1,
+dgenpois1 <- function(x, meanpar, dispind = 1,
                       log = FALSE) {
-  dgenpois0(x, theta = mean / sqrt(dispind),
+  dgenpois0(x, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind),
             log = log)
 }  # dgenpois1
 
 
-pgenpois1 <- function(q, mean, dispind = 1, lower.tail = TRUE) {
-  pgenpois0(q, theta = mean / sqrt(dispind),
+pgenpois1 <- function(q, meanpar, dispind = 1, lower.tail = TRUE) {
+  pgenpois0(q, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind), lower.tail = lower.tail)
 }  # pgenpois1
 
 
-qgenpois1 <- function(p, mean, dispind = 1) {
-  qgenpois0(p, theta = mean / sqrt(dispind),
+qgenpois1 <- function(p, meanpar, dispind = 1) {
+  qgenpois0(p, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind))
 }  # qgenpois1
 
 
-rgenpois1 <- function(n, mean, dispind = 1) {
-  rgenpois0(n, theta = mean / sqrt(dispind),
+rgenpois1 <- function(n, meanpar, dispind = 1) {
+  rgenpois0(n, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind))
 }  # rgenpois1
 
@@ -367,29 +367,29 @@ rgenpois1 <- function(n, mean, dispind = 1) {
 
 
 
-dgenpois2 <- function(x, mean, disppar = 0, log = FALSE) {
-  dgenpois0(x, theta = mean / (1 + disppar * mean),
-            lambda = disppar * mean / (1 + disppar * mean),
+dgenpois2 <- function(x, meanpar, disppar = 0, log = FALSE) {
+  dgenpois0(x, theta = meanpar / (1 + disppar * meanpar),
+            lambda = disppar * meanpar / (1 + disppar * meanpar),
             log = log)
 }  # dgenpois2
 
 
-pgenpois2 <- function(q, mean, disppar = 0, lower.tail = TRUE) {
-  pgenpois0(q, theta = mean / (1 + disppar * mean),
-            lambda = disppar * mean / (1 + disppar * mean),
+pgenpois2 <- function(q, meanpar, disppar = 0, lower.tail = TRUE) {
+  pgenpois0(q, theta = meanpar / (1 + disppar * meanpar),
+            lambda = disppar * meanpar / (1 + disppar * meanpar),
             lower.tail = lower.tail)
 }  # pgenpois2
 
 
-qgenpois2 <- function(p, mean, disppar = 0) {
-  qgenpois0(p, theta = mean / (1 + disppar * mean),
-            lambda = disppar * mean / (1 + disppar * mean))
+qgenpois2 <- function(p, meanpar, disppar = 0) {
+  qgenpois0(p, theta = meanpar / (1 + disppar * meanpar),
+            lambda = disppar * meanpar / (1 + disppar * meanpar))
 }  # qgenpois2
 
 
-rgenpois2 <- function(n, mean, disppar = 0) {
-  rgenpois0(n, theta = mean / (1 + disppar * mean),
-            lambda = disppar * mean / (1 + disppar * mean))
+rgenpois2 <- function(n, meanpar, disppar = 0) {
+  rgenpois0(n, theta = meanpar / (1 + disppar * meanpar),
+            lambda = disppar * meanpar / (1 + disppar * meanpar))
 }  # rgenpois2
 
 
@@ -889,19 +889,19 @@ rgenpois2 <- function(n, mean, disppar = 0) {
       eiM[, M1*(1:NOS)        ] <- ned2l.dlambda2
       eiM[, M1*(1:NOS) + M - 1] <- ned2l.dthetalambda
 
-      Tmp <- Jay <- array(0, c(n, NOS, M1, M1))  # Look aperm(Jay, 4:1)
-      Jay[, , 1, 1] <- 1
-      Jay[, , 1, 2] <- disppar
-      Jay[, , 2, 1] <- (-meanpar^2)
-      Jay[, , 2, 2] <- meanpar
-      Jay <- Jay / c(tmp.m^2)  # This works
+      Tmp <- J02 <- array(0, c(n, NOS, M1, M1))  # Look aperm(J02, 4:1)
+      J02[, , 1, 1] <- 1
+      J02[, , 1, 2] <- disppar
+      J02[, , 2, 1] <- (-meanpar^2)
+      J02[, , 2, 2] <- meanpar
+      J02 <- J02 / c(tmp.m^2)  # This works
 
       for (jay in 1:M1) {
         for (kay in 1:M1) {
           for (sss in 1:M1) {
             jk.indices <- which(wz.ind[1, ] == iam(jay, sss, M = M1))
-            Tmp[, , jay, kay] <- Tmp[, , jay, kay] +  # t(Jay):
-                                 eiM[, jk.indices] * Jay[, , kay, sss]
+            Tmp[, , jay, kay] <- Tmp[, , jay, kay] +  # t(J02):
+                                 eiM[, jk.indices] * J02[, , kay, sss]
           }  # sss
         }  # kay
       }  # jay
@@ -912,7 +912,7 @@ rgenpois2 <- function(n, mean, disppar = 0) {
           jk.indices <- which(wz.ind[1, ] == iam(jay, kay, M = M1))
           for (sss in 1:M1)
             Mie[, jk.indices] <- Mie[, jk.indices] +
-                                 Jay[, , jay, sss] * Tmp[, , sss, kay]
+                                 J02[, , jay, sss] * Tmp[, , sss, kay]
         }  # kay
       }  # jay
 
@@ -1202,18 +1202,18 @@ rgenpois2 <- function(n, mean, disppar = 0) {
       eiM[, M1*(1:NOS)        ] <- ned2l.dlambda2
       eiM[, M1*(1:NOS) + M - 1] <- ned2l.dthetalambda
 
-      Tmp <- Jay <- array(0, c(n, NOS, M1, M1))  # Look aperm(Jay, 4:1)
-      Jay[, , 1, 1] <- 1 / sqrt(dispind)
-      Jay[, , 1, 2] <- 0
-      Jay[, , 2, 1] <- (-0.5) * meanpar / dispind^1.5
-      Jay[, , 2, 2] <- 0.5 / dispind^1.5
+      Tmp <- J01 <- array(0, c(n, NOS, M1, M1))  # Look aperm(J01, 4:1)
+      J01[, , 1, 1] <- 1 / sqrt(dispind)
+      J01[, , 1, 2] <- 0
+      J01[, , 2, 1] <- (-0.5) * meanpar / dispind^1.5
+      J01[, , 2, 2] <- 0.5 / dispind^1.5
 
       for (jay in 1:M1) {
         for (kay in 1:M1) {
           for (sss in 1:M1) {
             jk.indices <- which(wz.ind[1, ] == iam(jay, sss, M = M1))
-            Tmp[, , jay, kay] <- Tmp[, , jay, kay] +  # t(Jay):
-                                 eiM[, jk.indices] * Jay[, , kay, sss]
+            Tmp[, , jay, kay] <- Tmp[, , jay, kay] +  # t(J01):
+                                 eiM[, jk.indices] * J01[, , kay, sss]
           }  # sss
         }  # kay
       }  # jay
@@ -1224,7 +1224,7 @@ rgenpois2 <- function(n, mean, disppar = 0) {
           jk.indices <- which(wz.ind[1, ] == iam(jay, kay, M = M1))
           for (sss in 1:M1)
             Mie[, jk.indices] <- Mie[, jk.indices] +
-                                 Jay[, , jay, sss] * Tmp[, , sss, kay]
+                                 J01[, , jay, sss] * Tmp[, , sss, kay]
         }  # kay
       }  # jay
 

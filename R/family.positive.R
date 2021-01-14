@@ -1,6 +1,8 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
 
 
 
@@ -118,7 +120,9 @@ N.hat.posbernoulli <-
                     c(sqrt(ss2 + t(dvect) %*% covun %*% dvect)) else
                     c(sqrt(ss2))
       )
-}
+}  # N.hat.posbernoulli
+
+
 
 
 
@@ -163,8 +167,7 @@ N.hat.posbernoulli <-
        y0i       = cp1 - 1,
        yr0i      = tau - cp1 - yr1i,
        yr1i      = yr1i)
-}
-
+}  # aux.posbernoulli.t
 
 
 
@@ -298,7 +301,7 @@ rposbern <-
   attr(ans, "n")          <- n
 
   ans
-}
+}  # rposbern
 
 
 
@@ -325,10 +328,7 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
   AA0 <- exp(logAA0)
   ell1 <- x * log(prob) + (1 - x) * log1p(-prob) - log1p(-AA0) / ncol(x)
   if (log.arg) ell1 else exp(ell1)
-}
-
-
-
+}  # dposbern
 
 
 
@@ -405,7 +405,7 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
         ned2l.dk2 <- ned2l.dk2 - df02.dkmat2 / (1 - prob0) -
          (df0.dkmat / (1 - prob0))^2
       ned2l.dk2
-    }  # end of EIM.posNB.specialp()
+}  # end of EIM.posNB.specialp()
 
 
 
@@ -458,7 +458,7 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
         ned2l.dk2 <- ned2l.dk2 - df02.dkmat2 / (1 - prob0) -
          (df0.dkmat / (1 - prob0))^2
       ned2l.dk2
-    }  # end of EIM.posNB.speciald()
+}  # end of EIM.posNB.speciald()
 
 
 
@@ -673,7 +673,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     kmat <- eta2theta(eta[, !TF, drop = FALSE], .lsize , earg = .esize )
    small.size <- 1e-10
    if (any(ind4 <- (kmat < small.size))) {
-     warning("estimates of 'size' are very small. Taking evasive action.")
+     warning("estimates of 'size' are very small. ",
+             "Taking evasive action.")
      kmat[ind4] <- small.size
    }
 
@@ -951,7 +952,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
         kkvec <- kmat[ii.TF, jay]
         muvec <- munb[ii.TF, jay]
         for (ii in 1:( .nsimEIM )) {
-        ysim <- rgaitnbinom(sum(ii.TF), kkvec, munb.p = muvec, truncate = 0)
+        ysim <- rgaitnbinom(sum(ii.TF), kkvec, munb.p = muvec,
+                            truncate = 0)
           dl.dk <- digamma(ysim + kkvec) - digamma(kkvec) -
                    (ysim - muvec) / (muvec + kkvec) +
                    log1p(-muvec / (kkvec + muvec)) +
@@ -1419,11 +1421,11 @@ rposgeom <- function(n, prob) {
     if (length(extra$tau)) {
       R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
       R[lower.tri(R)] <- 0
-      tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
-                             R = R, w = w,
-                             X.vlm = X.vlm.save,
-                             Hlist = Hlist,  # 20150428; bug fixed here
-                             extra = extra, model.type = "0")
+      tmp6 <- N.hat.posbernoulli(eta = eta, link = .link ,
+                         earg = .earg , R = R, w = w,
+                         X.vlm = X.vlm.save,
+                         Hlist = Hlist,  # 20150428; bug fixed here
+                         extra = extra, model.type = "0")
       extra$N.hat    <- tmp6$N.hat
       extra$SE.N.hat <- tmp6$SE.N.hat
     }
@@ -1441,14 +1443,15 @@ rposgeom <- function(n, prob) {
       ycounts <- if ( .multiple.responses ) {
                   round(y * extra$orig.w)
                  } else {
-                   if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                   y * w  # Convert proportions to counts
+                   if (is.numeric(extra$orig.w))
+                     y * w / extra$orig.w else
+                     y * w  # Convert proportions to counts
                  }
       nvec <- if ( .multiple.responses ) {
                 w
               } else {
-                if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                  round(w)
+                if (is.numeric(extra$orig.w))
+                  round(w / extra$orig.w) else round(w)
               }
       use.orig.w <- if (is.numeric(extra$orig.w)) extra$orig.w else 1
     binprob <- eta2theta(eta, .link , earg = .earg )
@@ -1459,7 +1462,7 @@ rposgeom <- function(n, prob) {
       answer <- c(use.orig.w) *
         dgaitbinom(ycounts, nvec, binprob, truncate = 0, log = TRUE)
       if ( .omit.constant ) {
-        answer <- answer - c(use.orig.w) * lchoose(n = nvec, k = ycounts)
+        answer <- answer - c(use.orig.w) * lchoose(nvec, ycounts)
       }
       ll.elts <- answer
       if (summation) {
@@ -1552,7 +1555,6 @@ rposgeom <- function(n, prob) {
   }), list( .link = link, .earg = earg,
             .multiple.responses = multiple.responses ))))
 }  # posbinomial
-
 
 
 
@@ -1701,11 +1703,11 @@ rposgeom <- function(n, prob) {
             .no.warning   = no.warning
            ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning the 'probs'.")
-                     "probs"
-                   }
+    type.fitted <-
+      if (length(extra$type.fitted)) extra$type.fitted else {
+        warning("cannot find 'type.fitted'. Returning the 'probs'.")
+        "probs"
+      }
 
     type.fitted <- match.arg(type.fitted,
                      c("probs", "onempall0"))[1]
@@ -1745,7 +1747,7 @@ rposgeom <- function(n, prob) {
     tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
                                R = R, w = w,
                                X.vlm = X.vlm.save,
-                               Hlist = Hlist,  # 20150428; bug fixed here
+                               Hlist = Hlist,  # 20150428 bug fixed here
                                extra = extra, model.type = "t")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -1824,17 +1826,13 @@ rposgeom <- function(n, prob) {
 
     for (slocal in 1:(M-1))
       for (tlocal in (slocal+1):M)
-        wz[, iam(slocal, tlocal, M = M)] <- dprobs.deta[, slocal] *
-                                            dprobs.deta[, tlocal] *
-                                            (B.st[, slocal,tlocal] +
-                                             B.s [, slocal] *
-                                             B.s [, tlocal] / AAA) / (-AAA)
-
-
-
+        wz[, iam(slocal, tlocal, M = M)] <-
+          dprobs.deta[, slocal] * dprobs.deta[, tlocal] *
+          (B.st[, slocal, tlocal] +
+           B.s [, slocal] * B.s [, tlocal] / AAA) / (-AAA)
     wz
   }), list( .link = link, .earg = earg ))))
-}
+}  # posbernoulli.t
 
 
 
@@ -1853,8 +1851,7 @@ rposgeom <- function(n, prob) {
            I2 = FALSE,
            ipcapture = NULL,
            iprecapture = NULL,
-           p.small = 1e-4, no.warning = FALSE
-           ) {
+           p.small = 1e-4, no.warning = FALSE) {
 
 
 
@@ -2205,7 +2202,8 @@ rposgeom <- function(n, prob) {
     wz <- c(w) * wz
     wz
   }), list( .link = link, .earg = earg ))))
-}
+}  # posbernoulli.b
+
 
 
 
@@ -2657,8 +2655,7 @@ rposgeom <- function(n, prob) {
   }), list( .link = link, .earg = earg,
             .ridge.constant = ridge.constant,
             .ridge.power = ridge.power ))))
-}
-
+}  # posbernoulli.tb
 
 
 
@@ -2674,49 +2671,39 @@ setClass("posbernoulli.b",      contains = "posbernoulli.tb")
 
 
 setMethod("summaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.tb"),
-  function(object,
-           VGAMff,
-           ...) {
+  function(object, VGAMff, ...) {
   object@post
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.tb"),
-  function(object,
-           VGAMff,
-           ...) {
+setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "posbernoulli.tb"),
+  function(object, VGAMff, ...) {
  if (length(object@extra$N.hat) == 1 &&
       is.numeric(object@extra$N.hat)) {
-    cat("\nEstimate of N: ", round(object@extra$N.hat, digits = 3), "\n")
-    cat("\nStd. Error of N: ", round(object@extra$SE.N.hat, digits = 3),
-        "\n")
+   cat("\nEstimate of N: ", round(object@extra$N.hat, digits = 3), "\n")
+   cat("\nStd. Error of N: ", round(object@extra$SE.N.hat, digits = 3),
+       "\n")
 
-    confint.N <- object@extra$N.hat +
-        c(Lower = -1, Upper = 1) * qnorm(0.975) * object@extra$SE.N.hat
-    cat("\nApproximate 95 percent confidence interval for N:\n")
+   confint.N <- object@extra$N.hat +
+       c(Lower = -1, Upper = 1) * qnorm(0.975) * object@extra$SE.N.hat
+   cat("\nApproximate 95 percent confidence interval for N:\n")
   }
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.b"),
-  function(object,
-           VGAMff,
-           ...) {
+setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "posbernoulli.b"),
+  function(object, VGAMff, ...) {
   callNextMethod(VGAMff = VGAMff, object = object, ...)
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.t"),
-  function(object,
-           VGAMff,
-           ...) {
+setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "posbernoulli.t"),
+  function(object, VGAMff, ...) {
   callNextMethod(VGAMff = VGAMff, object = object, ...)
 })
-
-
 
 
 

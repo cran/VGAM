@@ -43,8 +43,26 @@ such as \code{\link[VGAM:coefvlm]{coef}} and
 \code{\link[VGAM:predictvglm]{predict}}
 are available.
 The package uses S4 (see \code{\link[methods]{methods-package}}).
-A companion package called \pkg{VGAMdata} contains some larger
-data sets which were shifted from \pkg{VGAM}.
+
+
+
+
+
+Some companion packages:
+(1) \pkg{VGAMdata} contains data sets useful for
+illustrating \pkg{VGAM}.
+Some of the big ones were initially from \pkg{VGAM}.
+Recently, some older \pkg{VGAM} family functions have been shifted
+into \pkg{VGAMdata} too.
+(2) \pkg{VGAMextra} written by Victor Miranda has some additional
+\pkg{VGAM} family and link functions,
+with a bent towards time series models.
+(3) \pkg{svyVGAM} provides design-based inference,
+e.g., to survey sampling settings.
+This is because the \code{weights} argument of
+\code{\link{vglm}} can be assigned any positive values including
+survey weights.
+
 
 
 
@@ -104,7 +122,7 @@ do not use the backfitting algorithm,
 and have automatic smoothing parameter selection.
 The former is older and is based on Yee and Wild (1996).
 The latter is more modern
-(Yee, Somchit and Wild, 2018)
+(Yee, Somchit and Wild, 2020)
 but it requires a reasonably large number of observations
 to work well.
 

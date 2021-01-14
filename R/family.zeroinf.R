@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -331,143 +331,6 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
 
-
-
-
-
-
- yip88 <- function(link = "loglink", n.arg = NULL, imethod = 1) {
-
-
-
-
-
-
-
-
-  link <- as.list(substitute(link))
-  earg <- link2list(link)
-  link <- attr(earg, "function.name")
-
-
-  new("vglmff",
-  blurb = c("Zero-inflated Poisson (based on Yip (1988))\n\n",
-            "Link:     ",
-            namesof("lambda", link, earg), "\n",
-            "Variance: (1 - pstr0) * lambda"),
-  first = eval(substitute(expression({
-    zero <- y == 0
-    if (any(zero)) {
-      if (length(extra)) extra$sumw <- sum(w) else
-        extra <- list(sumw=sum(w))
-      if (is.numeric(.n.arg) && extra$sumw != .n.arg)
-        stop("value of 'n.arg' conflicts with data ",
-             "(it need not be specified anyway)")
-      warning("trimming out the zero observations")
-
-
-      axa.save <-  attr(x, "assign")
-      x <- x[!zero,, drop = FALSE]
-      attr(x, "assign") <- axa.save    # Don't lose these!!
-      w <- w[!zero]
-      y <- y[!zero]
-    } else {
-      if (!is.numeric(.n.arg))
-        stop("n.arg must be supplied")
-    }
-
-  }), list( .n.arg = n.arg ))),
-
-  initialize = eval(substitute(expression({
-    narg <- if (is.numeric(.n.arg)) .n.arg else extra$sumw
-    if (sum(w) > narg)
-      stop("sum(w) > narg")
-
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1,
-              ncol.y.max = 1)
-
-
-    predictors.names <-
-      namesof("lambda", .link, list(theta = NULL), tag = FALSE)
-
-    if (!length(etastart)) {
-      lambda.init <- Init.mu(y = y, w = w, imethod = .imethod ,  # x = x,
-                             pos.only = FALSE)
-      etastart <- theta2eta(lambda.init, .link , earg = .earg )
-    }
-    if (length(extra)) {
-      extra$sumw <- sum(w)
-      extra$narg <- narg   # For @linkinv
-    } else {
-      extra <- list(sumw = sum(w), narg = narg)
-    }
-  }), list( .link = link, .earg = earg,
-            .n.arg = n.arg, .imethod = imethod ))),
-
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    lambda <- eta2theta(eta, .link, .earg)
-    temp5 <- exp(-lambda)
-    pstr0 <- (1 - temp5 - extra$sumw/extra$narg) / (1 - temp5)
-    if (any(pstr0 <= 0))
-      stop("non-positive value(s) of pstr0")
-    (1 - pstr0) * lambda
-  }, list( .link = link, .earg = earg ))),
-
-  last = eval(substitute(expression({
-    misc$link <-    c(lambda = .link )
-
-    misc$earg <- list(lambda = .earg )
-
-    if (intercept.only) {
-      suma <- extra$sumw
-      pstr0 <- (1 - temp5[1] - suma / narg) / (1 - temp5[1])
-      pstr0 <- if (pstr0 < 0 || pstr0 > 1) NA else pstr0
-      misc$pstr0 <- pstr0
-    }
-  }), list( .link = link, .earg = earg ))),
-
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta,
-             extra = NULL,
-             summation = TRUE) {
-    lambda <- eta2theta(eta, .link)
-    temp5 <- exp(-lambda)
-    pstr0 <- (1 - temp5 - extra$sumw / extra$narg) / (1 - temp5)
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) *
-               dzipois(x = y, pstr0 = pstr0, lambda = lambda, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .link = link, .earg = earg ))),
-
-  vfamily = c("yip88"),
-
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    lambda <- eta2theta(eta, .link , earg = .earg )
-    okay1 <- all(is.finite(lambda)) && all(0 < lambda)
-    okay1
-  }, list( .link = link, .earg = earg ))),
-
-  deriv = eval(substitute(expression({
-    lambda <- eta2theta(eta, .link , earg = .earg )
-    temp5 <- exp(-lambda)
-    dl.dlambda <- -1 + y/lambda - temp5/(1-temp5)
-    dlambda.deta <- dtheta.deta(lambda, .link , earg = .earg )
-    w * dl.dlambda * dlambda.deta
-  }), list( .link = link, .earg = earg ))),
-  weight = eval(substitute(expression({
-    d2lambda.deta2 <- d2theta.deta2(lambda, .link , earg = .earg )
-    d2l.dlambda2 <- -y / lambda^2 + temp5 / (1 - temp5)^2
-    -w * (d2l.dlambda2*dlambda.deta^2 + dl.dlambda*d2lambda.deta2)
-  }), list( .link = link, .earg = earg ))))
-}
 
 
 
@@ -3565,8 +3428,8 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
     predictors.names <-
-        c(namesof("prob"     , .lprob      , earg = .eprob      , tag = FALSE),
-          namesof("onempstr0", .lonempstr0 , earg = .eonempstr0 , tag = FALSE))
+      c(namesof("prob"     , .lprob      , earg = .eprob      , tag = FALSE),
+        namesof("onempstr0", .lonempstr0 , earg = .eonempstr0 , tag = FALSE))
 
 
     extra$w <- w  # Needed for @linkinv

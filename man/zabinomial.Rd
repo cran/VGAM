@@ -145,6 +145,7 @@ zabinomialff(lprob = "logitlink", lonempobs0 = "logitlink",
   \code{\link{dzabinom}},
   \code{\link{zibinomial}},
   \code{\link{posbinomial}},
+  \code{\link{spikeplot}},
   \code{\link{binomialff}},
   \code{\link[stats:Binomial]{dbinom}},
   \code{\link{CommonVGAMffArguments}}.

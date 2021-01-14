@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -366,8 +366,8 @@ cao.control <- function(Rank = 1,
           sd.Cinit = 0.02,
           suppress.warnings = TRUE,
           trace = TRUE,
-          df1.nl = 2.5,  # About 1.5--2.5 gives the flexibility of a quadratic
-          df2.nl = 2.5,  # About 1.5--2.5 gives the flexibility of a quadratic
+          df1.nl = 2.5,  # About 1.5--2.5 gives flexibility of a quadratic
+          df2.nl = 2.5,  # About 1.5--2.5 gives flexibility of a quadratic
           spar1 = 0,  # 0 means df1.nl is used
           spar2 = 0,  # 0 means df2.nl is used
           ...) {
@@ -375,8 +375,8 @@ cao.control <- function(Rank = 1,
 
   if (length(Norrr) != 1 || !is.na(Norrr)) {
     warning("argument 'Norrr' has been replaced by 'noRRR'. ",
-            "Assigning the latter but using 'Norrr' will become an error in ",
-            "the next VGAM version soon.")
+            "Assigning the latter but using 'Norrr' will become ",
+            "an error in the next VGAM version soon.")
     noRRR <- Norrr
   }
 
@@ -898,7 +898,7 @@ calldcaoc <- function(cmatrix,
                           all.knots = control$all.knots, nk = NULL,
                           sf.only = TRUE)
 
-    ldk <- 4 * max(ncolHlist.[nwhich])   # was M;     # Prior to 20020711
+    ldk <- 4 * max(ncolHlist.[nwhich])   # was M;  # Prior to 20020711
     ldk <- 3 * max(ncolHlist.[nwhich]) + 1   # 20020711
 
 
@@ -1059,9 +1059,11 @@ warning("20100405; this is new:")
                      names(control$colx2.index), mynames5)),
          coefficients = ans1$beta,
          df1.nl = ans1$dofvec[1:NOS] - 1,
-         df2.nl = if (Rank == 2) ans1$dofvec[2 * (1:NOS) - 1] - 1 else NULL,
+         df2.nl = if (Rank == 2)
+                    ans1$dofvec[2 * (1:NOS) - 1] - 1 else NULL,
          lambda1 = ans1$lambda[1:NOS],
-         lambda2 = if (Rank == 2) ans1$lambda[2 * (1:NOS) - 1] else NULL,
+         lambda2 = if (Rank == 2)
+                     ans1$lambda[2 * (1:NOS) - 1] else NULL,
          df.residual = n * M - qrank - sum(ans1$df - 1),
          fitted = ans1$fv,
          kindex = ans1$kindex,
@@ -1106,11 +1108,11 @@ setClass(Class = "Coef.rrvgam", representation(
 
 
 
-Coef.rrvgam <- function(object,
-    epsOptimum = 0.00001,  # Determines how accurately Optimum is estimated
-    gridlen = 40,      # Number of points on the grid (one level at a time)
-    maxgriditer = 10,  # Maximum number of iters allowed for grid search
-    smallno = 0.05, ...) {
+ Coef.rrvgam <- function(object,
+   epsOptimum = 0.00001,  # Determines how accurately Optimum is estimated
+   gridlen = 40,      # Number of points on the grid (one level at a time)
+   maxgriditer = 10,  # Maximum number of iters allowed for grid search
+   smallno = 0.05, ...) {
 
   if (!is.Numeric(epsOptimum, positive = TRUE, length.arg = 1))
     stop("bad input for argument 'epsOptimum'")
@@ -1136,7 +1138,7 @@ Coef.rrvgam <- function(object,
        ncol(object@predictors) else
        object@misc$M
   NOS <- if (length(object@y)) ncol(object@y) else M
-    MSratio <- M / NOS  # 1 or 2; First value is g(mean)=quadratic form in latvar
+    MSratio <- M / NOS
     nice21 <- (length(ocontrol$colx1.index) == 1) &&
               (names(ocontrol$colx1.index) == "(Intercept)")
     if (!nice21)
@@ -1259,7 +1261,8 @@ Coef.rrvgam <- function(object,
     myetamat <- rbind(maximum)
     if (MSratio == 2)
       myetamat <- kronecker(myetamat, matrix(1:0, 1, 2))
-    maximum <- object@family@linkinv(eta = myetamat, extra = object@extra)
+    maximum <- object@family@linkinv(eta = myetamat,
+                                     extra = object@extra)
     maximum <- c(maximum)  # Convert from matrix to vector
     names(maximum) <- ynames
 
@@ -1317,6 +1320,7 @@ Coef.rrvgam <- function(object,
 
 
 
+
 show.Coef.rrvgam <- function(object,
                           digits = max(2, options()$digits-2), ...) {
   Rank <- object@Rank
@@ -1341,10 +1345,12 @@ show.Coef.rrvgam <- function(object,
               Maximum), digits = max(1, digits-1))
   cat("\nNonlinear degrees of freedom\n")
   if (Rank == 1) {
-    print(cbind(df1.nl = object@df1.nl), digits = max(2, digits-1), ...)
+    print(cbind(df1.nl = object@df1.nl),
+          digits = max(2, digits-1), ...)
   } else {
     print(cbind(df1.nl = object@df1.nl,
-                df2.nl = object@df2.nl), digits = max(2, digits-1), ...)
+                df2.nl = object@df2.nl),
+          digits = max(2, digits-1), ...)
   }
   invisible(object)
 }
@@ -1360,10 +1366,12 @@ setMethod("show", "Coef.rrvgam", function(object)
 
 
 
-setMethod("coef", "rrvgam", function(object, ...) Coef.rrvgam(object, ...))
+setMethod("coef", "rrvgam", function(object, ...)
+    Coef.rrvgam(object, ...))
 setMethod("coefficients", "rrvgam", function(object, ...)
     Coef.rrvgam(object, ...))
-setMethod("Coef", "rrvgam", function(object, ...) Coef.rrvgam(object, ...))
+setMethod("Coef", "rrvgam", function(object, ...)
+    Coef.rrvgam(object, ...))
 
 
 
@@ -1374,12 +1382,12 @@ lvplot.rrvgam <- function(object,
           xlab = paste("Latent Variable",
                        if (Rank == 1) "" else " 1", sep = ""),
           ylab = if (Rank == 1) switch(type, predictors = "Predictors",
-              fitted.values = "Fitted values") else "Latent Variable 2",
+            fitted.values = "Fitted values") else "Latent Variable 2",
           pcex = par()$cex, pcol = par()$col, pch = par()$pch,
           llty = par()$lty, lcol = par()$col, llwd = par()$lwd,
           label.arg= FALSE, adj.arg=-0.5,
-          sites= FALSE, spch = NULL, scol = par()$col, scex = par()$cex,
-          sfont = par()$font,
+          sites= FALSE, spch = NULL, scol = par()$col,
+          scex = par()$cex, sfont = par()$font,
           which.species = NULL,
           check.ok = TRUE, ...) {
     type <- match.arg(type, c("fitted.values", "predictors"))[1]
@@ -1391,7 +1399,7 @@ lvplot.rrvgam <- function(object,
          ncol(object@predictors) else
          object@misc$M
     NOS <- ncol(object@y)
-    MSratio <- M / NOS  # First value is g(mean) = quadratic form in latvar
+    MSratio <- M / NOS
     n <- object@misc$n
     colx2.index <- object@control$colx2.index
     cx1i <- object@control$colx1.index
@@ -1574,9 +1582,9 @@ predict.rrvgam <- function (object, newdata = NULL,
              is.matrix(object@predictors))
          ncol(object@predictors) else
          object@misc$M
-    MSratio <- M / NOS  # First value is g(mean) = quadratic form in latvar
+    MSratio <- M / NOS  # 1st value is g(mean) = quadratic form in latvar
     if (type == "terms") {
-      terms.mat <- matrix(0, nrow(X), Rank*NOS)  # 1st R cols for spp.1, etc.
+      terms.mat <- matrix(0, nrow(X), Rank * NOS)
       interceptvector <- rep_len(0, NOS)
     } else {
       etamat <- matrix(0, nrow(X), M)  # Could contain derivatives
@@ -1808,8 +1816,8 @@ setMethod("plot", "rrvgam",
 
 persp.rrvgam <-
   function(x,
-           show.plot = TRUE,
-           xlim = NULL, ylim = NULL, zlim = NULL,  # zlim ignored if Rank == 1
+           show.plot = TRUE,  # zlim ignored if Rank == 1:
+           xlim = NULL, ylim = NULL, zlim = NULL,
            gridlength = if (Rank == 1) 301 else c(51, 51),
            which.species = NULL,
            xlab = if (Rank == 1) "Latent Variable" else "Latent Variable 1",
@@ -1880,8 +1888,8 @@ persp.rrvgam <-
 
   if (Rank == 1) {
     if (show.plot) {
-      if (!length(ylim.orig))
-        ylim <- c(0, max(fitvals[,which.species.numer]) * stretch)  # A revision
+      if (!length(ylim.orig))  # A revision:
+        ylim <- c(0, max(fitvals[,which.species.numer]) * stretch)
       col <- rep_len(col, length(which.species.numer))
       lty <- rep_len(lty, length(which.species.numer))
       lwd <- rep_len(lwd, length(which.species.numer))

@@ -73,7 +73,7 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 
 }
 % \references{
-% Yee, T. W. and Ma, C. (2020).
+% Yee, T. W. and Ma, C. (2021).
 % Generally--altered, --inflated and --truncated regression,
 % with application to heaped and seeped counts.  % count data.
 % \emph{In preparation}.

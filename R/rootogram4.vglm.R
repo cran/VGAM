@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -178,10 +178,6 @@
 
   pmat <- matrix(NA_real_, n.lm, length(At))  # Important initialization
 
-  if (vfamily == "bellff") {
-    for (i in At)
-      pmat[, i + 1L] <- dbell(i, shape = Param.mat[, 1])
-  }
   if (vfamily == "borel.tanner") {
     for (i in At)
       pmat[, i + 1L] <- dbort(i, a = Param.mat[, 1],
@@ -249,12 +245,12 @@
   }
   if (vfamily == "genpoisson1") {
     for (i in At)
-      pmat[, i + 1L] <- dgenpois1(i, mean = Param.mat[, 1],
+      pmat[, i + 1L] <- dgenpois1(i, meanpar = Param.mat[, 1],
                                   dispind = Param.mat[, 2])
   }
   if (vfamily == "genpoisson2") {
     for (i in At)
-      pmat[, i + 1L] <- dgenpois2(i, mean = Param.mat[, 1],
+      pmat[, i + 1L] <- dgenpois2(i, meanpar = Param.mat[, 1],
                                   disppar = Param.mat[, 2])
   }
 

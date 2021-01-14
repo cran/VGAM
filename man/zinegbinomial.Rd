@@ -251,6 +251,7 @@ zinegbinomialff(lmunb = "loglink", lsize = "loglink", lonempstr0 = "logitlink",
 \seealso{
   \code{\link{Zinegbin}},
   \code{\link{negbinomial}},
+  \code{\link{spikeplot}},
   \code{\link[stats:Poisson]{rpois}},
   \code{\link{CommonVGAMffArguments}}.
 

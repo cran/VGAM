@@ -20,14 +20,14 @@
 
 }
 \usage{
-dgenpois1(x, mean, dispind = 1, log = FALSE)
-pgenpois1(q, mean, dispind = 1, lower.tail = TRUE)
-qgenpois1(p, mean, dispind = 1)
-rgenpois1(n, mean, dispind = 1)
-dgenpois2(x, mean, disppar = 0, log = FALSE)
-pgenpois2(q, mean, disppar = 0, lower.tail = TRUE)
-qgenpois2(p, mean, disppar = 0)
-rgenpois2(n, mean, disppar = 0)
+dgenpois1(x, meanpar, dispind = 1, log = FALSE)
+pgenpois1(q, meanpar, dispind = 1, lower.tail = TRUE)
+qgenpois1(p, meanpar, dispind = 1)
+rgenpois1(n, meanpar, dispind = 1)
+dgenpois2(x, meanpar, disppar = 0, log = FALSE)
+pgenpois2(q, meanpar, disppar = 0, lower.tail = TRUE)
+qgenpois2(p, meanpar, disppar = 0)
+rgenpois2(n, meanpar, disppar = 0)
 }
 \arguments{
   \item{x, q}{Vector of quantiles.}
@@ -35,7 +35,7 @@ rgenpois2(n, mean, disppar = 0)
   \item{n}{Similar to \code{\link[stats]{runif}}.}
 
 
-  \item{mean, dispind}{
+  \item{meanpar, dispind}{
     The mean and dispersion index (index of dispersion), which
     are the two parameters for the GP-1.
     The mean is positive while the \code{dispind}
@@ -153,11 +153,11 @@ generalized Poisson regression.
 
 }
 \examples{
-sum(dgenpois1(0:1000, mean = 5, dispind = 2))
+sum(dgenpois1(0:1000, meanpar = 5, dispind = 2))
 \dontrun{dispind <- 5; meanpar <- 5; y <- 0:15
-proby <- dgenpois1(y, mean = meanpar, dispind)
+proby <- dgenpois1(y, meanpar = meanpar, dispind)
 plot(y, proby, type = "h", col = "blue", lwd = 2, ylab = "P[Y=y]",
-     main = paste0("Y ~ GP-1(mean=", meanpar, ", dispind=",
+     main = paste0("Y ~ GP-1(meanpar=", meanpar, ", dispind=",
                    dispind, ")"), las = 1, ylim = c(0, 0.3),
      sub = "Orange is the Poisson probability function")
 lines(y + 0.1, dpois(y, meanpar), type = "h", lwd = 2, col = "orange") }

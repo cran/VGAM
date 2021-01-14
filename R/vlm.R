@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2020 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -30,7 +30,8 @@ vlm <-
 
 
   mf <- match.call(expand.dots = FALSE)
-  m <- match(c("formula", "data", "subset", "weights", "na.action", "offset"),
+  m <- match(c("formula", "data", "subset", "weights",
+               "na.action", "offset"),
              names(mf), 0)
   mf <- mf[c(1, m)]
   mf$drop.unused.levels <- TRUE
@@ -52,8 +53,9 @@ vlm <-
 
   xlev <- .getXlevels(mt, mf)
   y <- model.response(mf, "any")  # model.extract(mf, "response")
-  x <- if (!is.empty.model(mt)) model.matrix(mt, mf, contrasts) else
-       matrix(, NROW(y), 0)
+  x <- if (!is.empty.model(mt))
+         model.matrix(mt, mf, contrasts) else
+         matrix(, NROW(y), 0)
   attr(x, "assign") <- attrassigndefault(x, mt)
 
 
@@ -93,12 +95,14 @@ vlm <-
 
   control <- control
   Hlist <- process.constraints(constraints, x, M)
-  intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
+  intercept.only <- ncol(x) == 1 &&
+                    dimnames(x)[[2]] == "(Intercept)"
 
-  fit <- vlm.wfit(xmat = x, zmat = y, Hlist = Hlist, wz = wz, U = NULL,
-                 matrix.out = FALSE, is.vlmX = FALSE,
-                 ResSS = TRUE, qr = qr.arg,
-                 x.ret = TRUE, offset = offset)
+  fit <- vlm.wfit(xmat = x, zmat = y, Hlist = Hlist,
+                  wz = wz, U = NULL,
+                  matrix.out = FALSE, is.vlmX = FALSE,
+                  ResSS = TRUE, qr = qr.arg,
+                  x.ret = TRUE, offset = offset)
 
   ncol.X.vlm <- fit$rank
   fit$R <- fit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
@@ -171,7 +175,8 @@ vlm <-
 
   if (length(attr(x, "contrasts")))
       slot(answer, "contrasts") <- attr(x, "contrasts")
-  slot(answer, "na.action") <- if (length(aaa <- attr(mf, "na.action")))
+  slot(answer, "na.action") <-
+    if (length(aaa <- attr(mf, "na.action")))
       list(aaa) else list()
 
   if (length(offset))
