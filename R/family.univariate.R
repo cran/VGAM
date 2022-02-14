@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -30,7 +30,7 @@
 
 
 
-dgenpois0 <- function(x, theta, lambda = 0, log = FALSE) {
+ dgenpois0 <- function(x, theta, lambda = 0, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -42,7 +42,7 @@ dgenpois0 <- function(x, theta, lambda = 0, log = FALSE) {
   
   bad0 <- !is.finite(theta) | !is.finite(lambda) |
           theta < 0 | lambda < 0 | 1 <= lambda
-  bad <- bad0 | !is.finite(x)
+  bad <- bad0 | !is.finite(x) | !is.finite(lfactorial(x))
 
   logpdf <- x + lambda + theta
   
@@ -53,6 +53,7 @@ dgenpois0 <- function(x, theta, lambda = 0, log = FALSE) {
   }
   
   logpdf[!bad0 & is.infinite(x)] <- log(0)
+  logpdf[!bad0 & is.infinite(lfactorial(x))] <- log(0)
   logpdf[!bad0 & x < 0         ] <- log(0)
   logpdf[!bad0 & x != round(x) ] <- log(0)
   logpdf[ bad0] <- NaN
@@ -63,7 +64,7 @@ dgenpois0 <- function(x, theta, lambda = 0, log = FALSE) {
 
 
 
-dgenpois <- function(x, lambda = 0, theta, log = FALSE) {
+ dgenpois <- function(x, lambda = 0, theta, log = FALSE) {
 
   .Deprecated("dgenpois0")
   
@@ -96,7 +97,49 @@ dgenpois <- function(x, lambda = 0, theta, log = FALSE) {
 
 
 
-pgenpois0 <- function(q, theta, lambda = 0, lower.tail = TRUE) {
+
+
+
+
+
+
+if (FALSE)
+ pgenpois0.CoFortran <-
+  function(q, theta, lambda = 0, lower.tail = TRUE) {
+  warning("not working 20211025")
+  q <- floor(q)
+  LLL <- max(length(q), length(theta), length(lambda))
+  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
+  if (length(theta)  != LLL) theta  <- rep_len(theta,  LLL)
+  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
+
+  bad0 <- !is.finite(theta) | !is.finite(lambda) |
+          theta < 0 | lambda < 0 | 1 <= lambda
+  bad <- bad0 | !is.finite(q)
+
+  if (all(is.finite(lambda)) && all(lambda == 0))
+    return(ppois(q, theta, lower.tail = lower.tail))
+
+  ans <- q + lambda + theta
+  okay3 <- !bad & 0 <= q
+  zzzzz  # Call C or FORTRAN here.
+  zzzzz
+  zzzzz
+
+  ans[!bad0 & is.infinite(q)] <- 1
+  ans[!bad0 & q < 0         ] <- 0
+  ans[ bad0] <- NaN
+  if (!lower.tail)
+    ans <- 1 - ans
+  ans
+}  # pgenpois0.CorFORTRAN
+
+
+
+
+
+ pgenpois0 <-
+  function(q, theta, lambda = 0, lower.tail = TRUE) {
   q <- floor(q)
   LLL <- max(length(q), length(theta), length(lambda))
   if (length(q)      != LLL) q      <- rep_len(q,      LLL)
@@ -130,6 +173,16 @@ pgenpois0 <- function(q, theta, lambda = 0, lower.tail = TRUE) {
     ans <- 1 - ans
   ans
 }  # pgenpois0
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -455,6 +508,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "genpois0",
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("theta", "lambda"),
@@ -685,6 +739,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "genpois2",
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("meanpar", "disppar"),
@@ -994,6 +1049,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "genpois1",
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("meanpar", "dispind"),
@@ -1761,6 +1817,8 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
 
 
 
+
+
 dirmul.old <- function(link = "loglink", ialpha = 0.01,
                        parallel = FALSE, zero = NULL) {
 
@@ -2154,6 +2212,7 @@ rdiric <- function(n, shape, dimension = NULL,
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "cauchy",  # cauchy2
          charfun = TRUE,
          expected = TRUE,
          multipleResponses = FALSE,
@@ -2345,7 +2404,7 @@ rdiric <- function(n, shape, dimension = NULL,
     wz
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale ))))
-}
+}  # cauchy
 
 
 
@@ -2546,7 +2605,9 @@ rdiric <- function(n, shape, dimension = NULL,
     wz
   }), list( .elocat = elocat, .scale.arg = scale.arg,
             .llocat = llocat ))))
-}
+}  # cauchy1
+
+
 
 
 
@@ -2675,7 +2736,9 @@ rdiric <- function(n, shape, dimension = NULL,
     wz <- c(w) * dlocat.deta^2 / ( .scale.arg^2 * 3)
     wz
   }), list( .scale.arg = scale.arg ))))
-}
+}  # logistic1
+
+
 
 
 
@@ -2813,13 +2876,15 @@ rdiric <- function(n, shape, dimension = NULL,
         ll.elts
       }
     }
-  }, list( .lscale = lscale, .escale = escale, .shape.arg = shape.arg ))),
+    }, list( .lscale = lscale, .escale = escale,
+             .shape.arg = shape.arg ))),
   vfamily = c("erlang"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     sc <- eta2theta(eta, .lscale , earg = .escale )
     okay1 <- all(is.finite(sc)) && all(0 < sc)
     okay1
-  }, list( .lscale = lscale, .escale = escale, .shape.arg = shape.arg ))),
+  }, list( .lscale = lscale, .escale = escale,
+           .shape.arg = shape.arg ))),
 
 
 
@@ -2906,7 +2971,7 @@ dbort <- function(x, Qsize = 1, a = 0.5, log = FALSE) {
     ans[xok] <- exp(ans[xok])
   }
   ans
-}
+}  # dbort
 
 
 
@@ -2936,7 +3001,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
     fini <- fini | (qsize < 1)
   }
   totqsize
-}
+}  # rbort
 
 
 
@@ -2972,6 +3037,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "bort",
          Qsize = .Qsize ,
          hadof = TRUE,
          link = .link ,
@@ -3087,7 +3153,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
     wz <- c(w) * ned2l.da2 * da.deta^2
     wz
   }), list( .Qsize = Qsize ))))
-}
+}  # borel.tanner
 
 
 
@@ -3116,11 +3182,12 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
     ans[xok] <- exp(ans[xok])
   }
   ans
-}
+}  # dfelix
 
 
 
- felix <- function(lrate = extlogitlink(min = 0, max = 0.5), imethod = 1) {
+ felix <-
+  function(lrate = extlogitlink(min = 0, max = 0.5), imethod = 1) {
 
   lrate <- as.list(substitute(lrate))
   erate <- link2list(lrate)
@@ -3141,6 +3208,7 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "felix",
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = FALSE,
@@ -3230,7 +3298,7 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
     wz <- c(w) * da.deta^2 * ned2l.da2
     wz
   }), list( .lrate = lrate ))))
-}
+}  # felix
 
 
 
@@ -3278,7 +3346,7 @@ simple.exponential <- function() {
     wz <- c(w) * drate.deta^2 * ned2l.drate2
     wz
   }))
-}
+}  # simple.exponential
 
 
 
@@ -3314,6 +3382,7 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "exp",
          multipleResponses = TRUE,
          zero = .zero )
   }, list( .zero = zero ))),
@@ -3403,7 +3472,7 @@ simple.exponential <- function() {
     }
     c(w) * wz
   }), list( .link = link, .expected = expected, .earg = earg ))))
-}
+}  # better.exponential
 
 
 
@@ -3465,6 +3534,7 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "exp",
          charfun = TRUE,
          multipleResponses = TRUE,
          parallel = .parallel ,
@@ -3654,24 +3724,7 @@ simple.exponential <- function() {
     }
     c(w) * wz
   }), list( .link = link, .expected = expected, .earg = earg ))))
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}  # exponential
 
 
 
@@ -3713,6 +3766,7 @@ simple.exponential <- function() {
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
+         Q1 = 1,
          parallel = .parallel ,
          percentiles = .percentiles ,
          type.fitted = .type.fitted ,
@@ -3861,7 +3915,8 @@ simple.exponential <- function() {
     wz <- ned2l.dshape * dshape.deta^2
     c(w) * wz
   }))
-}
+}  # gamma1
+
 
 
 
@@ -3940,6 +3995,7 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "gamma",
          charfun = TRUE,
          expected = .expected ,
          multipleResponses = TRUE,
@@ -4142,7 +4198,7 @@ simple.exponential <- function() {
   }), list( .lratee = lratee, .lshape = lshape,
             .eratee = eratee, .eshape = eshape, .expected = expected,
             .scale.12 = scale.12, .ratee.TF = ratee.TF, .lss = lss  ))))
-}
+}  # gammaR 
 
 
 
@@ -4216,6 +4272,7 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "gamma",
          apply.parint = .apply.parint ,
          expected = TRUE,
          multipleResponses = TRUE,
@@ -4242,7 +4299,8 @@ simple.exponential <- function() {
     y <- temp5$y
 
 
-    assign("CQO.FastAlgorithm", ( .lmu == "loglink" && .lshape == "loglink"),
+    assign("CQO.FastAlgorithm", ( .lmu == "loglink" &&
+                                  .lshape == "loglink"),
            envir = VGAMenv)
     if (any(function.name == c("cqo", "cao")) &&
        is.Numeric( .zero , length.arg = 1) && .zero != -2)
@@ -4427,7 +4485,7 @@ simple.exponential <- function() {
     }
   }, list( .lshape = lshape )))
   ans
-}
+}  # gamma2
 
 
 
@@ -4478,6 +4536,7 @@ simple.exponential <- function() {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "geom",
          expected = TRUE,
          multipleResponses = TRUE,
          zero = .zero )
@@ -4607,7 +4666,7 @@ simple.exponential <- function() {
     c(w) * wz
   }), list( .link = link, .earg = earg,
             .expected = expected ))))
-}
+}  # geometric
 
 
 
@@ -4636,7 +4695,7 @@ dbetageom <- function(x, shape1, shape2, log = FALSE) {
   } else {
     exp(loglik)
   }
-}
+}  # dbetageom
 
 
 pbetageom <- function(q, shape1, shape2, log.p = FALSE) {
@@ -4669,7 +4728,7 @@ pbetageom <- function(q, shape1, shape2, log.p = FALSE) {
     }
   }
   if (log.p) log(ans) else ans
-}
+}  # pbetageom
 
 
 rbetageom <- function(n, shape1, shape2) {
@@ -4734,14 +4793,7 @@ rbetageom <- function(n, shape1, shape2) {
     d2l.dlambda2 <- 1 / lambda
     c(w) * d2l.dlambda2 * dlambda.deta^2
   }))
-}
-
-
-
-
-
-
-
+}  # simple.poisson
 
 
 
@@ -4781,6 +4833,8 @@ rbetageom <- function(n, shape1, shape2) {
             "Variance: df / (df - 2) if df > 2\n"),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
+         Q1 = 1,
+         dpqrfun = "t",
          tol1 = .tol1 )
   }, list( .tol1 = tol1 ))),
   initialize = eval(substitute(expression({
@@ -4900,14 +4954,16 @@ rbetageom <- function(n, shape1, shape2) {
     wz <- c(w) * ned2l.dnu2 * ddf.deta^2
     wz
   }), list( .ldof = ldof, .edof = edof ))))
-}
+}  # studentt
 
 
 
 
 
 
-    Kayfun.studentt <- function(df, bigno = .Machine$double.eps^(-0.46)) {
+
+ Kayfun.studentt <-
+  function(df, bigno = .Machine$double.eps^(-0.46)) {
       ind1 <- is.finite(df)
 
       const4 <- dnorm(0)
@@ -4925,14 +4981,15 @@ rbetageom <- function(n, shape1, shape2) {
       ans[!ind1] <- const4 # 1 / const3  # for handling df = Inf
 
       ans
-    }
+}  # Kayfun.studentt
 
 
 
 
- studentt3 <- function(llocation = "identitylink",
-                       lscale    = "loglink",
-                       ldf       = "logloglink",
+ studentt3 <-
+  function(llocation = "identitylink",
+           lscale    = "loglink",
+           ldf       = "logloglink",
                        ilocation = NULL, iscale = NULL, idf = NULL,
                        imethod = 1,
                        zero = c("scale", "df")) {
@@ -4990,6 +5047,7 @@ rbetageom <- function(n, shape1, shape2) {
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "t",  # With modification zz
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("location", "scale", "df"),
@@ -5247,7 +5305,8 @@ rbetageom <- function(n, shape1, shape2) {
   }), list( .lloc = lloc, .eloc = eloc,
             .lsca = lsca, .esca = esca,
             .ldof = ldof, .edof = edof ))))
-}
+}  # studentt3
+
 
 
 
@@ -5306,6 +5365,7 @@ rbetageom <- function(n, shape1, shape2) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "t",  # With modification zz
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("location", "scale"),
@@ -5504,7 +5564,9 @@ rbetageom <- function(n, shape1, shape2) {
   }), list( .lloc = lloc, .eloc = eloc,
             .lsca = lsca, .esca = esca,
             .doff = doff  ))))
-}
+}  # studentt2
+
+
 
 
 
@@ -5544,6 +5606,7 @@ rbetageom <- function(n, shape1, shape2) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "chisq",
          charfun = TRUE,
          expected = TRUE,
          multipleResponses = TRUE,
@@ -5648,7 +5711,7 @@ rbetageom <- function(n, shape1, shape2) {
     wz <- ned2l.dv2 * dv.deta^2
     c(w) * wz
   }), list( .link = link, .earg = earg ))))
-}
+}  # chisq
 
 
 
@@ -5672,7 +5735,8 @@ dsimplex <- function(x, mu = 0.5, dispersion = 1, log = FALSE) {
   logpdf[mu    >= 1.0] <- NaN
   logpdf[sigma <= 0.0] <- NaN
   if (log.arg) logpdf else exp(logpdf)
-}
+}  # dsimplex
+
 
 
 rsimplex <- function(n, mu = 0.5, dispersion = 1) {
@@ -5723,7 +5787,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     }
   }
   answer
-}
+}  # rsimplex
 
 
 
@@ -5781,6 +5845,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "simplex",
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("mu", "sigma"),
@@ -5917,12 +5982,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     c(w) * wz
   }), list( .lmu = lmu, .lsigma = lsigma,
             .emu = emu, .esigma = esigma ))))
-}
-
-
-
-
-
+}  # simplex
 
 
 
@@ -6064,12 +6124,13 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     wz
   }), list( .lmu = lmu, .llambda = llambda, .expected = FALSE,
             .emu = emu, .elambda = elambda ))))
-}
+}  # rigff
 
 
 
- hypersecant <- function(link.theta = extlogitlink(min = -pi/2, max = pi/2),
-                         init.theta = NULL) {
+ hypersecant <-
+  function(link.theta = extlogitlink(min = -pi/2, max = pi/2),
+           init.theta = NULL) {
 
 
   link.theta <- as.list(substitute(link.theta))
@@ -6145,12 +6206,13 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     wz <- c(w) * d2l.dthetas2 * dparam.deta^2
     wz
   }))
-}
+}  # hypersecant
 
 
 
- hypersecant01 <- function(link.theta = extlogitlink(min = -pi/2, max = pi/2),
-                           init.theta = NULL) {
+ hypersecant01 <-
+  function(link.theta = extlogitlink(min = -pi/2, max = pi/2),
+           init.theta = NULL) {
 
 
   link.theta <- as.list(substitute(link.theta))
@@ -6236,7 +6298,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
     wz <- c(w) * d2l.dthetas2 * dparam.deta^2
     wz
   }))
-}
+}  # hypersecant01
 
 
 
@@ -6392,7 +6454,6 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   }), list( .lmu = lmu, .llambda = llambda, .expected = FALSE,
             .emu = emu, .elambda = elambda ))))
 }  # leipnik
-
 
 
 
@@ -6575,7 +6636,7 @@ plgamma <- function(q, location = 0, scale = 1, shape = 1,
   ans <- pgamma(exp(zedd), shape, lower.tail = lower.tail, log.p = log.p)
   ans[scale <  0] <- NaN
   ans
-}
+}  # plgamma
 
 
 
@@ -6695,16 +6756,14 @@ rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
     wz <- c(w) * dk.deta^2 * ned2l.dk2
     wz
   }), list( .link = link, .earg = earg ))))
-}
-
-
-
-
+}  # lgamma1
 
 
 
  lgamma3   <-
-  function(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
+  function(llocation = "identitylink",
+           lscale = "loglink",
+           lshape = "loglink",
            ilocation = NULL, iscale = NULL, ishape = 1,
            zero = c("scale", "shape")) {
 
@@ -6748,6 +6807,7 @@ rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "lgamma",
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("location", "scale", "shape"),
@@ -6907,7 +6967,7 @@ rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
     wz
   }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
             .elocat = elocat, .escale = escale, .eshape = eshape))))
-}
+}  # lgamma3
 
 
 
@@ -6934,7 +6994,7 @@ dprentice74 <-
     ll.elts[shape0] <- dnorm(x[shape0], location[shape0],
                              scale[shape0], log = TRUE)
   if (log.arg) ll.elts else exp(ll.elts)
-}
+}  # dprentice74
 
 
 
@@ -6989,6 +7049,7 @@ dprentice74 <-
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "prentice74",
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("location", "scale", "shape"),
@@ -7227,7 +7288,8 @@ if (FALSE) {
     wz
   }), list( .llocat = llocat, .lscale = lscale, .lshape = lshape,
             .elocat = elocat, .escale = escale, .eshape = eshape))))
-}
+}  # prentice74
+
 
 
 
@@ -7279,7 +7341,7 @@ dgengamma.stacy <- function(x, scale = 1, d, k, log = FALSE) {
     warning("NaNs produced")
 
   answer
-}
+}  # dgengamma.stacy
 
 
 
@@ -7371,6 +7433,7 @@ rgengamma.stacy <- function(n, scale = 1, d, k) {
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "gengamma.stacy",
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("scale", "d", "k"),
@@ -7803,7 +7866,7 @@ rlevy <- function(n, location = 0, scale = 1)
   }), list( .link.gamma = link.gamma, .earg = earg,
            .delta.known = delta.known,
            .delta = delta ))))
-}
+}  # levy
 
 
 
@@ -8101,7 +8164,7 @@ pmaxwell <- function(q, rate, lower.tail = TRUE, log.p = FALSE) {
     }
   }
   ans
-}
+}  # pmaxwell
 
 
 
@@ -8109,14 +8172,14 @@ qmaxwell <- function(p, rate, lower.tail = TRUE, log.p = FALSE) {
 
   sqrt(2 * qgamma(p = p, 1.5, lower.tail = lower.tail,
                   log.p = log.p) / rate)
-}
+}  # qmaxwell
 
 
 
 rmaxwell <- function(n, rate) {
 
   sqrt(2 * rgamma(n = n, 1.5) / rate)
-}
+}  # rmaxwell
 
 
 
@@ -8159,6 +8222,7 @@ rmaxwell <- function(n, rate) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "maxwell",
          parallel = .parallel ,
          percentiles = .percentiles ,
          type.fitted = .type.fitted ,
@@ -8388,7 +8452,7 @@ qnaka <- function(p, scale = 1, shape, ...) {
                        p = p[ii], ...)$root
   }
   ans
-}
+}  # qnaka
 
 
 rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
@@ -8428,7 +8492,7 @@ rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
     }
   }
   ans
-}
+}  # rnaka
 
 
 
@@ -8560,7 +8624,10 @@ rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
     c(w) * wz
   }), list( .lscale = lscale, .lshape = lshape,
             .escale = escale, .eshape = eshape))))
-}
+}  # nakagami
+
+
+
 
 
 
@@ -8610,7 +8677,7 @@ prayleigh <- function(q, scale = 1, lower.tail = TRUE, log.p = FALSE) {
     }
   ans[scale <  0] <- NaN
   ans
-}
+}  # prayleigh
 
 
 
@@ -8647,7 +8714,7 @@ qrayleigh <- function(p, scale = 1,
   }
   ans[scale <= 0] <- NaN
   ans
-}
+}  # qrayleigh
 
 
 
@@ -8706,6 +8773,7 @@ rrayleigh <- function(n, scale = 1) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "rayleigh",
          expected = TRUE,
          multipleResponses = TRUE,
          parallel = .parallel ,
@@ -8888,7 +8956,13 @@ rrayleigh <- function(n, scale = 1) {
   }), list( .lscale = lscale,
             .escale = escale,
             .nrfs = nrfs, .oim.mean = oim.mean ))))
-}
+}  # rayleigh
+
+
+
+
+
+
 
 
 
@@ -8919,7 +8993,7 @@ dparetoIV <- function(x, location = 0, scale = 1, inequality = 1,
                       log1p(zedd[xok]^(1/inequality[xok]))
   logdensity[is.infinite(x)] <- log(0)  # 20141208 KaiH
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dparetoIV
 
 
 
@@ -8958,7 +9032,7 @@ pparetoIV <-
   }
   answer[scale <= 0 | shape <= 0 | inequality <= 0] <- NaN
   answer
-}
+}  # pparetoIV
 
 
 
@@ -9000,7 +9074,7 @@ qparetoIV <-
   }
   ans[scale <= 0 | shape <= 0 | inequality <= 0] <- NaN
   ans
-}
+}  # qparetoIV
 
 
 
@@ -9012,7 +9086,8 @@ rparetoIV <-
   ans[scale <= 0] <- NaN
   ans[shape <= 0] <- NaN
   ans
-}
+}  # rparetoIV
+
 
 
 dparetoIII <- function(x, location = 0, scale = 1, inequality = 1,
@@ -9020,17 +9095,23 @@ dparetoIII <- function(x, location = 0, scale = 1, inequality = 1,
   dparetoIV(x = x, location = location, scale = scale,
             inequality = inequality, shape = 1, log = log)
 
+
+
 pparetoIII <- function(q, location = 0, scale = 1, inequality = 1,
                        lower.tail = TRUE, log.p = FALSE)
   pparetoIV(q = q, location = location, scale = scale,
             inequality = inequality, shape = 1,
             lower.tail = lower.tail, log.p = log.p)
 
+
+
 qparetoIII <- function(p, location = 0, scale = 1, inequality = 1,
                        lower.tail = TRUE, log.p = FALSE)
   qparetoIV(p = p, location = location, scale = scale,
             inequality = inequality, shape = 1,
             lower.tail = lower.tail, log.p = log.p)
+
+
 
 rparetoIII <- function(n, location = 0, scale = 1, inequality = 1)
   rparetoIV(n = n, location= location, scale = scale,
@@ -9043,11 +9124,15 @@ dparetoII <-
   dparetoIV(x = x, location = location, scale = scale,
             inequality = 1, shape = shape, log = log)
 
+
+
 pparetoII <- function(q, location = 0, scale = 1, shape = 1,
                       lower.tail = TRUE, log.p = FALSE)
   pparetoIV(q = q, location = location, scale = scale,
             inequality = 1, shape = shape,
             lower.tail = lower.tail, log.p = log.p)
+
+
 
 qparetoII <- function(p, location = 0, scale = 1, shape = 1,
                       lower.tail = TRUE, log.p = FALSE)
@@ -9055,14 +9140,19 @@ qparetoII <- function(p, location = 0, scale = 1, shape = 1,
             inequality = 1, shape = shape,
             lower.tail = lower.tail, log.p = log.p)
 
+
+
 rparetoII <- function(n, location = 0, scale = 1, shape = 1)
   rparetoIV(n = n, location = location, scale = scale,
             inequality = 1, shape = shape)
 
 
+
+
 dparetoI <- function(x, scale = 1, shape = 1, log = FALSE)
   dparetoIV(x = x, location = scale, scale = scale, inequality = 1,
             shape = shape, log = log)
+
 
 pparetoI <- function(q, scale = 1, shape = 1,
                      lower.tail = TRUE, log.p = FALSE)
@@ -9070,15 +9160,19 @@ pparetoI <- function(q, scale = 1, shape = 1,
             shape = shape,
             lower.tail = lower.tail, log.p = log.p)
 
+
 qparetoI <- function(p, scale = 1, shape = 1,
                      lower.tail = TRUE, log.p = FALSE)
   qparetoIV(p = p, location = scale, scale = scale, inequality = 1,
             shape = shape,
             lower.tail = lower.tail, log.p = log.p)
 
+
 rparetoI <- function(n, scale = 1, shape = 1)
   rparetoIV(n = n, location = scale, scale = scale, inequality = 1,
             shape = shape)
+
+
 
 
 
@@ -9284,7 +9378,7 @@ rparetoI <- function(n, scale = 1, shape = 1)
         c(w) * wz
   }), list( .lscale = lscale, .linequ = linequ, .lshape = lshape,
             .escale = escale, .einequ = einequ, .eshape = eshape))))
-}
+}  # paretoIV
 
 
 
@@ -9434,9 +9528,7 @@ rparetoI <- function(n, scale = 1, shape = 1)
     c(w) * wz
   }), list( .lscale = lscale, .linequ = linequ,
             .escale = escale, .einequ = einequ ))))
-}
-
-
+}  # paretoIII
 
 
 
@@ -9587,7 +9679,7 @@ rparetoI <- function(n, scale = 1, shape = 1)
     c(w) * wz
   }), list( .lscale = lscale, .lshape = lshape,
             .escale = escale, .eshape = eshape))))
-}
+}  # paretoII
 
 
 
@@ -9612,7 +9704,7 @@ dpareto <- function(x, scale = 1, shape, log = FALSE) {
   logdensity[xok] <- log(shape[xok]) + shape[xok] * log(scale[xok]) -
                       (shape[xok]+1) * log(x[xok])
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dpareto
 
 
 
@@ -9649,7 +9741,7 @@ ppareto <- function(q, scale = 1, shape,
 
   ans[shape <= 0 | scale <= 0] <- NaN
   ans
-}
+}  # ppareto
 
 
 
@@ -9689,7 +9781,7 @@ qpareto <- function(p, scale = 1, shape,
   }
   ans[shape <= 0 | scale <= 0] <- NaN
   ans
-}
+}  # qpareto
 
 
 
@@ -9698,7 +9790,7 @@ rpareto <- function(n, scale = 1, shape) {
   ans[scale <= 0] <- NaN
   ans[shape <= 0] <- NaN
   ans
-}
+}  # rpareto
 
 
 
@@ -9800,7 +9892,8 @@ rpareto <- function(n, scale = 1, shape) {
     wz <- c(w) * dk.deta^2 * ned2l.dk2
     wz
   }), list( .lshape = lshape, .eshape = eshape ))))
-}
+}  #  paretoff
+
 
 
 
@@ -9838,7 +9931,7 @@ dtruncpareto <- function(x, lower, upper, shape, log = FALSE) {
   logdensity[0 > lower] <- NaN
 
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dtruncpareto
 
 
 
@@ -9876,7 +9969,7 @@ ptruncpareto <- function(q, lower, upper, shape,
   } else {
     if (log.arg) log1p(-ans) else exp(log1p(-ans))
   }
-}
+}  # ptruncpareto
 
 
 
@@ -9892,7 +9985,8 @@ qtruncpareto <- function(p, lower, upper, shape) {
   ans[shape <= 0] <- NaN
   ans[upper <  lower] <- NaN
   ans
-}
+}  # qtruncpareto
+
 
 
 rtruncpareto <- function(n, lower, upper, shape) {
@@ -9903,7 +9997,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
   ans[upper <= 0] <- NaN
   ans[shape <= 0] <- NaN
   ans
-}
+}  # rtruncpareto
 
 
 
@@ -10047,7 +10141,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     wz
   }), list( .lshape = lshape, .lower = lower,
             .eshape = eshape, .upper = upper ))))
-}
+}  # truncpareto
 
 
 
@@ -10143,10 +10237,11 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
 
- expexpff <- function(lrate = "loglink", lshape = "loglink",
-                      irate = NULL, ishape = 1.1,  # ishape cannot be 1
-                      tolerance = 1.0e-6,
-                      zero = NULL) {
+ expexpff <-
+  function(lrate = "loglink", lshape = "loglink",
+           irate = NULL, ishape = 1.1,  # ishape cannot be 1
+           tolerance = 1.0e-6,
+           zero = NULL) {
 
 
 
@@ -10305,7 +10400,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     wz[, iam(2, 2, M)] <- dshape.deta^2 * d11
       c(w) * wz
   }), list( .tolerance = tolerance ))))
-}
+}  # expexpff
 
 
 
@@ -10436,7 +10531,10 @@ rtruncpareto <- function(n, lower, upper, shape) {
       pooled.weight <- FALSE
     c(w) * wz
   }), list( .lrate = lrate, .erate = erate))))
-}
+}  # expexpff1
+
+
+
 
 
 
@@ -10496,6 +10594,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "logis",
          multipleResponses = TRUE,
          expected = TRUE,
          zero = .zero )
@@ -10679,7 +10778,7 @@ rtruncpareto <- function(n, lower, upper, shape) {
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
   }), list( .llocat = llocat, .lscale = lscale,
             .elocat = elocat, .escale = escale))))
-}
+}  # logistic
 
 
 

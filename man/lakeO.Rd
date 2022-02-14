@@ -85,12 +85,13 @@
 % p.43
 
 
-%%  ~~ reference to a publication or URL from which the data were obtained ~~
+%% reference to a publication or URL from which the data were obtained
 }
 \references{
 
   {Dedual, M.  and MacLean, G. and Rowe, D. and Cudby, E.},
-  \emph{The Trout Population and Fishery of {L}ake {O}tamangakau---Interim Report}.
+  \emph{The Trout Population and Fishery of
+    {L}ake {O}tamangakau---Interim Report}.
   {National Institute of Water and Atmospheric Research},
   {Hamilton, New Zealand}.
   Consultancy Report Project No. {ELE70207},

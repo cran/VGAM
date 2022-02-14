@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -151,8 +151,10 @@ mix2normal.control <- function(trace = TRUE, ...) {
                 round(n* init.phi[1]):n else
                 1:round(n* init.phi[1])
       sorty <- sort(y)
-      init.sd1 <- rep_len(if (length( .isd1 )) .isd1 else sd(sorty[ind.1]), n)
-      init.sd2 <- rep_len(if (length( .isd2 )) .isd2 else sd(sorty[ind.2]), n)
+      init.sd1 <- rep_len(if (length( .isd1 ))
+                          .isd1 else sd(sorty[ind.1]), n)
+      init.sd2 <- rep_len(if (length( .isd2 ))
+                          .isd2 else sd(sorty[ind.2]), n)
       if ( .eq.sd ) {
         init.sd1 <-
         init.sd2 <- (init.sd1 + init.sd2) / 2
@@ -306,6 +308,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
     c(w) * wz
   }), list(.lphi = lphi, .lmu = lmu, .nsimEIM = nsimEIM ))))
 }
+
 
 
 

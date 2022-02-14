@@ -44,7 +44,7 @@ riceff(lsigma = "loglink", lvee = "loglink", isigma = NULL,
 \details{
   The Rician distribution has density function
   \deqn{f(y;v,\sigma) =
-  \frac{ y }{\sigma^2} \, \exp(-(y^2+v^2) / (2\sigma^2)) \, I_0(y v / \sigma^2)
+  \frac{y}{\sigma^2} \, \exp(-(y^2+v^2) / (2\sigma^2)) \, I_0(y v / \sigma^2)
   }{%
   f(y;v,sigma) =
   (y/sigma^2) * exp(-(y^2+v^2) / (2*sigma^2)) * I_0(y*v/sigma^2)}
@@ -85,8 +85,9 @@ Mathematical Analysis of Random Noise.
   \code{\link{rayleigh}} or possibly use an \code{\link{identity}} link.
 
 
-  When \eqn{v} is large (greater than 3, say) then the mean is approximately
-  \eqn{v} and the standard deviation is approximately \eqn{\sigma}{sigma}.
+  When \eqn{v} is large (greater than 3, say) then the mean is
+  approximately \eqn{v} and the standard deviation is approximately
+  \eqn{\sigma}{sigma}.
 
 
 }

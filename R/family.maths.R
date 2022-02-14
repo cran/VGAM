@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -107,7 +107,8 @@ VGAM.weights.function <- function(w, M, n) {
 
 
 if (FALSE)
- gaussianff <- function(dispersion = 0, parallel = FALSE, zero = NULL) {
+ gaussianff <-
+  function(dispersion = 0, parallel = FALSE, zero = NULL) {
 
   if (!is.Numeric(dispersion, length.arg = 1) ||
       dispersion < 0)
@@ -287,7 +288,10 @@ if (FALSE)
   weight = expression({
     wz
   }))
-}
+}  # gaussianff
+
+
+
 
 
 
@@ -371,6 +375,7 @@ if (FALSE)
  posnormal.control <- function(save.weights = TRUE, ...) {
   list(save.weights = save.weights)
 }
+
 
 
 
@@ -487,6 +492,7 @@ if (FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "posnorm",
          eq.mean = .eq.mean ,
          eq.sd   = .eq.sd   ,
          multipleResponses = TRUE,
@@ -764,13 +770,15 @@ if (FALSE)
   }), list( .lmean = lmean, .lsd = lsd,
             .emean = emean, .esd = esd,
             .nsimEIM = nsimEIM ))))
-}
+}  # posnormal
 
 
 
 
 
-dbetanorm <- function(x, shape1, shape2, mean = 0, sd = 1, log = FALSE) {
+
+ dbetanorm <-
+  function(x, shape1, shape2, mean = 0, sd = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -785,7 +793,7 @@ dbetanorm <- function(x, shape1, shape2, mean = 0, sd = 1, log = FALSE) {
 
   logden[is.infinite(x)] <- log(0)  # 20141210 KaiH
   if (log.arg) logden else exp(logden)
-}
+}  # dbetanorm
 
 
 
@@ -795,7 +803,7 @@ pbetanorm <- function(q, shape1, shape2, mean = 0, sd = 1,
   pbeta(q = pnorm(q = q, mean = mean, sd = sd),
         shape1 = shape1, shape2 = shape2,
         lower.tail = lower.tail, log.p = log.p)
-}
+}  # pbetanorm
 
 
 
@@ -804,14 +812,14 @@ qbetanorm <- function(p, shape1, shape2, mean = 0, sd = 1,
   qnorm(p = qbeta(p = p, shape1 = shape1, shape2 = shape2,
                   lower.tail = lower.tail, log.p = log.p),
         mean = mean, sd = sd)
-}
+}  # qbetanorm
 
 
 
 rbetanorm <- function(n, shape1, shape2, mean = 0, sd = 1) {
   qnorm(p = qbeta(p = runif(n), shape1 = shape1, shape2 = shape2),
         mean = mean, sd = sd)
-}
+}  # rbetanorm
 
 
 
@@ -1028,10 +1036,11 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
 
 
 
- foldnormal <- function(lmean = "identitylink", lsd = "loglink",
-                        imean = NULL,       isd = NULL,
-                        a1 = 1, a2 = 1,
-                        nsimEIM = 500, imethod = 1, zero = NULL) {
+ foldnormal <-
+  function(lmean = "identitylink", lsd = "loglink",
+           imean = NULL,       isd = NULL,
+           a1 = 1, a2 = 1,
+           nsimEIM = 500, imethod = 1, zero = NULL) {
   if (!is.Numeric(a1, positive = TRUE, length.arg = 1) ||
       !is.Numeric(a2, positive = TRUE, length.arg = 1))
     stop("bad input for arguments 'a1' and 'a2'")
@@ -1075,6 +1084,7 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "foldnorm",
          a1 = .a1 ,
          a2 = .a2 ,
          multiple.responses = FALSE,
@@ -1248,7 +1258,8 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
     wz <- wz * DTHETA.detas[, index0$row] * DTHETA.detas[, index0$col]
 
   }), list( .nsimEIM = nsimEIM, .a1 = a1, .a2 = a2 ))))
-}
+}  # foldnormal
+
 
 
 
@@ -2148,6 +2159,7 @@ moment.millsratio2 <- function(zedd) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "norm",
          charfun = TRUE,
          expected = TRUE,
          hadof = TRUE,
@@ -2563,6 +2575,8 @@ moment.millsratio2 <- function(zedd) {
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
   }), list( .var.arg = var.arg ))))
 }  #  End of uninormal()
+
+
 
 
 
@@ -3200,8 +3214,10 @@ moment.millsratio2 <- function(zedd) {
 
 
 
- lognormal <- function(lmeanlog = "identitylink", lsdlog = "loglink",
-                       zero = "sdlog") {
+
+ lognormal <-
+  function(lmeanlog = "identitylink", lsdlog = "loglink",
+           zero = "sdlog") {
 
 
 
@@ -3234,6 +3250,7 @@ moment.millsratio2 <- function(zedd) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "lnorm",
          lmeanlog = .lmeanlog ,
          lsdlog   = .lsdlog ,
          expected = TRUE,
@@ -3356,7 +3373,7 @@ moment.millsratio2 <- function(zedd) {
     wz = c(w) * wz
     wz
   }))
-}
+}  # lognormal
 
 
 
@@ -3441,6 +3458,7 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "skewnorm",
          multipleResponses = FALSE,
          parameters.names = c("shape"),
          nsimEIM = .nsimEIM)
@@ -3492,7 +3510,7 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
   }), list( .eshape = eshape, .lshape = lshape,
             .nsimEIM = nsimEIM ))),
   linkfun = eval(substitute(function(mu, extra = NULL) {
-    alpha <- mu / sqrt(2/pi - mu^2)
+    alpha <- mu / sqrt(2 / pi - mu^2)
     theta2eta(alpha, .lshape , earg = .eshape )
   }, list( .eshape = eshape, .lshape = lshape ))),
   loglikelihood = eval(substitute(
@@ -3578,7 +3596,7 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
     wz
   }), list( .eshape = eshape,
             .lshape = lshape, .nsimEIM = nsimEIM ))))
-}
+}  # skewnormal
 
 
 

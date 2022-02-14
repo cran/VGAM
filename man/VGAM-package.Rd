@@ -122,7 +122,7 @@ do not use the backfitting algorithm,
 and have automatic smoothing parameter selection.
 The former is older and is based on Yee and Wild (1996).
 The latter is more modern
-(Yee, Somchit and Wild, 2020)
+(Yee, Somchit and Wild, 2022)
 but it requires a reasonably large number of observations
 to work well.
 
@@ -264,7 +264,14 @@ Yee, T. W. (2010)
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
-\url{https://www.jstatsoft.org/v32/i10/}.
+\doi{10.18637/jss.v032.i10}.
+
+
+
+% \url{https://www.jstatsoft.org/article/view/v032i10/}. works 202110
+% \url{https://www.jstatsoft.org/v32/i10/}.   % Old!!
+
+
 
 
   Yee, T. W. (2014)
@@ -274,14 +281,24 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-Yee, T. W. (2018)
+Yee, T. W. and Ma, C. (2022)
+  Generally--altered, --inflated, --truncated and --deflated regression,
+  with application to heaped and seeped data.
+\emph{In preparation}.
+
+
+% \emph{Under review}.
+
+
+Yee, T. W. (2022)
 On the Hauck-Donner effect in Wald tests:
-Detection, and parameter space characterization
-(\emph{under review}).
+Detection, tipping points and parameter space characterization,
+\emph{Journal of the American Statistical Association}, in press.
 
 
 
-Yee, T. W. and Somchit, C. and Wild, C. J. (2019)
+
+Yee, T. W. and Somchit, C. and Wild, C. J. (2022)
 Penalized vector generalized additive models.
 Manuscript in preparation.
 

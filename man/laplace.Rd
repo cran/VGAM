@@ -104,10 +104,10 @@ Boston: Birkhauser.
 }
 
 \seealso{
-  \code{\link{rlaplace}},
-  \code{\link{alaplace2}} (which differs slightly from this parameterization),
-  \code{\link{exponential}},
-  \code{\link[stats]{median}}.
+\code{\link{rlaplace}},
+\code{\link{alaplace2}} (which differs slightly from this parameterization),
+\code{\link{exponential}},
+\code{\link[stats]{median}}.
 
 
 }

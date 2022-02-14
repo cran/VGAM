@@ -84,7 +84,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 \seealso{
   \code{\link{logff}},
-  \code{\link{Gaitlog}},
+  \code{\link{Gaitdlog}},
   \code{\link[VGAMdata]{Oilog}}.
   \code{\link[VGAMdata]{Otlog}}.
 
@@ -97,8 +97,8 @@ rlog(20, 0.5)
 \dontrun{ shape <- 0.8; x <- 1:10
 plot(x, dlog(x, shape = shape), type = "h", ylim = 0:1,
      sub = "shape=0.8", las = 1, col = "blue", ylab = "shape",
-     main = "Logarithmic distribution: blue=density; orange=distribution function")
-lines(x + 0.1, plog(x, shape = shape), col = "orange", lty = 3, type = "h") }
+     main = "Logarithmic distribution: blue=PDF; orange=CDF")
+lines(x + 0.1, plog(x, shape), col = "orange", lty = 3, type = "h") }
 }
 \keyword{distribution}
 

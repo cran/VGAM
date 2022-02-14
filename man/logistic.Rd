@@ -66,8 +66,8 @@ logistic(llocation = "identitylink", lscale = "loglink",
   \code{logistic1} estimates the location parameter only while
   \code{logistic} estimates both parameters.
   By default,
-  \eqn{\eta_1 = l}{eta1 = l} and \eqn{\eta_2 = \log(s)}{eta2 = log(s)} for
-  \code{logistic}.
+  \eqn{\eta_1 = l}{eta1 = l} and \eqn{\eta_2 = \log(s)}{eta2 = log(s)}
+  for \code{logistic}.
 
 
   \code{logistic} can handle multiple responses.
@@ -100,7 +100,8 @@ Hoboken, NJ, USA: Wiley-Interscience, p.130.
 
 
 deCani, J. S. and Stine, R. A. (1986).
-A Note on Deriving the Information Matrix for a Logistic Distribution,
+A Note on Deriving the Information Matrix for a
+Logistic Distribution,
 \emph{The American Statistician},
 \bold{40}, 220--222.
 
@@ -108,7 +109,8 @@ A Note on Deriving the Information Matrix for a Logistic Distribution,
 }
 \author{ T. W. Yee }
 \note{
-  Fisher scoring is used, and the Fisher information matrix is diagonal.
+  Fisher scoring is used, and the Fisher information matrix is
+  diagonal.
 
 
 }
@@ -133,7 +135,7 @@ fit1 <- vglm(y1 ~ x2, logistic1(scale = exp(2)), data = ldata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 
 # Both location and scale unknown
-ldata <- transform(ldata, y2 = rlogis(nn, loc = 1 + 5*x2, scale = exp(0 + 1*x2)))
+ldata <- transform(ldata, y2 = rlogis(nn, loc = 1 + 5*x2, exp(0 + 1 * x2)))
 fit2 <- vglm(cbind(y1, y2) ~ x2, logistic, data = ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 vcov(fit2)

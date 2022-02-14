@@ -6,8 +6,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Reciprocal Link Function }
 \description{
-  Computes the reciprocal transformation, including its inverse and the
-  first two derivatives.
+  Computes the reciprocal transformation, including its inverse
+  and the first two derivatives.
 
 
 }
@@ -44,8 +44,8 @@ negreciprocallink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
-  The \code{negreciprocallink} link function computes the negative reciprocal,
-  i.e., \eqn{-1/ \theta}{-1/theta}.
+  The \code{negreciprocallink} link function computes the negative
+  reciprocal, i.e., \eqn{-1/ \theta}{-1/theta}.
 
 
 

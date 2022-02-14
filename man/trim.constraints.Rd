@@ -10,7 +10,8 @@
 
 }
 \usage{
-trim.constraints(object, sig.level = 0.05, max.num = Inf, \dots)
+trim.constraints(object, sig.level = 0.05, max.num = Inf,
+                 intercepts = TRUE, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,6 +50,23 @@ trim.constraints(object, sig.level = 0.05, max.num = Inf, \dots)
     this argument will probably not work properly
     when there are terms that
     generate more than one column of the LM model matrix.
+    Having a value greater than unity might be unsuitable
+    in the presence of multicollinearity because all
+    correlated variables might be eliminated at once.
+
+
+
+    
+%   ---this corresponds
+%   to the \emph{backward elimination} technique if \eqn{M=1}.
+
+
+    
+  }
+  \item{intercepts}{
+  Logical. Trim the intercept term?
+  If \code{FALSE} then the constraint matrix for the
+  \code{"(Intercept)"} term is left unchanged.
 
 
 
@@ -96,8 +114,8 @@ trim.constraints(object, sig.level = 0.05, max.num = Inf, \dots)
 
   
   One can think of this function as facilitating
-  \emph{backward elimination},
-  especially if \code{max.num = 1},
+  \emph{backward elimination} for variable selection,
+  especially if \code{max.num = 1} and \eqn{M=1},
   however usually more than one regression coefficient is deleted
   here by default.
 

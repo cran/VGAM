@@ -90,8 +90,8 @@ The equilibrium size distribution of freely-forming groups.
 
 }
 \seealso{
-  \code{\link[VGAM]{Gaitpois}},
-  \code{\link{gaitpoisson}},
+  \code{\link[VGAM]{Gaitdpois}},
+  \code{\link{gaitdpoisson}},
   \code{\link{posnegbinomial}},
   \code{\link{poissonff}},
   \code{\link{zapoisson}},
@@ -113,7 +113,7 @@ fitted(fit)
 
 pdata <- data.frame(x2 = runif(nn <- 1000))  # Artificial data
 pdata <- transform(pdata, lambda = exp(1 - 2 * x2))
-pdata <- transform(pdata, y1 = rgaitpois(nn, lambda, truncate = 0))
+pdata <- transform(pdata, y1 = rgaitdpois(nn, lambda, truncate = 0))
 with(pdata, table(y1))
 fit <- vglm(y1 ~ x2, pospoisson, data = pdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)

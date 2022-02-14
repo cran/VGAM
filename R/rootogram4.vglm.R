@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -80,20 +80,22 @@
       
 
 
-  GAITffs <-
-      c("gaitpoisson", "gaitlog",
-        "gaitzeta")
+  GAITDffs <-
+      c("gaitdpoisson", "gaitdlog", "gaitdzeta",
+         "gaitdnbinomial")
 
 
 
 
       
-  if (vfamily %in% GAITffs) {
+  if (vfamily %in% GAITDffs) {
     spvals <- specials(object)
-    alt.mix  <- spvals$alt.mix  # Might be NULL
-    alt.mlm  <- spvals$alt.mlm  # Might be NULL
-    inf.mix  <- spvals$inf.mix  # Might be NULL
-    inf.mlm  <- spvals$inf.mlm  # Might be NULL
+    a.mix  <- spvals$a.mix  # Might be NULL
+    a.mlm  <- spvals$a.mlm  # Might be NULL
+    i.mix  <- spvals$i.mix  # Might be NULL
+    i.mlm  <- spvals$i.mlm  # Might be NULL
+    d.mix  <- spvals$d.mix  # Might be NULL
+    d.mlm  <- spvals$d.mlm  # Might be NULL
     truncate <- spvals$truncate  # Might be NULL
     max.support <- spvals$max.support  # Often Inf
     if (length(tmp9 <- infos.list$Support) >= 3)
@@ -108,16 +110,20 @@
 
     if ((M1 <- ncol(eta.mat)) != M1.infos)
       stop("confused about the variable 'M1'")
-    pobs.mix <- pstr.mix <-
-    pobs.mlm <- pstr.mlm <- 0  # Initialize; maybe NULL would be safer
-    if (lalt.mix <- length(alt.mix))
+    pobs.mix <- pstr.mix <- pdip.mix <-
+    pobs.mlm <- pstr.mlm <- pdip.mlm <- 0  # Initialize;
+    if (la.mix <- length(a.mix))
       pobs.mix <- fitted(object, type.fitted = "pobs.mix")
-    if (lalt.mlm <- length(alt.mlm))
+    if (la.mlm <- length(a.mlm))
       pobs.mlm <- fitted(object, type.fitted = "pobs.mlm")
-    if (linf.mix <- length(inf.mix))
+    if (li.mix <- length(i.mix))
       pstr.mix <- fitted(object, type.fitted = "pstr.mix")
-    if (linf.mlm <- length(inf.mlm))
+    if (li.mlm <- length(i.mlm))
       pstr.mlm <- fitted(object, type.fitted = "pstr.mlm")
+    if (ld.mix <- length(d.mix))
+      pdip.mix <- fitted(object, type.fitted = "pdip.mix")
+    if (ld.mlm <- length(d.mlm))
+      pdip.mlm <- fitted(object, type.fitted = "pdip.mlm")
 
 
 
@@ -125,29 +131,44 @@
     thetanames <- infos.list$baseparams.argnames
     Thetas.z <- fitted(object, type.fitted = paste0(thetanames[1], "s"))
     Theta.p1 <- Thetas.z[, 1]  # Always
-    Theta.a1 <- Theta.i1 <- Theta.p1  # Needed; and answer not corrupted
-
+    Theta.a1 <- Theta.i1 <- Theta.d1 <- Theta.p1  # Needed
     tmp3.TF <- !is.na(rowSums(object@extra$indeta))
-    if (tmp3.TF[3])
-      Theta.a1 <- Thetas.z[, paste0(thetanames[1], ".a")]
-    if (tmp3.TF[5])
-      Theta.i1 <- Thetas.z[, paste0(thetanames[1], ".i")]
+    if (infos.list$MM1 == 1) {
+      if (tmp3.TF[ 3])
+        Theta.a1 <- Thetas.z[, paste0(thetanames[1], ".a")]
+      if (tmp3.TF[ 5])
+        Theta.i1 <- Thetas.z[, paste0(thetanames[1], ".i")]
+      if (tmp3.TF[ 7])
+        Theta.d1 <- Thetas.z[, paste0(thetanames[1], ".d")]
+    } else {  # infos.list$MM1 == 2
+      if (tmp3.TF[ 4])
+        Theta.a1 <- Thetas.z[, paste0(thetanames[1], ".a")]
+      if (tmp3.TF[ 7])
+        Theta.i1 <- Thetas.z[, paste0(thetanames[1], ".i")]
+      if (tmp3.TF[10])
+        Theta.d1 <- Thetas.z[, paste0(thetanames[1], ".d")]
+    }
+
 
 
 
     if (infos.list$MM1 == 2) {
-      Thetas.z <- fitted(object, type.fitted = paste0(thetanames[2], "s"))
-      Theta.p2 <- Thetas.z[, 2]  # Always
-      Theta.a2 <- Theta.i2 <- Theta.p2  # Needed; and answer not corrupted
-      if (tmp3.TF[3])
-        Theta.a2 <- Thetas.z[, paste0(thetanames[2], ".a")]
-      if (tmp3.TF[5])
-        Theta.i2 <- Thetas.z[, paste0(thetanames[2], ".i")]
-    }
-  }  # GAITffs
+      ind.flip <- 2   # ifelse(flip.args, 1, 2)
+      Thetas.z <- fitted(object,
+                         type.fitted = paste0(thetanames[ind.flip], "s"))
+      Theta.p2 <- Thetas.z[, paste0(thetanames[ind.flip], ".p")]
+      Theta.a2 <- Theta.i2 <- Theta.d2 <- Theta.p2  # Needed
+      if (tmp3.TF[ 4])
+        Theta.a2 <- Thetas.z[, paste0(thetanames[ind.flip], ".a")]
+      if (tmp3.TF[ 8])
+        Theta.i2 <- Thetas.z[, paste0(thetanames[ind.flip], ".i")]
+      if (tmp3.TF[11])
+        Theta.d2 <- Thetas.z[, paste0(thetanames[ind.flip], ".d")]
+    }  # infos.list$MM1 == 2
+  }  # GAITDffs
 
 
-      
+
 
 
   if (!mixture.links &&  # !multipleResponses && 
@@ -191,7 +212,7 @@
 
 
       
-  if (vfamily %in% GAITffs) {
+  if (vfamily %in% GAITDffs) {
 
 
 
@@ -203,29 +224,33 @@
     if (infos.list$MM1 > 2)
       stop("cannot handle MM1 > 2")
     alist <- list(  # x = xx,  # theta.p,
-                  alt.mix = alt.mix, alt.mlm = alt.mlm,
-                  inf.mix = inf.mix, inf.mlm = inf.mlm,
+                  a.mix = a.mix, a.mlm = a.mlm,
+                  i.mix = i.mix, i.mlm = i.mlm,
+                  d.mix = d.mix, d.mlm = d.mlm,
                   truncate = truncate, max.support = max.support,
-                  byrow.ai = FALSE,  # Because of reconstruction
+                  byrow.aid = FALSE,  # Because of reconstruction
                   pobs.mix = pobs.mix, pobs.mlm = pobs.mlm,
-                  pstr.mix = pstr.mix, pstr.mlm = pstr.mlm)
+                  pstr.mix = pstr.mix, pstr.mlm = pstr.mlm,
+                  pdip.mix = pdip.mix, pdip.mlm = pdip.mlm)
     alist[[paste0(baseparams.argnames[1], ".p")]] <- Theta.p1
     alist[[paste0(baseparams.argnames[1], ".a")]] <- Theta.a1
     alist[[paste0(baseparams.argnames[1], ".i")]] <- Theta.i1
+    alist[[paste0(baseparams.argnames[1], ".d")]] <- Theta.d1
     if (infos.list$MM1 == 2) {
       alist[[paste0(baseparams.argnames[2], ".p")]] <- Theta.p2
       alist[[paste0(baseparams.argnames[2], ".a")]] <- Theta.a2
       alist[[paste0(baseparams.argnames[2], ".i")]] <- Theta.i2
+      alist[[paste0(baseparams.argnames[2], ".d")]] <- Theta.d2
     }
     dlist <- alist
     dlist$log <- FALSE
-    dfun <- paste0("dgait", infos.list$parent.name[2])
+    dfun <- paste0("dgaitd", infos.list$parent.name[2])
 
     for (i in seq_along(At)) {
       dlist$x <- At[i]
       pmat[, i] <- do.call(dfun, dlist)  # i + lowsup - 1L
     }
-  }  # vfamily %in% GAITffs
+  }  # vfamily %in% GAITDffs
 
 
 
@@ -293,8 +318,8 @@
   }
   if (vfamily == "posnegbinomial") {
     for (i in At)
-      pmat[, i + 1L] <- dgaitnbinom(i, Param.mat[, 2],
-                                    munb.p = Param.mat[, 1])
+      pmat[, i + 1L] <- dgaitdnbinom(i, Param.mat[, 2],
+                                     munb.p = Param.mat[, 1])
   }
   if (vfamily == "truncgeometric") {
     upper.limit <- object@extra$upper.limit
@@ -437,8 +462,7 @@
     obsrvd <- as.vector(xtabs(w ~ factor(y[, 1L], levels = At)))
     pmat <- matrix(NA, length(mu), length(At))
     for (i in At)
-      pmat[, i + 1L] <- dgaitbinom(i, size, Param.mat[, 1],
-                                   truncate = 0)
+      pmat[, i + 1L] <- dgaitdbinom(i, size, Param.mat[, 1], truncate = 0)
     expctd <- colSums(pmat * w)
   }
 

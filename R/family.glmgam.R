@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -96,6 +96,7 @@ hdeffminp <-
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "binom",
          bred = .bred ,
          charfun = TRUE,
          expected = TRUE,
@@ -587,7 +588,7 @@ hdeffminp <-
     }
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
-    misc$estimated.dispersion <- .estimated.dispersion
+    misc$estimated.dispersion <- ( .estimated.dispersion )
 
     misc$link <- rep_len( .link , M)
     names(misc$link) <- param.names("mu", M, skip1 = TRUE)
@@ -595,7 +596,7 @@ hdeffminp <-
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:M)
-      misc$earg[[ii]] <- .earg
+      misc$earg[[ii]] <- ( .earg )
 
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
@@ -625,6 +626,7 @@ hdeffminp <-
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
   }), list( .link = link, .earg = earg))))
 }  # gammaff()
+
 
 
 
@@ -669,6 +671,8 @@ hdeffminp <-
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         expected = TRUE,
+         multipleResponses = TRUE,
          parameters.names = c("mu"),
          quasi.type = TRUE,
          dispersion = .dispersion )
@@ -714,7 +718,7 @@ hdeffminp <-
     }
     misc$dispersion <- dpar
     misc$default.dispersion <- 0
-    misc$estimated.dispersion <- .estimated.dispersion
+    misc$estimated.dispersion <- ( .estimated.dispersion )
 
     misc$link <- rep_len( .link , M)
     names(misc$link) <- param.names("mu", M, skip1 = TRUE)
@@ -722,10 +726,7 @@ hdeffminp <-
     misc$earg <- vector("list", M)
     names(misc$earg) <- names(misc$link)
     for (ii in 1:M)
-      misc$earg[[ii]] <- .earg
-
-    misc$expected <- TRUE
-    misc$multipleResponses <- TRUE
+      misc$earg[[ii]] <- ( .earg )
   }), list( .dispersion = dispersion,
             .estimated.dispersion = estimated.dispersion,
             .link = link, .earg = earg ))),
@@ -751,7 +752,7 @@ hdeffminp <-
     wz <- dmu.deta^2 * d2l.dmu2
     w.wz.merge(w = w, wz = wz, n = n, M = M, ndepy = ncoly)
   }), list( .link = link, .earg = earg ))))
-}
+}  # inverse.gaussianff
 
 
 
@@ -821,11 +822,12 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- inv.gaussianff <- function(lmu = "loglink", llambda = "loglink",
-                            imethod = 1,  ilambda = NULL,
-                            parallel = FALSE,
-                            ishrinkage = 0.99,
-                            zero = NULL) {
+ inv.gaussianff <-
+  function(lmu = "loglink", llambda = "loglink",
+           imethod = 1,  ilambda = NULL,
+           parallel = FALSE,
+           ishrinkage = 0.99,
+           zero = NULL) {
 
 
   apply.parint <- FALSE
@@ -879,6 +881,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "inv.gaussian",
          imethod = .imethod ,
          parameters.names = c("mu", "lambda"),
          expected = TRUE,
@@ -1042,13 +1045,14 @@ rinv.gaussian <- function(n, mu, lambda) {
 
 
 
- poissonff <- function(link = "loglink",
-                       imu = NULL, imethod = 1,
-                       parallel = FALSE, zero = NULL,
-                       bred = FALSE,
-                       earg.link = FALSE,
-                       type.fitted = c("mean", "quantiles"),
-                       percentiles = c(25, 50, 75)) {
+ poissonff <-
+  function(link = "loglink",
+           imu = NULL, imethod = 1,
+           parallel = FALSE, zero = NULL,
+           bred = FALSE,
+           earg.link = FALSE,
+           type.fitted = c("mean", "quantiles"),
+           percentiles = c(25, 50, 75)) {
 
 
 
@@ -1112,6 +1116,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "pois",
          charfun = TRUE,
          expected = TRUE,
          hadof = TRUE,
@@ -1792,8 +1797,9 @@ if (FALSE)
 
 
 
- augbinomial <- function(link = "logitlink", multiple.responses = FALSE,
-                         parallel = TRUE) {
+ augbinomial <-
+  function(link = "logitlink", multiple.responses = FALSE,
+           parallel = TRUE) {
 
   if (!is.logical(parallel) ||
       length(parallel) != 1 ||
@@ -2017,7 +2023,9 @@ if (FALSE)
     my.wk.wt <- my.wk.wt[, interleave.VGAM(M1 * NOS, M1 = M1)]
     my.wk.wt
   }), list( .link = link, .earg = earg))))
-}
+}  # augbinomial
+
+
 
 
 

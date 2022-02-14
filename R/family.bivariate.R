@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -4094,17 +4094,35 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
 
- binormal <- function(lmean1 = "identitylink",
-                      lmean2 = "identitylink",
-                      lsd1   = "loglink",
-                      lsd2   = "loglink",
-                      lrho   = "rhobitlink",
-                      imean1 = NULL,       imean2 = NULL,
-                      isd1   = NULL,       isd2   = NULL,
-                      irho   = NULL,       imethod = 1,
-                      eq.mean = FALSE,     eq.sd = FALSE,
-                      zero = c("sd", "rho")) {
+ binormal <-
+  function(lmean1 = "identitylink",
+           lmean2 = "identitylink",
+           lsd1   = "loglink",
+           lsd2   = "loglink",
+           lrho   = "rhobitlink",
+           imean1 = NULL,       imean2 = NULL,
+           isd1   = NULL,       isd2   = NULL,
+           irho   = NULL,       imethod = 1,
+           eq.mean = FALSE,     eq.sd = FALSE,
+           zero = c("sd", "rho"),
+           rho.arg = NA  # 20210923; possibly a known value
+           ) {
 
+
+  if (length(rho.arg) != 1)
+    stop("argument 'rho.arg' must be scalar")
+  est.rho <- is.na(rho.arg)  # Estimate rho?
+  if (!est.rho && (!is.Numeric(rho.arg) ||
+      rho.arg <= -1 || 1 <= rho.arg))
+    stop("bad input for argument 'rho.arg'")
+
+  if (!est.rho && is.character(zero) && any(zero == "rho")) {
+    zero <- zero[zero != "rho"]
+    if (length(zero) == 0)
+      zero <- NULL  # Make sure
+  }
+
+      
   lmean1 <- as.list(substitute(lmean1))
   emean1 <- link2list(lmean1)
   lmean1 <- attr(emean1, "function.name")
@@ -4128,8 +4146,10 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
 
-  trivial1 <- is.logical(eq.mean) && length(eq.mean) == 1 && !eq.mean
-  trivial2 <- is.logical(eq.sd  ) && length(eq.sd  ) == 1 && !eq.sd
+  trivial1 <- is.logical(eq.mean) &&
+              length(eq.mean) == 1 && !eq.mean
+  trivial2 <- is.logical(eq.sd  ) &&
+              length(eq.sd  ) == 1 && !eq.sd
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -4142,18 +4162,27 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
             namesof("mean1", lmean1, earg = emean1 ), ", ",
             namesof("mean2", lmean2, earg = emean2 ), ", ",
             namesof("sd1",   lsd1,   earg = esd1   ), ", ",
-            namesof("sd2",   lsd2,   earg = esd2   ), ", ",
-            namesof("rho",   lrho,   earg = erho   )),
+            namesof("sd2",   lsd2,   earg = esd2   ),
+            if (est.rho) ", ",
+            if (est.rho) namesof("rho", lrho, earg = erho )),
   constraints = eval(substitute(expression({
 
-
     constraints.orig <- constraints
-    M1 <- 5
+
+    if (is.null(constraints.orig)) {
+
+    M1.use <- M1 <- ifelse( .est.rho , 5, 4)
     NOS <- M / M1
 
+            
+
     cm1.m <-
-    cmk.m <- kronecker(diag(NOS), rbind(diag(2), matrix(0, 3, 2)))
-    con.m <- cm.VGAM(kronecker(diag(NOS), rbind(1, 1, 0, 0, 0)),
+    cmk.m <- kronecker(diag(NOS),
+                       rbind(diag(2),
+                             matrix(0, ifelse( .est.rho , 3, 2), 2)))
+    con.m <- cm.VGAM(kronecker(diag(NOS),
+                               rbind(1, 1, 0, 0,
+                                     if ( .est.rho ) 0 else NULL)),
                      x = x,
                      bool = .eq.mean ,  #
                      constraints = constraints.orig,
@@ -4164,8 +4193,12 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
     cm1.s <-
     cmk.s <- kronecker(diag(NOS),
-                       rbind(matrix(0, 2, 2), diag(2), matrix(0, 1, 2)))
-    con.s <- cm.VGAM(kronecker(diag(NOS), rbind(0, 0, 1, 1, 0)),
+                       rbind(matrix(0, 2, 2),
+                             diag(2),
+                             if ( .est.rho ) matrix(0, 1, 2) else NULL))
+    con.s <- cm.VGAM(kronecker(diag(NOS),
+                               rbind(0, 0, 1, 1,
+                                     if ( .est.rho ) 0 else NULL)),
                      x = x,
                      bool = .eq.sd ,  #
                      constraints = constraints.orig,
@@ -4179,27 +4212,34 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
       con.use[[klocal]] <-
         cbind(con.m[[klocal]],
               con.s[[klocal]],
-              kronecker(matrix(1, NOS, 1), diag(5)[, 5]))
+              if ( .est.rho )
+                kronecker(matrix(1, NOS, 1), diag(5)[, 5]) else NULL)
 
     }
+  constraints <-
+    cm.zero.VGAM(con.use,   # constraints,  # Prior to 20210923
+                 x = x, .zero , M = M,
+                 predictors.names = predictors.names,
+                 M1 = M1.use)
+  }  #  if (is.null(constraints.orig))
 
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 5)
-  }), list( .zero = zero,
+
+
+  }), list( .zero = zero, .est.rho = est.rho, .rho.arg = rho.arg,
             .eq.sd   = eq.sd,
             .eq.mean = eq.mean ))),
 
   infos = eval(substitute(function(...) {
-    list(M1 = 5,
+    list(M1 = ifelse( .est.rho , 5, 4),
          Q1 = 2,
          expected = TRUE,
          multipleResponses = FALSE,
-         parameters.names = c("mean1", "mean2", "sd1", "sd2", "rho"),
+         parameters.names = c("mean1", "mean2", "sd1", "sd2",
+                              if ( .est.rho ) "rho" else NULL),
          eq.mean = .eq.mean ,
          eq.sd   = .eq.sd   ,
          zero    = .zero )
-    }, list( .zero    = zero,
+    }, list( .zero    = zero, .est.rho = est.rho,
              .eq.mean = eq.mean,
              .eq.sd   = eq.sd    ))),
 
@@ -4224,7 +4264,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
       namesof("mean2", .lmean2 , earg = .emean2 , short = TRUE),
       namesof("sd1",   .lsd1 ,   earg = .esd1 ,   short = TRUE),
       namesof("sd2",   .lsd2 ,   earg = .esd2 ,   short = TRUE),
-      namesof("rho",   .lrho ,   earg = .erho ,   short = TRUE))
+      if ( .est.rho )
+      namesof("rho",   .lrho ,   earg = .erho ,   short = TRUE) else
+      NULL)
 
     extra$colnames.y  <- colnames(y)
 
@@ -4233,8 +4275,10 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                    weighted.mean(y[, 1], w = w), n)
       imean2 <- rep_len(if (length( .imean2 )) .imean2 else
                    weighted.mean(y[, 2], w = w), n)
-      isd1 <- rep_len(if (length( .isd1 )) .isd1 else  sd(y[, 1]), n)
-      isd2 <- rep_len(if (length( .isd2 )) .isd2 else  sd(y[, 2]), n)
+      isd1 <- rep_len(if (length( .isd1 )) .isd1 else
+                      sd(y[, 1]), n)
+      isd2 <- rep_len(if (length( .isd2 )) .isd2 else
+                      sd(y[, 2]), n)
       irho <- rep_len(if (length( .irho )) .irho else
                       cor(y[, 1], y[, 2]), n)
 
@@ -4247,13 +4291,16 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
               theta2eta(imean2, .lmean2 , earg = .emean2 ),
               theta2eta(isd1,   .lsd1 ,   earg = .esd1 ),
               theta2eta(isd2,   .lsd2 ,   earg = .esd2 ),
-              theta2eta(irho,   .lrho ,   earg = .erho ))
+              if ( .est.rho )
+              theta2eta(irho,   .lrho ,   earg = .erho ) else
+              NULL)
     }
   }), list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
             .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod,
+            .est.rho = est.rho, .rho.arg = rho.arg,
             .imean1 = imean1, .imean2 = imean2,
             .isd1   = isd1,   .isd2   = isd2,
             .irho   = irho ))),
@@ -4264,6 +4311,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     fv.mat <- cbind(mean1, mean2)
     label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
   }  , list( .lmean1 = lmean1, .lmean2 = lmean2,
+             .est.rho = est.rho, .rho.arg = rho.arg,
              .emean1 = emean1, .emean2 = emean2,
              .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
              .esd1   = esd1  , .esd2   = esd2  , .erho = erho ))),
@@ -4273,18 +4321,26 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                       "mean2" = .lmean2 ,
                       "sd1"   = .lsd1 ,
                       "sd2"   = .lsd2 ,
-                      "rho"   = .lrho )
+                      if ( .est.rho ) c("rho" = .lrho ) else NULL)
 
+    if ( .est.rho ) {
     misc$earg <- list("mean1" = .emean1 ,
                       "mean2" = .emean2 ,
                       "sd1"   = .esd1 ,
                       "sd2"   = .esd2 ,
                       "rho"   = .erho )
+    } else {
+    misc$earg <- list("mean1" = .emean1 ,
+                      "mean2" = .emean2 ,
+                      "sd1"   = .esd1 ,
+                      "sd2"   = .esd2 )
+    }
 
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
   }) , list( .lmean1 = lmean1, .lmean2 = lmean2,
              .emean1 = emean1, .emean2 = emean2,
+             .est.rho = est.rho, .rho.arg = rho.arg,
              .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
              .esd1   = esd1  , .esd2   = esd2  , .erho = erho ))),
   loglikelihood = eval(substitute(
@@ -4295,7 +4351,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     mean2 <- eta2theta(eta[, 2], .lmean2 , earg = .emean2 )
     sd1   <- eta2theta(eta[, 3], .lsd1   , earg = .esd1   )
     sd2   <- eta2theta(eta[, 4], .lsd2   , earg = .esd2   )
-    Rho   <- eta2theta(eta[, 5], .lrho   , earg = .erho   )
+    Rho   <- if ( .est.rho )
+             eta2theta(eta[, 5], .lrho   , earg = .erho   ) else
+             rep( .rho.arg , length = nrow(eta)) 
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
@@ -4314,6 +4372,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     }
   } , list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
+            .est.rho = est.rho, .rho.arg = rho.arg,
             .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod ))),
@@ -4323,7 +4382,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
     sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
     sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
-    Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
+    Rho   <- if ( .est.rho )
+             eta2theta(eta[, 5], .lrho  , earg = .erho  ) else
+             rep( .rho.arg , length = nrow(eta)) 
     okay1 <- all(is.finite(mean1)) &&
              all(is.finite(mean2)) &&
              all(is.finite(sd1  )) && all(0 < sd1) &&
@@ -4332,6 +4393,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     okay1
   } , list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
+            .est.rho = est.rho, .rho.arg = rho.arg,
             .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod ))),
@@ -4350,12 +4412,16 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     mean2 <- eta2theta(eta[, 2], .lmean2 , earg = .emean2 )
     sd1   <- eta2theta(eta[, 3], .lsd1   , earg = .esd1   )
     sd2   <- eta2theta(eta[, 4], .lsd2   , earg = .esd2   )
-    Rho   <- eta2theta(eta[, 5], .lrho   , earg = .erho   )
+    Rho   <- if ( .est.rho )
+             eta2theta(eta[, 5], .lrho   , earg = .erho   ) else
+             rep( .rho.arg , length = nrow(eta)) 
     rbinorm(nsim * length(sd1),
             mean1 = mean1, mean2 = mean2,
-            var1 = sd1^2, var2 = sd2^2, cov12 = Rho * sd1 * sd2)
+            var1 = sd1^2, var2 = sd2^2,
+            cov12 = Rho * sd1 * sd2)
   } , list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
+            .est.rho = est.rho, .rho.arg = rho.arg,
             .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho ))),
 
@@ -4367,7 +4433,9 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     mean2 <- eta2theta(eta[, 2], .lmean2, earg = .emean2)
     sd1   <- eta2theta(eta[, 3], .lsd1  , earg = .esd1  )
     sd2   <- eta2theta(eta[, 4], .lsd2  , earg = .esd2  )
-    Rho   <- eta2theta(eta[, 5], .lrho  , earg = .erho  )
+    Rho   <- if ( .est.rho )
+             eta2theta(eta[, 5], .lrho  , earg = .erho  ) else
+             rep( .rho.arg , length = nrow(eta)) 
 
     zedd1 <- (y[, 1] - mean1) / sd1
     zedd2 <- (y[, 2] - mean2) / sd2
@@ -4377,12 +4445,14 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     SigmaInv[, iam(1, 1, M = 2)] <- 1 / ((sd1^2) * temp5)
     SigmaInv[, iam(2, 2, M = 2)] <- 1 / ((sd2^2) * temp5)
     SigmaInv[, iam(1, 2, M = 2)] <- -Rho / (sd1 * sd2 * temp5)
-    dl.dmeans <- mux22(t(SigmaInv), y - cbind(mean1, mean2), M = 2,
-                       as.matrix = TRUE)
-    dl.dsd1   <- -1 / sd1 + zedd1 * (zedd1 - Rho * zedd2) / (sd1 * temp5)
-    dl.dsd2   <- -1 / sd2 + zedd2 * (zedd2 - Rho * zedd1) / (sd2 * temp5)
+    dl.dmeans <- mux22(t(SigmaInv), y - cbind(mean1, mean2),
+                       M = 2, as.matrix = TRUE)
+    dl.dsd1   <- -1 / sd1 +
+                 zedd1 * (zedd1 - Rho * zedd2) / (sd1 * temp5)
+    dl.dsd2   <- -1 / sd2 +
+                 zedd2 * (zedd2 - Rho * zedd1) / (sd2 * temp5)
     dl.drho   <- -Rho * (zedd1^2 - 2 * Rho * zedd1 * zedd2 +
-                        zedd2^2) / temp5^2 +
+                         zedd2^2) / temp5^2 +
                 zedd1 * zedd2 / temp5 +
                 Rho / temp5
 
@@ -4392,18 +4462,20 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     dsd2.deta   <- dtheta.deta(sd2  , .lsd2  )
     drho.deta   <- dtheta.deta(Rho  , .lrho  )
     dthetas.detas  <- cbind(dmean1.deta,
-                           dmean2.deta,
-                           dsd1.deta,
-                           dsd2.deta,
-                           drho.deta)
+                            dmean2.deta,
+                            dsd1.deta,
+                            dsd2.deta,
+                            if ( .est.rho ) drho.deta else NULL)
 
     c(w) * cbind(dl.dmeans[, 1],
                  dl.dmeans[, 2],
                  dl.dsd1,
                  dl.dsd2,
-                 dl.drho) * dthetas.detas
+                 if ( .est.rho ) dl.drho else NULL) *
+    dthetas.detas
   }), list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
+            .est.rho = est.rho, .rho.arg = rho.arg,
             .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod ))),
@@ -4416,21 +4488,24 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     wz[, iam(3, 3, M)] <- (1 + 1 / temp5) / sd1^2
     wz[, iam(4, 4, M)] <- (1 + 1 / temp5) / sd2^2
     wz[, iam(3, 4, M)] <- -(Rho^2) / (temp5 * sd1 * sd2)
-    wz[, iam(5, 5, M)] <- (1 + Rho^2) / temp5^2
-    wz[, iam(3, 5, M)] <- -Rho / (sd1 * temp5)
-    wz[, iam(4, 5, M)] <- -Rho / (sd2 * temp5)
+    if ( .est.rho ) {
+      wz[, iam(5, 5, M)] <- (1 + Rho^2) / temp5^2
+      wz[, iam(3, 5, M)] <- -Rho / (sd1 * temp5)
+      wz[, iam(4, 5, M)] <- -Rho / (sd2 * temp5)
+    }
     for (ilocal in 1:M)
       for (jlocal in ilocal:M)
-        wz[, iam(ilocal, jlocal, M)] <- wz[, iam(ilocal, jlocal, M)] *
-                                        dthetas.detas[, ilocal] *
-                                        dthetas.detas[, jlocal]
+        wz[, iam(ilocal, jlocal, M)] <-
+        wz[, iam(ilocal, jlocal, M)] * dthetas.detas[, ilocal] *
+                                       dthetas.detas[, jlocal]
       c(w) * wz
   }), list( .lmean1 = lmean1, .lmean2 = lmean2,
             .emean1 = emean1, .emean2 = emean2,
+            .est.rho = est.rho, .rho.arg = rho.arg,
             .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
             .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
             .imethod = imethod ))))
-}
+}  # binormal
 
 
 

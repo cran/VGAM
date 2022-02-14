@@ -28,7 +28,8 @@ lino(lshape1 = "loglink", lshape2 = "loglink", llambda = "loglink",
   \item{ishape1, ishape2, ilambda}{
   Initial values for the parameters. A \code{NULL} value means
   one is computed internally. The argument \code{ilambda} must
-  be numeric, and the default corresponds to a standard beta distribution.
+  be numeric, and the default corresponds to a standard beta
+  distribution.
 
   }
   \item{zero}{
@@ -123,7 +124,7 @@ lino(lshape1 = "loglink", lshape2 = "loglink", llambda = "loglink",
 }
 
 \examples{
-ldata <- data.frame(y1 = rbeta(n = 1000, exp(0.5), exp(1)))  # ~ standard beta
+ldata <- data.frame(y1 = rbeta(n = 1000, exp(0.5), exp(1)))  # Standard beta
 fit <- vglm(y1 ~ 1, lino, data = ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)

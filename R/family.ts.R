@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -698,21 +698,21 @@ AR1.control <- function(epsilon  = 1e-6,
         }), list( .zero = zero,
                   .nodrift = nodrift ))),
 
-     infos = eval(substitute(function(...) {
-       list(M1 = 3 - .nodrift ,
-            Q1 = 1,
-            expected = TRUE,
-            multipleResponse = TRUE,
-            type.likelihood = .type.likelihood ,
-            ldrift = if ( .nodrift ) NULL else .lsmn ,
-            edrift = if ( .nodrift ) NULL else .esmn ,
-            lvar = .lvar ,
-            lsd  = .lsdv ,
-            evar = .evar ,
-            esd  = .esdv ,
-            lrho = .lrho ,
-            erho = .erho ,
-            zero = .zero )
+  infos = eval(substitute(function(...) {
+    list(M1 = 3 - .nodrift ,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponse = TRUE,
+         type.likelihood = .type.likelihood ,
+         ldrift = if ( .nodrift ) NULL else .lsmn ,
+         edrift = if ( .nodrift ) NULL else .esmn ,
+         lvar = .lvar ,
+         lsd  = .lsdv ,
+         evar = .evar ,
+         esd  = .esdv ,
+         lrho = .lrho ,
+         erho = .erho ,
+         zero = .zero )
      }, list( .lsmn = lsmn, .lvar = lvar, .lsdv = lsdv, .lrho = lrho,
               .esmn = esmn, .evar = evar, .esdv = esdv, .erho = erho,
               .type.likelihood = type.likelihood,

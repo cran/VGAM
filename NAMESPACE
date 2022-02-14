@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -11,21 +11,49 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
+
+
+
+
+export(moments.gaitdcombo.binom)
+export(goffset)
+export(gaitdnbinomial.control)
+export(gaitdpoisson.control)
+export(gaitdlog.control)
+export(gaitdzeta.control)
+export(Pheapseep)
+export(KLDvglm)
+exportMethods(KLD)
+  export(gaitdnbinomial)
+exportMethods(is.deflated)
+export(cm3gaitd)
+export(moments.gaitdcombo.2par, moments.gaitdcombo.nbinom)
+
+
+export(get.indices.gaitd, pd.damlm)
+export(amazon.col, avocado.col, indigo.col, iris.col,
+       turquoise.col, dirt.col, deer.col, desire.col)
+
+export(peach.col, azure.col, asparagus.col, artichoke.col)
+
+
+
+
   export(spikeplot)
   export(trim.constraints)
- export(meangait)
+ export(meangaitd)
  importFrom("graphics", "title")
  export(Trunc)
- export(dgaitplot)
- export(plotdgait, plotdgait.vglm)
+ export(dgaitdplot)
+ export(plotdgaitd, plotdgaitd.vglm)
  export(round2)
- export(gaitpoisson)
- export(gaitlog)
- export(gaitzeta)
+ export(gaitdpoisson)
+ export(gaitdlog)
+ export(gaitdzeta)
 exportMethods(is.altered, is.inflated, is.truncated)
-export(dgaitbinom, pgaitbinom, qgaitbinom, rgaitbinom)
-export(dgaitnbinom, pgaitnbinom, qgaitnbinom, rgaitnbinom)
-export(gait.errorcheck)
+export(dgaitdbinom, pgaitdbinom, qgaitdbinom, rgaitdbinom)
+export(dgaitdnbinom, pgaitdnbinom, qgaitdnbinom, rgaitdnbinom)
+export(gaitd.errorcheck)
 export(genpoisson1, genpoisson2)
 export(dgenpois0, pgenpois0, qgenpois0, rgenpois0)
 export(dgenpois1, pgenpois1, qgenpois1, rgenpois1)
@@ -33,18 +61,18 @@ export(dgenpois2, pgenpois2, qgenpois2, rgenpois2)
 exportMethods(Influence)
 export(Influence.vglm)
 export(hdeff.numeric, hdeff.matrix)
-  export(moments.gaitcombo)
-  export(moments.gaitcombo.pois)
-  export(moments.gaitcombo.log)
-  export(moments.gaitcombo.zeta)
+  export(moments.gaitdcombo.1par)
+  export(moments.gaitdcombo.pois)
+  export(moments.gaitdcombo.log)
+  export(moments.gaitdcombo.zeta)
   export(eCDF)
 exportMethods(eCDF)
   export(dextlogF, extlogF1, extlogF1.control)
   export(is.crossing, fix.crossing)
 exportMethods(is.crossing, fix.crossing)
-  export(dgaitzeta, pgaitzeta, qgaitzeta, rgaitzeta)  # gaitzeta.mix
-  export(dgaitpois, pgaitpois, qgaitpois, rgaitpois)  # gaitpoisson.mix
-  export(dgaitlog , pgaitlog , qgaitlog , rgaitlog)  # gaitlog.mix
+  export(dgaitdzeta, pgaitdzeta, qgaitdzeta, rgaitdzeta)  # gaitzeta.mix
+  export(dgaitdpois, pgaitdpois, qgaitdpois, rgaitdpois)  # gaitpoisson.mix
+  export(dgaitdlog , pgaitdlog , qgaitdlog , rgaitdlog)  # gaitlog.mix
 exportMethods(specials, altered, inflated, truncated)
 export(specialsvglm)
 export(get.offset)
@@ -288,20 +316,11 @@ importFrom("splines", splineDesign, bs, ns)
 
 
 export(nparam, nparam.vlm, nparam.vgam, nparam.rrvglm, nparam.qrrvglm, nparam.rrvgam)
-export(linkfun, linkfun.vglm)
+export(linkfunvlm)
+exportMethods(linkfun)
 export(sm.bs, sm.ns, sm.scale.default, sm.poly, sm.scale)
 exportMethods(coefficients, coef)
 importFrom("stats", coefficients, coef)
-export(case.names,
-       coef,
-       coefficients,
-       df.residual,
-       fitted,
-       fitted.values,
-       formula,
-       residuals,
-       variable.names,
-       weights)
 
 
 export(expected.betabin.ab, grid.search, grid.search2, grid.search3, grid.search4)

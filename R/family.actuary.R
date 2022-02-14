@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -221,6 +221,7 @@ rgumbelII <- function(n, scale = 1, shape) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "gumbelII",
          parameters.names = c("scale", "shape"),
          perc.out = .perc.out ,
          zero = .zero )
@@ -848,6 +849,7 @@ perks.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "perks",
          nsimEIM = .nsimEIM ,
          parameters.names = c("scale", "shape"),
          zero = .zero )
@@ -1362,6 +1364,7 @@ makeham.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "makeham",
          nsimEIM = .nsimEIM,
          parameters.names = c("scale", "shape"),
          zero = .zero )
@@ -1850,6 +1853,7 @@ gompertz.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "gompertz",
          nsimEIM = .nsimEIM,
          parameters.names = c("scale", "shape"),
          zero = .zero )
@@ -2227,6 +2231,7 @@ exponential.mo.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "moe",
          nsimEIM = .nsimEIM,
          parameters.names = c("alpha", "lambda"),
          zero = .zero )
@@ -2549,6 +2554,7 @@ if (ii < 3) {
   infos = eval(substitute(function(...) {
     list(M1 = 4,
          Q1 = 1,
+         dpqrfun = "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -3305,12 +3311,14 @@ dsinmad <- function(x, scale = 1, shape1.a, shape3.q, log = FALSE) {
 
 
 dlomax <- function(x, scale = 1, shape3.q, log = FALSE)
-  dsinmad(x, scale = scale, shape1.a = 1, shape3.q = shape3.q, log = log)
+  dsinmad(x, scale = scale, shape1.a = 1, shape3.q = shape3.q,
+          log = log)
 
 
 
 dfisk <- function(x, scale = 1, shape1.a, log = FALSE)
-  dsinmad(x, scale = scale, shape1.a = shape1.a, shape3.q = 1, log = log)
+  dsinmad(x, scale = scale, shape1.a = shape1.a, shape3.q = 1,
+          log = log)
 
 
 
@@ -3447,6 +3455,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "sinmad",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -3823,7 +3832,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
                                     .lshape3.q = lshape3.q,
                                     .eshape3.q = eshape3.q,
             .lss = lss ))))
-}
+}  # sinmad
 
 
 
@@ -3912,6 +3921,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "dagum",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -4357,6 +4367,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 3,
          Q1 = 1,
+         dpqrfun = "betaII",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -4694,6 +4705,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "lomax",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -5034,6 +5046,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "fisk",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -5390,6 +5403,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "inv.lomax",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -5717,6 +5731,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "paralogistic",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,
@@ -6117,6 +6132,7 @@ dinv.paralogistic <- function(x, scale = 1, shape1.a, log = FALSE)
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "inv.paralogistic",  # "genbetaII",
          expected = TRUE,
          zero = .zero ,
          multipleResponses = TRUE,

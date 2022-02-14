@@ -98,12 +98,12 @@ Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 
 \seealso{
   \code{\link{zeta}},
-  \code{\link{gaitzeta}},
+  \code{\link{Zeta}},
+  \code{\link{gaitdzeta}},
   \code{\link[VGAMdata]{oazeta}},
   \code{\link[VGAMdata]{oizeta}},
   \code{\link[VGAMdata]{otzeta}},
   \code{\link{diffzeta}},
-  \code{\link{dzeta}},
   \code{\link{hzeta}},
   \code{\link{zipf}}.
 

@@ -8,9 +8,10 @@
 }
 \usage{
 micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
-       imethod = 1, oim = TRUE,    link1 = "identitylink", link2 = "identitylink",
-       firstDeriv = c("nsimEIM", "rpar"), probs.x = c(0.15, 0.85),
-       nsimEIM = 500, dispersion = 0, zero = NULL)
+       imethod = 1, oim = TRUE, link1 = "identitylink",
+       link2 = "identitylink", firstDeriv = c("nsimEIM", "rpar"),
+       probs.x = c(0.15, 0.85), nsimEIM = 500, dispersion = 0,
+       zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -69,10 +70,10 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   are the two parameters.
 
 
-  The relationship between iteratively reweighted least squares
-  and the Gauss-Newton algorithm is given in Wedderburn (1974).
-  However, the algorithm used by this family function is different.
-  Details are given at the Author's web site.
+  The relationship between iteratively reweighted least squares and the
+  Gauss-Newton algorithm is given in Wedderburn (1974).  However, the
+  algorithm used by this family function is different.  Details are
+  given at the Author's web site.
 
 }
 \value{
@@ -115,14 +116,14 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   The LHS of the formula \code{form2} is ignored.
 
 
-  To predict the response at new values of \eqn{u_i}{u_i} one must assign
-  the \code{@extra$Xm2} slot in the fitted object these values, e.g.,
-  see the example below.
+  To predict the response at new values of \eqn{u_i}{u_i} one must
+  assign the \code{@extra$Xm2} slot in the fitted object these values,
+  e.g., see the example below.
 
 
   Numerical problems may occur. If so, try setting some initial values
-  for the parameters. In the future, several self-starting initial values
-  will be implemented.
+  for the parameters. In the future, several self-starting initial
+  values will be implemented.
 
 
 }

@@ -2,7 +2,8 @@
 \alias{lms.yjn}
 \alias{lms.yjn2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ LMS Quantile Regression with a Yeo-Johnson Transformation to Normality }
+\title{ LMS Quantile Regression with a Yeo-Johnson Transformation
+        to Normality }
 \description{
   LMS quantile regression with the Yeo-Johnson transformation
   to normality.

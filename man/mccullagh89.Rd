@@ -71,7 +71,8 @@ precision parameter, respectively.
 
 
 McCullagh, P. (1989).
-Some statistical properties of a family of continuous univariate distributions.
+Some statistical properties of a family of continuous
+univariate distributions.
 \emph{Journal of the American Statistical Association},
 \bold{84}, 125--129.
 
@@ -87,12 +88,12 @@ New York: Wiley.
 }
 \author{ T. W. Yee }
 \note{
-Convergence may be slow or fail unless the initial values are reasonably
-close. If a failure occurs, try assigning the argument \code{inu} and/or
-\code{itheta}.  Figure 1 of McCullagh (1989) gives a broad range of
-densities for different values of \eqn{\theta}{theta} and \eqn{\nu}{nu},
-and this could be consulted for obtaining reasonable initial values if
-all else fails.
+Convergence may be slow or fail unless the initial values are
+reasonably close. If a failure occurs, try assigning the argument
+\code{inu} and/or \code{itheta}.  Figure 1 of McCullagh (1989) gives a
+broad range of densities for different values of \eqn{\theta}{theta} and
+\eqn{\nu}{nu}, and this could be consulted for obtaining reasonable
+initial values if all else fails.
 
 
 }
@@ -108,7 +109,8 @@ all else fails.
 %}
 
 \examples{
-mdata <- data.frame(y = rnorm(n = 1000, sd = 0.2))  # Limit as theta = 0, nu = Inf
+# Limit as theta = 0, nu = Inf:
+mdata <- data.frame(y = rnorm(1000, sd = 0.2))
 fit <- vglm(y ~ 1, mccullagh89, data = mdata, trace = TRUE)
 head(fitted(fit))
 with(mdata, mean(y))

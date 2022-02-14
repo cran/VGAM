@@ -249,8 +249,9 @@ for counts with extra zeros.
 }
 
 \seealso{
+  \code{\link{gaitdnbinomial}},
   \code{\link{posnegbinomial}},
-  \code{\link{Gaitnbinom}},
+  \code{\link{Gaitdnbinom}},
   \code{\link{negbinomial}},
   \code{\link{binomialff}},
   \code{\link{zinegbinomial}},

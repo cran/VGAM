@@ -1,7 +1,6 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
-
 
 
 
@@ -20,6 +19,7 @@ hdeff.vglm <-
            derivative = NULL,
            se.arg = FALSE,
            subset = NULL,  # Useful for Cox model as a poissonff().
+           theta0 = 0,  # Recycled to the necessary length 20210406
            hstep = 0.005,  # Formerly 'Delta', recycled to length 2
            fd.only = FALSE,
            ...) {
@@ -90,12 +90,16 @@ hdeff.vglm <-
   dim.wz <- dim(wwt.0)  # Inefficient
 
   p.VLM <- ncol(all.Hk)
+  if (length(theta0) > p.VLM)
+    warning("length of argument 'theta0' is loo long. ",
+            "Truncating it.")
+  theta0 <- rep_len(theta0, p.VLM)
   M1 <- npred(object, type = "one.response")
 
   vc2 <- vcov(object)
   SE2 <- diag.ixwx <- diag(vc2)
   SE1 <- sqrt(SE2)
-  cobj <- coef(object)
+  cobj <- coef(object) - theta0
   SE2.deriv1 <- vec.Wald.deriv1 <- rep_len(NA_real_, p.VLM)
   names(vec.Wald.deriv1) <- names(cobj)
   if (type == "derivatives" && derivative == 2) {
@@ -553,6 +557,19 @@ if (FALSE) {  ###################################################
     ans <- if (is.matrix(ans))
       ans[kvec.use, , drop = FALSE] else
       ans[kvec.use]
+
+
+  if (any(is.na(ans)) && !fd.only) {
+    warning("NAs detected. Setting 'fd.only = TRUE' and ",
+            "making a full recursive call")
+    ans <- hdeff.vglm(object, derivative = derivative,
+                      se.arg = se.arg, subset = subset,
+                      theta0 = theta0, hstep = hstep,
+                      fd.only = TRUE, ...)
+  }
+
+
+
   ans
 }  # hdeff.vglm
 
@@ -606,8 +623,9 @@ hdeff.numeric <-
 
 
 
- if (!isGeneric("hdeff"))
-    setGeneric("hdeff", function(object, ...) standardGeneric("hdeff"))
+if (!isGeneric("hdeff"))
+  setGeneric("hdeff", function(object, ...)
+    standardGeneric("hdeff"))
 
 
 setMethod("hdeff", "vglm", function(object, ...)

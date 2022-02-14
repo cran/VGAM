@@ -102,7 +102,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 \seealso{
   \code{\link{Log}},
-  \code{\link{gaitlog}},
+  \code{\link{gaitdlog}},
   \code{\link[VGAMdata:oalog]{oalog}},
   \code{\link[VGAMdata:oilog]{oilog}},
   \code{\link[VGAMdata:otlog]{otlog}},
@@ -132,11 +132,9 @@ ldata <- data.frame(y = rlog(nn, shape = logitlink(0.2, inv = TRUE)))
 fit <- vglm(y ~ 1, logff, data = ldata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
-\dontrun{with(ldata,
-    hist(y, prob = TRUE, breaks = seq(0.5, max(y) + 0.5, by = 1),
-         border = "blue"))
+\dontrun{with(ldata, spikeplot(y, col = "blue", capped = TRUE))
 x <- seq(1, with(ldata, max(y)), by = 1)
-with(ldata, lines(x, dlog(x, Coef(fit)[1]), col = "orange",
+with(ldata, lines(x + 0.1, dlog(x, Coef(fit)[1]), col = "orange",
         type = "h", lwd = 2)) }
 
 # Example: Corbet (1943) butterfly Malaya data

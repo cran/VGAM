@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -3416,6 +3416,146 @@ dpois.points <- function(x, lambda, ostatistic,
             .ostatistic = ostatistic,
             .dimension = dimension ))))
 }  # poisson.points
+
+
+
+
+
+
+
+
+ gumbel1 <- function(llocation = "identitylink",
+                     iscale = 1,   # The *actual* value
+                     zero = NULL) {
+
+  llocat <- as.list(substitute(llocation))
+  elocat <- link2list(llocat)
+  llocat <- attr(elocat, "function.name")
+
+  if (length(iscale) && !is.Numeric(iscale, positive = TRUE))
+    stop("bad input for argument 'iscale'")
+  if (any(iscale != 1))
+    stop("bad 'iscale'")
+
+
+  new("vglmff",
+  blurb = c("Gumbel distribution for extreme value regression\n",
+            "Links:    ",
+            namesof("location", llocat, earg = elocat )),
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = 1)
+  }), list( .zero = zero ))),
+
+
+  infos = eval(substitute(function(...) {
+    list(M1 = 1,
+         Q1 = 1,
+         expected = TRUE,
+         multipleResponses = FALSE,
+         parameters.names = c("location"),
+         llocation = .llocat ,
+         iscale    = .iscale ,
+         zero = .zero )
+  }, list( .zero = zero,
+           .llocat = llocation, .iscale = iscale ))),
+
+
+  initialize = eval(substitute(expression({
+
+    predictors.names <-
+    c(namesof("location", .llocat , earg = .elocat , short = TRUE))
+
+
+    y <- as.matrix(y)
+    if (ncol(y) > 1)
+      stop("only vector y allowed")
+
+
+    w <- as.matrix(w)
+    if (ncol(w) != 1)
+      stop("the 'weights' argument must be a vector or ",
+           "1-column matrix")
+
+
+    r.vec <- rowSums(cbind(!is.na(y)))
+    if (any(r.vec == 0))
+      stop("There is at least one row of the response containing all NAs")
+
+
+      sc.init <- ( .iscale )
+      sc.init <- rep_len(sc.init, n)
+      EulerM <- -digamma(1)
+      loc.init <- (y - sc.init * EulerM)
+      loc.init[loc.init <= 0] <- min(y)
+
+    if (!length(etastart)) {
+      etastart <-
+        cbind(theta2eta(loc.init, .llocat , earg = .elocat ))
+    }
+    
+  }), list( .llocat = llocat,
+            .elocat = elocat, .iscale = iscale ))),
+
+  linkinv = eval(substitute(function(eta, extra = NULL) {
+    eta <- cbind(eta)
+    loc   <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    sigma <- ( .iscale )
+
+    EulerM <- -digamma(1)
+    mu <- loc + sigma * EulerM
+    mu
+  }, list( .llocat = llocat, .iscale = iscale,
+           .elocat = elocat ))),
+
+  last = eval(substitute(expression({
+    misc$links <-   c(location = .llocat )
+    misc$earg <- list(location = .elocat )
+  }), list( .llocat = llocat, .iscale = iscale,
+            .elocat = elocat ))),
+  vfamily = c("gumbel1", "vextremes"),
+  loglikelihood = eval(substitute(
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    eta <- cbind(eta)
+    loc   <- eta2theta(eta[, 1], .llocat ,  earg = .elocat )
+    sigma <- ( .iscale )
+    ans <- -(y - loc) - exp( -(y-loc)/sigma )
+
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ll.elts <- c(w) * ans
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  }, list( .llocat = llocat, .iscale = iscale,
+           .elocat = elocat ))),
+  deriv = eval(substitute(expression({
+    eta <- cbind(eta)
+    locat <- eta2theta(eta[, 1], .llocat , earg = .elocat )
+    sigma <- ( .iscale )
+
+    dlocat.deta <- dtheta.deta(locat, .llocat , earg = .elocat )
+    dl.dlocat <- 1 - exp(-y + locat)
+
+    c(w) * cbind(dl.dlocat * dlocat.deta)
+  }), list( .llocat = llocat, .iscale = iscale,
+            .elocat = elocat ))),
+
+  weight = eval(substitute(expression({
+    wz <- exp(-y + locat) * dlocat.deta^2
+    c(w) * wz
+  }), list( .iscale = iscale ))))
+}  # gumbel1
+
+
+
+
 
 
 

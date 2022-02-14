@@ -35,8 +35,8 @@ loglinb2(exchangeable = FALSE, zero = "u12")
   \eqn{u_{12}}{u12}.
   The normalizing parameter \eqn{u_0}{u0} can be expressed as a function
   of the other parameters, viz.,
-  \deqn{u_0 = -\log[1 + \exp(u_1) + \exp(u_2) + \exp(u_1 + u_2 + u_{12})].}{%
-        u0 = -log[1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)].}
+\deqn{u_0 = -\log[1 + \exp(u_1) + \exp(u_2) + \exp(u_1 + u_2 + u_{12})].}{%
+      u0 = -log[1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)].}
   The linear/additive predictors are
   \eqn{(\eta_1,\eta_2,\eta_3)^T = (u_1,u_2,u_{12})^T}{(eta1,eta2,eta3) =
        (u1,u2,u12)}.
@@ -96,16 +96,17 @@ McCullagh, P. and Nelder, J. A. (1989).
 \examples{
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
 # Get the n x 4 matrix of counts
-fit0 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or, data = coalminers)
+fit0 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or, coalminers)
 counts <- round(c(weights(fit0, type = "prior")) * depvar(fit0))
 # Create a n x 2 matrix response for loglinb2()
 # bwmat <- matrix(c(0,0, 0,1, 1,0, 1,1), 4, 2, byrow = TRUE)
 bwmat <- cbind(bln = c(0,0,1,1), wheeze = c(0,1,0,1))
 matof1 <- matrix(1, nrow(counts), 1)
-newminers <- data.frame(bln    = kronecker(matof1, bwmat[, 1]),
-                        wheeze = kronecker(matof1, bwmat[, 2]),
-                        wt     = c(t(counts)),
-                        Age    = with(coalminers, rep(age, rep(4, length(age)))))
+newminers <-
+  data.frame(bln    = kronecker(matof1, bwmat[, 1]),
+             wheeze = kronecker(matof1, bwmat[, 2]),
+             wt     = c(t(counts)),
+             Age    = with(coalminers, rep(age, rep(4, length(age)))))
 newminers <- newminers[with(newminers, wt) > 0,]
 
 fit <- vglm(cbind(bln,wheeze) ~ Age, loglinb2(zero = NULL),

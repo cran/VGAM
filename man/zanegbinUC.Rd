@@ -11,11 +11,15 @@
   for the zero-altered negative binomial distribution with parameter \code{pobs0}.
 
 }
+%dzanegbin(x, size, prob = NULL, munb = NULL, pobs0 = 0, log = FALSE)
+%pzanegbin(q, size, prob = NULL, munb = NULL, pobs0 = 0)
+%qzanegbin(p, size, prob = NULL, munb = NULL, pobs0 = 0)
+%rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 \usage{
-dzanegbin(x, size, prob = NULL, munb = NULL, pobs0 = 0, log = FALSE)
-pzanegbin(q, size, prob = NULL, munb = NULL, pobs0 = 0)
-qzanegbin(p, size, prob = NULL, munb = NULL, pobs0 = 0)
-rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
+dzanegbin(x, size, munb, pobs0 = 0, log = FALSE)
+pzanegbin(q, size, munb, pobs0 = 0)
+qzanegbin(p, size, munb, pobs0 = 0)
+rzanegbin(n, size, munb, pobs0 = 0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,10 +27,13 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
   If \code{length(n) > 1} then the length is taken to be the number required. }
-  \item{size, prob, munb, log}{
+  \item{size, munb, log}{
   Parameters from the ordinary negative binomial distribution
   (see \code{\link[stats:NegBinomial]{dnbinom}}).
   Some arguments have been renamed slightly.
+
+
+ % prob,
 
   }
   \item{pobs0}{
@@ -62,7 +69,7 @@ rzanegbin(n, size, prob = NULL, munb = NULL, pobs0 = 0)
 }
 
 \seealso{
-  \code{\link{Gaitnbinom}},
+  \code{\link{Gaitdnbinom}},
   \code{\link{zanegbinomial}}.
 
 

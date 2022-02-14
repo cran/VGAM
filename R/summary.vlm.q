@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,7 +16,8 @@
 
 summaryvlm <-
   function(object, correlation = FALSE, dispersion = NULL,
-           Colnames = c("Estimate", "Std. Error", "z value", "Pr(>|z|)"),
+           Colnames = c("Estimate", "Std. Error",
+                        "z value", "Pr(>|z|)"),
            presid = TRUE,  # FALSE
            lrt0.arg = FALSE,
            score0.arg = FALSE,
@@ -155,10 +156,11 @@ summaryvlm <-
 
   if (score0.arg) {
     coef4score0 <- coef3  # Overwrite some columns
-    score.list <- score.stat(object, all.out = TRUE,
-                             values0 = values0, subset = subset,
-                             trace = FALSE,
-                           omit1s = omit1s)  # Intercept-only model: NULL
+    score.list <-
+      score.stat(object, all.out = TRUE,
+                 values0 = values0, subset = subset,
+                 trace = FALSE,
+                 omit1s = omit1s)  # Intercept-only model: NULL
     SEs <- score.list$SE0
     if (length(score.list)) {  # Usually omit intercepts:
       coef4score0 <- coef4score0[names(SEs), , drop = FALSE]
@@ -191,10 +193,11 @@ summaryvlm <-
 
   if (wald0.arg) {
     coef4wald0 <- coef3  # Overwrite some columns
-    SEs <- wald.stat(object, all.out = TRUE,
-                     values0 = values0, subset = subset,
-                     trace = FALSE,
-                     omit1s = omit1s)$SE0  # Intercept-only model: NULL
+    SEs <-
+      wald.stat(object, all.out = TRUE,
+                values0 = values0, subset = subset,
+                trace = FALSE,
+                omit1s = omit1s)$SE0  # Intercept-only model: NULL
     if (length(SEs)) {  # Usually omit intercepts:
       coef4wald0 <- coef4wald0[names(SEs), , drop = FALSE]
       if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {

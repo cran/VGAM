@@ -17,10 +17,10 @@
 \usage{
 dloglap(x, location.ald = 0, scale.ald = 1,
         tau = 0.5, kappa = sqrt(tau/(1-tau)), log = FALSE)
-ploglap(q, location.ald = 0, scale.ald = 1,
-        tau = 0.5, kappa = sqrt(tau/(1-tau)), lower.tail = TRUE, log.p = FALSE)
-qloglap(p, location.ald = 0, scale.ald = 1,
-        tau = 0.5, kappa = sqrt(tau/(1-tau)), lower.tail = TRUE, log.p = FALSE)
+ploglap(q, location.ald = 0, scale.ald = 1, tau = 0.5,
+        kappa = sqrt(tau/(1-tau)), lower.tail = TRUE, log.p = FALSE)
+qloglap(p, location.ald = 0, scale.ald = 1, tau = 0.5,
+        kappa = sqrt(tau/(1-tau)), lower.tail = TRUE, log.p = FALSE)
 rloglap(n, location.ald = 0, scale.ald = 1,
         tau = 0.5, kappa = sqrt(tau/(1-tau)))
 }
@@ -105,19 +105,20 @@ Log-Laplace distributions.
 \examples{
 loc <- 0; sigma <- exp(0.5); kappa <- 1
 x <- seq(-0.2, 5, by = 0.01)
-\dontrun{
-plot(x, dloglap(x, loc, sigma, kappa = kappa), type = "l", col = "blue",
+\dontrun{plot(x, dloglap(x, loc, sigma, kappa = kappa),
+     type = "l", col = "blue", ylim = c(0,1),
      main = "Blue is density, red is cumulative distribution function",
-     ylim = c(0,1), sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
+     sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
       dloglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
-                loc, sigma, kappa = kappa), col = "purple", lty = 3, type = "h")
+              loc, sigma, kappa = kappa),
+      col = "purple", lty = 3, type = "h")
 lines(x, ploglap(x, loc, sigma, kappa = kappa), type = "l", col = "red")
 abline(h = 0, lty = 2)
 }
 ploglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
-          loc, sigma, kappa = kappa)
+        loc, sigma, kappa = kappa)
 }
 \keyword{distribution}
 

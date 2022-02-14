@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -58,8 +58,8 @@
 
   if (orig.SE)
     vc2 <- vcov(object)
-  cobj <- coef(object)
-  signed.Lrt.0 <-
+  Cobj <- coef(object)  # Of length p.VLM
+  Signed.Lrt.0 <-
   Lrt.0 <-
   Score.0 <-
   SE2.0 <- rep_len(NA_real_, p.VLM)  # More than enough storage
@@ -126,22 +126,22 @@
 
 
   kvec.use <- subset
-  values0.use <- cobj * NA  # A vector of NAs of length == p.VLM
-  values0.use[kvec.use] <- values0  # Recycle and put in right place
+  Values0.use <- Cobj * NA  # A vector of NAs of length == p.VLM
+  Values0.use[kvec.use] <- values0  # Recycle and put in right place
 
 
   if (orig.SE && Wd.really) { # Wald stat already done
     csobj <- coef(summary(object))[kvec.use, , drop = FALSE]
     wald.stat <- csobj[, "z value"]
-    SE0 <- csobj[, "Std. Error"]
-    cobj <- cobj[kvec.use]
-    values0.use <- values0.use[kvec.use]
-    names(SE0) <- names(cobj)
+    se0.a <- csobj[, "Std. Error"]  # .a added for uniqueness
+    cobj <- Cobj[kvec.use]
+    values0.use <- Values0.use[kvec.use]
+    names(se0.a) <- names(cobj)
     names(values0.use) <- names(cobj)
     names(wald.stat) <- names(cobj)
     if (all.out) return(
       list(wald.stat  = wald.stat,
-           SE0        = SE0,
+           SE0        = se0.a,
            values0    = values0.use)) else
       return(wald.stat)
   }  # orig.SE && Wd.really
@@ -158,8 +158,8 @@
         stop("The large model matrix only has one column")
       X.vlm.mk <- X.vlm.save[, -kay, drop = FALSE]
       attr(X.vlm.mk, "assign") <- attr(X.vlm.save, "assign")  # zz wrong!
-      ooo <- if (values0.use[kay] == 0) OOO.orig else
-             OOO.orig + matrix(X.vlm.save[, kay] * values0.use[kay],
+      ooo <- if (Values0.use[kay] == 0) OOO.orig else
+             OOO.orig + matrix(X.vlm.save[, kay] * Values0.use[kay],
                                n.LM, M, byrow = TRUE)
       fm <- vglm.fit(x = X.lm,  # Try this
                      y = Y, w = Wts,
@@ -185,28 +185,31 @@
                 "so the original fit had not converged")
       }
       zedd <- zee  # sgn * sqrt(zee)
-      signed.Lrt.0[kay] <- sqrt(zedd) *
-                           sign(cobj[kay] - values0.use[kay])
+      Signed.Lrt.0[kay] <- sqrt(zedd) *
+                           sign(Cobj[kay] - Values0.use[kay])
       Lrt.0[kay] <- zedd
     } else {  # +++++++++++++++++++++++++++++++++++++
 
-      done.early <- RS.really && !orig.SE && iterate.SE == iterate.score
+      done.early <- RS.really && !orig.SE &&
+                    iterate.SE == iterate.score
       if (RS.really) {
         U.eta.mat.use <- if (iterate.score) {
           as.matrix(fm$predictors)
         } else {  # \theta_{k0} replaces \widehat{\theta}_k
           eta.mat.orig +
-          matrix(X.vlm.save[, kay] * (values0.use[kay] - cobj[kay]),
+          matrix(X.vlm.save[, kay] * (Values0.use[kay] - Cobj[kay]),
                  n.LM, M, byrow = TRUE)  # GGGG
         }
         temp1@predictors <- U.eta.mat.use
-        temp1@fitted.values <- cbind(
+        temp1@fitted.values <- cbind(  # Make sure a matrix
           temp1@family@linkinv(eta = temp1@predictors,
-                               extra = temp1@extra))  # Make sure a matrix
-        wwt.both <- weights(temp1, type = "working", ignore.slot = TRUE,
+                               extra = temp1@extra))
+        wwt.both <- weights(temp1, type = "working",
+                            ignore.slot = TRUE,
                             deriv.arg = RS.really)  # TRUE
-        Score.0[kay] <- sum(wwt.both$deriv * matrix(X.vlm.save[, kay],
-                                                    n.LM, M, byrow = TRUE))
+        Score.0[kay] <- sum(wwt.both$deriv *
+                            matrix(X.vlm.save[, kay],
+                                   n.LM, M, byrow = TRUE))
         if (done.early)
           wwt.new <- wwt.both$weights  # Assigned early, dont do later
       }  # RS.really
@@ -221,14 +224,15 @@
           if (iterate.SE) 
             as.matrix(fm$predictors) else
             eta.mat.orig +
-            matrix(X.vlm.save[, kay] * (values0.use[kay] - cobj[kay]),
+            matrix(X.vlm.save[, kay] * (Values0.use[kay] - Cobj[kay]),
                    n.LM, M, byrow = TRUE)  # GGGG but with iterate.SE
         }
         temp1@predictors <- SE.eta.mat.use
-        temp1@fitted.values <- cbind(
+        temp1@fitted.values <- cbind(  # Must be a matrix
           temp1@family@linkinv(eta = temp1@predictors,
-                               extra = temp1@extra))  # Must be a matrix
-        wwt.new <- weights(temp1, type = "working", ignore.slot = TRUE,
+                               extra = temp1@extra))
+        wwt.new <- weights(temp1, type = "working",
+                           ignore.slot = TRUE,
                            deriv.arg = FALSE)  # For RS.really&Wd.really
 
       }  # !done.early
@@ -239,7 +243,7 @@
         if (!all(qrstr$pivot == 1:length(qrstr$pivot)))
           stop("cannot handle pivoting just yet")
         R <- qr.R(qrstr)  # dim(R) == ncol(w12X.vlm); diags may be < 0
-        covun <- chol2inv(R)  # This is 4 (t(X.vlm) %*% W %*% X.vlm)^{-1}
+        covun <- chol2inv(R)
         SE2.0[kay] <- diag(covun)[kay]
       }
     }  # !LR.really +++++++++++++++++++++++++++++++++++++
@@ -250,38 +254,38 @@
 
 
 
-  cobj <- cobj[kvec.use]
-  SE0 <- sqrt(SE2.0[kvec.use])  # All NAs if 'wald'
-  names(SE0) <- names(cobj)
-  values0.use <- values0.use[kvec.use]
+  cobj <- Cobj[kvec.use]
+  se0 <- sqrt(SE2.0[kvec.use])  # All NAs if 'wald'
+  names(se0) <- names(cobj)
+  values0.use <- Values0.use[kvec.use]
   names(values0.use) <- names(cobj)
 
 
   if (LR.really) {
-    Lrt.0 <- Lrt.0[kvec.use]
-    names(Lrt.0) <- names(cobj)
-    signed.Lrt.0 <- signed.Lrt.0[kvec.use]
-    names(signed.Lrt.0) <- names(cobj)
+    lrt.0 <- Lrt.0[kvec.use]
+    names(lrt.0) <- names(cobj)
+    signed.lrt.0 <- Signed.Lrt.0[kvec.use]
+    names(signed.lrt.0) <- names(cobj)
     if (all.out)
-      list(lrt.stat   = signed.Lrt.0,
-           Lrt.stat2  = Lrt.0,
-           pvalues    = pchisq(Lrt.0, df = 1, lower.tail = FALSE),
+      list(lrt.stat   = signed.lrt.0,
+           Lrt.stat2  = lrt.0,
+           pvalues    = pchisq(lrt.0, df = 1, lower.tail = FALSE),
            values0    = values0.use) else
-      signed.Lrt.0
+      signed.lrt.0
   } else if (RS.really) {
-    Score.0 <- Score.0[kvec.use]
-    names(Score.0) <- names(cobj)
-    score.stat <- Score.0 * SE0
+    score.0 <- Score.0[kvec.use]
+    names(score.0) <- names(cobj)
+    score.stat <- score.0 * se0
     if (all.out)
       list(score.stat = score.stat,
-           SE0        = SE0,  # Same as Wald
+           SE0        = se0,  # Same as Wald
            values0    = values0.use) else
       score.stat
   } else {  # Wd.really
-    wald.stat <- (cobj - values0.use) / SE0
+    wald.stat <- (cobj - values0.use) / se0
     if (all.out)
       list(wald.stat  = wald.stat,
-           SE0        = SE0,  # Same as RS
+           SE0        = se0,  # Same as RS
            values0    = values0.use) else
       wald.stat
   }

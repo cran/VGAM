@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -110,8 +110,7 @@ setMethod("plot", "vglm",
 
 
 
-
-spikeplot <-
+ spikeplot <-
   function(x,
            freq = FALSE,  # Default are proportions
            as.table = FALSE,
@@ -120,27 +119,36 @@ spikeplot <-
            lwd = par("lwd"),  #
            lend = par("lend"),  # "butt", "round", etc.
            type = "h",  #
-           xlab = NULL,
+           xlab = deparse1(substitute(x)),  # NULL,
            ylab = NULL,
-           capped = FALSE, cex =  sqrt(lwd) / 2, pch = 19, pcol = col,
+           capped = FALSE, cex =  sqrt(lwd) / 2, pch = 19,
+           pcol = col,
            scol = NULL, slty = NULL, slwd = NULL,
+           new.plot = TRUE, offset.x = 0,  # 20211123
+           ymux = 1,  # 20211129
            ...) {  # ... allows many graphical params, e.g., xlim
-  xlabel <- if (length(xlab)) xlab else deparse1(substitute(x))
+
+      deparse1 <- function(expr, collapse = " ",
+                           width.cutoff = 500L, ...)
+    paste(deparse(expr, width.cutoff, ...), collapse = collapse)
+  xlabel <- xlab
   ylabel <- if (length(ylab)) ylab else
              ifelse(freq, "Frequency", "Proportion")
   if (!is.numeric(x))
     stop("argument 'x' is not numeric")
   tx <- table(x)  # exclude, useNA
   ntx <- names(tx)
-  x.use <- as.numeric(ntx)
+  x.use <- x.use2 <- as.numeric(ntx)
   if (as.table) {
-    y.use <- if (freq) tx else tx / sum(tx)
-    plot(y.use,
-         xlab = xlabel, ylab = ylabel,
-         col = col, type = type, lwd = lwd, lty = lty, lend = lend,
-         ...)
+    y.use <- y.use2 <- ymux * (if (freq) tx else tx / sum(tx))
+    if (new.plot)
+      plot(y.use, col = col, xlab = xlabel, ylab = ylabel,
+           type = type, lwd = lwd, lty = lty, lend = lend, ...) else
+      points(y.use, col = col,  #  xlab = xlabel, ylab = ylabel,
+             type = type, lwd = lwd, lty = lty, lend = lend, ...)
   } else {
-    y.use <- if (freq) as.vector(tx) else as.vector(tx / sum(tx))
+      y.use <- ymux * (if (freq) as.vector(tx) else
+                       as.vector(tx / sum(tx)))
 
 
 
@@ -158,10 +166,15 @@ spikeplot <-
       y.use2 <- y.use
     }
 
-    plot(x.use2, y.use2,
-         xlab = xlabel, ylab = ylabel, type = type,
-         col = col, lty = lty, lwd = lwd, lend = lend, ...)
+    if (new.plot)
+      plot(x.use2 + offset.x, y.use2,
+           type = type, xlab = xlabel, ylab = ylabel,
+           col = col, lty = lty, lwd = lwd, lend = lend, ...) else
+    points(x.use2 + offset.x, y.use2,
+           type = type,  # xlab = xlabel, ylab = ylabel,
+           col = col, lty = lty, lwd = lwd, lend = lend, ...)
 
+      
     if (length.sargs) {
       if (length(scol)) {
         vec_scol <- unlist(scol, use.names = FALSE)
@@ -189,7 +202,8 @@ spikeplot <-
         }
         if (length(slty) && any(vec_slty == xx)) {
           use_slty <- names(vec_slty[vec_slty == xx])
-        bits <- substring(use_slty, 1:nchar(use_slty), 1:nchar(use_slty))
+          bits <- substring(use_slty, 1:nchar(use_slty),
+                            1:nchar(use_slty))
           if (all(bits %in% as.character(0:9)))
            use_slty <- as.numeric(use_slty)
         }
@@ -197,19 +211,19 @@ spikeplot <-
           use_slwd <- as.numeric(names(vec_slwd[vec_slwd == xx]))
         }
 
-        points(xx, y.use[x.use == xx], type = type,
+        points(xx + offset.x, y.use[x.use == xx], type = type,
                col = use_scol, lty = use_slty,
                lwd = use_slwd, lend = lend)
 
         if (capped)
-          points(xx, y.use[x.use = xx],
+          points(xx + offset.x, y.use[x.use = xx],
                  cex = cex, pch = pch, col = use_scol)
       }  # for ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     }  # length.sargs
   }  # !as.table
 
   if (capped)
-    points(x.use2, y.use2, cex = cex, pch = pch, col = pcol)
+    points(x.use2 + offset.x, y.use2, cex = cex, pch = pch, col = pcol)
 
   invisible(tx)
 }  # spikeplot

@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Bivariate Normal Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the five parameters of a bivariate
-  normal distribution.
+  Maximum likelihood estimation of the five parameters of a
+  bivariate normal distribution.
 
 }
 \usage{
@@ -15,7 +15,7 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
          isd1   = NULL,       isd2   = NULL,
          irho   = NULL,       imethod = 1,
          eq.mean = FALSE,     eq.sd = FALSE,
-         zero = c("sd", "rho"))
+         zero = c("sd", "rho"), rho.arg = NA)
 
 
 }
@@ -49,6 +49,20 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
   }
 
+% 20210923; rho.arg implemented.
+  \item{rho.arg}{
+    If \eqn{\rho}{rho} is known then this argument may
+    be assigned the (scalar) value lying in \eqn{(-1, 1)}.
+    The default is to estimate that parameter so that \eqn{M=5}.
+    If known, then other arguments such as \code{lrho}
+    and \code{irho} are ignored,
+    and \code{"rho"} is removed from \code{zero}.
+
+
+%   and arguments such as \code{eq.sd} might not work,
+  }
+
+
 }
 \details{
   For the bivariate normal distribution,
@@ -73,7 +87,8 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
 }
 \section{Warning}{
-  This function may be renamed to \code{normal2()} or something like that
+  This function may be renamed to \code{normal2()} or
+  something like that
   at a later date.
 
 
@@ -88,7 +103,7 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 \note{
   If both equal means and equal standard deviations are desired
   then use something like
-  \code{constraints = list("(Intercept)" = matrix(c(1,1,0,0,0, 0,0,1,1,0 ,0,0,0,0,1), 5, 3))}
+\code{constraints = list("(Intercept)" = matrix(c(1,1,0,0,0, 0,0,1,1,0 ,0,0,0,0,1), 5, 3))}
   and maybe
   \code{zero = NULL}
   etc.

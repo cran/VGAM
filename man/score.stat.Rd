@@ -150,4 +150,5 @@ summary(pfit, score0 = TRUE)
 }
 \keyword{models}
 \keyword{regression}
+\keyword{htest}
 

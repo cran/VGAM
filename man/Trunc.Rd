@@ -21,11 +21,12 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 % ipobs0 = NULL,
 \arguments{
   \item{Range}{
-    Numeric, of length 2 containing the minimum and maximum in that order.
+    Numeric, of length 2 containing the minimum and maximum
+    (in that order) of the untransformed data.
     Alternatively, if \code{length(Range) > 2} then it is assumed
-    that the untransformed data is passed in so that
+    that the entire untransformed data is passed in so that
     \code{\link[base]{range}} is applied.
-    
+
 
   }
   \item{mux}{
@@ -45,13 +46,16 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
     omitted).
     If \code{FALSE} then the multiples are returned.
 
+
+
   }
 }
 \details{
   Generally-truncated regression can handle underdispersion
   with respect to some parent or base distribution such as the
   Poisson.
-  Yee and Ma (2020) call this the GT-Expansion (GTE) method,
+  Yee and Ma (2022) call this the
+  \emph{GT-Expansion} (GTE) method,
   which is a special case of the GT-location-scale (GT-LS) method.
   This is a utility function to help make life easier.
   It is assumed that the response is a count variable.
@@ -60,8 +64,8 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 
 }
 \value{
-  A vector of values to be fed into the \code{truncate} argument of a
-  \pkg{VGAM} family function such as \code{\link{gaitpoisson}}.
+  A vector of values to be fed into the \code{truncate} argument
+  of a \pkg{VGAM} family function such as \code{\link{gaitdpoisson}}.
   If \code{mux = 1} then the function will return a \code{NULL}
   rather than \code{integer(0)}.
 
@@ -73,9 +77,9 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 
 }
 % \references{
-% Yee, T. W. and Ma, C. (2021).
-% Generally--altered, --inflated and --truncated regression,
-% with application to heaped and seeped counts.  % count data.
+% Yee, T. W. and Ma, C. (2022).
+%Generally--altered, --inflated, --truncated and --altered
+%count regression.
 % \emph{In preparation}.
 
 
@@ -88,7 +92,7 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 
 
 %\section{Warning }{
-%    See \code{\link{gaitpoisson}}
+%    See \code{\link{gaitdpoisson}}
 
 
 
@@ -98,7 +102,7 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 
 \author{ T. W. Yee}
 %\note{
-%  See \code{\link{gaitpoisson}}
+%  See \code{\link{gaitdpoisson}}
 
 
 % See \code{\link{gaitlog.mlm}} for other general details.
@@ -107,11 +111,12 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 %}
 
 \seealso{
-  \code{\link{gaitpoisson}},
-  \code{\link{gaitlog}},
-  \code{\link{gaitzeta}},
-  \code{\link[base]{range}}.
-  \code{\link[base]{setdiff}}.
+  \code{\link{gaitdpoisson}},
+  \code{\link{gaitdlog}},
+  \code{\link{gaitdzeta}},
+  \code{\link[base]{range}},
+  \code{\link[base]{setdiff}},
+  \code{\link{goffset}}.
 
 
 % \code{\link{gaitlog.mlm}},
@@ -135,11 +140,11 @@ logliks <- numeric(m.max)
 names(logliks) <- as.character(1:m.max)
 for (i in 1:m.max) {
   logliks[i] <- logLik(vglm(i * y1 ~ offset(rep(log(i), nn)),
-    gaitpoisson(truncate = Trunc(org1, i)), data = gdata))
+    gaitdpoisson(truncate = Trunc(org1, i)), data = gdata))
 }
 sort(logliks, decreasing = TRUE)  # Best to worst
 \dontrun{ par(mfrow = c(1, 2))
-plot(with(gdata, table(y1)))  # Underdispersed wrt poisson
+plot(with(gdata, table(y1)))  # Underdispersed wrt Poisson
 plot(logliks, col = "blue", type = "b", xlab = "Multiplier") }
 }
 \keyword{models}
@@ -147,7 +152,7 @@ plot(logliks, col = "blue", type = "b", xlab = "Multiplier") }
 
 
 
-%                     truncate = tvec, max.support = max.support
-%                               eq.ip = TRUE, max.support = max.support
+%                 truncate = tvec, max.support = max.support
+%                           eq.ip = TRUE, max.support = max.support
 
 

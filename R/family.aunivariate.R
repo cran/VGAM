@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -48,6 +48,7 @@ hzeta <-
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "hzeta",
          expected = FALSE,
          multipleResponses = FALSE,
          parameters.names = c("shape"),
@@ -408,6 +409,7 @@ pkumar <- function(q, shape1, shape2,
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "kumar",
          expected = TRUE,
          multipleResponses = TRUE,
          parameters.names = c("shape1", "shape2"),
@@ -678,6 +680,7 @@ riceff.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "rice",
          expected = FALSE,
          multipleResponses = FALSE,
          parameters.names = c("sigma", "vee"),
@@ -957,6 +960,7 @@ skellam.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "skellam",
          expected = FALSE,
          multipleResponses = FALSE,
          parameters.names = c("mu1", "mu2"),
@@ -1294,6 +1298,7 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "yules",
          expected = TRUE,
          multipleResponses = TRUE,
          nsimEIM = .nsimEIM ,
@@ -1553,6 +1558,7 @@ rlind <- function(n, theta) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "lind",
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = TRUE,
@@ -1698,6 +1704,7 @@ rlind <- function(n, theta) {
     c(w) * ned2l.dtheta2 * DTHETA.DETA^2
   }), list( .zero = zero ))))
 }  # lindley
+
 
 
 
@@ -1884,6 +1891,7 @@ slash.control <- function(save.weights = TRUE, ...) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "slash",
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("mu", "sigma"),
@@ -2109,6 +2117,7 @@ dnefghs <- function(x, tau, log = FALSE) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "nefgs",
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("tau"),
@@ -2255,6 +2264,7 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
+         dpqrfun = "logF",
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("shape1", "shape2"),
@@ -2786,9 +2796,9 @@ qbenf <- function(p, ndigits = 1,
 
     misc$M1 <- M1
     misc$multipleResponses <- TRUE
-    misc$expected <- .expected
-    misc$imethod <- .imethod
-    misc$iprob <- .iprob
+    misc$expected <- ( .expected )
+    misc$imethod <- ( .imethod )
+    misc$iprob <- ( .iprob )
   }), list( .link = link, .earg = earg,
             .iprob = iprob,
             .upper.limit = upper.limit,
@@ -4054,6 +4064,7 @@ rtopple <- function(n, shape) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "topple",
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = TRUE,
@@ -4377,6 +4388,7 @@ rzeta <- function(n, shape) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "zeta",
          multipleResponses = TRUE,
          parameters.names = "shape",
          zero = .zero ,
@@ -4712,6 +4724,7 @@ rzipf <- function(n, N, shape) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "zipf",
          multipleResponses = FALSE,
          parameters.names = "shape",
          N = enteredN,
@@ -5203,6 +5216,7 @@ rdiffzeta <- function(n, shape, start = 1) {
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
+         dpqrfun = "diffzipf",
          expected = TRUE,
          multipleResponses = TRUE,
          start = .start ,

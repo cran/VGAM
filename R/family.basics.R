@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -2079,7 +2079,9 @@ muxtXAX <- function(A, X, M) {
 
  trim.constraints <-
    function(object, sig.level = 0.05,
-            max.num = Inf, ...) {
+            max.num = Inf,
+            intercepts = TRUE,   # intercepts constraint matrices
+            ...) {
 
 
 
@@ -2096,6 +2098,7 @@ muxtXAX <- function(A, X, M) {
   csfit <- coef(summary(object, HDEtest = FALSE))
   X.small <- model.matrix(object, type = "lm")
   X.assign <- attr(X.small, "assign")
+  cmlist0 <-
   cmlist2 <-
   cmlist1 <- constraints(object, type = "term")
   ncolHlist <- sapply(cmlist1, ncol)
@@ -2128,6 +2131,12 @@ muxtXAX <- function(A, X, M) {
     cmlist2[[kay]] <- if (length(cm.kay)) cm.kay else NULL
   }
 
+
+
+
+  if (!intercepts && length(cmlist0[["(Intercept)"]])) {
+    cmlist2[["(Intercept)"]] <- cmlist0[["(Intercept)"]]
+  }
 
 
 

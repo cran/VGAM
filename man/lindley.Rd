@@ -40,9 +40,11 @@ lindley(link = "loglink", itheta = NULL, zero = NULL)
         f(y; theta) = theta^2 * (1 + y) * exp(-theta * y) / (1 + theta)}
   for \eqn{\theta > 0}{theta > 0} and \eqn{y > 0}.
   The mean of \eqn{Y} (returned as the fitted values)
-  is \eqn{\mu = (\theta + 2) / (\theta (\theta + 1))}{mu = (theta + 2) / (theta * (theta + 1))}.
+  is \eqn{\mu = (\theta + 2) / (\theta (\theta + 1))}{mu =
+    (theta + 2) / (theta * (theta + 1))}.
   The variance
-  is \eqn{(\theta^2 + 4 \theta + 2) / (\theta (\theta + 1))^2}{(theta^2 + 4 * theta + 2) / (theta * (theta + 1))^2}.
+  is \eqn{(\theta^2 + 4  \theta + 2) / (\theta  (\theta + 1))^2}{
+           (theta^2 + 4 * theta + 2) / (theta * (theta + 1))^2}.
 
 
 }

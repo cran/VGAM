@@ -9,8 +9,8 @@
 }
 \usage{
 mix2normal(lphi = "logitlink", lmu = "identitylink", lsd = "loglink",
-           iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
-           qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = "phi")
+    iphi = 0.5, imu1 = NULL, imu2 = NULL, isd1 = NULL, isd2 = NULL,
+    qmu = c(0.2, 0.8), eq.sd = TRUE, nsimEIM = 100, zero = "phi")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,11 +52,10 @@ mix2normal(lphi = "logitlink", lmu = "identitylink", lsd = "loglink",
 
   }
   \item{qmu}{
-    Vector with two values giving the probabilities relating to the sample
-    quantiles for obtaining initial values for \eqn{\mu_1}{mu1}
-    and \eqn{\mu_2}{mu2}.
-    The two values are fed in as the \code{probs} argument into
-    \code{\link[stats]{quantile}}.
+    Vector with two values giving the probabilities relating to the
+    sample quantiles for obtaining initial values for \eqn{\mu_1}{mu1}
+    and \eqn{\mu_2}{mu2}.  The two values are fed in as the \code{probs}
+    argument into \code{\link[stats]{quantile}}.
 
 
   }
@@ -88,7 +87,8 @@ mix2normal(lphi = "logitlink", lmu = "identitylink", lsd = "loglink",
 }
 \details{
   The probability density function can be loosely written as
-  \deqn{f(y) = \phi \, N(\mu_1,\sigma_1) + (1-\phi) \, N(\mu_2, \sigma_2)}{%
+  \deqn{f(y) = \phi \, N(\mu_1,\sigma_1) +
+        (1-\phi) \, N(\mu_2, \sigma_2)}{%
         f(y) = phi * N(mu1, sd1) + (1-phi) * N(mu2, sd2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group.

@@ -119,4 +119,9 @@ sum(weights(fit, type = "work"))  # Sum of the working weights
 \keyword{models}
 \keyword{regression}
 
-%fit <- vglm(y ~ 1, inv.binomial(ilambda = 1), trace = TRUE, crit = "c", checkwz = FALSE)
+
+
+%fit <- vglm(y ~ 1, inv.binomial(ilambda = 1), trace = TRUE,
+%            crit = "c", checkwz = FALSE)
+
+

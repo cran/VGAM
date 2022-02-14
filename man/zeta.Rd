@@ -124,6 +124,7 @@ New York: Dover Publications Inc.
 
 \seealso{
   \code{\link{zetaff}},
+  \code{\link{Zeta}},
   \code{\link[VGAMdata]{oazeta}},
   \code{\link[VGAMdata]{oizeta}},
   \code{\link[VGAMdata]{otzeta}},

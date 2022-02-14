@@ -86,6 +86,17 @@ as \code{summary(glm())}.
 
 
 
+
+For one-parameter models setting
+\code{orig.SE = FALSE} results in what is called the
+\emph{null Wald} (NW) statistic by some people,
+e.g., Laskar and King (1997) and Goh and King (1999).
+The NW statistic does not suffer from the HDE.
+% 20210602
+
+
+
+
 }
 \item{iterate.SE}{
   Logical, for the standard error computations.
@@ -195,9 +206,22 @@ setting \code{wald0.arg = TRUE} in \code{\link{summaryvglm}}.
   
 
 }
-%\references{
-%
-%}
+\references{
+  Laskar, M. R. and M. L. King (1997).
+  Modified Wald test for regression disturbances.
+  \emph{Economics Letters}, \bold{56}, 5--11.
+
+
+
+  Goh, K.-L. and M. L. King (1999).
+  A correction for local biasedness of the Wald
+  and null Wald tests.
+  \emph{Oxford Bulletin of Economics and Statistics}
+  \bold{61}, 435--450.
+  
+
+
+}
 \author{ Thomas W. Yee }
 
 %\note{
@@ -245,4 +269,5 @@ wald.stat(fit, orig.SE = TRUE)  # Same as previous line
 }
 \keyword{models}
 \keyword{regression}
+\keyword{htest}
 

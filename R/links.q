@@ -1,6 +1,15 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
+
+
+
+
+
+
+
+
+
 
 
 
@@ -11,6 +20,259 @@
 
 ToString <- function(x)
   paste(x, collapse = ", ")
+
+
+
+
+
+
+
+
+
+
+
+
+ multilogitlink <-
+  function(theta,
+           refLevel = "(Last)",
+           M = NULL,  # stop("argument 'M' not specified"),
+           whitespace = FALSE,
+           bvalue = NULL,
+           inverse = FALSE, deriv = 0,
+           all.derivs = FALSE,
+           short = TRUE, tag = FALSE) {
+
+
+
+
+
+  d.mlm = NULL  # 20211105
+  if ((LLL <- length(d.mlm)) > 0) {
+    sd.mlm <- unique(sort(d.mlm))  # Values must be unique
+    if (!is.Numeric(d.mlm, integer.valued = TRUE,  # any length
+                    length.arg = length(sd.mlm), positive = TRUE))
+      stop("bad input for argument 'd.mlm'")
+    if (is.numeric(refLevel) && any(refLevel == sd.mlm))
+      stop("cannot have the reference level being deflated")
+    if (deriv != 0)
+      stop("cannot have 'deriv' > 0 when 'd.mlm' is specified")
+    d.mlm <- sd.mlm  # Replace this
+  }  # LLL
+
+
+
+
+
+  fillerChar <- ifelse(whitespace, " ", "")
+
+  if (length(refLevel) != 1)
+    stop("the length of argument 'refLevel' must be one")
+
+  if (is.character(refLevel)) {
+    if (refLevel != "(Last)")
+      stop('if a character, refLevel must be "(Last)"')
+    refLevel <- -1
+  } else
+  if (is.factor(refLevel)) {
+    if (is.ordered(refLevel))
+      warning("argument 'refLevel' is from an ordered factor")
+    refLevel <- as.character(refLevel) == levels(refLevel)
+    refLevel <- (seq_along(refLevel))[refLevel]
+    if (!is.Numeric(refLevel, length.arg = 1,
+                    integer.valued = TRUE, positive = TRUE))
+      stop("could not coerce 'refLevel' into a single ",
+           "positive integer")
+  } else
+  if (!is.Numeric(refLevel, length.arg = 1,
+                  positive = TRUE, integer.valued = TRUE))
+    stop("'refLevel' must be a single positive integer")
+
+
+
+
+  if (is.character(theta)) {
+    is.M <- is.finite(M) && is.numeric(M)
+    string <- if (short) {
+        paste("multilogitlink(", theta, ")", sep = "")
+    } else {
+        theta <- as.char.expression(theta)
+
+         if (refLevel < 0) {
+           ifelse(whitespace,
+             paste("log(", theta, "[,j] / ",
+                   theta, "[,",
+                   ifelse(is.M, M+1, "M+1"),
+                   "]), j = 1:",
+                   ifelse(is.M, M, "M"), sep = ""),
+             paste("log(", theta, "[,j]/",
+                   theta, "[,",
+                   ifelse(is.M, M+1, "M+1"),
+                   "]), j=1:",
+                   ifelse(is.M, M, "M"), sep = ""))
+         } else {
+             if (refLevel == 1) {
+               paste("log(", theta, "[,", "j]",
+                   fillerChar, "/", fillerChar,
+                     "", theta, "[,", refLevel, "]), j",
+                     fillerChar, "=", fillerChar, "2:",
+                   ifelse(is.M, (M+1), "(M+1)"),
+                     sep = "")
+             } else {
+               paste("log(", theta, "[,", "j]", fillerChar, "/",
+                     "", theta, "[,", refLevel, "]), j",
+                     fillerChar, "=", fillerChar,
+                     "c(1:", refLevel-1, ",",
+                     fillerChar,
+                     refLevel+1, ":",
+                     ifelse(is.M, (M+1), "(M+1)"),
+                     ")", sep = "")
+             }
+         }
+    }
+    if (tag)
+      string <- paste("Multinomial logit link:", string)
+    return(string)
+  }
+
+
+
+  M.orig <- M
+  M <- NCOL(theta) - !(inverse && deriv == 0)
+  if (M < 1)
+    ifelse(inverse,
+           stop("argument 'eta' should have at least one column"),
+           stop("argument 'theta' should have at least two columns"))
+  if (is.numeric(M.orig) && M != M.orig) {
+    warning("argument 'M' does not seem right but using it")
+    M <- M.orig
+  }
+  if (is.numeric(refLevel) && refLevel > M + 1)
+    stop("bad input for argument 'refLevel'")
+
+
+
+  if (length(d.mlm) > 0) {
+    if (any(d.mlm > M + 1))
+      stop("argument 'd.mlm' is excessive")
+  }
+
+
+  if (!inverse && length(bvalue))
+    theta[theta <= 0.0] <- bvalue
+  if (!inverse && length(bvalue))
+    theta[theta >= 1.0] <- 1 - bvalue
+
+
+  foo <- function(eta, refLevel = -1, M,
+                  d.mlm = NULL, signvec = rep_len(1, M)) {
+    is.D <- length(d.mlm) > 0
+    use.refLevel <- if ( refLevel < 0) M+1 else refLevel  # unneeded
+    if (is.D) {  # Further error checking
+      if (any(d.mlm == use.refLevel) || any(d.mlm > M+1))
+       stop("bad input for argument 'd.mlm'")
+    }
+    phat <- if ((refLevel < 0) || (refLevel == M+1)) {
+      if (is.D) cbind(care.exp(eta), 1.0) else
+                care.exp2(cbind(eta, 0.0))
+    } else if ( refLevel == 1) {
+      if (M > 1) {
+        if (is.D) cbind(1.0, care.exp(eta)) else
+                  care.exp2(cbind(0.0, eta))
+      } else {  # M == 1
+        if (is.D) cbind(1.0, care.exp(eta)) else
+                  care.exp2(cbind(0.0, eta))
+      }
+    } else {
+      etamat <- cbind(eta[, 1:( refLevel - 1), drop = FALSE],
+                      0.0,
+                      eta[, ( refLevel ):M, drop = FALSE])
+      if (is.D) care.exp(etamat) else care.exp2(etamat)
+    }
+    if (is.D) {
+       phat[, d.mlm] <- 1 / phat[, d.mlm]
+    }
+
+    if (any(signvec < 0)) {
+      ind.d <- which(signvec < 0)
+      tmpmat <- phat
+      tmpmat[, ind.d] <- (-tmpmat[, ind.d])
+      if (any((rSp <- rowSums(tmpmat)) < 0))
+        warning("negative probabilities! Too much deflation?")
+    } else {
+      rSp <- rowSums(phat)
+    }
+    ans <- phat / rSp
+    colnames(ans) <- NULL  # Safest for now
+    ans
+  }  # foo
+
+
+
+    use.refLevel <- if ( refLevel < 0) M+1 else refLevel
+    pmone <- rep_len(1, M + 1)
+    if (length(d.mlm)) {
+      if (any(d.mlm == use.refLevel))
+        stop("cannot deflate the baseline reference level")
+      pmone[d.mlm] <- -1
+    }
+    signvec <- pmone
+
+
+  if (inverse) {
+    use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
+    switch(as.character(deriv),
+      "0" = {
+              foo(theta, refLevel,  # refLevel, not use.refLevel
+                  M = M, d.mlm = d.mlm, signvec = signvec)
+            },
+      "1" = if (all.derivs) {
+              index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+              theta <- theta[, -use.refLevel, drop = FALSE]  # n x M
+              wz <- -theta[, index$row, drop = FALSE] *
+                     theta[, index$col, drop = FALSE]
+              wz[, 1:M] <- wz[, 1:M] + theta
+              wz
+            } else {
+              theta[, -use.refLevel,  drop = FALSE] *
+              theta[,  use.refLevel] / (
+              theta[, -use.refLevel,  drop = FALSE] +
+              theta[,  use.refLevel])
+            },
+      "2" = (theta*(1-theta)*(1-2*theta))[, -use.refLevel,
+                                          drop = FALSE],
+      "3" = {
+              temp1 <- theta * (1 - theta)
+             (temp1 * (1 - 6 * temp1))[, -use.refLevel,
+                                       drop = FALSE]
+            },
+      stop("argument 'deriv' unmatched"))
+  } else {  # Not inverse below here ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+    switch(as.character(deriv),
+           "0" = {
+      ans <- if (refLevel < 0) {
+        log(theta[, -ncol(theta)] / theta[, ncol(theta)])
+      } else {
+        use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
+        log(theta[, -( use.refLevel )] / theta[, use.refLevel ])
+      }
+
+      if (length(d.mlm) > 0 && any(signvec[-use.refLevel] < 0)) {
+        ind.d <- which(signvec[-use.refLevel] < 0)
+        ans[, ind.d] <- (-ans[, ind.d])
+      }
+      colnames(ans) <- NULL  # Safest for now
+      ans
+      },
+      "1" = care.exp(-log(theta) - log1p(-theta)),
+      "2" = (2 * theta - 1) / care.exp(2*log(theta) + 2*log1p(-theta)),
+      "3" = {
+        temp1 <- care.exp(log(theta) + log1p(-theta))
+        2 * (1 - 3 * temp1) / temp1^3
+      },
+      stop("argument 'deriv' unmatched"))
+  }
+}  # multilogitlink
 
 
 
@@ -85,6 +347,7 @@ TypicalVGAMlink <-
 
 
 
+
 care.exp <-
   function(x,
            thresh = -log( sqrt( .Machine$double.xmin ) )) {
@@ -102,8 +365,6 @@ care.exp2 <- function(x) {
     x <- cbind(x)
   exp(x - x[cbind(1:NROW(x), max.col(x))])
 }
-
-
 
 
 
@@ -140,14 +401,22 @@ care.exp2 <- function(x) {
            "2" = theta,
            "3" = theta,
            "4" = theta,
+           "5" = theta,
+           "6" = theta,
+           "7" = theta,
+           "8" = theta,
            stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
        "0" = log(theta),
-       "1" =  1 / theta,
-       "2" = -1 / theta^2,
-       "3" =  2 / theta^3,
-       "4" = -6 / theta^4,
+       "1" =     1 / theta,
+       "2" =    -1 / theta^2,
+       "3" =     2 / theta^3,
+       "4" =    -6 / theta^4,
+       "5" =    24 / theta^5,
+       "6" =  -120 / theta^6,
+       "7" =   720 / theta^7,
+       "8" = -5040 / theta^8,
        stop("argument 'deriv' unmatched"))
   }
 }  # loglink
@@ -336,14 +605,28 @@ care.exp2 <- function(x) {
         "2" = theta * (1 - theta) * (1 - 2 * theta),
         "3" = (1 - 6 * theta * (1 - theta)) *
               theta * (1 - theta),
+        "4" = {
+  iD1 <- Recall(theta, deriv = 1, inverse = TRUE)
+  iD2 <- Recall(theta, deriv = 2, inverse = TRUE)
+  iD3 <- Recall(theta, deriv = 3, inverse = TRUE)
+  DD1 <- Recall(theta, deriv = 1, inverse = FALSE)
+  DD2 <- Recall(theta, deriv = 2, inverse = FALSE)
+  DD3 <- Recall(theta, deriv = 3, inverse = FALSE)
+  DD4 <- Recall(theta, deriv = 4, inverse = FALSE)
+  (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
+              6 * (iD1^3) * DD2 * DD3 -
+              4 * iD2 * DD3 - (iD1^2) * DD4)
+        },
            stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
-       "0" = qlogis(theta),
-       "1" = 1 / (theta * (1 - theta)),
-       "2" = (2 * theta - 1) / (theta * (1 - theta))^2,
-       "3" = 2 * (1 - 3 * theta * (1 - theta)) / (theta * (1 - theta))^3,
-       stop("argument 'deriv' unmatched"))
+     "0" = qlogis(theta),
+     "1" = 1 / (theta * (1 - theta)),
+     "2" = (2 * theta - 1) / (theta * (1 - theta))^2,
+     "3" = 2 * (1 - 3 * theta * (1 - theta)) / (theta * (1 - theta))^3,
+     "4" = -6 * (1 - 2 * theta) *
+           (1 - 2 * theta * (1 - theta)) / (theta * (1 - theta))^4,
+     stop("argument 'deriv' unmatched"))
   }
 }  # logitlink
 
@@ -375,8 +658,8 @@ care.exp2 <- function(x) {
            "1" = (theta * log(theta)),
            "2" = { junk <- log(theta)
                    theta  * junk * (1 + junk) },
-           "3" = { Junk <- theta * log(theta)
-                   Junk * ((1 + log(theta))^2 + Junk / theta)
+           "3" = { Junk3 <- theta * log(theta)
+                   Junk3 * ((1 + log(theta))^2 + Junk3 / theta)
       },
            stop("argument 'deriv' unmatched"))
   } else {
@@ -386,8 +669,8 @@ care.exp2 <- function(x) {
            "2" = { junk <- log(theta)
                    -(1 + junk) / (theta * junk)^2
            },
-           "3" = { Junk <- theta * log(theta)
-                   (2 * (1 + log(theta))^2 / Junk - 1 / theta) / Junk^2
+           "3" = { Junk3 <- theta * log(theta)
+                   (2 * (1 + log(theta))^2 / Junk3 - 1 / theta) / Junk3^2
                  },
            stop("argument 'deriv' unmatched"))
   }
@@ -484,26 +767,41 @@ care.exp2 <- function(x) {
   if (inverse) {
     switch(as.character(deriv),
            "0" = { -expm1(-exp(theta)) },
-           "1" = -((1 - theta) * log1p(-theta)),
+           "1" = { ans5 <- (-(1 - theta) * log1p(-theta))
+                 ans5[1 - theta == 0] <- 0  # 20210522; limit
+                 ans5
+                 },
            "2" = { junk <- log1p(-theta)
-                   -(1 - theta) * (1 + junk) * junk },
+                 ans6 <- -(1 - theta) * (1 + junk) * junk
+                 ans6[1 - theta == 0] <- 0  # 20210522; limit
+                 ans6
+           },
            "3" = {
              junk <- log1p(-theta)
-             Junk <- (1 - theta) * junk
-             -Junk * (Junk / (1 - theta) + (1 + junk)^2)
+             Junk2 <- (1 - theta) * junk
+             ans7 <- -Junk2 * (Junk2 / (1 - theta) + (1 + junk)^2)
+             ans7[1 - theta == 0] <- 0  # 20210524; limit
+             ans7
            },
            stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
            "0" = log(-log1p(-theta)),
-           "1" = -1 / ((1 - theta) * log1p(-theta)),
+           "1" = { ans5 <- -1 / ((1 - theta) * log1p(-theta))
+                 ans5[1 - theta == 0] <- Inf  # 20210522; limit
+                 ans5
+                 },
            "2" = {  junk <- log1p(-theta)
-               -(1 + junk) / ((1 - theta) * junk)^2
-           },
+                 ans6 <- -(1 + junk) / ((1 - theta) * junk)^2
+                 ans6[1 - theta == 0] <- Inf  # 20210522; limit
+                 ans6
+                 },
            "3" = {
              junk <- log1p(-theta)
-             Junk <- (1 - theta) * junk
-             (1 / (1 - theta) - 2 * (1 + junk)^2 / Junk) / Junk^2
+             Junk3 <- (1 - theta) * junk
+             ans7 <- (1 / (1 - theta) - 2 * (1 + junk)^2 / Junk3) / Junk3^2
+             ans7[1 - theta == 0] <- Inf  # 20210524; limit
+             ans7
            },
            stop("argument 'deriv' unmatched"))
   }
@@ -547,22 +845,25 @@ care.exp2 <- function(x) {
                  inverse = FALSE, deriv = deriv)
          },
            "2" = {  # 2nd deriv
-        Junk <- qnorm(theta)
-        ans <- -Junk * dnorm(Junk)
-        if (is.vector(theta)) ans else
+        Junk2 <- qnorm(theta)
+        ans6 <- -Junk2 * dnorm(Junk2)
+        ans6[1 - theta == 0] <- 0  # 20210525; limit
+        if (is.vector(theta)) ans6 else
         if (is.matrix(theta)) {
-          dim(ans) <- dim(theta)
-          ans
+          dim(ans6) <- dim(theta)
+          ans6
         } else {
           warning("can only handle vectors and matrices;",
                   " converting to vector")
-          ans
+          ans6
         }
       },
            "3" = {
-             Junk <- qnorm(theta)
-             junk <- dnorm(Junk)
-             junk * (Junk^2 - 1)
+             Junk3 <- qnorm(theta)
+             junk <- dnorm(Junk3)
+             ans7 <- junk * (Junk3^2 - 1)
+             ans7[1 - theta == 0] <- 0  # 20210525; limit
+             ans7
            },
            stop("argument 'deriv' unmatched"))
   } else {
@@ -570,7 +871,7 @@ care.exp2 <- function(x) {
            "0" = {
         ans <- qnorm(theta)
         if (is.matrix(theta))
-            dim(ans) <- dim(theta)
+          dim(ans) <- dim(theta)
         ans
      },
            "1" = {  # 1st deriv
@@ -583,9 +884,9 @@ care.exp2 <- function(x) {
        }
       },
            "2" = {  # 2nd deriv
-        Junk <- qnorm(theta)
+        Junk2 <- qnorm(theta)
 
-        ans <- Junk / (dnorm(Junk))^2
+        ans <- Junk2 / (dnorm(Junk2))^2
 
         if (is.vector(theta)) ans else
         if (is.matrix(theta)) {
@@ -598,9 +899,9 @@ care.exp2 <- function(x) {
         }
       },
            "3" = {
-             Junk <- qnorm(theta)
-             junk <- dnorm(Junk)
-             (1 + 2 * Junk^2) / junk^3
+             Junk3 <- qnorm(theta)
+             junk <- dnorm(Junk3)
+             (1 + 2 * Junk3^2) / junk^3
            },
            stop("argument 'deriv' unmatched"))
   }
@@ -899,183 +1200,6 @@ care.exp2 <- function(x) {
            stop("argument 'deriv' unmatched"))
     }
 }  # fisherzlink
-
-
-
-
-
-
- multilogitlink <-
-  function(theta,
-           refLevel = "(Last)",
-           M = NULL,  # stop("argument 'M' not specified"),
-           whitespace = FALSE,
-           bvalue = NULL,
-           inverse = FALSE, deriv = 0,
-           all.derivs = FALSE,
-           short = TRUE, tag = FALSE) {
-
-
-
-
-  fillerChar <- ifelse(whitespace, " ", "")
-
-  if (length(refLevel) != 1)
-    stop("the length of argument 'refLevel' must be one")
-
-  if (is.character(refLevel)) {
-    if (refLevel != "(Last)")
-      stop('if a character, refLevel must be "(Last)"')
-    refLevel <- -1
-  } else
-  if (is.factor(refLevel)) {
-    if (is.ordered(refLevel))
-      warning("argument 'refLevel' is from an ordered factor")
-    refLevel <- as.character(refLevel) == levels(refLevel)
-    refLevel <- (seq_along(refLevel))[refLevel]
-    if (!is.Numeric(refLevel, length.arg = 1,
-                    integer.valued = TRUE, positive = TRUE))
-      stop("could not coerce 'refLevel' into a single positive integer")
-  } else
-  if (!is.Numeric(refLevel, length.arg = 1,
-                  integer.valued = TRUE))
-    stop("'refLevel' must be a single (positive?) integer")
-
-
-
-
-  if (is.character(theta)) {
-    is.M <- is.finite(M) && is.numeric(M)
-    string <- if (short) {
-        paste("multilogitlink(", theta, ")", sep = "")
-    } else {
-        theta <- as.char.expression(theta)
-
-         if (refLevel < 0) {
-           ifelse(whitespace,
-             paste("log(", theta, "[,j] / ",
-                   theta, "[,",
-                   ifelse(is.M, M+1, "M+1"),
-                   "]), j = 1:",
-                   ifelse(is.M, M, "M"), sep = ""),
-             paste("log(", theta, "[,j]/",
-                   theta, "[,",
-                   ifelse(is.M, M+1, "M+1"),
-                   "]), j=1:",
-                   ifelse(is.M, M, "M"), sep = ""))
-         } else {
-             if (refLevel == 1) {
-               paste("log(", theta, "[,", "j]",
-                   fillerChar, "/", fillerChar,
-                     "", theta, "[,", refLevel, "]), j",
-                     fillerChar, "=", fillerChar, "2:",
-                   ifelse(is.M, (M+1), "(M+1)"),
-                     sep = "")
-             } else {
-               paste("log(", theta, "[,", "j]", fillerChar, "/",
-                     "", theta, "[,", refLevel, "]), j",
-                     fillerChar, "=", fillerChar,
-                     "c(1:", refLevel-1, ",",
-                     fillerChar,
-                     refLevel+1, ":",
-                     ifelse(is.M, (M+1), "(M+1)"),
-                     ")", sep = "")
-             }
-         }
-    }
-    if (tag)
-      string <- paste("Multinomial logit link:", string)
-    return(string)
-  }
-
-
-
-  M.orig <- M
-  M <- NCOL(theta) - !(inverse && deriv == 0)
-  if (M < 1)
-    ifelse(inverse,
-           stop("argument 'eta' should have at least one column"),
-           stop("argument 'theta' should have at least two columns"))
-  if (is.numeric(M.orig) && M != M.orig) {
-    warning("argument 'M' does not seem right but using it")
-    M <- M.orig
-  }
-
-
-  if (!inverse && length(bvalue))
-    theta[theta <= 0.0] <- bvalue
-  if (!inverse && length(bvalue))
-    theta[theta >= 1.0] <- 1 - bvalue
-
-
-
-  foo <- function(eta, refLevel = -1, M) {
-    phat <- if ((refLevel < 0) || (refLevel == M+1)) {
-      care.exp2(cbind(eta, 0.0))
-    } else if ( refLevel == 1) {
-      care.exp2(cbind(0.0, eta))
-    } else {
-      use.refLevel <- if ( refLevel < 0) M+1 else refLevel
-      etamat <- cbind(eta[, 1:( refLevel - 1), drop = FALSE],
-                      0.0,
-                      eta[, ( refLevel ):M, drop = FALSE])
-      care.exp2(etamat)
-    }
-    ans <- phat / rowSums(phat)
-    colnames(ans) <- NULL
-    ans
-  }  # foo
-
-
-  if (inverse) {
-    use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
-    switch(as.character(deriv),
-      "0" = {
-      foo(theta, refLevel, M = M)  # log(theta[, -jay] / theta[, jay])
-            },
-      "1" = if (all.derivs) {
-              index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-              theta <- theta[, -use.refLevel, drop = FALSE]  # n x M
-              wz <- -theta[, index$row, drop = FALSE] *
-                     theta[, index$col, drop = FALSE]
-              wz[, 1:M] <- wz[, 1:M] + theta
-              wz
-            } else {
-              theta[, -use.refLevel,  drop = FALSE] *
-              theta[,  use.refLevel] / (
-              theta[, -use.refLevel,  drop = FALSE] +
-              theta[,  use.refLevel])
-            },
-      "2" = (theta*(1-theta)*(1-2*theta))[, -use.refLevel,  drop = FALSE],
-      "3" = {
-              temp1 <- theta * (1 - theta)
-              (temp1 * (1 - 6 * temp1))[, -use.refLevel,  drop = FALSE]
-            },
-      stop("argument 'deriv' unmatched"))
-  } else {
-    switch(as.character(deriv),
-           "0" = {
-      ans <- if (refLevel < 0) {
-        log(theta[, -ncol(theta)] / theta[, ncol(theta)])
-      } else {
-        use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
-        log(theta[, -( use.refLevel )] / theta[, use.refLevel ])
-      }
-      colnames(ans) <- NULL
-      ans
-      },
-      "1" = care.exp(-log(theta) - log1p(-theta)),
-      "2" = (2 * theta - 1) / care.exp(2*log(theta) + 2*log1p(-theta)),
-      "3" = {
-        temp1 <- care.exp(log(theta) + log1p(-theta))
-        2 * (1 - 3 * temp1) / temp1^3
-      },
-      stop("argument 'deriv' unmatched"))
-  }
-}  # multilogitlink
-
-
-
 
 
 
@@ -2070,7 +2194,7 @@ warning("20150711; this function has not been updated")
 
 
 
-linkfun.vglm <- function(object, earg = FALSE, ...) {
+ linkfunvlm <- function(object, earg = FALSE, ...) {
   if (!any(slotNames(object) == "extra"))
     stop("cannot access the 'extra' slot of the object")
   if (!any(slotNames(object) == "misc"))
@@ -2096,18 +2220,19 @@ linkfun.vglm <- function(object, earg = FALSE, ...) {
   } else {
     if (earg) list(link = LINKS2, earg = EARGS2) else LINKS2
   }
-}  # linkfun.vglm
+}  # linkfunvlm
 
 
 
 if (!isGeneric("linkfun"))
   setGeneric("linkfun", function(object, ...)
-             standardGeneric("linkfun"))
+      standardGeneric("linkfun"),
+      package = "VGAM")
 
 
 
-setMethod("linkfun", "vglm", function(object, ...)
-    linkfun.vglm(object, ...))
+setMethod("linkfun", "vlm", function(object, ...)
+    linkfunvlm(object, ...))
 
 
 

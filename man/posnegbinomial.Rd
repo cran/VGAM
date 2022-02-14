@@ -191,7 +191,7 @@ Set \code{trace = TRUE} to monitor convergence.
 }
 
 \seealso{
-  \code{\link{Gaitnbinom}},
+  \code{\link{gaitdnbinomial}},
   \code{\link{pospoisson}},
   \code{\link{negbinomial}},
   \code{\link{zanegbinomial}},
@@ -202,6 +202,8 @@ Set \code{trace = TRUE} to monitor convergence.
   \code{\link{simulate.vlm}}.
 
 
+
+% \code{\link{Gaitdnbinom}},
 % \code{\link{rposnegbin}},
 % \code{\link{gatnbinomial.mlm}},
 % \code{\link[MASS]{rnegbin}}.
@@ -212,8 +214,8 @@ Set \code{trace = TRUE} to monitor convergence.
 \examples{
 pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata,
-  y1 = rgaitnbinom(nn, exp(1), munb.p = exp(0+2*x2), truncate = 0),
-  y2 = rgaitnbinom(nn, exp(3), munb.p = exp(1+2*x2), truncate = 0))
+  y1 = rgaitdnbinom(nn, exp(1), munb.p = exp(0+2*x2), truncate = 0),
+  y2 = rgaitdnbinom(nn, exp(3), munb.p = exp(1+2*x2), truncate = 0))
 fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 dim(depvar(fit))  # Using dim(fit@y) is not recommended
@@ -222,7 +224,7 @@ dim(depvar(fit))  # Using dim(fit@y) is not recommended
 # Another artificial data example
 pdata2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
 pdata2 <- transform(pdata2,
-                    y3 = rgaitnbinom(nn, size, munb.p = munb, truncate = 0))
+                    y3 = rgaitdnbinom(nn, size, munb.p = munb, truncate = 0))
 with(pdata2, table(y3))
 fit <- vglm(y3 ~ 1, posnegbinomial, data = pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
@@ -237,7 +239,7 @@ fit <- vglm(ofreq ~ 1, posnegbinomial, weights = species, data = corbet)
 coef(fit, matrix = TRUE)
 Coef(fit)
 (khat <- Coef(fit)["size"])
-pdf2 <- dgaitnbinom(with(corbet, ofreq), khat, munb.p = fitted(fit), truncate = 0)
+pdf2 <- dgaitdnbinom(with(corbet, ofreq), khat, munb.p = fitted(fit), truncate = 0)
 print(with(corbet, cbind(ofreq, species, fitted = pdf2*sum(species))), dig = 1)
 \dontrun{ with(corbet,
 matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,

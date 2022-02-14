@@ -112,18 +112,23 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
 
 
 }
-%\references{
+\references{
 
 
-%Yee, T. W. (2018).
-%On the Hauck-Donner effect in Wald tests:
-%Detection, and parameter space characterization
-%(\emph{under review}).
+Yee, T. W. (2022).
+On the Hauck-Donner effect in Wald tests:
+Detection, tipping points and parameter space characterization.
+\emph{Journal of the American Statistical Association}, in press.
 
 
 
+Yee, T. W. (2021).
+Some new results concerning the Hauck-Donner effect.
+\emph{Manuscript in preparation}.
 
-%}
+
+
+}
 \author{ Thomas W. Yee.  }
 
 %\section{Warning }{
@@ -179,6 +184,7 @@ cbind(severity = ansm$sev,
 % R documentation directory.
 \keyword{models}
 \keyword{regression}
+\keyword{htest}
 
 
 

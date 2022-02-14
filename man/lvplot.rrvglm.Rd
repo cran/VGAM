@@ -62,7 +62,8 @@ lvplot.rrvglm(object,
   \item{Apch}{ Either an integer specifying a symbol or a single character
       to be used as the default in plotting points.
       See \code{\link[graphics]{par}}.
-      The \code{pch} argument can be of length \eqn{M}, the number of species. }
+      The \code{pch} argument can be of length \eqn{M},
+      the number of species. }
   \item{Clabels}{ Character vector to label \bold{C}. Must be of length
       \eqn{p2}. }
   \item{Cadj}{ Justification of text strings for labelling \bold{C}.
@@ -75,9 +76,10 @@ lvplot.rrvglm(object,
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
   \item{Clwd}{ Line width of the arrows representing \bold{C}.
   See the \code{lwd} argument of \code{\link[graphics]{par}}. }
-  \item{chull.arg}{ Logical. Plot the convex hull of the scores? This is
-   done for each group (see the \code{group} argument). }
-  \item{ccex}{ Numeric. Character expansion of the labelling of the convex hull.
+\item{chull.arg}{ Logical. Plot the convex hull of the scores?
+  This is done for each group (see the \code{group} argument). }
+ \item{ccex}{ Numeric.
+   Character expansion of the labelling of the convex hull.
   See the \code{cex} argument of \code{\link[graphics]{par}}. }
   \item{ccol}{ Line color of the convex hull.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
@@ -85,11 +87,14 @@ lvplot.rrvglm(object,
   See the \code{lty} argument of \code{\link[graphics]{par}}. }
   \item{clwd}{ Line width of the convex hull.
   See the \code{lwd} argument of \code{\link[graphics]{par}}. }
-  \item{spch}{ Either an integer specifying a symbol or a single character
+\item{spch}{ Either an integer specifying a symbol or
+  a single character
       to be used as the default in plotting points.
       See \code{\link[graphics]{par}}.
-      The \code{spch} argument can be of length \eqn{M}, the number of species. }
-  \item{scex}{ Numeric. Character expansion of the labelling of the scores.
+      The \code{spch} argument can be of length \eqn{M},
+      the number of species. }
+    \item{scex}{ Numeric. Character expansion of the
+      labelling of the scores.
   See the \code{cex} argument of \code{\link[graphics]{par}}. }
   \item{scol}{ Line color of the arrows representing \bold{C}.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
@@ -103,7 +108,8 @@ lvplot.rrvglm(object,
  }
 }
 \details{
-  For RR-VGLMs, a \emph{biplot} and a \emph{latent variable} plot coincide.
+  For RR-VGLMs, a \emph{biplot} and a \emph{latent variable}
+  plot coincide.
   In general, many of the arguments starting with
   ``A'' refer to \bold{A} (of length \eqn{M}),
   ``C'' to \bold{C} (of length \eqn{p2}),
@@ -133,9 +139,9 @@ Reduced-rank vector generalized linear models.
 }
 \author{ Thomas W. Yee }
 \note{
-%  Further work to be done: This function could be hooked up
-%  to the normalization code of \code{\link{rrvglm}} to allow uncorrelated
-%  latent variables etc.
+%Further work to be done: This function could be hooked up
+%to the normalization code of \code{\link{rrvglm}} to allow
+%uncorrelated latent variables etc.
 
 
    The functions \code{\link{lvplot.rrvglm}} and
@@ -159,8 +165,9 @@ Reduced-rank vector generalized linear models.
 }
 \examples{
 nn <- nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
-pneumo <- transform(pneumo, slet = scale(log(exposure.time)),
-                              x1 = rnorm(nn), x2 = rnorm(nn), x3 = rnorm(nn))
+pneumo <-
+  transform(pneumo, slet = scale(log(exposure.time)),
+                    x1 = rnorm(nn), x2 = rnorm(nn), x3 = rnorm(nn))
 fit <- rrvglm(cbind(normal, mild, severe) ~ slet + x1 + x2 + x3,
               multinomial, data = pneumo, Rank = 2,
               Corner = FALSE, Uncorrel = TRUE)

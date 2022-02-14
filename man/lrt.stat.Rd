@@ -154,6 +154,7 @@ summary(fit, lrt0 = TRUE)  # Easy way to get it
 % R documentation directory.
 \keyword{models}
 \keyword{regression}
+\keyword{htest}
 
 
 

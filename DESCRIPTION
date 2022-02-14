@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 1.1-5
-Date: 2021-01-13
+Version: 1.1-6
+Date: 2022-02-02
 Title: Vector Generalized Linear and Additive Models
 Authors@R: c(person("Thomas", "Yee", role = c("aut", "cre"),
                     email = "t.yee@auckland.ac.nz"),
@@ -22,7 +22,7 @@ Description: An implementation of about 6 major classes of
     Linear and Additive Models: With an Implementation in R"
     (Yee, 2015) <DOI:10.1007/978-1-4939-2818-7> gives details of
     the statistical framework and the package. Currently only
-    fixed-effects models are implemented. Many (150+) models and
+    fixed-effects models are implemented. Many (100+) models and
     distributions are estimated by maximum likelihood estimation
     (MLE) or penalized MLE. The other classes are RR-VGLMs
     (reduced-rank VGLMs), quadratic RR-VGLMs, reduced-rank VGAMs,
@@ -38,6 +38,6 @@ NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2021-01-12 22:59:39 UTC; tyee001
+Packaged: 2022-02-02 08:17:53 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2021-01-14 06:20:05 UTC
+Date/Publication: 2022-02-14 10:10:20 UTC

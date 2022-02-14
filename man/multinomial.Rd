@@ -3,15 +3,20 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Multinomial Logit Model }
 \description{
-  Fits a multinomial logit model to a (preferably unordered) factor
-  response.
+  Fits a multinomial logit model (MLM) to a (preferably unordered)
+  factor response.
+% The deflated--altered MLM (DAML model, or DAMLM) may also be
+% fitted.
 
+  
 }
 \usage{
 multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
-            refLevel = "(Last)", whitespace = FALSE)
+            refLevel = "(Last)", imethod = 1, imu = NULL,
+            byrow.arg = FALSE, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
+%           refLevel = "(Last)", d.mlm = NULL, imethod = 1,
 \arguments{
 
   \item{zero}{
@@ -31,7 +36,12 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
   }
   \item{nointercept, whitespace}{
-  See \code{\link{CommonVGAMffArguments}} for more details.
+  See \code{\link{CommonVGAMffArguments}} for details.
+
+
+  }
+  \item{imu, byrow.arg}{
+  See \code{\link{CommonVGAMffArguments}} for details.
 
 
   }
@@ -40,7 +50,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   or (3) a character string.
   If inputted as an integer then it specifies which
   column of the response matrix is the reference or baseline level.
-  The default is the last one (the \eqn{(M+1)}th one).
+  The default is the \emph{last} one (the \eqn{(M+1)}th one).
   If used, this argument will be usually assigned the value \code{1}.
   If inputted as a value of a factor then beware of missing values
   of certain levels of the factor
@@ -51,16 +61,57 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   equal to (A) one of the levels of the factor response, else (B) one
   of the column names of the matrix response of counts;
   e.g.,
-  \code{vglm(cbind(normal, mild, severe) ~ let, multinomial(refLevel = "severe"), data = pneumo)}
+  \code{vglm(cbind(normal, mild, severe) ~ let,}
+  \code{multinomial(refLevel = "severe"), data = pneumo)}
   if it was (incorrectly because the response is ordinal)
   applied to the \code{\link{pneumo}} data set.
   Another example is
-  \code{vglm(ethnicity ~ age, multinomial(refLevel = "European"), data = xs.nz)}
+  \code{vglm(ethnicity ~ age,}
+  \code{multinomial(refLevel = "European"), data = xs.nz)}
   if it was applied to the \code{\link[VGAMdata]{xs.nz}} data set.
 
 
 
   }
+  \item{imethod}{
+    Choosing 2 will use the mean sample proportions of each
+    column of the response matrix, which corresponds to
+    the MLEs for intercept-only models.
+    See \code{\link{CommonVGAMffArguments}} for more details.
+
+
+
+%    Initial values for the DAMLM often need to be better than
+%    the ordinary MLM, hence choosing various values of
+%    this argument is encouraged.
+
+
+
+  }
+% \item{d.mlm}{
+%   This argument helps implement GAITD regression by fitting
+%   the DAMLM.
+%   The argument is the same as \code{\link{gaitdpoisson}}
+%   and is the set of deflated values (levels)
+%   from \{1,2,\ldots,\eqn{M+1}\}.
+%   The ordinary MLM may be called the AMLM because the
+%   probabilities are modelled as \emph{altered} values.
+
+    
+
+
+%   The second argument may be assigned higher values if
+%   necessary in order to ensure that the probabilities
+%   are positive---the vector is recycled to \code{length(d.mlm)}.
+%   If the baseline group is chosen to be the one with the
+%   largest  probability or probabilities
+%   then \code{eta.d.max = 0} should suffice,
+%   however, it might be necessary to increase its value
+%   slightly, e.g., by 1 or 2 maybe.
+
+
+
+% }
 }
 \details{
   In this help file the response \eqn{Y} is assumed to be
@@ -69,10 +120,12 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   \eqn{\eta_j}{eta_j}.
 
 
+  
   The default model can be written
   \deqn{\eta_j = \log(P[Y=j]/ P[Y=M+1])}{%
          eta_j =  log(P[Y=j]/ P[Y=M+1])}
-  where \eqn{\eta_j}{eta_j} is the \eqn{j}th linear/additive predictor.
+  where \eqn{\eta_j}{eta_j} is the \eqn{j}th
+  linear/additive predictor.
   Here, \eqn{j=1,\ldots,M}, and \eqn{\eta_{M+1}}{eta_{M+1}}
   is 0 by definition. That is, the last level of the factor,
   or last column of the response matrix, is taken as the
@@ -81,6 +134,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   be changed with the \code{refLevel} argument.
 
 
+  
   In almost all the literature, the constraint matrices
   associated with this family of models are known.
   For example, setting \code{parallel = TRUE} will make all
@@ -108,28 +162,71 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
 
 
+The above details correspond to the ordinary MLM where
+all the levels are \emph{altered} (in the terminology
+of GAITD regression).
+
+
+%The \eqn{j}th linear/additive predictor is different
+%from above if level \eqn{j} is deflated: it is negated
+%so that increasing the linear/additive predictor results
+%in a decreasing probability.
+%Thus the DAMLM simply has a sign change for those levels
+%that are deflated.
+
+
+
+
+
+%DAMLMs require skill to fit because handling
+%data that is extreme (high or low fitted values)
+%means that \code{eta.d.max} may need to be increased.
+%It pays to fit an intercept-only model first and to
+%monitor convergence carefully.
+%One disadvantage of DAMLMs is that the regression
+%coefficients depend on \code{eta.d.max} so there is
+%no unique solution.
+
+
+
+
 }
 \value{
   An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as \code{\link{vglm}},
-  \code{\link{rrvglm}}
-  and \code{\link{vgam}}.
+  \code{\link{rrvglm}} and \code{\link{vgam}}.
 
 
 }
 \references{
 
+
+
 Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
-\url{https://www.jstatsoft.org/v32/i10/}.
+\doi{10.18637/jss.v032.i10}.
+
+
+
+% \url{https://www.jstatsoft.org/article/view/v032i10/}.
+% \url{https://www.jstatsoft.org/v32/i10/}.
+
 
 
 Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
+
+
+
+Yee, T. W. and Ma, C. (2021).
+Generally--altered, --inflated, --truncated and --altered
+count regression.
+\emph{In preparation}.
+
 
 
 McCullagh, P. and Nelder, J. A. (1989).
@@ -156,7 +253,8 @@ New York, USA: Springer-Verlag.
 
 Anderson, J. A. (1984).
 Regression and ordered categorical variables.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society, Series B,
+  Methodological},
 \bold{46}, 1--30.
 
 
@@ -235,6 +333,10 @@ Cambridge University Press.
   No check is made to verify that the response is nominal.
 
 
+% Using \code{d.mlm} may not work with other options,
+% e.g., the Hauck-Donner effect detection using derivatives.
+
+
   See \code{\link{CommonVGAMffArguments}} for more warnings.
 
 
@@ -251,7 +353,8 @@ Cambridge University Press.
     \code{\link{rrvglm}},
     \code{\link{fill1}},
     \code{\link[stats:Multinom]{Multinomial}},
-    \code{\link{Gaitpois}},
+    \code{\link{gaitdpoisson}},
+    \code{\link{Gaitdpois}},
     \code{\link[datasets]{iris}}.
 
 
@@ -273,7 +376,7 @@ data(iris)
 coef(fit, matrix = TRUE) }
 
 # Example 2a: a simple example
-ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))  # Counts
+ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))
 fit <- vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
 fit@prior.weights   # NOT recommended for extraction of prior weights

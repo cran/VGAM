@@ -71,8 +71,8 @@ rcqo(n, p, S, Rank = 1,
   \item{eq.tolerances}{
     Logical. Does each species have the
     same tolerance? If \code{TRUE} then the common value is 1 along
-    every latent variable, i.e., all species' tolerance matrices are the
-    order-\eqn{R} identity matrix.
+    every latent variable, i.e., all species' tolerance matrices
+    are the order-\eqn{R} identity matrix.
 
 
   }
@@ -94,8 +94,9 @@ rcqo(n, p, S, Rank = 1,
     The species have a maximum
     between \code{lo.abundance} and \code{hi.abundance}. That is,
     at their optimal environment, the mean abundance of each
-    species is between the two componentwise values. If \code{eq.maximums}
-    is \code{TRUE} then \code{lo.abundance} and \code{hi.abundance}
+    species is between the two componentwise values.
+    If \code{eq.maximums} is \code{TRUE} then
+    \code{lo.abundance} and \code{hi.abundance}
     must have the same values.
     If \code{eq.maximums} is \code{FALSE} then the
     logarithm of the maximums are uniformly distributed between
@@ -162,7 +163,8 @@ rcqo(n, p, S, Rank = 1,
     that the resulting species data can be considered very crudely to be
     approximately Poisson distributed.
     They will not integers in general but much easier (less numerical
-    problems) to estimate using something like \code{cqo(..., family="poissonff")}.
+    problems) to estimate using something like
+    \code{cqo(..., family="poissonff")}.
 
   }
   \item{log.arg}{
@@ -285,7 +287,8 @@ rcqo(n, p, S, Rank = 1,
 
   }
   \item{"formula"}{
-    The formula involving the species and environmental variable names.
+    The formula involving the species and environmental
+    variable names.
     This can be used directly in the \code{formula} argument of
     \code{\link{cqo}}.
 

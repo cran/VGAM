@@ -14,7 +14,7 @@
   (GP-1 and GP-2 Parameterizations of the Mean)}
 \description{
   Density, distribution function, quantile function and
-  and random generation
+  random generation
   for two parameterizations (GP-1 and GP-2) of the
   generalized Poisson distribution of the mean.
 

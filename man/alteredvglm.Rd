@@ -1,18 +1,20 @@
 \name{altered}
 \alias{altered}
+\alias{deflated}
 \alias{inflated}
 \alias{truncated}
 \alias{is.altered}
 \alias{is.inflated}
+\alias{is.deflated}
 \alias{is.truncated}
 \title{
-Altered, Inflated and Truncated Values in GAIT Regression
+Altered, Inflated, Truncated and Deflated Values in GAITD Regression
 
 }
 \description{
-  Return the altered, inflated and truncated values
-  in a GAIT regression object,
-  else test whether the model is altered, inflated or truncated
+  Return the altered, inflated, truncated and deflated values
+  in a GAITD regression object,
+  else test whether the model is altered, inflated, truncated or deflated.
 
 
   
@@ -22,6 +24,7 @@ altered(object, \dots)
 inflated(object, \dots)
 truncated(object, \dots)
 is.altered(object, \dots)
+is.deflated(object, \dots)
 is.inflated(object, \dots)
 is.truncated(object, \dots)
 }
@@ -29,7 +32,7 @@ is.truncated(object, \dots)
 \arguments{
   \item{object}{
     an object of class \code{"vglm"}.
-    Currently only a GAIT regression object returns
+    Currently only a GAITD regression object returns
     valid results of these functions.
 
 
@@ -41,7 +44,7 @@ is.truncated(object, \dots)
   }
 }
 \value{
-  Returns one type of `special' sets associated with GAIT regression.
+  Returns one type of `special' sets associated with GAITD regression.
   This is a vector, else a list for truncation.
   All three sets are returned by \code{\link{specialsvglm}}.
 
@@ -51,10 +54,13 @@ is.truncated(object, \dots)
 
 }
 \details{
-  Yee and Ma (2020) propose GAIT regression where values
-  from three disjoint sets are referred to as \emph{special}.
+  Yee and Ma (2021) propose GAITD regression where values
+  from four
+  (or seven since there are parametric and nonparametric forms)
+  disjoint sets are referred to as \emph{special}.
   These extractor functions return one set each;
-  they are the \code{alter}, \code{inflate}, \code{truncate}
+  they are the \code{alter}, \code{inflate}, \code{truncate},
+  \code{deflate}
   (and sometimes \code{max.support})
   arguments from the family function.
 
@@ -71,7 +77,7 @@ is.truncated(object, \dots)
 %}
 \section{Warning}{
   Some of these functions are subject to change.
-  Only family functions beginning with \code{"gait"} will
+  Only family functions beginning with \code{"gaitd"} will
   work with these functions, hence
   \code{\link{zipoisson}} fits will return \code{FALSE} or empty
   values.
@@ -83,10 +89,10 @@ is.truncated(object, \dots)
   \code{\link{vglm}},
   \code{\link{vglm-class}},
   \code{\link{specialsvglm}},
-  \code{\link{gaitpoisson}},
-  \code{\link{gaitlog}},
-  \code{\link{gaitzeta}},
-  \code{\link{Gaitpois}}.
+  \code{\link{gaitdpoisson}},
+  \code{\link{gaitdlog}},
+  \code{\link{gaitdzeta}},
+  \code{\link{Gaitdpois}}.
 
 
 
@@ -95,9 +101,9 @@ is.truncated(object, \dots)
 
 }
 \references{
-Yee, T. W. and Ma, C. (2020).
-Generally--altered, --inflated and --truncated regression,
-with application to heaped and seeped counts.
+Yee, T. W. and Ma, C. (2022).
+Generally--altered, --inflated, --truncated and --deflated
+regression, with application to heaped and seeped data.
 \emph{In preparation}.
 
 
@@ -115,7 +121,7 @@ with application to heaped and seeped counts.
 
 \examples{
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
-fit1 <- vglm(y ~ 1, gaitpoisson(alt.mix = 0),
+fit1 <- vglm(y ~ 1, gaitdpoisson(a.mix = 0),
              data = abdata, weight = w, subset = w > 0)
 specials(fit1)  # All three sets
 altered(fit1)  # Subject to change

@@ -1,7 +1,8 @@
 \name{lms.bcg}
 \alias{lms.bcg}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ LMS Quantile Regression with a Box-Cox transformation to a Gamma Distribution }
+\title{ LMS Quantile Regression with a Box-Cox transformation
+        to a Gamma Distribution }
 \description{
   LMS quantile regression with the Box-Cox transformation
   to the gamma distribution.

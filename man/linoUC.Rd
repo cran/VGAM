@@ -79,20 +79,19 @@ rlino(n, shape1, shape2, lambda = 1)
 
 }
 \examples{
-\dontrun{
-lambda <- 0.4; shape1 <- exp(1.3); shape2 <- exp(1.3)
+\dontrun{  lambda <- 0.4; shape1 <- exp(1.3); shape2 <- exp(1.3)
 x <- seq(0.0, 1.0, len = 101)
 plot(x, dlino(x, shape1 = shape1, shape2 = shape2, lambda = lambda),
      type = "l", col = "blue", las = 1, ylab = "",
-     main = "Blue is density, red is cumulative distribution function",
+     main = "Blue is PDF, orange is the CDF",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 abline(h = 0, col = "blue", lty = 2)
-lines(x, plino(x, shape1 = shape1, shape2 = shape2, l = lambda), col = "red")
+lines(x, plino(x, shape1, shape2, lambda = lambda), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qlino(probs, shape1 = shape1, shape2 = shape2, lambda = lambda)
 lines(Q, dlino(Q, shape1 = shape1, shape2 = shape2, lambda = lambda),
       col = "purple", lty = 3, type = "h")
-plino(Q, shape1 = shape1, shape2 = shape2, l = lambda) - probs  # Should be all 0
+plino(Q, shape1, shape2, lambda = lambda) - probs  # Should be all 0
 }
 }
 \keyword{distribution}

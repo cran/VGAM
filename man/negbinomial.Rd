@@ -557,8 +557,9 @@ Reduced-rank vector generalized linear models with two linear predictors.
 Yee, T. W. (2020).
 The \pkg{VGAM} package for negative binomial regression.
 \emph{Australian \& New Zealand Journal of Statistics},
-\bold{61},
-  in press.
+\bold{62}, 116--131.
+
+
 
 
 
@@ -686,6 +687,7 @@ The \pkg{VGAM} package for negative binomial regression.
 
 \seealso{
   \code{\link[stats]{quasipoisson}},
+  \code{\link{gaitdnbinomial}},
   \code{\link{poissonff}},
   \code{\link{zinegbinomial}},
   \code{\link{negbinomial.size}} (e.g., NB-G),

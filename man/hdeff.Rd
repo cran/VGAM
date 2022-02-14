@@ -14,8 +14,8 @@
 }
 \usage{
 hdeff(object, ...)
-hdeff.vglm(object, derivative = NULL, se.arg = FALSE,
-           subset = NULL, hstep = 0.005, fd.only = FALSE, ...)
+hdeff.vglm(object, derivative = NULL, se.arg = FALSE, subset = NULL,
+           theta0 = 0, hstep = 0.005, fd.only = FALSE, ...)
 hdeff.numeric(object, byrow = FALSE, ...)
 hdeff.matrix(object, ...)
 }
@@ -102,6 +102,21 @@ hdeff.matrix(object, ...)
 
 
   }
+  \item{theta0}{
+    Numeric. Vector recycled to the necessary length which is
+    the number of regression coefficients.
+    The null hypotheses for the regression coefficients are that
+    they equal those respective values, and the alternative
+    hypotheses are all two-sided.
+    It is not recommended that argument \code{subset} be used
+    if a vector of values is assigned here because
+    \code{theta0[subset]} is implied and might not work.
+    
+
+% 20210406
+    
+
+  }
   \item{hstep}{
     Positive numeric and recycled to length 2;
     it is the so-called \emph{step size} when using
@@ -128,6 +143,18 @@ hdeff.matrix(object, ...)
     the derivatives even if an analytical solution has been coded,
     By default, finite-differences will be used
     when an analytical solution has not been implemented.
+
+
+
+% 20211001
+
+
+    It is possible that \code{NA}s are returned.
+    If so, and if \code{fd.only = FALSE}, then a warning
+    is issued and a recursive
+    call is made with \code{fd.only = TRUE}---this is more
+    likely to return an answer without any \code{NA}s.
+
 
 
 %   as the last resort
@@ -282,10 +309,17 @@ Corrigenda: JASA, \bold{75}, 482.
 
 
 
-Yee, T. W. (2018)
+Yee, T. W. (2022)
 On the Hauck-Donner effect in Wald tests:
-Detection, and parameter space characterization
-(\emph{submitted for publication}).
+Detection, tipping points and parameter space characterization,
+\emph{Journal of the American Statistical Association}, in press.
+
+
+
+
+Yee, T. W. (2021).
+Some new results concerning the Hauck-Donner effect.
+\emph{Manuscript in preparation}.
 
 
 
@@ -404,6 +438,7 @@ hdeff(c(t(mymat)), byrow = TRUE)  # Reordering of the data
 % R documentation directory.
 \keyword{models}
 \keyword{regression}
+\keyword{htest}
 
 
 

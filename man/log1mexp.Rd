@@ -6,7 +6,8 @@
   Logarithms with an Unit Offset and Exponential Term
 }
 \description{
-Computes \code{log(1 + exp(x))} and \code{log(1 - exp(-x))} accurately.
+Computes \code{log(1 + exp(x))} and \code{log(1 - exp(-x))}
+accurately.
 
 }
 \usage{
@@ -17,7 +18,8 @@ log1pexp(x)
 \arguments{
   \item{x}{
   A vector of reals (numeric). Complex numbers not allowed since
-  \code{\link[base]{expm1}} and \code{\link[base]{log1p}} do not handle these.
+  \code{\link[base]{expm1}} and \code{\link[base]{log1p}} do not
+  handle these.
 
 
 }
@@ -32,11 +34,13 @@ in value.
 }
 \value{
 
-\code{log1mexp(x)} gives the value of \eqn{\log(1-\exp(-x))}{log(1-exp(-x))}.
+\code{log1mexp(x)} gives the value of
+\eqn{\log(1-\exp(-x))}{log(1-exp(-x))}.
 
 
 
-\code{log1pexp(x)} gives the value of \eqn{\log(1+\exp(x))}{log(1+exp(x))}.
+\code{log1pexp(x)} gives the value of
+\eqn{\log(1+\exp(x))}{log(1+exp(x))}.
 
 
 

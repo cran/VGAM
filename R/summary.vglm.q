@@ -1,6 +1,7 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
+
 
 
 
@@ -119,7 +120,8 @@ summaryvglm <-
 
 
 
-  try.this <- findFirstMethod("summaryvglmS4VGAM", object@family@vfamily)
+  try.this <- findFirstMethod("summaryvglmS4VGAM",
+                              object@family@vfamily)
   if (length(try.this)) {
     new.postslot <-
     summaryvglmS4VGAM(object = object,
@@ -580,12 +582,13 @@ vcov.vlm <- function(object, ...) {
 
 
  vcovvlm <-
-function(object, dispersion = NULL, untransform = FALSE,
-         complete = TRUE) {
+ function(object, dispersion = NULL, untransform = FALSE,
+          complete = TRUE) {
 
 
 
   so <- summaryvlm(object, correlation = FALSE,
+                   presid = FALSE,
                    dispersion = dispersion)
   d <- if (any(slotNames(so) == "dispersion") &&
            is.Numeric(so@dispersion))

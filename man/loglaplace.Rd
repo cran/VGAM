@@ -37,7 +37,8 @@ logitlaplace1(tau = NULL, llocation = "logitlink",
   See \code{\link{Links}} for more choices.
   However, this argument should be left unchanged with
   count data because it restricts the quantiles to be positive.
-  With proportions data  \code{llocation} can be assigned a link such as
+  With proportions data  \code{llocation} can be assigned a link
+  such as
   \code{\link{logitlink}},
   \code{\link{probitlink}},
   \code{\link{clogloglink}},
@@ -63,8 +64,8 @@ logitlaplace1(tau = NULL, llocation = "logitlink",
   }
 % \item{eq.scale}{ Logical.
 %   Should the scale parameters be equal? It is advised to keep
-%   \code{eq.scale = TRUE} unchanged because it does not make sense to
-%   have different values for each \code{tau} value.
+%   \code{eq.scale = TRUE} unchanged because it does not make
+%   sense to have different values for each \code{tau} value.
 % }
 
 
@@ -82,15 +83,17 @@ logitlaplace1(tau = NULL, llocation = "logitlink",
   \item{rep0, rep01}{
   Numeric, positive.
   Replacement values for 0s and 1s respectively.
-  For count data, values of the response whose value is 0 are replaced
-  by \code{rep0}; it avoids computing \code{log(0)}.
+  For count data, values of the response whose value is 0 are
+  replaced by \code{rep0}; it avoids computing \code{log(0)}.
   For proportions data values of the response whose value is 0 or 1
   are replaced by
   \code{min(rangey01[1]/2, rep01/w[y< = 0])} and
   \code{max((1 + rangey01[2])/2, 1-rep01/w[y >= 1])}
-  respectively; e.g., it avoids computing \code{logitlink(0)} or \code{logitlink(1)}.
-  Here, \code{rangey01} is the 2-vector \code{range(y[(y > 0) & (y < 1)])}
-  of the response.
+  respectively;
+  e.g.,
+  it avoids computing \code{logitlink(0)} or \code{logitlink(1)}.
+  Here, \code{rangey01} is the 2-vector
+  \code{range(y[(y > 0) & (y < 1)])} of the response.
 
 
   }
@@ -112,7 +115,8 @@ logitlaplace1(tau = NULL, llocation = "logitlink",
   the asymmetric Laplace distribution (ALD).
   The resulting variants may be suitable for quantile regression
   for count data or sample proportions.
-  For example, a log link applied to count data is assumed to follow an ALD.
+  For example,
+  a log link applied to count data is assumed to follow an ALD.
   Another example is a logit link applied to proportions data so as
   to follow an ALD.
   A positive random variable \eqn{Y} is said to have a log-Laplace
@@ -243,7 +247,7 @@ plotvgam(fit1, se = TRUE, scol = "red", lcol = "blue",
 # Centered approximately !
 linkFunctionChar <- as.character(fit1@misc$link)
 adata <- transform(adata, trueFunction=
-                   theta2eta(theta = mymu(x2), link=linkFunctionChar))
+                   theta2eta(theta = mymu(x2), link = linkFunctionChar))
 with(adata, lines(x2, trueFunction - mean(trueFunction), col = "darkgreen"))
 
 
@@ -256,14 +260,14 @@ truecol <- rep(1:3, len = fit1@misc$M)  # Add the 'truth'
 smallxgrid <- seq(0, 1, len = 501)
 for (ii in 1:length(mytau))
   lines(smallxgrid, col = truecol[ii], lwd = 2,
-        qbinom(p = mytau[ii], prob = mymu(smallxgrid), size = ssize) / ssize)
+        qbinom(mytau[ii], prob = mymu(smallxgrid), size = ssize) / ssize)
 
 
 # Plot on the eta (== logitlink()/probit()/...) scale
 with(adata, matplot(x2, predict(fit1), add = FALSE, lwd = 3, type = "l"))
 # Add the 'truth'
 for (ii in 1:length(mytau)) {
-  true.quant <- qbinom(p = mytau[ii], pr = mymu(smallxgrid), si = ssize) / ssize
+  true.quant <- qbinom(mytau[ii], pr = mymu(smallxgrid), si = ssize) / ssize
   lines(smallxgrid, theta2eta(theta = true.quant, link = linkFunctionChar),
         col = truecol[ii], lwd = 2)
 }

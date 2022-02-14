@@ -9,8 +9,9 @@
 
 }
 \usage{
-mix2exp(lphi = "logitlink", llambda = "loglink", iphi = 0.5, il1 = NULL,
-        il2 = NULL, qmu = c(0.8, 0.2), nsimEIM = 100, zero = "phi")
+mix2exp(lphi = "logitlink", llambda = "loglink", iphi = 0.5,
+    il1 = NULL, il2 = NULL, qmu = c(0.8, 0.2), nsimEIM = 100,
+    zero = "phi")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,10 +34,10 @@ mix2exp(lphi = "logitlink", llambda = "loglink", iphi = 0.5, il1 = NULL,
 
   }
   \item{qmu}{
-    Vector with two values giving the probabilities relating to the sample
-    quantiles for obtaining initial values for \eqn{\lambda_1}{lambda1}
-    and \eqn{\lambda_2}{lambda2}.
-    The two values are fed in as the \code{probs} argument into
+    Vector with two values giving the probabilities relating to the
+    sample quantiles for obtaining initial values for
+    \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}.  The two
+    values are fed in as the \code{probs} argument into
     \code{\link[stats]{quantile}}.
 
   }
@@ -54,9 +55,11 @@ mix2exp(lphi = "logitlink", llambda = "loglink", iphi = 0.5, il1 = NULL,
               (1-phi) * Exponential(lambda2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group, and \eqn{y>0}.
-  The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
+  The parameter \eqn{\phi}{phi} satisfies
+  \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is
-  \eqn{\phi / \lambda_1 + (1-\phi) / \lambda_2}{phi/lambda1 + (1-phi)/lambda2}
+  \eqn{\phi / \lambda_1 + (1-\phi) / \lambda_2}{phi/lambda1 +
+       (1-phi)/lambda2}
   and this is returned as the fitted values.
   By default, the three linear/additive predictors are
   \eqn{(logit(\phi), \log(\lambda_1), \log(\lambda_2))^T}{(logit(phi),
@@ -125,7 +128,7 @@ coef(fit, matrix = TRUE)
 round(rbind('Estimated' = Coef(fit),
             'Truth' = c(phi, lambda1, lambda2)), digits = 2)
 
-with(mdata, hist(Y, prob = TRUE, main = "Orange = estimate, blue = truth"))
+with(mdata, hist(Y, prob = TRUE, main = "Orange=estimate, blue=truth"))
 abline(v = 1 / Coef(fit)[c(2, 3)],  lty = 2, col = "orange", lwd = 2)
 abline(v = 1 / c(lambda1, lambda2), lty = 2, col = "blue", lwd = 2)
 }

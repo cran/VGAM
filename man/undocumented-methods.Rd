@@ -4,13 +4,18 @@
 %\alias{ccoef-method}
 %
 %
+% 202011
+\alias{KLD,ANY-method}
+\alias{KLD,vglm-method}
 % 202010
-\alias{plotdgait,vglm-method}
+\alias{plotdgaitd,vglm-method}
 % 202008
 \alias{is.altered,ANY-method}
 \alias{is.altered,vglm-method}
 \alias{is.inflated,ANY-method}
 \alias{is.inflated,vglm-method}
+\alias{is.deflated,ANY-method}
+\alias{is.deflated,vglm-method}
 \alias{is.truncated,ANY-method}
 \alias{is.truncated,vglm-method}
 \alias{Influence,ANY-method}
@@ -159,7 +164,7 @@
 \alias{nparam,vglm-method}
 \alias{nparam,rrvglm-method}
 \alias{linkfun,ANY-method}
-\alias{linkfun,vglm-method}
+\alias{linkfun,vlm-method}
 %
 %
 % 201407

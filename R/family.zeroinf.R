@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,30 +16,23 @@
 
 
 
-dzanegbin <- function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
-                      log = FALSE) {
-  if (length(munb)) {
-    if (length(prob))
-      stop("arguments 'prob' and 'munb' both specified")
-    prob <- 1 / (1 + munb/size)
-  }
+ dzanegbin <- function(x, size,  #  prob = NULL,
+                       munb,  #  = NULL,
+                       pobs0 = 0,
+                       log = FALSE) {
 
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
 
-  LLL <- max(length(x), length(pobs0), length(prob), length(size))
+  LLL <- max(length(x), length(pobs0), length(size))  # , length(prob)
   if (length(x)     != LLL) x     <- rep_len(x,     LLL)
   if (length(pobs0) != LLL) pobs0 <- rep_len(pobs0, LLL)
-  if (length(prob)  != LLL) prob  <- rep_len(prob,  LLL)
   if (length(size)  != LLL) size  <- rep_len(size,  LLL)
 
   ans <- rep_len(0.0, LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
-  if (!is.Numeric(prob, positive = TRUE) ||
-      max(prob, na.rm = TRUE) >  1)
-    stop("argument 'prob' must be in (0,1]")
   if (!is.Numeric(size, positive = TRUE))
     stop("argument 'size' must be in (0,Inf)")
   index0 <- x == 0
@@ -48,31 +41,29 @@ dzanegbin <- function(x, size, prob = NULL, munb = NULL, pobs0 = 0,
     ans[ index0] <- log(pobs0[index0])
     if (any(!index0))
       ans[!index0] <- log1p(-pobs0[!index0]) +
-                      dgaitnbinom(x[!index0], size[!index0], truncate = 0,
-                                  prob.p = prob[!index0], log = TRUE)
+                      dgaitdnbinom(x[!index0], size[!index0], truncate = 0,
+                                   munb.p = munb[!index0],
+                                   log = TRUE)
   } else {
     ans[ index0] <- pobs0[index0]
     if (any(!index0))
       ans[!index0] <- (1 - pobs0[!index0]) *
-                      dgaitnbinom(x[!index0], size[!index0], truncate = 0,
-                                  prob.p = prob[!index0])
+                      dgaitdnbinom(x[!index0], size[!index0],
+                                   munb.p = munb[!index0],
+                                   truncate = 0)
   }
   ans
 }  # dzanegbin
 
 
 
-pzanegbin <- function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
-  if (length(munb)) {
-    if (length(prob))
-      stop("arguments 'prob' and 'munb' both specified")
-    prob <- 1 / (1 + munb/size)
-  }
+ pzanegbin <- function(q, size,  # prob = NULL,
+                       munb,  # = NULL,
+                       pobs0 = 0) {
 
-  LLL <- max(length(q), length(pobs0), length(prob), length(size))
+  LLL <- max(length(q), length(pobs0), length(size))  # length(prob), 
   if (length(q)     != LLL) q     <- rep_len(q,     LLL)
   if (length(pobs0) != LLL) pobs0 <- rep_len(pobs0, LLL)
-  if (length(prob)  != LLL) prob  <- rep_len(prob,  LLL)
   if (length(size)  != LLL) size  <- rep_len(size,  LLL)
   ans <- rep_len(0.0, LLL)
 
@@ -80,8 +71,9 @@ pzanegbin <- function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
     stop("argument 'pobs0' must be in [0,1]")
   qindex <- (q >  0)
   ans[ qindex] <- pobs0[qindex] + (1 - pobs0[qindex]) *
-                  pgaitnbinom(q[qindex], size[qindex], truncate = 0,
-                              prob.p = prob[qindex])
+                  pgaitdnbinom(q[qindex], size[qindex],
+                               munb.p = munb[qindex],
+                               truncate = 0)
   ans[q <  0] <- 0
   ans[q == 0] <- pobs0[q == 0]
 
@@ -92,17 +84,14 @@ pzanegbin <- function(q, size, prob = NULL, munb = NULL, pobs0 = 0) {
 }  # pzanegbin
 
 
-qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
-  if (length(munb)) {
-    if (length(prob))
-      stop("arguments 'prob' and 'munb' both specified")
-    prob <- 1 / (1 + munb/size)
-  }
 
-  LLL <- max(length(p), length(pobs0), length(prob), length(size))
+ qzanegbin <- function(p, size,  # prob = NULL,
+                       munb,  # = NULL,
+                       pobs0 = 0) {
+
+  LLL <- max(length(p), length(pobs0), length(size))  # , length(prob)
   if (length(p)     != LLL) p      <- rep_len(p,     LLL)
   if (length(pobs0) != LLL) pobs0  <- rep_len(pobs0, LLL)
-  if (length(prob)  != LLL) prob   <- rep_len(prob,  LLL)
   if (length(size)  != LLL) size   <- rep_len(size,  LLL)
   ans <- rep_len(0.0, LLL)
 
@@ -112,26 +101,27 @@ qzanegbin <- function(p, size, prob = NULL, munb = NULL, pobs0 = 0) {
   ans[p <= pobs0] <- 0
   pindex <- (p > pobs0)
   ans[pindex] <-
-    qgaitnbinom((p[pindex] - pobs0[pindex]) / (1 - pobs0[pindex]),
-                size[pindex], prob.p = prob[pindex], truncate = 0)
+    qgaitdnbinom((p[pindex] - pobs0[pindex]) / (1 - pobs0[pindex]),
+                  size[pindex],
+                  munb.p = munb[pindex],
+                  truncate = 0)
   ans
 }  # qzanegbin
 
 
 
-rzanegbin <- function(n, size, prob = NULL, munb = NULL, pobs0 = 0) {
+ rzanegbin <- function(n, size,  # prob = NULL,
+                      munb,  # = NULL,
+                      pobs0 = 0) {
   use.n <- if ((length.n <- length(n)) > 1) length.n else
            if (!is.Numeric(n, integer.valued = TRUE,
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  if (length(munb)) {
-    if (length(prob))
-      stop("arguments 'prob' and 'munb' both specified")
-    prob <- 1 / (1 + munb/size)
-  }
 
-  ans <- rgaitnbinom(n = use.n, size, prob, truncate = 0)
+  ans <- rgaitdnbinom(n = use.n, size,  # prob,
+                      munb.p = munb,
+                      truncate = 0)
   if (length(pobs0) != use.n)
     pobs0 <- rep_len(pobs0, use.n)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -164,11 +154,11 @@ dzapois <- function(x, lambda, pobs0 = 0, log = FALSE) {
   if (log.arg) {
     ans[ index0] <- log(pobs0[index0])
     ans[!index0] <- log1p(-pobs0[!index0]) +
-       dgaitpois(x[!index0], lambda[!index0], log = TRUE, truncate = 0)
+       dgaitdpois(x[!index0], lambda[!index0], log = TRUE, truncate = 0)
   } else {
     ans[ index0] <- pobs0[index0]
     ans[!index0] <- (1 - pobs0[!index0]) *
-                    dgaitpois(x[!index0], lambda[!index0], truncate = 0)
+                    dgaitdpois(x[!index0], lambda[!index0], truncate = 0)
   }
   ans
 }
@@ -185,7 +175,7 @@ pzapois <- function(q, lambda, pobs0 = 0) {
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
   ans[q >  0] <-    pobs0[q > 0] +
-    (1-pobs0[q > 0]) * pgaitpois(q[q > 0], lambda[q > 0], truncate = 0)
+    (1-pobs0[q > 0]) * pgaitdpois(q[q > 0], lambda[q > 0], truncate = 0)
   ans[q <  0] <- 0
   ans[q == 0] <- pobs0[q == 0]
 
@@ -208,8 +198,8 @@ qzapois <- function(p, lambda, pobs0 = 0) {
   ans <- p
   ind4 <- (p > pobs0)
   ans[!ind4] <- 0
-  ans[ ind4] <- qgaitpois((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
-                          lambda[ind4], truncate = 0)
+  ans[ ind4] <- qgaitdpois((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
+                           lambda[ind4], truncate = 0)
   ans
 }
 
@@ -222,7 +212,7 @@ rzapois <- function(n, lambda, pobs0 = 0) {
                            length.arg = 1, positive = TRUE))
               stop("bad input for argument 'n'") else n
 
-  ans <- rgaitpois(use.n, lambda, truncate = 0)
+  ans <- rgaitdpois(use.n, lambda, truncate = 0)
   if (length(pobs0) != use.n)
     pobs0 <- rep_len(pobs0, use.n)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -1416,8 +1406,8 @@ zanegbinomial.control <-
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,  # prob = phi0,
-                            kmat[, jay], munb.p = munb[, jay]) + 10
+      Q.maxs <- qgaitdnbinom(p = eff.p[2], truncate = 0,  # prob = phi0,
+                             kmat[, jay], munb.p = munb[, jay]) + 10
 
 
       eps.trig <- .eps.trig
@@ -2049,8 +2039,8 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,  # prob = phi0,
-                            kmat[, jay], munb.p = munb[, jay]) + 10
+      Q.maxs <- qgaitdnbinom(p = eff.p[2], truncate = 0,  # prob = phi0,
+                             kmat[, jay], munb.p = munb[, jay]) + 10
 
 
 
@@ -3058,6 +3048,7 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
+         Q1 = NA,
          type.fitted  = .type.fitted ,
          expected = TRUE,
          multipleResponses = FALSE,
@@ -3705,8 +3696,8 @@ qzibinom <- function(p, size, prob, pstr0 = 0
     ans[p[ind0] <= pobs0] <- 0
     pindex <- (1:LLL)[ind0 & (p > pobs0)]
     Pobs0 <- pstr0[pindex] + (1 - pstr0[pindex]) * prob0[pindex]
-    ans[pindex] <- qgaitbinom((p[pindex] - Pobs0) / (1 - Pobs0),
-                              size[pindex], prob[pindex], truncate = 0)
+    ans[pindex] <- qgaitdbinom((p[pindex] - Pobs0) / (1 - Pobs0),
+                               size[pindex], prob[pindex], truncate = 0)
   }
 
   ans[pstr0 < deflat.limit] <- NaN
@@ -4359,7 +4350,7 @@ zinegbinomial.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,
+      Q.maxs <- qgaitdnbinom(p = eff.p[2], truncate = 0,
                             kmat[, jay], munb.p = munb[, jay]) + 10
 
 
@@ -5033,8 +5024,8 @@ zinegbinomialff.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,
-                            kmat[, jay], munb.p = munb[, jay]) + 10
+      Q.maxs <- qgaitdnbinom(p = eff.p[2], truncate = 0,
+                             kmat[, jay], munb.p = munb[, jay]) + 10
 
 
 
@@ -6107,13 +6098,13 @@ dzabinom <- function(x, size, prob, pobs0 = 0, log = FALSE) {
   if (log.arg) {
     ans[ index0] <- log(pobs0[index0])
     ans[!index0] <- log1p(-pobs0[!index0]) +
-                    dgaitbinom(x[!index0], size[!index0], prob[!index0],
-                               truncate = 0, log = TRUE)
+                    dgaitdbinom(x[!index0], size[!index0], prob[!index0],
+                                truncate = 0, log = TRUE)
   } else {
     ans[ index0] <- pobs0[index0]
     ans[!index0] <- (1-pobs0[!index0]) *
-                    dgaitbinom(x[!index0], size[!index0], prob[!index0],
-                               truncate = 0)
+                    dgaitdbinom(x[!index0], size[!index0], prob[!index0],
+                                truncate = 0)
   }
   ans
 }
@@ -6134,7 +6125,7 @@ pzabinom <- function(q, size, prob, pobs0 = 0) {
 
   ans[q >  0] <- pobs0[q > 0] +
       (1 - pobs0[q > 0]) *
-      pgaitbinom(q[q > 0], size[q > 0], prob[q > 0], truncate = 0)
+      pgaitdbinom(q[q > 0], size[q > 0], prob[q > 0], truncate = 0)
   ans[q <  0] <- 0
   ans[q == 0] <- pobs0[q == 0]
 
@@ -6159,8 +6150,8 @@ qzabinom <- function(p, size, prob, pobs0 = 0) {
   ans <- p
   ind4 <- (p > pobs0)
   ans[!ind4] <- 0.0
-  ans[ ind4] <- qgaitbinom((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
-                           size[ind4], prob[ind4], truncate = 0)
+  ans[ ind4] <- qgaitdbinom((p[ind4] - pobs0[ind4]) / (1 - pobs0[ind4]),
+                            size[ind4], prob[ind4], truncate = 0)
   ans
 }
 
@@ -6171,7 +6162,7 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
                            length.arg = 1, positive = TRUE))
                stop("bad input for argument 'n'") else n
 
-  ans <- rgaitbinom(use.n, size, prob, truncate = 0)
+  ans <- rgaitdbinom(use.n, size, prob, truncate = 0)
   if (length(pobs0) != use.n)
     pobs0 <- rep_len(pobs0, use.n)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))

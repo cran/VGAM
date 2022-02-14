@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Mixture of Two Poisson Distributions }
 \description{
-  Estimates the three parameters of a mixture of two Poisson distributions
-  by maximum likelihood estimation.
+  Estimates the three parameters of a mixture of two Poisson
+  distributions by maximum likelihood estimation.
 
 }
 \usage{
@@ -42,10 +42,10 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
 
   }
   \item{qmu}{
-    Vector with two values giving the probabilities relating to the sample
-    quantiles for obtaining initial values for \eqn{\lambda_1}{lambda1}
-    and \eqn{\lambda_2}{lambda2}.
-    The two values are fed in as the \code{probs} argument into
+    Vector with two values giving the probabilities relating to the
+    sample quantiles for obtaining initial values for
+    \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}.  The two
+    values are fed in as the \code{probs} argument into
     \code{\link[stats]{quantile}}.
 
 
@@ -58,7 +58,8 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
 }
 \details{
   The probability function can be loosely written as
-  \deqn{P(Y=y) = \phi \, Poisson(\lambda_1) + (1-\phi) \, Poisson(\lambda_2)}{%
+  \deqn{P(Y=y) = \phi \, Poisson(\lambda_1) +
+        (1-\phi) \, Poisson(\lambda_2)}{%
         P(Y=y) = phi * Poisson(lambda1) + (1-phi) * Poisson(lambda2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group, and \eqn{y=0,1,2,\ldots}{y=0,1,2,...}.
@@ -140,7 +141,7 @@ mfit <- vglm(y ~ 1, mix2poisson, data = mdata)
 coef(mfit, matrix = TRUE)
 
 # Compare the results with the truth
-round(rbind('Estimated' = Coef(mfit), 'Truth' = c(phi, mu1, mu2)), digits = 2)
+round(rbind('Estimated' = Coef(mfit), 'Truth' = c(phi, mu1, mu2)), 2)
 
 ty <- with(mdata, table(y))
 plot(names(ty), ty, type = "h", main = "Orange=estimate, blue=truth",
@@ -158,7 +159,7 @@ Mfit <- vglm(deaths ~ 1, weight = freq, data = ltdata1,
             mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5, nsimEIM = 5000))
 
 # This works better in general
-Mfit <- vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), data = ltdata2)
+Mfit <- vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), ltdata2)
 coef(Mfit, matrix = TRUE)
 Coef(Mfit)
 }

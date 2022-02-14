@@ -275,7 +275,7 @@ head(predict(fit))
 head(fitted(fit))
 head(BMIdata)
 head(cdf(fit))  # Person 46 is probably overweight, given his age
-100 * colMeans(depvar(fit, drop = TRUE) < fitted(fit))  # Empirical proportions
+100 * colMeans(c(depvar(fit)) < fitted(fit))  # Empirical proportions
 
 # Correct for "vgam" objects but not very elegant:
 fit@family@linkinv(eta = predict(fit, data.frame(age = 60)),
@@ -295,8 +295,7 @@ fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), lms.bcn(zero = 1), data = BMIdata,
             etastart = predict(fit0))
 }
 
-\dontrun{
-# Quantile plot
+\dontrun{# Quantile plot
 par(bty = "l", mar = c(5, 4, 4, 3) + 0.1, xpd = TRUE)
 qtplot(fit, percentiles = c(5, 50, 90, 99), main = "Quantiles",
        xlim = c(15, 66), las = 1, ylab = "BMI", lwd = 2, lcol = 4)

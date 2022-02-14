@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,7 +35,7 @@ vglm.fit <-
 
   orig.stepsize <- control$stepsize
   minimize.criterion <- control$min.criterion
-
+  history <- NULL
 
   fv <- NULL
 
@@ -203,6 +203,10 @@ vglm.fit <-
             tfun(mu = mu, y = y, w = w,
                  res = FALSE, eta = eta, extra = extra))
 
+    if (is.null(history))
+      history <- matrix(NA_real_, maxit,
+        if (criterion == "coefficients") length(new.coeffs) else 1)
+    history[iter, ] <- new.crit  # Imperfect (e.g., step-halving).
 
     if (trace && orig.stepsize == 1) {
       cat("VGLM    linear loop ", iter, ": ", criterion, "= ")
@@ -383,6 +387,8 @@ vglm.fit <-
   asgn <- attr(X.vlm.save, "assign")
 
   names(final.coefs) <- xnrow.X.vlm
+  colnames(history) <- if (criterion == "coefficients")
+                       xnrow.X.vlm else criterion
 
   rank <- tfit$rank
   cnames <- xnrow.X.vlm
@@ -459,6 +465,7 @@ vglm.fit <-
       colnames.X.vlm = xnrow.X.vlm,
       criterion = criterion,
       function.name = function.name,
+      history = history[seq(iter), , drop = FALSE],
       intercept.only = intercept.only,
       predictors.names = predictors.names,
       M = M,

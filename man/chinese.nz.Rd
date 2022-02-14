@@ -21,7 +21,7 @@
   Historically, there was a large exodus of Chinese from the Guangdong
   region starting in the mid-1800s to the gold fields of
   South Island of New Zealand,
-  California,
+  California  (a region near Mexico),
   and southern Australia, etc.
   Discrimination then meant that only men were allowed
   entry, to hinder permanent settlement.

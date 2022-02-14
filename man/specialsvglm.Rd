@@ -41,8 +41,8 @@ specialsvglm(object, \dots)
 
 }
 \details{
-  This extractor function was motivated by GAIT regression
-  (Yee and Ma, 2020)
+  This extractor function was motivated by GAITD regression
+  (Yee and Ma, 2021)
   where the values from three disjoint sets are referred
   to as \emph{special}.
   More generally, S4 methods functions can be written so that
@@ -68,18 +68,18 @@ specialsvglm(object, \dots)
   \code{\link{inflated}},
   \code{\link{altered}},
   \code{\link{truncated}},
-  \code{\link{Gaitpois}},
-  \code{\link{gaitpoisson}}.
+  \code{\link{Gaitdpois}},
+  \code{\link{gaitdpoisson}}.
 
 
 
 
 }
 \references{
-Yee, T. W. and Ma, C. (2020).
-Generally--altered, --inflated and --truncated regression,
-with application to heaped and seeped counts.
-\emph{In preparation}.
+  Yee, T. W. and Ma, C. (2022).
+  Generally--altered, --inflated, --truncated and --deflated regression,
+  with application to heaped and seeped data.
+  \emph{In preparation}.
 
 
 
@@ -99,7 +99,7 @@ with application to heaped and seeped counts.
 
 \examples{
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
-fit1 <- vglm(y ~ 1, gaitpoisson(alt.mix = 0), data = abdata,
+fit1 <- vglm(y ~ 1, gaitdpoisson(a.mix = 0), data = abdata,
              weight = w, subset = w > 0)
 specials(fit1)
 }

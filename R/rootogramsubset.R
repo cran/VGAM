@@ -9,9 +9,13 @@
 
 
 
+
+
+
 rootogram0 <- function(object, ...) {
   UseMethod("rootogram0")
 }
+
 
 
 
@@ -28,8 +32,8 @@ rootogram0.default <-
 
 
   ## rectangle style
-  scale <- match.arg(scale)
-  style <- match.arg(style)
+  scale <- match.arg(scale, c("sqrt", "raw"))[1]
+  style <- match.arg(style, c("hanging", "standing", "suspended"))[1]
 
   ## default annotation
   if (is.null(xlab)) {
@@ -153,6 +157,11 @@ plot.rootogram0 <- function(x,
    for(i in 1L:n)
      rootogram1(x[x$group == i, ], ...)
 }  # plot.rootogram0 
+
+
+
+
+
 
 
 

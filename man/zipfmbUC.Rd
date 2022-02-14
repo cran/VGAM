@@ -91,7 +91,7 @@ x <- 1:10
 plot(x, dzipfmb(x, shape = 0.5), type = "h", ylim = 0:1,
      sub = "shape=0.5", las = 1, col = "blue", ylab = "Probability",
      main = "Zipf-Mandelbrot distribution: blue=PMF; orange=CDF")
-lines(x + 0.1, pzipfmb(x, shape = 0.8), col = "orange", lty = 3, type = "h") 
+lines(x + 0.1, pzipfmb(x, shape = 0.5), col = "orange", lty = 3, type = "h") 
 }
 }
 

@@ -6,9 +6,10 @@
 \title{Likelihood Ratio Test of Nested Models}
 
 \description{
- \code{lrtest} is a generic function for carrying out likelihood ratio tests.
- The default method can be employed for comparing nested VGLMs
- (see details below).
+  \code{lrtest} is a generic function for carrying out
+  likelihood ratio tests.
+  The default method can be employed for comparing nested VGLMs
+  (see details below).
 
 }
 
@@ -106,12 +107,12 @@
 
 
   \emph{Approximate} LRTs might be applied to VGAMs, as
-  produced by \code{\link{vgam}}, but it is probably better in inference
-  to use \code{\link{vglm}} with regression splines
+  produced by \code{\link{vgam}}, but it is probably better in
+  inference to use \code{\link{vglm}} with regression splines
   (\code{\link[splines]{bs}} and
    \code{\link[splines]{ns}}).
-  This methods function should not be applied to other models such as
-  those produced
+  This methods function should not be applied to other models
+  such as those produced
   by \code{\link{rrvglm}},
   by \code{\link{cqo}},
   by \code{\link{cao}}.
@@ -121,8 +122,8 @@
 
 \section{Warning }{
   Several \pkg{VGAM} family functions implement distributions
-  which do not satisfying the usual regularity conditions needed for
-  the LRT to work. No checking or warning is given for these.
+  which do not satisfying the usual regularity conditions needed
+  for the LRT to work. No checking or warning is given for these.
 
 }
 
@@ -159,10 +160,11 @@
 
 \examples{
 set.seed(1)
-pneumo <- transform(pneumo, let = log(exposure.time), x3 = runif(nrow(pneumo)))
-fit1 <- vglm(cbind(normal, mild, severe) ~ let     , propodds, data = pneumo)
-fit2 <- vglm(cbind(normal, mild, severe) ~ let + x3, propodds, data = pneumo)
-fit3 <- vglm(cbind(normal, mild, severe) ~ let     , cumulative, data = pneumo)
+pneumo <- transform(pneumo, let = log(exposure.time),
+                            x3  = runif(nrow(pneumo)))
+fit1 <- vglm(cbind(normal, mild, severe) ~ let     , propodds, pneumo)
+fit2 <- vglm(cbind(normal, mild, severe) ~ let + x3, propodds, pneumo)
+fit3 <- vglm(cbind(normal, mild, severe) ~ let     , cumulative, pneumo)
 # Various equivalent specifications of the LR test for testing x3
 (ans1 <- lrtest(fit2, fit1))
 ans2 <- lrtest(fit2, 2)
@@ -172,16 +174,16 @@ c(all.equal(ans1, ans2), all.equal(ans1, ans3), all.equal(ans1, ans4))
 
 # Doing it manually
 (testStatistic <- 2 * (logLik(fit2) - logLik(fit1)))
-(mypval <- pchisq(testStatistic, df = length(coef(fit2)) - length(coef(fit1)),
-                  lower.tail = FALSE))
+(pval <- pchisq(testStatistic, df = df.residual(fit1) - df.residual(fit2),
+                lower.tail = FALSE))
 
-(ans4 <- lrtest(fit3, fit1))  # Test proportional odds (parallelism) assumption
+(ans4 <- lrtest(fit3, fit1))  # Test PO (parallelism) assumption
 }
 
 \keyword{htest}
 
 
 %(testStatistic <- 2 * (logLik(fit3) - logLik(fit1)))
-%(mypval <- pchisq(testStatistic, df = length(coef(fit3)) - length(coef(fit1)),
+%(mypval <- pchisq(testStatistic, length(coef(fit3)) - length(coef(fit1)),
 %                  lower.tail = FALSE))
 

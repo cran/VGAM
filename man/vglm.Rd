@@ -528,7 +528,7 @@ The \code{VGAM} Package.
   \code{\link{fittedvlm}},
   \code{\link{hatvaluesvlm}},
   \code{\link{hdeff.vglm}},
-  \code{\link{linkfun.vglm}},
+  \code{\link{linkfunvlm}},
   \code{\link{lrt.stat.vlm}},
   \code{\link{score.stat.vlm}},
   \code{\link{wald.stat.vlm}},

@@ -249,6 +249,7 @@ zinegbinomialff(lmunb = "loglink", lsize = "loglink", lonempstr0 = "logitlink",
 }
 
 \seealso{
+  \code{\link{gaitdnbinomial}},
   \code{\link{Zinegbin}},
   \code{\link{negbinomial}},
   \code{\link{spikeplot}},

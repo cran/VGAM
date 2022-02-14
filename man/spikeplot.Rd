@@ -11,12 +11,11 @@ Spike Plot
 
 }
 \usage{
-spikeplot(x, freq = FALSE, as.table = FALSE,
-    col = par("col"), lty = par("lty"), 
-    lwd = par("lwd"), lend = par("lend"),
-    type = "h", xlab = NULL, ylab = NULL,
-    capped = FALSE, cex = sqrt(lwd) / 2, pch = 19, pcol = col,
-    scol = NULL, slty = NULL, slwd = NULL, ...)
+spikeplot(x, freq = FALSE, as.table = FALSE, col = par("col"),
+    lty = par("lty"), lwd = par("lwd"), lend = par("lend"),
+    type = "h", xlab = deparse1(substitute(x)), ylab = NULL,
+    capped = FALSE, cex = sqrt(lwd) / 2, pch = 19, pcol = col, scol = NULL,
+    slty = NULL, slwd = NULL, new.plot = TRUE, offset.x = 0, ymux = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -84,6 +83,21 @@ spikeplot(x, freq = FALSE, as.table = FALSE,
 
 
 }
+  \item{new.plot, offset.x}{
+   Logical and numeric.
+   Add to an existing plot? If so, set \code{new.plot = FALSE}
+   and it is useful for
+   the spikes to be shifted by some amount \code{offset.x}. 
+
+
+}
+  \item{ymux}{
+  Numeric, y-multiplier. The response is multiplied by \code{ymux}.
+  This can be useful when plotting subsets side-by-side so that
+  the constituent proportions add up to the overall proportion.
+
+
+}
   \item{\dots}{
     Additional graphical arguments passed into an ordinary
     \code{\link[base]{plot}}, for example,
@@ -108,8 +122,8 @@ spikeplot(x, freq = FALSE, as.table = FALSE,
   work.
   The default for \code{type} means that any heaping and
   \emph{seeping} should easily be seen. 
-  If such features exist then \emph{GAIT regression} is
-  potentially useful---see \code{\link{gaitpoisson}} etc.
+  If such features exist then \emph{GAITD regression} is
+  potentially useful---see \code{\link{gaitdpoisson}} etc.
   Currently missing values are ignored totally because
   \code{table(x)} is used without further arguments;
   this might change in the future.
@@ -142,12 +156,28 @@ T. W. Yee.
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
+
+%\section{Warning }{This function needs R 4.0.0 or later, as it uses
+%  \code{\link[base]{deparse1}}.
+%
+%
+% This is no longer true as deparse1 is now included inside spikeplot().
+% yettodo: remove it when DESCRIPTION has R 4.0.0 or above is needed.
+%
+%
+%
+%
+%}
+
+
 \seealso{
   \code{\link[base]{table}},
   \code{\link[base]{plot}},
   \code{\link[graphics]{par}},
-  \code{\link{dgaitplot}},
-  \code{\link{gaitpoisson}}.
+  \code{\link[base]{deparse1}},
+  \code{\link{dgaitdplot}},
+  \code{\link{plotdgaitd}},
+  \code{\link{gaitdpoisson}}.
 
 
 % \code{\link{Gaitgenpois1}}.

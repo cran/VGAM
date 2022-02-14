@@ -42,7 +42,8 @@ mills.ratio2(x)
 \references{
 
 Mills, J. P. (1926).
-Table of the ratio: area to bounding ordinate, for any portion of normal curve.
+Table of the ratio: area to bounding ordinate, for any portion
+of normal curve.
 \emph{Biometrika}.
 \bold{18}(3/4),
 395--400.
@@ -69,7 +70,8 @@ curve(mills.ratio, -5, 5, col = "orange", las = 1, log = "y")
 }
 \keyword{math}
 
-% curve(zeta, -13, 0.8, xlim = c(-12, 10), ylim = c(-1, 4), col = "orange")
+% curve(zeta, -13, 0.8, xlim = c(-12, 10), ylim = c(-1, 4),
+%       col = "orange")
 % curve(zeta, 1.2,  12, add = TRUE, col = "orange")
 % abline(v = 0, h = c(0,1), lty = "dashed")
 

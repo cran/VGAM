@@ -9,7 +9,7 @@
   (Original Parameterization)}
 \description{
   Density, distribution function, quantile function and
-  and random generation
+  random generation
   for the original parameterization of the
   generalized Poisson distribution.
 
@@ -121,6 +121,15 @@ requires positive \code{lambda}.
 More details can be found in
 Famoye (1997) and
 Demirtas (2017).
+
+
+
+The function \code{dgenpois0}
+uses \code{\link[base:Special]{lfactorial}}, which
+equals \code{Inf} when \code{x} is approximately \code{1e306}
+on many machines.
+So the density is returned as \code{0} in very extreme cases;
+see \code{\link[base]{.Machine}}.
 
 
 

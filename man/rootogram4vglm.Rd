@@ -36,7 +36,15 @@ rootogram4vglm(object, newdata = NULL, breaks = NULL, max = NULL,
 
   }
   \item{breaks}{numeric. Breaks for the histogram intervals.}
-  \item{max}{maximum count displayed.}
+  \item{max}{maximum count displayed.
+If an error message occurs regarding running out of memory
+then use this argument; it might occur with a very long
+tailed distribution such as \code{\link{gaitdzeta}}.
+
+
+
+
+}
   \item{xlab, main}{graphical parameters.}
   \item{width}{numeric. Widths of the histogram bars.}
 %  \item{pkg}{which package to call \code{rootogram()}.
@@ -46,6 +54,11 @@ rootogram4vglm(object, newdata = NULL, breaks = NULL, max = NULL,
     any additional arguments to
     \code{rootogram.default} and
     \code{plot.rootogram} in \pkg{countreg}.
+    Probably the most useful of these are
+    \code{style = c("hanging", "standing", "suspended")}
+    and
+    \code{scale = c("sqrt", "raw")}.
+
 
 
 %   \code{\link[countreg]{rootogram.default}}

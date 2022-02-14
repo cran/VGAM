@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -34,6 +34,7 @@ rrvglm.fit <-
     trace <- control$trace
     orig.stepsize <- control$stepsize
     minimize.criterion <- control$min.criterion
+    history <- NULL
 
 
     fv <- one.more <- rrr.expression <- modelno <- NULL
@@ -345,6 +346,13 @@ rrvglm.fit <-
                     res = FALSE, eta = eta, extra))
 
 
+    if (is.null(history))
+      history <- matrix(NA_real_, maxit,
+        if (criterion == "coefficients") length(new.coeffs) else 1)
+    history[iter, ] <- new.crit  # Imperfect (e.g., step-halving).
+
+
+
 
       if (trace && orig.stepsize == 1) {
         cat(if (control$Quadratic) "QRR-VGLM" else "RR-VGLM",
@@ -509,6 +517,10 @@ rrvglm.fit <-
 
     cnames <- xnrow.X.vlm
 
+
+  colnames(history) <- if (criterion == "coefficients")
+                       xnrow.X.vlm else criterion
+
     if (check.rank && rank < ncol.X.vlm)
       stop("rrvglm only handles full-rank models (currently)")
 
@@ -608,6 +620,7 @@ rrvglm.fit <-
         colnames.X.vlm = xnrow.X.vlm,
         criterion = criterion,
         function.name = function.name,
+        history = history[seq(iter), , drop = FALSE],
         intercept.only = intercept.only,
         predictors.names = predictors.names,
         M = M,
@@ -646,8 +659,9 @@ rrvglm.fit <-
       eval(family@last)
 
 
-    structure(c(fit, list(predictors = if (nice31) matrix(eta, n, M) else
-                                       tfit$predictors,
+    structure(c(fit,
+                list(predictors = if (nice31) matrix(eta, n, M) else
+                                  tfit$predictors,
         contrasts = attr(x, "contrasts"),
         control = control,
         crit.list = crit.list,

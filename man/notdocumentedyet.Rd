@@ -3,6 +3,50 @@
 %
 %
 %
+% 20210614
+% \alias{anova}  % Its best not having this since it causes two cases when
+% ?anova is typed. Ditto for coef, print, AIC, plot, and other common
+% generic functions.
+%
+%
+%
+%
+%
+% 202202
+\alias{moments.gaitdcombo.binom}
+% 202201
+\alias{gaitdnbinomial.control}
+\alias{gaitdpoisson.control}
+\alias{gaitdlog.control}
+\alias{gaitdzeta.control}
+% 202112
+\alias{Pheapseep}
+% 202111
+% \alias{gaitdnbinomial}
+% \alias{KLDvglm}
+\alias{cm3gaitd}
+\alias{moments.gaitdcombo.2par}
+\alias{moments.gaitdcombo.nbinom}
+% 202110
+\alias{pd.damlm}
+\alias{get.indices.gaitd}
+\alias{amazon.col}
+\alias{avocado.col}
+\alias{indigo.col}
+\alias{iris.col}
+\alias{turquoise.col}
+\alias{dirt.col}
+\alias{deer.col}
+\alias{desire.col}
+\alias{peach.col}
+\alias{azure.col}
+\alias{asparagus.col}
+\alias{artichoke.col}
+%
+%
+%
+%\alias{damultilogitlink}
+%\alias{damultinomial}
 % 202012
 % \alias{spikeplot}
 % 202010
@@ -10,10 +54,10 @@
 % 202009
 %\alias{gaitpoisson}
 % 202006
-\alias{moments.gaitcombo}
-\alias{moments.gaitcombo.pois}
-\alias{moments.gaitcombo.log}
-\alias{moments.gaitcombo.zeta}
+\alias{moments.gaitdcombo.1par}
+\alias{moments.gaitdcombo.pois}
+\alias{moments.gaitdcombo.log}
+\alias{moments.gaitdcombo.zeta}
 % 202004
 \alias{extlogF1.control}
 % 202003
@@ -33,7 +77,7 @@
 %\alias{pgaitpois.mix}
   \alias{EIM.GATNB.speciald}
   \alias{GATNB.deriv012}
-  \alias{gait.errorcheck}
+  \alias{gaitd.errorcheck}
 % \alias{semigait.errorcheck}
 % 201908
 % part a is based on \pkg{vcd}:
@@ -282,7 +326,7 @@
 %\alias{familyname.vglmff}
 % 201309;
 \alias{I.col}
-\alias{BIC}
+% \alias{BIC}  % 20210614 commenting this out
 \alias{check.omit.constant}
 %
 % 201308;
@@ -369,15 +413,15 @@
 %
 %
 % 20120112
-\alias{AIC}
-\alias{AICc}
-\alias{coef}
-\alias{logLik}
-\alias{plot}
+%\alias{AIC}   % 20210614 commenting this out
+ \alias{AICc}
+%\alias{coef}   % 20210614 commenting this out
+%\alias{logLik}   % 20210614 commenting this out
+%\alias{plot}   % 20210614 commenting this out
 %\alias{vcov}      % 20150828
 %\alias{vcovvlm}      % 20150828
 \alias{VGAMenv}
-\alias{nobs}
+%\alias{nobs}   % 20210614 commenting this out
 \alias{show.Coef.rrvgam}
 \alias{show.Coef.qrrvglm}
 \alias{show.Coef.rrvglm}
@@ -538,7 +582,7 @@
 % \alias{attrassignlm}
 % \alias{beta4}
 % \alias{betaffqn}
-\alias{biplot}
+% \alias{biplot}   % 20210614 commenting this out
 \alias{biplot.qrrvglm}
 % \alias{block.diag}
 % \alias{borel.tanner}
@@ -613,7 +657,7 @@
 \alias{fff.control}
 \alias{fill2}
 \alias{fill3}
-\alias{fitted}
+% \alias{fitted}   % 20210614 commenting this out
 \alias{fitted.values}
 %\alias{fitted.values.uqo}
 \alias{fittedvsmooth.spline}
@@ -624,7 +668,7 @@
 \alias{case.names}
 \alias{case.namesvlm}
 %
-\alias{formula}
+% \alias{formula}   % 20210614 commenting this out
 \alias{formulaNA.VGAM}
 \alias{gammaff}
 % \alias{get.arg}
@@ -640,7 +684,7 @@
 % \alias{gleg.weight.yjn.11}
 % \alias{gleg.weight.yjn.12}
 % \alias{gleg.weight.yjn.13}
-\alias{glm}
+% \alias{glm}   % 20210614 commenting this out
 % \alias{hypersecant}
 % \alias{hypersecant01}
 % \alias{ima}
@@ -656,7 +700,7 @@
 \alias{Kayfun.studentt}
 % \alias{is.linear.term}
 % \alias{jitteruqo}
-\alias{lm}
+% \alias{lm}    % 20210614 commenting this out
 \alias{lm2qrrvlm.model.matrix}
 \alias{lm2vlm.model.matrix}
 \alias{vlm2lm.model.matrix}
@@ -708,7 +752,7 @@
 \alias{nvar.rrvgam}
 \alias{nvar.rcim}
 % \alias{num.deriv.rrr}
-\alias{persp}
+% \alias{persp}   % 20210614 commenting this out
 \alias{persp.rrvgam}
 \alias{plot.rrvgam}
 \alias{plotpreplotvgam}
@@ -717,7 +761,7 @@
 \alias{plotvsmooth.spline}
 % \alias{pnorm2} done 20120910
 % \alias{poissonqn}
-\alias{predict}
+%\alias{predict}   % 20210614 commenting this out
 \alias{predict.rrvgam}
 \alias{predict.glm}
 \alias{predict.lm}
@@ -733,7 +777,7 @@
 \alias{predictvsmooth.spline}
 \alias{predictvsmooth.spline.fit}
 % \alias{preplotvgam}
-\alias{print}
+% \alias{print}   % 20210614 commenting this out
 \alias{procVec}
 \alias{negzero.expression.VGAM}
 \alias{process.binomial2.data.VGAM}
@@ -864,7 +908,7 @@
 \alias{vplot.matrix}
 \alias{vplot.numeric}
 \alias{vvplot.factor}
-\alias{weights}
+% \alias{weights}   % 20210614 commenting this out
 \alias{Wr1}
 \alias{Wr2}
 % \alias{wweighted.mean}

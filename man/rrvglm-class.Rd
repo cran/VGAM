@@ -239,8 +239,8 @@ Vector generalized additive models.
 \author{ Thomas W. Yee }
 
 \note{
-  The slots of \code{"rrvglm"} objects are currently identical to \code{"vglm"}
-  objects.
+  The slots of \code{"rrvglm"} objects are currently identical
+  to \code{"vglm"} objects.
 
 
 }

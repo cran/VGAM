@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,7 +15,473 @@
 
 
 
-process.categorical.data.VGAM <- expression({
+
+
+
+
+
+ multinomial <-
+  function(zero = NULL, parallel = FALSE,
+           nointercept = NULL, refLevel = "(Last)",
+           imethod = 1,  # 20211008; DAMLMs need better init vals
+           imu = NULL, byrow.arg = FALSE,  # 20211105
+           whitespace = FALSE) {
+
+
+      
+
+  d.mlm <- NULL  # 20211105
+
+
+  if (length(refLevel) != 1)
+    stop("the length of 'refLevel' must be one")
+
+  if ( is.numeric(refLevel) &&
+      !is.Numeric(refLevel, integer.valued = TRUE, positive = TRUE))
+    stop("argument 'refLevel' is not a positive integer")
+
+  if (is.character(refLevel)) {
+    if (refLevel == "(Last)")
+      refLevel <- -1
+  }
+  if (is.factor(refLevel)) {
+    if (is.ordered(refLevel))
+      warning("argument 'refLevel' is from an ordered factor")
+
+    refLevel <- as.character(refLevel) == levels(refLevel)
+    refLevel <- (seq_along(refLevel))[refLevel]
+    if (!is.Numeric(refLevel, length.arg = 1,
+                    integer.valued = TRUE, positive = TRUE))
+      stop("could not coerce 'refLevel' into a single ",
+           "positive integer")
+  }
+
+
+  if ((LLL <- length(d.mlm)) > 0) {
+    sd.mlm <- unique(sort(d.mlm))  # Values must be unique
+    if (!is.Numeric(d.mlm, integer.valued = FALSE,
+                    length.arg = length(sd.mlm), positive = FALSE))
+      stop("bad input for 'd.mlm'")
+    if (is.numeric(refLevel) && any(refLevel == sd.mlm))
+      stop("cannot deflate the reference level")
+    d.mlm <- as.vector(sd.mlm)  # Replacement
+  }
+
+
+
+
+
+  stopifnot(is.logical(whitespace) &&
+            length(whitespace) == 1)
+  fillerChar <- ifelse(whitespace, " ", "")
+
+
+  new("vglmff",
+      blurb = c(ifelse(length(d.mlm) > 0,
+                       "Deflated-altered m", "M"),
+            "ultinomial logit model\n\n",
+            ifelse(length(d.mlm) > 0, "(Altered) ", ""),
+            "Links:    ",
+         if (is.numeric(refLevel)) {
+         if (refLevel < 0) {
+           ifelse(whitespace,
+                  "log(mu[,j] / mu[,M+1]), j = 1:M,\n",
+                  "log(mu[,j]/mu[,M+1]), j=1:M,\n")
+         } else {
+            if (refLevel == 1) {
+              paste("log(mu[,", "j]", fillerChar, "/", fillerChar,
+                    "mu[,", refLevel, "]), j",
+                    fillerChar, "=", fillerChar, "2:(M+1),\n",
+                    sep = "")
+            } else {
+              paste("log(mu[,", "j]", fillerChar, "/",
+                   "mu[,", refLevel, "]), j",
+                    fillerChar, "=", fillerChar, "c(1:", refLevel-1,
+                    ",", fillerChar, refLevel+1, ":(M+1)),\n",
+                    sep = "")
+            }
+         }
+         } else {  # refLevel is character
+           paste("log(mu[,", "j]", fillerChar, "/",
+                "mu[,'", refLevel, "']), j",
+                 fillerChar, " != '", fillerChar, refLevel,
+                 "',\n",
+                 sep = "")
+         },
+         "Variance: ",
+           ifelse(whitespace,
+                  "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
+                  "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
+
+  constraints = eval(substitute(expression({
+    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
+                           bool = .parallel ,
+                           apply.int = TRUE,
+                           constraints = constraints)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+                                predictors.names = predictors.names,
+                                M1 = M)
+    constraints <- cm.nointercept.VGAM(constraints, x,
+                                       .nointercept , M)
+  }), list( .parallel = parallel, .zero = zero,
+            .d.mlm = d.mlm, .nointercept = nointercept ))),
+
+  deviance = Deviance.categorical.data.vgam,
+
+  infos = eval(substitute(function(...) {
+    list(parallel = .parallel ,
+         refLevel = .refLevel ,  # original
+         M1 = -1,
+         link = "multilogitlink",
+         link1parameter = FALSE,  # The link is multiparameter, but
+         mixture.links = FALSE,  # the link is not a mixture.
+         expected = TRUE,
+         d.mlm = .d.mlm ,
+         imethod = .imethod ,
+         multipleResponses = FALSE,
+         parameters.names = as.character(NA),
+         zero = .zero )
+  }, list( .zero = zero,
+           .refLevel = refLevel, .imethod = imethod,
+           .d.mlm = d.mlm,
+           .parallel = parallel ))),
+  initialize = eval(substitute(expression({
+
+    if (is.factor(y) && is.ordered(y))
+      warning("response should be nominal, not ordinal")
+
+
+    delete.zero.colns <- TRUE
+    eval(process.categorical.data.VGAM)
+
+    if ( .imethod == 2) {  # MLE for intercept-only.
+      mustart <- matrix(colMeans(y), n, NCOL(y), byrow = TRUE)
+    }
+    if ( .imethod > 2) stop("argument 'imethod' unmatched")
+    
+
+    M <- ncol(y) - 1
+    use.refLevel <- if (is.numeric( .refLevel )) {
+      if ( .refLevel < 0) M + 1 else ( .refLevel )
+    } else {  # Is character. Match it with the response levels.
+      tmp6 <- match( .refLevel , colnames(y))
+      if (is.na(tmp6))
+        stop("could not match argument 'refLevel' with any ",
+             "columns of the response matrix")
+      tmp6
+    }
+
+
+    if (use.refLevel > (M + 1))
+      stop("argument 'refLevel' has a value that is too high")
+    extra$use.refLevel <- use.refLevel  # Used in all other slots.
+    sd.mlm <- extra$d.mlm <- as.vector( .d.mlm )  # May be NULL, okay.
+    pmone <- rep_len(1, M + 1)
+    if (length(sd.mlm)) {
+      pmone[sd.mlm] <- -1
+    }
+    signvec <- extra$signvec.damlm <- pmone
+
+
+    allbut.refLevel <- seq(M + 1)[-use.refLevel]
+    predictors.names <-
+      paste("log(mu[,", allbut.refLevel,
+            "]", .fillerChar, "/", .fillerChar,
+            "mu[,", use.refLevel, "])", sep = "")
+    if (length(sd.mlm) > 0 && any(signvec[-use.refLevel] < 0)){
+      ind.d <- sd.mlm
+      ind.d[use.refLevel < ind.d] <-
+      ind.d[use.refLevel < ind.d] - 1  # Scrunch RHS up
+      predictors.names[ind.d] <- paste0("-", predictors.names[ind.d])
+    }
+
+    extra$colnames.y <- colnames(y)
+
+
+    imu <- as.vector( .imu )
+    if (length(imu)) {
+      mustart <- matrix(imu, n, NCOL(y), byrow = .byrow.arg )
+    }
+  }), list( .refLevel = refLevel, .fillerChar = fillerChar,
+            .d.mlm = d.mlm, .imu = imu, .byrow.arg = byrow.arg,
+            .imethod = imethod, .whitespace = whitespace ))),
+  linkinv = eval(substitute( function(eta, extra = NULL) {
+    if (anyNA(eta))
+      warning("there are NAs in eta in slot inverse")
+    ans <-
+      multilogitlink(eta,  # .refLevel , d.mlm = .d.mlm ,
+                     refLevel = extra$use.refLevel, inverse = TRUE)
+    if (anyNA(ans))
+      warning("there are NAs here in slot linkinv")
+    if (min(ans) == 0 || max(ans) == 1)
+      warning("fitted probabilities numerically 0 or 1 occurred")
+
+    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = 1)
+  }), list( .refLevel = refLevel, .d.mlm = d.mlm )),
+  last = eval(substitute(expression({
+    misc$link <- "multilogitlink"
+
+    misc$earg <- list(multilogitlink = list(
+      M = M,
+      refLevel = use.refLevel
+    ))
+
+    dy <- dimnames(y)
+    if (!is.null(dy[[2]]))
+      dimnames(fit$fitted.values) <- dy
+
+    misc$nointercept <- ( .nointercept )
+    misc$parallel <- ( .parallel )
+    misc$refLevel <- use.refLevel
+    misc$refLevel.orig <- ( .refLevel )
+    misc$zero <- ( .zero )
+  }), list( .refLevel = refLevel, .nointercept = nointercept,
+            .parallel = parallel,
+            .d.mlm = d.mlm, .zero = zero ))),
+
+  linkfun = eval(substitute( function(mu, extra = NULL) {
+
+    multilogitlink(mu,   # d.mlm = .d.mlm ,
+                   refLevel = extra$use.refLevel)
+  }), list( .refLevel = refLevel, .d.mlm = d.mlm )),
+
+  loglikelihood =
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
+             summation = TRUE) {
+    if (residuals) {
+      stop("loglikelihood residuals not implemented yet")
+    } else {
+      ycounts <- if (is.numeric(extra$orig.w))
+                   y * w / extra$orig.w else
+                   y * w  # Convert proportions to counts
+      nvec <- if (is.numeric(extra$orig.w))
+                round(w / extra$orig.w) else round(w)
+
+      smallno <- 1.0e4 * .Machine$double.eps
+      if (max(abs(ycounts - round(ycounts))) > smallno)
+        warning("converting 'ycounts' to integer in @loglikelihood")
+      ycounts <- round(ycounts)
+      ll.elts <-
+        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
+         dmultinomial(x = ycounts, size = nvec, prob = mu,
+                      log = TRUE, dochecking = FALSE)
+      if (summation) {
+        sum(ll.elts)
+      } else {
+        ll.elts
+      }
+    }
+  },
+  vfamily = c("multinomial", "VGAMcategorical"),
+
+
+
+
+  hadof = eval(substitute(
+  function(eta, extra = list(),
+           linpred.index = 1,
+           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           deriv = 1, ...) {
+
+
+  multinomial.eim.deriv1 <- function(mu, jay, w) {
+    M <- ncol(mu)  # Not ncol(mu) - 1 coz 1 coln has been deleted
+    MM12 <- M * (M + 1) / 2  # Full matrix
+    wz1 <- matrix(0, NROW(mu), MM12)
+    ind5 <- iam(NA, NA, M = M, both = TRUE)
+    for (i in 1:MM12) {
+      i1 <- ind5$row.index[i]
+      j1 <- ind5$col.index[i]
+      if (i1 == jay && j1 == jay) {
+        wz1[, iam(i1, j1, M = M)] <-  (1 - 2 * mu[, i1])  # *
+      }
+      if (i1 == jay && j1 != jay) {
+        wz1[, iam(i1, j1, M = M)] <- -mu[, j1]  # -(1 - 2 * mu[, i1]) *
+      }
+      if (i1 != jay && j1 == jay) {
+        wz1[, iam(i1, j1, M = M)] <- -mu[, i1]  # -(1 - 2 * mu[, j1]) *
+      }
+    }  # for (i)
+    c(w) * wz1
+  }  # multinomial.eim.deriv1
+
+
+
+  multinomial.eim.deriv2 <- function(mu, jay, w) {
+    M <- ncol(mu)  # Not ncol(mu) - 1 since 1 coln has been deleted
+    zz.yettodo <- 0  # NA_real_
+    MM12 <- M * (M + 1) / 2  # Full matrix
+    wz1 <- matrix(NA_real_, NROW(mu), MM12)
+    ind5 <- iam(NA, NA, M = M, both = TRUE)
+    for (i in 1:MM12) {
+      i1 <- ind5$row.index[i]
+      j1 <- ind5$col.index[i]
+      if (i1 == jay && j1 == jay) {
+        wz1[, iam(i1, j1, M = M)] <-  zz.yettodo
+      }
+      if (i1 != jay && j1 == i1) {
+        wz1[, iam(i1, j1, M = M)] <- -mu[, i1] * mu[, jay] *
+                                 (1 - 2 * mu[, i1] - 2 * mu[, jay] +
+                                      6 * mu[, i1] * mu[, jay])
+                                            
+      }
+      if (i1 == jay && j1 != jay) {
+        wz1[, iam(i1, j1, M = M)] <- zz.yettodo
+      }
+      if (i1 != jay && j1 == jay) {
+        wz1[, iam(i1, j1, M = M)] <- zz.yettodo
+      }
+      if (any(is.na(wz1[, iam(i1, j1, M = M)]))) {
+        wz1[, iam(i1, j1, M = M)] <-       2 * mu[, i1]  * 
+                                               mu[, j1] * mu[, jay] *
+                                      (1 - 3 * mu[, jay])
+      }
+    }  # for (i)
+ cat("\n\n\n\n")
+    c(w) * wz1
+  }  # multinomial.eim.deriv2
+
+
+    M <- NCOL(eta)
+    use.refLevel <- extra$use.refLevel  # Restore its value
+    if (!is.numeric(use.refLevel)) {
+      warning("variable 'use.refLevel' cannot be found. ",
+              "Trying the original value.")
+      use.refLevel <- .refLevel  # Only if numeric...
+      if (use.refLevel == "(Last)")
+        use.refLevel <- M+1
+    }
+    mu.use <- multilogitlink(eta, refLevel = use.refLevel,
+                             inverse = TRUE)
+    mu.use <- pmax(mu.use, .Machine$double.eps * 1.0e-0)
+
+
+    index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
+    myinc <- (index$row.index >= use.refLevel)
+    index$row.index[myinc] <- index$row.index[myinc] + 1
+    myinc <- (index$col.index >= use.refLevel)
+    index$col.index[myinc] <- index$col.index[myinc] + 1
+
+
+    switch(as.character(deriv),
+       "0" =  {
+         wz <- -mu.use[, index$row] * mu.use[, index$col]
+         wz[, 1:M] <- wz[, 1:M] + mu.use[, -use.refLevel ]
+         c(w) * wz
+       },
+       "1" = {
+         multinomial.eim.deriv1(mu.use[, -use.refLevel, drop = FALSE],
+                                jay = linpred.index, w = w)
+       },
+       "2" = {
+         multinomial.eim.deriv2(mu.use[, -use.refLevel, drop = FALSE],
+                                jay = linpred.index, w = w)
+       },
+       stop("argument 'deriv' must be 0 or 1 or 2"))
+  }, list( .refLevel = refLevel,  # End of @hadof
+           .d.mlm = d.mlm ))),
+
+
+
+
+  validparams = eval(substitute(function(eta, y, extra = NULL) {
+    probs <-
+      multilogitlink(eta, refLevel = extra$use.refLevel,
+                     # d.mlm = extra$d.mlm,
+                     inverse = TRUE)  # ( .refLevel )
+    okay1 <- all(is.finite(probs)) && all(0 < probs)
+    if (!length(extra$d.mlm))
+      okay1 <- okay1 && all(probs < 1)
+    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
+    okay1
+  }, list( .refLevel = refLevel, .d.mlm = d.mlm ))),
+  deriv = eval(substitute(expression({
+    signvec <- extra$signvec.damlm
+    use.refLevel <- extra$use.refLevel  # Restore its value
+    d.mlm <- extra$d.mlm  # Deflated excluding baseline gp
+    ansd <- ( y[, -use.refLevel, drop = FALSE] -
+             mu[, -use.refLevel, drop = FALSE])  # AMLM
+
+
+    if (length(d.mlm) > 0) {  # DAMLM3
+      yy.use <-  y[, -use.refLevel, drop = FALSE]
+      mu.use <- mu[, -use.refLevel, drop = FALSE]
+      ind.d4 <- which(signvec[-use.refLevel] < 0)
+      dl.dprob.damlm <-
+        yy.use[, ind.d4, drop = FALSE] / (
+        mu.use[, ind.d4, drop = FALSE]) -
+        c(y[, use.refLevel] / mu[, use.refLevel])  # Recycling colns
+      ansd[, ind.d4] <- ansd[, ind.d4] -  # DAMLM3
+        2 * mu.use[, ind.d4, drop = FALSE] * dl.dprob.damlm
+    }  # length(d.mlm) > 0  # DAMLM3
+    c(w) * ansd
+  }), list( .refLevel = refLevel, .d.mlm = d.mlm ))),
+  weight = eval(substitute(expression({
+    mytiny <- (mu <       sqrt(.Machine$double.eps)) |
+              (mu > 1.0 - sqrt(.Machine$double.eps))
+
+    if (M == 1) {
+      wz <- mu[, 3 - use.refLevel] * (1 - mu[, 3 - use.refLevel])
+    } else {  # M > 1
+      index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
+      myinc <- (index$row.index >= use.refLevel)
+      index$row.index[myinc] <- index$row.index[myinc] + 1
+      myinc <- (index$col.index >= use.refLevel)
+      index$col.index[myinc] <- index$col.index[myinc] + 1
+      wz <- -mu[, index$row] * mu[, index$col]
+      wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]  # AMLM
+    }
+
+
+    if (length(d.mlm) > 0) {  # DAMLM3
+      for (rowval in ind.d4) {
+        ind3 <- iam(rowval, 1:M, M = M)  # Both rows AND colns
+        wz[, ind3] <- wz[, ind3] - c(
+          2 * mu.use[, rowval] / mu[, use.refLevel])
+      }  # rowval
+      for (colval in ind.d4) {
+        ind3 <- iam(1:M, colval, M = M)
+        wz[, ind3] <- wz[, ind3] - c(
+          2 * mu.use[, colval] / mu[, use.refLevel])
+      }  # colval
+      for (diagval in ind.d4) {
+        ind3 <- iam(diagval, diagval, M = M)  # scalar
+        wz[, ind3] <- wz[, ind3] +
+          4 * (mu.use[, diagval, drop = FALSE]^2) * c(
+          1 / mu.use[, diagval] + 0 / mu[, use.refLevel]) + c(
+          2 * mu.use[, diagval] / mu[, use.refLevel])  # rm once
+      }  # diagval
+ 
+
+
+
+
+
+    }  # DAMLM3
+
+
+
+
+
+    atiny <- (mytiny %*% rep(1, ncol(mu))) > 0
+    if (any(atiny)) {
+      if (M == 1)
+        wz[atiny] <- wz[atiny] * (1 + .Machine$double.eps^0.5) +
+                                      .Machine$double.eps else
+        wz[atiny, 1:M] <- .Machine$double.eps +
+        wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5)
+    }  # atiny
+    c(w) * wz
+  }), list( .refLevel = refLevel, .d.mlm = d.mlm ))))
+}  # multinomial(), was damultinomial()
+
+
+
+
+
+
+
+ process.categorical.data.VGAM <- expression({
 
 
 
@@ -124,7 +590,7 @@ Deviance.categorical.data.vgam <-
     M <- if (is.matrix(eta)) ncol(eta) else 1
     if (M > 1)
       return(NULL)
-    devi <- devi %*% rep_len(1, ncol(devi))  # deviance = \sum_i devi[i]
+    devi <- devi %*% rep_len(1, ncol(devi))  # Dev = \sum_i devi[i]
     return(c(sign(y[, 1] - mu[, 1]) * sqrt(abs(devi) * w)))
   } else {
     dev.elts <- c(w) * devi
@@ -140,8 +606,11 @@ Deviance.categorical.data.vgam <-
 
 
 
-dmultinomial <- function(x, size = NULL, prob, log = FALSE,
-                         dochecking = TRUE, smallno = 1.0e-7) {
+
+
+ dmultinomial <-
+    function(x, size = NULL, prob, log = FALSE,
+             dochecking = TRUE, smallno = 1.0e-7) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -171,7 +640,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (!length(size))
       size <- round(rowSums(prob))
   }
-  logdensity <- lgamma(size + 1) + rowSums(x * log(prob) - lgamma(x + 1))
+  logdensity <- lfactorial(size) + rowSums(x*log(prob) - lfactorial(x))
   if (log.arg) logdensity else exp(logdensity)
 }  # dmultinomial()
 
@@ -320,10 +789,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+      ycounts <- if (is.numeric(extra$orig.w))
+                 y * w / extra$orig.w else
                  y * w  # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+      nvec <- if (is.numeric(extra$orig.w))
+              round(w / extra$orig.w) else round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -378,6 +848,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     wz
   }), list( .earg = earg, .link = link, .reverse = reverse ))))
 }  # sratio()
+
+
 
 
 
@@ -525,10 +997,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+      ycounts <- if (is.numeric(extra$orig.w))
+                 y * w / extra$orig.w else
                  y * w  # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+      nvec <- if (is.numeric(extra$orig.w))
+              round(w / extra$orig.w) else round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -592,10 +1065,10 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
  vglm.multinomial.deviance.control <-
-  function(maxit = 21, panic = FALSE, ...) {
+  function(maxit = 31, panic = FALSE, ...) {
   if (maxit < 1) {
-      warning("bad value of maxit; using 21 instead")
-      maxit <- 21
+      warning("bad value of maxit; using 31 instead")
+      maxit <- 31
   }
   list(maxit = maxit, panic = as.logical(panic)[1])
 }
@@ -641,363 +1114,6 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
 
 
- multinomial <-
-  function(zero = NULL, parallel = FALSE,
-           nointercept = NULL, refLevel = "(Last)",
-           whitespace = FALSE) {
-
-
-
-  if (length(refLevel) != 1)
-    stop("the length of 'refLevel' must be one")
-
-  if ( is.numeric(refLevel) &&
-      !is.Numeric(refLevel, integer.valued = TRUE, positive = TRUE))
-    stop("argument 'refLevel' is not a positive integer")
-
-  if (is.character(refLevel)) {
-    if (refLevel == "(Last)")
-      refLevel <- -1
-  }
-  if (is.factor(refLevel)) {
-    if (is.ordered(refLevel))
-      warning("argument 'refLevel' is from an ordered factor")
-
-    refLevel <- as.character(refLevel) == levels(refLevel)
-    refLevel <- (seq_along(refLevel))[refLevel]
-    if (!is.Numeric(refLevel, length.arg = 1,
-                    integer.valued = TRUE, positive = TRUE))
-      stop("could not coerce 'refLevel' into a single positive integer")
-  }
-
-
-
-
-
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
-  fillerChar <- ifelse(whitespace, " ", "")
-
-
-  new("vglmff",
-  blurb = c("Multinomial logit model\n\n",
-            "Links:    ",
-         if (is.numeric(refLevel)) {
-         if (refLevel < 0) {
-           ifelse(whitespace,
-                  "log(mu[,j] / mu[,M+1]), j = 1:M,\n",
-                  "log(mu[,j]/mu[,M+1]), j=1:M,\n")
-         } else {
-            if (refLevel == 1) {
-              paste("log(mu[,", "j]", fillerChar, "/", fillerChar,
-                    "mu[,", refLevel, "]), j",
-                    fillerChar, "=", fillerChar, "2:(M+1),\n",
-                    sep = "")
-            } else {
-              paste("log(mu[,", "j]", fillerChar, "/",
-                   "mu[,", refLevel, "]), j",
-                    fillerChar, "=", fillerChar, "c(1:", refLevel-1,
-                    ",", fillerChar, refLevel+1, ":(M+1)),\n",
-                    sep = "")
-            }
-         }
-         } else {  # refLevel is character
-           paste("log(mu[,", "j]", fillerChar, "/",
-                "mu[,'", refLevel, "']), j",
-                 fillerChar, " != '", fillerChar, refLevel,
-                 "',\n",
-                 sep = "")
-         },
-         "Variance: ",
-           ifelse(whitespace,
-                  "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
-                  "mu[,j]*(1-mu[,j]); -mu[,j]*mu[,k]")),
-
-  constraints = eval(substitute(expression({
-    constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel ,
-                           apply.int = TRUE,
-                           constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = M)
-    constraints <- cm.nointercept.VGAM(constraints, x, .nointercept , M)
-  }), list( .parallel = parallel, .zero = zero,
-            .nointercept = nointercept ))),
-
-  deviance = Deviance.categorical.data.vgam,
-
-  infos = eval(substitute(function(...) {
-    list(parallel = .parallel ,
-         refLevel = .refLevel ,  # original
-         M1 = -1,
-         link = "multilogitlink",
-         link1parameter = FALSE,  # The link is multiparameter, but
-         mixture.links = FALSE,  # the link is not a mixture.
-         expected = TRUE,
-         multipleResponses = FALSE,
-         parameters.names = as.character(NA),
-         zero = .zero )
-  }, list( .zero = zero,
-           .refLevel = refLevel,
-           .parallel = parallel
-         ))),
-
-  initialize = eval(substitute(expression({
-
-    if (is.factor(y) && is.ordered(y))
-      warning("response should be nominal, not ordinal")
-
-
-
-    delete.zero.colns <- TRUE
-    eval(process.categorical.data.VGAM)
-
-
-    M <- ncol(y)-1
-    use.refLevel <- if (is.numeric( .refLevel )) {
-      if ( .refLevel < 0) M+1 else .refLevel
-    } else {  # Is character. Match it with the levels of the response.
-      tmp6 <- match( .refLevel , colnames(y))
-      if (is.na(tmp6))
-        stop("could not match argument 'refLevel' with any columns ",
-             "of the response matrix")
-      tmp6
-    }
-    if (use.refLevel > (M+1))
-      stop("argument 'refLevel' has a value that is too high")
-    extra$use.refLevel <- use.refLevel  # Used in all other slots.
-
-
-    allbut.refLevel <- (1:(M+1))[-use.refLevel]
-    predictors.names <-
-      paste("log(mu[,", allbut.refLevel,
-            "]", .fillerChar, "/", .fillerChar, "mu[,",
-            use.refLevel, "])", sep = "")
-
-    extra$colnames.y  <- colnames(y)
-  }), list( .refLevel = refLevel,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
-
-  linkinv = eval(substitute( function(eta, extra = NULL) {
-    if (anyNA(eta))
-      warning("there are NAs in eta in slot inverse")
-    ans <- multilogitlink(eta,
-                      refLevel = extra$use.refLevel,  # .refLevel ,
-                      inverse = TRUE)
-    if (anyNA(ans))
-      warning("there are NAs here in slot linkinv")
-    if (min(ans) == 0 || max(ans) == 1)
-      warning("fitted probabilities numerically 0 or 1 occurred")
-
-    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = 1)
-  }), list( .refLevel = refLevel )),
-
-  last = eval(substitute(expression({
-    misc$link <- "multilogitlink"
-
-    misc$earg <- list(multilogitlink = list(
-      M = M,
-      refLevel = use.refLevel
-    ))
-
-    dy <- dimnames(y)
-    if (!is.null(dy[[2]]))
-      dimnames(fit$fitted.values) <- dy
-
-    misc$nointercept <- .nointercept
-    misc$parallel <- .parallel
-    misc$refLevel <- use.refLevel  # if ( .refLevel<0) M+1 else .refLevel
-    misc$refLevel.orig <- .refLevel
-    misc$zero <- .zero
-  }), list( .refLevel = refLevel,
-            .nointercept = nointercept,
-            .parallel = parallel,
-            .zero = zero
-          ))),
-
-  linkfun = eval(substitute( function(mu, extra = NULL) {
-    multilogitlink(mu, refLevel = extra$use.refLevel)  # .refLevel
-  }), list( .refLevel = refLevel )),
-
-  loglikelihood =
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
-             summation = TRUE) {
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w  # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
-
-      smallno <- 1.0e4 * .Machine$double.eps
-      if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
-      ycounts <- round(ycounts)
-
-      ll.elts <-
-        (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-         dmultinomial(x = ycounts, size = nvec, prob = mu,
-                      log = TRUE, dochecking = FALSE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  },
-  vfamily = c("multinomial", "VGAMcategorical"),
-
-
-
-
-  hadof = eval(substitute(
-  function(eta, extra = list(),
-           linpred.index = 1,
-           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
-           deriv = 1, ...) {
-
-
-  multinomial.eim.deriv1 <- function(mu, jay, w) {
-    M <- ncol(mu)  # Not ncol(mu) - 1 since one coln has been deleted
-    MM12 <- M * (M + 1) / 2  # Full matrix
-    wz1 <- matrix(0, NROW(mu), MM12)
-    ind5 <- iam(NA, NA, M = M, both = TRUE)
-    for (i in 1:MM12) {
-      i1 <- ind5$row.index[i]
-      j1 <- ind5$col.index[i]
-      if (i1 == jay && j1 == jay) {
-        wz1[, iam(i1, j1, M = M)] <-  (1 - 2 * mu[, i1])  #*
-      }
-      if (i1 == jay && j1 != jay) {
-        wz1[, iam(i1, j1, M = M)] <- -mu[, j1]  # -(1 - 2 * mu[, i1]) *
-      }
-      if (i1 != jay && j1 == jay) {
-        wz1[, iam(i1, j1, M = M)] <- -mu[, i1]  # -(1 - 2 * mu[, j1]) *
-      }
-    }  # for (i)
-    c(w) * wz1
-  }  # multinomial.eim.deriv1
-
-
-
-  multinomial.eim.deriv2 <- function(mu, jay, w) {
-    M <- ncol(mu)  # Not ncol(mu) - 1 since one coln has been deleted
-    zz.yettodo <- 0  # NA_real_
-    MM12 <- M * (M + 1) / 2  # Full matrix
-    wz1 <- matrix(NA_real_, NROW(mu), MM12)
-    ind5 <- iam(NA, NA, M = M, both = TRUE)
-    for (i in 1:MM12) {
-      i1 <- ind5$row.index[i]
-      j1 <- ind5$col.index[i]
-      if (i1 == jay && j1 == jay) {
-        wz1[, iam(i1, j1, M = M)] <-  zz.yettodo
-      }
-      if (i1 != jay && j1 == i1) {
-        wz1[, iam(i1, j1, M = M)] <- -mu[, i1] * mu[, jay] *
-                                     (1 - 2 * mu[, i1] - 2 * mu[, jay] +
-                                          6 * mu[, i1] * mu[, jay])
-                                            
-      }
-      if (i1 == jay && j1 != jay) {
-        wz1[, iam(i1, j1, M = M)] <- zz.yettodo
-      }
-      if (i1 != jay && j1 == jay) {
-        wz1[, iam(i1, j1, M = M)] <- zz.yettodo
-      }
-      if (any(is.na(wz1[, iam(i1, j1, M = M)]))) {
-        wz1[, iam(i1, j1, M = M)] <-       2 * mu[, i1]  * 
-                                               mu[, j1] * mu[, jay] *
-                                      (1 - 3 * mu[, jay])
-      }
-    }  # for (i)
- cat("\n\n\n\n")
-    c(w) * wz1
-  }  # multinomial.eim.deriv2
-
-
-    M <- NCOL(eta)
-    use.refLevel <- extra$use.refLevel  # Restore its value
-    if (!is.numeric(use.refLevel)) {
-      warning("variable 'use.refLevel' cannot be found. ",
-              "Trying the original value.")
-      use.refLevel <- .refLevel  # Only if numeric...
-      if (use.refLevel == "(Last)")
-        use.refLevel <- M+1
-    }
-    mu.use <- multilogitlink(eta, refLevel = use.refLevel, inverse = TRUE)
-    mu.use <- pmax(mu.use, .Machine$double.eps * 1.0e-0)
-
-
-    index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
-    myinc <- (index$row.index >= use.refLevel)
-    index$row.index[myinc] <- index$row.index[myinc] + 1
-    myinc <- (index$col.index >= use.refLevel)
-    index$col.index[myinc] <- index$col.index[myinc] + 1
-
-
-    switch(as.character(deriv),
-       "0" =  {
-         wz <- -mu.use[, index$row] * mu.use[, index$col]
-         wz[, 1:M] <- wz[, 1:M] + mu.use[, -use.refLevel ]
-         c(w) * wz
-       },
-       "1" = {
-         multinomial.eim.deriv1(mu.use[, -use.refLevel, drop = FALSE],
-                                jay = linpred.index, w = w)
-       },
-       "2" = {
-         multinomial.eim.deriv2(mu.use[, -use.refLevel, drop = FALSE],
-                                jay = linpred.index, w = w)
-       },
-       stop("argument 'deriv' must be 0 or 1 or 2"))
-  }, list( .refLevel = refLevel ))),
-
-
-
-
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    probs <- multilogitlink(eta, refLevel = extra$use.refLevel,
-                        inverse = TRUE)  # .refLevel
-    okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
-    okay1
-  }, list( .refLevel = refLevel ))),
-
-  deriv = eval(substitute(expression({
-    use.refLevel <- extra$use.refLevel  # Restore its value
-    c(w) * (y[, -use.refLevel] - mu[, -use.refLevel])
-  }), list( .refLevel = refLevel ))),
-  weight = eval(substitute(expression({
-    mytiny <- (mu <       sqrt(.Machine$double.eps)) |
-              (mu > 1.0 - sqrt(.Machine$double.eps))
-
-    if (M == 1) {
-      wz <- mu[, 3 - use.refLevel] * (1 - mu[, 3 - use.refLevel])
-    } else {
-      index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
-      myinc <- (index$row.index >= use.refLevel)
-      index$row.index[myinc] <- index$row.index[myinc] + 1
-      myinc <- (index$col.index >= use.refLevel)
-      index$col.index[myinc] <- index$col.index[myinc] + 1
-      wz <- -mu[, index$row] * mu[, index$col]
-      wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]
-    }
-
-    atiny <- (mytiny %*% rep(1, ncol(mu))) > 0  # apply(mytiny, 1, any)
-    if (any(atiny)) {
-      if (M == 1)
-        wz[atiny] <- wz[atiny] * (1 + .Machine$double.eps^0.5) +
-                                 .Machine$double.eps else
-        wz[atiny, 1:M] <- .Machine$double.eps +
-        wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5)
-    }
-    c(w) * wz
-  }), list( .refLevel = refLevel ))))
-}  # multinomial()
-
-
 
 
 
@@ -1023,7 +1139,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   fillerChar <- ifelse(whitespace, " ", "")
 
 
-  if (!is.logical(multiple.responses) || length(multiple.responses) != 1)
+  if (!is.logical(multiple.responses) ||
+      length(multiple.responses) != 1)
     stop("argument 'multiple.responses' must be a single logical")
   if (!is.logical(reverse) || length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
@@ -1066,7 +1183,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       if ( !length(constraints) ) {
         Llevels <- extra$Llevels
         NOS <- extra$NOS
-        Hk.matrix <- kronecker(diag(NOS), matrix(1,Llevels-1,1))
+        Hk.matrix <- kronecker(diag(NOS), matrix(1, Llevels-1, 1))
         constraints <- cm.VGAM(Hk.matrix, x = x,
                                bool = .parallel ,
                                apply.int = .apply.parint ,
@@ -1084,14 +1201,31 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   deviance = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
+
+
+
+
+    if (FALSE) {
+    mytiny <- .Machine$double.eps
+    mu[mu < mytiny] <- mytiny
+    }
+
+
+
+
+
+
+
+
+
     answer <-
     if ( .multiple.responses ) {
       totdev <- 0
       NOS <- extra$NOS
       Llevels <- extra$Llevels
       for (iii in 1:NOS) {
-        cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
-        aindex <- (iii-1)*(Llevels  ) + 1:(Llevels)
+        cindex <- (iii - 1) * (Llevels-1) + 1:(Llevels - 1)
+        aindex <- (iii - 1) * (Llevels  ) + 1:(Llevels)
         totdev <- totdev +
                   Deviance.categorical.data.vgam(
                     mu = mu[, aindex, drop = FALSE],
@@ -1146,8 +1280,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         Y.names <- paste("Y", iii, sep = "")
         mu.names <- paste("mu", iii, ".", sep = "")
         mynames <- c(mynames, if ( .reverse )
-          paste("P[", Y.names, ">=", 2:Llevels,     "]", sep = "") else
-          paste("P[", Y.names, "<=", 1:(Llevels-1), "]", sep = ""))
+        paste("P[", Y.names, ">=", 2:Llevels,     "]", sep = "") else
+        paste("P[", Y.names, "<=", 1:(Llevels-1), "]", sep = ""))
         y.names <- c(y.names, param.names(mu.names, Llevels))
       }
 
@@ -1181,59 +1315,65 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
     extra$colnames.y  <- colnames(y)
   }
-  }), list( .reverse = reverse, .multiple.responses = multiple.responses,
+  }), list( .reverse = reverse,
+            .multiple.responses = multiple.responses,
             .link = link, .earg = earg,
             .fillerChar = fillerChar,
             .whitespace = whitespace ))),
 
 
-    linkinv = eval(substitute( function(eta, extra = NULL) {
-        answer <-
-        if ( .multiple.responses ) {
-          NOS <- extra$NOS
-          Llevels <- extra$Llevels
-          fv.mat <- matrix(0, nrow(eta), NOS * Llevels)
-          for (iii in 1:NOS) {
-            cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
-            aindex <- (iii-1)*(Llevels) + 1:(Llevels)
-            if ( .reverse ) {
-              ccump <- cbind(1,
-                             eta2theta(eta[, cindex, drop = FALSE],
-                                       .link , earg = .earg ))
-              fv.mat[, aindex] <-
-                  cbind(-tapplymat1(ccump, "diff"),
-                        ccump[, ncol(ccump)])
-            } else {
-              cump <- cbind(eta2theta(eta[, cindex, drop = FALSE],
-                                      .link ,
-                                      earg = .earg ),
-                            1)
-              fv.mat[, aindex] <-
-                  cbind(cump[, 1], tapplymat1(cump, "diff"))
-            }
-          }
-          label.cols.y(fv.mat, NOS = NOS,
-                       colnames.y = if (is.null(extra$colnames.y))
-                                    NULL else
-                         rep_len(extra$colnames.y, ncol(fv.mat)))
-        } else {
-          fv.mat <- if ( .reverse ) {
-            ccump <- cbind(1, eta2theta(eta, .link , earg = .earg ))
-            cbind(-tapplymat1(ccump, "diff"), ccump[, ncol(ccump)])
+  linkinv = eval(substitute( function(eta, extra = NULL) {
+    answer <-
+      if ( .multiple.responses ) {
+        NOS <- extra$NOS
+        Llevels <- extra$Llevels
+        fv.mat <- matrix(0, nrow(eta), NOS * Llevels)
+        for (iii in 1:NOS) {
+          cindex <- (iii - 1) * (Llevels - 1) + 1:(Llevels - 1)
+          aindex <- (iii - 1) * (Llevels) + 1:(Llevels)
+          if ( .reverse ) {
+            ccump <- cbind(1,
+                           eta2theta(eta[, cindex, drop = FALSE],
+                                     .link , earg = .earg ))
+            fv.mat[, aindex] <-
+                cbind(-tapplymat1(ccump, "diff"),
+                      ccump[, ncol(ccump)])
           } else {
-            cump <- cbind(eta2theta(eta, .link , earg = .earg ), 1)
-            cbind(cump[, 1], tapplymat1(cump, "diff"))
+            cump <- cbind(eta2theta(eta[, cindex, drop = FALSE],
+                                    .link , arg = .earg ),
+                            1)
+            fv.mat[, aindex] <-
+                cbind(cump[, 1], tapplymat1(cump, "diff"))
           }
-          label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
         }
-        answer
-    }, list( .reverse = reverse,
-             .link = link, .earg = earg,
-             .multiple.responses = multiple.responses ))),
+        label.cols.y(fv.mat, NOS = NOS,
+                     colnames.y = if (is.null(extra$colnames.y))
+                                  NULL else
+                       rep_len(extra$colnames.y, ncol(fv.mat)))
+      } else {
+        fv.mat <- if ( .reverse ) {
+          ccump <- cbind(1, eta2theta(eta, .link , earg = .earg ))
+          cbind(-tapplymat1(ccump, "diff"), ccump[, ncol(ccump)])
+        } else {
+          cump <- cbind(eta2theta(eta, .link , earg = .earg ), 1)
+          cbind(cump[, 1], tapplymat1(cump, "diff"))
+        }
+        label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
+      }
+
+
+    answer[answer < 1e-100] <- 1e-100  # Avoids exactly 0
+
+
+
+    answer
+  }, list( .reverse = reverse,
+           .link = link, .earg = earg,
+           .multiple.responses = multiple.responses ))),
 
   last = eval(substitute(expression({
     if ( .multiple.responses ) {
-      misc$link <- .link
+      misc$link <- ( .link )
       misc$earg <- list( .earg )
 
     } else {
@@ -1243,19 +1383,18 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
       misc$earg <- vector("list", M)
       names(misc$earg) <- names(misc$link)
       for (ii in 1:M)
-        misc$earg[[ii]] <- .earg
+        misc$earg[[ii]] <- ( .earg )
 
     }
 
-    misc$fillerChar <- .fillerChar
-    misc$whitespace <- .whitespace
+    misc$fillerChar <- ( .fillerChar )
+    misc$whitespace <- ( .whitespace )
 
     misc$parameters <- mynames
-    misc$reverse <- .reverse
-    misc$parallel <- .parallel
+    misc$reverse <- ( .reverse )
+    misc$parallel <- ( .parallel )
     misc$multiple.responses <- .multiple.responses
-  }), list(
-            .reverse = reverse, .parallel = parallel,
+  }), list( .reverse = reverse, .parallel = parallel,
             .link = link, .earg = earg,
             .fillerChar = fillerChar,
             .multiple.responses = multiple.responses,
@@ -1266,26 +1405,24 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if ( .multiple.responses ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
-      eta.matrix <- matrix(0, nrow(mu), NOS*(Llevels-1))
+      eta.matrix <- matrix(0, nrow(mu), NOS * (Llevels - 1))
       for (iii in 1:NOS) {
-        cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
-        aindex <- (iii-1)*(Llevels) + 1:(Llevels)
+        cindex <- (iii - 1) * (Llevels - 1) + 1:(Llevels - 1)
+        aindex <- (iii - 1) * (Llevels) + 1:(Llevels)
         cump <- tapplymat1(as.matrix(mu[, aindex]), "cumsum")
         eta.matrix[, cindex] <-
-            theta2eta(if ( .reverse ) 1-cump[, 1:(Llevels-1)] else
+            theta2eta(if ( .reverse ) 1 - cump[, 1:(Llevels-1)] else
                   cump[, 1:(Llevels-1)], .link , earg = .earg )
       }
       eta.matrix
     } else {
       cump <- tapplymat1(as.matrix(mu), "cumsum")
       M <- NCOL(mu) - 1
-      theta2eta(if ( .reverse ) 1-cump[, 1:M] else cump[, 1:M],
+      theta2eta(if ( .reverse ) 1 - cump[, 1:M] else cump[, 1:M],
                 .link , earg = .earg )
     }
     answer
-  }, list(
-           .link = link, .earg = earg,
-           .reverse = reverse,
+  }, list( .link = link, .earg = earg, .reverse = reverse,
            .multiple.responses = multiple.responses ))),
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
@@ -1293,10 +1430,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
-                 y * w # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+      ycounts <- if (is.numeric(extra$orig.w))
+                   y * w / extra$orig.w else
+                   y * w  # Convert proportions to counts
+      nvec <- if (is.numeric(extra$orig.w))
+                round(w / extra$orig.w) else round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -1305,7 +1443,7 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
       ll.elts <-
         (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-         dmultinomial(x = ycounts, size = nvec, prob = mu,
+         dmultinomial(ycounts, size = nvec, prob = mu,
                       log = TRUE, dochecking = FALSE)
       if (summation) {
         sum(ll.elts)
@@ -1319,8 +1457,8 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
 
   hadof = eval(substitute(
   function(eta, extra = list(),
-           linpred.index = 1,
-           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           linpred.index = 1, w = 1,
+           dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta) + 1) / 2), 
            deriv = 1, ...) {
   if ( .multiple.responses )
     return(NA_real_, dim.wz[1], dim.wz[2])
@@ -1381,15 +1519,14 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
          wz
        },
        "1" = {
-         cumulative.eim.deriv1(mu = mu.use, jay = linpred.index, w = w,
-                               reverse = .reverse )
+         cumulative.eim.deriv1(mu = mu.use, jay = linpred.index,
+                               w = w, reverse = .reverse )
        },
        "2" = {
          cumulative.eim.deriv2(mu = mu.use, jay = linpred.index, w = w)
        },
        stop("argument 'deriv' must be 0 or 1 or 2"))
-  }, list( .link = link, .earg = earg,
-           .reverse = reverse,
+  }, list( .link = link, .earg = earg, .reverse = reverse,
            .multiple.responses = multiple.responses ))),
 
 
@@ -1410,17 +1547,23 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
     if (!okay1)
       warning("It seems that the nonparallelism assumption has ",
-              "resulted in intersecting linear/additive predictors. ",
-              "Try propodds() or fitting a partial nonproportional ",
-              "odds model or choosing ",
+              "resulted in intersecting linear/additive ",
+              "predictors.  Try propodds() or fitting a partial ",
+              "nonproportional odds model or choosing ",
               "some other link function, etc.")
     okay1
-  }, list( .link = link, .earg = earg,
-           .reverse = reverse,
+  }, list( .link = link, .earg = earg, .reverse = reverse,
            .multiple.responses = multiple.responses ))),
 
   deriv = eval(substitute(expression({
     mu.use <- pmax(mu, .Machine$double.eps * 1.0e-0)
+
+
+    mu.use <- pmax(mu, .Machine$double.eps * 1.0e5)
+    mu.use <- pmax(mu, sqrt(.Machine$double.eps))
+
+
+
     deriv.answer <-
     if ( .multiple.responses ) {
       NOS <- extra$NOS
@@ -1433,20 +1576,29 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                          .link , earg = .earg )
         dcump.deta[,cindex] <- dtheta.deta(cump, .link , earg = .earg )
         resmat[,cindex] <-
-          (y[,   aindex, drop = FALSE] /mu.use[,   aindex, drop = FALSE] -
-           y[, 1+aindex, drop = FALSE] /mu.use[, 1+aindex, drop = FALSE])
+        (y[,   aindex, drop = FALSE]/mu.use[,   aindex, drop = FALSE] -
+         y[, 1+aindex, drop = FALSE]/mu.use[, 1+aindex, drop = FALSE])
       }
       (if ( .reverse ) -c(w)  else c(w)) * dcump.deta * resmat
     } else {
       cump <- eta2theta(eta, .link , earg = .earg )
+
+
+      cump[cump == 1] <- 1 - .Machine$double.eps * 1e2
+
+
+
+
       dcump.deta <- dtheta.deta(cump, .link , earg = .earg )
-      c(if ( .reverse ) -c(w)  else c(w)) *
+
+
+
+      c(if ( .reverse ) -c(w) else c(w)) *
       dcump.deta *
       (y[, -(M+1)] / mu.use[, -(M+1)] - y[, -1] / mu.use[, -1])
     }
     deriv.answer
-  }), list( .link = link, .earg = earg,
-            .reverse = reverse,
+  }), list( .link = link, .earg = earg, .reverse = reverse,
             .multiple.responses = multiple.responses ))),
   weight = eval(substitute(expression({
     if ( .multiple.responses ) {
@@ -1460,11 +1612,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
                         (1 / mu.use[,   aindex, drop = FALSE] +
                          1 / mu.use[, 1+aindex, drop = FALSE])
       }
-      if (Llevels-1 > 1) {
+      if (Llevels - 1 > 1) {
         iii <- 1
-        oindex <- (iii-1) * (Llevels-1) + 1:(Llevels-2)
+        oindex <- (iii - 1) * (Llevels - 1) + 1:(Llevels - 2)
         wz <- cbind(wz, -c(w) *
-              dcump.deta[, oindex] * dcump.deta[, 1+oindex])
+              dcump.deta[, oindex] * dcump.deta[, 1 + oindex])
 
 
         if (NOS > 1) {
@@ -1484,11 +1636,34 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
         }
     } else {
       wz <- c(w) * dcump.deta^2 * (1/mu.use[, 1:M] + 1/mu.use[, -1])
-      if (M > 1)
-        wz <- cbind(wz,
-                    -c(w) * dcump.deta[, -M] *
-                    dcump.deta[, 2:M] / mu.use[, 2:M])
+      if (M > 1) {
+        wz.RHS <- -c(w) * dcump.deta[, -M] *
+                          dcump.deta[, 2:M] / mu.use[, 2:M]
+        wz.RHS[wz.RHS < 1e-12] <- 1e-12  # 20210522
+        wz <- cbind(wz, wz.RHS)
+      }
+
+      if (any(is.na(wz)))
+        stop("some NAs in wz")
+
+
+
+    if (FALSE) {
+    mytiny <- (mu <       sqrt(.Machine$double.eps)) |
+              (mu > 1.0 - sqrt(.Machine$double.eps))
+    atiny <- (mytiny %*% rep(1, ncol(mu))) > 0
+    if (any(atiny)) {
+      if (M == 1)
+        wz[atiny] <- wz[atiny] * (1 + .Machine$double.eps^0.5) +
+                                      .Machine$double.eps else
+        wz[atiny, 1:M] <- .Machine$double.eps +
+        wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5)
     }
+    }  # FALSE or TRUE
+
+
+
+    }  # Not multiple responses
     wz
   }), list( .earg = earg, .link = link,
             .multiple.responses = multiple.responses ))))
@@ -1530,10 +1705,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
   blurb = c("Adjacent-categories model\n\n",
             "Links:    ",
     namesof(if (reverse)
-    ifelse(whitespace, "P[Y = j] / P[Y = j + 1]", "P[Y=j]/P[Y=j+1]") else
-    ifelse(whitespace, "P[Y = j + 1] / P[Y = j]", "P[Y=j+1]/P[Y=j]"),
-            link, earg = earg),
-            "\n",
+                ifelse(whitespace, "P[Y = j] / P[Y = j + 1]",
+                       "P[Y=j]/P[Y=j+1]") else
+                ifelse(whitespace, "P[Y = j + 1] / P[Y = j]",
+                                   "P[Y=j+1]/P[Y=j]"),
+            link, earg = earg), "\n",
             "Variance: ",
             ifelse(whitespace,
             "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
@@ -1638,10 +1814,11 @@ dmultinomial <- function(x, size = NULL, prob, log = FALSE,
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+      ycounts <- if (is.numeric(extra$orig.w))
+                 y * w / extra$orig.w else
                  y * w  # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+      nvec <- if (is.numeric(extra$orig.w))
+                  round(w / extra$orig.w) else round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -1800,7 +1977,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
     uindex <- if ( .refgp == "last") 1:M else (1:(M+1))[-( .refgp ) ]
 
     predictors.names <-
-      namesof(paste("alpha", uindex, sep = ""), "loglink", short = TRUE)
+      namesof(paste("alpha", uindex, sep = ""), "loglink",
+              short = TRUE)
 
   }), list( .refgp = refgp, .ialpha = ialpha ))),
 
@@ -1840,10 +2018,11 @@ acat.deriv <- function(zeta, reverse, M, n) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+      ycounts <- if (is.numeric(extra$orig.w))
+                 y * w / extra$orig.w else
                  y * w  # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+      nvec <- if (is.numeric(extra$orig.w))
+              round(w / extra$orig.w) else round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
@@ -1908,15 +2087,16 @@ acat.deriv <- function(zeta, reverse, M, n) {
       for (aa in 1:(M+1)) {
         wz[ii, 1:M] <- wz[ii, 1:M] + (1 - (aa == uindex)) *
                        (ymat[aa, uindex] + ymat[uindex, aa]) *
-               alpha[aa] * alpha[uindex] / (alpha[aa] + alpha[uindex])^2
+            alpha[aa] * alpha[uindex] / (
+            alpha[aa] + alpha[uindex])^2
       }
       if (M > 1) {
         ind5 <- iam(1, 1, M, both = TRUE, diag = FALSE)
         wz[ii, (M+1):ncol(wz)] <-
           -(ymat[cbind(uindex[ind5$row], uindex[ind5$col])] +
             ymat[cbind(uindex[ind5$col], uindex[ind5$row])]) *
-             alpha[uindex[ind5$col]] * alpha[uindex[ind5$row]] /
-            (alpha[uindex[ind5$row]] + alpha[uindex[ind5$col]])^2
+             alpha[uindex[ind5$col]] * alpha[uindex[ind5$row]] / (
+             alpha[uindex[ind5$row]] + alpha[uindex[ind5$col]])^2
       }
     }
     wz <- c(w) * wz
@@ -1990,7 +2170,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
                              "loglink",
                              list(theta = NULL)),
                    n, NCo-1, byrow = TRUE),
-            theta2eta(rep_len(ialpha0, n), "loglink", list(theta = NULL)))
+            theta2eta(rep_len(ialpha0, n), "loglink",
+                      list(theta = NULL)))
     refgp <- .refgp
     if (!intercept.only)
       warning("this function only works with intercept-only models")
@@ -2001,7 +2182,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
     uindex <- if (refgp == "last") 1:(NCo-1) else (1:(NCo))[-refgp ]
 
     predictors.names <- c(
-      namesof(paste("alpha", uindex, sep = ""), "loglink", short = TRUE),
+      namesof(paste("alpha", uindex, sep = ""), "loglink",
+              short = TRUE),
       namesof("alpha0", "loglink", short = TRUE))
   }), list( .refgp = refgp,
            .i0 = i0,
@@ -2067,8 +2249,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha0 <- loglink(eta[ii, M], inverse = TRUE)
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
-       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))  #
-      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))  #
+       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))
+      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))
     }
     okay1 <- all(is.finite( probs)) && all(0 <  probs &  probs < 1) &&
              all(is.finite(qprobs)) && all(0 < qprobs & qprobs < 1)
@@ -2143,7 +2325,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
         wz[ii,(M+1):ncol(wz)] <- -(ymat[mat4] + ymat[mat4[, 2:1]] +
            tmat[mat4]) * alphajunk[uindex[ind5$col]] *
            alphajunk[uindex[ind5$row]] / (alpha0 +
-           alphajunk[uindex[ind5$row]] + alphajunk[uindex[ind5$col]])^2
+           alphajunk[uindex[ind5$row]] +
+           alphajunk[uindex[ind5$col]])^2
       }
       for (sss in seq_along(uindex)) {
         jay <- uindex[sss]
@@ -2280,6 +2463,7 @@ InverseBrat <-
   }
   ans
 }  # InverseBrat()
+
 
 
 
@@ -2728,7 +2912,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "tobit"),
   ymat[censoL] <- Lowmat[censoL]
   ymat[censoU] <- Uppmat[censoU]
   zedd <- (ymat - mustar) / sigmahat  # nnn x NOS
-  coefmat <- coef(object, matrix = TRUE)[, c(TRUE, FALSE), drop = FALSE]
+  coefmat <- coef(object, matrix = TRUE)[, c(TRUE, FALSE),
+                                         drop = FALSE]
   ppp <- nrow(coefmat)
 
   betamat <- matrix(c(coefmat), nnn, ppp * NOS, byrow = TRUE)
@@ -2797,7 +2982,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cumulative"),
 
     }  # if
 
-    resmat[, M+1] <- ifelse(reverse, 1, -1) * hdot.big[, M] * cfit[, M]
+    resmat[, M+1] <- ifelse(reverse, 1, -1) *
+                     hdot.big[, M] * cfit[, M]
 
     ans.cum <- array(resmat, c(ppp, nnn, M+1),
                      dimnames = list(dimnames(Bmat)[[1]],
@@ -3083,7 +3269,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
     dimnames(ans.csratio) <- list(rownames(Bmat),
                                   colnames(fitmat),
                                   rownames(etamat))
-    subsetarray3(ans.csratio, subset = subset)  # "cratio" and "sratio"
+    subsetarray3(ans.csratio, subset = subset)  # "cratio" & "sratio"
   })
 
 
@@ -3208,7 +3394,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
     dimnames(ans.csratio) <- list(rownames(Bmat),
                                   colnames(fitmat),
                                   rownames(etamat))
-    subsetarray3(ans.csratio, subset = subset)  # "cratio" and "sratio"
+    subsetarray3(ans.csratio, subset = subset)  # "cratio" & "sratio"
   })
 
 
@@ -3228,8 +3414,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
     is.element(c("multinomial", "cumulative", "acat",
                  "cratio", "sratio"),
                object@family@vfamily)))
-    stop("'object' is not a 'multinomial' or 'acat' or 'cumulative' ",
-         " or 'cratio' or 'sratio' VGLM!")
+    stop("'object' is not a 'multinomial' or 'acat' ",
+         "or 'cumulative'  or 'cratio' or 'sratio' VGLM!")
   vfamily <- object@family@vfamily
   if (is(object, "vgam"))
     stop("'object' is a vgam() object")
@@ -3356,8 +3542,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
 
 
 
-  if (is.logical(is.multivariateY <- object@misc$multiple.responses) &&
-      is.multivariateY)
+     if (is.logical(is.multivariateY <-
+         object@misc$multiple.responses) && is.multivariateY)
     stop("cannot handle cumulative(multiple.responses = TRUE)")
 
 
@@ -3616,10 +3802,12 @@ prplot <- function(object,
 
   if (!any(slotNames(object) == "family") ||
       !any(object@family@vfamily == "VGAMcategorical"))
-    stop("'object' does not seem to be a VGAM categorical model object")
+    stop("'object' does not seem to be a VGAM categorical ",
+         "model object")
 
   if (!any(object@family@vfamily == "cumulative"))
-    stop("'object' is not seem to be a VGAM categorical model object")
+    stop("'object' does not seem to be a VGAM categorical ",
+         "model object")
 
     control <- prplot.control(...)
 
@@ -3648,7 +3836,8 @@ prplot <- function(object,
            control$xlab else (object@preplot[[1]])$xlab
   mymain <- if (MM <= 3)
            paste(object@misc$parameters, collapse = ", ") else
-           paste(object@misc$parameters[c(1, MM)], collapse = ",...,")
+           paste(object@misc$parameters[c(1, MM)],
+                 collapse = ",...,")
   if (length(control$main)) mymain = control$main
   if (length(control$ylab)) myylab = control$ylab
 
@@ -3727,6 +3916,8 @@ setMethod("is.parallel",  "vglm", function(object, ...)
 
 
 
+
+
 is.zero.matrix <- function(object, ...) {
 
   rnames <- rownames(object)
@@ -3774,6 +3965,7 @@ setMethod("is.zero",  "matrix", function(object, ...)
 
 setMethod("is.zero",  "vglm", function(object, ...)
           is.zero.vglm(object, ...))
+
 
 
 
@@ -3972,11 +4164,13 @@ ordsup.vglm <-
     gamma <-
     switch(linkfns[1],
     clogloglink = clogloglink(ifelse(reverse, 1, -1) *  # Not sure
-                                cobj[ is.binary ], inverse = TRUE),
+                              cobj[ is.binary ], inverse = TRUE),
     logitlink   =   logitlink(ifelse(reverse, 1, -1) *
-                                cobj[ is.binary ] / sqrt(2), inverse = TRUE),
+                              cobj[ is.binary ] / sqrt(2),
+                              inverse = TRUE),
     probitlink  =  probitlink(ifelse(reverse, 1, -1) *
-                              cobj[ is.binary ] / sqrt(2), inverse = TRUE))
+                              cobj[ is.binary ] / sqrt(2),
+                              inverse = TRUE))
   },
   zzzz = {
   })

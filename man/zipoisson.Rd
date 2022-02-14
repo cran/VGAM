@@ -172,6 +172,13 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
   Cambridge University Press: Cambridge.
 
 
+  M'Kendrick, A. G. (1925).
+  Applications of mathematics to medical problems.
+  \emph{Proc. Edinb. Math. Soc.},
+  \bold{44}, 98--130.
+
+
+
   Yee, T. W. (2014).
   Reduced-rank vector generalized linear models with two linear predictors.
   \emph{Computational Statistics and Data Analysis},
@@ -241,7 +248,7 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink", type.fitted =
 }
 
 \seealso{
-  \code{\link{gaitpoisson}},
+  \code{\link{gaitdpoisson}},
   \code{\link{zapoisson}},
   \code{\link{Zipois}},
   \code{\link[VGAMdata]{yip88}},
@@ -282,7 +289,7 @@ coef(fit12, matrix = TRUE)  # These should agree with the above values
 (fitted(fit1, type = "pstr0") / fitted(fit1, type = "pobs0"))[1]
 
 
-# Example 2: McKendrick (1926). Data from 223 Indian village households
+# Example 2: McKendrick (1925). Data from 223 Indian village households
 cholera <- data.frame(ncases = 0:4,  # Number of cholera cases,
                       wfreq  = c(168, 32, 16, 6, 1))  # Frequencies
 fit <- vglm(ncases ~ 1, zipoisson, wei = wfreq, cholera, trace = TRUE)

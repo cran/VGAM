@@ -120,7 +120,8 @@ For rank-2 models, points are the optimums.
   (applies only to rank-2 models only).
 
  }
-  \item{adj.arg}{ Justification of text strings for labelling the optimums
+ \item{adj.arg}{ Justification of text strings for labelling
+   the optimums
   (applies only to rank-2 models only).
   See the \code{adj} argument of \code{\link[graphics]{par}}.
 
@@ -191,9 +192,11 @@ For rank-2 models, points are the optimums.
   See the \code{col} argument of \code{\link[graphics]{par}}. }
   \item{Clwd}{ Line width of the arrows representing \bold{C}.
   See the \code{lwd} argument of \code{\link[graphics]{par}}. }
-  \item{Ccex}{ Numeric. Character expansion of the labelling of \bold{C}.
+\item{Ccex}{ Numeric.
+  Character expansion of the labelling of \bold{C}.
   See the \code{cex} argument of \code{\link[graphics]{par}}. }
-  \item{Cadj.arg}{  Justification of text strings when labelling \bold{C}.
+\item{Cadj.arg}{
+  Justification of text strings when labelling \bold{C}.
   See the \code{adj} argument of \code{\link[graphics]{par}}. }
   \item{stretchC}{ Numerical. Stretching factor for \bold{C}.
   Instead of using \bold{C}, \code{stretchC * } \bold{C} is used. }
@@ -224,9 +227,11 @@ For rank-2 models, points are the optimums.
 % which species (quadratic predictor) is to be chosen so that
 % its major and semi-minor axes are parallel to the latent variable
 % axes, i.e., that species' Tolerance matrix will be diagonal.
-% If \code{Rotate} is \code{TRUE}, the first species is selected for rotation.
+% If \code{Rotate} is \code{TRUE}, the first species is selected
+% for rotation.
 
-% By default a rotation is performed only if the tolerance matrices are equal,
+% By default a rotation is performed only if the tolerance matrices
+% are equal,
 % and \code{Rotation} only applies when the rank is greater than one.
 
 % See \code{\link{Coef.qrrvglm}} for details.
@@ -234,8 +239,8 @@ For rank-2 models, points are the optimums.
 
 % \item{I.tolerances}{
 % Logical.
-% If \code{TRUE}, the tolerances matrices are transformed so that they are
-% the order-\code{Rank} identity matrix. This means that a rank-2
+% If \code{TRUE}, the tolerances matrices are transformed so that they
+% are the order-\code{Rank} identity matrix. This means that a rank-2
 % latent variable plot
 % can be interpreted naturally in terms of distances and directions.
 % See \code{\link{Coef.qrrvglm}} for details.
@@ -243,7 +248,8 @@ For rank-2 models, points are the optimums.
 
   \item{check.ok}{ Logical. Whether a check is performed to see
   that \code{noRRR = ~ 1} was used.
-  It doesn't make sense to have a latent variable plot unless this is so.
+  It doesn't make sense to have a latent variable plot unless
+  this is so.
 
   }
 

@@ -76,7 +76,8 @@ has cumulative distribution function
 \left[ 1 - e^{\beta y} \right]
 \right\}
 }{%
-F(y; alpha, beta, epsilon) = 1 - exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
+  F(y; alpha, beta, epsilon) =
+  1 - exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
 }
 which leads to a probability density function
 \deqn{f(y; \alpha, \beta, \varepsilon) =
@@ -89,7 +90,9 @@ which leads to a probability density function
 \left[ 1 - e^{\beta y} \right]
 \right\},
 }{%
-f(y; alpha, beta, epsilon) = (epsilon + alpha * e^(beta y) ) * exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
+  f(y; alpha, beta, epsilon) =
+  (epsilon + alpha * e^(beta y) ) *
+  exp(-y * epsilon + (alpha / beta) * [1 - e^(beta * y)])
 }
 for \eqn{\alpha > 0}{alpha > 0},
 \eqn{\beta > 0}{beta > 0},
@@ -171,5 +174,5 @@ summary(fit1)
 
 
 %# fit1 <- vglm(y1 ~ 1, makeham, data = mdata, trace = TRUE)
-%# fit2 <- vglm(y1 ~ 1, makeham(imeth = 2), data = mdata, trace = TRUE)
+%# fit2 <- vglm(y1 ~ 1, makeham(imeth = 2), mdata, trace = TRUE)
 

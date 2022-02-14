@@ -101,7 +101,7 @@ leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
 
 }
 \examples{
-ldata <- data.frame(y = rnorm(n = 2000, mean = 0.5, sd = 0.1))  # Not proper data
+ldata <- data.frame(y = rnorm(n = 2000, 0.5, 0.1))  # Improper data
 fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE)
 head(fitted(fit))
 with(ldata, mean(y))
@@ -115,14 +115,14 @@ sum(weights(fit, type = "work"))  # Sum of the working weights
 \keyword{models}
 \keyword{regression}
 
-%fit <- vglm(y ~ 1, leipnik(ilambda = 1), tr = TRUE, cri = "c", checkwz = FALSE)
+%fit = vglm(y ~ 1, leipnik(ilambda = 1), tr=TRUE, cri="c", checkwz = FALSE)
 
 
-% leipnik(lmu = "logitlink", llambda = "loglink", imu = NULL, ilambda = NULL)
+% leipnik(lmu = "logitlink", llambda = "loglink", imu=NULL, ilambda=NULL)
 
 
 %fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logofflink(offset = 1)),
 %            data = ldata, trace = TRUE, crit = "coef")
-% fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE, checkwz = FALSE)
+% fit <- vglm(y ~ 1, leipnik(ilambda=1), ldata, trace=TRUE, checkwz=FALSE)
 
 

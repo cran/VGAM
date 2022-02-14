@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2021 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -354,8 +354,8 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
 
       if (!is.numeric(y.max)) {
         eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
-        y.max <- max(qgaitnbinom(p = eff.p[2], truncate = 0,
-                                 size, munb.p = munb)) + 10
+        y.max <- max(qgaitdnbinom(p = eff.p[2], truncate = 0,
+                                  size, munb.p = munb)) + 10
       }
 
       Y.mat <- if (intercept.only) rbind(y.min:y.max) else
@@ -369,8 +369,8 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
       trigg.term0 <- if (intercept.only) {
 
 
-        sum(c(dgaitnbinom(Y.mat2, size[1], munb.p = munb[1],
-                          truncate = 0)) *
+        sum(c(dgaitdnbinom(Y.mat2, size[1], munb.p = munb[1],
+                           truncate = 0)) *
         c(trigamma(Y.mat2 + size[1])))
       } else {
       }
@@ -389,7 +389,7 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
       as.integer(intercept.only),
       as.double(neff.row), as.double(neff.col),
       as.double(size),
-      as.double(1 - pgaitnbinom(Y.mat, size, munb.p = munb, truncate = 0
+      as.double(1 - pgaitdnbinom(Y.mat, size, munb.p = munb, truncate = 0
                             )),
       rowsums = double(neff.row))
       answerC$rowsums
@@ -433,8 +433,8 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
 
       if (!is.numeric(y.max)) {
         eff.p <- sort(c(cutoff.prob, 1 - cutoff.prob))
-        y.max <- max(qgaitnbinom(p = eff.p[2], truncate = 0,
-                                 size, munb.p = munb)) + 10
+        y.max <- max(qgaitdnbinom(p = eff.p[2], truncate = 0,
+                                  size, munb.p = munb)) + 10
       }
 
       Y.mat <- if (intercept.only) rbind(y.min:y.max) else
@@ -442,12 +442,12 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
                       y.max-y.min+1, byrow = TRUE)
       trigg.term <- if (intercept.only) {
 
-         sum(c(dgaitnbinom(Y.mat, size[1], munb.p = munb[1],
-                           truncate = 0)) *
+         sum(c(dgaitdnbinom(Y.mat, size[1], munb.p = munb[1],
+                            truncate = 0)) *
              c(trigamma(Y.mat + size[1])))
       } else {
-         rowSums(dgaitnbinom(Y.mat, size, munb.p = munb,
-                             truncate = 0) *
+         rowSums(dgaitdnbinom(Y.mat, size, munb.p = munb,
+                              truncate = 0) *
                  trigamma(Y.mat + size))
       }
 
@@ -466,8 +466,8 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
 
 posNBD.Loglikfun2 <- function(munbval, sizeval,
                               y, x, w, extraargs) {
-  sum(c(w) * dgaitnbinom(y, sizeval, munb.p = munbval,
-                         truncate = 0, log = TRUE))
+  sum(c(w) * dgaitdnbinom(y, sizeval, munb.p = munbval,
+                          truncate = 0, log = TRUE))
 }
 
 
@@ -734,8 +734,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <-
-        c(w) * dgaitnbinom(y, kmat, munb.p = munb,
-                           truncate = 0, log = TRUE)
+        c(w) * dgaitdnbinom(y, kmat, munb.p = munb,
+                            truncate = 0, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -762,7 +762,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
                       .lmunb, earg = .emunb )
     kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                       .lsize, earg = .esize )
-    rgaitnbinom(nsim * length(munb), kmat, munb.p = munb, truncate = 0)
+    rgaitdnbinom(nsim * length(munb), kmat, munb.p = munb, truncate = 0)
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize ))),
 
@@ -891,8 +891,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     for (jay in 1:NOS) {
       eff.p <- sort(c( .cutoff.prob , 1 - .cutoff.prob ))
       Q.mins <- 1
-      Q.maxs <- qgaitnbinom(p = eff.p[2], truncate = 0,
-                            kmat[, jay], munb.p = munb[, jay]) + 10
+      Q.maxs <- qgaitdnbinom(p = eff.p[2], truncate = 0,
+                             kmat[, jay], munb.p = munb[, jay]) + 10
 
 
       eps.trig <- .eps.trig
@@ -952,8 +952,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
         kkvec <- kmat[ii.TF, jay]
         muvec <- munb[ii.TF, jay]
         for (ii in 1:( .nsimEIM )) {
-        ysim <- rgaitnbinom(sum(ii.TF), kkvec, munb.p = muvec,
-                            truncate = 0)
+        ysim <- rgaitdnbinom(sum(ii.TF), kkvec, munb.p = muvec,
+                             truncate = 0)
           dl.dk <- digamma(ysim + kkvec) - digamma(kkvec) -
                    (ysim - muvec) / (muvec + kkvec) +
                    log1p(-muvec / (kkvec + muvec)) +
@@ -1180,7 +1180,7 @@ rposgeom <- function(n, prob) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dgaitpois(y, lambda, truncate = 0, log = TRUE)
+      ll.elts <- c(w) * dgaitdpois(y, lambda, truncate = 0, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1207,7 +1207,7 @@ rposgeom <- function(n, prob) {
       warning("ignoring prior weights")
     eta <- predict(object)
     lambda <- eta2theta(eta, .link , earg = .earg )
-    rgaitpois(nsim * length(lambda), lambda, truncate = 0)
+    rgaitdpois(nsim * length(lambda), lambda, truncate = 0)
   }, list( .link = link, .earg = earg ))),
 
 
@@ -1460,7 +1460,7 @@ rposgeom <- function(n, prob) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       answer <- c(use.orig.w) *
-        dgaitbinom(ycounts, nvec, binprob, truncate = 0, log = TRUE)
+        dgaitdbinom(ycounts, nvec, binprob, truncate = 0, log = TRUE)
       if ( .omit.constant ) {
         answer <- answer - c(use.orig.w) * lchoose(nvec, ycounts)
       }
@@ -1509,7 +1509,7 @@ rposgeom <- function(n, prob) {
               if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
                 round(w)
             }
-    rgaitbinom(nsim * length(eta), nvec, binprob, truncate = 0)
+    rgaitdbinom(nsim * length(eta), nvec, binprob, truncate = 0)
   }, list( .link = link, .earg = earg,
           .multiple.responses = multiple.responses,
           .omit.constant = omit.constant ))),

@@ -69,7 +69,7 @@ rzipois(n, lambda, pstr0 = 0)
   stand for the probability of a structural zero loses its
   meaning. When \code{pstr0} equals \code{-1/expm1(lambda)}
   this corresponds to the positive-Poisson distribution
-  (e.g., see \code{\link{Gaitpois}}).
+  (e.g., see \code{\link{Gaitdpois}}).
 
 
 % (e.g., see \code{\link{dpospois}}).
@@ -80,7 +80,7 @@ rzipois(n, lambda, pstr0 = 0)
 
 \seealso{
     \code{\link{zipoisson}},
-    \code{\link{Gaitpois}},
+    \code{\link{Gaitdpois}},
     \code{\link[stats:Poisson]{dpois}},
     \code{\link{rzinegbin}}.
 
