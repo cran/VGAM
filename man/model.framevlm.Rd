@@ -9,9 +9,10 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
     that inherits from a \emph{vector linear model} (VLM),
     e.g., a model of class \code{"vglm"}.}
 
-  \item{\dots}{further arguments such as \code{data}, \code{na.action},
-    \code{subset}.
-    See \code{\link[stats]{model.frame}} for more information on these.
+  \item{\dots}{further arguments such as \code{data},
+  \code{na.action},
+  \code{subset}.  See \code{\link[stats]{model.frame}} for more
+  information on these.
 
 
   }
@@ -25,9 +26,9 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
 
 }
 \description{
-  This function returns a \code{\link{data.frame}} with the variables.
-  It is applied to an object which inherits from class \code{"vlm"} (e.g.,
-  a fitted model of class \code{"vglm"}).
+  This function returns a \code{\link{data.frame}} with the
+  variables.  It is applied to an object which inherits from
+  class \code{"vlm"} (e.g., a fitted model of class \code{"vglm"}).
 
 
 }
@@ -36,8 +37,8 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
   a fitted model of class \code{"vglm"}),
   the method will either returned the saved model frame
   used when fitting the model (if any, selected by argument
-  \code{model = TRUE}) or pass the call used when fitting on to the
-  default method.
+  \code{model = TRUE}) or pass the call used when fitting on to
+  the default method.
 
 
   This code implements \emph{smart prediction}
@@ -74,7 +75,7 @@ model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)
 # Illustrates smart prediction
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal,mild, severe) ~ poly(c(scale(let)), 2),
-            multinomial, data = pneumo, trace = TRUE, x = FALSE)
+            multinomial, pneumo, trace = TRUE, x = FALSE)
 class(fit)
 
 check1 <- head(model.frame(fit))

@@ -16,13 +16,15 @@ borel.tanner(Qsize = 1, link = "logitlink", imethod = 1)
   \item{Qsize}{
   A positive integer.
   It is called \eqn{Q} below and is the initial queue size.
-  The default value \eqn{Q = 1} corresponds to the Borel distribution.
+  The default value \eqn{Q = 1} corresponds to the Borel
+  distribution.
 
 
   }
   \item{link}{
   Link function for the parameter;
-  see \code{\link{Links}} for more choices and for general information.
+  see \code{\link{Links}} for more choices and for general
+  information.
 
 
   }
@@ -35,16 +37,15 @@ borel.tanner(Qsize = 1, link = "logitlink", imethod = 1)
 }
 \details{
   The Borel-Tanner distribution (Tanner, 1953) describes the
-  distribution of the total number of customers served before a queue
-  vanishes given a single queue with random arrival times of
-  customers (at a constant rate \eqn{r} per unit time,
-  and each customer taking a constant time \eqn{b} to be served).
-  Initially the queue has \eqn{Q} people and the first one starts to
-  be served.
-  The two parameters appear in the density only in the form of the product
-  \eqn{rb}, therefore we use \eqn{a=rb}, say, to denote the single
-  parameter to be estimated.
-  The density function is
+  distribution of the total number of customers served before a
+  queue vanishes given a single queue with random arrival times
+  of customers (at a constant rate \eqn{r} per unit time, and
+  each customer taking a constant time \eqn{b} to be served).
+  Initially the queue has \eqn{Q} people and the first one starts
+  to be served.
+  The two parameters appear in the density only in the form of the
+  product \eqn{rb}, therefore we use \eqn{a=rb}, say, to denote
+  the single parameter to be estimated.  The density function is
   \deqn{f(y;a) =
   \frac{ Q }{(y-Q)!} y^{y-Q-1} a^{y-Q}  \exp(-ay)
   }{%
@@ -69,8 +70,10 @@ borel.tanner(Qsize = 1, link = "logitlink", imethod = 1)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -116,7 +119,7 @@ Boston, MA, USA: Birkhauser.
 }
 \examples{
 bdata <- data.frame(y = rbort(n <- 200))
-fit <- vglm(y ~ 1, borel.tanner, data = bdata, trace = TRUE, crit = "c")
+fit <- vglm(y ~ 1, borel.tanner, bdata, trace = TRUE, crit = "c")
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

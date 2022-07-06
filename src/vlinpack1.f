@@ -14,7 +14,6 @@ C Output from Public domain Ratfor, version 1.01
       fasrkub3(j) = vdnrm2(n,x(1,j),ldx,1)
       work(j) = fasrkub3(j)
 23000 continue
-23001 continue
       l=1
       lup = min0(n,p)
       curpvt = p
@@ -32,7 +31,7 @@ C Output from Public domain Ratfor, version 1.01
       jpvt(jj)=jpvt(j)
       fasrkub3(jj)=fasrkub3(j)
       work(jj)=work(j)
-23007 j=j+1
+      j=j+1
       goto 23006
 23008 continue
       jpvt(curpvt)=jp
@@ -67,7 +66,7 @@ C Output from Public domain Ratfor, version 1.01
       work(j) = fasrkub3(j)
       endif
       endif
-23016 j=j+1
+      j=j+1
       goto 23015
 23017 continue
       fasrkub3(l) = x(l,l)

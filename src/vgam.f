@@ -13,9 +13,9 @@ C Output from Public domain Ratfor, version 1.01
       call wbvalue(ankcghz2, rpyis2kc(1,yq6lorbx), nk, ifour4, chw8lzty,
      * order, smat(ayfnwr1v,yq6lorbx))
 23002 continue
-23003 continue
+C23003 continue
 23000 continue
-23001 continue
+C23001 continue
       return
       end
       subroutine tfeswo7c(osiz4fxy, nk, wy1vqfzu, ldk, wbkq9zyi, sgmat)
@@ -29,36 +29,36 @@ C Output from Public domain Ratfor, version 1.01
       osiz4fxy(ldk,(ayfnwr1v-1)*wy1vqfzu+yq6lorbx) = osiz4fxy(ldk,(ayfnw
      *r1v-1)*wy1vqfzu+yq6lorbx) + wbkq9zyi(yq6lorbx) * sgmat(ayfnwr1v,1)
 23006 continue
-23007 continue
+C23007 continue
 23004 continue
-23005 continue
+C23005 continue
       do23008 ayfnwr1v=1,(nk-1) 
       do23010 yq6lorbx=1,wy1vqfzu 
       osiz4fxy(ldk-wy1vqfzu,(ayfnwr1v-0)*wy1vqfzu+yq6lorbx) = osiz4fxy(l
      *dk-wy1vqfzu,(ayfnwr1v-0)*wy1vqfzu+yq6lorbx) + wbkq9zyi(yq6lorbx) *
      * sgmat(ayfnwr1v,2)
 23010 continue
-23011 continue
+C23011 continue
 23008 continue
-23009 continue
+C23009 continue
       do23012 ayfnwr1v=1,(nk-2) 
       do23014 yq6lorbx=1,wy1vqfzu 
       osiz4fxy(ldk-2*wy1vqfzu,(ayfnwr1v+1)*wy1vqfzu+yq6lorbx) = osiz4fxy
      *(ldk-2*wy1vqfzu,(ayfnwr1v+1)*wy1vqfzu+yq6lorbx) + wbkq9zyi(yq6lorb
      *x) * sgmat(ayfnwr1v,3)
 23014 continue
-23015 continue
+C23015 continue
 23012 continue
-23013 continue
+C23013 continue
       do23016 ayfnwr1v=1,(nk-3) 
       do23018 yq6lorbx=1,wy1vqfzu 
       osiz4fxy(ldk-3*wy1vqfzu,(ayfnwr1v+2)*wy1vqfzu+yq6lorbx) = osiz4fxy
      *(ldk-3*wy1vqfzu,(ayfnwr1v+2)*wy1vqfzu+yq6lorbx) + wbkq9zyi(yq6lorb
      *x) * sgmat(ayfnwr1v,4)
 23018 continue
-23019 continue
+C23019 continue
 23016 continue
-23017 continue
+C23017 continue
       return
       end
       subroutine ybnagt8k(iii, cz8qdfyj, tesdm5kv, g9fvdrbw, osiz4fxy, w
@@ -90,7 +90,7 @@ C Output from Public domain Ratfor, version 1.01
      *tcex
       endif
 23020 continue
-23021 continue
+C23021 continue
       return
       end
       subroutine vsplin(he7mqnvy,rbne6ouj,wmat,kuzxj1lo,gkdx5jal, nk,ldk
@@ -152,7 +152,7 @@ C Output from Public domain Ratfor, version 1.01
       rbne6ouj(ayfnwr1v,yq6lorbx) = rbne6ouj(ayfnwr1v,yq6lorbx) / wmat(a
      *yfnwr1v,yq6lorbx)
 23038 continue
-23039 continue
+C23039 continue
       call dnaoqj0l(penalt, dof(yq6lorbx), he7mqnvy, rbne6ouj(1,yq6lorbx
      *), wmat(1,yq6lorbx), kuzxj1lo,nk, gkdx5jal,rpyis2kc(1,yq6lorbx), t
      *8hwvalr(1,yq6lorbx), ifys6woa(1,yq6lorbx), qcpiaj7f,wbkq9zyi(yq6lo
@@ -164,13 +164,13 @@ C Output from Public domain Ratfor, version 1.01
       wmat(ayfnwr1v,yq6lorbx) = wmat(ayfnwr1v,yq6lorbx) * wmat(ayfnwr1v,
      *yq6lorbx)
 23042 continue
-23043 continue
+C23043 continue
       if(yzoe1rsp .ne. 0)then
       do23046 ayfnwr1v=1,kuzxj1lo 
       ui8ysltq(ayfnwr1v,yq6lorbx) = ifys6woa(ayfnwr1v,yq6lorbx) / wmat(a
      *yfnwr1v,yq6lorbx)
 23046 continue
-23047 continue
+C23047 continue
       endif
       else
       call dnaoqj0l(penalt, dof(yq6lorbx), he7mqnvy, btwy(1,yq6lorbx), w
@@ -184,14 +184,14 @@ C Output from Public domain Ratfor, version 1.01
       wmat(ayfnwr1v,yq6lorbx) = wmat(ayfnwr1v,yq6lorbx) * wmat(ayfnwr1v,
      *yq6lorbx)
 23050 continue
-23051 continue
+C23051 continue
       endif
       if(fbd5yktj .ne. 0)then
       return
       endif
       endif
 23024 continue
-23025 continue
+C23025 continue
       if((wy1vqfzu .eq. 1) .or. (dimw .eq. wy1vqfzu))then
       return
       endif
@@ -199,16 +199,16 @@ C Output from Public domain Ratfor, version 1.01
       do23058 yq6lorbx=1,wy1vqfzu 
       btwy(yq6lorbx,ayfnwr1v)=0.0d0
 23058 continue
-23059 continue
+C23059 continue
 23056 continue
-23057 continue
+C23057 continue
       do23060 ayfnwr1v=1,(nk*wy1vqfzu) 
       do23062 yq6lorbx=1,ldk 
       osiz4fxy(yq6lorbx,ayfnwr1v) = 0.0d0
 23062 continue
-23063 continue
+C23063 continue
 23060 continue
-23061 continue
+C23061 continue
       qaltf0nz = 0.1d-9
       do23064 ayfnwr1v=1,kuzxj1lo 
       call vinterv(gkdx5jal(1),(nk+1),he7mqnvy(ayfnwr1v),dqlr5bse,pqzfxw
@@ -227,7 +227,7 @@ C Output from Public domain Ratfor, version 1.01
       btwy(urohxe6t,yq6lorbx)=btwy(urohxe6t,yq6lorbx) + rbne6ouj(ayfnwr1
      *v,urohxe6t) * g9fvdrbw(1,1)
 23070 continue
-23071 continue
+C23071 continue
       call ybnagt8k(ayfnwr1v, yq6lorbx, 0, g9fvdrbw, osiz4fxy, wmat, 1, 
      *1, wy1vqfzu, ldk, dimw, kuzxj1lo, nk, tgiyxdw1, dufozmt7)
       call ybnagt8k(ayfnwr1v, yq6lorbx, 1, g9fvdrbw, osiz4fxy, wmat, 1, 
@@ -241,7 +241,7 @@ C Output from Public domain Ratfor, version 1.01
       btwy(urohxe6t,yq6lorbx)=btwy(urohxe6t,yq6lorbx) + rbne6ouj(ayfnwr1
      *v,urohxe6t) * g9fvdrbw(2,1)
 23072 continue
-23073 continue
+C23073 continue
       call ybnagt8k(ayfnwr1v, yq6lorbx, 0, g9fvdrbw, osiz4fxy, wmat, 2, 
      *2, wy1vqfzu, ldk, dimw, kuzxj1lo, nk, tgiyxdw1, dufozmt7)
       call ybnagt8k(ayfnwr1v, yq6lorbx, 1, g9fvdrbw, osiz4fxy, wmat, 2, 
@@ -253,7 +253,7 @@ C Output from Public domain Ratfor, version 1.01
       btwy(urohxe6t,yq6lorbx)=btwy(urohxe6t,yq6lorbx) + rbne6ouj(ayfnwr1
      *v,urohxe6t) * g9fvdrbw(3,1)
 23074 continue
-23075 continue
+C23075 continue
       call ybnagt8k(ayfnwr1v, yq6lorbx, 0, g9fvdrbw, osiz4fxy, wmat, 3, 
      *3, wy1vqfzu, ldk, dimw, kuzxj1lo, nk, tgiyxdw1, dufozmt7)
       call ybnagt8k(ayfnwr1v, yq6lorbx, 1, g9fvdrbw, osiz4fxy, wmat, 3, 
@@ -263,11 +263,11 @@ C Output from Public domain Ratfor, version 1.01
       btwy(urohxe6t,yq6lorbx)=btwy(urohxe6t,yq6lorbx) + rbne6ouj(ayfnwr1
      *v,urohxe6t) * g9fvdrbw(4,1)
 23076 continue
-23077 continue
+C23077 continue
       call ybnagt8k(ayfnwr1v, yq6lorbx, 0, g9fvdrbw, osiz4fxy, wmat, 4, 
      *4, wy1vqfzu, ldk, dimw, kuzxj1lo, nk, tgiyxdw1, dufozmt7)
 23064 continue
-23065 continue
+C23065 continue
       call zosq7hub(sgdub(1,1), sgdub(1,2), sgdub(1,3), sgdub(1,4), gkdx
      *5jal, nk)
       call tfeswo7c(osiz4fxy, nk, wy1vqfzu, ldk, wbkq9zyi, sgdub)
@@ -282,9 +282,9 @@ C Output from Public domain Ratfor, version 1.01
       i1loc = i1loc + 1
       rpyis2kc(ayfnwr1v,yq6lorbx) = btwy(yq6lorbx,ayfnwr1v)
 23082 continue
-23083 continue
+C23083 continue
 23080 continue
-23081 continue
+C23081 continue
       call cn8kzpab(gkdx5jal, he7mqnvy, rpyis2kc, kuzxj1lo, nk, wy1vqfzu
      *, t8hwvalr)
       call vicb2(osiz4fxy, osiz4fxy, sgdub, wkmm, ldk-1, nk*wy1vqfzu)
@@ -309,9 +309,9 @@ C Output from Public domain Ratfor, version 1.01
       call wbvalue(ankcghz2, rpyis2kc(1,yq6lorbx), nk, ifour4, chw8lzty,
      * izero0, t8hwvalr(ayfnwr1v,yq6lorbx))
 23086 continue
-23087 continue
+C23087 continue
 23084 continue
-23085 continue
+C23085 continue
       return
       end
       subroutine vsuff9(kuzxj1lo,nef,ezlgm2up, he7mqnvy,tlgduey8,wmat, p
@@ -341,29 +341,29 @@ C Output from Public domain Ratfor, version 1.01
       do23094 ayfnwr1v=1,kuzxj1lo 
       pygsw6ko(ezlgm2up(ayfnwr1v))=he7mqnvy(ayfnwr1v)
 23094 continue
-23095 continue
+C23095 continue
       do23096 yq6lorbx=1,wy1vqfzu 
       do23098 ayfnwr1v=1,nef 
       wpasjmo8g(ayfnwr1v,yq6lorbx) = 0.0d0
 23098 continue
-23099 continue
+C23099 continue
 23096 continue
-23097 continue
+C23097 continue
       do23100 yq6lorbx=1,dimw 
       do23102 ayfnwr1v=1,nef 
       wbar(ayfnwr1v,yq6lorbx) = 0.0d0
 23102 continue
-23103 continue
+C23103 continue
 23100 continue
-23101 continue
+C23101 continue
       if(dimw .ne. imk5wjxg)then
       do23106 gp1jxzuh=1,wy1vqfzu 
       do23108 yq6lorbx=1,wy1vqfzu 
       work(yq6lorbx,gp1jxzuh) = 0.0d0
 23108 continue
-23109 continue
+C23109 continue
 23106 continue
-23107 continue
+C23107 continue
       endif
       do23110 ayfnwr1v=1,kuzxj1lo 
       do23112 yq6lorbx=1,dimw 
@@ -372,23 +372,23 @@ C Output from Public domain Ratfor, version 1.01
       work(dufozmt7(yq6lorbx),tgiyxdw1(yq6lorbx)) = work(tgiyxdw1(yq6lor
      *bx),dufozmt7(yq6lorbx))
 23112 continue
-23113 continue
+C23113 continue
       do23114 yq6lorbx=1,wy1vqfzu 
       do23116 gp1jxzuh=1,wy1vqfzu 
       wpasjmo8g(ezlgm2up(ayfnwr1v),yq6lorbx) = wpasjmo8g(ezlgm2up(ayfnwr
      *1v),yq6lorbx) + work(yq6lorbx,gp1jxzuh)*tlgduey8(ayfnwr1v,gp1jxzuh
      *)
 23116 continue
-23117 continue
+C23117 continue
 23114 continue
-23115 continue
+C23115 continue
       do23118 yq6lorbx=1,dimw 
       wbar(ezlgm2up(ayfnwr1v),yq6lorbx) = wbar(ezlgm2up(ayfnwr1v),yq6lor
      *bx) + wmat(ayfnwr1v,yq6lorbx)
 23118 continue
-23119 continue
+C23119 continue
 23110 continue
-23111 continue
+C23111 continue
       dvhw1ulq = 1
       if(iz2nbfjc .eq. 1)then
       do23122 ayfnwr1v=1,nef 
@@ -398,11 +398,11 @@ C Output from Public domain Ratfor, version 1.01
       work(dufozmt7(yq6lorbx),tgiyxdw1(yq6lorbx)) = work(tgiyxdw1(yq6lor
      *bx),dufozmt7(yq6lorbx))
 23124 continue
-23125 continue
+C23125 continue
       do23126 yq6lorbx=1,wy1vqfzu 
       work(yq6lorbx,wy1vqfzu+1)=wpasjmo8g(ayfnwr1v,yq6lorbx)
 23126 continue
-23127 continue
+C23127 continue
       call vcholf(work, work(1,wy1vqfzu+1), wy1vqfzu, dvhw1ulq, oneint)
       if(dvhw1ulq .ne. 1)then
       return
@@ -412,23 +412,23 @@ C Output from Public domain Ratfor, version 1.01
       uwbar(yq6lorbx,ayfnwr1v) = work(tgiyxdw1(yq6lorbx),dufozmt7(yq6lor
      *bx))
 23132 continue
-23133 continue
+C23133 continue
       endif
       do23134 yq6lorbx=1,wy1vqfzu 
       pasjmo8g(ayfnwr1v,yq6lorbx)=work(yq6lorbx,wy1vqfzu+1)
 23134 continue
-23135 continue
+C23135 continue
 23122 continue
-23123 continue
+C23123 continue
       else
       if(dimw .ne. imk5wjxg)then
       do23138 yq6lorbx=1,wy1vqfzu 
       do23140 gp1jxzuh=1,wy1vqfzu 
       work(yq6lorbx,gp1jxzuh) = 0.0d0
 23140 continue
-23141 continue
+C23141 continue
 23138 continue
-23139 continue
+C23139 continue
       endif
       do23142 ayfnwr1v=1,nef 
       call qpsedg8xf(tgiyxdw1, dufozmt7, wy1vqfzu)
@@ -438,11 +438,11 @@ C Output from Public domain Ratfor, version 1.01
       work(dufozmt7(yq6lorbx),tgiyxdw1(yq6lorbx)) = work(tgiyxdw1(yq6lor
      *bx),dufozmt7(yq6lorbx))
 23144 continue
-23145 continue
+C23145 continue
       do23146 yq6lorbx=1,wy1vqfzu 
       work(yq6lorbx,wy1vqfzu+1)=wpasjmo8g(ayfnwr1v,yq6lorbx)
 23146 continue
-23147 continue
+C23147 continue
       do23148 yq6lorbx=1,kgwmz4ip 
       do23150 gp1jxzuh=yq6lorbx,kgwmz4ip 
       work2(yq6lorbx,gp1jxzuh) = 0.0d0
@@ -452,32 +452,32 @@ C Output from Public domain Ratfor, version 1.01
      *hxe6t,yq6lorbx) * work(urohxe6t,bpvaqm5z) * hjm2ktyr(bpvaqm5z,gp1j
      *xzuh)
 23154 continue
-23155 continue
+C23155 continue
 23152 continue
-23153 continue
+C23153 continue
 23150 continue
-23151 continue
+C23151 continue
 23148 continue
-23149 continue
+C23149 continue
       call qpsedg8xf(tgiyxdw1, dufozmt7, kgwmz4ip)
       do23156 yq6lorbx=1,dimu 
       wbar(ayfnwr1v,yq6lorbx) = work2(tgiyxdw1(yq6lorbx),dufozmt7(yq6lor
      *bx))
 23156 continue
-23157 continue
+C23157 continue
       do23158 yq6lorbx=1,kgwmz4ip 
       work2(yq6lorbx,kgwmz4ip+1) = 0.0d0
       do23160 urohxe6t=1,wy1vqfzu 
       work2(yq6lorbx,kgwmz4ip+1) = work2(yq6lorbx,kgwmz4ip+1) + hjm2ktyr
      *(urohxe6t,yq6lorbx) * work(urohxe6t,wy1vqfzu+1)
 23160 continue
-23161 continue
+C23161 continue
 23158 continue
-23159 continue
+C23159 continue
       do23162 yq6lorbx=1,kgwmz4ip 
       wpasjmo8g(ayfnwr1v,yq6lorbx) = work2(yq6lorbx,kgwmz4ip+1)
 23162 continue
-23163 continue
+C23163 continue
       call vcholf(work2, work2(1,kgwmz4ip+1), kgwmz4ip, dvhw1ulq, oneint
      *)
       if(dvhw1ulq .ne. 1)then
@@ -488,14 +488,14 @@ C Output from Public domain Ratfor, version 1.01
       uwbar(yq6lorbx,ayfnwr1v) = work2(tgiyxdw1(yq6lorbx),dufozmt7(yq6lo
      *rbx))
 23168 continue
-23169 continue
+C23169 continue
       endif
       do23170 yq6lorbx=1,kgwmz4ip 
       pasjmo8g(ayfnwr1v,yq6lorbx) = work2(yq6lorbx,kgwmz4ip+1)
 23170 continue
-23171 continue
+C23171 continue
 23142 continue
-23143 continue
+C23143 continue
       endif
       return
       end
@@ -517,9 +517,9 @@ C Output from Public domain Ratfor, version 1.01
       do23176 ayfnwr1v=1,kuzxj1lo 
       grmuyvx9(ayfnwr1v,gp1jxzuh) = 0.0d0
 23176 continue
-23177 continue
+C23177 continue
 23174 continue
-23175 continue
+C23175 continue
       endif
       qaltf0nz = 0.10d-9
       call qpsedg8xf(tgiyxdw1, dufozmt7, wy1vqfzu)
@@ -528,9 +528,9 @@ C Output from Public domain Ratfor, version 1.01
       do23182 gp1jxzuh=1,wy1vqfzu 
       bmb(yq6lorbx,gp1jxzuh)=0.0d0
 23182 continue
-23183 continue
+C23183 continue
 23180 continue
-23181 continue
+C23181 continue
       call vinterv(gkdx5jal(1), (nk+1), he7mqnvy(ayfnwr1v), dqlr5bse, pq
      *zfxw4i)
       if(pqzfxw4i.eq. 1)then
@@ -548,26 +548,26 @@ C Output from Public domain Ratfor, version 1.01
       call o0xlszqr(wy1vqfzu, g9fvdrbw(urohxe6t-yq6lorbx+1,1) * g9fvdrbw
      *(urohxe6t-yq6lorbx+1,1), work, bmb)
 23188 continue
-23189 continue
+C23189 continue
       do23190 urohxe6t=yq6lorbx,yq6lorbx+3 
       do23192 bpvaqm5z=urohxe6t+1,yq6lorbx+3 
       call vsel(urohxe6t, bpvaqm5z, wy1vqfzu, nk, ldk, enaqpzk9, work)
       call o0xlszqr(wy1vqfzu, 2.0d0 * g9fvdrbw(urohxe6t-yq6lorbx+1,1) * 
      *g9fvdrbw(bpvaqm5z-yq6lorbx+1,1), work, bmb)
 23192 continue
-23193 continue
+C23193 continue
 23190 continue
-23191 continue
+C23191 continue
       if(jzwsy6tp .ne. 0)then
       do23196 yq6lorbx=1,wy1vqfzu 
       grmuyvx9(ayfnwr1v,yq6lorbx) = bmb(yq6lorbx,yq6lorbx)
 23196 continue
-23197 continue
+C23197 continue
       endif
       call ovjnsmt2(bmb, wmat, work, ifys6woa, wy1vqfzu, kuzxj1lo, dimw,
      * tgiyxdw1, dufozmt7, ayfnwr1v)
 23178 continue
-23179 continue
+C23179 continue
       return
       end
       subroutine o0xlszqr(wy1vqfzu, g9fvdrbw, work, bmb)
@@ -580,17 +580,17 @@ C Output from Public domain Ratfor, version 1.01
       do23200 gp1jxzuh=1,wy1vqfzu 
       work(yq6lorbx,gp1jxzuh) = work(yq6lorbx,gp1jxzuh) * g9fvdrbw
 23200 continue
-23201 continue
+C23201 continue
 23198 continue
-23199 continue
+C23199 continue
       do23202 yq6lorbx=1,wy1vqfzu 
       do23204 gp1jxzuh=1,wy1vqfzu 
       bmb(gp1jxzuh,yq6lorbx) = bmb(gp1jxzuh,yq6lorbx) + work(gp1jxzuh,yq
      *6lorbx)
 23204 continue
-23205 continue
+C23205 continue
 23202 continue
-23203 continue
+C23203 continue
       return
       end
       subroutine vsel(s, t, wy1vqfzu, nk, ldk, minv, work)
@@ -602,9 +602,9 @@ C Output from Public domain Ratfor, version 1.01
       do23208 yq6lorbx=1,wy1vqfzu 
       work(ayfnwr1v,yq6lorbx) = 0.0d0
 23208 continue
-23209 continue
+C23209 continue
 23206 continue
-23207 continue
+C23207 continue
       if(s .ne. t)then
       do23212 ayfnwr1v=1,wy1vqfzu 
       biuvowq2 = (s-1)*wy1vqfzu + ayfnwr1v
@@ -612,9 +612,9 @@ C Output from Public domain Ratfor, version 1.01
       nbj8tdsk = (t-1)*wy1vqfzu + yq6lorbx
       work(ayfnwr1v,yq6lorbx) = minv(ldk-(nbj8tdsk-biuvowq2), nbj8tdsk)
 23214 continue
-23215 continue
+C23215 continue
 23212 continue
-23213 continue
+C23213 continue
       else
       do23216 ayfnwr1v=1,wy1vqfzu 
       biuvowq2 = (s-1)*wy1vqfzu + ayfnwr1v
@@ -622,16 +622,16 @@ C Output from Public domain Ratfor, version 1.01
       nbj8tdsk = (t-1)*wy1vqfzu + yq6lorbx
       work(ayfnwr1v,yq6lorbx) = minv(ldk-(nbj8tdsk-biuvowq2), nbj8tdsk)
 23218 continue
-23219 continue
+C23219 continue
 23216 continue
-23217 continue
+C23217 continue
       do23220 ayfnwr1v=1,wy1vqfzu 
       do23222 yq6lorbx=ayfnwr1v+1,wy1vqfzu 
       work(yq6lorbx,ayfnwr1v) = work(ayfnwr1v,yq6lorbx)
 23222 continue
-23223 continue
+C23223 continue
 23220 continue
-23221 continue
+C23221 continue
       endif
       return
       end
@@ -648,24 +648,24 @@ C Output from Public domain Ratfor, version 1.01
       do23228 gp1jxzuh=1,wy1vqfzu 
       work(gp1jxzuh,yq6lorbx) = 0.0d0
 23228 continue
-23229 continue
+C23229 continue
 23226 continue
-23227 continue
+C23227 continue
       do23230 urohxe6t=1,dimw 
       obr6tcex = wmat(iii,urohxe6t)
       work(tgiyxdw1(urohxe6t),dufozmt7(urohxe6t)) = obr6tcex
       work(dufozmt7(urohxe6t),tgiyxdw1(urohxe6t)) = obr6tcex
 23230 continue
-23231 continue
+C23231 continue
       q6zdcwxk = 0.0d0
       do23232 yq6lorbx=1,wy1vqfzu 
       q6zdcwxk = q6zdcwxk + bmb(bpvaqm5z,yq6lorbx) * work(yq6lorbx,bpvaq
      *m5z)
 23232 continue
-23233 continue
+C23233 continue
       ifys6woa(iii,bpvaqm5z) = q6zdcwxk
 23224 continue
-23225 continue
+C23225 continue
       return
       end
       subroutine vicb2(enaqpzk9, wpuarq2m, d, uu, wy1vqfzu, kuzxj1lo)
@@ -682,9 +682,9 @@ C Output from Public domain Ratfor, version 1.01
       do23236 ayfnwr1v=1,hofjnx2e 
       uu(ayfnwr1v, kij0gwer-sedf7mxb+1) = wpuarq2m(ayfnwr1v, kij0gwer)
 23236 continue
-23237 continue
+C23237 continue
 23234 continue
-23235 continue
+C23235 continue
       ayfnwr1v = kuzxj1lo-1 
 23238 if(.not.(ayfnwr1v .ge. 1))goto 23240
       if(wy1vqfzu .lt. kuzxj1lo-ayfnwr1v)then
@@ -701,7 +701,7 @@ C Output from Public domain Ratfor, version 1.01
      *dbx3tk+wy1vqfzu+1,ayfnwr1v+lsvdbx3tk) - uu(-gp1jxzuh+wy1vqfzu+1,ay
      *fnwr1v+gp1jxzuh -sedf7mxb+1) * enaqpzk9(gp1jxzuh-lsvdbx3tk+wy1vqfz
      *u+1,ayfnwr1v+lsvdbx3tk)
-23247 gp1jxzuh=gp1jxzuh+1
+      gp1jxzuh=gp1jxzuh+1
       goto 23246
 23248 continue
 23249 if(.not.(gp1jxzuh .le. uplim))goto 23251
@@ -709,10 +709,10 @@ C Output from Public domain Ratfor, version 1.01
      *dbx3tk+wy1vqfzu+1,ayfnwr1v+lsvdbx3tk) - uu(-gp1jxzuh+wy1vqfzu+1,ay
      *fnwr1v+gp1jxzuh -sedf7mxb+1) * enaqpzk9(lsvdbx3tk-gp1jxzuh+wy1vqfz
      *u+1,ayfnwr1v+gp1jxzuh)
-23250 gp1jxzuh=gp1jxzuh+1
+      gp1jxzuh=gp1jxzuh+1
       goto 23249
 23251 continue
-23244 lsvdbx3tk=lsvdbx3tk+1
+      lsvdbx3tk=lsvdbx3tk+1
       goto 23243
 23245 continue
       enaqpzk9(wy1vqfzu+1,ayfnwr1v) = 1.0d0 / d(ayfnwr1v)
@@ -721,7 +721,7 @@ C Output from Public domain Ratfor, version 1.01
       enaqpzk9(wy1vqfzu+1,ayfnwr1v) = enaqpzk9(wy1vqfzu+1,ayfnwr1v) - uu
      *(-lsvdbx3tk+wy1vqfzu+1,ayfnwr1v+lsvdbx3tk -sedf7mxb+1) * enaqpzk9(
      *-lsvdbx3tk+wy1vqfzu+1,ayfnwr1v+lsvdbx3tk)
-23253 lsvdbx3tk=lsvdbx3tk+1
+      lsvdbx3tk=lsvdbx3tk+1
       goto 23252
 23254 continue
       if(ayfnwr1v .eq. sedf7mxb)then
@@ -734,21 +734,21 @@ C Output from Public domain Ratfor, version 1.01
       gp1jxzuh=1
 23262 if(.not.(gp1jxzuh .le. hofjnx2e))goto 23264
       uu(gp1jxzuh,kij0gwer+1) = uu(gp1jxzuh,kij0gwer)
-23263 gp1jxzuh=gp1jxzuh+1
+      gp1jxzuh=gp1jxzuh+1
       goto 23262
 23264 continue
-23260 kij0gwer=kij0gwer-1
+      kij0gwer=kij0gwer-1
       goto 23259
 23261 continue
       gp1jxzuh=1
 23265 if(.not.(gp1jxzuh .le. hofjnx2e))goto 23267
       uu(gp1jxzuh,1) = wpuarq2m(gp1jxzuh,sedf7mxb)
-23266 gp1jxzuh=gp1jxzuh+1
+      gp1jxzuh=gp1jxzuh+1
       goto 23265
 23267 continue
       endif
       endif
-23239 ayfnwr1v = ayfnwr1v-1
+      ayfnwr1v = ayfnwr1v-1
       goto 23238
 23240 continue
       return
@@ -798,7 +798,7 @@ C Output from Public domain Ratfor, version 1.01
       do23272 ayfnwr1v=1,nef 
       xin(ayfnwr1v) = (xin(ayfnwr1v)-xmin)/xrange
 23272 continue
-23273 continue
+C23273 continue
       ldk = 4*kgwmz4ip
       fbd5yktj = 0
       do23274 yq6lorbx=1,kgwmz4ip 
@@ -806,7 +806,7 @@ C Output from Public domain Ratfor, version 1.01
       dof(yq6lorbx) = dof(yq6lorbx) + 1.0d0
       endif
 23274 continue
-23275 continue
+C23275 continue
       call qpsedg8xf(tgiyxdw1, dufozmt7, kgwmz4ip)
       call vsplin(xin,rbne6ouj,win,nef,zv2xfhei, acpios9q,ldk,kgwmz4ip,d
      *imwin, tgiyxdw1,dufozmt7, wkmm, wbkq9zyi, info, sout, rpyis2kc, wo
@@ -817,9 +817,9 @@ C Output from Public domain Ratfor, version 1.01
       do23280 ayfnwr1v=1,nef 
       dof(yq6lorbx)=dof(yq6lorbx)+ifys6woa(ayfnwr1v,yq6lorbx)
 23280 continue
-23281 continue
+C23281 continue
 23278 continue
-23279 continue
+C23279 continue
       if(kgwmz4ip .ge. 1)then
       pvofyg8z = 1.0d-7
       rutyk8mg = nef*kgwmz4ip
@@ -833,7 +833,7 @@ C Output from Public domain Ratfor, version 1.01
       do23284 gp1jxzuh=1,xjc4ywlh 
       ges1xpkr(gp1jxzuh) = gp1jxzuh
 23284 continue
-23285 continue
+C23285 continue
       call vqrdca(work3,rutyk8mg,rutyk8mg,xjc4ywlh,fasrkub3,ges1xpkr,wor
      *k1,qemj9asg,pvofyg8z)
       call qpsedg8xf(tgiyxdw1, dufozmt7, kgwmz4ip)
@@ -855,9 +855,9 @@ C Output from Public domain Ratfor, version 1.01
      *orbx,1) - xin(ayfnwr1v) * (2.0d0 * s0(yq6lorbx,yq6lorbx+kgwmz4ip,1
      *) + xin(ayfnwr1v) * s0(yq6lorbx+kgwmz4ip,yq6lorbx+kgwmz4ip,1))
 23292 continue
-23293 continue
+C23293 continue
 23290 continue
-23291 continue
+C23291 continue
       endif
       else
       call dsrt0gem(nef, xin, win, sout, ub4xioar, cov, yzoe1rsp)
@@ -867,14 +867,14 @@ C Output from Public domain Ratfor, version 1.01
       sout(ayfnwr1v,yq6lorbx) = sout(ayfnwr1v,yq6lorbx) - ub4xioar(yq6lo
      *rbx,ayfnwr1v)
 23296 continue
-23297 continue
+C23297 continue
 23294 continue
-23295 continue
+C23295 continue
       do23298 yq6lorbx=1,kgwmz4ip 
       call shm8ynte(kuzxj1lo, nef, ezlgm2up, sout(1,yq6lorbx), smo(1,yq6
      *lorbx))
 23298 continue
-23299 continue
+C23299 continue
       return
       end
       subroutine x6kanjdh(he7mqnvy, xout, kuzxj1lo, wy1vqfzu)
@@ -893,11 +893,11 @@ C Output from Public domain Ratfor, version 1.01
       endif
       iptr=iptr+1
 23304 continue
-23305 continue
+C23305 continue
 23302 continue
-23303 continue
+C23303 continue
 23300 continue
-23301 continue
+C23301 continue
       do23308 yq6lorbx=1,wy1vqfzu 
       do23310 ayfnwr1v=1,kuzxj1lo 
       do23312 gp1jxzuh=1,wy1vqfzu 
@@ -908,11 +908,11 @@ C Output from Public domain Ratfor, version 1.01
       endif
       iptr=iptr+1
 23312 continue
-23313 continue
+C23313 continue
 23310 continue
-23311 continue
+C23311 continue
 23308 continue
-23309 continue
+C23309 continue
       return
       end
       double precision function rd9beyfk(kuzxj1lo, bhcji9gl, m0ibglfx, p
@@ -929,7 +929,7 @@ C Output from Public domain Ratfor, version 1.01
       rxeqjn0y = rxeqjn0y + po8rwsmy(ayfnwr1v)*work*work
       lm9vcjob = lm9vcjob + po8rwsmy(ayfnwr1v)
 23316 continue
-23317 continue
+C23317 continue
       if(lm9vcjob .gt. 0.0d0)then
       rd9beyfk=rxeqjn0y/lm9vcjob
       else
@@ -951,7 +951,7 @@ C Output from Public domain Ratfor, version 1.01
       rxeqjn0y = rxeqjn0y + bhcji9gl(ayfnwr1v) * po8rwsmy(ayfnwr1v)
       lm9vcjob = lm9vcjob + po8rwsmy(ayfnwr1v)
 23320 continue
-23321 continue
+C23321 continue
       if(lm9vcjob .gt. 0.0d0)then
       lfu2qhid = rxeqjn0y / lm9vcjob
       else
@@ -981,13 +981,13 @@ C Output from Public domain Ratfor, version 1.01
       hofjnx2e = hofjnx2e * hofjnx2e
       q6zdcwxk = q6zdcwxk + hofjnx2e * w(ayfnwr1v)
 23324 continue
-23325 continue
+C23325 continue
       eck8vubt = nsum/q6zdcwxk
       interc = pasjmo8g - eck8vubt * pygsw6ko
       do23326 ayfnwr1v=1,kuzxj1lo 
       ub4xioar(ayfnwr1v) = interc + eck8vubt * x(ayfnwr1v)
 23326 continue
-23327 continue
+C23327 continue
       bzmd6ftv = interc + eck8vubt * x(1)
       if(yzoe1rsp .ne. 0)then
       do23330 ayfnwr1v=1,kuzxj1lo 
@@ -999,7 +999,7 @@ C Output from Public domain Ratfor, version 1.01
       cov(ayfnwr1v,1) = 0.0d0
       endif
 23330 continue
-23331 continue
+C23331 continue
       endif
       return
       end
@@ -1011,7 +1011,7 @@ C Output from Public domain Ratfor, version 1.01
       do23334 ayfnwr1v=1,kuzxj1lo 
       x(ayfnwr1v) = pygsw6ko(ezlgm2up(ayfnwr1v))
 23334 continue
-23335 continue
+C23335 continue
       return
       end
       subroutine vankcghz2l2(x, kuzxj1lo, ankcghz2, rvy1fpli, ukgwt7na)
@@ -1032,15 +1032,15 @@ C Output from Public domain Ratfor, version 1.01
       do23340 yq6lorbx = 1,3 
       ankcghz2(yq6lorbx) = x(1) 
 23340 continue
-23341 continue
+C23341 continue
       do23342 yq6lorbx = 1,ndk 
       ankcghz2(yq6lorbx+3) = x( 1 + (yq6lorbx-1)*(kuzxj1lo-1)/(ndk-1) ) 
 23342 continue
-23343 continue
+C23343 continue
       do23344 yq6lorbx = 1,3 
       ankcghz2(ndk+3+yq6lorbx) = x(kuzxj1lo) 
 23344 continue
-23345 continue
+C23345 continue
       return
       end
       subroutine pankcghz2l2(ankcghz2, kuzxj1lo, zo8wpibx, tol)
@@ -1051,7 +1051,7 @@ C Output from Public domain Ratfor, version 1.01
       do23346 ayfnwr1v=1,4 
       zo8wpibx(ayfnwr1v) = 1
 23346 continue
-23347 continue
+C23347 continue
       cjop5bwm = 4
       do23348 ayfnwr1v=5,(kuzxj1lo-4) 
       if((ankcghz2(ayfnwr1v) - ankcghz2(cjop5bwm) .ge. tol) .and. (ankcg
@@ -1062,10 +1062,10 @@ C Output from Public domain Ratfor, version 1.01
       zo8wpibx(ayfnwr1v) = 0
       endif
 23348 continue
-23349 continue
+C23349 continue
       do23352 ayfnwr1v=(kuzxj1lo-3),kuzxj1lo 
       zo8wpibx(ayfnwr1v) = 1
 23352 continue
-23353 continue
+C23353 continue
       return
       end

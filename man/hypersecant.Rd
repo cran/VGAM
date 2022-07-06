@@ -11,13 +11,16 @@
 
 }
 \usage{
-  hypersecant(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = NULL)
-hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = NULL)
+  hypersecant(link.theta = extlogitlink(min = -pi/2, max = pi/2),
+              init.theta = NULL)
+hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2),
+              init.theta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link.theta}{
-  Parameter link function applied to the parameter \eqn{\theta}{theta}.
+    Parameter link function applied to the
+    parameter \eqn{\theta}{theta}.
   See \code{\link{Links}} for more choices.
 
 
@@ -31,10 +34,12 @@ hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = N
   }
 }
 \details{
-  The probability density function of the hyperbolic secant distribution
+  The probability density function of the
+  hyperbolic secant distribution
   is given by
-  \deqn{f(y;\theta) = \exp(\theta y + \log(\cos(\theta ))) / (2 \cosh(\pi y/2)),}{%
-        f(y; theta) = exp(theta*y + log(cos(theta))) / (2*cosh(pi*y/2)),}
+  \deqn{f(y;\theta) =
+    \exp(\theta y + \log(\cos(\theta ))) / (2 \cosh(\pi y/2)),}{%
+f(y; theta) = exp(theta*y + log(cos(theta))) / (2*cosh(pi*y/2)),}
   for parameter \eqn{-\pi/2 < \theta < \pi/2}{-pi/2 < theta < pi/2}
   and all real \eqn{y}.
   The mean of \eqn{Y} is \eqn{\tan(\theta)}{tan(theta)}
@@ -52,24 +57,30 @@ hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2), init.theta = N
   \deqn{f(u;\theta)=(\cos(\theta)/\pi) \times
                          u^{-0.5+\theta/\pi} \times
                      (1-u)^{-0.5-\theta/\pi},}{%
-        f(u;theta) = (cos(theta)/pi) * u^(-0.5+theta/pi) * (1-u)^(-0.5-theta/pi),}
-  for parameter \eqn{-\pi/2 < \theta < \pi/2}{-pi/2 < theta < pi/2}
+f(u;theta)=(cos(theta)/pi)*u^(-0.5+theta/pi)*(1-u)^(-0.5-theta/pi),}
+  for
+ parameter \eqn{-\pi/2 < \theta < \pi/2}{-pi/2 < theta < pi/2}
   and \eqn{0 < u < 1}.
-  Then the mean of \eqn{U} is \eqn{0.5 + \theta/\pi}{0.5 + theta/pi}
+  Then the mean of \eqn{U}
+  is \eqn{0.5 + \theta/\pi}{0.5 + theta/pi}
   (returned as the fitted values) and the variance is
-  \eqn{(\pi^2 - 4 \theta^2) / (8\pi^2)}{(pi^2 - 4*theta^2) / (8*pi^2)}.
+  \eqn{(\pi^2 - 4 \theta^2) / (8\pi^2)}{
+    (pi^2 - 4*theta^2) / (8*pi^2)}.
 
 
 
-  For both parameterizations Newton-Raphson is same as Fisher scoring.
+  For both parameterizations Newton-Raphson is
+  same as Fisher scoring.
 
 
 
 }
 
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -106,12 +117,12 @@ Natural exponential families with quadratic variance functions.
 \examples{
 hdata <- data.frame(x2 = rnorm(nn <- 200))
 hdata <- transform(hdata, y = rnorm(nn))  # Not very good data!
-fit1 <- vglm(y ~ x2, hypersecant, data = hdata, trace = TRUE, crit = "coef")
+fit1 <- vglm(y ~ x2, hypersecant, hdata, trace = TRUE, crit = "c")
 coef(fit1, matrix = TRUE)
 fit1@misc$earg
 
 # Not recommended:
-fit2 <- vglm(y ~ x2, hypersecant(link = "identitylink"), data = hdata, trace = TRUE)
+fit2 <- vglm(y ~ x2, hypersecant(link = "identitylink"), hdata)
 coef(fit2, matrix = TRUE)
 fit2@misc$earg
 }

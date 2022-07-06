@@ -11,7 +11,8 @@ It is only applicable for rank-1 models with argument
 
 }
 \usage{
-trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
+trplot.qrrvglm(object, which.species = NULL, add = FALSE,
+               show.plot = TRUE,
                label.sites = FALSE, sitenames = rownames(object@y),
                axes.equal = TRUE, cex = par()$cex,
                col = 1:(nos * (nos - 1)/2), log = "",
@@ -23,7 +24,8 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ Object of class \code{"qrrvglm"}, i.e., a CQO object. }
+  \item{object}{ Object of class \code{"qrrvglm"},
+    i.e., a CQO object. }
   \item{which.species}{ Integer or character vector specifying the
   species to be plotted. If integer, these are the columns of the
   response matrix. If character, these must match exactly with the
@@ -32,7 +34,8 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
 
 
   }
-  \item{add}{ Logical. Add to an existing plot? If \code{FALSE} (default),
+  \item{add}{ Logical. Add to an existing plot?
+    If \code{FALSE} (default),
   a new plot is made. }
   \item{show.plot}{ Logical. Plot it? }
   \item{label.sites}{ Logical. If \code{TRUE}, the points on the
@@ -43,7 +46,8 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
 
 
   }
-  \item{cex}{ Character expansion of the labelling of the site names.
+  \item{cex}{ Character expansion of the labelling
+    of the site names.
   Used only if \code{label.sites} is \code{TRUE}.
   See the \code{cex} argument in \code{\link[graphics]{par}}.
 
@@ -122,16 +126,21 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE, show.plot = TRUE,
  therefore contain at least two species. By default, all of the
  species that were fitted in \code{object} are plotted.
  With more than a few species
- the resulting plot will be very congested, and so it is recommended
+ the resulting plot will be very congested, and so it
+ is recommended
  that only a few species be selected for plotting.
 
 
-In the above, \eqn{M} is the number of species selected for plotting,
-so there will be \eqn{M(M-1)/2}{M*(M-1)/2} curves/trajectories in total.
+ In the above, \eqn{M} is the number of species selected
+ for plotting,
+so there will be \eqn{M(M-1)/2}{M*(M-1)/2} curves/trajectories
+in total.
 
 
-A trajectory plot will be fitted only if \code{noRRR = ~ 1} because
-otherwise the trajectory will not be a smooth function of the latent
+A trajectory plot will be fitted only
+if \code{noRRR = ~ 1} because
+otherwise the trajectory will not be a smooth function
+of the latent
 variables.
 
 
@@ -139,8 +148,10 @@ variables.
 \value{
   A list with the following components.
   \item{species.names}{
-   A matrix of characters giving the `first' and `second' species. The
-   number of different combinations of species is given by the number
+    A matrix of characters giving
+    the `first' and `second' species. The
+    number of different combinations of
+    species is given by the number
    of rows.  This is useful for creating a legend.
 
    }
@@ -165,10 +176,13 @@ quadratic ordination.
 
 \note{
    Plotting the axes on a log scale is often a good idea.
-   The use of \code{xlim} and \code{ylim} to control the axis limits
-   is also a good idea, so as to limit the extent of the curves at low
+   The use of \code{xlim} and \code{ylim} to control
+   the axis limits
+   is also a good idea, so as to limit the extent
+   of the curves at low
    abundances or probabilities.
-   Setting \code{label.sites = TRUE} is a good idea only if the number of
+   Setting \code{label.sites = TRUE}
+   is a good idea only if the number of
    sites is small, otherwise there is too much clutter.
 
 
@@ -182,19 +196,23 @@ quadratic ordination.
 
 }
 
-\examples{\dontrun{ set.seed(111)  # This leads to the global solution
-# hspider[,1:6] <- scale(hspider[,1:6])  # Standardize the environmental variables
-p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
+\examples{\dontrun{ set.seed(111)  # Leads to the global solution
+# hspider[,1:6] <- scale(hspider[,1:6])  # Stdze the environ vars
+p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute,
+                Arctperi, Auloalbi, Pardlugu, Pardmont,
+                Pardnigr, Pardpull, Trocterr, Zoraspin) ~
+          WaterCon + BareSand + FallTwig + CoveMoss +
+          CoveHerb + ReflLux,
           poissonff, data = hspider, trace = FALSE)
 
 trplot(p1, which.species = 1:3, log = "xy", type = "b", lty = 1,
        main = "Trajectory plot of three hunting spiders species",
        col = c("blue","red","green"), lwd = 2, label = TRUE) -> ii
-legend(0.00005, 0.3, lwd = 2, lty = 1, col = c("blue", "red", "green"),
-       with(ii, paste(species.names[,1], species.names[,2], sep = " and ")))
-abline(a = 0, b = 1, lty = "dashed", col = "grey")  # Useful reference line
+legend(0.00005, 0.3, lwd = 2, lty = 1,
+       col = c("blue", "red", "green"),
+       with(ii, paste(species.names[,1], species.names[,2],
+                      sep = " and ")))
+abline(a = 0, b = 1, lty = "dashed", col = "grey")  # Ref. line
 }
 }
 \keyword{models}

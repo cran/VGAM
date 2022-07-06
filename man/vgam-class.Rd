@@ -15,7 +15,8 @@ Nonlinear chi-squared values. }
 Nonlinear chi-squared degrees of freedom values. }
     \item{\code{spar}:}{Object of class \code{"numeric"}
 containing the (scaled) smoothing parameters. }
-    \item{\code{s.xargument}:}{Object of class \code{"character"}
+    \item{\code{s.xargument}:}{Object of
+ class \code{"character"}
 holding the variable name of any \code{s()} terms. }
     \item{\code{var}:}{Object of class \code{"matrix"} holding
  approximate pointwise standard error information. }
@@ -32,13 +33,16 @@ The family function.  }
     \item{\code{iter}:}{Object of class \code{"numeric"}.
 The number of IRLS iterations used. }
     \item{\code{predictors}:}{Object of class \code{"matrix"}
-with \eqn{M} columns which holds the \eqn{M} linear predictors. }
+      with \eqn{M} columns which holds
+      the \eqn{M} linear predictors. }
     \item{\code{assign}:}{Object of class \code{"list"},
   from class \code{ "vlm"}.
-  This named list gives information matching the columns and the
+  This named list gives information matching
+  the columns and the
   (LM) model matrix terms.
     }
-    \item{\code{call}:}{Object of class \code{"call"}, from class
+    \item{\code{call}:}{Object of class \code{"call"},
+      from class
   \code{ "vlm"}.
   The matched call.
     }
@@ -46,20 +50,24 @@ with \eqn{M} columns which holds the \eqn{M} linear predictors. }
 \code{"numeric"}, from class \code{ "vlm"}.
 A named vector of coefficients.
     }
-    \item{\code{constraints}:}{Object of class \code{"list"}, from
+    \item{\code{constraints}:}{Object of
+      class \code{"list"}, from
   class \code{ "vlm"}.
   A named list of constraint matrices used in the fitting.
     }
-    \item{\code{contrasts}:}{Object of class \code{"list"}, from
+    \item{\code{contrasts}:}{Object of
+      class \code{"list"}, from
   class \code{ "vlm"}.
   The contrasts used (if any).
     }
-    \item{\code{control}:}{Object of class \code{"list"}, from class
+    \item{\code{control}:}{Object of class \code{"list"},
+      from class
   \code{ "vlm"}.
   A list of parameters for controlling the fitting process.
           See \code{\link{vglm.control}} for details.
     }
-    \item{\code{criterion}:}{Object of class \code{"list"}, from
+    \item{\code{criterion}:}{Object of
+      class \code{"list"}, from
   class \code{ "vlm"}.
   List of convergence criterion evaluated at the
                    final IRLS iteration.
@@ -84,7 +92,8 @@ The effects.
   Object of class
   \code{"matrix"}, from class \code{ "vlm"}.
   The fitted values. This is usually the mean but may be
-  quantiles, or the location parameter, e.g., in the Cauchy model.
+  quantiles, or the location parameter,
+  e.g., in the Cauchy model.
 
  }
     \item{\code{misc}:}{Object of class \code{"list"},
@@ -122,7 +131,8 @@ QR decomposition at the final iteration.
  }
     \item{\code{R}:}{Object of class \code{"matrix"},
  from class \code{ "vlm"}.
-The \bold{R} matrix in the QR decomposition used in the fitting.
+ The \bold{R} matrix in the QR decomposition used
+ in the fitting.
  }
     \item{\code{rank}:}{Object of class \code{"integer"},
  from class \code{ "vlm"}.
@@ -211,7 +221,8 @@ quantile plot (only applicable to some models). }
 residuals. There are various types of these. }
     \item{residuals}{\code{signature(object = "vglm")}:
 residuals. Shorthand for \code{resid}. }
-    \item{rlplot}{\code{signature(object = "vglm")}: return level plot.
+    \item{rlplot}{\code{signature(object = "vglm")}:
+ return level plot.
 Useful for extreme value data models.}
     \item{summary}{\code{signature(object = "vglm")}:
 a more detailed summary of the object. }
@@ -222,7 +233,8 @@ a more detailed summary of the object. }
 
 Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+  Series B, Methodological},
 \bold{58}, 481--493.
 
 
@@ -238,7 +250,7 @@ Vector generalized additive models.
 
 }
 
-%~Make other sections like WARNING with \section{WARNING }{....} ~
+%~Make other sections like WARNING with \section{WARNING }{..}~
 
 \seealso{
 \code{\link{vgam.control}},

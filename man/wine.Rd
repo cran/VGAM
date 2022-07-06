@@ -40,21 +40,28 @@ data(wine)
 \details{
 
 The data set comes from Randall (1989) and concerns a factorial
-experiment for investigating factors that affect the bitterness of white
-wines. There are two factors in the experiment: temperature at the time
-of crushing the grapes and contact of the juice with the skin.
-Two bottles of wine were fermented for each of the treatment combinations.
-A panel of 9 judges were selected and trained for the ability to
-detect bitterness.
-Thus there were 72 bottles in total.
-Originally, the bitterness of the wine were taken on a continuous
-scale in the interval from 0 (none) to 100 (intense)
-but later they were
-grouped using equal lengths into five ordered categories 1, 2, 3, 4 and 5.
+experiment for investigating factors that affect the
+bitterness of white
+wines. There are two factors in the experiment:
+temperature at the time
+of crushing the grapes and contact of the juice
+with the skin.  Two
+bottles of wine were fermented for each of the
+treatment combinations.
+A panel of 9 judges were selected and trained
+for the ability to detect
+bitterness.  Thus there were 72 bottles in total.
+Originally, the
+bitterness of the wine were taken on a
+continuous scale in the interval
+from 0 (none) to 100 (intense) but later they
+were grouped using equal
+lengths into five ordered categories 1, 2, 3, 4 and 5.
 
 
 
-%%  ~~ If necessary, more details than the __description__ above ~~
+%%  ~~ If necessary, more details
+%% than the __description__ above ~~
 }
 \source{
 
@@ -65,12 +72,14 @@ grouped using equal lengths into five ordered categories 1, 2, 3, 4 and 5.
 
 
 Christensen, R. H. B. (2013)
-Analysis of ordinal data with cumulative link models---estimation
+Analysis of ordinal data with
+cumulative link models---estimation
 with the R-package \pkg{ordinal}.
 R Package Version 2013.9-30.
 \url{https://CRAN.R-project.org/package=ordinal}.
 %\url{https://www.R-project.org/package=ordinal}.
-%\url{https://www.CRAN.R-project.org/package=ordinal}.  % Prior to 20150728
+% Prior to 20150728:
+%\url{https://www.CRAN.R-project.org/package=ordinal}.
 
 
 
@@ -82,7 +91,8 @@ R Package Version 2013.9-30.
 
   Kosmidis, I. (2014).
   Improved estimation in cumulative link models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+  \emph{Journal of the Royal Statistical Society, Series B,
+    Methodological},
 \bold{76}(1): 169--196.
 
 

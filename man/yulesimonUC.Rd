@@ -27,7 +27,8 @@ ryules(n, shape)
 
   }
 % \item{p}{vector of probabilities.}
-% \item{n}{number of observations. Same as in \code{\link[stats]{runif}}. }
+% \item{n}{number of observations.
+% Same as in \code{\link[stats]{runif}}. }
   \item{shape}{
    See \code{\link{yulesimon}}.
 
@@ -44,7 +45,8 @@ ryules(n, shape)
 \details{
   See \code{\link{yulesimon}}, the \pkg{VGAM} family function
   for estimating the parameter,
-  for the formula of the probability density function and other details.
+  for the formula of the probability density function
+  and other details.
 
 
 }
@@ -83,6 +85,6 @@ round(1000 * dyules(1:8, 2))
 table(ryules(1000, 2))
 
 \dontrun{ x <- 0:6
-plot(x, dyules(x, shape = 2.2), type = "h", las = 1, col = "blue") }
-}
+plot(x, dyules(x, shape = 2.2), type = "h", las = 1, col = "blue")
+}}
 \keyword{distribution}

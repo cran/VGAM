@@ -129,7 +129,7 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
   }
   \item{xij}{
-  A formula or a list of formulas.
+  A list of formulas.
   Each formula has a RHS giving \eqn{M} terms making up a
   covariate-dependent term (whose name is the response).
   That is, it creates a variable
@@ -143,6 +143,13 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   each successive row of the constraint matrix.
   When \code{xij} is used, the use of \code{form2} is also required
   to give \emph{every} term used by the model.
+
+
+
+% 20220203; it was originally this, but am unsure:
+  A formula or a list of formulas.
+
+
 
 
 
@@ -305,8 +312,8 @@ fit3 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1, dum2),
              fam = binom2.or(exchangeable = TRUE, zero = 3),
              xij = list(NS(dum1, dum2) ~ NS(dum1, dum2) +
                                          NS(dum2, dum1) +
-                                         fill(NS( dum1))),
-             form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) + fill(NS(dum1)) +
+                                         fill1(NS( dum1))),
+             form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) + fill1(NS(dum1)) +
                         dum1 + dum2 + dum3 + Age + age + dumm,
              data = coalminers, trace = TRUE)
 head(model.matrix(fit3, type = "lm"))   # LM model matrix

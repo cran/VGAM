@@ -7,8 +7,8 @@
 \title{The Inverse Lomax Distribution}
 \description{
   Density, distribution function, quantile function and random
-  generation for the inverse Lomax distribution with shape parameter
-  \code{p} and scale parameter \code{scale}.
+  generation for the inverse Lomax distribution with shape
+  parameter \code{p} and scale parameter \code{scale}.
 
 }
 \usage{
@@ -56,14 +56,15 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{inv.lomax}}, which is the \pkg{VGAM} family function
-  for estimating the parameters by maximum likelihood estimation.
+  See \code{\link{inv.lomax}}, which is the \pkg{VGAM} family
+  function for estimating the parameters by maximum likelihood
+  estimation.
 
 
 }
 \note{
-  The inverse Lomax distribution is a special case of the 4-parameter
-  generalized beta II distribution.
+  The inverse Lomax distribution is a special case of the
+  4-parameter generalized beta II distribution.
 
 
 }
@@ -75,7 +76,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 \examples{
 idata <- data.frame(y = rinv.lomax(n = 1000, exp(2), exp(1)))
-fit <- vglm(y ~ 1, inv.lomax, data = idata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, inv.lomax, idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

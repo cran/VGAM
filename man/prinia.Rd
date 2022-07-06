@@ -80,7 +80,8 @@ data(prinia)
 % \code{\link{posbernoulli.b}},
 % \code{\link{posbernoulli.t}} and
 % \code{\link{posbernoulli.tb}} to work.
-% In contrast, \code{\link{posbinomial}} may have a simple 2-column
+% In contrast,
+% \code{\link{posbinomial}} may have a simple 2-column
 % matrix as the response.
 
 
@@ -88,7 +89,7 @@ data(prinia)
 
 
 
-%%  ~~ If necessary, more details than the __description__ above ~~
+%% ~~ If necessary, more details than the __description__ above~~
 }
 \source{
 
@@ -98,14 +99,16 @@ data(prinia)
 % Further information is at:
 
 % Huggins, R. M. and Yip, P. S. F. (1997).
-% Statistical analysis of removal experiments with the use of auxillary variables.
+% Statistical analysis of removal experiments with the
+% use of auxillary variables.
 % \emph{Statistica Sinica} \bold{7}, 705--712.
 
 
   Hwang, W.-H. and Huggins, R. M. (2007)
   Application of semiparametric regression models in the
   analysis of capture--recapture experiments.
-  \emph{Australian and New Zealand Journal of Statistics} \bold{49}, 191--202.
+  \emph{Australian and New Zealand Journal of Statistics}
+  \bold{49}, 191--202.
 
 
 }
@@ -115,13 +118,13 @@ summary(prinia)
 rowSums(prinia[, c("cap", "noncap")])  # 19s
 
 #  Fit a positive-binomial distribution (M.h) to the data:
-fit1 <- vglm(cbind(cap, noncap) ~ length + fat, posbinomial, data = prinia)
+fit1 <- vglm(cbind(cap, noncap) ~ length + fat, posbinomial, prinia)
 
 #  Fit another positive-binomial distribution (M.h) to the data:
 #  The response input is suitable for posbernoulli.*-type functions.
 fit2 <- vglm(cbind(y01, y02, y03, y04, y05, y06, y07, y08, y09, y10,
                    y11, y12, y13, y14, y15, y16, y17, y18, y19) ~
-             length + fat, posbernoulli.b(drop.b = FALSE ~ 0), data = prinia)
+             length + fat, posbernoulli.b(drop.b = FALSE ~ 0), prinia)
 }
 \keyword{datasets}
 

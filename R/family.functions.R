@@ -9,8 +9,7 @@
 
 
 
-fill <-
-fill1 <- fill2 <- fill3 <-
+fill1 <- fill2 <- fill3 <- fill4 <-
   function(x, values = 0, ncolx = ncol(x)) {
   x <- as.matrix(x)
   matrix(values, nrow = nrow(x), ncol = ncolx, byrow = TRUE)

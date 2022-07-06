@@ -39,7 +39,8 @@ rzibinom(n, size, prob, pstr0 = 0)
   \item{log}{
       Same as \code{\link[stats:Binomial]{pbinom}}.}
   \item{pstr0}{
-  Probability of a structural zero (i.e., ignoring the binomial distribution),
+  Probability of a structural zero
+  (i.e., ignoring the binomial distribution),
   called \eqn{\phi}{phi}.
   The default value of \eqn{\phi=0}{phi=0} corresponds to
   the response having an ordinary binomial distribution.
@@ -48,7 +49,8 @@ rzibinom(n, size, prob, pstr0 = 0)
 }
 \details{
   The probability function of \eqn{Y} is 0 with probability
-  \eqn{\phi}{phi}, and \eqn{Binomial(size, prob)}{Binomial(size, prob)} with
+  \eqn{\phi}{phi}, 
+  and \eqn{Binomial(size, prob)}{Binomial(size, prob)} with
   probability \eqn{1-\phi}{1-phi}. Thus
   \deqn{P(Y=0) =\phi + (1-\phi) P(W=0)}{%
         P(Y=0) = phi + (1-phi) * P(W=0)}
@@ -92,18 +94,18 @@ rzibinom(n, size, prob, pstr0 = 0)
 \examples{
 prob <- 0.2; size <- 10; pstr0 <- 0.5
 (ii <- dzibinom(0:size, size, prob, pstr0 = pstr0))
-max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0)))  # Should be 0
+max(abs(cumsum(ii) - pzibinom(0:size, size, prob, pstr0 = pstr0)))  # 0?
 table(rzibinom(100, size, prob, pstr0 = pstr0))
 
 table(qzibinom(runif(100), size, prob, pstr0 = pstr0))
-round(dzibinom(0:10, size, prob, pstr0 = pstr0) * 100)  # Should be similar
+round(dzibinom(0:10, size, prob, pstr0 = pstr0) * 100)  # Similar?
 
 \dontrun{ x <- 0:size
 barplot(rbind(dzibinom(x, size, prob, pstr0 = pstr0),
                 dbinom(x, size, prob)),
-        beside = TRUE, col = c("blue", "green"), ylab = "Probability",
-        main = paste("ZIB(", size, ", ", prob, ", pstr0 = ", pstr0, ") (blue) vs",
-                     " Binomial(", size, ", ", prob, ") (green)", sep=""),
-        names.arg = as.character(x), las = 1, lwd = 2) }
+    beside = TRUE, col = c("blue", "green"), ylab = "Probability",
+    main = paste0("ZIB(", size, ", ", prob, ", pstr0 = ", pstr0, ")",
+                 " (blue) vs Binomial(", size, ", ", prob, ") (green)"),
+    names.arg = as.character(x), las = 1, lwd = 2) }
 }
 \keyword{distribution}

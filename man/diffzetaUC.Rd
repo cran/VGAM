@@ -31,7 +31,7 @@ rdiffzeta(n, shape, start = 1)
    Details at \code{\link{diffzeta}}.
 
 
-%   For \code{rdiffzeta()} this pa%arameter must be of length 1.
+%For \code{rdiffzeta()} this pa%arameter must be of length 1.
 
 
   }
@@ -87,10 +87,11 @@ ddiffzeta(1:20, 0.5, start = 2)
 rdiffzeta(20, 0.5)
 
 \dontrun{ shape <- 0.8; x <- 1:10
-plot(x, ddiffzeta(x, shape = shape), type = "h", ylim = 0:1,
-     sub = "shape=0.8", las = 1, col = "blue", ylab = "Probability",
+plot(x, ddiffzeta(x, sh = shape), type = "h", ylim = 0:1, las = 1,
+     sub = "shape=0.8", col = "blue", ylab = "Probability",
      main = "Differenced zeta distribution: blue=PMF; orange=CDF")
-lines(x + 0.1, pdiffzeta(x, shape = shape), col = "orange", lty = 3, type = "h") }
+lines(x + 0.1, pdiffzeta(x, shape = shape), col = "orange",
+      lty = 3, type = "h") }
 }
 \keyword{distribution}
 

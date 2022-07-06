@@ -79,17 +79,18 @@ legend(x = 3, y = 0.9, legend = paste("shape  = ",c(0.5, 1,2)),
        col = c("green","blue","orange"), lty = 1:3, lwd = 2)
 
 shape <- 1; x <- seq(0.0, 4, len = 401)
-plot(x, dbisa(x, shape = shape), type = "l", col = "blue", las = 1, ylab = "",
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles", ylim = 0:1)
+plot(x, dbisa(x, shape = shape), type = "l", col = "blue",
+     main = "Blue is density, orange is the CDF", las = 1,
+     sub = "Red lines are the 10,20,...,90 percentiles",
+     ylab = "", ylim = 0:1)
 abline(h = 0, col = "blue", lty = 2)
 lines(x, pbisa(x, shape = shape), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qbisa(probs, shape = shape)
-lines(Q, dbisa(Q, shape = shape), col = "purple", lty = 3, type = "h")
+lines(Q, dbisa(Q, shape = shape), col = "red", lty = 3, type = "h")
 pbisa(Q, shape = shape) - probs  # Should be all zero
-abline(h = probs, col = "purple", lty = 3)
-lines(Q, pbisa(Q, shape = shape), col = "purple", lty = 3, type = "h")
+abline(h = probs, col = "red", lty = 3)
+lines(Q, pbisa(Q, shape = shape), col = "red", lty = 3, type = "h")
 }
 }
 \keyword{distribution}

@@ -73,15 +73,25 @@ Agresti, A. (2013).
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
 \cr
-Simonoff, J. S. (2003).
-\emph{Analyzing Categorical Data},
-New York: Springer-Verlag.
+Tutz, G. (2012).
+\emph{Regression for Categorical Data},
+Cambridge: Cambridge University Press.
 \cr
 Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
 \doi{10.18637/jss.v032.i10}.
+
+
+
+
+%\cr
+%Simonoff, J. S. (2003).
+%\emph{Analyzing Categorical Data},
+%New York: Springer-Verlag.
+%\cr
+
 
 
 % \url{https://www.jstatsoft.org/article/view/v032i10/}.

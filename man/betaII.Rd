@@ -7,8 +7,9 @@
   beta II distribution.
 }
 \usage{
-betaII(lscale = "loglink", lshape2.p = "loglink", lshape3.q = "loglink",
-       iscale = NULL, ishape2.p = NULL, ishape3.q = NULL, imethod = 1,
+betaII(lscale = "loglink", lshape2.p = "loglink",
+       lshape3.q = "loglink", iscale = NULL, ishape2.p = NULL,
+       ishape3.q = NULL, imethod = 1,
        gscale = exp(-5:5), gshape2.p = exp(-5:5),
        gshape3.q = seq(0.75, 4, by = 0.25),
        probs.y = c(0.25, 0.5, 0.75), zero = "shape")
@@ -43,9 +44,10 @@ betaII(lscale = "loglink", lshape2.p = "loglink", lshape3.q = "loglink",
   The 3-parameter beta II is the 4-parameter
   \emph{generalized} beta II distribution with shape parameter \eqn{a=1}.
   It is also known as the Pearson VI distribution.
-  Other distributions which are special cases of the 3-parameter beta II include
-  the Lomax (\eqn{p=1}) and inverse Lomax (\eqn{q=1}).
-  More details can be found in Kleiber and Kotz (2003).
+  Other distributions which are special cases of the 3-parameter
+  beta II include the Lomax (\eqn{p=1}) and inverse Lomax
+  (\eqn{q=1}).  More details can be found in Kleiber and Kotz
+  (2003).
 
 
 The beta II distribution has density
@@ -55,16 +57,19 @@ The beta II distribution has density
 Here, \eqn{b} is the scale parameter \code{scale},
 and the others are shape parameters.
 The mean is
-  \deqn{E(Y) = b \, \Gamma(p + 1) \, \Gamma(q - 1) / (\Gamma(p) \, \Gamma(q))}{%
-        E(Y) = b  gamma(p + 1)  gamma(q - 1) / ( gamma(p)  gamma(q))}
+\deqn{E(Y) = b \, \Gamma(p + 1) \,
+      \Gamma(q - 1) / (\Gamma(p) \, \Gamma(q))}{%
+E(Y) = b  gamma(p + 1)  gamma(q - 1) / ( gamma(p)  gamma(q))}
 provided \eqn{q > 1}; these are returned as the fitted values.
 This family function handles multiple responses.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -72,7 +77,8 @@ This family function handles multiple responses.
 \references{
 
 Kleiber, C. and Kotz, S. (2003).
-\emph{Statistical Size Distributions in Economics and Actuarial Sciences},
+\emph{Statistical Size Distributions in Economics and
+      Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -100,8 +106,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-bdata <- data.frame(y = rsinmad(2000, shape1.a = 1, shape3.q = exp(2),
-                                scale = exp(1)))  # Not genuine data!
+bdata <- data.frame(y = rsinmad(2000, shape1.a = 1,
+         shape3.q = exp(2), scale = exp(1)))  # Not genuine data!
 fit <- vglm(y ~ 1, betaII, data = bdata, trace = TRUE)
 fit <- vglm(y ~ 1, betaII(ishape2.p = 0.7, ishape3.q = 0.7),
             data = bdata, trace = TRUE)

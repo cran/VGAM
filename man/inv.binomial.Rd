@@ -9,19 +9,21 @@
 }
 \usage{
 inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
-             llambda = "loglink", irho = NULL, ilambda = NULL, zero = NULL)
+    llambda = "loglink", irho = NULL, ilambda = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lrho, llambda}{
-  Link function for the \eqn{\rho}{rho} and \eqn{\lambda}{lambda} parameters.
+  Link function for the \eqn{\rho}{rho} and \eqn{\lambda}{lambda}
+  parameters.
   See \code{\link{Links}} for more choices.
 
 
   }
   \item{irho, ilambda}{
   Numeric.
-  Optional initial values for \eqn{\rho}{rho} and \eqn{\lambda}{lambda}.
+  Optional initial values for \eqn{\rho}{rho} and
+  \eqn{\lambda}{lambda}.
 
 
   }
@@ -32,9 +34,12 @@ inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
   }
 }
 \details{
-  The inverse binomial distribution of Yanagimoto (1989) has density function
+  The inverse binomial distribution of Yanagimoto (1989) has
+  density function
   \deqn{f(y;\rho,\lambda) =
-  \frac{ \lambda  \,\Gamma(2y+\lambda) }{\Gamma(y+1) \, \Gamma(y+\lambda+1) }
+  \frac{ \lambda
+         \,\Gamma(2y+\lambda) }{\Gamma(y+1) \,
+         \Gamma(y+\lambda+1) }
   \{ \rho(1-\rho) \}^y  \rho^{\lambda}}{%
   f(y;rho,lambda) =
   (lambda * Gamma(2y+lambda)) * [rho*(1-rho)]^y *
@@ -47,7 +52,8 @@ inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
   is \eqn{\lambda (1-\rho) /(2 \rho-1)}{lambda*(1-rho)/(2*rho-1)}
   (returned as the fitted values) and the
   variance is
-  \eqn{\lambda \rho (1-\rho) /(2 \rho-1)^3}{lambda*rho*(1-rho)/(2*rho-1)^3}.
+  \eqn{\lambda \rho
+  (1-\rho) /(2 \rho-1)^3}{lambda*rho*(1-rho)/(2*rho-1)^3}.
   The inverse binomial distribution is a special
   case of the generalized negative binomial distribution of
   Jain and Consul (1971).
@@ -58,8 +64,10 @@ inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -87,15 +95,15 @@ inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
 \note{
 This \pkg{VGAM} family function only works reasonably well with
 intercept-only models.
-Good initial values are needed; if convergence failure occurs use
-\code{irho} and/or \code{ilambda}.
+Good initial values are needed; if convergence failure occurs
+use \code{irho} and/or \code{ilambda}.
 
 
 Some elements of the working weight matrices use the expected
 information matrix while other elements use the observed
 information matrix.
-Yet to do: using the mean and the reciprocal of \eqn{\lambda}{lambda}
-results in an EIM that is diagonal.
+Yet to do: using the mean and the reciprocal of
+\eqn{\lambda}{lambda} results in an EIM that is diagonal.
 
 
 }

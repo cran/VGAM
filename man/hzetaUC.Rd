@@ -6,8 +6,9 @@
 \alias{rhzeta}
 \title{ Haight's Zeta Distribution  }
 \description{
-  Density, distribution function, quantile function and random generation
-  for Haight's zeta distribution with parameter \code{shape}.
+  Density, distribution function, quantile function and random
+  generation for Haight's zeta distribution with parameter
+  \code{shape}.
 
 
 }
@@ -87,9 +88,10 @@ round(1000 * dhzeta(1:8, 2))
 table(rhzeta(1000, 2))
 
 \dontrun{ shape <- 1.1; x <- 1:10
-plot(x, dhzeta(x, shape = shape), type = "h", ylim = 0:1, lwd = 2,
-     sub = paste("shape =", shape), las = 1, col = "blue", ylab = "Probability",
-     main = "Haight's zeta: blue = density; orange = distribution function")
+plot(x, dhzeta(x, shape = shape), type = "h", ylim = 0:1,
+     sub = paste("shape =", shape), las = 1, col = "blue",
+     ylab = "Probability", lwd = 2,
+     main = "Haight's zeta: blue = density; orange = CDF")
 lines(x+0.1, phzeta(x, shape = shape), col = "orange", lty = 3, lwd = 2,
       type = "h")
 }

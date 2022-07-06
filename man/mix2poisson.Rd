@@ -24,7 +24,8 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
 % \item{ephi, el1, el2}{
 %           ephi = list(), el1 = list(), el2 = list(),
 % List. Extra argument for each of the links.
-% See \code{earg} in \code{\link{Links}} for general information.
+% See \code{earg} in \code{\link{Links}} for
+% general information.
 % }
 
   \item{iphi}{
@@ -42,10 +43,10 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
 
   }
   \item{qmu}{
-    Vector with two values giving the probabilities relating to the
-    sample quantiles for obtaining initial values for
-    \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}.  The two
-    values are fed in as the \code{probs} argument into
+    Vector with two values giving the probabilities relating
+    to the sample quantiles for obtaining initial values for
+    \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}.
+    The two values are fed in as the \code{probs} argument into
     \code{\link[stats]{quantile}}.
 
 
@@ -60,22 +61,25 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
   The probability function can be loosely written as
   \deqn{P(Y=y) = \phi \, Poisson(\lambda_1) +
         (1-\phi) \, Poisson(\lambda_2)}{%
-        P(Y=y) = phi * Poisson(lambda1) + (1-phi) * Poisson(lambda2)}
+P(Y=y) = phi * Poisson(lambda1) + (1-phi) * Poisson(lambda2)}
   where \eqn{\phi}{phi} is the probability an observation belongs
   to the first group, and \eqn{y=0,1,2,\ldots}{y=0,1,2,...}.
-  The parameter \eqn{\phi}{phi} satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
+  The parameter \eqn{\phi}{phi}
+  satisfies \eqn{0 < \phi < 1}{0 < phi < 1}.
   The mean of \eqn{Y} is
-  \eqn{\phi \lambda_1 + (1-\phi) \lambda_2}{phi*lambda1 + (1-phi)*lambda2}
+\eqn{\phi\lambda_1+(1-\phi)\lambda_2}{phi*lambda1 + (1-phi)*lambda2}
   and this is returned as the fitted values.
   By default, the three linear/additive predictors are
-  \eqn{(logit(\phi), \log(\lambda_1), \log(\lambda_2))^T}{(logit(phi),
+\eqn{(logit(\phi), \log(\lambda_1), \log(\lambda_2))^T}{(logit(phi),
   log(lambda1), log(lambda2))^T}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -84,11 +88,12 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
 \section{Warning }{
   This \pkg{VGAM} family function requires care for a successful
   application.
-  In particular, good initial values are required because of the presence
-  of local solutions. Therefore running this function with several
-  different combinations of arguments such as \code{iphi}, \code{il1},
-  \code{il2}, \code{qmu} is highly recommended. Graphical methods such
-  as \code{\link[graphics]{hist}} can be used as an aid.
+  In particular, good initial values are required because
+  of the presence of local solutions. Therefore running
+  this function with several different combinations of
+  arguments such as \code{iphi}, \code{il1}, \code{il2},
+  \code{qmu} is highly recommended. Graphical methods such as
+  \code{\link[graphics]{hist}} can be used as an aid.
 
 
   With grouped data (i.e., using the \code{weights} argument)
@@ -106,18 +111,18 @@ mix2poisson(lphi = "logitlink", llambda = "loglink",
 
 \author{ T. W. Yee }
 \note{
-  The response must be integer-valued since \code{\link[stats]{dpois}}
-  is invoked.
+  The response must be integer-valued since
+  \code{\link[stats]{dpois}} is invoked.
 
 
-  Fitting this model successfully to data can be difficult due to local
-  solutions and ill-conditioned data. It pays to fit the model several
-  times with different initial values, and check that the best fit
-  looks reasonable. Plotting the results is recommended. This function
-  works better as \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2}
-  become more different.
-  The default control argument \code{trace = TRUE} is to encourage
-  monitoring convergence.
+  Fitting this model successfully to data can be difficult
+  due to local solutions and ill-conditioned data. It pays to
+  fit the model several times with different initial values,
+  and check that the best fit looks reasonable. Plotting
+  the results is recommended. This function works better as
+  \eqn{\lambda_1}{lambda1} and \eqn{\lambda_2}{lambda2} become
+  more different.  The default control argument \code{trace =
+  TRUE} is to encourage monitoring convergence.
 
 
 }
@@ -151,15 +156,15 @@ abline(v = c(mu1, mu2), lty = 2, col = "blue", lwd = 2)
 
 # Example 2: London Times data (Lange, 1997, p.31)
 ltdata1 <- data.frame(deaths = 0:9,
-                      freq = c(162, 267, 271, 185, 111, 61, 27, 8, 3, 1))
+                      freq = c(162,267,271, 185,111,61,27,8,3,1))
 ltdata2 <- data.frame(y = with(ltdata1, rep(deaths, freq)))
 
 # Usually this does not work well unless nsimEIM is large
 Mfit <- vglm(deaths ~ 1, weight = freq, data = ltdata1,
-            mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5, nsimEIM = 5000))
+        mix2poisson(iphi=0.3, il1=1, il2=2.5, nsimEIM=5000))
 
 # This works better in general
-Mfit <- vglm(y ~ 1, mix2poisson(iphi = 0.3, il1 = 1, il2 = 2.5), ltdata2)
+Mfit = vglm(y ~ 1, mix2poisson(iphi=0.3, il1=1, il2=2.5), ltdata2)
 coef(Mfit, matrix = TRUE)
 Coef(Mfit)
 }

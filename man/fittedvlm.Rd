@@ -5,8 +5,8 @@
 \title{Fitted Values of a VLM object}
 \description{
   Extractor function for the fitted values of a model object that
-  inherits from a \emph{vector linear model} (VLM), e.g., a model of
-  class \code{"vglm"}.
+  inherits from a \emph{vector linear model} (VLM), e.g.,
+  a model of class \code{"vglm"}.
 
 
 }
@@ -36,7 +36,8 @@ fittedvlm(object, drop = FALSE, type.fitted = NULL,
 % }
   \item{type.fitted}{
   Character.
-  Some \pkg{VGAM} family functions have a \code{type.fitted} argument.
+  Some \pkg{VGAM} family functions have a \code{type.fitted}
+  argument.
   If so then a different type of fitted value can be returned.
   It is recomputed from the model after convergence.
   Note: this is an experimental feature and not all
@@ -66,9 +67,11 @@ fittedvlm(object, drop = FALSE, type.fitted = NULL,
   The mean may even not exist, e.g., for a Cauchy distribution.
 
 
-  Note that the fitted value is output from the \code{@linkinv} slot
+  Note that the fitted value is output from
+  the \code{@linkinv} slot
   of the \pkg{VGAM} family function,
-  where the \code{eta} argument is the \eqn{n \times M}{n x M} matrix
+  where the \code{eta} argument is
+  the \eqn{n \times M}{n x M} matrix
   of linear predictors.
 
 
@@ -116,26 +119,28 @@ Chambers, J. M. and T. J. Hastie (eds) (1992).
 \examples{
 # Categorical regression example 1
 pneumo <- transform(pneumo, let = log(exposure.time))
-(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo))
+(fit1 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo))
 fitted(fit1)
 
 # LMS quantile regression example 2
 fit2 <- vgam(BMI ~ s(age, df = c(4, 2)),
              lms.bcn(zero = 1), data = bmi.nz, trace = TRUE)
-head(predict(fit2, type = "response"))  # Equal to the the following two:
+head(predict(fit2, type = "response"))  # Equals to both these:
 head(fitted(fit2))
 predict(fit2, type = "response", newdata = head(bmi.nz))
 
 # Zero-inflated example 3
 zdata <- data.frame(x2 = runif(nn <- 1000))
-zdata <- transform(zdata, pstr0.3  = logitlink(-0.5       , inverse = TRUE),
-                          lambda.3 =   loglink(-0.5 + 2*x2, inverse = TRUE))
-zdata <- transform(zdata, y1 = rzipois(nn, lambda = lambda.3, pstr0 = pstr0.3))
-fit3 <- vglm(y1 ~ x2, zipoisson(zero = NULL), data = zdata, trace = TRUE)
-head(fitted(fit3, type.fitted = "mean" ))      # E(Y), which is the default
-head(fitted(fit3, type.fitted = "pobs0"))      # P(Y = 0)
-head(fitted(fit3, type.fitted = "pstr0"))      #     Prob of a structural 0
-head(fitted(fit3, type.fitted = "onempstr0"))  # 1 - prob of a structural 0
+zdata <- transform(zdata,
+                   pstr0.3  = logitlink(-0.5       , inverse = TRUE),
+                   lambda.3 =   loglink(-0.5 + 2*x2, inverse = TRUE))
+zdata <- transform(zdata,
+         y1 = rzipois(nn, lambda = lambda.3, pstr0 = pstr0.3))
+fit3 <- vglm(y1 ~ x2, zipoisson(zero = NULL), zdata, trace = TRUE)
+head(fitted(fit3, type.fitted = "mean" ))  # E(Y) (the default)
+head(fitted(fit3, type.fitted = "pobs0"))  # Pr(Y = 0)
+head(fitted(fit3, type.fitted = "pstr0"))  # Prob of a structural 0
+head(fitted(fit3, type.fitted = "onempstr0"))  # 1 - Pr(structural 0)
 }
 \keyword{models}
 \keyword{regression}

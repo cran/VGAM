@@ -9,7 +9,8 @@
 
 }
 \usage{
-biamhcop(lapar = "rhobitlink", iapar = NULL, imethod = 1, nsimEIM = 250)
+biamhcop(lapar = "rhobitlink", iapar = NULL, imethod = 1,
+         nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -65,8 +66,10 @@ biamhcop(lapar = "rhobitlink", iapar = NULL, imethod = 1, nsimEIM = 250)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 

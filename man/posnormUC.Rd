@@ -20,7 +20,8 @@ rposnorm(n, mean = 0, sd = 1)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  If \code{length(n) > 1} then the length is taken to be the
+  number required.
 
   }
   \item{mean, sd, log, lower.tail, log.p}{
@@ -42,7 +43,8 @@ rposnorm(n, mean = 0, sd = 1)
 \details{
   See \code{\link{posnormal}}, the \pkg{VGAM} family function
   for estimating the parameters,
-  for the formula of the probability density function and other details.
+  for the formula of the probability density function and other
+  details.
 
 
 }
@@ -57,7 +59,7 @@ rposnorm(n, mean = 0, sd = 1)
 \dontrun{ m <-  0.8; x <- seq(-1, 4, len = 501)
 plot(x, dposnorm(x, m = m), type = "l", las = 1, ylim = 0:1,
      ylab = paste("posnorm(m = ", m, ", sd = 1)"), col = "blue",
-     main = "Blue is density, orange is cumulative distribution function",
+     main = "Blue is density, orange is the CDF",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 abline(h = 0, col = "grey")
 lines(x, pposnorm(x, m = m), col = "orange", type = "l")

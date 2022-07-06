@@ -11,7 +11,8 @@
 
 }
 \usage{
-binom2.rho(lmu = "probitlink", lrho = "rhobitlink", imu1 = NULL, imu2 = NULL,
+binom2.rho(lmu = "probitlink", lrho = "rhobitlink",
+           imu1 = NULL, imu2 = NULL,
            irho = NULL, imethod = 1, zero = "rho",
            exchangeable = FALSE, grho = seq(-0.95, 0.95, by = 0.05),
            nsimEIM = NULL)
@@ -19,7 +20,8 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
            exchangeable = FALSE, nsimEIM = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
-% binom2.rho(lrho = "rhobitlink", lmu = "probitlink", imu1 = NULL, imu2 = NULL,...)
+% binom2.rho(lrho = "rhobitlink", lmu = "probitlink",
+%            imu1 = NULL, imu2 = NULL,...)
 \arguments{
   \item{lmu}{
   Link function applied to the marginal probabilities.
@@ -28,7 +30,8 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
 
   }
   \item{lrho}{
-  Link function applied to the \eqn{\rho}{rho} association parameter.
+  Link function applied to the \eqn{\rho}{rho} association
+  parameter.
   See \code{\link{Links}} for more choices.
 
 
@@ -47,18 +50,19 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
 
   }
   \item{zero}{
-  Specifies which linear/additive predictors are modelled as intercept-only.
+  Specifies which linear/additive predictors are modelled as
+  intercept-only.
   A \code{NULL} means none.
-  Numerically, the \eqn{\rho}{rho} parameter is easiest modelled as
-  an intercept only, hence the default.
+  Numerically, the \eqn{\rho}{rho} parameter is easiest
+  modelled as an intercept only, hence the default.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
   \item{exchangeable}{
   Logical.
-  If \code{TRUE}, the two marginal probabilities are constrained to
-  be equal.
+  If \code{TRUE}, the two marginal probabilities are constrained
+  to be equal.
 
 
   }
@@ -99,15 +103,16 @@ binom2.Rho(rho = 0, imu1 = NULL, imu2 = NULL,
   \deqn{rhobit[rho] = \eta_3.}{%
         rhobit[rho] =  eta_3.}
   The joint probability
-  \eqn{P(Y_1=1,Y_2=1)=\Phi(\eta_1,\eta_2;\rho)}{P(Y_1=1,Y_2=1)=Phi(eta1,eta2;rho)},
-  and from these the other three joint probabilities are easily computed.
-  The model is fitted by maximum likelihood estimation since the full
-  likelihood is specified.
-  Fisher scoring is implemented.
+\eqn{P(Y_1=1,Y_2=1)=
+\Phi(\eta_1,\eta_2;\rho)}{P(Y_1=1,Y_2=1)=Phi(eta1,eta2;rho)},
+  and from these the other three joint probabilities are easily
+  computed.  The model is fitted by maximum likelihood estimation
+  since the full likelihood is specified.  Fisher scoring is
+  implemented.
 
 
-  The default models \eqn{\eta_3}{eta3} as a single parameter only,
-  i.e., an intercept-only model for rho, but this can be
+  The default models \eqn{\eta_3}{eta3} as a single parameter
+  only, i.e., an intercept-only model for rho, but this can be
   circumvented by setting \code{zero = NULL} in order to model
   rho as a function of all the explanatory variables.
 
@@ -144,7 +149,7 @@ Ashford, J. R. and Sowden, R. R. (1970).
 
 Freedman, D. A. (2010).
 \emph{Statistical Models and Causal Inference: a Dialogue with
-      the Social Sciences}, Cambridge: Cambridge University Press.
+the Social Sciences}, Cambridge: Cambridge University Press.
 
 
 Freedman, D. A. and Sekhon, J. S. (2010).

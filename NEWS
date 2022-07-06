@@ -1,3 +1,31 @@
+                CHANGES IN VGAM VERSION 1.1-7
+
+NEW FEATURES
+
+    o   Slot 'rqresslot' added to VGAM family functions, for implementing
+        randomized quantile residuals.
+        Available in about 50 family functions such as poissonff() currently.
+    o   Slot 'rqresslot' added to VGAM family functions, for implementing
+    o   Argument 'label.it' added to model.matrixvlm().
+    o   New generic and/or methods functions: rqresid(), rqresiduals().
+    o   New data set: lpossums.
+    o   Tested okay on R 4.2.1.
+
+
+BUG FIXES and CHANGES
+
+
+    o   cumulative() has been replaced by its version prior
+        to 2021-05. Evidently some so-called improvements
+        created some bugs. Thanks to Johanna Neslehova for
+        alerting me to this.
+    o   bistudentt() was documented wrong; thanks to
+        Iago Gine Vazquez for finding this.
+    o   fill() now deprecated; replaced by fill4().
+
+
+
+
                 CHANGES IN VGAM VERSION 1.1-6
 
 NEW FEATURES

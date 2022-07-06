@@ -49,8 +49,8 @@ Frank's family of bivariate distributions.
 \details{
   See \code{\link{bifrankcop}}, the \pkg{VGAM}
   family functions for estimating the association
-  parameter by maximum likelihood estimation, for the formula of the
-  cumulative distribution function and other details.
+  parameter by maximum likelihood estimation, for the formula of
+  the cumulative distribution function and other details.
 
 
 }

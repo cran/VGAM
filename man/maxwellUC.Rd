@@ -27,7 +27,8 @@ rmaxwell(n, rate)
   \item{rate}{the (rate) parameter.}
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the
+  density is returned.
 
   }
   \item{lower.tail, log.p}{
@@ -76,9 +77,9 @@ rmaxwell(n, rate)
 }
 \examples{
 \dontrun{ rate <- 3; x <- seq(-0.5, 3, length = 100)
-plot(x, dmaxwell(x, rate = rate), type = "l", col = "blue", las = 1,
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles", ylab = "")
+plot(x, dmaxwell(x, rate = rate), type = "l", col = "blue",
+     main = "Blue is density, orange is CDF", ylab = "", las = 1,
+     sub = "Purple lines are the 10,20,...,90 percentiles")
 abline(h = 0, col = "blue", lty = 2)
 lines(x, pmaxwell(x, rate = rate), type = "l", col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)

@@ -12,6 +12,8 @@
 
 
 
+
+
 attrassigndefault <- function(mmat, tt) {
   if (!inherits(tt, "terms"))
     stop("need terms object")
@@ -52,7 +54,7 @@ attrassignlm <- function(object, ...)
     n2[n3 == 1] <- ""
   n1n2 <- paste(n1, n2, sep = "")
   n1n2
-}
+}  # vlabel
 
 
 
@@ -90,10 +92,11 @@ attrassignlm <- function(object, ...)
 
   if (FALSE) {
     vecTF <- Hmatrices[linpred.index, ] != 0
-    X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index, vecTF,
-                      drop = FALSE]
+    X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index,
+                      vecTF, drop = FALSE]
   }
-  vecTF2 <- colSums(Hmatrices[linpred.index, , drop = FALSE]) != 0
+  vecTF2 <- colSums(Hmatrices[linpred.index, ,
+                              drop = FALSE]) != 0
   vecTF1 <- rep_len(FALSE, M)
   vecTF1[linpred.index] <- TRUE
   X.lm.jay <- x.vlm[vecTF1, vecTF2, drop = FALSE]  # Recycling
@@ -106,9 +109,12 @@ attrassignlm <- function(object, ...)
 
 
 
+
  lm2vlm.model.matrix <-
   function(x, Hlist = NULL, assign.attributes = TRUE,
-           M = NULL, xij = NULL, Xm2 = NULL) {
+           M = NULL, xij = NULL,
+           label.it = TRUE,  # Ignored for "lm".
+           Xm2 = NULL) {
 
 
 
@@ -142,11 +148,17 @@ attrassignlm <- function(object, ...)
     rm(X1)
   }
 
-  dn <- labels(x)
-  yn <- dn[[1]]
-  xn <- dn[[2]]
-  dimnames(X.vlm) <- list(vlabel(yn, rep(M, nrow.X.lm), M),
-                          vlabel(xn, ncolHlist, M))
+
+
+  if (label.it) {
+    dn <- labels(x)
+    yn <- dn[[1]]
+    xn <- dn[[2]]
+    dimnames(X.vlm) <- list(vlabel(yn, rep(M, nrow.X.lm), M),
+                            vlabel(xn, ncolHlist, M))
+  }  # label.it
+
+
 
   if (assign.attributes) {
     attr(X.vlm, "contrasts")   <- attr(x, "contrasts")
@@ -268,6 +280,7 @@ model.matrix.vlm <- function(object, ...)
   function(object,
            type = c("vlm", "lm", "lm2", "bothlmlm2"),
            linpred.index = NULL,
+           label.it = TRUE,
            ...) {
 
 
@@ -276,7 +289,8 @@ model.matrix.vlm <- function(object, ...)
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
-  type <- match.arg(type, c("vlm", "lm", "lm2", "bothlmlm2"))[1]
+  type <- match.arg(type, c("vlm", "lm", "lm2",
+                            "bothlmlm2"))[1]
 
   linpred.index <- unique(sort(linpred.index))
   LLLL <- length(linpred.index)
@@ -293,7 +307,7 @@ model.matrix.vlm <- function(object, ...)
          "'linpred.index' is assigned a value")
 
 
-  x   <- slot(object, "x")
+  x <- slot(object, "x")
 
 
   Xm2 <- if (any(slotNames(object) == "Xm2"))
@@ -335,7 +349,8 @@ model.matrix.vlm <- function(object, ...)
 
 
     if (length(form2)) {
-      attr(Xm2, "assign") <- attrassigndefault(Xm2, terms(form2))
+      attr(Xm2, "assign") <- attrassigndefault(Xm2,
+                                               terms(form2))
     }
   }
 
@@ -353,8 +368,9 @@ model.matrix.vlm <- function(object, ...)
 
 
   M <- object@misc$M  # Number of linear/additive predictors
-  Hlist <- object@constraints  # == constraints(object, type = "lm")
+  Hlist <- object@constraints  # == constraints(object,type="lm")
   X.vlm <- lm2vlm.model.matrix(x = x, Hlist = Hlist, Xm2 = Xm2,
+                               label.it = label.it,
                                xij = object@control$xij)
 
   if (type == "vlm" && !length(linpred.index))
@@ -370,8 +386,9 @@ model.matrix.vlm <- function(object, ...)
          "values from the set 1:", M)
 
   Hlist <- Hlist
-  n.lm <- nobs(object, type = "lm")  # Number of rows of the LM matrix
-  Hmatrices <- abs(constraints(object, matrix = TRUE))  # by column
+  n.lm <- nobs(object, type = "lm")  # nrow(the LM matrix)
+  Hmatrices <- abs(constraints(object,
+                               matrix = TRUE))  # by column
   jay <- linpred.index
   vecTF2 <- colSums(Hmatrices[jay, , drop = FALSE]) != 0
   index2 <- which(vecTF2)
@@ -425,8 +442,7 @@ model.matrix.vlm <- function(object, ...)
 
 
   attr(X.lm.jay, "assign") <- ans4
-  attr(X.lm.jay, "rm.assign") <- aasgn[all.union]  # Some elts gone
-
+  attr(X.lm.jay, "rm.assign") <- aasgn[all.union]
 
 
 
@@ -686,7 +702,7 @@ hatvaluesvlm <-
 
   qrSlot <- model@qr
 
-  if (!is.list(qrSlot) && class(qrSlot) != "qr")
+  if (!is.list(qrSlot) && !inherits(qrSlot, "qr"))
     stop("slot 'qr' should be a list")
 
   M  <- npred(model)
@@ -701,7 +717,7 @@ hatvaluesvlm <-
     qrSlot <- qr(UU.X.vlm)
   } else {
     X.vlm <- NULL
-    class(qrSlot) <- "qr" # S3 class
+    class(qrSlot) <- "qr"  # S3 class
   }
   Q.S3 <- qr.Q(qrSlot)
 

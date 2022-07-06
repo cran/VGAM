@@ -7,9 +7,8 @@
 \title{The Log-Gamma Distribution }
 \description{
   Density, distribution function, quantile function and random
-  generation for the log-gamma distribution with
-  location parameter \code{location},
-  scale parameter \code{scale} and
+  generation for the log-gamma distribution with location
+  parameter \code{location}, scale parameter \code{scale} and
   shape parameter \code{k}.
 
 
@@ -35,7 +34,8 @@ rlgamma(n, location = 0, scale = 1, shape = 1)
   \item{shape}{the (positive) shape parameter \eqn{k}.}
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -67,10 +67,10 @@ London: Imperial College Press.
 \author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{lgamma1}}, the \pkg{VGAM} family function for
-  estimating the one parameter standard log-gamma distribution by maximum
-  likelihood estimation, for formulae and other details.  Apart from
-  \code{n}, all the above arguments may be vectors and are recyled to
-  the appropriate length if necessary.
+  estimating the one parameter standard log-gamma distribution by
+  maximum likelihood estimation, for formulae and other details.
+  Apart from \code{n}, all the above arguments may be vectors
+  and are recyled to the appropriate length if necessary.
 
 
 
@@ -93,13 +93,13 @@ London: Imperial College Press.
 x <- seq(-3.2, 5, by = 0.01)
 plot(x, dlgamma(x, loc = loc, Scale, shape = shape), type = "l",
      col = "blue", ylim = 0:1,
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
+     main = "Blue is density, orange is the CDF",
+     sub = "Red are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
-lines(qlgamma(seq(0.05, 0.95, by = 0.05), loc = loc, Scale, shape = shape),
-      dlgamma(qlgamma(seq(0.05, 0.95, by = 0.05), loc = loc, scale = Scale,
+lines(qlgamma(seq(0.05, 0.95, by = 0.05), loc = loc, Scale, sh = shape),
+      dlgamma(qlgamma(seq(0.05, 0.95, by = 0.05), loc = loc, sc = Scale,
                       shape = shape),
-      loc = loc, Scale, shape = shape), col = "purple", lty = 3, type = "h")
+    loc = loc, Scale, shape = shape), col = "red", lty = 3, type = "h")
 lines(x, plgamma(x, loc = loc, Scale, shape = shape), col = "orange")
 abline(h = 0, lty = 2) }
 }

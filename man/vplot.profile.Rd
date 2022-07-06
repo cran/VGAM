@@ -6,12 +6,14 @@
 \alias{vpairs.profile}
 \title{Plotting Functions for 'profile' Objects}
 \description{
-  \code{\link{plot}} and \code{\link{pairs}} methods for objects of
+  \code{\link{plot}} and \code{\link{pairs}} methods
+  for objects of
   class \code{"profile"}, but renamed as
   \code{vplot} and \code{vpairs}.
 
 
-% \code{\link{vplot}} and \code{\link{vpairs}} methods for objects of
+  % \code{\link{vplot}} and \code{\link{vpairs}}
+  % methods for objects of
 % class \code{"profile"}.
 
 
@@ -22,7 +24,8 @@ vpairs.profile(x, colours = 2:3, ...)
 }
 \arguments{
   \item{x}{an object inheriting from class \code{"profile"}.}
-  \item{colours}{Colours to be used for the mean curves conditional on
+  \item{colours}{Colours to be used for the mean curves
+    conditional on
     \code{x} and \code{y} respectively.}
   \item{\dots}{arguments passed to or from other methods.}
 }

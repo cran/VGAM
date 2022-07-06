@@ -72,17 +72,17 @@ max(abs(pgumbelII(qgumbelII(p = probs, shape = Shape, Scale),
                   shape = Shape, Scale) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 10, by = 0.01);
-plot(x, dgumbelII(x, shape = Shape, Scale), type = "l", col = "blue", las = 1,
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles",
+plot(x, dgumbelII(x, shape = Shape, Scale), type = "l", col = "blue",
+     main = "Blue is density, orange is the CDF", las = 1,
+     sub = "Red lines are the 10,20,...,90 percentiles",
      ylab = "", ylim = 0:1)
 abline(h = 0, col = "blue", lty = 2)
 lines(x, pgumbelII(x, shape = Shape, Scale), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qgumbelII(probs, shape = Shape, Scale)
-lines(Q, dgumbelII(Q, Scale, Shape), col = "purple", lty = 3, type = "h")
+lines(Q, dgumbelII(Q, Scale, Shape), col = "red", lty = 3, type = "h")
 pgumbelII(Q, shape = Shape, Scale) - probs # Should be all zero
-abline(h = probs, col = "purple", lty = 3) }
+abline(h = probs, col = "red", lty = 3) }
 }
 \keyword{distribution}
 

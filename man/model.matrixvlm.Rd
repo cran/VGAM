@@ -3,7 +3,7 @@
 \title{Construct the Design Matrix of a VLM Object}
 \usage{
 model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
-                linpred.index = NULL, \dots)
+                linpred.index = NULL, label.it = TRUE, \dots)
 }
 \arguments{
   \item{object}{an object of a class that inherits from the
@@ -42,6 +42,15 @@ model.matrixvlm(object, type = c("vlm", "lm", "lm2", "bothlmlm2"),
 
 
 %    Single integer: 20190625; this is no longer true.
+  }
+  \item{label.it}{
+    Logical. Label the row and columns with character names?
+    If \code{FALSE}, time and memory might be saved if
+    the big model matrix is very large.
+    The argument is only used when \code{type = "vlm"}.
+
+
+
   }
   \item{\dots}{further arguments passed to or from other methods.
     These include \code{data} (which

@@ -7,14 +7,15 @@
   inverse paralogistic distribution.
 }
 \usage{
-inv.paralogistic(lscale = "loglink", lshape1.a = "loglink", iscale = NULL,
-    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5),
-    gshape1.a = seq(0.75, 4, by = 0.25), probs.y = c(0.25, 0.5, 0.75),
-    zero = "shape")
-}
-%- maybe also 'usage' for other objects documented here.
+inv.paralogistic(lscale = "loglink", lshape1.a = "loglink",
+    iscale = NULL, ishape1.a = NULL, imethod = 1,
+    lss = TRUE, gscale = exp(-5:5),
+    gshape1.a = seq(0.75, 4, by = 0.25), probs.y = c(0.25, 0.5,
+    0.75), zero = "shape")
+} %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important
+  information.
 
 
   }
@@ -46,10 +47,10 @@ inv.paralogistic(lscale = "loglink", lshape1.a = "loglink", iscale = NULL,
 
 }
 \details{
-  The 2-parameter inverse paralogistic distribution is the 4-parameter
-  generalized beta II distribution with shape parameter \eqn{q=1} and
-  \eqn{a=p}.
-It is the 3-parameter Dagum distribution with \eqn{a=p}.
+  The 2-parameter inverse paralogistic distribution is the
+  4-parameter generalized beta II distribution with shape parameter
+  \eqn{q=1} and \eqn{a=p}.
+  It is the 3-parameter Dagum distribution with \eqn{a=p}.
   More details can be found in Kleiber and Kotz (2003).
 
 
@@ -60,8 +61,9 @@ The inverse paralogistic distribution has density
 Here, \eqn{b} is the scale parameter \code{scale},
 and \eqn{a} is the shape parameter.
 The mean is
-  \deqn{E(Y) = b \, \Gamma(a + 1/a) \, \Gamma(1 - 1/a) / \Gamma(a)}{%
-        E(Y) = b  gamma(a + 1/a)  gamma(1 - 1/a) /  gamma(a)}
+\deqn{E(Y) = b \, \Gamma(a + 1/a) \,
+             \Gamma(1 - 1/a) / \Gamma(a)}{%
+      E(Y) = b  gamma(a + 1/a)  gamma(1 - 1/a) /  gamma(a)}
 provided \eqn{a > 1}; these are returned as the fitted values.
 This family function handles multiple responses.
 
@@ -69,8 +71,10 @@ This family function handles multiple responses.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -108,8 +112,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-idata <- data.frame(y = rinv.paralogistic(n = 3000, exp(1), scale = exp(2)))
-fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE), data = idata, trace = TRUE)
+idata <- data.frame(y = rinv.paralogistic(3000, exp(1), sc = exp(2)))
+fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE), idata, trace = TRUE)
 fit <- vglm(y ~ 1, inv.paralogistic(imethod = 2, ishape1.a = 4),
             data = idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)

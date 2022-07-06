@@ -35,7 +35,8 @@
 
 
   new("vglmff",
-  blurb = c("Univariate normal distribution with double censoring\n\n",
+  blurb = c("Univariate normal distribution with ",
+            "double censoring\n\n",
             "Links:    ",
             namesof("mu", lmu, earg = emu, tag = TRUE), ", ",
             namesof("sd", lsd, earg = esd, tag = TRUE),
@@ -72,7 +73,7 @@
            "of positive integers")
 
     sumw <- sum(w)
-    extra$bign <- sumw + .r1 + .r2  # Tot num of censored & uncensored obsns
+    extra$bign <- sumw + .r1 + .r2  # Tot num
 
     if (!length(etastart)) {
       yyyy.est <- if (length( .imu )) .imu else median(y)
@@ -82,8 +83,9 @@
       }
       yyyy.est <- rep_len(yyyy.est , n)
       sd.y.est <- rep_len(sd.y.est , n)
-      etastart <- cbind(mu = theta2eta(yyyy.est, .lmu , earg = .emu ),
-                        sd = theta2eta(sd.y.est, .lsd , earg = .esd ))
+      etastart <-
+        cbind(mu = theta2eta(yyyy.est, .lmu , earg = .emu ),
+              sd = theta2eta(sd.y.est, .lsd , earg = .esd ))
     }
   }) , list( .lmu = lmu, .lsd = lsd,
              .emu = emu, .esd = esd,
@@ -150,9 +152,11 @@
     Fz2 <- if ( .r2 == 0) 0.99 else pnorm(z2)
 
     dl.dmu <- (y - mu) / sd^2 +
-             ((- .r1 * fz1/Fz1 + .r2 * fz2/(1-Fz2)) / sd) / (n*w)
-    dl.dsd <- -1/sd + (y-mu)^2 / sd^3 +
-             ((- .r1 * z1*fz1/Fz1 + .r2 * z2*fz2/(1-Fz2)) / sd) / (n*w)
+              ((- .r1 * fz1 / Fz1 +
+                  .r2 * fz2 / (1 - Fz2)) / sd) / (n * w)
+    dl.dsd <- -1 / sd + (y - mu)^2 / sd^3 +
+              ((- .r1 * z1 * fz1 / Fz1 +
+                  .r2 * z2 * fz2 / (1 - Fz2)) / sd) / (n * w)
 
     dmu.deta <- dtheta.deta(mu, .lmu , earg =.emu )
     dsd.deta <- dtheta.deta(sd, .lsd , earg =.esd )
@@ -164,11 +168,12 @@
   weight = expression({
     wz <- matrix(NA_real_, n, dimm(M))
 
-    Q.1 <- ifelse(q1 == 0, 1, q1)  # Saves division by 0 below; not elegant
-    Q.2 <- ifelse(q2 == 0, 1, q2)  # Saves division by 0 below; not elegant
+    Q.1 <- ifelse(q1 == 0, 1, q1)  # Saves division by 0 below;
+    Q.2 <- ifelse(q2 == 0, 1, q2)  # Saves division by 0 below;
 
     ed2l.dmu2 <- 1 / (sd^2) +
-                 ((fz1*(z1+fz1/Q.1) - fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
+                 ((fz1*(z1+fz1/Q.1) -
+                   fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
     ed2l.dmusd <- ((fz1-fz2 + z1*fz1*(z1+fz1/Q.1) -
                   z2*fz2*(z2-fz2/Q.2)) / sd^2) / (pee*w)
     ed2l.dsd2 <- 2 / (sd^2) +
@@ -250,7 +255,9 @@ qbisa <- function(p, scale = 1, shape,
   if (lower.tail) {
     if (log.p) {
       ln.p <- p
-      ans <- ifelse(exp(p) < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+      ans <- ifelse(exp(p) < 0.5,
+                    pmin(ans1, ans2),
+                    pmax(ans1, ans2))
       ans[ln.p == -Inf] <- 0
       ans[ln.p == 0] <- Inf
      #ans[ln.p > 0] <- NaN
@@ -264,7 +271,9 @@ qbisa <- function(p, scale = 1, shape,
   } else {
     if (log.p) {
       ln.p <- p
-      ans <- ifelse(-expm1(p) < 0.5, pmin(ans1, ans2), pmax(ans1, ans2))
+      ans <- ifelse(-expm1(p) < 0.5,
+                    pmin(ans1, ans2),
+                    pmax(ans1, ans2))
       ans[ln.p == -Inf] <- Inf
       ans[ln.p == 0] <- 0
      #ans[ln.p > 0] <- NaN
@@ -306,11 +315,15 @@ rbisa <- function(n, scale = 1, shape) {
 
 
 
- bisa <- function(lscale = "loglink", lshape = "loglink",
-                  iscale = 1,      ishape = NULL,
-                  imethod = 1,
-                  zero = "shape",
-                  nowarning = FALSE) {
+
+
+
+ bisa <-
+  function(lscale = "loglink", lshape = "loglink",
+           iscale = 1,      ishape = NULL,
+           imethod = 1,
+           zero = "shape",
+           nowarning = FALSE) {
 
 
 
@@ -336,7 +349,8 @@ rbisa <- function(n, scale = 1, shape) {
   new("vglmff",
   blurb = c("Birnbaum-Saunders distribution\n\n",
             "Links:    ",
-            namesof("scale", lscale, earg = escale, tag = TRUE), "; ",
+            namesof("scale", lscale, earg = escale, tag = TRUE),
+            "; ",
             namesof("shape", lshape, earg = eshape, tag = TRUE)),
   constraints = eval(substitute(expression({
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
@@ -353,8 +367,17 @@ rbisa <- function(n, scale = 1, shape) {
          lscale = .lscale ,
          lshape = .lshape ,
          zero = .zero )
-  }, list( .zero = zero, .lscale = lscale, .lshape = lshape
-         ))),
+  }, list( .zero = zero, .lscale = lscale, .lshape = lshape  ))),
+
+
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+      Scale <- eta2theta(eta[, 1], .lscale , earg = .escale )
+      Shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    scrambleseed <- runif(1)  # To scramble the seed
+      qnorm(pbisa(y, scale = Scale, shape = Shape))
+  }, list( .lshape = lshape, .lscale = lscale,
+           .eshape = eshape, .escale = escale ))),
 
 
   initialize = eval(substitute(expression({
@@ -367,10 +390,11 @@ rbisa <- function(n, scale = 1, shape) {
 
     if (!length(etastart)) {
       scale.init <- rep_len( .iscale , n)
-      shape.init <- if (is.Numeric( .ishape)) rep_len( .ishape , n) else {
+      shape.init <- if (is.Numeric( .ishape))
+                      rep_len( .ishape , n) else {
       if ( .imethod == 1) {
         ybar <- rep_len(weighted.mean(y, w), n)
-        ybarr <- rep_len(1 / weighted.mean(1/y, w), n)  # Reqrs y > 0
+        ybarr <- rep_len(1 / weighted.mean(1/y, w), n)  # Reqrs y>0
         sqrt(ybar / scale.init + scale.init / ybarr - 2)
       } else if ( .imethod == 2) {
         sqrt(2*( pmax(y, scale.init+0.1) / scale.init - 1))
@@ -379,8 +403,9 @@ rbisa <- function(n, scale = 1, shape) {
         sqrt(2*(pmax(ybar, scale.init + 0.1) / scale.init - 1))
       }
     }
-      etastart <- cbind(theta2eta(scale.init, .lscale , earg = .escale ),
-                        theta2eta(shape.init, .lshape , earg = .eshape ))
+      etastart <-
+        cbind(theta2eta(scale.init, .lscale , earg = .escale ),
+              theta2eta(shape.init, .lshape , earg = .eshape ))
     }
   }) , list( .lshape = lshape, .lscale = lscale,
              .ishape = ishape, .iscale = iscale,
@@ -410,7 +435,8 @@ rbisa <- function(n, scale = 1, shape) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dbisa(x = y, scale = sc, shape = sh, log = TRUE)
+      ll.elts <- c(w) *
+                 dbisa(x = y, scale = sc, shape = sh, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -433,9 +459,10 @@ rbisa <- function(n, scale = 1, shape) {
     sc <- eta2theta(eta[, 1], .lscale , earg = .escale )
     sh <- eta2theta(eta[, 2], .lshape , earg = .eshape )
 
-    dl.dsh <- ((y/sc - 2 + sc/y) / sh^2 - 1) / sh
-    dl.dsc <- -0.5 / sc + 1/(y+sc) + sqrt(y) * ((y+sc)/y) *
-             (sqrt(y/sc) - sqrt(sc/y)) / (2 * sh^2 * sc^1.5)
+    dl.dsh <- ((y / sc - 2 + sc / y) / sh^2 - 1) / sh
+    dl.dsc <- -0.5 / sc + 1/(y + sc) +
+               sqrt(y) * ((y + sc) / y) *
+              (sqrt(y / sc) - sqrt(sc / y)) / (2 * sh^2 * sc^1.5)
 
     dsh.deta <- dtheta.deta(sh, .lshape , earg = .eshape )
     dsc.deta <- dtheta.deta(sc, .lscale , earg = .escale )
@@ -448,10 +475,11 @@ rbisa <- function(n, scale = 1, shape) {
     wz <- matrix(NA_real_, n, M)  # Diagonal!!
     wz[, iam(2, 2, M)] <- 2 * dsh.deta^2 / sh^2
     hfunction <- function(alpha)
-      alpha * sqrt(pi/2) - pi * exp(2/alpha^2) *
-                           pnorm(2/alpha, lower.tail = FALSE)
+      alpha * sqrt(pi/2) - pi * exp(2 / alpha^2) *
+                           pnorm(2 / alpha, lower.tail = FALSE)
     wz[, iam(1, 1, M)] <- dsc.deta^2 *
-                          (sh * hfunction(sh) / sqrt(2*pi) + 1) / (sh*sc)^2
+                          (sh * hfunction(sh) / sqrt(2 * pi) +
+                          1) / (sh * sc)^2
     c(w) * wz
   }), list( .zero = zero ))))
 }

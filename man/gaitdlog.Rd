@@ -65,6 +65,11 @@ gaitdlog(a.mix = NULL, i.mix = NULL, d.mix = NULL,
     Link functions.
     See \code{\link{gaitdpoisson}}
     and \code{\link{Links}} for more choices and information.
+   Actually, it is usually a good idea to set these arguments
+    equal to \code{\link[VGAMextra]{logffMlink}}
+    because the log-mean is the first linear/additive predictor so
+    it is like a Poisson regression.
+
 
   }
 
@@ -167,6 +172,19 @@ gaitdlog(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
 
 
+  As alluded to above, when there are covariates  it is
+  much more interpretable to model the mean rather than
+  the shape parameter.
+  Hence \code{\link[VGAMextra]{logffMlink}} is recommended.
+  (This might become the default in the future.)
+  So installing \pkg{VGAMextra} is a good idea.
+
+
+
+
+
+
+
 
   Apart from the order of the linear/additive predictors,
   the following are (or should be) equivalent:
@@ -179,6 +197,7 @@ The functions
 \code{\link[VGAMdata]{oilog}} and
 \code{\link[VGAMdata]{otlog}}
 have been placed in \pkg{VGAMdata}.
+
 
 
 
@@ -240,6 +259,7 @@ have been placed in \pkg{VGAMdata}.
 \seealso{
   \code{\link{Gaitdlog}},
   \code{\link{logff}},
+  \code{\link[VGAMextra]{logffMlink}},
   \code{\link{Gaitdpois}},
   \code{\link{gaitdpoisson}},
   \code{\link{gaitdzeta}},

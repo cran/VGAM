@@ -6,11 +6,11 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The Log-Laplace Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the 3-parameter log-Laplace distribution with location
-  parameter \code{location.ald}, scale parameter \code{scale.ald}
-  (on the log scale),
-  and asymmetry parameter \code{kappa}.
+  Density, distribution function, quantile function and random
+  generation for the 3-parameter log-Laplace distribution
+  with location parameter \code{location.ald}, scale parameter
+  \code{scale.ald} (on the log scale), and asymmetry parameter
+  \code{kappa}.
 
 
 }
@@ -30,7 +30,9 @@ rloglap(n, location.ald = 0, scale.ald = 1,
   \item{p}{vector of probabilities.}
   \item{n}{
   number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  If \code{length(n) > 1} then the length is taken to be the
+  number required.
+
   }
   \item{location.ald, scale.ald}{
     the location parameter \eqn{\xi}{xi} and
@@ -61,9 +63,9 @@ rloglap(n, location.ald = 0, scale.ald = 1,
 }
 \details{
   A positive random variable \eqn{Y} is said to have a log-Laplace
-  distribution if \eqn{\log(Y)} has an asymmetric Laplace distribution
-  (ALD). There are many variants of ALDs and the one used here
-  is described in \code{\link{alaplace3}}.
+  distribution if \eqn{\log(Y)} has an asymmetric Laplace
+  distribution (ALD). There are many variants of ALDs and the
+  one used here is described in \code{\link{alaplace3}}.
 
 
 }
@@ -107,14 +109,14 @@ loc <- 0; sigma <- exp(0.5); kappa <- 1
 x <- seq(-0.2, 5, by = 0.01)
 \dontrun{plot(x, dloglap(x, loc, sigma, kappa = kappa),
      type = "l", col = "blue", ylim = c(0,1),
-     main = "Blue is density, red is cumulative distribution function",
+     main = "Blue is density, red is the CDF",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
-      dloglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
+  dloglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),
               loc, sigma, kappa = kappa),
       col = "purple", lty = 3, type = "h")
-lines(x, ploglap(x, loc, sigma, kappa = kappa), type = "l", col = "red")
+lines(x, ploglap(x, loc, sigma, kappa = kappa), type = "l", col = 2)
 abline(h = 0, lty = 2)
 }
 ploglap(qloglap(seq(0.05,0.95,by = 0.05), loc, sigma, kappa = kappa),

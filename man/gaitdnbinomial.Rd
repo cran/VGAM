@@ -10,7 +10,8 @@
 \description{
   Fits a generally--altered, --inflated --truncated and deflated
   negative binomial regression by MLE.
-  The GAITD combo model having 7 types of special values is implemented.
+  The GAITD combo model having 7 types of special values
+  is implemented.
   This allows mixtures of negative binomial distributions
   on nested and/or partitioned
   support as well as a multinomial logit model for
@@ -26,32 +27,32 @@
 %    eq.ap = FALSE, eq.ip = FALSE, eq.dp = FALSE,
 \usage{
  gaitdnbinomial(a.mix = NULL, i.mix = NULL, d.mix = NULL,
-           a.mlm = NULL, i.mlm = NULL, d.mlm = NULL,
-           truncate = NULL, zero = c("size", "pobs", "pstr", "pdip"),
-           eq.ap = TRUE, eq.ip = TRUE, eq.dp = TRUE,
-           parallel.a = FALSE, parallel.i = FALSE, parallel.d = FALSE,
-           lmunb.p = "loglink",
-           lmunb.a = lmunb.p, lmunb.i = lmunb.p, lmunb.d = lmunb.p,
-           lsize.p = "loglink",
-           lsize.a = lsize.p, lsize.i = lsize.p, lsize.d = lsize.p,
-           type.fitted = c("mean", "munbs", "sizes", "pobs.mlm",
-           "pstr.mlm", "pdip.mlm", "pobs.mix", "pstr.mix", "pdip.mix",
-           "Pobs.mix", "Pstr.mix", "Pdip.mix", "nonspecial", "Numer",
-           "Denom.p", "sum.mlm.i", "sum.mix.i",
-           "sum.mlm.d", "sum.mix.d", "ptrunc.p", "cdf.max.s"),
-           gpstr.mix = ppoints(7) / 3,
-           gpstr.mlm = ppoints(7) / (3 + length(i.mlm)),
-           imethod = 1, mux.init = c(0.75, 0.5, 0.75, 0.5),
-           imunb.p = NULL, imunb.a = imunb.p,
-           imunb.i = imunb.p, imunb.d = imunb.p,
-           isize.p = NULL,  isize.a = isize.p,
-           isize.i = isize.p, isize.d = isize.p,
-           ipobs.mix = NULL, ipstr.mix = NULL,
-           ipdip.mix = NULL, ipobs.mlm = NULL,
-           ipstr.mlm = NULL, ipdip.mlm = NULL,
-           byrow.aid = FALSE, ishrinkage = 0.95, probs.y = 0.35,
-           nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
-           nbd.max.support = 4000, max.chunk.MB = 30)
+     a.mlm = NULL, i.mlm = NULL, d.mlm = NULL,
+     truncate = NULL, zero = c("size", "pobs", "pstr", "pdip"),
+     eq.ap = TRUE, eq.ip = TRUE, eq.dp = TRUE,
+     parallel.a = FALSE, parallel.i = FALSE, parallel.d = FALSE,
+     lmunb.p = "loglink",
+     lmunb.a = lmunb.p, lmunb.i = lmunb.p, lmunb.d = lmunb.p,
+     lsize.p = "loglink",
+     lsize.a = lsize.p, lsize.i = lsize.p, lsize.d = lsize.p,
+     type.fitted = c("mean", "munbs", "sizes", "pobs.mlm",
+     "pstr.mlm", "pdip.mlm", "pobs.mix", "pstr.mix", "pdip.mix",
+     "Pobs.mix", "Pstr.mix", "Pdip.mix", "nonspecial", "Numer",
+     "Denom.p", "sum.mlm.i", "sum.mix.i",
+     "sum.mlm.d", "sum.mix.d", "ptrunc.p", "cdf.max.s"),
+     gpstr.mix = ppoints(7) / 3,
+     gpstr.mlm = ppoints(7) / (3 + length(i.mlm)),
+     imethod = 1, mux.init = c(0.75, 0.5, 0.75, 0.5),
+     imunb.p = NULL, imunb.a = imunb.p,
+     imunb.i = imunb.p, imunb.d = imunb.p,
+     isize.p = NULL,  isize.a = isize.p,
+     isize.i = isize.p, isize.d = isize.p,
+     ipobs.mix = NULL, ipstr.mix = NULL,
+     ipdip.mix = NULL, ipobs.mlm = NULL,
+     ipstr.mlm = NULL, ipdip.mlm = NULL,
+     byrow.aid = FALSE, ishrinkage = 0.95, probs.y = 0.35,
+     nsimEIM = 500, cutoff.prob = 0.999, eps.trig = 1e-7,
+     nbd.max.support = 4000, max.chunk.MB = 30)
 }
 %- maybe also 'usage' for other objects documented here.
 % ipobs0 = NULL,
@@ -80,7 +81,8 @@
 
   \item{lmunb.p, lmunb.a, lmunb.i, lmunb.d}{
     Link functions pertaining to the mean parameters.
-    See \code{\link{gaitdpoisson}} where \code{llambda.p} etc. are
+    See \code{\link{gaitdpoisson}} where \code{llambda.p}
+    etc. are
     the equivalent.
 
 
@@ -223,7 +225,8 @@
   The full
   GAITD--NB--NB--MLM--NB-MLM--NB-MLM combo model
   may be fitted with this family function.
-  There are seven types of special values and all arguments for these
+  There are seven types of special values and all
+  arguments for these
   may be used in a single model.
   Here, the MLM represents the nonparametric while the NB
   refers to the negative binomial mixtures.
@@ -247,8 +250,8 @@
 
 
   
-  The order of the linear/additive predictors is best explained by
-  an example.
+  The order of the linear/additive predictors is
+  best explained by an example.
   Suppose a combo model has
   \code{length(a.mix) > 3} and
   \code{length(i.mix) > 3},
@@ -273,7 +276,8 @@
   Next are the probabilities for the \code{a.mlm} values.
   Then are the probabilities for the \code{i.mlm} values.
   Lastly are the probabilities for the \code{d.mlm} values.
-  All the probabilities are estimated by one big MLM and effectively
+  All the probabilities are estimated by one big MLM
+  and effectively
   the \code{"(Others)"} column of left over probabilities is
   associated with the nonspecial values.
   These might be called the
@@ -295,18 +299,24 @@
 Apart from the order of the linear/additive predictors,
 the following are (or should be) equivalent:
 \code{gaitdnbinomial()} and \code{negbinomial()},
-\code{gaitdnbinomial(a.mix = 0)} and \code{zanegbinomial(zero = "pobs0")},
-\code{gaitdnbinomial(i.mix = 0)} and \code{zinegbinomial(zero = "pstr0")},
-\code{gaitdnbinomial(truncate = 0)} and \code{posnegbinomial()}.
+\code{gaitdnbinomial(a.mix = 0)}
+and \code{zanegbinomial(zero = "pobs0")},
+\code{gaitdnbinomial(i.mix = 0)}
+and \code{zinegbinomial(zero = "pstr0")},
+\code{gaitdnbinomial(truncate = 0)}
+and \code{posnegbinomial()}.
 Likewise, if
 \code{a.mix} and \code{i.mix} are assigned a scalar then
-it effectively moves that scalar to \code{a.mlm} and \code{i.mlm}
+it effectively moves that scalar to \code{a.mlm}
+and \code{i.mlm}
 because there is no
 parameters such as \code{munb.i} being estimated.
 Thus
-\code{gaitdnbinomial(a.mix = 0)} and \code{gaitdnbinomial(a.mlm = 0)}
+\code{gaitdnbinomial(a.mix = 0)}
+and \code{gaitdnbinomial(a.mlm = 0)}
 are the effectively same, and ditto for
-\code{gaitdnbinomial(i.mix = 0)} and \code{gaitdnbinomial(i.mlm = 0)}.
+\code{gaitdnbinomial(i.mix = 0)}
+and \code{gaitdnbinomial(i.mlm = 0)}.
 
 
 
@@ -316,8 +326,10 @@ are the effectively same, and ditto for
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -388,9 +400,10 @@ regression, with application to heaped and seeped data.
 \note{
   If \code{length(a.mix)} is 1 then effectively this becomes a
   value of \code{a.mlm}.
-  If \code{length(a.mix)} is 2 then an error message will be issued
-  (overfitting really).
-  If \code{length(a.mix)} is 3 then this is almost overfitting too.
+  If \code{length(a.mix)} is 2 then an error message
+  will be issued (overfitting really).
+  If \code{length(a.mix)} is 3 then this is almost
+  overfitting too.
   Hence \code{length(a.mix)} should be 4 or more.
   Ditto for \code{length(i.mix)} and \code{length(d.mix)}.
 
@@ -469,16 +482,19 @@ tvec <- c(3, 11)   # Truncate these values
 pstr.mlm <- 0.1  # So parallel.i = TRUE
 pobs.mix <- pstr.mix <- 0.1; set.seed(1)
 gdata <- data.frame(x2 = runif(nn <- 1000))
-gdata <- transform(gdata, munb.p = exp(2 + 0.0 * x2), size.p = exp(1))
+gdata <- transform(gdata, munb.p = exp(2 + 0.0 * x2),
+                   size.p = exp(1))
 gdata <- transform(gdata,
-  y1 = rgaitdnbinom(nn, size.p, munb.p, a.mix = a.mix, i.mix = i.mix,
+  y1 = rgaitdnbinom(nn, size.p, munb.p, a.mix = a.mix,
+                    i.mix = i.mix,
                     pobs.mix = pobs.mix, pstr.mix = pstr.mix,
                     i.mlm = i.mlm, pstr.mlm = pstr.mlm,
                     truncate = tvec))
 gaitdnbinomial(a.mix = a.mix, i.mix = i.mix, i.mlm = i.mlm)
 with(gdata, table(y1))
 fit1 <- vglm(y1 ~ 1, crit = "coef", trace = TRUE, data = gdata,
-             gaitdnbinomial(a.mix = a.mix, i.mix = i.mix, i.mlm = i.mlm,
+             gaitdnbinomial(a.mix = a.mix, i.mix = i.mix,
+                            i.mlm = i.mlm,
                             parallel.i = TRUE, eq.ap = TRUE,
                             eq.ip = TRUE, truncate = tvec))
 head(fitted(fit1, type.fitted = "Pstr.mix"))
@@ -495,7 +511,8 @@ plotdgaitd(fit1, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)  }
 %gapoisson(lpobs0 = "logitlink", lmunb = "loglink",
 %   type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
 %gapoissonff(lmunb = "loglink", lonempobs0 = "logitlink",
-%   type.fitted = c("mean", "pobs0", "onempobs0"), zero = "onempobs0")
+%   type.fitted = c("mean", "pobs0", "onempobs0"),
+%   zero = "onempobs0")
 
 
 

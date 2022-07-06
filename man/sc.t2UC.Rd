@@ -4,7 +4,9 @@
 \alias{psc.t2}
 \alias{qsc.t2}
 \alias{rsc.t2}
-\title{ Expectiles/Quantiles of the Scaled Student t Distribution with 2 Df}
+\title{ Expectiles/Quantiles of the Scaled Student t Distribution
+with 2 Df}
+
 \description{
   Density function, distribution function, and
   quantile/expectile function and random generation for the

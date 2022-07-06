@@ -4,17 +4,20 @@
 %\alias{weibull.lsh}
 %\alias{weibull3}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Weibull Distribution Family Function, Parameterized by the Mean }
+\title{ Weibull Distribution Family Function,
+  Parameterized by the Mean }
 \description{
-  Maximum likelihood estimation of the 2-parameter Weibull distribution.
+  Maximum likelihood estimation of the
+  2-parameter Weibull distribution.
   The mean is one of the  parameters.
   No observations should be censored.
 
 }
 \usage{
-weibull.mean(lmean = "loglink", lshape = "loglink", imean = NULL,
-             ishape = NULL, probs.y = c(0.2, 0.5, 0.8),
-             imethod = 1, zero = "shape")
+weibull.mean(lmean = "loglink", lshape = "loglink",
+             imean = NULL, ishape = NULL,
+             probs.y = c(0.2, 0.5, 0.8), imethod = 1,
+             zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,7 +42,8 @@ weibull.mean(lmean = "loglink", lshape = "loglink", imean = NULL,
 \details{
   See \code{\link{weibullR}} for most of the details
   for this family function too.
-  The mean of \eqn{Y} is \eqn{b \, \Gamma(1+ 1/a)}{b * gamma(1+ 1/a)}
+  The mean of \eqn{Y}
+  is \eqn{b \, \Gamma(1+ 1/a)}{b * gamma(1+ 1/a)}
   (returned as the fitted values),
   and this is the first parameter (a \code{\link{loglink}}
   link is the default because it is positive).
@@ -50,8 +54,8 @@ weibull.mean(lmean = "loglink", lshape = "loglink", imean = NULL,
   This \pkg{VGAM} family function currently does not handle
   censored data.
   Fisher scoring is used to estimate the two parameters.
-  Although the expected information matrices used here are valid
-  in all regions of the parameter space,
+  Although the expected information matrices used here
+  are valid in all regions of the parameter space,
   the regularity conditions for maximum
   likelihood estimation are satisfied only if \eqn{a>2}
   (according to Kleiber and Kotz (2003)).
@@ -63,8 +67,10 @@ weibull.mean(lmean = "loglink", lshape = "loglink", imean = NULL,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -78,8 +84,10 @@ weibull.mean(lmean = "loglink", lshape = "loglink", imean = NULL,
 
 }
 %\section{Warning}{
-% This function is under development to handle other censoring situations.
-% The version of this function which will handle censored data will be
+% This function is under development to handle
+% other censoring situations.
+% The version of this function which will handle censored
+% data will be
 
 
 %}
@@ -104,9 +112,10 @@ wdata <- transform(wdata, mu     = exp(-1 + 1 * x2),
                           shape1 = exp(1),
                           shape2 = exp(2))
 wdata <- transform(wdata,
-  y1 = rweibull(nn, shape = shape1, scale = mu / gamma(1 + 1/shape1)),
-  y2 = rweibull(nn, shape = shape2, scale = mu / gamma(1 + 1/shape2)))
-fit <- vglm(cbind(y1, y2) ~ x2 + x3, weibull.mean, data = wdata, trace = TRUE)
+  y1 = rweibull(nn, shape1, scale = mu / gamma(1 + 1/shape1)),
+  y2 = rweibull(nn, shape2, scale = mu / gamma(1 + 1/shape2)))
+fit <- vglm(cbind(y1, y2) ~ x2 + x3, weibull.mean, wdata,
+            trace = TRUE)
 coef(fit, matrix = TRUE)
 sqrt(diag(vcov(fit)))  # SEs
 summary(fit, presid = FALSE)

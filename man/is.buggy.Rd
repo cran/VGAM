@@ -35,14 +35,14 @@ is.buggy.vlm(object, each.term = FALSE, ...)
 }
 \details{
   It is known that \code{\link{vgam}} with \code{\link{s}} terms
-  do not correctly handle constraint matrices (\code{cmat}, say) when
-  \code{crossprod(cmat)} is not diagonal.
+  do not correctly handle constraint matrices (\code{cmat}, say)
+  when \code{crossprod(cmat)} is not diagonal.
   This function detects whether this is so or not.
-  Note that probably all \pkg{VGAM} family functions have defaults where all
-  \code{crossprod(cmat)}s are diagonal, therefore do not suffer from this
-  bug. It is more likely to occur if the user inputs constraint matrices
-  using the \code{constraints} argument (and setting \code{zero = NULL}
-  if necessary).
+  Note that probably all \pkg{VGAM} family functions have defaults
+  where all \code{crossprod(cmat)}s are diagonal, therefore do
+  not suffer from this bug. It is more likely to occur if the
+  user inputs constraint matrices using the \code{constraints}
+  argument (and setting \code{zero = NULL} if necessary).
 
 
 
@@ -57,10 +57,10 @@ is.buggy.vlm(object, each.term = FALSE, ...)
 \value{
   The default is a single logical (\code{TRUE} if any term is
   \code{TRUE}),
-  otherwise a vector of such with each element corresponding to a term.
-  If the value is \code{TRUE} then I suggest replacing the VGAM
-  by a similar model fitted by \code{\link{vglm}} and using
-  regression splines, e.g., \code{\link[splines]{bs}},
+  otherwise a vector of such with each element corresponding to
+  a term.  If the value is \code{TRUE} then I suggest replacing
+  the VGAM by a similar model fitted by \code{\link{vglm}} and
+  using regression splines, e.g., \code{\link[splines]{bs}},
   \code{\link[splines]{ns}}.
 
 
@@ -95,23 +95,24 @@ fit1 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(3, 4)),
              binomialff(multiple.responses = TRUE), data = hunua)
 is.buggy(fit1)  # Okay
 is.buggy(fit1, each.term = TRUE)  # No terms are buggy
-
-fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(3, 4)),
-             binomialff(multiple.responses = TRUE), data = hunua,
-             constraints =
-             list("(Intercept)" = diag(2),
-                  "s(altitude, df = c(3, 4))" = matrix(c(1, 1, 0, 1), 2, 2)))
+fit2 <-
+  vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(3, 4)),
+       binomialff(multiple.responses = TRUE), data = hunua,
+       constraints =
+       list("(Intercept)" = diag(2),
+            "s(altitude, df = c(3, 4))" = matrix(c(1, 1, 0, 1), 2, 2)))
 is.buggy(fit2)  # TRUE
 is.buggy(fit2, each.term = TRUE)
 constraints(fit2)
 
 # fit2b is an approximate alternative to fit2:
-fit2b <- vglm(cbind(agaaus, kniexc) ~ bs(altitude, df = 3) + bs(altitude, df = 4),
-              binomialff(multiple.responses = TRUE), data = hunua,
-              constraints =
-              list("(Intercept)" = diag(2),
-                   "bs(altitude, df = 3)" = rbind(1, 1),
-                   "bs(altitude, df = 4)" = rbind(0, 1)))
+fit2b <-
+  vglm(cbind(agaaus, kniexc) ~ bs(altitude, df=3) + bs(altitude, df=4),
+       binomialff(multiple.responses = TRUE), data = hunua,
+       constraints =
+         list("(Intercept)" = diag(2),
+              "bs(altitude, df = 3)" = rbind(1, 1),
+              "bs(altitude, df = 4)" = rbind(0, 1)))
 is.buggy(fit2b)  # Okay
 is.buggy(fit2b, each.term = TRUE)
 constraints(fit2b)

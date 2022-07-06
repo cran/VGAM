@@ -38,10 +38,10 @@ bigumbelIexp(lapar = "identitylink", iapar = NULL, imethod = 1)
 }
 \details{
   The cumulative distribution function is
-  \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = e^{-y_1-y_2+\alpha y_1 y_2}
-             + 1  - e^{-y_1} - e^{-y_2} }{%
-        P(Y1 <= y1, Y2 <= y2) =
-        exp(-y1-y2+alpha*y1*y2) + 1 - exp(-y1) - exp(-y2) }
+\deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = e^{-y_1-y_2+\alpha y_1 y_2}
+      + 1  - e^{-y_1} - e^{-y_2} }{%
+P(Y1 <= y1, Y2 <= y2) =
+exp(-y1-y2+alpha*y1*y2) + 1 - exp(-y1) - exp(-y2) }
   for real \eqn{\alpha}{alpha}.
   The support of the function is for \eqn{y_1>0}{y1>0} and
   \eqn{y_2>0}{y2>0}.
@@ -49,15 +49,17 @@ bigumbelIexp(lapar = "identitylink", iapar = NULL, imethod = 1)
   unit mean.
 
 
-  A variant of Newton-Raphson is used, which only seems to work for an
-  intercept model.
+  A variant of Newton-Raphson is used, which only seems
+  to work for an intercept model.
   It is a very good idea to set \code{trace=TRUE}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -67,8 +69,10 @@ bigumbelIexp(lapar = "identitylink", iapar = NULL, imethod = 1)
 
 
 
-%Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005)
-%\emph{Extreme Value and Related Models with Applications in Engineering and Science},
+%Castillo, E., Hadi, A. S.,
+%Balakrishnan, N. and Sarabia, J. S. (2005)
+%\emph{Extreme Value and Related Models with Applications
+%in Engineering and Science},
 %Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -106,7 +110,7 @@ Bivariate Exponential Distributions.
 nn <- 1000
 gdata <- data.frame(y1 = rexp(nn), y2 = rexp(nn))
 \dontrun{ with(gdata, plot(cbind(y1, y2))) }
-fit <- vglm(cbind(y1, y2) ~ 1, bigumbelIexp, data = gdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ 1, bigumbelIexp, gdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 head(fitted(fit))

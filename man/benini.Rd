@@ -8,8 +8,9 @@
 
 }
 \usage{
-benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loglink",
-        ishape = NULL, imethod = 1, zero = NULL, parallel = FALSE,
+benini1(y0 = stop("argument 'y0' must be specified"),
+        lshape = "loglink", ishape = NULL, imethod = 1,
+        zero = NULL, parallel = FALSE,
         type.fitted = c("percentiles", "Qlink"),
         percentiles = 50)
 }
@@ -20,8 +21,8 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loglink",
 
   }
   \item{lshape}{
-  Parameter link function and extra argument of the parameter \eqn{b},
-  which is the shape parameter.
+  Parameter link function and extra argument of the parameter
+  \eqn{b}, which is the shape parameter.
   See \code{\link{Links}} for more choices.
   A log link is the default because \eqn{b} is positive.
 
@@ -54,7 +55,8 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loglink",
   \deqn{F(y) = 1 - \exp(-s[(\log(y/y_0))^2]).}{%
         F(y) = 1 - exp(-s * [(log(y / y0))^2]). }
   Here, Newton-Raphson and Fisher scoring coincide.
-  The median of \eqn{Y} is now returned as the fitted values, by default.
+  The median of \eqn{Y} is now returned as the fitted values,
+  by default.
   This \pkg{VGAM} family function can handle a multiple
   responses, which is inputted as a matrix.
 
@@ -74,8 +76,10 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loglink",
 %
 %}
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -83,7 +87,8 @@ benini1(y0 = stop("argument 'y0' must be specified"), lshape = "loglink",
 \references{
 
 Kleiber, C. and Kotz, S. (2003).
-\emph{Statistical Size Distributions in Economics and Actuarial Sciences},
+\emph{Statistical Size Distributions in Economics and
+  Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -94,8 +99,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \author{ T. W. Yee }
 \note{
   Yet to do: the 2-parameter Benini distribution estimates another
-  shape parameter \eqn{a}{a} too.
-  Hence, the code may change in the future.
+  shape parameter \eqn{a}{a} too.  Hence, the code may change in
+  the future.
 
 
 }

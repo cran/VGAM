@@ -7,8 +7,8 @@
 \title{The Paralogistic Distribution}
 \description{
   Density, distribution function, quantile function and random
-  generation for the paralogistic distribution with shape parameter \code{a}
-  and scale parameter \code{scale}.
+  generation for the paralogistic distribution with shape parameter
+  \code{a} and scale parameter \code{scale}.
 
 }
 \usage{

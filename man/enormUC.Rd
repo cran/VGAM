@@ -50,7 +50,8 @@ General details are given in \code{\link{deunif}}
 including
 a note regarding the terminology used.
 Here,
-\code{norm} corresponds to the distribution of interest, \eqn{F}, and
+\code{norm} corresponds to the distribution of interest, \eqn{F},
+and
 \code{enorm} corresponds to \eqn{G}.
 The addition of ``\code{e}'' is for the `other'
 distribution associated with the parent distribution.
@@ -131,12 +132,12 @@ par(mfrow = c(2, 1))
 yy <- seq(-3, 3, len = nn)
 plot(yy, denorm(yy), type = "l", col="blue", xlab = "y", ylab = "g(y)",
      main = "g(y) for N(0,1); dotted green is f(y) = dnorm(y)")
-lines(yy, dnorm(yy), col = "darkgreen", lty = "dotted", lwd = 2)  # 'original'
+lines(yy, dnorm(yy), col = "green", lty = "dotted", lwd = 2)  # 'original'
 
 plot(yy, penorm(yy), type = "l", col = "blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for N(0,1)")
 abline(v = 0, h = 0.5, col = "red", lty = "dashed")
-lines(yy, pnorm(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
+lines(yy, pnorm(yy), col = "green", lty = "dotted", lwd = 2) }
 }
 \keyword{distribution}
 

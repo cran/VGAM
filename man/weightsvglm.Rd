@@ -3,7 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Prior and Working Weights of a VGLM fit }
 \description{
-  Returns either the prior weights or working weights of a VGLM object.
+  Returns either the prior weights or working weights
+  of a VGLM object.
 
 }
 \usage{
@@ -15,7 +16,8 @@ weightsvglm(object, type = c("prior", "working"),
 \arguments{
   \item{object}{
   a model object from the \pkg{VGAM} \R package
-  that inherits from a \emph{vector generalized linear model} (VGLM),
+  that inherits from
+  a \emph{vector generalized linear model} (VGLM),
   e.g., a model of class \code{"vglm"}.
 
   }
@@ -119,7 +121,8 @@ weightsvglm(object, type = c("prior", "working"),
 
 }
 
-% ~Make other sections like Warning with \section{Warning }{....} ~
+% ~Make other sections like Warning with
+% \section{Warning }{....} ~
 
 \seealso{
   \code{\link[stats]{glm}},
@@ -131,15 +134,15 @@ weightsvglm(object, type = c("prior", "working"),
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit <- vglm(cbind(normal, mild, severe) ~ let,
-             cumulative(parallel = TRUE, reverse = TRUE), data = pneumo))
+             cumulative(parallel = TRUE, reverse = TRUE), pneumo))
 depvar(fit)  # These are sample proportions
-weights(fit, type = "prior", matrix = FALSE)  # Number of observations
+weights(fit, type = "prior", matrix = FALSE)  # No. of observations
 
 # Look at the working residuals
 nn <- nrow(model.matrix(fit, type = "lm"))
 M <- ncol(predict(fit))
 
-wwt <- weights(fit, type = "working", deriv = TRUE)  # In matrix-band format
+wwt <- weights(fit, type="working", deriv=TRUE)  # Matrix-band format
 wz <- m2a(wwt$weights, M = M)  # In array format
 wzinv <- array(apply(wz, 3, solve), c(M, M, nn))
 wresid <- matrix(NA, nn, M)  # Working residuals

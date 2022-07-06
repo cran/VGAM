@@ -27,9 +27,9 @@ rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
 
   }
   \item{shape1, shape2}{
-  the two (positive) shape parameters of the standard beta distribution.
-  They are called \code{a} and \code{b} respectively in
-  \code{\link[base:Special]{beta}}.
+  the two (positive) shape parameters of the standard beta
+  distribution.  They are called \code{a} and \code{b} respectively
+  in \code{\link[base:Special]{beta}}.
 
 
   }
@@ -42,7 +42,8 @@ rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
   }
   \item{log, log.p}{
   Logical.
-  If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
+  If \code{TRUE} then all probabilities \code{p} are given as
+  \code{log(p)}.
 
 
   }
@@ -90,16 +91,19 @@ rbetanorm(n, shape1, shape2, mean = 0, sd = 1)
 \dontrun{
 shape1 <- 0.1; shape2 <- 4; m <- 1
 x <- seq(-10, 2, len = 501)
-plot(x, dbetanorm(x, shape1, shape2, m = m), type = "l", ylim = 0:1, las = 1,
-     ylab = paste("betanorm(",shape1,", ",shape2,", m=",m, ", sd=1)", sep = ""),
-     main = "Blue is density, orange is cumulative distribution function",
+plot(x, dbetanorm(x, shape1, shape2, m = m), type = "l",
+     ylim = 0:1, las = 1,
+     ylab = paste0("betanorm(",shape1,", ",shape2,", m=",m, ", sd=1)"),
+     main = "Blue is density, orange is the CDF",
      sub = "Gray lines are the 10,20,...,90 percentiles", col = "blue")
 lines(x, pbetanorm(x, shape1, shape2, m = m), col = "orange")
 abline(h = 0, col = "black")
 probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qbetanorm(probs, shape1, shape2, m = m)
-lines(Q, dbetanorm(Q, shape1, shape2, m = m), col = "gray50", lty = 2, type = "h")
-lines(Q, pbetanorm(Q, shape1, shape2, m = m), col = "gray50", lty = 2, type = "h")
+lines(Q, dbetanorm(Q, shape1, shape2, m = m),
+      col = "gray50", lty = 2, type = "h")
+lines(Q, pbetanorm(Q, shape1, shape2, m = m),
+      col = "gray50", lty = 2, type = "h")
 abline(h = probs, col = "gray50", lty = 2)
 pbetanorm(Q, shape1, shape2, m = m) - probs  # Should be all 0
 }

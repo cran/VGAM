@@ -4,8 +4,8 @@
 \title{ Bivariate Student-t Family Function }
 \description{
   Estimate the degrees of freedom and correlation parameters of
-  the (bivariate) Student-t
-  distribution by maximum likelihood estimation.
+  the (bivariate) Student-t distribution by maximum likelihood
+  estimation.
 
 }
 \usage{
@@ -32,17 +32,20 @@ bistudentt(ldf = "logloglink", lrho = "rhobitlink",
   The density function is
   \deqn{f(y_1, y_2; \nu, \rho) =
         \frac{1}{2\pi\sqrt{1-\rho^2}}
-        (1 + y_1^2 + y_2^2 - 2\rho y_1 y_2) / (\nu (1-\rho^2))^{(\nu+2)/2} }{%
+	(1 + (y_1^2 + y_2^2 -
+	2\rho y_1 y_2) / (\nu (1-\rho^2)))^{-(\nu+2)/2} }{%
         f(y1, y2; nu, rho) =
         (1/(2*pi*sqrt(1-\rho^2))) *
-        (1 + y1^2 + y_2^2 - 2*rho*y1*y2) / (nu*(1-rho^2))^((\nu+2)/2) }
+(1 + (y1^2 + y_2^2 - 2*rho*y1*y2) / (nu*(1-rho^2)))^(-(\nu+2)/2) }
   for \eqn{-1 < \rho < 1}{-1 < rho < 1},
   and real \eqn{y_1}{y1} and \eqn{y_2}{y2}.
 
+  
 
 % The support of the function is the interior of the unit square;
 % however, values of 0 and/or 1 are not allowed.
-% The marginal distributions are the standard uniform distributions.
+% The marginal distributions are the standard
+% uniform distributions.
 % When \eqn{\rho = 0}{rho=0} the random variables are
 % independent.
 
@@ -56,8 +59,10 @@ bistudentt(ldf = "logloglink", lrho = "rhobitlink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -81,7 +86,8 @@ with help from Thibault Vatter.
 \note{
   The response matrix must have a multiple of two-columns.
   Currently, the fitted
-  value is a matrix with the same number of columns and values equal to 0.0.
+  value is a matrix with the same number of columns and values
+  equal to 0.0.
 
 
 }
@@ -105,13 +111,14 @@ nn <- 1000
 mydof <- logloglink(1, inverse = TRUE)
 ymat <- cbind(rt(nn, df = mydof), rt(nn, df = mydof))
 bdata <- data.frame(y1 = ymat[, 1], y2 = ymat[, 2],
-                    y3 = ymat[, 1], y4 = ymat[, 2], x2 = runif(nn))
+                    y3 = ymat[, 1], y4 = ymat[, 2],
+                    x2 = runif(nn))
 summary(bdata)
 \dontrun{ plot(ymat, col = "blue") }
-fit1 <- vglm(cbind(y1, y2, y3, y4) ~ 1,  # 2 responses, e.g., (y1,y2) is the 1st
-             fam = bistudentt,  # crit = "coef",  # Sometimes a good idea
-             data = bdata, trace = TRUE)
-
+fit1 <-    # 2 responses, e.g., (y1,y2) is the 1st
+  vglm(cbind(y1, y2, y3, y4) ~ 1,
+       bistudentt,  # crit = "coef",  # Sometimes a good idea
+       data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 head(fitted(fit1))

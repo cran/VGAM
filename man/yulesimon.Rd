@@ -7,7 +7,8 @@
 
 }
 \usage{
-yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
+yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200,
+          zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,14 +16,16 @@ yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
   Link function for the shape parameter,
   called
   \eqn{\rho}{rho} below.
-  See \code{\link{Links}} for more choices and for general information.
+  See \code{\link{Links}} for more choices and
+  for general information.
 
 
   }
   \item{ishape}{
   Optional initial value for the (positive) parameter.
   See \code{\link{CommonVGAMffArguments}} for more information.
-  The default is to obtain an initial value internally. Use this argument
+  The default is to obtain an initial value internally.
+  Use this argument
   if the default fails.
 
 
@@ -40,7 +43,8 @@ yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
     where the parameter \eqn{\rho>0}{rho>0},
     \eqn{beta} is the \code{\link[base]{beta}} function,
     and \eqn{y=1,2,\ldots}{y=1,2,...}.
-    The function \code{\link{dyules}} computes this probability function.
+    The function \code{\link{dyules}} computes this
+    probability function.
     The mean of \eqn{Y}, which is returned as fitted values, is
     \eqn{\rho/(\rho-1)}{rho/(rho-1)}
     provided \eqn{\rho > 1}{rho > 1}.
@@ -50,7 +54,8 @@ yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
 
 
 
-  The distribution was named after Udny Yule and Herbert A. Simon.
+    The distribution was named after
+    Udny Yule and Herbert A. Simon.
   Simon originally called it the Yule distribution.
   This family function can handle multiple responses.
 
@@ -58,8 +63,10 @@ yulesimon(lshape = "loglink", ishape = NULL, nsimEIM = 200, zero = NULL)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 

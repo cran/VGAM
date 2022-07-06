@@ -10,9 +10,8 @@
 
 }
 \usage{
-residualsvglm(object,
-  type = c("working", "pearson", "response", "deviance", "ldot", "stdres"),
-  matrix.arg = TRUE)
+residualsvglm(object, type = c("working", "pearson", "response",
+   "deviance", "ldot", "stdres", "rquantile"), matrix.arg = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,9 +24,10 @@ residualsvglm(object,
   \item{type}{
   The value of this argument can be abbreviated.
   The type of residuals to be returned.
-  The default is the first one: working residuals corresponding to
-  the IRLS algorithm. These should be defined for all models.
-  They are sometimes be added to VGAM plots of estimated
+  The default is the first one: working residuals
+  corresponding to
+  the IRLS algorithm. These are defined for all models.
+  They are sometimes added to VGAM plots of estimated
   component functions (see \code{\link{plotvgam}}).
   
 
@@ -53,6 +53,58 @@ residualsvglm(object,
   a deviance function. They tend to GLMs mainly.
   This function returns a \code{NULL} for those models
   whose deviance is undefined.
+
+
+
+  Randomized quantile residuals (RQRs)
+  (Dunn and Smyth, 1996)
+  are based on
+  the \code{p}-type function being fed into
+  \code{\link[stats]{qnorm}}.
+  For example, for the default \code{\link{exponential}}
+  it is \code{qnorm(pexp(y, rate = 1 / fitted(object)))}.
+  So one should expect these residuals to have a
+  standard normal distribution if the model and data agree well.
+  If the distribution is discrete then \emph{randomized}
+  values are returned; see
+  \code{\link[stats]{runif}} and
+  \code{\link[base]{set.seed}}.
+  For example, for the default \code{\link{poissonff}}
+  it is
+  \code{qnorm(runif(length(y), ppois(y - 1, mu), ppois(y, mu)))}
+  where \code{mu} is the fitted mean.
+The following excerpts comes from their writings.
+They highly recommend quantile residuals for
+discrete distributions
+since plots
+using deviance and Pearson residuals may contain
+distracting patterns.
+Four replications of the quantile residuals are recommended
+with discrete distributions because they
+have a random component.
+Any features not preserved across all four sets
+of residuals are considered artifacts of the randomization.
+This type of residual is continuous even for
+discrete distributions;
+for both discrete and continuous distributions,
+the quantile residuals have an exact standard normal
+distribution.
+
+
+
+
+% bug fixed; scrambleseed:
+%For RQRs it is found that
+%certain values of \code{\link[base]{set.seed}} may
+%produce a funny effect for \code{\link{gaitdpoisson}}
+%models; sometimes they are `discrete' in nature but
+%usually they are fine.
+%In particular, this funny behaviour occurs with \code{set.seed(1)}.
+
+
+
+
+% , unlike deviance and Pearson residuals
 
 
 
@@ -103,8 +155,8 @@ residualsvglm(object,
 
   }
 \item{matrix.arg}{
-  Logical, which applies when if the pre-processed answer is a vector
-  or a 1-column matrix.
+  Logical, which applies when if the pre-processed
+  answer is a vector or a 1-column matrix.
   If \code{TRUE} then the
   value returned will be a matrix, else a vector.
 
@@ -122,7 +174,8 @@ residualsvglm(object,
 }
 \details{
   This function returns various kinds of residuals,
-  sometimes depending on the specific type of model having been fitted.
+  sometimes depending on the specific type of
+  model having been fitted.
   Section 3.7 of Yee (2015) gives some details on
   several types of residuals defined for the VGLM class.
 
@@ -130,9 +183,10 @@ residualsvglm(object,
 
   Standardized residuals for GLMs are described in
   Section 4.5.6 of Agresti (2013) as the ratio of
-  the raw (response) residuals divided by their standard error.
-  They involve the generalized hat matrix evaluated at the final
-  IRLS iteration.
+  the raw (response) residuals divided by their
+  standard error.
+  They involve the generalized hat matrix evaluated
+  at the final IRLS iteration.
   When applied to the LM,
   standardized residuals for GLMs simplify to
   \code{\link[stats]{rstandard}}.
@@ -152,9 +206,10 @@ leverage.
 
 }
 \value{
-  If that residual type is undefined or inappropriate then
-  \code{NULL} is returned, otherwise a matrix or
-  vector of residuals is returned.
+  If that residual type is undefined or inappropriate
+  or not yet implemented,
+  then \code{NULL} is returned,
+  otherwise a matrix or vector of residuals is returned.
 
 
 
@@ -175,6 +230,15 @@ leverage.
   Agresti, A. (2018).
   \emph{An Introduction to Categorical Data Analysis, 3rd ed.},
   New York: John Wiley & Sons.
+
+
+  Dunn, P. K. and Smyth, G. K. (1996).
+  Randomized quantile residuals.
+  \emph{Journal of Computational and Graphical Statistics},
+  \bold{5}, 236--244.
+
+
+% Issue = 3,
 
 
 }
@@ -206,7 +270,7 @@ leverage.
 
 \examples{
 pneumo <- transform(pneumo, let = log(exposure.time))
-fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo)
+fit <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 resid(fit)  # Same as having type = "working" (the default)
 resid(fit, type = "response")
 resid(fit, type = "pearson")

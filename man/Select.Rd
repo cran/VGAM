@@ -193,7 +193,7 @@ Select(data = list(), prefix = "y",
   \code{\link[base]{cbind}},
   \code{\link[base]{subset}},
   \code{\link[stats]{formula}},
-  \code{\link{fill}}.
+  \code{\link{fill1}}.
 
 
 

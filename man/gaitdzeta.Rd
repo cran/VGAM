@@ -64,6 +64,10 @@ gaitdzeta(a.mix = NULL, i.mix = NULL, d.mix = NULL,
     Link functions.
     See \code{\link{gaitdpoisson}}
     and \code{\link{Links}} for more choices and information.
+    Actually, it is usually a good idea to set these arguments
+    equal to \code{\link[VGAMextra]{zetaffMlink}}
+    because the log-mean is the first linear/additive predictor so
+    it is like a Poisson regression.
 
     
   }
@@ -170,6 +174,15 @@ gaitdzeta(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
 
 
+  As alluded to above, when there are covariates  it is
+  much more interpretable to model the mean rather than
+  the shape parameter.
+  Hence \code{\link[VGAMextra]{zetaffMlink}} is recommended.
+  (This might become the default in the future.)
+  So installing \pkg{VGAMextra} is a good idea.
+
+
+
 
 
   Apart from the order of the linear/additive predictors,
@@ -244,6 +257,7 @@ have been placed in \pkg{VGAMdata}.
 \seealso{
   \code{\link{Gaitdzeta}},
   \code{\link{zetaff}},
+  \code{\link[VGAMextra]{zetaffMlink}},
   \code{\link{Gaitdpois}},
   \code{\link{gaitdpoisson}},
   \code{\link{gaitdlog}},

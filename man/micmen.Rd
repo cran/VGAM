@@ -16,13 +16,16 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{rpar}{
-  Numeric. Initial positive ridge parameter. This is used to create
+    Numeric. Initial positive ridge parameter.
+    This is used to create
   positive-definite weight matrices.
 
   }
   \item{divisor}{
-  Numerical. The divisor used to divide the ridge parameter at each
-  iteration until it is very small but still positive.  The value of
+    Numerical. The divisor used to divide the
+    ridge parameter at each
+    iteration until it is very small but still positive.
+    The value of
   \code{divisor} should be greater than one.
 
   }
@@ -70,15 +73,20 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   are the two parameters.
 
 
-  The relationship between iteratively reweighted least squares and the
-  Gauss-Newton algorithm is given in Wedderburn (1974).  However, the
-  algorithm used by this family function is different.  Details are
+  The relationship between
+  iteratively reweighted least squares and the
+  Gauss-Newton algorithm is given in Wedderburn (1974).
+  However, the
+  algorithm used by this family function is different.
+  Details are
   given at the Author's web site.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -112,17 +120,22 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
   The regressor values \eqn{u_i}{u_i} are inputted as the RHS of
   the \code{form2} argument.
   It should just be a simple term; no smart prediction is used.
-  It should just a single vector, therefore omit the intercept term.
+  It should just a single vector, therefore omit
+  the intercept term.
   The LHS of the formula \code{form2} is ignored.
 
 
-  To predict the response at new values of \eqn{u_i}{u_i} one must
-  assign the \code{@extra$Xm2} slot in the fitted object these values,
+  To predict the response at new values
+  of \eqn{u_i}{u_i} one must
+  assign the \code{@extra$Xm2} slot in the fitted
+  object these values,
   e.g., see the example below.
 
 
-  Numerical problems may occur. If so, try setting some initial values
-  for the parameters. In the future, several self-starting initial
+  Numerical problems may occur. If so, try setting
+  some initial values
+  for the parameters. In the future, several
+  self-starting initial
   values will be implemented.
 
 
@@ -138,7 +151,8 @@ micmen(rpar = 0.001, divisor = 10, init1 = NULL, init2 = NULL,
 }
 \section{Warning }{
   This function is not (nor could ever be) entirely reliable.
-  Plotting the fitted function and monitoring convergence is recommended.
+  Plotting the fitted function and monitoring
+  convergence is recommended.
 
 
 }
@@ -147,15 +161,19 @@ mfit <- vglm(velocity ~ 1, micmen, data = enzyme, trace = TRUE,
              crit = "coef", form2 = ~ conc - 1)
 summary(mfit)
 
-\dontrun{ plot(velocity ~ conc, enzyme, xlab = "concentration", las = 1,
-     col = "blue", main = "Michaelis-Menten equation for the enzyme data",
+\dontrun{
+plot(velocity ~ conc, enzyme, xlab = "concentration", las = 1,
+     col = "blue",
+     main = "Michaelis-Menten equation for the enzyme data",
      ylim = c(0, max(velocity)), xlim = c(0, max(conc)))
-points(fitted(mfit) ~ conc, enzyme, col = "red", pch = "+", cex = 1.5)
+points(fitted(mfit) ~ conc, enzyme, col = 2, pch = "+", cex = 2)
 
 # This predicts the response at a finer grid:
-newenzyme <- data.frame(conc = seq(0, max(with(enzyme, conc)), len = 200))
-mfit@extra$Xm2 <- newenzyme$conc # This assignment is needed for prediction
-lines(predict(mfit, newenzyme, "response") ~ conc, newenzyme, col = "red") }
+newenzyme <- data.frame(conc = seq(0, max(with(enzyme, conc)),
+      len = 200))
+mfit@extra$Xm2 <- newenzyme$conc # This is needed for prediction
+lines(predict(mfit, newenzyme, "response") ~ conc, newenzyme,
+      col = "red") }
 }
 \keyword{models}
 \keyword{regression}

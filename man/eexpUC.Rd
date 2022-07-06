@@ -62,10 +62,9 @@ Thus
 \code{reexp} generates random variates from \eqn{g}.
 
 
-For \code{qeexp} the Newton-Raphson algorithm is used to solve for
-\eqn{y} satisfying \eqn{p = G(y)}.
-Numerical problems may occur when values of \code{p} are
-very close to 0 or 1.
+For \code{qeexp} the Newton-Raphson algorithm is used to solve
+for \eqn{y} satisfying \eqn{p = G(y)}.  Numerical problems may
+occur when values of \code{p} are very close to 0 or 1.
 
 
 }
@@ -114,12 +113,12 @@ sum(myexp - y[y <= myexp]) / sum(abs(myexp - y))  # Should be my.p
 yy <- seq(-0, 4, len = nn)
 plot(yy, deexp(yy),  col = "blue", ylim = 0:1, xlab = "y", ylab = "g(y)",
      type = "l", main = "g(y) for Exp(1); dotted green is f(y) = dexp(y)")
-lines(yy, dexp(yy), col = "darkgreen", lty = "dotted", lwd = 2)  # 'original'
+lines(yy, dexp(yy), col = "green", lty = "dotted", lwd = 2)  # 'original'
 
 plot(yy, peexp(yy), type = "l", col = "blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for Exp(1)")
 abline(v = 1, h = 0.5, col = "red", lty = "dashed")
-lines(yy, pexp(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
+lines(yy, pexp(yy), col = "green", lty = "dotted", lwd = 2) }
 }
 \keyword{distribution}
 
@@ -142,7 +141,8 @@ lines(yy, pexp(yy), col = "darkgreen", lty = "dotted", lwd = 2) }
 %peexp(mean(yy), rate = myrate)  #  Should be 0.5
 %abs(qeexp(0.5, rate = myrate) - mean(yy))  #  Should be 0
 %abs(peexp(myexp, rate = myrate) - my.p)  #  Should be 0
-%integrate(f = deexp, lower = -1, upper = Inf, rate = myrate)  #  Should be 1
+%#  Should be 1:
+%integrate(f = deexp, lower = -1, upper = Inf, rate = myrate)
 
 
 

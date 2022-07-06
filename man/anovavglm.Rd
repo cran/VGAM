@@ -47,12 +47,13 @@
     Note that \code{\link[stats]{anova.glm}}
     has \code{1} or \code{"I"}
     as its default;
-    and that \code{Anova.glm()} in \pkg{car}
+    and that \code{Anova.glm()} in \bold{car}
+    (that is, the \bold{car} package)
     has \code{2} or \code{"II"} as its default
     (and allows for \code{type = "III"}), so
     one can think of this function as
     a combination of \code{\link[stats]{anova.glm}}
-    and \code{Anova.glm()} in \pkg{car},
+    and \code{Anova.glm()} in \bold{car},
     but with the default of the latter.
     See Details below for more information.
 
@@ -82,7 +83,8 @@
 
 
 
-% yettodo: it is hoped that \code{test = "Rao"} be supported one day.
+% yettodo: it is hoped that
+% \code{test = "Rao"} be supported one day.
 % See \code{\link[stats]{stat.anova}}.
 %
 
@@ -136,34 +138,36 @@
 
 
 
-  The \code{Anova()} function in \pkg{car} allows for testing
-  \emph{Type II} and \emph{Type III} (SAS jargon) hypothesis tests,
-  although the definitions used are \emph{not} precisely that of SAS.
-  As \pkg{car} notes,
-  \emph{Type I} rarely test interesting hypotheses in unbalanced designs.
-  Type III enter each term \emph{last}, keeping all the other terms in the
-  model.
+  The \code{Anova()} function in \bold{car} allows for testing
+  \emph{Type II} and \emph{Type III} (SAS jargon) hypothesis
+  tests, although the definitions used are \emph{not} precisely
+  that of SAS.
+  As \bold{car} notes,
+  \emph{Type I} rarely test interesting hypotheses in unbalanced
+  designs.  Type III enter each term \emph{last}, keeping all
+  the other terms in the model.
+
   Type II tests,
   according to SAS,
-add the term after all other terms have been added
-to the model except terms that contain the effect being tested;
-an effect is contained in another effect if it can be derived by
-deleting variables from the latter effect.
+add the term after all other terms have been added to the model
+except terms that contain the effect being tested; an effect
+is contained in another effect if it can be derived by deleting
+variables from the latter effect.
   Type II tests are currently the default.
 
 
 
   As in \code{\link[stats]{anova.glm}}, but not as
-  \code{Anova.glm()} in \pkg{car},
+  \code{Anova.glm()} in \bold{car},
   if more than one object is specified, then
   the table has a row for the
   residual degrees of freedom and deviance for each model.
-  For all but the first model, the change in degrees of freedom and
-  deviance is also given. (This only makes statistical sense if the
-  models are nested.)  It is conventional to list the models from
-  smallest to largest, but this is up to the user.
-  It is necessary to have \code{type = 1} with more than one objects
-  are specified.
+  For all but the first model, the change in degrees of freedom
+  and deviance is also given. (This only makes statistical sense
+  if the models are nested.)  It is conventional to list the
+  models from smallest to largest, but this is up to the user.
+  It is necessary to have \code{type = 1} with more than one
+  objects are specified.
 
 
 % \code{\link[car]{Anova.glm}},
@@ -191,7 +195,7 @@ deleting variables from the latter effect.
 
   The code was adapted
   directly from \code{\link[stats]{anova.glm}}
-  and \code{Anova.glm()} in \pkg{car}
+  and \code{Anova.glm()} in \bold{car}
   by T. W. Yee.
   Hence the Type II and Type III tests do \emph{not}
   correspond precisely with the SAS definition.
@@ -215,7 +219,7 @@ deleting variables from the latter effect.
 
 
   
-  As \pkg{car} says, be careful of Type III tests
+  As \bold{car} says, be careful of Type III tests
   because they violate marginality.
   Type II tests (the default) do not have this problem.
 
@@ -253,7 +257,7 @@ deleting variables from the latter effect.
   \code{\link[stats]{anova.glm}},
   \code{\link[stats]{stat.anova}},
   \code{stats:::print.anova},
-  \code{Anova.glm()} in \pkg{car} if \pkg{car} is installed,
+  \code{Anova.glm()} in \bold{car} if \bold{car} is installed,
   \code{\link{vglm}},
   \code{\link{lrtest}},
   \code{\link{add1.vglm}},
@@ -266,7 +270,7 @@ deleting variables from the latter effect.
 
 
 
-% \code{\link[car]{Anova.glm}} if \pkg{car} is installed,
+% \code{\link[car]{Anova.glm}} if \bold{car} is installed,
 % \code{\link{score.stat.vlm}},
 % \code{\link{step4vglm}},
 

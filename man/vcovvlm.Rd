@@ -21,7 +21,8 @@
 }
 \usage{
 vcov(object, \dots)
-vcovvlm(object, dispersion = NULL, untransform = FALSE, complete = TRUE)
+vcovvlm(object, dispersion = NULL, untransform = FALSE,
+        complete = TRUE)
 vcovqrrvglm(object, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -132,9 +133,9 @@ vcovqrrvglm(object, \dots)
 
 \examples{
 ndata <- data.frame(x2 = runif(nn <- 300))
-ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)),
-                          y2 = rnbinom(nn, mu = exp(2-x2), size = exp(0)))
-fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, data = ndata, trace = TRUE)
+ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), exp(1)),
+                          y2 = rnbinom(nn, mu = exp(2-x2), exp(0)))
+fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, ndata, trace = TRUE)
 fit2 <- rrvglm(y1 ~ x2, negbinomial(zero = NULL), data = ndata)
 coef(fit1, matrix = TRUE)
 vcov(fit1)

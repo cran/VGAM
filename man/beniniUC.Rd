@@ -6,8 +6,8 @@
 \alias{rbenini}
 \title{The Benini Distribution}
 \description{
-  Density, distribution function, quantile function and random
-  generation for the Benini distribution with parameter
+  Density, distribution function, quantile function and
+  random generation for the Benini distribution with parameter
   \code{shape}.
 
 
@@ -36,7 +36,8 @@ rbenini(n, y0, shape)
   }
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -68,8 +69,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{benini1}}, the \pkg{VGAM} family function
-  for estimating the parameter \eqn{s} by maximum likelihood estimation,
-  for the formula of the probability density function and other details.
+  for estimating the parameter \eqn{s} by maximum likelihood
+  estimation, for the formula of the probability density function
+  and other details.
 
 
 }
@@ -85,10 +87,10 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \dontrun{
 y0 <- 1; shape <- exp(1)
 xx <- seq(0.0, 4, len = 101)
-plot(xx, dbenini(xx, y0 = y0, shape = shape), type = "l", col = "blue",
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles", ylim = 0:1,
-     las = 1, ylab = "", xlab = "x")
+plot(xx, dbenini(xx, y0 = y0, shape = shape), col = "blue",
+     main = "Blue is density, orange is the CDF", type = "l",
+     sub = "Purple lines are the 10,20,...,90 percentiles",
+     ylim = 0:1, las = 1, ylab = "", xlab = "x")
 abline(h = 0, col = "blue", lty = 2)
 lines(xx, pbenini(xx, y0 = y0, shape = shape), col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)

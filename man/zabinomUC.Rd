@@ -7,8 +7,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Altered Binomial Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the zero-altered binomial distribution with parameter \code{pobs0}.
+  Density, distribution function, quantile function and random
+  generation for the zero-altered binomial distribution with
+  parameter \code{pobs0}.
 
 }
 \usage{
@@ -22,7 +23,9 @@ rzabinom(n, size, prob, pobs0 = 0)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  If \code{length(n) > 1} then the length is taken to be the
+  number required.
+
   }
   \item{size, prob, log}{
   Parameters from the ordinary binomial distribution
@@ -37,10 +40,8 @@ rzabinom(n, size, prob, pobs0 = 0)
   }
 }
 \details{
-  The probability function of \eqn{Y} is 0 with probability \code{pobs0},
-  else a positive
-  binomial(size, prob)
-  distribution.
+  The probability function of \eqn{Y} is 0 with probability
+  \code{pobs0}, else a positive binomial(size, prob) distribution.
 
 
 }
@@ -55,8 +56,8 @@ rzabinom(n, size, prob, pobs0 = 0)
 %\references{ }
 \author{ T. W. Yee }
 \note{
-    The argument \code{pobs0} is recycled to the required length, and
-    must have values which lie in the interval \eqn{[0,1]}.
+    The argument \code{pobs0} is recycled to the required length,
+    and must have values which lie in the interval \eqn{[0,1]}.
 
 
 }
@@ -80,10 +81,10 @@ table(rzabinom(100, size = size, prob = prob, pobs0 = pobs0))
 \dontrun{ x <- 0:10
 barplot(rbind(dzabinom(x, size = size, prob = prob, pobs0 = pobs0),
                 dbinom(x, size = size, prob = prob)),
-        beside = TRUE, col = c("blue", "orange"), cex.main = 0.7, las = 1,
-        ylab = "Probability", names.arg = as.character(x),
-        main = paste("ZAB(size = ", size, ", prob = ", prob, ", pobs0 = ", pobs0,
-                   ") [blue] vs",  " Binom(size = ", size, ", prob = ", prob,
-                   ") [orange] densities", sep = "")) }
+  beside = TRUE, col = c("blue", "orange"), cex.main = 0.7, las = 1,
+  ylab = "Probability", names.arg = as.character(x),
+  main = paste("ZAB(size = ", size, ", prob = ", prob, ", pobs0 = ", pobs0,
+               ") [blue] vs",  " Binom(size = ", size, ", prob = ", prob,
+               ") [orange] densities", sep = "")) }
 }
 \keyword{distribution}

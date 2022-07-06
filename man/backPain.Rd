@@ -4,9 +4,9 @@
 \docType{data}
 \title{ Data on Back Pain Prognosis, from Anderson (1984) }
 \description{
-  Data from a study of patients suffering from back pain. Prognostic
-  variables were recorded at presentation and progress was categorised
-  three weeks after treatment.
+  Data from a study of patients suffering from back
+  pain. Prognostic variables were recorded at presentation and
+  progress was categorised three weeks after treatment.
 
 }
 \usage{data(backPain)}

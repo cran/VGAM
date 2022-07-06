@@ -44,8 +44,8 @@ negreciprocallink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
-  The \code{negreciprocallink} link function computes the negative
-  reciprocal, i.e., \eqn{-1/ \theta}{-1/theta}.
+  The \code{negreciprocallink} link function computes
+  the negative reciprocal, i.e., \eqn{-1/ \theta}{-1/theta}.
 
 
 
@@ -57,7 +57,8 @@ negreciprocallink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   and if \code{inverse = TRUE} then
   \code{1/theta}.
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  \emph{d} \code{theta} / \emph{d} \code{eta}
+  as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
@@ -65,7 +66,8 @@ negreciprocallink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \references{
     McCullagh, P. and Nelder, J. A. (1989).
-    \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+    \emph{Generalized Linear Models}, 2nd ed.
+    London: Chapman & Hall.
 
 
 }

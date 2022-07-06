@@ -45,8 +45,8 @@ rbifgmcop(n, apar)
 \details{
   See \code{\link{bifgmcop}}, the \pkg{VGAM}
   family functions for estimating the
-  parameter by maximum likelihood estimation, for the formula of the
-  cumulative distribution function and other details.
+  parameter by maximum likelihood estimation, for the formula of
+  the cumulative distribution function and other details.
 
 
 }

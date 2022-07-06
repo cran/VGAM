@@ -7,8 +7,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{The Zeta Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the zeta distribution.
+  Density, distribution function, quantile function and random
+  generation for the zeta distribution.
 
 }
 \usage{
@@ -67,10 +67,9 @@ New York: Wiley.
 }
 \author{ T. W. Yee }
 \note{
-    \code{qzeta()} runs slower and slower as \code{shape} approaches 0
-    and \code{p} approaches 1.
-    The \pkg{VGAM} family function \code{\link{zetaff}} estimates the
-    shape parameter \eqn{s}.
+  \code{qzeta()} runs slower and slower as \code{shape} approaches
+  0 and \code{p} approaches 1.  The \pkg{VGAM} family function
+  \code{\link{zetaff}} estimates the shape parameter \eqn{s}.
 
 
 
@@ -101,7 +100,7 @@ max(abs(pzeta(1:200, myshape) -
 
 \dontrun{ plot(1:6, dzeta(1:6, 2), type = "h", las = 1,
                col = "orange", ylab = "Probability",
-     main = "zeta probability function; orange: shape = 2; blue: shape = 1")
+ main = "zeta probability function; orange: shape = 2; blue: shape = 1")
 points(0.10 + 1:6, dzeta(1:6, 1), type = "h", col = "blue") }
 }
 \keyword{distribution}

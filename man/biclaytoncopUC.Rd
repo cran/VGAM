@@ -17,7 +17,8 @@ rbiclaytoncop(n, apar = 0)
 %pbiclaytoncop(q1, q2, rho = 0)
 \arguments{
   \item{x1, x2}{vector of quantiles.
-  The \code{x1} and \code{x2} should both be in the interval \eqn{(0,1)}.
+  The \code{x1} and \code{x2} should both be in the interval
+  \eqn{(0,1)}.
 
 
   }
@@ -42,8 +43,10 @@ rbiclaytoncop(n, apar = 0)
   }
 }
 \value{
-  \code{dbiclaytoncop} gives the density at point (\code{x1},\code{x2}),
-  \code{rbiclaytoncop} generates random deviates (a two-column matrix).
+  \code{dbiclaytoncop} gives the density at point
+  (\code{x1},\code{x2}),
+  \code{rbiclaytoncop} generates random
+  deviates (a two-column matrix).
 
 
 % \code{pbiclaytoncop} gives the distribution function, and
@@ -57,7 +60,8 @@ rbiclaytoncop(n, apar = 0)
 
 Clayton, D. (1982).
 A model for association in bivariate survival data.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+      Series B, Methodological},
 \bold{44}, 414--422.
 
 

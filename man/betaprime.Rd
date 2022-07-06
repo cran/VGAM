@@ -3,19 +3,20 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The Beta-Prime Distribution }
 \description{
-  Estimation of the two shape parameters of the beta-prime distribution
-  by maximum likelihood estimation.
+  Estimation of the two shape parameters of the beta-prime
+  distribution by maximum likelihood estimation.
 
 
 }
 \usage{
-betaprime(lshape = "loglink", ishape1 = 2, ishape2 = NULL, zero = NULL)
+betaprime(lshape = "loglink", ishape1 = 2, ishape2 = NULL,
+          zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lshape}{
-  Parameter link function applied to the two (positive) shape parameters.
-  See \code{\link{Links}} for more choices.
+  Parameter link function applied to the two (positive) shape
+  parameters.  See \code{\link{Links}} for more choices.
 
 
   }
@@ -65,8 +66,10 @@ betaprime(lshape = "loglink", ishape1 = 2, ishape2 = NULL, zero = NULL)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 

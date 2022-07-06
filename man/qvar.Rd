@@ -11,7 +11,7 @@ Quasi-variances Extraction Function
   returns either the quasi-variances or quasi-standard errors.
 
 
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+%% A concise (1-5 lines) description of what the function does.
 }
 \usage{
 qvar(object, se = FALSE, ...)
@@ -27,7 +27,8 @@ qvar(object, se = FALSE, ...)
 
 }
 \item{se}{
-  Logical. If \code{FALSE} then the quasi-variances are returned,
+  Logical. If \code{FALSE} then the quasi-variances
+  are returned,
   else the square root of them, called quasi-standard errors.
 
 
@@ -45,7 +46,8 @@ qvar(object, se = FALSE, ...)
   computing the quasi-variances
   by \code{diag(predict(fit1)[, c(TRUE, FALSE)]) / 2}.
   This function is for convenience only.
-  Serious users of quasi-variances ought to understand why and how this
+  Serious users of quasi-variances ought to understand
+  why and how this
   function works.
 
 
@@ -96,16 +98,17 @@ Shipmodel <- vglm(incidents ~ type + year + period,
                   data = ships, subset = (service > 0))
 
 # Easiest form of input
-fit1 <- rcim(Qvar(Shipmodel, "type"), uninormal("explink"), maxit = 99)
+fit1 = rcim(Qvar(Shipmodel, "type"), uninormal("explink"), maxit=99)
 qvar(fit1)             # Quasi-variances
 qvar(fit1, se = TRUE)  # Quasi-standard errors
 
 # Manually compute them:
-(quasiVar <- exp(diag(fitted(fit1))) / 2)                 # Version 1
-(quasiVar <- diag(predict(fit1)[, c(TRUE, FALSE)]) / 2)   # Version 2
+(quasiVar <- exp(diag(fitted(fit1))) / 2)                # Version 1
+(quasiVar <- diag(predict(fit1)[, c(TRUE, FALSE)]) / 2)  # Version 2
 (quasiSE  <- sqrt(quasiVar))
 
-\dontrun{ qvplot(fit1, col = "green", lwd = 3, scol = "blue", slwd = 2, las = 1) }
+\dontrun{ qvplot(fit1, col = "green", lwd = 3, scol = "blue",
+     slwd = 2, las = 1) }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

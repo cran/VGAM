@@ -23,7 +23,8 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
-  The default value means none are modelled as intercept-only terms.
+  The default value means none are modelled as
+  intercept-only terms.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
@@ -46,19 +47,22 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
   }
   \item{refLevel}{
-  Either a (1) single positive integer or (2) a value of the factor
-  or (3) a character string.
+    Either a (1) single positive integer or (2) a value of
+    the factor or (3) a character string.
   If inputted as an integer then it specifies which
   column of the response matrix is the reference or baseline level.
   The default is the \emph{last} one (the \eqn{(M+1)}th one).
-  If used, this argument will be usually assigned the value \code{1}.
-  If inputted as a value of a factor then beware of missing values
+  If used, this argument will be usually assigned
+  the value \code{1}.
+  If inputted as a value of a factor then beware of
+  missing values
   of certain levels of the factor
   (\code{drop.unused.levels = TRUE} or
    \code{drop.unused.levels = FALSE}).
   See the example below.
   If inputted as a character string then this should be
-  equal to (A) one of the levels of the factor response, else (B) one
+  equal to (A) one of the levels of the factor response,
+  else (B) one
   of the column names of the matrix response of counts;
   e.g.,
   \code{vglm(cbind(normal, mild, severe) ~ let,}
@@ -192,8 +196,10 @@ of GAITD regression).
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}} and \code{\link{vgam}}.
 
 
@@ -222,9 +228,10 @@ Reduced-rank vector generalized linear models.
 
 
 
-Yee, T. W. and Ma, C. (2021).
-Generally--altered, --inflated, --truncated and --altered
-count regression.
+Yee, T. W. and Ma, C. (2022).
+Generally--altered, --inflated, --truncated
+and --deflated regression,
+with application to heaped and seeped data.
 \emph{In preparation}.
 
 
@@ -246,9 +253,9 @@ Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009).
 New York, USA: Springer-Verlag.
 
 
-Simonoff, J. S. (2003).
-\emph{Analyzing Categorical Data},
-New York, USA: Springer-Verlag.
+%Simonoff, J. S. (2003).
+%\emph{Analyzing Categorical Data},
+%%New York, USA: Springer-Verlag.
 
 
 Anderson, J. A. (1984).
@@ -260,13 +267,13 @@ Regression and ordered categorical variables.
 
 Tutz, G. (2012).
 \emph{Regression for Categorical Data},
-Cambridge University Press.
+Cambridge: Cambridge University Press.
 
 
 
 %Further information and examples on categorical data analysis
 %by the \pkg{VGAM} package can be found at
-%\url{http://www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
+%\url{www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
 
 
 }
@@ -281,7 +288,8 @@ Cambridge University Press.
 
 
   The multinomial logit model is more appropriate for a nominal
-  (unordered) factor response than for an ordinal (ordered) factor
+  (unordered) factor response than for an
+  ordinal (ordered) factor
   response.
   Models more suited for the latter include those based on
   cumulative probabilities, e.g., \code{\link{cumulative}}.
@@ -313,7 +321,7 @@ Cambridge University Press.
   variable \code{Time.car} is the difference between
   the travel duration/time to work by car and walking,
   etc. For other details about the \code{xij} argument see
-  \code{\link{vglm.control}} and \code{\link{fill}}.
+  \code{\link{vglm.control}} and \code{\link{fill1}}.
 
 
   The \code{\link[nnet]{multinom}} function in the
@@ -370,7 +378,7 @@ Cambridge University Press.
 
 
 \examples{
-# Example 1: fit a multinomial logit model to Edgar Anderson's iris data
+# Example 1: fit a MLM to Edgar Anderson's iris data
 data(iris)
 \dontrun{ fit <- vglm(Species ~ ., multinomial, iris)
 coef(fit, matrix = TRUE) }
@@ -379,7 +387,7 @@ coef(fit, matrix = TRUE) }
 ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))
 fit <- vglm(ycounts ~ 1, multinomial)
 head(fitted(fit))   # Proportions
-fit@prior.weights   # NOT recommended for extraction of prior weights
+fit@prior.weights   # NOT recommended for the prior weights
 weights(fit, type = "prior", matrix = FALSE)  # The better method
 depvar(fit)         # Sample proportions; same as fit@y
 constraints(fit)    # Constraint matrices
@@ -391,7 +399,8 @@ coef(fit , matrix = TRUE)  # Easy to reconcile this output with fit2
 
 # Example 3: The response is a factor.
 nn <- 10
-dframe3 <- data.frame(yfac = gl(3, nn, labels = c("Ctrl", "Trt1", "Trt2")),
+dframe3 <- data.frame(yfac = gl(3, nn, labels = c("Ctrl",
+                                "Trt1", "Trt2")),
                       x2   = runif(3 * nn))
 myrefLevel <- with(dframe3, yfac[12])
 fit3a <- vglm(yfac ~ x2, multinomial(refLevel = myrefLevel), dframe3)
@@ -401,21 +410,23 @@ coef(fit3b, matrix = TRUE)  # "Trt1" is the reference level
 margeff(fit3b)
 
 # Example 4: Fit a rank-1 stereotype model
-fit4 <- rrvglm(Country ~ Width + Height + HP, multinomial, data = car.all)
+fit4 <- rrvglm(Country ~ Width + Height + HP, multinomial, car.all)
 coef(fit4)  # Contains the C matrix
 constraints(fit4)$HP       # The A matrix
 coef(fit4, matrix = TRUE)  # The B matrix
 Coef(fit4)@C               # The C matrix
 concoef(fit4)              # Better to get the C matrix this way
 Coef(fit4)@A               # The A matrix
-svd(coef(fit4, matrix = TRUE)[-1, ])$d  # This has rank 1; = C %*% t(A)
+svd(coef(fit4, matrix = TRUE)[-1, ])$d  # Has rank 1; = C %*% t(A)
 # Classification (but watch out for NAs in some of the variables):
 apply(fitted(fit4), 1, which.max)  # Classification
-colnames(fitted(fit4))[apply(fitted(fit4), 1, which.max)]  # Classification
-apply(predict(fit4, car.all, type = "response"), 1, which.max)  # Ditto
+# Classification:
+colnames(fitted(fit4))[apply(fitted(fit4), 1, which.max)]
+apply(predict(fit4, car.all, type = "response"),
+      1, which.max)  # Ditto
 
 
-# Example 5: The use of the xij argument (aka conditional logit model)
+# Example 5: Using the xij argument (aka conditional logit model)
 set.seed(111)
 nn <- 100  # Number of people who travel to work
 M <- 3  # There are M+1 models of transport to go to work
@@ -428,14 +439,14 @@ gotowork <- data.frame(cost.bus  = runif(nn), time.bus  = runif(nn),
                        cost.walk = runif(nn), time.walk = runif(nn))
 gotowork <- round(gotowork, digits = 2)  # For convenience
 gotowork <- transform(gotowork,
-                      Cost.bus   = cost.bus   - cost.walk,
-                      Cost.car   = cost.car   - cost.walk,
-                      Cost.train = cost.train - cost.walk,
-                      Cost       = cost.train - cost.walk,  # for labelling
-                      Time.bus   = time.bus   - time.walk,
-                      Time.car   = time.car   - time.walk,
-                      Time.train = time.train - time.walk,
-                      Time       = time.train - time.walk)  # for labelling
+              Cost.bus   = cost.bus   - cost.walk,
+              Cost.car   = cost.car   - cost.walk,
+              Cost.train = cost.train - cost.walk,
+              Cost       = cost.train - cost.walk,  # for labelling
+              Time.bus   = time.bus   - time.walk,
+              Time.car   = time.car   - time.walk,
+              Time.train = time.train - time.walk,
+              Time       = time.train - time.walk)  # for labelling
 fit <- vglm(ycounts ~ Cost + Time,
             multinomial(parall = TRUE ~ Cost + Time - 1),
             xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,

@@ -7,10 +7,9 @@
 \title{The Generalized Extreme Value Distribution }
 \description{
   Density, distribution function, quantile function and random
-  generation for the generalized extreme value distribution (GEV) with
-  location parameter \code{location},
-  scale parameter \code{scale} and
-  shape parameter \code{shape}.
+  generation for the generalized extreme value distribution
+  (GEV) with location parameter \code{location}, scale parameter
+  \code{scale} and shape parameter \code{shape}.
 
 
 }
@@ -25,7 +24,9 @@ rgev(n, location = 0, scale = 1, shape = 0)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required. }
+  If \code{length(n) > 1} then the length is taken to be the
+  number required. }
+
   \item{location}{the location parameter \eqn{\mu}{mu}.}
   \item{scale}{the (positive) scale parameter \eqn{\sigma}{sigma}.
       Must consist of positive values. }
@@ -44,10 +45,10 @@ rgev(n, location = 0, scale = 1, shape = 0)
   }
   \item{tolshape0}{
   Positive numeric.
-  Threshold/tolerance value for resting whether \eqn{\xi}{xi} is zero.
-  If the absolute value of the estimate of \eqn{\xi}{xi} is less than
-  this value then it will be assumed zero and a Gumbel distribution will
-  be used.
+  Threshold/tolerance value for resting whether \eqn{\xi}{xi}
+  is zero.  If the absolute value of the estimate of \eqn{\xi}{xi}
+  is less than this value then it will be assumed zero and a
+  Gumbel distribution will be used.
 
 
   }
@@ -61,7 +62,8 @@ rgev(n, location = 0, scale = 1, shape = 0)
 % \code{1+shape*(x-location)/scale > 0}. Outside that region, the
 % logarithm of the density is assigned \code{oobounds.log}, which
 % equates to a zero density.
-% It should not be assigned a positive number, and ideally is very negative.
+% It should not be assigned a positive number,
+% and ideally is very negative.
 % Since \code{\link{egev}} uses this function it is necessary
 % to return a finite value outside this region  so as to allow
 % for half-stepping. Both arguments are in support of this.
@@ -98,12 +100,12 @@ London: Springer-Verlag.
 
 }
 \note{
-  The default value of \eqn{\xi = 0}{xi = 0} means the default distribution
-  is the Gumbel.
+  The default value of \eqn{\xi = 0}{xi = 0} means the default
+  distribution is the Gumbel.
 
 
-  Currently, these functions have different argument names compared with
-  those in the \pkg{evd} package.
+  Currently, these functions have different argument names compared
+  with those in the \pkg{evd} package.
 
 
 }
@@ -118,7 +120,7 @@ London: Springer-Verlag.
 pgev(qgev(seq(0.05, 0.95, by = 0.05), loc, sigma, xi), loc, sigma, xi)
 \dontrun{ x <- seq(loc - 3, loc + 3, by = 0.01)
 plot(x, dgev(x, loc, sigma, xi), type = "l", col = "blue", ylim = c(0, 1),
-     main = "Blue is density, orange is cumulative distribution function",
+     main = "Blue is density, orange is the CDF",
      sub = "Purple are 10,...,90 percentiles", ylab = "", las = 1)
 abline(h = 0, col = "blue", lty = 2)
 lines(qgev(seq(0.1, 0.9, by = 0.1), loc, sigma, xi),

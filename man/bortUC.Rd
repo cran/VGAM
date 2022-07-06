@@ -34,7 +34,8 @@ rbort(n, Qsize = 1, a = 0.5)
   }
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
 
@@ -55,7 +56,8 @@ rbort(n, Qsize = 1, a = 0.5)
 \details{
   See \code{\link{borel.tanner}}, the \pkg{VGAM} family function
   for estimating the parameter,
-  for the formula of the probability density function and other details.
+  for the formula of the probability density function and other
+  details.
 
 
 }
@@ -75,8 +77,8 @@ rbort(n, Qsize = 1, a = 0.5)
 \examples{
 \dontrun{ qsize <- 1; a <- 0.5; x <- qsize:(qsize+10)
 plot(x, dbort(x, qsize, a), type = "h", las = 1, col = "blue",
-     ylab = paste("fbort(qsize=", qsize, ", a=", a, ")"), log = "y",
-     main = "Borel-Tanner density function") }
+     ylab = paste("fbort(qsize=", qsize, ", a=", a, ")"),
+     log = "y", main = "Borel-Tanner density function") }
 }
 \keyword{distribution}
 

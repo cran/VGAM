@@ -6,8 +6,8 @@
 \alias{rzipf}
 \title{The Zipf Distribution}
 \description{
-  Density, distribution function, quantile function and random generation
-  for the Zipf distribution.
+  Density, distribution function, quantile function and random
+  generation for the Zipf distribution.
 
 }
 \usage{
@@ -42,7 +42,8 @@ rzipf(n, N, shape)
 \details{
   This is a finite version of the zeta distribution.
   See \code{\link{zetaff}} for more details.
-  In general, these functions runs slower and slower as \code{N} increases.
+  In general, these functions runs slower and slower as \code{N}
+  increases.
 
 
 
@@ -60,11 +61,11 @@ rzipf(n, N, shape)
 \examples{
 N <- 10; shape <- 0.5; y <- 1:N
 proby <- dzipf(y, N = N, shape = shape)
-\dontrun{ plot(proby ~ y, type = "h", col = "blue", ylab = "Probability",
-     ylim = c(0, 0.2), main = paste("Zipf(N = ",N,", shape = ",shape,")", sep = ""),
-     lwd = 2, las = 1) }
+\dontrun{ plot(proby ~ y, type = "h", col = "blue",
+   ylim = c(0, 0.2), ylab = "Probability", lwd = 2, las = 1,
+   main = paste0("Zipf(N = ", N, ", shape = ", shape, ")")) }
 sum(proby)  # Should be 1
-max(abs(cumsum(proby) - pzipf(y, N = N, shape = shape)))  # Should be 0
+max(abs(cumsum(proby) - pzipf(y, N = N, shape = shape)))  # 0?
 }
 \keyword{distribution}
 

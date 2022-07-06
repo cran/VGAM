@@ -25,12 +25,14 @@ diffzeta(start = 1, lshape = "loglink", ishape = NULL)
 }
 \details{
   The PMF is
-  \deqn{P(Y=y) = (a/y)^{s} - (a/(1+y))^{s},\ \ s>0,\ \ y=a,a+1,\ldots,}{%
-        P(Y=y) = (a/y)^(s) - / (a/(1+y))^(s), s>0, y=a,a+1,...,}
-  where \eqn{s} is the positive shape parameter, and \eqn{a} is \code{start}.
+\deqn{P(Y=y) = (a/y)^{s} -
+      (a/(1+y))^{s},\ \ s>0,\ \ y=a,a+1,\ldots,}{%
+      P(Y=y) = (a/y)^(s) - / (a/(1+y))^(s), s>0, y=a,a+1,...,}
+  where \eqn{s} is the positive shape parameter, and \eqn{a}
+  is \code{start}.
   According to   Moreno-Sanchez et al. (2016), this model
-  fits quite well to about 40 percent of all the English books in the
-  Project Gutenberg data base (about 30,000 texts).
+  fits quite well to about 40 percent of all the English books
+  in the Project Gutenberg data base (about 30,000 texts).
   Multiple responses are handled.
 
 
@@ -38,9 +40,10 @@ diffzeta(start = 1, lshape = "loglink", ishape = NULL)
 }
 
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"}
+ (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions such as
+  \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 
@@ -57,8 +60,8 @@ Large-Scale Analysis of Zipf's Law in English Texts,
 }
 \author{ T. W. Yee }
 %\note{
-%  The \code{\link{zeta}} function may be used to compute values
-%  of the zeta function.
+%  The \code{\link{zeta}} function may be used to
+%  compute values of the zeta function.
 %
 %
 %}
@@ -74,10 +77,10 @@ Large-Scale Analysis of Zipf's Law in English Texts,
 }
 \examples{
 odata <- data.frame(x2 = runif(nn <- 1000))  # Artificial data
-odata <- transform(odata, shape = loglink(-0.25 + x2, inverse = TRUE))
+odata <- transform(odata, shape = loglink(-0.25 + x2, inv = TRUE))
 odata <- transform(odata, y1 = rdiffzeta(nn, shape))
 with(odata, table(y1))
-ofit <- vglm(y1 ~ x2, diffzeta, data = odata, trace = TRUE, crit = "coef")
+ofit <- vglm(y1 ~ x2, diffzeta, odata, trace = TRUE)
 coef(ofit, matrix = TRUE)
 }
 \keyword{models}

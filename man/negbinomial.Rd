@@ -141,13 +141,13 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
   computing the EIM wrt \eqn{k}.
   The exact method algorithm operates separately on each response
   variable,
-  and it constructs a large matrix provided that the number of columns
-  is less than \code{max.support}.
+  and it constructs a large matrix provided that the number of
+  columns is less than \code{max.support}.
   If so, then the computations are done in chunks, so
   that no more than about \code{max.chunk.MB} megabytes
-  of memory is used at a time (actually, it is proportional to this amount).
-  Regarding eligibility of this algorithm, each observation must
-  have the length of the vector, starting from
+  of memory is used at a time (actually, it is proportional to
+  this amount).  Regarding eligibility of this algorithm, each
+  observation must have the length of the vector, starting from
   the \code{1-cutoff.prob} quantile
   and finishing up at the \code{cutoff.prob} quantile,
   less than \code{max.support}
@@ -157,15 +157,17 @@ polyaR(zero = "size", type.fitted = c("mean", "prob"),
   a very long time.
   Setting \code{max.chunk.MB = 0} or \code{max.support = 0}
   will force the EIM to be computed using the SFS algorithm only
-  (this \emph{used to be} the default method for \emph{all} the observations).
-  When the fitted values of the model are large and \eqn{k} is small,
-  the computation of the EIM will be costly with respect to time
-  and memory if the exact method is used. Hence the argument
-  \code{max.support} limits the cost in terms of time.
-  For intercept-only models \code{max.support} is multiplied by
-  a number (such as 10) because only one inner product needs be computed.
-  Note: \code{max.support} is an upper bound and limits the number of
-  terms dictated by the \code{eps.trig} argument.
+  (this \emph{used to be} the default method for \emph{all}
+  the observations).  When the fitted values of the model are
+  large and \eqn{k} is small, the computation of the EIM will be
+  costly with respect to time and memory if the exact method is
+  used. Hence the argument \code{max.support} limits the cost in
+  terms of time.  For intercept-only models \code{max.support}
+  is multiplied by a number (such as 10) because only one inner
+  product needs be computed.  Note: \code{max.support} is an
+  upper bound and limits the number of terms dictated by the
+  \code{eps.trig} argument.
+
 
 
 % Thus the number of columns of the matrix can be controlled by
@@ -192,18 +194,17 @@ relative to the mean, than it is below this threshold
 Numeric.
 A small positive value used in the computation of the EIMs.
 It focusses on the denominator of the terms of a series.
-Each term in the series (that is used to approximate an infinite series)
-has a value greater than \code{size / sqrt(eps.trig)},
-thus very small terms are ignored.
-It's a good idea to set a smaller value that will result in more accuracy,
-but it will require a greater computing time (when \eqn{k} is close to 0).
-And adjustment to \code{max.support} may be needed.
-In particular, the quantity computed by special means
-is \eqn{\psi'(k) - E[\psi'(Y+k)]}{trigamma(k) - E[trigamma(Y+k)]},
-which is the difference between two
-\code{\link[base]{trigamma}}.
-functions. It is part of the calculation of the EIM with
-respect to the \code{size} parameter.
+Each term in the series (that is used to approximate an infinite
+series) has a value greater than \code{size / sqrt(eps.trig)},
+thus very small terms are ignored.  It's a good idea to set
+a smaller value that will result in more accuracy, but it
+will require a greater computing time (when \eqn{k} is close
+to 0).  And adjustment to \code{max.support} may be needed.
+In particular, the quantity computed by special means is
+\eqn{\psi'(k) - E[\psi'(Y+k)]}{trigamma(k) - E[trigamma(Y+k)]},
+which is the difference between two \code{\link[base]{trigamma}}.
+functions. It is part of the calculation of the EIM with respect
+to the \code{size} parameter.
 
 
 
@@ -270,10 +271,10 @@ respect to the \code{size} parameter.
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} etc. which
-  specifies the initialization method for the \eqn{\mu}{mu} parameter.
-  If failure to converge occurs try another value
-  and/or else specify a value for \code{iprobs.y}
-  and/or else specify a value for \code{isize}.
+  specifies the initialization method for the \eqn{\mu}{mu}
+  parameter.  If failure to converge occurs try another value
+  and/or else specify a value for \code{iprobs.y} and/or else
+  specify a value for \code{isize}.
 
 
   }
@@ -284,8 +285,8 @@ respect to the \code{size} parameter.
   what is known as NB-1.
   If \code{parallel = TRUE} then the parallelism constraint
   does not apply to any intercept term.
-  You should set \code{zero = NULL} too if \code{parallel = TRUE} to
-  avoid a conflict.
+  You should set \code{zero = NULL} too if \code{parallel =
+  TRUE} to avoid a conflict.
 
 
 
@@ -294,16 +295,17 @@ respect to the \code{size} parameter.
     A vector representing a grid;
     passed into the \code{probs} argument
   of \code{\link[stats:quantile]{quantile}}
-  when \code{imethod = 1} to obtain an initial value for the mean
-  of each response. Is overwritten by any value of \code{iprobs.y}.
+  when \code{imethod = 1} to obtain an initial value for
+  the mean of each response. Is overwritten by any value of
+  \code{iprobs.y}.
 
 
   }
   \item{iprobs.y}{
   Passed into the \code{probs} argument
   of \code{\link[stats:quantile]{quantile}}
-  when \code{imethod = 1} to obtain an initial value for the mean
-  of each response. Overwrites any value of \code{gprobs.y}.
+  when \code{imethod = 1} to obtain an initial value for the
+  mean of each response. Overwrites any value of \code{gprobs.y}.
   This argument might be deleted in the future.
 
 
@@ -339,10 +341,11 @@ respect to the \code{size} parameter.
   Note that the \emph{dispersion} parameter is
   \eqn{1/k}, so that as \eqn{k} approaches infinity the
   NBD approaches a Poisson distribution.
-  The response has variance \eqn{Var(Y)=\mu+\mu^2/k}{Var(Y)=mu*(1+mu/k)}.
-  When fitted, the \code{fitted.values} slot of the object contains
-  the estimated value of the \eqn{\mu}{mu} parameter, i.e., of the mean
-  \eqn{E(Y)}.
+  The response has variance
+  \eqn{Var(Y)=\mu+\mu^2/k}{Var(Y)=mu*(1+mu/k)}.
+  When fitted, the \code{fitted.values} slot of the object
+  contains the estimated value of the \eqn{\mu}{mu} parameter,
+  i.e., of the mean \eqn{E(Y)}.
   It is common for some to use \eqn{\alpha=1/k}{alpha=1/k} as the
   ancillary or heterogeneity parameter;
   so common alternatives for \code{lsize} are
@@ -360,9 +363,9 @@ respect to the \code{size} parameter.
   and \eqn{k > 0} and \eqn{0 < p < 1}{0 < p < 1}.
 
 
-  Family function \code{polyaR()} is the same as \code{polya()} except
-  the order of the two parameters are switched.
-  The reason is that \code{polyaR()} tries to match with
+  Family function \code{polyaR()} is the same as \code{polya()}
+  except the order of the two parameters are switched.  The reason
+  is that \code{polyaR()} tries to match with
   \code{\link[stats:NegBinomial]{rnbinom}} closely
   in terms of the argument order, etc.
   Should the probability parameter be of primary interest,
@@ -422,10 +425,11 @@ However, the model is identifiable if the response values include
   infinity.  If the data is Poisson or close to Poisson,
   numerical problems may occur.
   Some corrective measures are taken, e.g.,
-  \eqn{k} is effectively capped (relative to the mean) during estimation
-  to some large value and a warning is issued.
-  And setting \code{stepsize = 0.5} for half stepping is
-  probably a good idea too when the data is extreme.
+  \eqn{k} is effectively capped (relative to the mean) during
+  estimation to some large value and a warning is issued.
+  And setting \code{stepsize = 0.5} for half stepping is probably
+  a good idea too when the data is extreme.
+
 
 
 % Possibly setting \code{crit = "coef"} is a good idea because
@@ -449,23 +453,22 @@ However, the model is identifiable if the response values include
 
 
 
-The NBD is a strictly unimodal
-distribution. Any data set that does not exhibit a mode (somewhere
-in the middle) makes the estimation problem difficult.
-Set \code{trace = TRUE} to monitor convergence.
+The NBD is a strictly unimodal distribution. Any data set
+that does not exhibit a mode (somewhere in the middle) makes
+the estimation problem difficult.  Set \code{trace = TRUE}
+to monitor convergence.
 
 
 
 
 
-  These functions are fragile; the maximum likelihood
-  estimate of the index parameter is fraught (see Lawless, 1987).
-  Other alternatives to \code{negbinomial} are
-  to fit a NB-1 or RR-NB (aka NB-P) model; see Yee (2014).
-  Also available are the NB-C, NB-H and NB-G.
-  Assigning values to the \code{isize} argument may lead
-  to a local solution, and smaller values are preferred
-  over large values when using this argument.
+  These functions are fragile; the maximum likelihood estimate
+  of the index parameter is fraught (see Lawless, 1987).
+  Other alternatives to \code{negbinomial} are to fit a NB-1 or
+  RR-NB (aka NB-P) model; see Yee (2014).  Also available are
+  the NB-C, NB-H and NB-G.  Assigning values to the \code{isize}
+  argument may lead to a local solution, and smaller values are
+  preferred over large values when using this argument.
 
 
 
@@ -484,18 +487,21 @@ Set \code{trace = TRUE} to monitor convergence.
   \code{max.chunk.MB = Inf} and
   \code{max.support = Inf}
   may provide a small speed increase.
-  If SFS is used at all, then the \code{@weights} slot of the
+  If SFS is used at all, then the working
+  weights (\code{@weights}) slot of the
   fitted object will be a matrix;
   otherwise that slot will be a \code{0 x 0} matrix.
 
 
 
-  An alternative to the NBD is the generalized Poisson distribution,
+  An alternative to the NBD is the generalized Poisson
+  distribution,
   \code{\link{genpoisson1}},
   \code{\link{genpoisson2}} and
   \code{\link{genpoisson0}},
   since that also handles overdispersion wrt Poisson.
-  It has one advantage in that its EIM can be computed straightforwardly.
+  It has one advantage in that its EIM can be computed
+  straightforwardly.
 
 
 
@@ -505,8 +511,10 @@ Set \code{trace = TRUE} to monitor convergence.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions such
+  as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -532,6 +540,7 @@ Fitting the negative binomial distribution to biological data.
 \bold{9}, 174--200.
 
 
+
 Conlisk, E. and Conlisk, J. and Harte, J. (2007).
 The impossibility of estimating a negative binomial
 clustering parameter from presence-absence data:
@@ -546,7 +555,8 @@ A comment on He and Gaston.
 
 
 Yee, T. W. (2014).
-Reduced-rank vector generalized linear models with two linear predictors.
+Reduced-rank vector generalized linear models with two linear
+predictors.
 \emph{Computational Statistics and Data Analysis},
 \bold{71}, 889--902.
 
@@ -556,7 +566,7 @@ Reduced-rank vector generalized linear models with two linear predictors.
 
 Yee, T. W. (2020).
 The \pkg{VGAM} package for negative binomial regression.
-\emph{Australian \& New Zealand Journal of Statistics},
+\emph{Australian and New Zealand Journal of Statistics},
 \bold{62}, 116--131.
 
 
@@ -571,9 +581,9 @@ The \pkg{VGAM} package for negative binomial regression.
 
 }
 \note{
-% The \pkg{VGAM} package has a few other family functions for the
-% negative binomial distribution. Currently, none of these others work
-% very well.
+% The \pkg{VGAM} package has a few other family functions for
+% the negative binomial distribution. Currently, none of these
+% others work very well.
 
 
   These 3 functions implement 2 common parameterizations
@@ -615,8 +625,8 @@ The \pkg{VGAM} package for negative binomial regression.
 
 
   Regardless of the algorithm used,
-  convergence problems may occur, especially when the response has large
-  outliers or is large in magnitude.
+  convergence problems may occur, especially when the response
+  has large outliers or is large in magnitude.
   If convergence failure occurs, try using arguments
   (in recommended decreasing order)
   \code{max.support},
@@ -629,37 +639,46 @@ The \pkg{VGAM} package for negative binomial regression.
   \code{max.chunk.MB}.
 
 
-  The function \code{negbinomial} can be used by the fast algorithm in
-  \code{\link{cqo}}, however, setting \code{eq.tolerances = TRUE} and
-  \code{I.tolerances = FALSE} is recommended.
+  The function \code{negbinomial} can be used by the
+  fast algorithm in \code{\link{cqo}}, however, setting
+  \code{eq.tolerances = TRUE} and \code{I.tolerances = FALSE}
+  is recommended.
 
 
-% For \code{\link{cqo}} and \code{\link{cao}}, taking the square-root
-% of the response means (approximately) a \code{\link{poissonff}} family
-% may be used on the transformed data.
+% For \code{\link{cqo}} and \code{\link{cao}}, taking
+% the square-root of the response means (approximately) a
+% \code{\link{poissonff}} family may be used on the transformed
+% data.
 
 
-% If the negative binomial family function \code{\link{negbinomial}}
-% is used for \code{cqo} then set \code{negbinomial(deviance = TRUE)}
-% is necessary. This means to minimize the deviance, which the fast
-% algorithm can handle.
+% If the negative binomial family function
+% \code{\link{negbinomial}} is used for \code{cqo} then set
+% \code{negbinomial(deviance = TRUE)} is necessary. This means
+% to minimize the deviance, which the fast algorithm can handle.
 
 
-  In the first example below (Bliss and Fisher, 1953), from each of 6
-  McIntosh apple trees in an orchard that had been sprayed, 25 leaves
-  were randomly selected. On each of the leaves, the number of adult
-  female European red mites were counted.
+  In the first example below (Bliss and Fisher, 1953), from each
+  of 6 McIntosh apple trees in an orchard that had been sprayed,
+  25 leaves were randomly selected. On each of the leaves,
+  the number of adult female European red mites were counted.
+
+
+% conducted at the Connecticut Agricultural Experimental Station
 
 
 
-  There are two special uses of \code{negbinomial} for handling count data.
+
+
+  There are two special uses of \code{negbinomial} for handling
+  count data.
   Firstly,
   when used by \code{\link{rrvglm}}  this
   results in a continuum of models in between and
   inclusive of quasi-Poisson and negative binomial regression.
-  This is known as a reduced-rank negative binomial model \emph{(RR-NB)}.
-  It fits a negative binomial log-linear regression with variance function
-  \eqn{Var(Y)=\mu+\delta_1 \mu^{\delta_2}}{Var(Y) = mu + delta1 * mu^delta2}
+  This is known as a reduced-rank negative binomial model
+  \emph{(RR-NB)}.  It fits a negative binomial log-linear
+  regression with variance function
+\eqn{Var(Y)=\mu+\delta_1 \mu^{\delta_2}}{Var(Y) = mu + delta1 * mu^delta2}
   where \eqn{\delta_1}{delta1}
   and   \eqn{\delta_2}{delta2}
   are parameters to be estimated by MLE.
@@ -724,33 +743,33 @@ fit <- vglm(y ~ 1, negbinomial(deviance = TRUE), data = appletree,
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)  # For intercept-only models
-deviance(fit)  # NB2 only; needs 'crit = "coef"' & 'deviance = TRUE' above
+deviance(fit)  # NB2 only; needs 'crit="coef"' & 'deviance=T' above
 
 # Example 2: simulated data with multiple responses
 \dontrun{
 ndata <- data.frame(x2 = runif(nn <- 200))
-ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), size = exp(1)),
-                          y2 = rnbinom(nn, mu = exp(2-x2), size = exp(0)))
-fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, data = ndata, trace = TRUE)
+ndata <- transform(ndata, y1 = rnbinom(nn, exp(1), mu = exp(3+x2)),
+                          y2 = rnbinom(nn, exp(0), mu = exp(2-x2)))
+fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 }
 
 # Example 3: large counts implies SFS is used
 \dontrun{
-ndata <- transform(ndata, y3 = rnbinom(nn, mu = exp(10+x2), size = exp(1)))
+ndata <- transform(ndata, y3 = rnbinom(nn, exp(1), mu = exp(10+x2)))
 with(ndata, range(y3))  # Large counts
 fit2 <- vglm(y3 ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
-head(fit2@weights)  # Non-empty; SFS was used
+head(weights(fit2, type = "working"))  # Non-empty; SFS was used
 }
 
-# Example 4: a NB-1 to estimate a negative binomial with Var(Y) = phi0 * mu
+# Example 4: a NB-1 to estimate a NB with Var(Y)=phi0*mu
 nn <- 200  # Number of observations
 phi0 <- 10  # Specify this; should be greater than unity
 delta0 <- 1 / (phi0 - 1)
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
-mydata <- transform(mydata, y3 = rnbinom(nn, mu = mu, size = delta0 * mu))
+mydata <- transform(mydata, y3 = rnbinom(nn, delta0 * mu, mu = mu))
 \dontrun{
 plot(y3 ~ x2, data = mydata, pch = "+", col = "blue",
      main = paste("Var(Y) = ", phi0, " * mu", sep = ""), las = 1) }
@@ -768,11 +787,10 @@ myvec <- rbind(-1, 1, 0, 0)
 (se.mydiff <- sqrt(t(myvec) \%*\%  vcov(nb1) \%*\%  myvec))
 ci.mydiff <- mydiff + c(-1.96, 1.96) * c(se.mydiff)
 ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
-(ci.phi0 <- 1 + 1 / rev(ci.delta0))  # The 95 percent conf. interval for phi0
-
+(ci.phi0 <- 1 + 1 / rev(ci.delta0))  # The 95% confint for phi0
 Confint.nb1(nb1)  # Quick way to get it
-
-summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper  # cf. moment estimator
+# cf. moment estimator:
+summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper
 }
 \keyword{models}
 \keyword{regression}

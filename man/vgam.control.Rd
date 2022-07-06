@@ -50,9 +50,12 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   }
   \item{checkwz}{
   logical indicating whether the diagonal elements of
-  the working weight matrices should be checked whether they are
-  sufficiently positive, i.e., greater than \code{wzepsilon}. If not,
-  any values less than \code{wzepsilon} are replaced with this value.
+  the working weight matrices should be checked
+  whether they are
+  sufficiently positive, i.e., greater
+  than \code{wzepsilon}. If not,
+  any values less than \code{wzepsilon} are
+  replaced with this value.
 
   }
   \item{Check.rank, Check.cm.rank}{
@@ -64,21 +67,25 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   \item{criterion}{
   character variable describing what criterion is to
   be used to test for convergence.
-  The possibilities are listed in \code{.min.criterion.VGAM}, but
+  The possibilities are listed
+  in \code{.min.criterion.VGAM}, but
   most family functions only implement a few of these.
 
   }
   \item{epsilon}{
   positive convergence tolerance epsilon. Roughly
-  speaking, the Newton-Raphson/Fisher-scoring/local-scoring iterations
+  speaking, the
+  Newton-Raphson/Fisher-scoring/local-scoring iterations
   are assumed to have
-  converged when two successive \code{criterion} values are within
+  converged when two successive \code{criterion}
+  values are within
   \code{epsilon} of each other.
 
   }
   \item{maxit}{
   maximum number of
-  Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
+  Newton-Raphson/Fisher-scoring/local-scoring
+  iterations allowed.
 
   }
   \item{Maxit.outer}{
@@ -102,7 +109,8 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   }
   \item{na.action}{
   how to handle missing values.
-  Unlike the SPLUS \code{gam} function, \code{\link{vgam}} cannot handle
+  Unlike the SPLUS \code{gam} function,
+  \code{\link{vgam}} cannot handle
   \code{NA}s when smoothing.
 
   }
@@ -111,18 +119,21 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   where \eqn{d} be the number of \code{\link{s}} terms
   in the formula.
   Recycling is used if necessary.
-  The \eqn{i}th value is the number of B-spline coefficients to be
+  The \eqn{i}th value is the number of
+  B-spline coefficients to be
   estimated for each component function of the \eqn{i}th
   \code{s()} term.
   \code{nk} differs from the number of knots by some constant.
-  If specified, \code{nk} overrides the automatic knot selection procedure.
+  If specified, \code{nk} overrides the
+  automatic knot selection procedure.
 
 
   }
   \item{save.weights}{
   logical indicating whether the \code{weights} slot
   of a \code{"vglm"} object will be saved on the object.
-  If not, it will be reconstructed when needed, e.g., \code{summary}.
+  If not, it will be reconstructed when needed,
+  e.g., \code{summary}.
 
   }
   \item{se.fit}{
@@ -134,7 +145,8 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 
   }
   \item{trace}{
-  logical indicating if output should be produced for each iteration.
+    logical indicating if output should be produced
+    for each iteration.
 
   }
   \item{wzepsilon}{
@@ -166,7 +178,8 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
     Inflation factor for optimizing the UBRE/GCV criterion.
     If given, a suggested value is 1.4 to help avoid overfitting,
     based on the work of Gu and co-workers
-    (values between 1.2 and 1.4 appeared reasonable, based on simulations).
+    (values between 1.2 and 1.4 appeared reasonable,
+    based on simulations).
     A warning may be given if the value is deemed out-of-range.
 
 
@@ -209,7 +222,8 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
 \references{
 Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+  Series B, Methodological},
 \bold{58}, 481--493.
 
 
@@ -221,7 +235,8 @@ Vector generalized additive models.
 % Kim, Y.-J. and Gu, C. 2004,
 % Smoothing spline Gaussian regression:
 % more scalable computation via efficient approximation.
-%\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+%\emph{Journal of the Royal Statistical Society,
+% Series B, Methodological},
 %\bold{66}, 337--356.
 %\bold{66}(2), 337--356.
 

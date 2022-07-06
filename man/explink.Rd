@@ -3,12 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Exponential Link Function }
 \description{
-  Computes the exponential transformation, including its inverse and the
+  Computes the exponential transformation,
+  including its inverse and the
   first two derivatives.
 
 }
 \usage{
-explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
+        short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +21,8 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
   }
 % \item{earg}{
 % Optional list.
-% See \code{\link{Links}} for general information about \code{earg}.
+% See \code{\link{Links}} for general
+% information about \code{earg}.
 % }
 
   \item{bvalue}{
@@ -35,9 +38,11 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 }
 \details{
 
-  The exponential link function is potentially suitable for parameters that
+  The exponential link function is potentially
+  suitable for parameters that
   are positive.
-  Numerical values of \code{theta} close to negative or positive infinity
+  Numerical values of \code{theta} close to negative
+  or positive infinity
   may result in
   \code{0}, \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
@@ -55,24 +60,28 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 
 
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a
+  function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
 
-  Here, all logarithms are natural logarithms, i.e., to base \emph{e}.
+  Here, all logarithms are natural logarithms,
+  i.e., to base \emph{e}.
 
 
 }
 %\references{
 %  McCullagh, P. and Nelder, J. A. (1989).
-%  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+%  \emph{Generalized Linear Models}, 2nd ed.
+% London: Chapman & Hall.
 %
 %}
 \author{ Thomas W. Yee }
 
 \note{
-  This function has particular use for computing quasi-variances when
+  This function has particular use for
+  computing quasi-variances when
   used with \code{\link{rcim}} and \code{\link{uninormal}}.
 
 
@@ -94,7 +103,7 @@ explink(theta, bvalue = NULL, inverse = FALSE, deriv = 0, short = TRUE, tag = FA
 \examples{
 theta <- rnorm(30)
 explink(theta)
-max(abs(explink(explink(theta), inverse = TRUE) - theta))  # Should be 0
+max(abs(explink(explink(theta), inverse = TRUE) - theta))  # 0?
 }
 \keyword{math}
 \keyword{models}

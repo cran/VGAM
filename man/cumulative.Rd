@@ -15,7 +15,8 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 %apply.parint = FALSE,
 %scumulative(link = "logitlink",
 %            lscale = "loglink", escale = list(),
-%            parallel = FALSE, sparallel = TRUE, reverse = FALSE, iscale = 1)
+%            parallel = FALSE, sparallel = TRUE, reverse = FALSE,
+%            iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
@@ -99,8 +100,9 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
   }
 %  \item{apply.parint}{
 %  Logical.
-%  Whether the \code{parallel} argument should be applied to the intercept term.
-%  This should be set to \code{TRUE} for \code{link=}
+%  Whether the \code{parallel} argument should be applied to
+%  the intercept term.  This should be set to \code{TRUE}
+%  for \code{link=}
 %  \code{\link{gordlink}},
 %  \code{\link{pordlink}},
 %  \code{\link{nbordlink}}.
@@ -132,7 +134,8 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
   This \pkg{VGAM} family function fits the class of
   \emph{cumulative link models} to (hopefully) an ordinal response.
-  By default, the \emph{non-parallel} cumulative logit model is fitted, i.e.,
+  By default, the \emph{non-parallel} cumulative logit model
+  is fitted, i.e.,
   \deqn{\eta_j = logit(P[Y \leq j])}{%
          eta_j = logit(P[Y<=j])}
   where \eqn{j=1,2,\dots,M} and
@@ -148,8 +151,8 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
   with this family of models are known. For example, setting
   \code{parallel = TRUE} will make all constraint matrices
   (except for the intercept) equal to a vector of \eqn{M} 1's.
-  If the constraint matrices are equal, unknown and to be estimated, then
-  this can be achieved by fitting the model as a
+  If the constraint matrices are equal, unknown and to be estimated,
+  then this can be achieved by fitting the model as a
   reduced-rank vector generalized
   linear model (RR-VGLM; see \code{\link{rrvglm}}).
   Currently, reduced-rank vector generalized additive models
@@ -185,18 +188,25 @@ Agresti, A. (2010).
 2nd ed. Hoboken, NJ, USA: Wiley.
 
 
-Dobson, A. J. and Barnett, A. (2008).
-\emph{An Introduction to Generalized Linear Models},
-3rd ed. Boca Raton, FL, USA: Chapman & Hall/CRC Press.
+%Dobson, A. J. and Barnett, A. (2008).
+%\emph{An Introduction to Generalized Linear Models},
+%3rd ed. Boca Raton, FL, USA: Chapman & Hall/CRC Press.
 
 
 McCullagh, P. and Nelder, J. A. (1989).
-\emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+\emph{Generalized Linear Models}, 2nd ed.
+London: Chapman & Hall.
 
 
-Simonoff, J. S. (2003).
-\emph{Analyzing Categorical Data},
-New York: Springer-Verlag.
+%Simonoff, J. S. (2003).
+%\emph{Analyzing Categorical Data},
+%New York: Springer-Verlag.
+
+
+Tutz, G. (2012).
+\emph{Regression for Categorical Data},
+Cambridge: Cambridge University Press.
+
 
 
 Yee, T. W. (2010).
@@ -213,7 +223,8 @@ The \pkg{VGAM} package for categorical data analysis.
 
 Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+  Series B, Methodological},
 \bold{58}, 481--493.
 
 
@@ -238,6 +249,7 @@ Vector generalized additive models.
   For a nominal (unordered) factor response, the multinomial
   logit model (\code{\link{multinomial}}) is more appropriate.
 
+  
 
   With the logit link, setting \code{parallel = TRUE} will fit a
   proportional odds model. Note that the \code{TRUE} here does
@@ -251,6 +263,7 @@ Vector generalized additive models.
   outside of \eqn{(0,1)}; setting \code{parallel = TRUE} will help avoid
   this problem.
 
+  
 
   Here is an example of the usage of the \code{parallel} argument.
   If there are covariates \code{x2}, \code{x3} and \code{x4}, then
@@ -259,6 +272,7 @@ Vector generalized additive models.
   the regression coefficients for \code{x2} and \code{x3} to be
   equal; those of the intercepts and \code{x4} would be different.
 
+  
 
   If the data is inputted in \emph{long} format
   (not \emph{wide} format, as in \code{\link{pneumo}} below)
@@ -270,6 +284,7 @@ Vector generalized additive models.
   See the example below.
 
 
+  
   To fit the proportional odds model one can use the
   \pkg{VGAM} family function \code{\link{propodds}}.
   Note that \code{propodds(reverse)} is equivalent to
@@ -282,6 +297,7 @@ Vector generalized additive models.
   more flexible.
 
 
+  
 % In the future, this family function may be renamed to
 % ``\code{cups}'' (for \bold{cu}mulative \bold{p}robabilitie\bold{s})
 % or ``\code{cute}'' (for \bold{cu}mulative probabili\bold{t}i\bold{e}s).
@@ -295,6 +311,7 @@ Vector generalized additive models.
   see \code{\link[base:factor]{ordered}}.
 
 
+  
 }
 
 \seealso{
@@ -307,6 +324,7 @@ Vector generalized additive models.
   \code{\link{cratio}},
   \code{\link{sratio}},
   \code{\link{multinomial}},
+  \code{\link{CommonVGAMffArguments}},
   \code{\link{pneumo}},
   \code{\link{Links}},
   \code{\link{hdeff.vglm}},

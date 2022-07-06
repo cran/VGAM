@@ -14,7 +14,9 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
-
+importFrom("stats", "pexp")
+exportMethods(rqresid)
+exportMethods(rqresiduals)
 export(moments.gaitdcombo.binom)
 export(goffset)
 export(gaitdnbinomial.control)
@@ -533,7 +535,7 @@ export(pnorm2, dnorm2)
 
 
 export(iam,
-fill, fill1, fill2, fill3,
+fill1, fill2, fill3, fill4,
 biamhcop, dbiamhcop, pbiamhcop, rbiamhcop,
 bigamma.mckay,
 freund61,

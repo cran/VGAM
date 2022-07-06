@@ -201,7 +201,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
            truncate = NULL, max.support = Inf,
            zero = c("pobs", "pstr", "pdip"),  # Pruned, handles all 6
            eq.ap = TRUE, eq.ip = TRUE, eq.dp = TRUE,
-           parallel.a = FALSE, parallel.i = FALSE, parallel.d = FALSE,
+           parallel.a = FALSE, parallel.i = FALSE,
+           parallel.d = FALSE,
            llambda.p = "loglink",
            llambda.a = llambda.p,  # "loglink", 20201117
            llambda.i = llambda.p,  # "loglink", 20201117
@@ -302,7 +303,7 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
     stop("argument 'parallel.d' must be a single logical")
 
 
-  if (FALSE) {  # Comment this out to allow default eq.ap = TRUE, etc.
+  if (FALSE) {  # Comment this out to allow default eq.ap=TRUE, etc.
   if (la.mix <= 1 && eq.ap)
     stop("<= one unstructured altered value (no 'lambda.a')",
          ", so setting 'eq.ap = TRUE' is meaningless")
@@ -520,7 +521,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
                        matrix(0, nrow(Use.mat),  # RHS
                                  ncol(use.mat.mlm) - 1))
       Use.mat[row(Use.mat) > nrow(use.mat.mix) &
-              col(Use.mat) > ncol(use.mat.mix)] <- use.mat.mlm[-1, -1]
+              col(Use.mat) > ncol(use.mat.mix)] <-
+          use.mat.mlm[-1, -1]
     }  # la.mlm + li.mlm + ld.mlm > 0
 
 
@@ -588,6 +590,120 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
            .predictors.names = predictors.names,
            .M1 = M1, .lall.len = lall.len
          ))),
+
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    if (!is.matrix(eta)) eta <- as.matrix(eta)
+    la.mix <- length((a.mix <- as.vector( .a.mix )))
+    li.mix <- length((i.mix <- as.vector( .i.mix )))
+    ld.mix <- length((d.mix <- as.vector( .d.mix )))
+    la.mlm <- length((a.mlm <- as.vector( .a.mlm )))
+    li.mlm <- length((i.mlm <- as.vector( .i.mlm )))
+    ld.mlm <- length((d.mlm <- as.vector( .d.mlm )))
+    truncate <- as.vector( .truncate )
+
+    tmp3.TF <- ( .tmp3.TF )   # Logical of length 10.
+
+    lall.len <- la.mix + li.mix + ld.mix + la.mlm + li.mlm + ld.mlm
+    pobs.mix <- pstr.mix <- pdip.mix <- 0  # 4 rowSums()
+    pobs.mlm <- pstr.mlm <- pdip.mlm <- 0  # matrix(0, NROW(eta), 1)
+    lambda.p <- cbind(eta2theta(eta[, 1], .llambda.p , .elambda.p ))
+    ind.lambda.z <- 1  # Points to lambda.p only.
+    lambda.a <- lambda.i <-
+    lambda.d <- lambda.p  # Needed and doesnt corrupt the answer
+
+    if (any(tmp3.TF[c(3, 5, 7)])) {  # At least 1 lambda.[aid]
+      ind.lambda.z <- extra$indeta[c(1, 3, 5, 7), 'launch']  # Vecs
+      ind.lambda.z <- c(na.omit(ind.lambda.z))  # At least 1 value
+
+      lambda.a <- if (!tmp3.TF[ 3]) lambda.p else
+        eta2theta(eta[, extra$indeta[3, 1]], .llambda.a , .elambda.a )
+      lambda.i <- if (!tmp3.TF[ 5]) lambda.p else
+        eta2theta(eta[, extra$indeta[5, 1]], .llambda.i , .elambda.i )
+      lambda.d <- if (!tmp3.TF[ 7]) lambda.p else
+        eta2theta(eta[, extra$indeta[7, 1]], .llambda.d , .elambda.d )
+    }  # la.mix + li.mix + ld.mix > 0
+
+    if (lall.len) {  # An MLM was fitted
+      allprobs <-
+        multilogitlink(eta[, -ind.lambda.z, drop = FALSE],
+                       refLevel = "(Last)",  # Make sure
+                       inverse = TRUE)  # rowSums == 1
+      if (anyNA(allprobs))
+        warning("there are NAs here in slot linkinv")
+      if (min(allprobs) == 0 || max(allprobs) == 1)
+        warning("fitted probabilities numerically 0 or 1 occurred")
+
+      Nextone <- 0  # Might not be used actually; 0, not 1
+      if (tmp3.TF[ 2])
+        pobs.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 4])
+        pstr.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 6])
+        pdip.mix <- allprobs[, (Nextone <- Nextone + 1)]
+
+      if (tmp3.TF[ 8]) {
+        ind8 <- (Nextone + 1):(Nextone + la.mlm)
+        pobs.mlm <- allprobs[, ind8, drop = FALSE]
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
+        Nextone <- Nextone + la.mlm
+      }
+      if (tmp3.TF[ 9]) {
+        ind9 <- (Nextone + 1):(Nextone + li.mlm)
+        pstr.mlm <- allprobs[, ind9, drop = FALSE]
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
+        Nextone <- Nextone + li.mlm
+      }
+      if (tmp3.TF[10]) {
+        ind10 <- (Nextone + 1):(Nextone + ld.mlm)
+        pdip.mlm <- allprobs[, ind10, drop = FALSE]
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
+        Nextone <- Nextone + ld.mlm  # Not needed
+      }
+    }  # lall.len
+
+
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+        pgaitdpois(y - 1, lambda.p = lambda.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  lambda.a = lambda.a, lambda.i = lambda.i, 
+                  lambda.d = lambda.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm),
+        pgaitdpois(y    , lambda.p = lambda.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  lambda.a = lambda.a, lambda.i = lambda.i, 
+                  lambda.d = lambda.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm)))
+  }, list(
+    .llambda.p = llambda.p, .elambda.p = elambda.p,
+    .llambda.a = llambda.a, .elambda.a = elambda.a,
+    .llambda.i = llambda.i, .elambda.i = elambda.i,
+    .llambda.d = llambda.d, .elambda.d = elambda.d,
+    .lpstr.mix = lpstr.mix, .lpobs.mix = lpobs.mix,
+    .lpdip.mix = lpdip.mix,
+    .epstr.mix = epstr.mix, .epobs.mix = epobs.mix,
+    .epdip.mix = epdip.mix,
+    .tmp3.TF = tmp3.TF,
+    .a.mix = a.mix, .i.mix = i.mix, .d.mix = d.mix,
+    .a.mlm = a.mlm, .i.mlm = i.mlm, .d.mlm = d.mlm,
+    .truncate = truncate, .max.support = max.support ))),
+
   initialize = eval(substitute(expression({
     extra$indeta <- ( .indeta )  # Avoids recomputing it several times
     la.mix <- length((a.mix <- as.vector( .a.mix )))
@@ -694,7 +810,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
           matrix( .ipobs.mlm , n, la.mlm, byrow = .byrow.aid )
         } else {
           mux.more.a <- extra$mux.init[1]                            
-          init.pobs.mlm <- colSums(c(w) * extra$skip.mlm.a) / colSums(w)
+          init.pobs.mlm <- colSums(c(w) *
+                                   extra$skip.mlm.a) / colSums(w)
           init.pobs.mlm <- init.pobs.mlm * as.vector( mux.more.a )
           matrix(init.pobs.mlm, n, la.mlm, byrow = TRUE)
         }
@@ -924,26 +1041,32 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 4]) {  # Coln 2 or 4
-        etastart[, (extra$indeta[4, 'launch'])] <- etastart.z[, nextone]
+        etastart[, (extra$indeta[4, 'launch'])] <-
+            etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 6]) {  # Coln 2 or 4 or 6
-        etastart[, (extra$indeta[6, 'launch'])] <- etastart.z[, nextone]
+        etastart[, (extra$indeta[6, 'launch'])] <-
+            etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 8]) {
-        ind8 <- (extra$indeta[8, 'launch']):(extra$indeta[8, 'finish'])
+        ind8 <- (extra$indeta[8, 'launch']):(extra$indeta[8,
+                                                          'finish'])
         etastart[, ind8] <- etastart.z[, nextone:(nextone+la.mlm - 1)]
         nextone <- nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
-        ind9 <- (extra$indeta[9, 'launch']):(extra$indeta[9, 'finish'])
+        ind9 <- (extra$indeta[9, 'launch']):(extra$indeta[9,
+                                                          'finish'])
         etastart[, ind9] <- etastart.z[, nextone:(nextone+li.mlm - 1)]
         nextone <- nextone + li.mlm
       }
       if (tmp3.TF[10]) {
-        ind0 <- (extra$indeta[10, 'launch']):(extra$indeta[10, 'finish'])
-        etastart[, ind0] <- etastart.z[, nextone:(nextone + ld.mlm - 1)]
+        ind0 <- (extra$indeta[10, 'launch']):(extra$indeta[10,
+                                                           'finish'])
+        etastart[, ind0] <- etastart.z[, nextone:(nextone +
+                                                  ld.mlm - 1)]
         if (ncol(etastart.z) != nextone + ld.mlm - 1)
           stop("miscalculation")
       }
@@ -1052,19 +1175,22 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1132,7 +1258,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
               matrix(lambda.a, n.obs, la.mix)) / (
         c(Bits[["SumA0.mix.a"]]))
       dim(tmp13) <- c(n.obs, la.mix)
-      dimnames(tmp13) <- list(rownames(eta), as.character(a.mix))
+      dimnames(tmp13) <- list(rownames(eta),
+                              as.character(a.mix))
       propn.mat.a <- tmp13
     }  # la.mix
 
@@ -1142,7 +1269,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
               matrix(lambda.i, n.obs, li.mix)) / (
         c(Bits[["SumI0.mix.i"]]))
       dim(tmp55) <- c(n.obs, li.mix)
-      dimnames(tmp55) <- list(rownames(eta), as.character(i.mix))
+      dimnames(tmp55) <- list(rownames(eta),
+                              as.character(i.mix))
       propn.mat.i <- tmp55  # Correct dimension
     }  # li.mix
 
@@ -1153,7 +1281,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
               matrix(lambda.d, n.obs, ld.mix)) / (
         c(Bits[["SumD0.mix.d"]]))
       dim(tmp55) <- c(n.obs, ld.mix)
-      dimnames(tmp55) <- list(rownames(eta), as.character(d.mix))
+      dimnames(tmp55) <- list(rownames(eta),
+                              as.character(d.mix))
       propn.mat.d <- tmp55  # Correct dimension
     }  # ld.mix
 
@@ -1232,7 +1361,7 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
     for (jay in seq(M))
       predictors.names <- c(predictors.names,
         namesof(parameter.names[jay], link.names[jay], tag = FALSE,
-                earg = list()))  # This line isnt perfect; info is lost
+                earg = list()))  # This isnt perfect; info is lost
     misc$predictors.names <- predictors.names  # Useful for coef()
     misc$link <- link.names  # 
     names(misc$link) <- parameter.names  # 
@@ -1336,19 +1465,22 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1434,19 +1566,22 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1534,19 +1669,22 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1650,19 +1788,22 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -6498,7 +6639,7 @@ plotdgaitd.vglm <-
          Q1 = 1,
          dpqrfun = "gaitdnbinom",
          link = .predictors.names ,  # ...strips... from above
-         link1parameter = as.logical( .lall.len <= 2),  # <= 1 safer
+     link1parameter = as.logical( .lall.len <= 2),  # <= 1 safer
          mixture.links  = any(c( .la.mlm , .li.mlm , .ld.mlm ,
                                  .la.mix , .li.mix ,
                                  .ld.mix ) > 1),  # FALSE if NULL
@@ -6512,13 +6653,13 @@ plotdgaitd.vglm <-
          max.support = as.vector( .max.support ),
          Support  = c( .lowsup , Inf, 1),  # a(b)c format as a,c,b.
          expected = TRUE,
-         multipleResponses = FALSE,  # negbinomial can be called if TRUE
+  multipleResponses = FALSE,  # negbinomial can be called if TRUE
          parameters.names = names( .predictors.names ),
          parent.name = c("negbinomial", "nbinom"),
          type.fitted  = as.vector( .type.fitted ),
          type.fitted.choices = ( .type.fitted.choices ),
-         baseparams.argnames  = c("munb", "size"),  # zz reorder this?
-         MM1 = 2,  # 2 parameters for 1 response (munb & size). Needed.
+     baseparams.argnames  = c("munb", "size"),  # zz reorder this?
+     MM1 = 2,  # 2 parameters for 1 response (munb & size). Needed.
          flip.args = TRUE,  # For dpqr arguments (GAITD plotting).
          zero = .zero )
   }, list( .zero = zero, .lowsup = lowsup,
@@ -6535,8 +6676,137 @@ plotdgaitd.vglm <-
            .truncate = truncate, .max.support = max.support,
            .predictors.names = predictors.names,
            .M1 = M1, .lall.len = lall.len ))),
+
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    if (!is.matrix(eta)) eta <- as.matrix(eta)
+    la.mix <- length((a.mix <- as.vector( .a.mix )))
+    li.mix <- length((i.mix <- as.vector( .i.mix )))
+    ld.mix <- length((d.mix <- as.vector( .d.mix )))
+    la.mlm <- length((a.mlm <- as.vector( .a.mlm )))
+    li.mlm <- length((i.mlm <- as.vector( .i.mlm )))
+    ld.mlm <- length((d.mlm <- as.vector( .d.mlm )))
+    truncate <- as.vector( .truncate )
+
+    tmp3.TF <- ( .tmp3.TF )   # Logical of length 10.
+
+    lall.len <- la.mix + li.mix + ld.mix + la.mlm + li.mlm + ld.mlm
+    pobs.mix <- pstr.mix <- pdip.mix <- 0  # 4 rowSums()
+    pobs.mlm <- pstr.mlm <- pdip.mlm <- 0  # matrix(0, NROW(eta), 1)
+    munb.p <- cbind(eta2theta(eta[, 1], .lmunb.p , .emunb.p ))
+    size.p <- cbind(eta2theta(eta[, 2], .lsize.p , .esize.p ))
+    ind.munb.z <- 1:2  # Points to munb.p and size.p only.
+    munb.a <- munb.i <- munb.d <- munb.p
+    size.a <- size.i <- size.d <- size.p
+
+    if (any(tmp3.TF[c(4, 7, 10)])) {  # At least one munb.[aid]
+      ind.munb.z <- extra$indeta[c(1:2, 4:5, 7:8, 10:11), 'launch']
+      ind.munb.z <- c(na.omit(ind.munb.z))  # At least one value
+      munb.a <- if (!tmp3.TF[ 4]) munb.p else
+        eta2theta(eta[, extra$indeta[ 4, 1]], .lmunb.a , .emunb.a )
+      munb.i <- if (!tmp3.TF[ 7]) munb.p else
+        eta2theta(eta[, extra$indeta[ 7, 1]], .lmunb.i , .emunb.i )
+      munb.d <- if (!tmp3.TF[10]) munb.p else
+        eta2theta(eta[, extra$indeta[10, 1]], .lmunb.d , .emunb.d )
+
+      size.a <- if (!tmp3.TF[ 5]) size.p else
+        eta2theta(eta[, extra$indeta[ 5, 1]], .lsize.a , .esize.a )
+      size.i <- if (!tmp3.TF[ 8]) size.p else
+        eta2theta(eta[, extra$indeta[ 8, 1]], .lsize.i , .esize.i )
+      size.d <- if (!tmp3.TF[11]) size.p else
+        eta2theta(eta[, extra$indeta[11, 1]], .lsize.d , .esize.d )
+    }  # la.mix + li.mix + ld.mix > 0
+
+    if (lall.len) {  # An MLM was fitted
+      allprobs <-
+        multilogitlink(eta[, -ind.munb.z, drop = FALSE],
+                       refLevel = "(Last)",  # Make sure
+                       inverse = TRUE)  # rowSums == 1
+      if (anyNA(allprobs))
+        warning("there are NAs here in slot linkinv")
+      if (min(allprobs) == 0 || max(allprobs) == 1)
+        warning("fitted probabilities numerically 0 or 1 occurred")
+
+      Nextone <- 0  # Might not be used actually; 0, not 1
+      if (tmp3.TF[ 3])
+        pobs.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 6])
+        pstr.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 9])
+        pdip.mix <- allprobs[, (Nextone <- Nextone + 1)]
+
+      if (tmp3.TF[12]) {
+        ind8 <- (Nextone + 1):(Nextone + la.mlm)
+        pobs.mlm <- allprobs[, ind8, drop = FALSE]
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
+        Nextone <- Nextone + la.mlm
+      }
+      if (tmp3.TF[13]) {
+        ind9 <- (Nextone + 1):(Nextone + li.mlm)
+        pstr.mlm <- allprobs[, ind9, drop = FALSE]
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
+        Nextone <- Nextone + li.mlm
+      }
+      if (tmp3.TF[14]) {
+        ind10 <- (Nextone + 1):(Nextone + ld.mlm)
+        pdip.mlm <- allprobs[, ind10, drop = FALSE]
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
+        Nextone <- Nextone + ld.mlm  # Not needed
+      }
+    }  # lall.len
+
+
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+        pgaitdnbinom(y - 1, munb.p = munb.p, size.p = size.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  munb.a = munb.a, munb.i = munb.i,
+                  munb.d = munb.d,
+                  size.a = size.a, size.i = size.i,
+                  size.d = size.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm),
+        pgaitdnbinom(y    , munb.p = munb.p, size.p = size.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  munb.a = munb.a, munb.i = munb.i,
+                  munb.d = munb.d,
+                  size.a = size.a, size.i = size.i,
+                  size.d = size.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm)))
+  }, list(
+    .lmunb.p = lmunb.p, .emunb.p = emunb.p,
+    .lmunb.a = lmunb.a, .emunb.a = emunb.a,
+    .lmunb.i = lmunb.i, .emunb.i = emunb.i,
+    .lmunb.d = lmunb.d, .emunb.d = emunb.d,
+    .lsize.p = lsize.p, .esize.p = esize.p,
+    .lsize.a = lsize.a, .esize.a = esize.a,
+    .lsize.i = lsize.i, .esize.i = esize.i,
+    .lsize.d = lsize.d, .esize.d = esize.d,
+    .lpstr.mix = lpstr.mix, .lpobs.mix = lpobs.mix,
+    .lpdip.mix = lpdip.mix,
+    .epstr.mix = epstr.mix, .epobs.mix = epobs.mix,
+    .epdip.mix = epdip.mix,
+    .tmp3.TF = tmp3.TF,
+    .a.mix = a.mix, .i.mix = i.mix, .d.mix = d.mix,
+    .a.mlm = a.mlm, .i.mlm = i.mlm, .d.mlm = d.mlm,
+    .truncate = truncate, .max.support = max.support ))),
+
   initialize = eval(substitute(expression({
-    extra$indeta <- ( .indeta )  # Avoids recomputing it several times
+    extra$indeta <- ( .indeta )  # Avoids recomputing it
     la.mix <- length((a.mix <- as.vector( .a.mix )))
     li.mix <- length((i.mix <- as.vector( .i.mix )))
     ld.mix <- length((d.mix <- as.vector( .d.mix )))
@@ -6619,7 +6889,7 @@ plotdgaitd.vglm <-
       if (tmp3.TF[ 2]) {
         init.size.p <-
           if (length( .isize.p )) ( .isize.p ) else {
-            keep.Mom.p.mix <- Mom.nb.init(y, w = w)   # TFvec = is.ns
+            keep.Mom.p.mix <- Mom.nb.init(y, w = w)  # TFvec = is.ns
             keep.Mom.p.mix["size"] * mux.more.k
           }
         etastart[, extra$indeta[ 2, 1]] <-
@@ -6718,7 +6988,8 @@ plotdgaitd.vglm <-
           matrix( .ipobs.mlm , n, la.mlm, byrow = .byrow.aid )
         } else {
           mux.more.a <- extra$mux.init[1]                            
-          init.pobs.mlm <- colSums(c(w) * extra$skip.mlm.a) / colSums(w)
+          init.pobs.mlm <- colSums(c(w) *
+                                   extra$skip.mlm.a) / colSums(w)
           init.pobs.mlm <- init.pobs.mlm * as.vector( mux.more.a )
           matrix(init.pobs.mlm, n, la.mlm, byrow = TRUE)
         }
@@ -6970,26 +7241,31 @@ plotdgaitd.vglm <-
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 6]) {  # Coln 3 or 6
-        etastart[, (extra$indeta[ 6, 1])] <- etastart.z[, nextone]
+        etastart[, (extra$indeta[ 6, 1])] <-
+            etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 9]) {  # Coln 3 or 6 or 9
-        etastart[, (extra$indeta[ 9, 1])] <- etastart.z[, nextone]
+        etastart[, (extra$indeta[ 9, 1])] <-
+            etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[12]) {
         ind8 <- (extra$indeta[12, 1]):(extra$indeta[12, 2])
-        etastart[, ind8] <- etastart.z[, nextone:(nextone + la.mlm - 1)]
+        etastart[, ind8] <- etastart.z[, nextone:(nextone +
+                                                  la.mlm - 1)]
         nextone <- nextone + la.mlm
       }
       if (tmp3.TF[13]) {
         ind9 <- (extra$indeta[13, 1]):(extra$indeta[13, 2])
-        etastart[, ind9] <- etastart.z[, nextone:(nextone + li.mlm - 1)]
+        etastart[, ind9] <- etastart.z[, nextone:(nextone +
+                                                  li.mlm - 1)]
         nextone <- nextone + li.mlm
       }
       if (tmp3.TF[14]) {
         ind0 <- (extra$indeta[14, 1]):(extra$indeta[14, 2])
-        etastart[, ind0] <- etastart.z[, nextone:(nextone + ld.mlm - 1)]
+        etastart[, ind0] <- etastart.z[, nextone:(nextone +
+                                                  ld.mlm - 1)]
         if (ncol(etastart.z) != nextone + ld.mlm - 1)
           stop("miscalculation")
       }
@@ -7063,7 +7339,8 @@ plotdgaitd.vglm <-
     munb.p <- cbind(eta2theta(eta[, 1], .lmunb.p , .emunb.p ))
     size.p <- cbind(eta2theta(eta[, 2], .lsize.p , .esize.p ))
     ind.munb.z <- 1:2  # Points to munb.p and size.p only.
-    munb.a <- munb.i <- munb.d <- munb.p  # Needed; answer not corrupted
+    munb.a <- munb.i <- munb.d <-
+              munb.p  # Needed; answer not corrupted
     size.a <- size.i <- size.d <- size.p
     tmp3.TF <- ( .tmp3.TF )   # Logical of length 14.
 
@@ -7112,19 +7389,22 @@ plotdgaitd.vglm <-
       if (tmp3.TF[12]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[13]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[14]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -7310,7 +7590,7 @@ plotdgaitd.vglm <-
     for (jay in seq(M))
       predictors.names <- c(predictors.names,
         namesof(parameter.names[jay], link.names[jay], tag = FALSE,
-                earg = list()))  # This line isnt perfect; info is lost
+                earg = list()))  # This isnt perfect; info is lost
     misc$predictors.names <- predictors.names  # Useful for coef()
     misc$link <- link.names  # 
     names(misc$link) <- parameter.names  # 
@@ -7426,19 +7706,22 @@ plotdgaitd.vglm <-
       if (tmp3.TF[12]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[13]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[14]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -7454,8 +7737,10 @@ plotdgaitd.vglm <-
                      a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
                      truncate = truncate,
                      max.support = as.vector( .max.support ),
-                     munb.a = munb.a, munb.i = munb.i, munb.d = munb.d,
-                     size.a = size.a, size.i = size.i, size.d = size.d,
+                     munb.a = munb.a, munb.i = munb.i,
+                     munb.d = munb.d,
+                     size.a = size.a, size.i = size.i,
+                     size.d = size.d,
                      pobs.mix = pobs.mix, pstr.mix = pstr.mix,
                      pdip.mix = pdip.mix,
                      pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
@@ -7537,19 +7822,22 @@ plotdgaitd.vglm <-
       if (tmp3.TF[12]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[13]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[14]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -7651,19 +7939,22 @@ plotdgaitd.vglm <-
       if (tmp3.TF[12]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[13]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[14]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -7779,19 +8070,22 @@ plotdgaitd.vglm <-
       if (tmp3.TF[12]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[13]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[14]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -8094,9 +8388,9 @@ plotdgaitd.vglm <-
 
 
     d0B.PI.mlm  <- Dp.mlm.0mat.i  / Denom0.p
-    d1B.PI.mlm1 <- Dp.mlm.1mat.i1 / Denom0.p -  # This is most general
+    d1B.PI.mlm1 <- Dp.mlm.1mat.i1 / Denom0.p -  # Most general
                    Dp.mlm.0mat.i  * Denom1.p1 / Denom0.p^2
-    d1B.PI.mlm2 <- Dp.mlm.1mat.i2 / Denom0.p -  # This is most general
+    d1B.PI.mlm2 <- Dp.mlm.1mat.i2 / Denom0.p -  # Most general
                    Dp.mlm.0mat.i  * Denom1.p2 / Denom0.p^2
     d2B.PI.mlm1 <- Dp.mlm.2mat.i1 / Denom0.p -
                2 * Dp.mlm.1mat.i1 * Denom1.p1 / Denom0.p^2 -
@@ -10099,7 +10393,8 @@ plotdgaitd.vglm <-
           for (sss in seq(lind.rc)) {
             wz.6[, iam(uuu, ind.rc[ttt], M)] <-
             wz.6[, iam(uuu, ind.rc[ttt], M)] +
-              allprobs[, sss] * (max(0, sss == ttt) - allprobs[, ttt]) *
+                allprobs[, sss] * (max(0, sss == ttt) -
+                                   allprobs[, ttt]) *
               wz[, iam(uuu, ind.rc[sss], M)] * dstar.deta[, iptr]
           }  # sss
         }  # ttt

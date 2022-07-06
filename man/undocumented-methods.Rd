@@ -4,7 +4,12 @@
 %\alias{ccoef-method}
 %
 %
-% 202011
+% 202206
+\alias{rqresid,vlm-method}
+\alias{rqresid,ANY-method}
+\alias{rqresiduals,vlm-method}
+\alias{rqresiduals,ANY-method}
+% 202111
 \alias{KLD,ANY-method}
 \alias{KLD,vglm-method}
 % 202010

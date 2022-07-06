@@ -22,8 +22,8 @@ levy(location = 0, lscale = "loglink", iscale = NULL)
 
   }
   \item{lscale}{
-  Parameter link function for the (positive) scale parameter \eqn{b}.
-  See \code{\link{Links}} for more choices.
+  Parameter link function for the (positive) scale parameter
+  \eqn{b}.  See \code{\link{Links}} for more choices.
 
 
   }
@@ -45,15 +45,17 @@ levy(location = 0, lscale = "loglink", iscale = NULL)
        exp( -b / (2(y - a))) / (y - a)^{3/2} }
   where \eqn{a<y<\infty}{a<y<Inf} and \eqn{b>0}.
   Note that if \eqn{a} is very close to \code{min(y)}
-  (where \code{y} is the response), then numerical problem will occur.
-  The mean does not exist.
-  The median is returned as the fitted values.
+  (where \code{y} is the response), then numerical problem will
+  occur.  The mean does not exist.  The median is returned as
+  the fitted values.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -72,9 +74,11 @@ levy(location = 0, lscale = "loglink", iscale = NULL)
 
 
 %\note{
-%  If \eqn{\delta}{delta} is given, then only one parameter is estimated
-%  and the default is \eqn{\eta_1=\log(\gamma)}{eta1=log(gamma)}.
-%  If \eqn{\delta}{delta} is not given, then \eqn{\eta_2=\delta}{eta2=delta}.
+% If \eqn{\delta}{delta} is given, then only one
+% parameter is estimated
+% and the default is \eqn{\eta_1=\log(\gamma)}{eta1=log(gamma)}.
+% If \eqn{\delta}{delta} is not given,
+% then \eqn{\eta_2=\delta}{eta2=delta}.
 %
 %
 %}
@@ -93,23 +97,24 @@ levy(location = 0, lscale = "loglink", iscale = NULL)
 \examples{
 nn <- 1000; loc1 <- 0; loc2 <- 10
 myscale <- 1  # log link ==> 0 is the answer
-ldata <- data.frame(y1 = loc1 + myscale/rnorm(nn)^2,  # Levy(myscale, a)
-                    y2 = rlevy(nn, loc = loc2, scale = exp(+2)))
-
+ldata <-
+  data.frame(y1 = loc1 + myscale/rnorm(nn)^2,  # Levy(myscale, a)
+             y2 = rlevy(nn, loc = loc2, scale = exp(+2)))
 # Cf. Table 1.1 of Nolan for Levy(1,0)
 with(ldata, sum(y1 > 1) / length(y1))  # Should be 0.6827
 with(ldata, sum(y1 > 2) / length(y1))  # Should be 0.5205
 
-fit1 <- vglm(y1 ~ 1, levy(location = loc1), data = ldata, trace = TRUE)
+fit1 <- vglm(y1 ~ 1, levy(location = loc1), ldata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 summary(fit1)
 head(weights(fit1, type = "work"))
 
-fit2 <- vglm(y2 ~ 1, levy(location = loc2), data = ldata, trace = TRUE)
+fit2 <- vglm(y2 ~ 1, levy(location = loc2), ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 Coef(fit2)
-c(median = with(ldata, median(y2)), fitted.median = head(fitted(fit2), 1))
+c(median = with(ldata, median(y2)),
+  fitted.median = head(fitted(fit2), 1))
 }
 \keyword{models}
 \keyword{regression}
@@ -117,14 +122,15 @@ c(median = with(ldata, median(y2)), fitted.median = head(fitted(fit2), 1))
 
 %%\eqn{\delta + \gamma \Gamma(-0.5) / (2\sqrt{\pi})}{delta +
 %%               gamma * gamma(-0.5) / (2*sqrt(pi))}
-%%where \code{gamma} is a parameter but \code{gamma()} is the gamma function.
+%%where \code{gamma} is a parameter but 
+%%\code{gamma()} is the gamma function.
 
 %%mygamma = exp(1)    # log link ==> 1 is the answer
 %% alternative:
 %%w = rgamma(n, shape=0.5)   # W ~ Gamma(0.5) distribution
 %%mean(w)    # 0.5
 %%mean(1/w)
-%%y = delta + mygamma / (2 * w)    # This is Levy(mygamma, delta)
+%%y = delta + mygamma / (2 * w)  # This is Levy(mygamma, delta)
 %%mean(y)
 %%set.seed(123)
 

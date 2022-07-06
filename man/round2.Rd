@@ -5,6 +5,7 @@
 \description{
   'round2' works like 'round' 
    but the rounding has base 2 under consideration so that bits
+   (binary digits)
    beyond a certain theshold are zeroed.
 
 }
@@ -25,19 +26,19 @@ round2(x, digits10 = 0)
   }
 }
 \details{
-  \code{round2()} is intended to allow reliable and safe for \code{==}
-  comparisons provided both sides have the function applied to the same
-  value of \code{digits10}.
-  Internally a numeric has its binary representation (bits) past a certain
-  point set to all 0s, while retaining a certain degree of accuracy.
-  Algorithmically, \code{x} is multiplied by \code{2^exponent} and then
-  rounded, and then divided by \code{2^exponent}.
-  The value of \code{exponent} is approximately \code{3 * digits10} when
-  \code{digits10} is positive.
-  If \code{digits10} is negative then what is returned is
-  \code{round(x, digits10)}.
-  The value of \code{exponent} guarantees that \code{x} has been rounded
-  to at least \code{digits10} decimal places (often around
+  \code{round2()} is intended to allow reliable and safe for
+  \code{==} comparisons provided both sides have the function
+  applied to the same value of \code{digits10}.  Internally a
+  numeric has its binary representation (bits)
+  past a certain point
+  set to all 0s, while retaining a certain degree of accuracy.
+  Algorithmically, \code{x} is multiplied by \code{2^exponent}
+  and then rounded, and then divided by \code{2^exponent}.
+  The value of \code{exponent} is approximately \code{3 *
+  digits10} when \code{digits10} is positive.  If \code{digits10}
+  is negative then what is returned is \code{round(x, digits10)}.
+  The value of \code{exponent} guarantees that \code{x} has been
+  rounded to at least \code{digits10} decimal places (often around
   \code{digits10 + 1} for safety).
 
   
@@ -89,7 +90,8 @@ seq(31) / 32
 }
 \keyword{math}
 
-% curve(round2, -13, 0.8, xlim = c(-12, 10), ylim = c(-1, 4), col = "orange")
+% curve(round2, -13, 0.8, xlim = c(-12, 10),
+%       ylim = c(-1, 4), col = "orange")
 % curve(round2, 1.2,  12, add = TRUE, col = "orange")
 % abline(v = 0, h = c(0,1), lty = "dashed")
 

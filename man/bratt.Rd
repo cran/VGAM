@@ -79,8 +79,10 @@ bratt(refgp = "last", refvalue = 1, ialpha = 1, i0 = 0.01)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}.
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}.
 
 
 }
@@ -145,12 +147,12 @@ ties <- 5 + 0 * mat
 ties[2, 1] <- ties[1,2] <- 9
 
 # Now fit the model
-fit <- vglm(Brat(mat, ties) ~ 1, bratt(refgp = 1), trace = TRUE)
-fit <- vglm(Brat(mat, ties) ~ 1, bratt(refgp = 1), trace = TRUE, crit = "coef")
+fit <- vglm(Brat(mat, ties) ~ 1, bratt(refgp = 1), trace = TRUE,
+            crit = "coef")
 
 summary(fit)
-c(0, coef(fit))  # Log-abilities (in order of "journal"); last is log(alpha0)
-c(1, Coef(fit))  #     Abilities (in order of "journal"); last is alpha0
+c(0, coef(fit))  # Log-abilities (last is log(alpha0))
+c(1, Coef(fit))  #     Abilities (last is alpha0)
 
 fit@misc$alpha   # alpha_1,...,alpha_M
 fit@misc$alpha0  # alpha_0
@@ -159,7 +161,7 @@ fitted(fit)  # Probabilities of winning and tying, in awkward form
 predict(fit)
 (check <- InverseBrat(fitted(fit)))    # Probabilities of winning
 qprob <- attr(fitted(fit), "probtie")  # Probabilities of a tie
-qprobmat <- InverseBrat(c(qprob), NCo = nrow(ties))  # Probabilities of a tie
+qprobmat <- InverseBrat(c(qprob), NCo = nrow(ties))  # Pr(tie)
 check + t(check) + qprobmat  # Should be 1s in the off-diagonals
 }
 \keyword{models}

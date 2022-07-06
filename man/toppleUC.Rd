@@ -27,7 +27,8 @@ rtopple(n, shape)
   \item{shape}{the (shape) parameter, which lies in \eqn{(0, 1)}.}
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the
+  density is returned.
 
   }
   \item{lower.tail, log.p}{
@@ -58,14 +59,18 @@ rtopple(n, shape)
 }
 \author{ T. W. Yee }
 \details{
-  See \code{\link{topple}}, the \pkg{VGAM} family function for
-  estimating the (shape) parameter \eqn{s} by maximum likelihood
-  estimation, for the formula of the probability density function.
+  See \code{\link{topple}}, the \pkg{VGAM}
+  family function for
+  estimating the (shape) parameter \eqn{s} by
+  maximum likelihood
+  estimation, for the formula of the
+  probability density function.
 
 
 }
 \note{
-  The Topp-Leone distribution is related to the triangle distribution.
+  The Topp-Leone distribution is related to
+  the triangle distribution.
 
 
 }
@@ -78,9 +83,9 @@ rtopple(n, shape)
 }
 \examples{
 \dontrun{ shape <- 0.7; x <- seq(0.02, 0.999, length = 300)
-plot(x, dtopple(x, shape = shape), type = "l", col = "blue", las = 1,
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple lines are the 10,20,...,90 percentiles", ylab = "")
+plot(x, dtopple(x, shape = shape), type = "l", col = "blue",
+     main = "Blue is density, orange is CDF", ylab = "", las = 1,
+     sub = "Purple lines are the 10,20,...,90 percentiles")
 abline(h = 0, col = "blue", lty = 2)
 lines(x, ptopple(x, shape = shape), type = "l", col = "orange")
 probs <- seq(0.1, 0.9, by = 0.1)

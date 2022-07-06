@@ -17,7 +17,8 @@
   }
     \item{\code{ssize}}{a numeric vector; sample size.}
     \item{\code{cityNo}}{a numeric vector; the city number.}
-    \item{\code{positive}}{a numeric vector; the number of subjects
+    \item{\code{positive}}{a numeric vector; the
+      number of subjects
           testing positive for the disease. }
   }
 }
@@ -49,14 +50,15 @@
 
 
   Efron, B. (1986).
-  Double exponential families and their use in generalized linear regression.
+  Double exponential families and their use in
+  generalized linear regression.
   \emph{Journal of the American Statistical Association},
   \bold{81}, 709--721.
 
 
 }
 \examples{
-\dontrun{ with(toxop, plot(rainfall, positive / ssize, col = "blue"))
+\dontrun{ with(toxop, plot(rainfall, positive/ssize, col = "blue"))
 plot(toxop, col = "blue") }
 }
 \keyword{datasets}

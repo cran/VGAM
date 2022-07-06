@@ -4,7 +4,9 @@
 \alias{dbinorm}
 \alias{pbinorm}
 \alias{rbinorm}
-\title{Bivariate Normal Distribution Cumulative Distribution Function}
+\title{Bivariate Normal Distribution Cumulative Distribution
+Function}
+
 \description{
   Density,
   cumulative distribution function
@@ -15,12 +17,14 @@
 }
 % quantile function
 \usage{
-dbinorm(x1, x2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0, log = FALSE)
+dbinorm(x1, x2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0,
+        log = FALSE)
 pbinorm(q1, q2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
  pnorm2(x1, x2, mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 }
-% dbinorm(x1, x2, mean1 = 0, mean2 = 0,  sd1 = 1,  sd2 = 1,   rho = 0, log = FALSE)
+% dbinorm(x1, x2, mean1 = 0, mean2 = 0,  sd1 = 1,  sd2 = 1,
+%         rho = 0, log = FALSE)
 \arguments{
   \item{x1, x2, q1, q2}{vector of quantiles.}
   \item{mean1, mean2, var1, var2, cov12}{
@@ -74,7 +78,7 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
   Let \code{sd1} (say) be \code{sqrt(var1)} and
   written \eqn{\sigma_1}{sigma_1}, etc.
   Then the general formula for the correlation coefficient is
-  \eqn{\rho = cov / (\sigma_1 \sigma_2)}{rho = cov / (sigma_1 * sigma_2)}
+\eqn{\rho = cov / (\sigma_1 \sigma_2)}{rho = cov / (sigma_1 * sigma_2)}
   where \eqn{cov} is argument \code{cov12}.
   Thus if arguments \code{var1} and \code{var2} are left alone then
   \code{cov12} can be inputted with \eqn{\rho}{rho}.
@@ -105,7 +109,8 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 
 
 % It gives the probability that a bivariate normal exceeds (ah, ak).
-% Here, gh and gk are 0.5 times the right tail areas of ah, ak under a N(0, 1)
+% Here, gh and gk are 0.5 times the right tail areas of ah,
+% ak under a N(0, 1)
 % distribution.
 
 
@@ -155,7 +160,8 @@ ymat <- expand.grid(yvec, yvec)
 cbind(ymat, pbinorm(ymat[, 1], ymat[, 2]))
 
 \dontrun{ rhovec <- seq(-0.95, 0.95, by = 0.01)
-plot(rhovec, pbinorm(0, 0, cov12 = rhovec), type = "l", col = "blue", las = 1)
+plot(rhovec, pbinorm(0, 0, cov12 = rhovec),
+     type = "l", col = "blue", las = 1)
 abline(v = 0, h = 0.25, col = "gray", lty = "dashed") }
 }
 \keyword{distribution}

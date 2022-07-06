@@ -9,15 +9,16 @@
 }
 \usage{
 lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
-        llambda = "identitylink", lmu = "identitylink", lsigma = "loglink",
-        idf.mu = 4, idf.sigma = 2, ilambda = 1, isigma = NULL)
+   llambda = "identitylink", lmu = "identitylink", lsigma = "loglink",
+   idf.mu = 4, idf.sigma = 2, ilambda = 1, isigma = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
   \item{percentiles}{
   A numerical vector containing values between 0 and 100,
-  which are the quantiles. They will be returned as `fitted values'.
+  which are the quantiles. They will be returned as `fitted
+  values'.
 
   }
 
@@ -42,17 +43,18 @@ lms.bcg(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
 
 }
 \details{
- Given a value of the covariate, this function applies a Box-Cox
- transformation to the response to best obtain a gamma distribution.
- The parameters
- chosen to do this are estimated by maximum likelihood or penalized
- maximum likelihood.
- Similar details can be found at \code{\link{lms.bcn}}.
+  Given a value of the covariate, this function applies a
+  Box-Cox transformation to the response to best obtain a
+  gamma distribution.  The parameters chosen to do this are
+  estimated by maximum likelihood or penalized maximum likelihood.
+  Similar details can be found at \code{\link{lms.bcn}}.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -104,7 +106,7 @@ Quantile regression via vector generalized additive models.
 
 \examples{
 # This converges, but deplot(fit) and qtplot(fit) do not work
-fit0 <- vglm(BMI ~ sm.bs(age, df = 4), lms.bcg, data = bmi.nz, trace = TRUE)
+fit0 <- vglm(BMI ~ sm.bs(age, df = 4), lms.bcg, bmi.nz, trace = TRUE)
 coef(fit0, matrix = TRUE)
 \dontrun{
 par(mfrow = c(1, 1))
@@ -115,8 +117,8 @@ plotvgam(fit0, se = TRUE)  # Plot mu function (only)
 fit1 <- vgam(BMI ~ s(age, df = c(4, 2)), etastart = predict(fit0),
              lms.bcg(zero = 1), bmi.nz, trace = TRUE)
 
-# Difficult to get a model that converges.
-# Here, we prematurely stop iterations because it fails near the solution.
+# Difficult to get a model that converges.  Here, we prematurely
+# stop iterations because it fails near the solution.
 fit2 <- vgam(BMI ~ s(age, df = c(4, 2)), maxit = 4,
              lms.bcg(zero = 1, ilam = 3), bmi.nz, trace = TRUE)
 summary(fit1)
@@ -136,9 +138,10 @@ qtplot(fit1, percentiles=c(5, 50, 90, 99), main = "Quantiles",
 ygrid <- seq(15, 43, len = 100)  # BMI ranges
 par(mfrow = c(1, 1), lwd = 2)
 (aa <- deplot(fit1, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
-  main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
-aa <- deplot(fit1, x0=42, y=ygrid, add=TRUE, llty=2, col="red")
-aa <- deplot(fit1, x0=55, y=ygrid, add=TRUE, llty=4, col="blue", Attach=TRUE)
+  main = "PDFs at Age = 20 (black), 42 (red) and 55 (blue)"))
+aa <- deplot(fit1, x0 = 42, y = ygrid, add=TRUE, llty=2, col="red")
+aa <- deplot(fit1, x0 = 55, y = ygrid, add=TRUE, llty=4, col="blue",
+             Attach = TRUE)
 aa@post$deplot  # Contains density function values
 }
 }

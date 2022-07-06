@@ -18,8 +18,8 @@
   }
 }
 \details{
-  They are a random sample from the Fletcher Challenge/Auckland Heart and
-  Health survey conducted in the early 1990s.
+  They are a random sample from the Fletcher Challenge/Auckland
+  Heart and Health survey conducted in the early 1990s.
 
 
   There are some outliers in the data set.
@@ -30,8 +30,9 @@
 
 }
 \source{
-  Clinical Trials Research Unit, University of Auckland, New Zealand,
-  \code{http://www.ctru.auckland.ac.nz}.
+  Formerly the
+  Clinical Trials Research Unit, University of Auckland, New
+  Zealand.    % , \code{http://www.ctru.auckland.ac.nz}.
 
 
 % \url{http://www.ctru.auckland.ac.nz}.
@@ -52,7 +53,8 @@ Health Study: design and baseline findings.
 }
 \examples{
 \dontrun{ with(bmi.nz, plot(age, BMI, col = "blue"))
-fit <- vgam(BMI ~ s(age, df = c(2, 4, 2)), lms.yjn, data = bmi.nz, trace = TRUE)
+fit <- vgam(BMI ~ s(age, df = c(2, 4, 2)), lms.yjn,
+            data = bmi.nz, trace = TRUE)
 qtplot(fit, pcol = "blue", tcol = "brown", lcol = "brown") }
 }
 \keyword{datasets}

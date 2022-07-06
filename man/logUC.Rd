@@ -28,7 +28,9 @@ rlog(n, shape)
 
   }
   \item{shape}{
-   The shape parameter value \eqn{c} described in in \code{\link{logff}}.
+   The shape parameter value \eqn{c} described in in
+   \code{\link{logff}}.
+
 %  Here it is called \code{shape} because \eqn{0<c<1} is the range.
 
 

@@ -29,12 +29,14 @@
 dbetabinom(x, size, prob, rho = 0, log = FALSE)
 pbetabinom(q, size, prob, rho = 0, log.p = FALSE)
 rbetabinom(n, size, prob, rho = 0)
-dbetabinom.ab(x, size, shape1, shape2, log = FALSE, Inf.shape = exp(20),
-              limit.prob = 0.5)
-pbetabinom.ab(q, size, shape1, shape2, limit.prob = 0.5, log.p = FALSE)
+dbetabinom.ab(x, size, shape1, shape2, log = FALSE,
+              Inf.shape = exp(20), limit.prob = 0.5)
+pbetabinom.ab(q, size, shape1, shape2, limit.prob = 0.5,
+              log.p = FALSE)
 rbetabinom.ab(n, size, shape1, shape2, limit.prob = 0.5,
               .dontuse.prob = NULL)
-dzoibetabinom(x, size, prob, rho = 0, pstr0 = 0, pstrsize = 0, log = FALSE)
+dzoibetabinom(x, size, prob, rho = 0, pstr0 = 0, pstrsize = 0,
+              log = FALSE)
 pzoibetabinom(q, size, prob, rho, pstr0 = 0, pstrsize = 0,
               lower.tail = TRUE, log.p = FALSE)
 rzoibetabinom(n, size, prob, rho = 0, pstr0 = 0, pstrsize = 0)
@@ -69,10 +71,10 @@ rzoibetabinom.ab(n, size, shape1, shape2, pstr0 = 0, pstrsize = 0)
   should be in the interval \eqn{[0, 1)}.
   The default value of 0 corresponds to the
   usual binomial distribution with probability \code{prob}.
-  Setting \code{rho = 1} would set both shape parameters equal to 0,
-  and the ratio \code{0/0}, which is actually \code{NaN},
-  is interpreted by \code{\link[stats]{Beta}} as 0.5.
-  See the warning below.
+  Setting \code{rho = 1} would set both shape parameters equal
+  to 0, and the ratio \code{0/0}, which is actually \code{NaN},
+  is interpreted by \code{\link[stats]{Beta}} as 0.5.  See the
+  warning below.
 
 
 
@@ -109,18 +111,20 @@ obtain the behaviour of the
   \item{Inf.shape}{
   Numeric. A large value such that,
   if \code{shape1} or \code{shape2} exceeds this, then
-  special measures are taken, e.g., calling \code{\link[stats]{dbinom}}.
-  Also, if \code{shape1} or \code{shape2} is less than its reciprocal,
-  then special measures are also taken.
+  special measures are taken,
+  e.g., calling \code{\link[stats]{dbinom}}.
+  Also, if \code{shape1} or \code{shape2} is less than
+  its reciprocal, then special measures are also taken.
   This feature/approximation is needed to avoid numerical
-  problem with catastrophic cancellation of
-  multiple \code{\link[base:Special]{lbeta}} calls.
+  problem with catastrophic cancellation of multiple
+  \code{\link[base:Special]{lbeta}} calls.
 
 
   }
   \item{limit.prob}{
   Numerical vector; recycled if necessary.
-  If either shape parameters are \code{Inf} then the binomial limit is
+  If either shape parameters are \code{Inf} then the binomial
+  limit is
   taken, with \code{shape1 / (shape1 + shape2)} as the
   probability of success.
   In the case where both are \code{Inf} this probability
@@ -136,8 +140,7 @@ obtain the behaviour of the
   because \code{rho = 0} by default, then
   \code{limit.prob = prob} so that the beta-binomial distribution
   behaves like the ordinary binomial distribution with respect
-  to arguments
-  \code{size} and \code{prob}.
+  to arguments \code{size} and \code{prob}.
 
 
 % Purists may assign \code{NaN} to this argument.
@@ -179,7 +182,8 @@ obtain the behaviour of the
   \code{dbetabinom} and \code{dbetabinom.ab} give the density,
   \code{pbetabinom} and \code{pbetabinom.ab} give the
   distribution function, and
-  \code{rbetabinom} and \code{rbetabinom.ab} generate random deviates.
+  \code{rbetabinom} and \code{rbetabinom.ab} generate random
+  deviates.
 
 
 % \code{qbetabinom} and \code{qbetabinom.ab} gives the
@@ -198,50 +202,52 @@ random inflated deviates.
 \author{ T. W. Yee and Xiangjie Xue}
 \details{
   The beta-binomial distribution is a binomial distribution whose
-  probability of success is not a constant but it is generated from a
-  beta distribution with parameters \code{shape1} and \code{shape2}.
-  Note that the mean of this beta distribution is
-  \code{mu = shape1/(shape1+shape2)}, which therefore is the
+  probability of success is not a constant but it is generated
+  from a beta distribution with parameters \code{shape1} and
+  \code{shape2}.  Note that the mean of this beta distribution
+  is \code{mu = shape1/(shape1+shape2)}, which therefore is the
   mean or the probability of success.
 
 
   
   See \code{\link{betabinomial}} and \code{\link{betabinomialff}},
   the \pkg{VGAM} family functions for
-  estimating the parameters, for the formula of the probability density
-  function and other details.
+  estimating the parameters, for the formula of the probability
+  density function and other details.
 
 
   
   For the inflated beta-binomial distribution, the probability mass
   function is
   \deqn{P(Y = y) =
-    (1 - pstr0 - pstrsize) \times BB(y) + pstr0 \times I[y = 0] +
-        pstrsize \times I[y = size]}{%
-        F(Y = y) =(1 -  pstr0 - pstrsize) * BB(y) +  pstr0 * I[y = 0] +
-        pstrsize * I[y = size]}
+(1 - pstr0 - pstrsize) \times BB(y) + pstr0 \times I[y = 0] +
+pstrsize \times I[y = size]}{%
+F(Y = y) =(1 -  pstr0 - pstrsize) * BB(y) +  pstr0 * I[y = 0] +
+pstrsize * I[y = size]}
 
   where \eqn{BB(y)} is the probability mass function
   of the beta-binomial distribution with the same shape parameters
   (\code{\link[VGAM]{pbetabinom.ab}}),
   \code{pstr0} is the inflated probability at 0
   and \code{pstrsize} is the inflated probability at 1.
-  The default values of \code{pstr0} and \code{pstrsize} mean that these
-  functions behave like the ordinary \code{\link[VGAM]{Betabinom}}
-  when only the essential arguments are inputted.
+  The default values of \code{pstr0} and \code{pstrsize}
+  mean that these functions behave like the ordinary
+  \code{\link[VGAM]{Betabinom}} when only the essential arguments
+  are inputted.
 
 
 }
 \note{
   \code{pzoibetabinom}, \code{pzoibetabinom.ab},
-  \code{pbetabinom} and \code{pbetabinom.ab} can be particularly slow.
+  \code{pbetabinom} and \code{pbetabinom.ab} can be particularly
+  slow.
   The functions here ending in \code{.ab} are called from those
   functions which don't.
   The simple transformations
   \eqn{\mu=\alpha / (\alpha + \beta)}{mu=alpha/(alpha+beta)} and
-  \eqn{\rho=1/(1 + \alpha + \beta)}{rho=1/(1+alpha+beta)} are used,
-  where \eqn{\alpha}{alpha} and \eqn{\beta}{beta} are the two
-  shape parameters.
+  \eqn{\rho=1/(1 + \alpha + \beta)}{rho=1/(1+alpha+beta)} are
+  used, where \eqn{\alpha}{alpha} and \eqn{\beta}{beta} are the
+  two shape parameters.
 
 
 }
@@ -266,7 +272,7 @@ random inflated deviates.
 }
 \examples{
 set.seed(1); rbetabinom(10, 100, prob = 0.5)
-set.seed(1);     rbinom(10, 100, prob = 0.5)  # The same since rho = 0
+set.seed(1);     rbinom(10, 100, prob = 0.5)  # The same as rho = 0
 
 \dontrun{ N <- 9; xx <- 0:N; s1 <- 2; s2 <- 3
 dy <- dbetabinom.ab(xx, size = N, shape1 = s1, shape2 = s2)

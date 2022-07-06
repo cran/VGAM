@@ -92,13 +92,15 @@ for the uniform distribution.
 Here,
 \code{unif} corresponds to \eqn{F} and
 \code{eunif} corresponds to \eqn{G}.
-The addition of ``\code{e}'' (for \emph{expectile}) is for the `other'
+The addition of ``\code{e}'' (for \emph{expectile}) is for the
+`other'
 distribution associated with the parent distribution.
 Thus
 \code{deunif} is for \eqn{g},
 \code{peunif} is for \eqn{G},
 \code{qeunif} is for the inverse of \eqn{G},
 \code{reunif} generates random variates from \eqn{g}.
+
 
 
 For \code{qeunif} the Newton-Raphson algorithm is used to solve for
@@ -127,10 +129,10 @@ Expectiles and M-quantiles are quantiles.
 \bold{20}, 149--153.
 
 
-Yee, T. W. (2012).
-Vector generalized linear and additive
-quantile and expectile regression.
-\emph{In preparation}.
+%Yee, T. W. (2012).
+%Vector generalized linear and additive
+%quantile and expectile regression.
+%\emph{In preparation}.
 
 
 
@@ -185,11 +187,11 @@ par(mfrow = c(2,1))
 yy <- seq(0.0, 1.0, len = nn)
 plot(yy, deunif(yy), type = "l", col = "blue", ylim = c(0, 2),
      xlab = "y", ylab = "g(y)", main = "g(y) for Uniform(0,1)")
-lines(yy, dunif(yy), col = "darkgreen", lty = "dotted", lwd = 2)  # 'original'
+lines(yy, dunif(yy), col = "green", lty = "dotted", lwd = 2)  # 'original'
 
 plot(yy, peunif(yy), type = "l", col = "blue", ylim = 0:1,
      xlab = "y", ylab = "G(y)", main = "G(y) for Uniform(0,1)")
-abline(a = 0.0, b = 1.0, col = "darkgreen", lty = "dotted", lwd = 2)
+abline(a = 0.0, b = 1.0, col = "green", lty = "dotted", lwd = 2)
 abline(v = 0.5, h = 0.5, col = "red", lty = "dashed") }
 }
 \keyword{distribution}

@@ -15,14 +15,14 @@ data(beggs)
   \describe{
 
     \item{b0, b1, b2, b3, b4}{
-    The \code{b} refers to bacon.
-    The number of times bacon was purchased was 0, 1, 2, 3, or 4.
+  The \code{b} refers to bacon.
+  The number of times bacon was purchased was 0, 1, 2, 3, or 4.
 
 
     }
     \item{e0, e1, e2, e3, e4}{
-    The \code{e} refers to eggs.
-    The number of times eggs was purchased was 0, 1, 2, 3, or 4.
+  The \code{e} refers to eggs.
+  The number of times eggs was purchased was 0, 1, 2, 3, or 4.
 
 
     }

@@ -5,8 +5,8 @@
 \title{ Positive Bernoulli Family Function with Time Effects }
 \description{
   Fits a GLM/GAM-like model to multiple Bernoulli responses where
-  each row in the capture history matrix response has at least one success
-  (capture).
+  each row in the capture history matrix response has at least one
+  success (capture).
   Sampling occasion effects are accommodated.
 
 
@@ -16,16 +16,17 @@
 
 }
 \usage{
-posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
-               p.small = 1e-4, no.warning = FALSE,
-               type.fitted = c("probs", "onempall0"))
+posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1,
+    iprob = NULL, p.small = 1e-4, no.warning = FALSE,
+    type.fitted = c("probs", "onempall0"))
 }
 %- maybe also 'usage' for other objects documented here.
 %apply.parint = FALSE,
 \arguments{
   \item{link, iprob, parallel.t}{
   See \code{\link{CommonVGAMffArguments}} for information.
-  By default, the parallelism assumption does not apply to the intercept.
+  By default, the parallelism assumption does not apply to the
+  intercept.
   Setting \code{parallel.t = FALSE ~ -1},
   or equivalently \code{parallel.t = FALSE ~ 0},
   results in the \eqn{M_0}/\eqn{M_h} model.
@@ -38,9 +39,9 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
   Any estimated probability value less than \code{p.small} will
   result in a warning, however, setting \code{no.warning = TRUE}
   will suppress this warning if it occurs.
-  This is because the Horvitz-Thompson estimator is the sum of the
-  reciprocal of such probabilities, therefore any probability that
-  is too close to 0 will result in an unstable estimate.
+  This is because the Horvitz-Thompson estimator is the sum of
+  the reciprocal of such probabilities, therefore any probability
+  that is too close to 0 will result in an unstable estimate.
 
 
 
@@ -65,7 +66,8 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
   These models (commonly known as \eqn{M_t} or \eqn{M_{th}}
   (no prefix \eqn{h} means it is an intercept-only model)
   in the capture--recapture literature) operate on a capture
-  history matrix response of 0s and 1s (\eqn{n \times \tau}{n x tau}).
+  history matrix response of 0s and 1s
+  (\eqn{n \times \tau}{n x tau}).
   Each column is a
   sampling occasion where animals are potentially captured
   (e.g., a field trip), and each row is an individual animal.
@@ -74,20 +76,21 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
   immigration or emigration.  Each row of the response
   matrix has at least one capture.
   Once an animal is captured for the first time,
-  it is marked/tagged so that its future capture history can be recorded.
-  Then it is released immediately back into the population to remix.
-  It is released immediately after each recapture too.
-  It is assumed that the animals are independent and
-  that, for a given animal, each sampling occasion is independent.
-  And animals do not lose their marks/tags, and
+  it is marked/tagged so that its future capture history can
+  be recorded.  Then it is released immediately back into the
+  population to remix.  It is released immediately after each
+  recapture too.  It is assumed that the animals are independent
+  and that, for a given animal, each sampling occasion is
+  independent.  And animals do not lose their marks/tags, and
   all marks/tags are correctly recorded.
 
 
 
   The number of linear/additive predictors is equal to the number
   of sampling occasions, i.e., \eqn{M = \tau}, say.
-  The default link functions
-  are \eqn{(logit \,p_{1},\ldots,logit \,p_{\tau})^T}{(logit p_(1),\ldots,logit p_(tau))^T}
+  The default link functions are
+\eqn{(logit \,p_{1},\ldots,logit \,p_{\tau})^T}{
+(logit p_(1),\ldots,logit p_(tau))^T}
   where each \eqn{p_{j}} denotes the probability of capture at
   time point \eqn{j}.
   The fitted value returned is a matrix of probabilities
@@ -108,6 +111,7 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
   at least one 1 and at least one 0.
 
 
+
   It is well-known that some species of animals are affected
   by capture, e.g., trap-shy or trap-happy. This \pkg{VGAM}
   family function does \emph{not} allow any behavioral effect to be
@@ -117,11 +121,13 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
   behavioral effects.
 
 
+
 % via covariates that are specific to each sampling occasion,
 % e.g., through the \code{xij} argument.
 % Ignoring capture history effects would mean
 % \code{\link{posbinomial}} could be used by aggregating over
 % the sampling occasions.
+
 
 
 % If there are no covariates that are specific to each occasion
@@ -132,9 +138,12 @@ posbernoulli.t(link = "logitlink", parallel.t = FALSE ~ 1, iprob = NULL,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
+
 
 
   Upon fitting the \code{extra} slot has a (list) component
@@ -163,8 +172,10 @@ capture--recapture experiments.
 \bold{79}, 385--400.
 
 
-  Otis, D. L. and Burnham, K. P. and White, G. C. and Anderson, D. R. (1978).
-  Statistical inference from capture data on closed animal populations,
+  Otis, D. L. and Burnham, K. P. and White, G. C. and Anderson,
+  D. R. (1978).
+  Statistical inference from capture data on closed animal
+  populations,
   \emph{Wildlife Monographs},
   \bold{62}, 3--135.
 
@@ -198,8 +209,10 @@ conditional likelihood.
 % See the example below.
 
 
+
   The \code{weights} argument of \code{\link{vglm}} need not be
   assigned, and the default is just a matrix of ones.
+
 
 
   Fewer numerical problems are likely to occur
@@ -212,10 +225,12 @@ conditional likelihood.
 % for \code{apply.parint = TRUE}.
 
 
+
   The response matrix is returned unchanged;
-  i.e., not converted into proportions like \code{\link{posbinomial}}.
-  If the response matrix has column names then these are used in the
-  labelling, else \code{prob1}, \code{prob2}, etc. are used.
+  i.e., not converted into proportions like
+  \code{\link{posbinomial}}.  If the response matrix has column
+  names then these are used in the labelling, else \code{prob1},
+  \code{prob2}, etc. are used.
 
 
 
@@ -233,8 +248,8 @@ conditional likelihood.
 
 
 
-% If not all of the \eqn{2^{\tau}-1}{2^(tau) - 1} combinations of
-% the response matrix are not present then it pays to add
+% If not all of the \eqn{2^{\tau}-1}{2^(tau) - 1} combinations
+% of the response matrix are not present then it pays to add
 % such rows to the response matrix and assign a small but
 % positive prior weight.
 % For example, if \eqn{\tau=2}{tau=2} then there should be
@@ -282,34 +297,36 @@ constraints(M.t, matrix = TRUE)
 summary(M.t, presid = FALSE)
 
 M.h.1 <- vglm(Select(deermice, "y") ~ sex + weight, trace = TRUE,
-              posbernoulli.t(parallel.t = FALSE ~ -1), data = deermice)
+              posbernoulli.t(parallel.t = FALSE ~ -1), deermice)
 coef(M.h.1, matrix = TRUE)
 constraints(M.h.1)
 summary(M.h.1, presid = FALSE)
 head(depvar(M.h.1))  # Response capture history matrix
 dim(depvar(M.h.1))
 
-M.th.2 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight, trace = TRUE,
-               posbernoulli.t(parallel.t = FALSE), data = deermice)
-lrtest(M.h.1, M.th.2)  # Test the parallelism assumption wrt sex and weight
+M.th.2 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
+               posbernoulli.t(parallel.t = FALSE), deermice)
+# Test the parallelism assumption wrt sex and weight:
+lrtest(M.h.1, M.th.2)
 coef(M.th.2)
 coef(M.th.2, matrix = TRUE)
 constraints(M.th.2)
 summary(M.th.2, presid = FALSE)
 head(model.matrix(M.th.2, type = "vlm"), 21)
 
-M.th.2@extra$N.hat     # Estimate of the population size; should be about N
+M.th.2@extra$N.hat  # Population size estimate; should be about N
 M.th.2@extra$SE.N.hat  # SE of the estimate of the population size
 # An approximate 95 percent confidence interval:
-round(M.th.2@extra$N.hat + c(-1, 1) * 1.96 *  M.th.2@extra$SE.N.hat, 1)
+round(M.th.2@extra$N.hat + c(-1, 1)*1.96* M.th.2@extra$SE.N.hat, 1)
 
-# Fit a M_h model, effectively the parallel M_t model, using posbinomial()
+# Fit a M_h model, effectively the parallel M_t model:
 deermice <- transform(deermice, ysum = y1 + y2 + y3 + y4 + y5 + y6,
                                 tau  = 6)
 M.h.3 <- vglm(cbind(ysum, tau - ysum) ~ sex + weight,
-              posbinomial(omit.constant = TRUE), data = deermice, trace = TRUE)
+              posbinomial(omit.constant = TRUE), data = deermice)
 max(abs(coef(M.h.1) - coef(M.h.3)))  # Should be zero
-logLik(M.h.3) - logLik(M.h.1)  # Difference is due to the binomial constants
+# Difference is due to the binomial constants:
+logLik(M.h.3) - logLik(M.h.1)
 }
 \keyword{models}
 \keyword{regression}
@@ -317,15 +334,19 @@ logLik(M.h.3) - logLik(M.h.1)  # Difference is due to the binomial constants
 
 
 %# Fit a M_tbh model:
-%pdata <- aux.posbernoulli.t(with(deermice, cbind(y1, y2, y3, y4, y5, y6)))  # Convenient
-%deermice <- data.frame(deermice, bei = 0, pdata$cap.hist1)  # Put all into 1 dataframe
-%head(deermice)  # Augmented with behavioural effect indicator variables
-%M.tbh.1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight + age + bei,
-%                posbernoulli.t(parallel.t = TRUE ~ sex + weight + age + bei - 1),
-%                data = deermice, trace = TRUE,
-%                xij = list(bei ~ bei1 + bei2 + bei3 + bei4 + bei5 + bei6 - 1),
-%                form2 = ~        bei1 + bei2 + bei3 + bei4 + bei5 + bei6 +
-%                           sex + weight + age + bei)
+%pdata <- aux.posbernoulli.t(with(deermice,
+%            cbind(y1, y2, y3, y4, y5, y6)))  # Convenient
+%# Put all into 1 dataframe:
+%deermice <- data.frame(deermice, bei = 0, pdata$cap.hist1)
+%# Augmented with behavioural effect indicator variables:
+%head(deermice)
+%M.tbh.1 <-
+%  vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight + age + bei,
+%  posbernoulli.t(parallel.t = TRUE ~sex+weight+age+bei - 1),
+%  data = deermice, trace = TRUE,
+%  xij = list(bei ~ bei1 + bei2 + bei3 + bei4 + bei5 + bei6 - 1),
+%  form2 = ~        bei1 + bei2 + bei3 + bei4 + bei5 + bei6 +
+%                  sex + weight + age + bei)
 %coef(M.tbh.1, matrix = TRUE)
 %head(deermice, 3)
 %head(model.matrix(M.tbh.1, type = "vlm"), 20)

@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Leipnik Regression Family Function}
 \description{
-  Estimates the two parameters of a (transformed) Leipnik distribution
-  by maximum likelihood estimation.
+  Estimates the two parameters of a (transformed) Leipnik
+  distribution by maximum likelihood estimation.
 
 
 }
@@ -15,7 +15,8 @@ leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmu, llambda}{
-  Link function for the \eqn{\mu}{mu} and \eqn{\lambda}{lambda} parameters.
+  Link function for the \eqn{\mu}{mu} and \eqn{\lambda}{lambda}
+  parameters.
   See \code{\link{Links}} for more choices.
 
 
@@ -41,19 +42,20 @@ leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
   and the variance is \eqn{1/\lambda}{1/lambda}.
 
 
-  Jorgensen (1997) calls the above the \bold{transformed} Leipnik
-  distribution, and if \eqn{y = (x+1)/2}
-  and \eqn{\mu = (\theta+1)/2}{mu = (theta+1)/2},
-  then the distribution of \eqn{X} as a function of
-  \eqn{x} and \eqn{\theta}{theta} is known as the the (untransformed)
-  Leipnik distribution.  Here, both \eqn{x} and \eqn{\theta}{theta}
-  are in \eqn{(-1, 1)}.
+  Jorgensen (1997) calls the above the \bold{transformed}
+  Leipnik distribution, and if \eqn{y = (x+1)/2} and \eqn{\mu =
+  (\theta+1)/2}{mu = (theta+1)/2}, then the distribution of \eqn{X}
+  as a function of \eqn{x} and \eqn{\theta}{theta} is known as the
+  the (untransformed) Leipnik distribution.  Here, both \eqn{x}
+  and \eqn{\theta}{theta} are in \eqn{(-1, 1)}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -77,20 +79,22 @@ leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
 \author{ T. W. Yee }
 \note{
   Convergence may be slow or fail.
-  Until better initial value estimates are forthcoming try assigning the
-  argument \code{ilambda} some numerical value if it fails to converge.
-  Currently, Newton-Raphson is implemented, not Fisher scoring.
-  Currently, this family function probably only really works for
-  intercept-only models, i.e., \code{y ~ 1} in the formula.
+  Until better initial value estimates are forthcoming try
+  assigning the argument \code{ilambda} some numerical value if it
+  fails to converge.  Currently, Newton-Raphson is implemented,
+  not Fisher scoring.  Currently, this family function probably
+  only really works for intercept-only models, i.e., \code{y ~
+  1} in the formula.
 
 
 }
 
 %\section{Warning }{
 % If \code{llambda="identitylink"} then it is possible that the
-% \code{lambda} estimate becomes less than \eqn{-1}, i.e., out of
-% bounds. One way to stop this is to choose \code{llambda = "loglink"},
-% however, \code{lambda} is then constrained to be positive.
+% \code{lambda} estimate becomes less than \eqn{-1}, i.e., out
+% of bounds. One way to stop this is to choose \code{llambda =
+% "loglink"}, however, \code{lambda} is then constrained to
+% be positive.
 
 
 %}
@@ -101,8 +105,8 @@ leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
 
 }
 \examples{
-ldata <- data.frame(y = rnorm(n = 2000, 0.5, 0.1))  # Improper data
-fit <- vglm(y ~ 1, leipnik(ilambda = 1), data = ldata, trace = TRUE)
+ldata <- data.frame(y = rnorm(2000, 0.5, 0.1))  # Improper data
+fit <- vglm(y ~ 1, leipnik(ilambda = 1), ldata, trace = TRUE)
 head(fitted(fit))
 with(ldata, mean(y))
 summary(fit)
@@ -115,14 +119,14 @@ sum(weights(fit, type = "work"))  # Sum of the working weights
 \keyword{models}
 \keyword{regression}
 
-%fit = vglm(y ~ 1, leipnik(ilambda = 1), tr=TRUE, cri="c", checkwz = FALSE)
+%vglm(y ~ 1, leipnik(ilambda = 1), tr=TRUE, cri="c", checkwz = FALSE)
 
 
-% leipnik(lmu = "logitlink", llambda = "loglink", imu=NULL, ilambda=NULL)
+% leipnik(lmu="logitlink", llambda="loglink", imu=NULL, ilambda=NULL)
 
 
-%fit <- vglm(y ~ 1, leipnik(ilambda = 1, llambda = logofflink(offset = 1)),
-%            data = ldata, trace = TRUE, crit = "coef")
-% fit <- vglm(y ~ 1, leipnik(ilambda=1), ldata, trace=TRUE, checkwz=FALSE)
+%fit=vglm(y~1,leipnik(ilambda=1,llambda=logofflink(offset=1)),
+%     data = ldata, trace = TRUE, crit = "coef")
+% fit=vglm(y~1, leipnik(ilambda=1), ldata, trace=TRUE, checkwz=FALSE)
 
 

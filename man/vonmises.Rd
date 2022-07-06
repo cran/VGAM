@@ -7,16 +7,19 @@
   von Mises distribution by maximum likelihood estimation.
 }
 \usage{
-vonmises(llocation = extlogitlink(min = 0, max = 2*pi), lscale = "loglink",
-         ilocation = NULL, iscale = NULL, imethod = 1, zero = NULL)
+vonmises(llocation = extlogitlink(min = 0, max = 2*pi),
+         lscale = "loglink", ilocation = NULL, iscale = NULL,
+         imethod = 1, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{llocation, lscale}{
-  Parameter link functions applied to the location \eqn{a} parameter
+    Parameter link functions applied to the
+    location \eqn{a} parameter
   and scale parameter \eqn{k}, respectively.
   See \code{\link{Links}} for more choices.
-  For \eqn{k}, a log link is the default because the parameter is positive.
+  For \eqn{k}, a log link is the default
+  because the parameter is positive.
 
   }
   \item{ilocation}{
@@ -35,7 +38,8 @@ vonmises(llocation = extlogitlink(min = 0, max = 2*pi), lscale = "loglink",
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} which
-  specifies the initialization method. If failure to converge occurs
+  specifies the initialization method. If failure
+  to converge occurs
   try the other value, or else specify a value for
   \code{ilocation} and \code{iscale}.
 
@@ -61,7 +65,8 @@ vonmises(llocation = extlogitlink(min = 0, max = 2*pi), lscale = "loglink",
 }
 \details{
   The (two-parameter) von Mises
-  is the most commonly used distribution in practice for circular data.
+  is the most commonly used distribution in practice
+  for circular data.
   It has a density that can be written as
   \deqn{f(y;a,k) = \frac{\exp[k\cos(y-a)]}{
       2\pi I_0(k)}}{%
@@ -84,8 +89,10 @@ vonmises(llocation = extlogitlink(min = 0, max = 2*pi), lscale = "loglink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -129,8 +136,9 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 \examples{
 vdata <- data.frame(x2 = runif(nn <- 1000))
-vdata <- transform(vdata, y = rnorm(nn, m = 2+x2, sd = exp(0.2)))  # Bad data!!
-fit <- vglm(y  ~ x2, vonmises(zero = 2), data = vdata, trace = TRUE)
+vdata <- transform(vdata,
+                   y = rnorm(nn, 2+x2, exp(0.2)))  # Bad data!!
+fit <- vglm(y  ~ x2, vonmises(zero = 2), vdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 with(vdata, range(y))  # Original data
@@ -139,7 +147,8 @@ range(depvar(fit))     # Processed data is in [0,2*pi)
 \keyword{models}
 \keyword{regression}
 
-%later an extended logit link \eqn{\eta_1=\log(a/(2\pi-a))}{eta1=log(a/(2*pi-a))}
+%later an extended logit link
+%\eqn{\eta_1=\log(a/(2\pi-a))}{eta1=log(a/(2*pi-a))}
 %might be provided for \eqn{\eta_1}{eta1}.
 %\eqn{\eta_1=a}{eta1=a} and
 

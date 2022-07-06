@@ -4,7 +4,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Truncated Weibull Distribution Family Function }
 \description{
-  Maximum likelihood estimation of the 2-parameter Weibull distribution
+  Maximum likelihood estimation of the
+  2-parameter Weibull distribution
   with lower truncation.
   No observations should be censored.
 
@@ -22,7 +23,8 @@ truncweibull(lower.limit = 1e-5,
     Positive lower truncation limits.
     Recycled to the same dimension as the response, going
     across rows first.
-    The default, being close to 0, should mean effectively the same
+    The default, being close to 0, should mean
+    effectively the same
     results as \code{\link{weibullR}} if there are no response
     values that are smaller.
 
@@ -53,7 +55,8 @@ truncweibull(lower.limit = 1e-5,
 \details{
   MLE of the two parameters of the Weibull distribution are
   computed, subject to lower truncation.
-  That is, all response values are greater than \code{lower.limit},
+  That is, all response values are greater
+  than \code{lower.limit},
   element-wise.
   For a particular observation this is any known positive value.
   This function is currently based directly on
@@ -65,7 +68,8 @@ truncweibull(lower.limit = 1e-5,
   \code{\link[stats:Weibull]{dweibull}}.
 
 
-% More details about the Weibull density are \code{\link{weibullR}}.
+  % More details about the Weibull density are
+  %\code{\link{weibullR}}.
 
 
   Upon fitting the \code{extra} slot has a component called
@@ -78,8 +82,10 @@ truncweibull(lower.limit = 1e-5,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -108,11 +114,13 @@ truncweibull(lower.limit = 1e-5,
   two interpretations of a formula; but it seems to work).
   Convergence is slower than usual and this may imply something
   is wrong; use argument \code{maxit}.
-  In fact, it's probably because \code{\link{pgamma.deriv.unscaled}} is
+  In fact, it's probably
+  because \code{\link{pgamma.deriv.unscaled}} is
   inaccurate at \code{q = 1} and \code{q = 2}.
   Also,
   convergence should be monitored, especially if the truncation
-  means that a large proportion of the data is lost compared to an
+  means that a large proportion of the data is lost
+  compared to an
   ordinary Weibull distribution.
 
 }
@@ -129,20 +137,22 @@ truncweibull(lower.limit = 1e-5,
 nn <- 5000; prop.lost <- 0.40   # Proportion lost to truncation
 wdata <- data.frame(x2 = runif(nn))  # Complete Weibull data
 wdata <- transform(wdata,
-                   Betaa = exp(1))  # > 2 is okay (satisfies regularity conds)
+         Betaa = exp(1))  # > 2 okay (satisfies regularity conds)
 wdata <- transform(wdata, Alpha = exp(0.5 - 1 * x2))
 wdata <- transform(wdata, Shape = Betaa,
 #                         aaa   = Betaa,
 #                         bbb   = 1 / Alpha^(1 / Betaa),
                           Scale = 1 / Alpha^(1 / Betaa))
-wdata <- transform(wdata, y2 = rweibull(nn, shape = Shape, scale = Scale))
+wdata <- transform(wdata, y2 = rweibull(nn, Shape, scale = Scale))
 summary(wdata)
 
-lower.limit2 <- with(wdata, quantile(y2, prob = prop.lost))  # Proportion lost
-wdata <- subset(wdata, y2 > lower.limit2)  # Smaller due to truncation
+# Proportion lost:
+lower.limit2 <- with(wdata, quantile(y2, prob = prop.lost))
+# Smaller due to truncation:
+wdata <- subset(wdata, y2 > lower.limit2)
 
 fit1 <- vglm(y2 ~ x2, maxit = 100, trace = TRUE,
-             truncweibull(lower.limit = lower.limit2), data = wdata)
+             truncweibull(lower.limit = lower.limit2), wdata)
 coef(fit1, matrix = TRUE)
 summary(fit1)
 vcov(fit1)

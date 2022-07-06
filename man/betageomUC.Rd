@@ -36,7 +36,8 @@ rbetageom(n, shape1, shape2)
   }
   \item{log, log.p}{
   Logical.
-  If \code{TRUE} then all probabilities \code{p} are given as \code{log(p)}.
+  If \code{TRUE} then all probabilities \code{p} are given as
+  \code{log(p)}.
 
 
   }
@@ -54,11 +55,12 @@ rbetageom(n, shape1, shape2)
 \author{ T. W. Yee }
 \details{
   The beta-geometric distribution is a geometric distribution whose
-  probability of success is not a constant but it is generated from a
-  beta distribution with parameters \code{shape1} and \code{shape2}.
-  Note that the mean of this beta distribution is
-  \code{shape1/(shape1+shape2)}, which therefore is the
-  mean of the probability of success.
+  probability of success is not a constant but it is generated
+  from a beta distribution with parameters \code{shape1} and
+  \code{shape2}.  Note that the mean of this beta distribution
+  is \code{shape1/(shape1+shape2)}, which therefore is the mean
+  of the probability of success.
+
 
 
 % See zz code{link{betageomzz}}, the \pkg{VGAM} family function
@@ -82,8 +84,8 @@ rbetageom(n, shape1, shape2)
 \dontrun{
 shape1 <- 1; shape2 <- 2; y <- 0:30
 proby <- dbetageom(y, shape1, shape2, log = FALSE)
-plot(y, proby, type = "h", col = "blue", ylab = "P[Y=y]", main = paste(
-     "Y ~ Beta-geometric(shape1=", shape1,", shape2=", shape2, ")", sep = ""))
+plot(y, proby, type = "h", col = "blue", ylab = "P[Y=y]", main = paste0(
+     "Y ~ Beta-geometric(shape1=", shape1,", shape2=", shape2, ")"))
 sum(proby)
 }
 }

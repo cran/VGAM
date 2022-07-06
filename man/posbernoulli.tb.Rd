@@ -2,23 +2,26 @@
 %\alias{posbernoulli}
 \alias{posbernoulli.tb}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Positive Bernoulli Family Function with Time and Behavioural Effects }
+\title{ Positive Bernoulli Family Function with Time and
+Behavioural Effects }
+
 \description{
   Fits a GLM/GAM-like model to multiple
   Bernoulli responses where
-  each row in the capture history matrix response has at least one success
-  (capture).
-  Sampling occasion effects and behavioural effects are accommodated.
+  each row in the capture history matrix response has at least
+  one success (capture).
+  Sampling occasion effects and behavioural effects are
+  accommodated.
 
 
 }
 \usage{
 posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
-                parallel.b = FALSE ~ 0, drop.b = FALSE ~ 1,
-                type.fitted = c("likelihood.cond", "mean.uncond"),
-                imethod = 1, iprob = NULL,
-                p.small = 1e-4, no.warning = FALSE,
-                ridge.constant = 0.0001, ridge.power = -4)
+   parallel.b = FALSE ~ 0, drop.b = FALSE ~ 1,
+   type.fitted = c("likelihood.cond", "mean.uncond"),
+   imethod = 1, iprob = NULL,
+   p.small = 1e-4, no.warning = FALSE,
+   ridge.constant = 0.0001, ridge.power = -4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,31 +38,34 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
   The \code{parallel.}-type arguments
   specify whether the constraint matrices have a parallelism
   assumption for the temporal and behavioural effects.
-  Argument \code{parallel.t} means parallel with respect to time, and
-  matches the same argument name in \code{\link{posbernoulli.t}}.
+  Argument \code{parallel.t} means parallel with
+  respect to time, and matches the same argument name in
+  \code{\link{posbernoulli.t}}.
 
 
   Suppose the model is intercept-only.
-  Setting \code{parallel.t = FALSE ~ 0} results in the \eqn{M_b} model.
-  Setting \code{drop.b = FALSE ~ 0} results in the \eqn{M_t} model
-  because it drops columns off the constraint matrices corresponding
-  to any behavioural effect.
+  Setting \code{parallel.t = FALSE ~ 0} results in the \eqn{M_b}
+  model.
+  Setting \code{drop.b = FALSE ~ 0} results in the \eqn{M_t}
+  model because it drops columns off the constraint matrices
+  corresponding to any behavioural effect.
   Setting \code{parallel.t = FALSE ~ 0} and
-  setting \code{parallel.b = FALSE ~ 0} results in the \eqn{M_b} model.
+  setting \code{parallel.b = FALSE ~ 0} results in the \eqn{M_b}
+  model.
   Setting \code{parallel.t = FALSE ~ 0},
           \code{parallel.b = FALSE ~ 0} and
           \code{drop.b = FALSE ~ 0} results in the \eqn{M_0} model.
   Note the default for \code{parallel.t} and \code{parallel.b}
   may be unsuitable for data sets which have a large \eqn{\tau}
-  because of the large number of parameters; it might be too flexible.
-  If it is desired to have the behaviour affect some of
-  the other covariates then set \code{drop.b = TRUE ~ 0}.
+  because of the large number of parameters; it might be too
+  flexible.  If it is desired to have the behaviour affect some
+  of the other covariates then set \code{drop.b = TRUE ~ 0}.
 
 
   The default model has a different intercept for each
-  sampling occasion, a time-parallelism assumption for all other covariates,
-  and a dummy variable representing a
-  single behavioural effect (also in the intercept).
+  sampling occasion, a time-parallelism assumption for all
+  other covariates, and a dummy variable representing a single
+  behavioural effect (also in the intercept).
 
 
   The most flexible model is to set
@@ -67,13 +73,14 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
   \code{parallel.t = TRUE  ~ 0} and
   \code{drop.b = TRUE ~ 0}.
   This means that all possible temporal and behavioural effects are
-  estimated, for the intercepts and other covariates.
-  Such a model is \emph{not} recommended; it will contain a lot of paramters.
+  estimated, for the intercepts and other covariates.  Such a model
+  is \emph{not} recommended; it will contain a lot of paramters.
 
 
   }
   \item{type.fitted}{
-  Character, one of the choices for the type of fitted value returned.
+  Character, one of the choices for the type of fitted value
+  returned.
   The default is the first one.
   Partial matching is okay.
   For \code{"likelihood.cond"}:
@@ -86,17 +93,20 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
   }
   \item{ridge.constant, ridge.power}{
   Determines the ridge parameters at each IRLS iteration.
-  They are the constant and power (exponent) for the ridge adjustment
-  for the working weight matrices (the capture probability block
-  matrix, hence the first \eqn{\tau} diagonal values).
+  They are the constant and power (exponent) for the ridge
+  adjustment for the working weight matrices (the capture
+  probability block matrix, hence the first \eqn{\tau} diagonal
+  values).
   At iteration \eqn{a} of the IRLS algorithm
   a positive value is added to the first \eqn{\tau}{tau}
   diagonal elements of the working weight matrices to make
   them positive-definite. This adjustment is the
   mean of the diagonal elements of \code{wz} multipled by
   \eqn{K \times a^p}{K * a^p}
-  where \eqn{K} is \code{ridge.constant} and \eqn{p} is \code{ridge.power}.
-  This is always positive but decays to zero as iterations proceed
+  where \eqn{K} is \code{ridge.constant} and \eqn{p} is
+  \code{ridge.power}.
+  This is always positive but decays to zero as
+  iterations proceed
   (provided \eqn{p} is negative etc.).
 
 
@@ -111,8 +121,10 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
 }
 \details{
   This model
-  (commonly known as \eqn{M_{tb}}/\eqn{M_{tbh}} in the capture--recapture literature)
-  operates on a response matrix of 0s and 1s (\eqn{n \times \tau}{n x tau}).
+  (commonly known as \eqn{M_{tb}}/\eqn{M_{tbh}}
+  in the capture--recapture literature)
+  operates on a response matrix of 0s and 1s
+  (\eqn{n \times \tau}{n x tau}).
   See \code{\link{posbernoulli.t}}
   for information that is in common.
   It allows time and behavioural effects to be modelled.
@@ -123,16 +135,22 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
   of full rank (especially in early iterations), so
   \code{ridge.constant} and \code{ridge.power} are used to
   \emph{try} fix up the problem.
-  The default link functions
-  are \eqn{(logit \,p_{c1},\ldots,logit \,p_{c\tau},logit \,p_{r2},\ldots,logit \,p_{r\tau})^T}{
-           (logit p_{c1},\ldots,logit p_{c,tau},logit p_{r2},\ldots,logit p_{r,tau})^T}
+  The default link functions are
+\eqn{(logit \,p_{c1},\ldots,logit \,
+p_{c\tau},logit \,p_{r2},\ldots,logit \,p_{r\tau})^T}{
+(logit p_{c1},\ldots,logit p_{c,tau},
+logit p_{r2},\ldots,logit p_{r,tau})^T}
   where the subscript \eqn{c} denotes capture,
         the subscript \eqn{r} denotes recapture,
-  and it is not possible to recapture the animal at sampling occasion 1.
+  and it is not possible to recapture the animal at sampling
+  occasion 1.
   Thus \eqn{M = 2\tau - 1}{M=2*tau-1}.
-  The parameters are currently prefixed by \code{pcapture} and \code{precapture}
+  The parameters are currently prefixed by \code{pcapture}
+  and \code{precapture}
   for the capture and recapture probabilities.
-  This \pkg{VGAM} family function may be further modified in the future.
+  This \pkg{VGAM} family function may be further modified in
+  the future.
+
 
 
 % Not surprisingly,
@@ -142,8 +160,10 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -157,17 +177,19 @@ posbernoulli.tb(link = "logitlink", parallel.t = FALSE ~ 1,
 \author{ Thomas W. Yee. }
 
 \note{
-  It is a good idea to apply the parallelism assumption to each sampling
-  occasion except possibly with respect to the intercepts.
-  Also, a simple behavioural effect such as being modelled using the intercept
-  is recommended; if the behavioural effect is not parallel and/or
-  allowed to apply to other covariates
+  It is a good idea to apply the parallelism assumption to each
+  sampling occasion except possibly with respect to the intercepts.
+  Also, a simple behavioural effect such as being modelled
+  using the intercept is recommended; if the behavioural effect
+  is not parallel and/or allowed to apply to other covariates
   then there will probably be too many parameters, and hence,
   numerical problems. See \code{M_tbh.1} below.
 
 
-%Data-wise, at each sampling occasion, the \eqn{M_{tb}} model requires at least
-%one first capture and at least one noncapture.
+
+%Data-wise, at each sampling occasion, the \eqn{M_{tb}} model
+% requires at least one first capture and at least one noncapture.
+
 
 
 % If not all of the \eqn{2^{\tau}-1}{2^(tau) - 1} combinations of
@@ -225,7 +247,7 @@ M_tbh.1 <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
 coef(M_tbh.1)  # First element is the behavioural effect
 coef(M_tbh.1, matrix = TRUE)
 constraints(M_tbh.1, matrix = TRUE)
-summary(M_tbh.1, presid = FALSE)  # Standard errors are approximate
+summary(M_tbh.1, presid = FALSE)  # Std errors are approximate
 head(fitted(M_tbh.1))
 head(model.matrix(M_tbh.1, type = "vlm"), 21)
 dim(depvar(M_tbh.1))
@@ -236,7 +258,7 @@ M_tbh.2 <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
 coef(M_tbh.2)  # First element is the behavioural effect
 coef(M_tbh.2, matrix = TRUE)
 constraints(M_tbh.2, matrix = TRUE)
-summary(M_tbh.2, presid = FALSE)  # Standard errors are approximate
+summary(M_tbh.2, presid = FALSE)  # Std errors are approximate
 head(fitted(M_tbh.2))
 head(model.matrix(M_tbh.2, type = "vlm"), 21)
 dim(depvar(M_tbh.2))
@@ -252,7 +274,7 @@ summary(fit1, presid = FALSE)  # Standard errors are approximate
 # fit1 is the same as Fit1 (a M_{th} model):
 Fit1 <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
              posbernoulli.tb(drop.b = TRUE ~ sex + weight,
-                             parallel.t = TRUE),  # No parallelism for the intercept
+                parallel.t = TRUE),  # But not for the intercept
              data = deermice, trace = TRUE)
 constraints(Fit1)
 }
@@ -291,8 +313,10 @@ constraints(Fit1)
 %}
 
 %yyy <- depvar(fit1)
-%if (length(table(4 * yyy[, 1] + 2 * yyy[, 2] + 1 * yyy[, 3])) != 2^(ncol(yyy)) - 1)
-%  warning("not every combination is represented by a row in the response matrix")
+%if (length(table(4 * yyy[, 1] + 2 * yyy[, 2] + 1 * yyy[, 3]))
+%    != 2^(ncol(yyy)) - 1)
+%  warning("not every combination is represented by ",
+%          "a row in the response matrix")
 
 
 % 20181020; was this for a long time until now:

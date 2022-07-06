@@ -22,8 +22,12 @@
   these are based on
   finite mixtures of the parent with itself
   and the multinomial logit model (MLM) respectively.
-  Altogether it can be abbreviated as
-  GAAIITDD--Log(shape.p)--Log(shape.a)--MLM--Log(shape.i)--MLM--Log(shape.d)--MLM.
+
+
+
+% Altogether it can be abbreviated as
+% GAAIITDD--Log(shape.p)--Log(shape.a)--MLM--
+% Log(shape.i)--MLM--Log(shape.d)--MLM.
 
 
 

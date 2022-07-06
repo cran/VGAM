@@ -3,14 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Bivariate Gamma: McKay's Distribution }
 \description{
-  Estimate the three parameters of McKay's bivariate gamma distribution
-  by maximum likelihood estimation.
+  Estimate the three parameters of McKay's bivariate gamma
+  distribution by maximum likelihood estimation.
 
 }
 \usage{
-bigamma.mckay(lscale = "loglink", lshape1 = "loglink", lshape2 = "loglink",
-              iscale = NULL, ishape1 = NULL, ishape2 = NULL,
-              imethod = 1, zero = "shape")
+bigamma.mckay(lscale = "loglink", lshape1 = "loglink",
+              lshape2 = "loglink", iscale = NULL, ishape1 = NULL,
+              ishape2 = NULL, imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,8 +22,8 @@ bigamma.mckay(lscale = "loglink", lshape1 = "loglink", lshape2 = "loglink",
 
   }
   \item{iscale, ishape1, ishape2}{
-  Optional initial values for \eqn{a}, \eqn{p} and \eqn{q} respectively.
-  The default is to compute them internally.
+  Optional initial values for \eqn{a}, \eqn{p} and \eqn{q}
+  respectively.  The default is to compute them internally.
 
 
   }
@@ -51,21 +51,22 @@ bigamma.mckay(lscale = "loglink", lshape1 = "loglink", lshape2 = "loglink",
   \eqn{\eta_3=\log(q)}{eta3=log(q)}.
 
 
-  The marginal distributions are gamma, with shape parameters \eqn{p} and
-  \eqn{p+q} respectively, but they have a common scale parameter \eqn{a}.
-  Pearson's product-moment correlation coefficient of
-  \eqn{y_1}{y1} and \eqn{y_2}{y2} is
-  \eqn{\sqrt{p/(p+q)}}{sqrt(p/(p+q))}.
-  This distribution is also known as the bivariate Pearson type III
-  distribution.
-  Also, \eqn{Y_2 - y_1}{Y2 - y1}, conditional on \eqn{Y_1=y_1}{Y1=y1},
+  The marginal distributions are gamma, with shape parameters
+  \eqn{p} and \eqn{p+q} respectively, but they have a
+  common scale parameter \eqn{a}.  Pearson's product-moment
+  correlation coefficient of \eqn{y_1}{y1} and \eqn{y_2}{y2} is
+  \eqn{\sqrt{p/(p+q)}}{sqrt(p/(p+q))}.  This distribution is also
+  known as the bivariate Pearson type III distribution.  Also,
+  \eqn{Y_2 - y_1}{Y2 - y1}, conditional on \eqn{Y_1=y_1}{Y1=y1},
   has a gamma distribution with shape parameter \eqn{q}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 }
@@ -81,7 +82,8 @@ Sampling from batches.
 
 
 Kotz, S. and Balakrishnan, N. and Johnson, N. L. (2000).
-\emph{Continuous Multivariate Distributions Volume 1: Models and Applications},
+\emph{Continuous Multivariate Distributions Volume 1:
+      Models and Applications},
 2nd edition,
 New York: Wiley.
 
@@ -95,8 +97,8 @@ New York: Springer.
 }
 \author{ T. W. Yee }
 \note{
-  The response must be a two column matrix where the first column is
-  \eqn{y_1}{y1} and the second \eqn{y_2}{y2}.
+  The response must be a two column matrix where the first column
+  is \eqn{y_1}{y1} and the second \eqn{y_2}{y2}.
   It is necessary that each element of the vectors \eqn{y_1}{y1}
   and
   \eqn{y_2-y_1}{y2-y1} be positive.
@@ -123,10 +125,10 @@ New York: Springer.
 }
 \examples{
 shape1 <- exp(1); shape2 <- exp(2); scalepar <- exp(3)
-mdata <- data.frame(y1 = rgamma(nn <- 1000, shape = shape1, scale = scalepar))
-mdata <- transform(mdata, zedd = rgamma(nn, shape = shape2, scale = scalepar))
-mdata <- transform(mdata, y2 = y1 + zedd)  # Z is defined as Y2-y1|Y1=y1
-fit <- vglm(cbind(y1, y2) ~ 1, bigamma.mckay, data = mdata, trace = TRUE)
+mdata <- data.frame(y1 = rgamma(nn <- 1000, shape1, scale = scalepar))
+mdata <- transform(mdata, zedd = rgamma(nn, shape2, scale = scalepar))
+mdata <- transform(mdata, y2 = y1 + zedd)  # Z defined as Y2-y1|Y1=y1
+fit <- vglm(cbind(y1, y2) ~ 1, bigamma.mckay, mdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 vcov(fit)

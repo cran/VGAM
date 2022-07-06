@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Logit-with-an-Offset Link Function }
 \description{
-  Computes the logitoffsetlink transformation, including its inverse and the
-  first two derivatives.
+  Computes the logitoffsetlink transformation, including its
+  inverse and the first two derivatives.
 
 }
 \usage{
@@ -55,14 +55,15 @@ logitoffsetlink(theta, offset = 0, inverse = FALSE, deriv = 0,
 
 
 
-  For \code{deriv = 1}, then the function returns
-  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
+  For \code{deriv = 1}, then the function returns \emph{d}
+  \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
 
 
-  Here, all logarithms are natural logarithms, i.e., to base \emph{e}.
+  Here, all logarithms are natural logarithms, i.e., to base
+  \emph{e}.
 
 
 }
@@ -93,7 +94,7 @@ logitoffsetlink(theta, offset = 0, inverse = FALSE, deriv = 0,
 p <- seq(0.05, 0.99, by = 0.01); myoff <- 0.05
 logitoffsetlink(p, myoff)
 max(abs(logitoffsetlink(logitoffsetlink(p, myoff),
-                        myoff, inverse = TRUE) - p))  # Should be 0
+        myoff, inverse = TRUE) - p))  # Should be 0
 }
 \keyword{math}
 \keyword{models}

@@ -33,8 +33,10 @@
   }
 }
 \details{
-  These were collected from the Waitakere Ranges, a small forest in northern
-  Auckland, New Zealand. At 579 sites in the forest, the presence/absence
+  These were collected from the Waitakere Ranges,
+  a small forest in northern
+  Auckland, New Zealand. At 579 sites in the forest,
+  the presence/absence
   of 17 plant species was recorded, as well as the altitude.
   Each site was of area size 200\eqn{m^2}{m^2}.
 

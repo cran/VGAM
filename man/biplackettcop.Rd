@@ -3,14 +3,15 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Plackett's Bivariate Copula Family Function }
 \description{
-  Estimate the association parameter of Plackett's bivariate distribution
-  (copula)
+  Estimate the association parameter of Plackett's bivariate
+  distribution (copula)
   by maximum likelihood estimation.
 
 
 }
 \usage{
-biplackettcop(link = "loglink", ioratio = NULL, imethod = 1, nsimEIM = 200)
+biplackettcop(link = "loglink", ioratio = NULL, imethod = 1,
+              nsimEIM = 200)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,7 +24,8 @@ biplackettcop(link = "loglink", ioratio = NULL, imethod = 1, nsimEIM = 200)
   }
   \item{ioratio}{
   Numeric. Optional initial value for \eqn{\psi}{psi}.
-  If a convergence failure occurs try assigning a value or a different value.
+  If a convergence failure occurs try assigning a value or a
+  different value.
 
 
   }
@@ -38,8 +40,8 @@ biplackettcop(link = "loglink", ioratio = NULL, imethod = 1, nsimEIM = 200)
   \deqn{\psi = H \times (1-y_1-y_2+H) / ((y_1-H) \times (y_2-H))}{%
          psi = H*(1-y1-y2+H) / ((y1-H)*(y2-H))}
   where
-  \eqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = H_{\psi}(y_1,y_2)}{P(Y1 <= y1, Y2 <= y2)=
-       H(y1,y2)}
+\eqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = H_{\psi}(y_1,y_2)}{P(Y1 <= y1,
+       Y2 <= y2)= H(y1,y2)}
   is the cumulative distribution function.
   The density function is \eqn{h_{\psi}(y_1,y_2) =}{h(y1,y2) =}
   \deqn{\psi [1 + (\psi-1)(y_1 + y_2 - 2 y_1 y_2) ] / \left(
@@ -69,8 +71,10 @@ biplackettcop(link = "loglink", ioratio = NULL, imethod = 1, nsimEIM = 200)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -89,9 +93,8 @@ A class of bivariate distributions.
 \author{ T. W. Yee }
 \note{
   The response must be a two-column matrix.  Currently, the fitted
-  value is a 2-column matrix with 0.5 values
-  because the marginal distributions correspond to a standard
-  uniform distribution.
+  value is a 2-column matrix with 0.5 values because the marginal
+  distributions correspond to a standard uniform distribution.
 
 
 }

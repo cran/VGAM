@@ -7,15 +7,16 @@
   Dagum distribution.
 }
 \usage{
-dagum(lscale = "loglink", lshape1.a = "loglink", lshape2.p = "loglink",
-      iscale = NULL, ishape1.a = NULL, ishape2.p = NULL, imethod = 1,
-      lss = TRUE, gscale = exp(-5:5), gshape1.a = seq(0.75, 4, by = 0.25),
-      gshape2.p = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = "shape")
-}
-%- maybe also 'usage' for other objects documented here.
-%     zero = ifelse(lss, -(2:3), -c(1, 3))
+dagum(lscale = "loglink", lshape1.a = "loglink", lshape2.p =
+      "loglink", iscale = NULL, ishape1.a = NULL, ishape2.p =
+      NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5), gshape1.a
+      = seq(0.75, 4, by = 0.25), gshape2.p = exp(-5:5), probs.y =
+      c(0.25, 0.5, 0.75), zero = "shape")
+} %- maybe also 'usage' for other objects documented here.  %
+% zero = ifelse(lss, -(2:3), -c(1, 3))
 \arguments{
-  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for
+  important information.
 
 
   }
@@ -49,11 +50,11 @@ dagum(lscale = "loglink", lshape1.a = "loglink", lshape2.p = "loglink",
 \details{
   The 3-parameter Dagum distribution is the 4-parameter
   generalized beta II distribution with shape parameter \eqn{q=1}.
-It is known under various other names, such as the Burr III, inverse Burr,
-beta-K, and 3-parameter kappa distribution.
+It is known under various other names, such as the Burr III,
+inverse Burr, beta-K, and 3-parameter kappa distribution.
 It can be considered a generalized log-logistic distribution.
-Some distributions which are special cases of the 3-parameter Dagum
-are the inverse Lomax (\eqn{a=1}), Fisk (\eqn{p=1}),
+Some distributions which are special cases of the 3-parameter
+Dagum are the inverse Lomax (\eqn{a=1}), Fisk (\eqn{p=1}),
 and the inverse paralogistic (\eqn{a=p}).
   More details can be found in Kleiber and Kotz (2003).
 
@@ -68,17 +69,18 @@ which leads to a probability density function
 Here, \eqn{b} is the scale parameter \code{scale},
 and the others are shape parameters.
 The mean is
-  \deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(1 - 1/a) / \Gamma(p)}{%
-        E(Y) = b  gamma(p + 1/a)  gamma(1 - 1/a) /  gamma(p)}
-provided \eqn{-ap < 1 < a}; these are returned as the fitted values.
-This family function handles multiple responses.
+\deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(1 - 1/a) / \Gamma(p)}{%
+      E(Y) = b  gamma(p + 1/a)  gamma(1 - 1/a) /  gamma(p)}
+provided \eqn{-ap < 1 < a}; these are returned as the fitted
+values.  This family function handles multiple responses.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions such as
+  \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 }
@@ -97,26 +99,26 @@ Hoboken, NJ, USA: Wiley-Interscience.
   See the notes in \code{\link{genbetaII}}.
 
 
-From Kleiber and Kotz (2003), the MLE is rather sensitive to isolated
-observations located sufficiently far from the majority of the data.
-Reliable estimation of the scale parameter require \eqn{n>7000},
-while estimates for \eqn{a} and \eqn{p} can be considered unbiased for
-\eqn{n>2000} or 3000.
+From Kleiber and Kotz (2003), the MLE is rather sensitive to
+isolated observations located sufficiently far from the majority
+of the data.  Reliable estimation of the scale parameter require
+\eqn{n>7000}, while estimates for \eqn{a} and \eqn{p} can be
+considered unbiased for \eqn{n>2000} or 3000.
 
 
 }
 
 \seealso{
-    \code{\link{Dagum}},
-    \code{\link{genbetaII}},
-    \code{\link{betaII}},
-    \code{\link{sinmad}},
-    \code{\link{fisk}},
-    \code{\link{inv.lomax}},
-    \code{\link{lomax}},
-    \code{\link{paralogistic}},
-    \code{\link{inv.paralogistic}},
-    \code{\link{simulate.vlm}}.
+  \code{\link{Dagum}},
+  \code{\link{genbetaII}},
+  \code{\link{betaII}},
+  \code{\link{sinmad}},
+  \code{\link{fisk}},
+  \code{\link{inv.lomax}},
+  \code{\link{lomax}},
+  \code{\link{paralogistic}},
+  \code{\link{inv.paralogistic}},
+  \code{\link{simulate.vlm}}.
 
 
 }

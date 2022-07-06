@@ -9,7 +9,7 @@
 }
 \usage{
 laplace(llocation = "identitylink", lscale = "loglink",
-        ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
+  ilocation = NULL, iscale = NULL, imethod = 1, zero = "scale")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -57,17 +57,20 @@ laplace(llocation = "identitylink", lscale = "loglink",
   about \eqn{a}.
 
 
-  For \code{y ~ 1} (where \code{y} is the response) the maximum likelihood
-  estimate (MLE) for the location parameter is the sample median, and
-  the MLE for \eqn{b} is \code{mean(abs(y-location))} (replace
-  location by its MLE if unknown).
+  For \code{y ~ 1} (where \code{y} is the response)
+  the maximum likelihood estimate (MLE) for the location
+  parameter is the sample median, and the MLE for \eqn{b} is
+  \code{mean(abs(y-location))} (replace location by its MLE
+  if unknown).
 
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -86,11 +89,10 @@ Boston: Birkhauser.
 \author{ T. W. Yee }
 \section{Warning}{
   This family function has not been fully tested.
-  The MLE regularity conditions do \emph{not} hold for this distribution,
-  therefore misleading inferences may result,
-  e.g., in the \code{summary} and \code{vcov} of the object.
-  Hence this family function might be withdrawn from \pkg{VGAM}
-  in the future.
+  The MLE regularity conditions do \emph{not} hold for this
+  distribution, therefore misleading inferences may result, e.g.,
+  in the \code{summary} and \code{vcov} of the object.  Hence this
+  family function might be withdrawn from \pkg{VGAM} in the future.
 
 
 
@@ -105,7 +107,8 @@ Boston: Birkhauser.
 
 \seealso{
 \code{\link{rlaplace}},
-\code{\link{alaplace2}} (which differs slightly from this parameterization),
+\code{\link{alaplace2}}
+(which differs slightly from this parameterization),
 \code{\link{exponential}},
 \code{\link[stats]{median}}.
 
@@ -113,15 +116,15 @@ Boston: Birkhauser.
 }
 
 \examples{
-ldata <- data.frame(y = rlaplace(nn <- 100, loc = 2, scale = exp(1)))
-fit <- vglm(y  ~ 1, laplace, data = ldata, trace = TRUE, crit = "l")
+ldata <- data.frame(y = rlaplace(nn <- 100, 2, scale = exp(1)))
+fit <- vglm(y  ~ 1, laplace, ldata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 with(ldata, median(y))
 
 ldata <- data.frame(x = runif(nn <- 1001))
-ldata <- transform(ldata, y = rlaplace(nn, loc = 2, scale = exp(-1 + 1*x)))
-coef(vglm(y ~ x, laplace(iloc = 0.2, imethod = 2, zero = 1), data = ldata,
+ldata <- transform(ldata, y = rlaplace(nn, 2, scale = exp(-1 + 1*x)))
+coef(vglm(y ~ x, laplace(iloc = 0.2, imethod = 2, zero = 1), ldata,
           trace = TRUE), matrix = TRUE)
 }
 \keyword{models}

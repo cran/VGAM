@@ -11,7 +11,8 @@
 \description{
   Fits a generally--altered, --inflated --truncated and deflated
   Poisson regression by MLE.
-  The GAITD combo model having 7 types of special values is implemented.
+  The GAITD combo model having 7 types of special values
+  is implemented.
   This allows mixtures of Poissons on nested and/or partitioned
   support as well as a multinomial logit model for
   (nonparametric) altered, inflated and deflated values.
@@ -55,7 +56,8 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
     the seven sets must be mutually disjoint.
     Argument \code{max.support} enables RHS-truncation,
     i.e., something equivalent to
-    \code{truncate = (U+1):Inf} for some upper support point \code{U}
+    \code{truncate = (U+1):Inf} for some
+    upper support point \code{U}
     specified by \code{max.support}.
 
 
@@ -119,7 +121,8 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
     
 
-% 20200828; decided against this: too stringent; Keyword: li.mix.eq.1.
+% 20200828; decided against this: too stringent;
+%   Keyword: li.mix.eq.1.
 %   For identifiability, \code{length(a.mix) != 1}
 %   and \code{length(i.mix) != 1} are needed.
 %   To handle a single special value,
@@ -166,8 +169,10 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
 
 %\emph{Note:} \code{i.mix}
-%\emph{must be assigned a 2-vector or more for this function to work}.
-%  Both arguments must have unique values only, and no values in common.
+%\emph{must be assigned a 2-vector or more for
+%  this function to work}.
+%  Both arguments must have unique values only,
+%  and no values in common.
 %  In contrast, \code{truncate} may be a \code{NULL},
 %  which stands for an empty set.
 
@@ -226,10 +231,12 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
     Single logical each.
     Constrain the rate parameters to be equal?
     See \code{\link{CommonVGAMffArguments}} for information.
-    Having all three arguments \code{TRUE} gives greater stability in
+    Having all three arguments \code{TRUE} gives
+    greater stability in
     the estimation because of fewer parameters and therefore
     fewer initial values needed,
-    however if so then one should try relax some of the arguments later.
+    however if so then one should try relax some of
+    the arguments later.
 
 
     
@@ -286,7 +293,12 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
     unconditional mean.
     Choosing an irrelevant value may result in
     an \code{NA} being returned and a warning, e.g.,
-    \code{"pstr.mlm"} for a GAT--MLM model.
+    \code{"pstr.mlm"} for a nonparametric GAT model.
+
+
+
+%   \code{"pstr.mlm"} for a GAT--MLM model.
+
 
 
 
@@ -316,13 +328,16 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
     
 
-%The choice \code{"pnotAT"} is the denominator of one of the terms of
-%the mean; it is one minus the sum of the parent PMF evaluated over
-%values of \code{a.mix} and \code{truncate}.
+    %The choice \code{"pnotAT"} is the denominator of
+    %one of the terms of
+    %the mean; it is one minus the sum of the
+    % parent PMF evaluated over
+    %values of \code{a.mix} and \code{truncate}.
 
 
 
-%  The choice \code{"pobs.mix"} is the probability of an altered value,
+%  The choice \code{"pobs.mix"} is the
+%  probability of an altered value,
 %  and \code{"onempobs.mix"} is its complement.
 %  See below for more details.
 
@@ -331,10 +346,12 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
    at \code{max.support} using the parent distribution,
    e.g., \code{ppois(max.support, lambda.p)} for
    \code{\link{gaitdpoisson}}.
-   The value should be 1 if \code{max.support = Inf} (the default).
+   The value should be 1 if \code{max.support = Inf}
+   (the default).
    The choice \code{"nonspecial"} is the probability of a
    nonspecial value.
-   The choices \code{"Denom.p"} and \code{"Numer"} are quantities
+   The choices \code{"Denom.p"} and \code{"Numer"}
+   are quantities
    found in the GAITD combo PMF and are for convenience only.
 
 
@@ -513,7 +530,7 @@ The other three \code{"sum.m*"} arguments are similar.
 }
 \details{
   The full
-  GAITD--Pois--Pois--MLM--Pois-MLM--Pois-MLM  combo model
+  GAITD--Pois combo model
   may be fitted with this family function.
   There are seven types of special values and all arguments for these
   may be used in a single model.
@@ -527,9 +544,13 @@ The other three \code{"sum.m*"} arguments are similar.
 
     
 
+% GAITD--Pois--Pois--MLM--Pois-MLM--Pois-MLM  combo model
+
+
+
   
-  The order of the linear/additive predictors is best explained by
-  an example.
+The order of the linear/additive predictors is best
+explained by an example.
   Suppose a combo model has
   \code{length(a.mix) > 2} and
   \code{length(i.mix) > 2},
@@ -547,7 +568,8 @@ The other three \code{"sum.m*"} arguments are similar.
   Next are the probabilities for the \code{a.mlm} values.
   Then are the probabilities for the \code{i.mlm} values.
   Lastly are the probabilities for the \code{d.mlm} values.
-  All the probabilities are estimated by one big MLM and effectively
+  All the probabilities are estimated by one big MLM
+  and effectively
   the \code{"(Others)"} column of left over probabilities is
   associated with the nonspecial values.
   These might be called the
@@ -583,19 +605,21 @@ The other three \code{"sum.m*"} arguments are similar.
 
 
   
-A good first step is to apply \code{\link{spikeplot}} for selecting
+A good first step is to apply \code{\link{spikeplot}}
+for selecting
 candidate values for altering, inflating and deflating.
 Deciding between
 parametrically or nonparametrically can also be determined from
 examining the spike plot.  Misspecified
-\code{a.mix}/\code{a.mlm}/\code{i.mix}/\code{i.mlm}/\code{d.mix}/\code{d.mlm}
+\code{a.mix/a.mlm/i.mix/i.mlm/d.mix/d.mlm}
 will result in convergence problems
 (setting \code{trace = TRUE} is a \emph{very} good idea.)
   This function currently does not handle multiple responses.
   Further details are at \code{\link{Gaitdpois}}.
 %  An alternative variant of this distribution,
 %  more unstructured in nature, is based
-%  on the multinomial logit model---see \code{\link{gaitdpoisson.mlm}}.
+%  on the multinomial logit model---see
+%  \code{\link{gaitdpoisson.mlm}}.
 
 
 
@@ -624,41 +648,48 @@ See below for the stepping-stone trick.
 Apart from the order of the linear/additive predictors,
 the following are (or should be) equivalent:
 \code{gaitdpoisson()} and \code{poissonff()},
-\code{gaitdpoisson(a.mix = 0)} and \code{zapoisson(zero = "pobs0")},
-\code{gaitdpoisson(i.mix = 0)} and \code{zipoisson(zero = "pstr0")},
+\code{gaitdpoisson(a.mix = 0)}
+and \code{zapoisson(zero = "pobs0")},
+\code{gaitdpoisson(i.mix = 0)}
+and \code{zipoisson(zero = "pstr0")},
 \code{gaitdpoisson(truncate = 0)} and \code{pospoisson()}.
 Likewise, if
 \code{a.mix} and \code{i.mix} are assigned a scalar then
 it effectively moves that scalar to \code{a.mlm} and \code{i.mlm}
-because there is no \code{lambda.a} or \code{lambda.i} being estimated.
+because there is no \code{lambda.a}
+or \code{lambda.i} being estimated.
 Thus
-\code{gaitdpoisson(a.mix = 0)} and \code{gaitdpoisson(a.mlm = 0)}
+\code{gaitdpoisson(a.mix = 0)}
+and \code{gaitdpoisson(a.mlm = 0)}
 are the effectively same, and ditto for
-\code{gaitdpoisson(i.mix = 0)} and \code{gaitdpoisson(i.mlm = 0)}.
+\code{gaitdpoisson(i.mix = 0)}
+and \code{gaitdpoisson(i.mlm = 0)}.
 
 
 
-  A nonparametric special case submodel is the
-  GAIT--Pois--MLM--MLM--MLM,
-  which is where the
-  ordinary values have a Poisson distribution, and 
-  there are altered, inflated and deflated values
-  having unstructured probabilities.
-  Thus the distribution being fitted is a mixture
-  of a Poisson and three MLMs with the support of
-  one of the MLMs being equal to the set of altered values,
-  another of the MLMs being equal to the set of inflated values
-  and the last MLM for the deflated values which are subtracted.
-  Hence the probability for each inflated value comes from
-  two sources: the parent distribution and a MLM.
+% A nonparametric special case submodel is the
+% GAIT--Pois --MLM--MLM--MLM,
+% which is where the
+% ordinary values have a Poisson distribution, and 
+% there are altered, inflated and deflated values
+% having unstructured probabilities.
+% Thus the distribution being fitted is a mixture
+% of a Poisson and three MLMs with the support of
+% one of the MLMs being equal to the set of altered values,
+% another of the MLMs being equal to the set of inflated values
+% and the last MLM for the deflated values which are subtracted.
+% Hence the probability for each inflated value comes from
+% two sources: the parent distribution and a MLM.
 
 
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -666,7 +697,8 @@ are the effectively same, and ditto for
 
 
   The \code{fitted.values} slot of the fitted object,
-  which should be extracted by the generic function \code{fitted},
+  which should be extracted by the
+  generic function \code{fitted},
   returns the mean \eqn{\mu}{mu} by default.
   See the information above on \code{type.fitted}.
 
@@ -727,10 +759,12 @@ regression, with application to heaped and seeped data.
 
 
   
-  Using \code{i.mlm} requires more caution than \code{a.mlm} because
+  Using \code{i.mlm} requires more caution
+  than \code{a.mlm} because
   gross inflation is ideally needed for it to work safely.
   Ditto for \code{i.mix} versus \code{a.mix}.
-  Data exhibiting deflation or little to no inflation will produce
+  Data exhibiting deflation or little to no
+  inflation will produce
   numerical problems,
   hence set \code{trace = TRUE} to monitor convergence.
   More than c.10 IRLS iterations should raise suspicion.
@@ -783,7 +817,8 @@ regression, with application to heaped and seeped data.
   This way the estimation can borrow strength from both the
   inflated and non-inflated values.
   If the \code{i.mix} values form a single small
-  cluster then this can easily create estimation difficulties---the
+  cluster then this can easily create estimation
+  difficulties---the
   idea is somewhat similar to multicollinearity.
   The same holds for \code{d.mix}.
 
@@ -808,10 +843,14 @@ regression, with application to heaped and seeped data.
 
   
 
-  Good initial values may be difficult to obtain using self-starting
-  procedures, especially when there are covariates.  If so, then it is
-  advisable to use a trick: fit an intercept-only model first and then
-  use \code{etastart = predict(int.only.model)} to fit the model
+  Good initial values may be difficult to obtain using
+  self-starting
+  procedures, especially when there are covariates.
+  If so, then it is
+  advisable to use a trick: fit an intercept-only
+  model first and then
+  use \code{etastart = predict(int.only.model)}
+  to fit the model
   with covariates.
   This uses the simpler model as a stepping-stone.
 
@@ -846,6 +885,11 @@ regression, with application to heaped and seeped data.
   Due to its complexity,
   the HDE test \code{\link{hdeff}} is currently unavailable
   for GAITD regressions. 
+
+
+  
+  Randomized quantile residuals (RQRs) are available;
+  see \code{\link{residualsvglm}}.
 
 
 
@@ -885,6 +929,7 @@ regression, with application to heaped and seeped data.
   \code{\link{gaitdzeta}},
   \code{\link{multilogitlink}},
   \code{\link{multinomial}},
+  \code{\link{residualsvglm}},
   \code{\link{poissonff}},
   \code{\link{zapoisson}},
   \code{\link{zipoisson}},
@@ -931,13 +976,14 @@ gdata <- transform(gdata,
 gaitdpoisson(a.mix = a.mix, i.mix = i.mix, i.mlm = i.mlm)
 with(gdata, table(y1))
 fit1 <- vglm(y1 ~ 1, crit = "coef", trace = TRUE, data = gdata,
-             gaitdpoisson(a.mix = a.mix, i.mix = i.mix, i.mlm = i.mlm,
-                          parallel.i = TRUE, eq.ap = TRUE, eq.ip = TRUE,
-                          truncate = tvec, max.support = max.support))
+             gaitdpoisson(a.mix = a.mix, i.mix = i.mix,
+                          i.mlm = i.mlm, parallel.i = TRUE,
+                          eq.ap = TRUE, eq.ip = TRUE, truncate =
+                          tvec, max.support = max.support))
 head(fitted(fit1, type.fitted = "Pstr.mix"))
 head(predict(fit1))
 t(coef(fit1, matrix = TRUE))  # Easier to see with t()
-summary(fit1)  # No HDE test by default; HDEtest = TRUE would be the ideal
+summary(fit1)  # No HDE test by default but HDEtest = TRUE is ideal
 \dontrun{ spikeplot(with(gdata, y1), lwd = 2)
 plotdgaitd(fit1, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)  }
 }
@@ -946,9 +992,10 @@ plotdgaitd(fit1, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)  }
 
 
 %gapoisson(lpobs0 = "logitlink", llambda = "loglink",
-%   type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
+%type.fitted = c("mean", "pobs0", "onempobs0"), zero = NULL)
 %gapoissonff(llambda = "loglink", lonempobs0 = "logitlink",
-%   type.fitted = c("mean", "pobs0", "onempobs0"), zero = "onempobs0")
+%type.fitted = c("mean", "pobs0", "onempobs0"),
+%zero = "onempobs0")
 
 
 

@@ -50,8 +50,10 @@ maxwell(link = "loglink", zero = NULL, parallel = FALSE,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -85,7 +87,7 @@ maxwell(link = "loglink", zero = NULL, parallel = FALSE,
 }
 \examples{
 mdata <- data.frame(y = rmaxwell(1000, rate = exp(2)))
-fit <- vglm(y ~ 1, maxwell, data = mdata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, maxwell, mdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
 }

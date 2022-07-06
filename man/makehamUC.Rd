@@ -16,8 +16,10 @@
 }
 \usage{
 dmakeham(x, scale = 1, shape, epsilon = 0, log = FALSE)
-pmakeham(q, scale = 1, shape, epsilon = 0, lower.tail = TRUE, log.p = FALSE)
-qmakeham(p, scale = 1, shape, epsilon = 0, lower.tail = TRUE, log.p = FALSE)
+pmakeham(q, scale = 1, shape, epsilon = 0, lower.tail = TRUE,
+         log.p = FALSE)
+qmakeham(p, scale = 1, shape, epsilon = 0, lower.tail = TRUE,
+         log.p = FALSE)
 rmakeham(n, scale = 1, shape, epsilon = 0)
 }
 \arguments{
@@ -30,7 +32,8 @@ rmakeham(n, scale = 1, shape, epsilon = 0)
   }
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
   }
   \item{lower.tail, log.p}{
@@ -41,7 +44,8 @@ rmakeham(n, scale = 1, shape, epsilon = 0)
   }
 
   \item{scale, shape}{positive scale and shape parameters. }
-  \item{epsilon}{another parameter. Must be non-negative. See below. }
+  \item{epsilon}{another parameter. Must be non-negative. See
+  below. }
 
 }
 \value{
@@ -86,12 +90,12 @@ Gompertz-Makeham distribution.
 \examples{
 probs <- seq(0.01, 0.99, by = 0.01)
 Shape <- exp(-1); Scale <- exp(1); eps = Epsilon <- exp(-1)
-max(abs(pmakeham(qmakeham(p = probs, sca = Scale, Shape, eps = Epsilon),
-                 sca = Scale, Shape, eps = Epsilon) - probs))  # Should be 0
+max(abs(pmakeham(qmakeham(probs, sca = Scale, Shape, eps = Epsilon),
+    sca = Scale, Shape, eps = Epsilon) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 2.0, by = 0.01);
 plot(x, dmakeham(x, sca = Scale, Shape, eps = Epsilon), type = "l",
-     main = "Blue is density, orange is cumulative distribution function",
+     main = "Blue is density, orange is the CDF",
      sub = "Purple lines are the 10,20,...,90 percentiles",
      col = "blue", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
@@ -100,7 +104,7 @@ probs <- seq(0.1, 0.9, by = 0.1)
 Q <- qmakeham(probs, sca = Scale, Shape, eps = Epsilon)
 lines(Q, dmakeham(Q, sca = Scale, Shape, eps = Epsilon),
       col = "purple", lty = 3, type = "h")
-pmakeham(Q, sca = Scale, Shape, eps = Epsilon) - probs # Should be all zero
+pmakeham(Q, sca = Scale, Shape, eps = Epsilon) - probs # Should be all 0
 abline(h = probs, col = "purple", lty = 3) }
 }
 \keyword{distribution}

@@ -9,13 +9,14 @@
 }
 \usage{
 fisk(lscale = "loglink", lshape1.a = "loglink", iscale = NULL,
-    ishape1.a = NULL, imethod = 1, lss = TRUE, gscale = exp(-5:5),
-    gshape1.a = seq(0.75, 4, by = 0.25), probs.y = c(0.25, 0.5, 0.75),
-    zero = "shape")
+    ishape1.a = NULL, imethod = 1, lss = TRUE,
+    gscale = exp(-5:5), gshape1.a = seq(0.75, 4, by = 0.25),
+    probs.y = c(0.25, 0.5, 0.75), zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for
+    important information.
 
 
   }
@@ -47,8 +48,10 @@ fisk(lscale = "loglink", lshape1.a = "loglink", iscale = NULL,
 
 }
 \details{
-  The 2-parameter Fisk (aka log-logistic) distribution is the 4-parameter
-  generalized beta II distribution with shape parameter \eqn{q=p=1}.
+  The 2-parameter Fisk (aka log-logistic) distribution
+  is the 4-parameter
+  generalized beta II distribution with
+  shape parameter \eqn{q=p=1}.
   It is also the 3-parameter Singh-Maddala distribution
   with shape parameter \eqn{q=1}, as well as the
   Dagum distribution with \eqn{p=1}.
@@ -74,14 +77,17 @@ This family function handles multiple responses.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 }
 \references{
 Kleiber, C. and Kotz, S. (2003).
-\emph{Statistical Size Distributions in Economics and Actuarial Sciences},
+\emph{Statistical Size Distributions in
+  Economics and Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -120,9 +126,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-fdata <- data.frame(y = rfisk(n = 200, shape = exp(1), scale = exp(2)))
+fdata <- data.frame(y = rfisk(200, shape = exp(1), exp(2)))
 fit <- vglm(y ~ 1, fisk(lss = FALSE), data = fdata, trace = TRUE)
-fit <- vglm(y ~ 1, fisk(ishape1.a = exp(2)), data = fdata, trace = TRUE)
+fit <- vglm(y ~ 1, fisk(ishape1.a = exp(2)), fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

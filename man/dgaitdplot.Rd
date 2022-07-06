@@ -39,8 +39,10 @@ dgaitdplot(theta.p, fam = "pois", a.mix = NULL, i.mix = NULL,
 \arguments{
   \item{theta.p}{
 Numeric, usually scalar but may have length 2.
-This matches with, e.g., \code{lambda.p} for \code{\link{Gaitdpois}}.
-A length 2 example is \code{c(size.p, munb.p)} for \code{\link{Gaitdnbinom}},
+This matches with, e.g., \code{lambda.p} for
+\code{\link{Gaitdpois}}.
+A length 2 example is \code{c(size.p, munb.p)} for
+\code{\link{Gaitdnbinom}},
 in which case \code{fam = "nbinom"}.
 Another length 2 example is
 \code{c(mean.p, dispind.p)} for \code{Gaitgenpois1},
@@ -88,8 +90,8 @@ in which case \code{fam = "genpois1"}.
 
 }
 \item{theta.a, theta.i, theta.d}{
-  Similar to \code{theta.p}, and they should have the same length
-  too.
+  Similar to \code{theta.p}, and they should have the same
+  length too.
 
   
 }
@@ -108,19 +110,19 @@ in which case \code{fam = "genpois1"}.
   shift the lines.
 
 }
-  \item{xlim, ylim, xlab, ylab}{
-    See \code{\link[graphics]{par}} and
-    \code{\link[graphics]{plot.default}}.
-    Argument \code{xlim} should be integer-valued.
+\item{xlim, ylim, xlab, ylab}{
+  See \code{\link[graphics]{par}} and
+  \code{\link[graphics]{plot.default}}.
+  Argument \code{xlim} should be integer-valued.
  
 
 }
   \item{main, cex.main, posn.main}{
-    Character, size and position of \code{main} for the title.
-    See \code{\link[graphics]{title}},
-    \code{\link[graphics]{par}} and
-    \code{\link[graphics]{plot.default}}.
-    The position is used if it is a 2-vector.
+  Character, size and position of \code{main} for the title.
+  See \code{\link[graphics]{title}},
+  \code{\link[graphics]{par}} and
+  \code{\link[graphics]{plot.default}}.
+  The position is used if it is a 2-vector.
 
 
 
@@ -157,8 +159,8 @@ in which case \code{fam = "genpois1"}.
     probabilities being reddish.
     The proper colour names are similar to being acrostic.
     For each operator, the colours of \code{"mix"} vs \code{"mlm"}
-    are similar but different---this is intentional.
-    Warning: the default colours might change, depending on style!
+    are similar but different---this is intentional.  Warning:
+    the default colours might change, depending on style!
 
     
 }
@@ -180,15 +182,16 @@ in which case \code{fam = "genpois1"}.
 
 }
   \item{col.t}{
-    Point colour for truncated values, the default is \code{"tan"}.
+    Point colour for truncated values, the default is
+    \code{"tan"}.
 
     
 }
   \item{type.plot, cex.p}{
     The former matches 'type' argument in
     \code{\link[graphics]{plot.default}}.
-    The latter is the size of the point if \code{type.plot = "p"}
-    or \code{type.plot = "b"}, etc.
+    The latter is the size of the point if \code{type.plot =
+    "p"} or \code{type.plot = "b"}, etc.
 
 
     
@@ -217,7 +220,8 @@ in which case \code{fam = "genpois1"}.
     \code{FALSE} then the spikes are drawn from the bottom---this
     makes it easier to see their distribution.
     Likewise, if \code{deflation = TRUE} then
-    \code{dontop} is used to position the deflation (dip) probabilities.
+    \code{dontop} is used to position the deflation (dip)
+    probabilities.
 
     
 
@@ -254,7 +258,8 @@ in which case \code{fam = "genpois1"}.
 
   }
   \item{nparams, flip.args}{
-    Not for use by the user. It is used internally to handle the NBD.
+    Not for use by the user. It is used internally to handle
+    the NBD.
 
   }
   \item{\dots}{
@@ -269,8 +274,8 @@ in which case \code{fam = "genpois1"}.
 \details{
   This is meant to be a crude function to plot the PMF of
   the GAITD combo model.
-  Some flexibility is offered via many graphical arguments, but
-  there are still many improvements that could be done.
+  Some flexibility is offered via many graphical arguments,
+  but there are still many improvements that could be done.
 
 
 
@@ -308,8 +313,8 @@ in which case \code{fam = "genpois1"}.
   \item{unsc.parent}{
   Unscaled parent distribution.
   If there is no alteration, inflation, deflation and truncation
-  then this is the basic PMF stipulated by the parent
-  distribution only.
+  then this is the basic PMF stipulated by the parent distribution
+  only.
   Usually this is FYI only.
 
 
@@ -334,7 +339,7 @@ This utility function may change a lot in the future.
   
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+%% Make other sections like Warning with \section{Warning }{....}
 
 \seealso{
   \code{\link{plotdgaitd}},
@@ -358,9 +363,9 @@ i.mix <- seq(0, 25, by = 5)
 mean.p <- 10 
 dispind.p <- 8^2 / mean.p  # Var(Y) = dispind.p * mean.p
 dgaitdplot(c(mean.p, dispind.p), fam = "genpois1",
-  a.mix = i.mix + 1, i.mix = i.mix, max.support = 33,
-  pobs.mix = 0.1, pstr.mix = 0.1, lwd.p = 2, lwd.a = 2, lwd.i = 2) }
-}
+  a.mix = i.mix + 1, i.mix = i.mix, max.support = 33, lwd.i = 2,
+  pobs.mix = 0.1, pstr.mix = 0.1, lwd.p = 2, lwd.a = 2)
+}}
 \keyword{graphs}
 \keyword{models}
 \keyword{regression}
@@ -382,7 +387,7 @@ dgaitdplot(c(mean.p, dispind.p), fam = "genpois1",
 
 
 % 20201026; lots of
-%   See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
+% See \code{\link[graphics]{par}} and \code{\link[base]{plot}}.
 
 
 

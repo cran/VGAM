@@ -44,7 +44,8 @@ yeo.johnson(y, lambda, derivative = 0,
 \references{
 
 Yeo, I.-K. and Johnson, R. A. (2000).
-A new family of power transformations to improve normality or symmetry.
+A new family of power transformations to improve
+normality or symmetry.
 \emph{Biometrika},
 \bold{87}, 954--959.
 
@@ -79,9 +80,10 @@ for (ii in 1:lltry)
   psi[, ii] <- yeo.johnson(y, lambda = ltry[ii])
 
 \dontrun{
-matplot(y, psi, type = "l", ylim = c(-4, 4), lwd = 2, lty = 1:lltry,
-        ylab = "Yeo-Johnson transformation", col = 1:lltry, las = 1,
-        main = "Yeo-Johnson transformation with some values of lambda")
+matplot(y, psi, type = "l", ylim = c(-4, 4), lwd = 2,
+        lty = 1:lltry, col = 1:lltry, las = 1,
+        ylab = "Yeo-Johnson transformation", 
+        main = "Yeo-Johnson transformation with some lambda values")
 abline(v = 0, h = 0)
 legend(x = 1, y = -0.5, lty = 1:lltry, legend = as.character(ltry),
        lwd = 2, col = 1:lltry) }

@@ -4,13 +4,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Folded Square Root Link Function }
 \description{
-  Computes the folded square root transformation, including its inverse
+  Computes the folded square root transformation,
+  including its inverse
   and the first two derivatives.
 
 }
 \usage{
 foldsqrtlink(theta, min = 0, max = 1, mux = sqrt(2),
-             inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+     inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,7 +54,8 @@ foldsqrtlink(theta, min = 0, max = 1, mux = sqrt(2),
 
 
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a
+  function of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
@@ -67,9 +69,11 @@ foldsqrtlink(theta, min = 0, max = 1, mux = sqrt(2),
 \note{
   The default has, if \code{theta} is 0 or 1, the link function
   value is \code{-sqrt(2)} and \code{+sqrt(2)} respectively.
-  These are finite values, therefore one cannot use this link function for
+  These are finite values, therefore one cannot use
+  this link function for
   general modelling of probabilities because of numerical problem,
-  e.g., with \code{\link{binomialff}}, \code{\link{cumulative}}. See
+  e.g., with \code{\link{binomialff}},
+  \code{\link{cumulative}}. See
   the example below.
 
 
@@ -83,7 +87,7 @@ foldsqrtlink(theta, min = 0, max = 1, mux = sqrt(2),
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)
 foldsqrtlink(p)
-max(abs(foldsqrtlink(foldsqrtlink(p), inverse = TRUE) - p))  # Should be 0
+max(abs(foldsqrtlink(foldsqrtlink(p), inverse = TRUE) - p))  # 0
 
 p <- c(seq(-0.02, 0.02, by = 0.01), seq(0.97, 1.02, by = 0.01))
 foldsqrtlink(p)  # Has NAs
@@ -93,8 +97,9 @@ p <- seq(0.01, 0.99, by = 0.01)
 par(mfrow = c(2, 2), lwd = (mylwd <- 2))
 y <- seq(-4, 4, length = 100)
 for (d in 0:1) {
-  matplot(p, cbind(logitlink(p, deriv = d), foldsqrtlink(p, deriv = d)),
-          type = "n", col = "purple", ylab = "transformation", las = 1,
+  matplot(p, cbind(logitlink(p, deriv = d),
+                foldsqrtlink(p, deriv = d)), las = 1,
+          type = "n", col = "purple", ylab = "transformation",
           main = if (d == 0) "Some probability link functions"
           else "First derivative")
   lines(p, logitlink(p, deriv = d), col = "limegreen")
@@ -103,8 +108,10 @@ for (d in 0:1) {
   lines(p, foldsqrtlink(p, deriv = d), col = "tan")
   if (d == 0) {
     abline(v = 0.5, h = 0, lty = "dashed")
-    legend(0, 4.5, c("logitlink", "probitlink", "clogloglink", "foldsqrtlink"),
-           lwd = 2, col = c("limegreen", "purple", "chocolate", "tan"))
+    legend(0, 4.5, c("logitlink", "probitlink",
+                     "clogloglink", "foldsqrtlink"),
+           lwd = 2, col = c("limegreen", "purple",
+                            "chocolate", "tan"))
   } else
     abline(v = 0.5, lty = "dashed")
 }
@@ -112,37 +119,38 @@ for (d in 0:1) {
 for (d in 0) {
   matplot(y, cbind(logitlink(y, deriv = d, inverse = TRUE),
                    foldsqrtlink(y, deriv = d, inverse = TRUE)),
-          type = "n", col = "purple", xlab = "transformation", ylab = "p",
-          lwd = 2, las = 1,
-          main = if (d == 0) "Some inverse probability link functions"
-          else "First derivative")
-  lines(y, logitlink(y, deriv = d, inverse = TRUE), col = "limegreen")
-  lines(y, probitlink(y, deriv = d, inverse = TRUE), col = "purple")
-  lines(y, clogloglink(y, deriv = d, inverse = TRUE), col = "chocolate")
-  lines(y, foldsqrtlink(y, deriv = d, inverse = TRUE), col = "tan")
+          type = "n", col = "purple", xlab = "transformation",
+          ylab = "p", lwd = 2, las = 1, main = if (d == 0)
+          "Some inverse probability link functions" else
+          "First derivative")
+  lines(y, logitlink(y, deriv=d, inverse=TRUE), col = "limegreen")
+  lines(y, probitlink(y, deriv=d, inverse=TRUE), col = "purple")
+  lines(y, clogloglink(y, deriv=d, inverse=TRUE), col = "chocolate")
+  lines(y, foldsqrtlink(y, deriv=d, inverse = TRUE), col = "tan")
   if (d == 0) {
     abline(h = 0.5, v = 0, lty = "dashed")
-    legend(-4, 1, c("logitlink", "probitlink", "clogloglink", "foldsqrtlink"),
-           lwd = 2, col = c("limegreen", "purple", "chocolate", "tan"))
+    legend(-4, 1, c("logitlink", "probitlink",
+                    "clogloglink", "foldsqrtlink"), lwd = 2, 
+           col = c("limegreen", "purple", "chocolate", "tan"))
   }
 }
 par(lwd = 1)
 }
 
 # This is lucky to converge
-fit.h <- vglm(agaaus ~ sm.bs(altitude), binomialff(link = foldsqrtlink(mux = 5)),
-              data = hunua, trace = TRUE)
+fit.h <- vglm(agaaus ~ sm.bs(altitude),
+              binomialff(foldsqrtlink(mux = 5)),
+              hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",
          main = "Orange is Hunua, Blue is Waitakere") }
 head(predict(fit.h, hunua, type = "response"))
 
-
 \dontrun{
 # The following fails.
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ let,
-       cumulative(link = foldsqrtlink(mux = 10), par = TRUE, rev = TRUE),
+       cumulative(foldsqrtlink(mux = 10), par = TRUE, rev = TRUE),
        data = pneumo, trace = TRUE, maxit = 200) }
 }
 \keyword{math}

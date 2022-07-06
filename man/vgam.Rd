@@ -9,19 +9,22 @@
   2nd-generation VGAMs (based on P-splines, with automatic
   smoothing parameter selection) are implemented.
   This is a large class
-  of models that includes generalized additive models (GAMs) and vector
+  of models that includes generalized additive models
+  (GAMs) and vector
   generalized linear models (VGLMs) as special cases.
 
 
 }
 \usage{
-vgam(formula, family = stop("argument 'family' needs to be assigned"),
+vgam(formula,
+     family = stop("argument 'family' needs to be assigned"),
      data = list(), weights = NULL, subset = NULL,
      na.action = na.fail, etastart = NULL, mustart = NULL,
-     coefstart = NULL, control = vgam.control(...), offset = NULL,
-     method = "vgam.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,
-     contrasts = NULL, constraints = NULL,
-     extra = list(), form2 = NULL, qr.arg = FALSE, smart = TRUE, ...)
+     coefstart = NULL, control = vgam.control(...),
+     offset = NULL, method = "vgam.fit", model = FALSE,
+     x.arg = TRUE, y.arg = TRUE, contrasts = NULL,
+     constraints = NULL, extra = list(), form2 = NULL,
+     qr.arg = FALSE, smart = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -29,7 +32,8 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
 
   \item{formula}{
   a symbolic description of the model to be fit.
-  The RHS of the formula is applied to each linear/additive predictor,
+  The RHS of the formula is applied to each
+  linear/additive predictor,
   and should include at least one
      \code{\link[VGAM]{sm.os}} term
   or \code{\link[VGAM]{sm.ps}} term
@@ -46,17 +50,21 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{data}{
-  an optional data frame containing the variables in the model.
+    an optional data frame containing the variables
+    in the model.
   By default the variables are taken from
-  \code{environment(formula)}, typically the environment from which
+  \code{environment(formula)}, typically the
+  environment from which
   \code{vgam} is called.
 
 
   }
   \item{weights, subset, na.action}{
   Same as for \code{\link{vglm}}.
-  Note that \code{subset} may be unreliable and to get around
-  this problem it is best to use \code{\link[base]{subset}} to create
+  Note that \code{subset} may be unreliable
+  and to get around
+  this problem it is best to
+  use \code{\link[base]{subset}} to create
   a new smaller data frame and feed in the smaller data frame.
   See below for an example.
   This is a bug that needs fixing.
@@ -87,10 +95,14 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{x.arg, y.arg}{
-  logical values indicating whether the model matrix and response
-  vector/matrix used in the fitting process should be assigned in the
-  \code{x} and \code{y} slots.  Note the model matrix is the LM model
-  matrix; to get the VGAM model matrix type \code{model.matrix(vgamfit)}
+    logical values indicating whether the
+    model matrix and response
+    vector/matrix used in the fitting process
+    should be assigned in the
+    \code{x} and \code{y} slots.  Note the
+    model matrix is the LM model
+    matrix; to get the VGAM model matrix
+    type \code{model.matrix(vgamfit)}
   where \code{vgamfit} is a \code{vgam} object.
 
 
@@ -108,15 +120,18 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
 
 }
 \details{
-  A vector generalized additive model (VGAM) is loosely defined
-  as a statistical model that is a function of \eqn{M} additive predictors.
+  A vector generalized additive model (VGAM)
+  is loosely defined
+  as a statistical model that is a function
+  of \eqn{M} additive predictors.
   The central formula is given by
   \deqn{\eta_j = \sum_{k=1}^p f_{(j)k}(x_k)}{%
          eta_j = sum_{k=1}^p f_{(j)k}(x_k)}
   where \eqn{x_k}{x_k} is the \eqn{k}th explanatory variable
   (almost always \eqn{x_1=1} for the intercept term),
   and
-  \eqn{f_{(j)k}} are smooth functions of \eqn{x_k} that are estimated
+  \eqn{f_{(j)k}} are smooth functions of \eqn{x_k}
+  that are estimated
   by smoothers.
   The first term in the summation is just the intercept.
   Currently
@@ -159,24 +174,31 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
   Second-generation VGAMs are based on the
   O-splines and P-splines.
   The latter is due to Eilers and Marx (1996).
-  Backfitting is not required, and estimation is performed using IRLS.
+  Backfitting is not required, and estimation is
+  performed using IRLS.
   The function \code{\link{sm.os}} represents a \emph{smart}
   implementation of O-splines.
   The function \code{\link{sm.ps}} represents a \emph{smart}
   implementation of P-splines.
-  Written G2-VGAMs or P-VGAMs, this methodology should not be used
+  Written G2-VGAMs or P-VGAMs, this methodology
+  should not be used
   unless the sample size is reasonably large.
   Usually an UBRE predictive criterion is optimized
   (at each IRLS iteration)
   because the
   scale parameter for VGAMs is usually assumed to be known.
-  This search for optimal smoothing parameters does not always converge,
+  This search for optimal smoothing parameters
+  does not always converge,
   and neither is it totally reliable.
-  G2-VGAMs implicitly set \code{criterion = "coefficients"} so that
-  convergence occurs when the change in the regression coefficients
+  G2-VGAMs implicitly set \code{criterion = "coefficients"}
+  so that
+  convergence occurs when the change in the
+  regression coefficients
   between 2 IRLS iterations is sufficiently small.
-  Otherwise the search for the optimal smoothing parameters might
-  cause the log-likelihood to decrease between 2 IRLS iterations.
+  Otherwise the search for the optimal
+  smoothing parameters might
+  cause the log-likelihood to decrease
+  between 2 IRLS iterations.
   Currently \emph{outer iteration} is implemented,
   by default,
   rather than \emph{performance iteration} because the latter
@@ -198,8 +220,10 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
   The underlying algorithm of VGAMs is IRLS.
   First-generation VGAMs (called G1-VGAMs)
   are estimated by modified vector backfitting
-  using vector splines. O-splines are used as the basis functions
-  for the vector (smoothing) splines, which are a lower dimensional
+  using vector splines. O-splines are used as
+  the basis functions
+  for the vector (smoothing) splines, which are
+  a lower dimensional
   version of natural B-splines.
   The function \code{vgam.fit()} actually does the
   work.  The smoothing code is based on F. O'Sullivan's
@@ -210,7 +234,8 @@ vgam(formula, family = stop("argument 'family' needs to be assigned"),
 
 
 
-%  If more than one of \code{etastart}, \code{start} and \code{mustart}
+  %  If more than one of \code{etastart}, \code{start}
+  % and \code{mustart}
 %  is specified, the first in the list will be used.
 
 
@@ -247,7 +272,8 @@ for generalized additive models.
 
 Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+  Series B, Methodological},
 \bold{58}, 481--493.
 
 
@@ -297,15 +323,23 @@ by Wood, S. N. and Pya, N. and Safken, N.,
 
 \author{ Thomas W. Yee }
 \note{
-  This function can fit a wide variety of statistical models. Some of
-  these are harder to fit than others because of inherent numerical
-  difficulties associated with some of them. Successful model fitting
-  benefits from cumulative experience. Varying the values of arguments
-  in the \pkg{VGAM} family function itself is a good first step if
-  difficulties arise, especially if initial values can be inputted.
-  A second, more general step, is to vary the values of arguments in
+  This function can fit a wide variety of
+  statistical models. Some of
+  these are harder to fit than others because
+  of inherent numerical
+  difficulties associated with some of them.
+  Successful model fitting
+  benefits from cumulative experience.
+  Varying the values of arguments
+  in the \pkg{VGAM} family function itself
+  is a good first step if
+  difficulties arise, especially if initial
+  values can be inputted.
+  A second, more general step, is to vary
+  the values of arguments in
   \code{\link{vgam.control}}.
-  A third step is to make use of arguments such as \code{etastart},
+  A third step is to make use of arguments
+  such as \code{etastart},
   \code{coefstart} and \code{mustart}.
 
 
@@ -313,7 +347,8 @@ by Wood, S. N. and Pya, N. and Safken, N.,
   Some \pkg{VGAM} family functions end in \code{"ff"}
   to avoid interference with other functions, e.g.,
   \code{\link{binomialff}}, \code{\link{poissonff}}.
-  This is because \pkg{VGAM} family functions are incompatible with
+  This is because \pkg{VGAM} family functions
+  are incompatible with
   \code{\link[stats]{glm}} (and also
   \code{gam()} in \pkg{gam} and
   \code{\link[mgcv]{gam}} in \pkg{mgcv}).
@@ -339,13 +374,15 @@ by Wood, S. N. and Pya, N. and Safken, N.,
 
 
 
-%~Make other sections like WARNING with \section{WARNING }{....} ~
+%~Make other sections like WARNING with \section{WARNING }{..}~
 \section{WARNING}{
   For G1-VGAMs,
-  currently \code{vgam} can only handle constraint matrices \code{cmat},
+  currently \code{vgam} can only handle
+  constraint matrices \code{cmat},
   say, such that \code{crossprod(cmat)} is diagonal.
   It can be detected by \code{\link{is.buggy}}.
-  VGAMs with constraint matrices that have non-orthogonal columns should
+  VGAMs with constraint matrices that have
+  non-orthogonal columns should
   be fitted with
   \code{\link{sm.os}} or
   \code{\link{sm.ps}} terms
@@ -386,7 +423,7 @@ vgam(cbind(normal, mild, severe) ~ s(let),
      cumulative(parallel = TRUE), data = pneumo, trace = TRUE)
 
 # Nonparametric logistic regression
-hfit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, data = hunua)
+hfit <- vgam(agaaus ~ s(altitude, df = 2), binomialff, hunua)
 \dontrun{ plot(hfit, se = TRUE) }
 phfit <- predict(hfit, type = "terms", raw = TRUE, se = TRUE)
 names(phfit)
@@ -402,9 +439,10 @@ coef(hfit2, matrix = TRUE)  # Not really interpretable
 \dontrun{
 plot(hfit2, se = TRUE, overlay = TRUE, lcol = 3:4, scol = 3:4)
 ooo <- with(hunua, order(altitude))
-with(hunua, matplot(altitude[ooo], fitted(hfit2)[ooo,], ylim = c(0, 0.8),
-     xlab = "Altitude (m)", ylab = "Probability of presence", las = 1,
-     main = "Two plant species' response curves", type = "l", lwd = 2))
+with(hunua, matplot(altitude[ooo], fitted(hfit2)[ooo,],
+      ylim = c(0, 0.8), las = 1,type = "l", lwd = 2,
+     xlab = "Altitude (m)", ylab = "Probability of presence",
+     main = "Two plant species' response curves"))
 with(hunua, rug(altitude))
 }
 

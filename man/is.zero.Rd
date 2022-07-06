@@ -15,8 +15,8 @@ is.zero.vglm(object, \dots)
 }
 \arguments{
   \item{object}{
-  an object such as a coefficient matrix of a \code{\link{vglm}} object,
-  or a \code{\link{vglm}} object.
+  an object such as a coefficient matrix of a \code{\link{vglm}}
+  object, or a \code{\link{vglm}} object.
 
   }
   \item{\dots}{
@@ -28,18 +28,20 @@ is.zero.vglm(object, \dots)
 \details{
   These functions test the effect of the \code{zero} argument
   on a \code{\link{vglm}} object or the coefficient matrix
-  of a \code{\link{vglm}} object.
-  The latter is obtained by \code{coef(vglmObject, matrix = TRUE)}.
+  of a \code{\link{vglm}} object.  The latter is obtained by
+  \code{coef(vglmObject, matrix = TRUE)}.
 
 
 
 }
 \value{
-  A vector of logicals, testing whether each linear/additive predictor
+  A vector of logicals,
+  testing whether each linear/additive predictor
   has the \code{zero} argument applied to it.
   It is \code{TRUE} if that linear/additive predictor is
   intercept-only, i.e., all other regression coefficients
   are set to zero.
+
 
   No checking is done for the intercept term at all, i.e., that
   it was estimated in the first place.
@@ -55,7 +57,8 @@ is.zero.vglm(object, \dots)
 
 \examples{
 coalminers <- transform(coalminers, Age = (age - 42) / 5)
-fit <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero = NULL), coalminers)
+fit <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age, binom2.or(zero = NULL),
+            data = coalminers)
 is.zero(fit)
 is.zero(coef(fit, matrix = TRUE))
 }

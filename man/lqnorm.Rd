@@ -15,9 +15,9 @@ lqnorm(qpower = 2, link = "identitylink",
 \arguments{
   \item{qpower}{
   A single numeric, must be greater than one, called \eqn{q} below.
-  The absolute value of residuals are raised to the power of this argument,
-  and then summed.
-  This quantity is minimized with respect to the regression coefficients.
+  The absolute value of residuals are raised to the power of
+  this argument, and then summed.  This quantity is minimized
+  with respect to the regression coefficients.
 
   }
   \item{link}{
@@ -53,24 +53,27 @@ lqnorm(qpower = 2, link = "identitylink",
   \eqn{\eta_i = g(\mu_i)}{eta_i = g(mu_i)} where \eqn{g} is
   the link function, and
   \eqn{\eta_i}{eta_i} is the vector of linear/additive predictors.
-  The prior weights \eqn{w_i} can be inputted using the \code{weights}
-  argument of \code{vlm}/\code{\link{vglm}}/\code{\link{vgam}} etc.;
-  it should be just a vector here since
-  this function handles only a single vector or one-column response.
+  The prior weights \eqn{w_i} can be
+  inputted using the \code{weights} argument of
+  \code{vlm}/\code{\link{vglm}}/\code{\link{vgam}} etc.; it should
+  be just a vector here since this function handles only a single
+  vector or one-column response.
 
 
   Numerical problem will occur when \eqn{q} is too close to one.
   Probably reasonable values range from 1.5 and up, say.
-  The value \eqn{q=2} corresponds to ordinary least squares while
-  \eqn{q=1} corresponds to the MLE of a double exponential (Laplace)
-  distibution. The procedure becomes more sensitive to outliers the
-  larger the value of \eqn{q}.
+  The value \eqn{q=2} corresponds to ordinary least squares
+  while \eqn{q=1} corresponds to the MLE of a double exponential
+  (Laplace) distibution. The procedure becomes more sensitive to
+  outliers the larger the value of \eqn{q}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -78,7 +81,8 @@ lqnorm(qpower = 2, link = "identitylink",
 \references{
   Yee, T. W. and Wild, C. J. (1996).
   Vector generalized additive models.
-  \emph{Journal of the Royal Statistical Society, Series B, Methodological},
+  \emph{Journal of the Royal Statistical Society,
+        Series B, Methodological},
   \bold{58}, 481--493.
 
 
@@ -89,16 +93,16 @@ lqnorm(qpower = 2, link = "identitylink",
   This \pkg{VGAM} family function is an initial attempt to
   provide a more robust alternative for regression and/or offer
   a little more flexibility than least squares.
-  The \code{@misc} slot of the fitted object contains a list component
-  called \code{objectiveFunction} which is the value of the
-  objective function at the final iteration.
+  The \code{@misc} slot of the fitted object contains a list
+  component called \code{objectiveFunction} which is the value
+  of the objective function at the final iteration.
 
 
 }
 
 \section{Warning }{
- Convergence failure is common, therefore the user is advised to be
- cautious and monitor convergence!
+ Convergence failure is common, therefore the user is advised to
+ be cautious and monitor convergence!
 
 
 }
@@ -128,8 +132,9 @@ fit@misc$objectiveFunction
 
 \dontrun{
 # Graphical check
-with(ldata, plot(x, y, main = paste("LS = red, lqnorm = blue (qpower = ",
-             fit@misc$qpower, "), truth = black", sep = ""), col = "blue"))
+with(ldata, plot(x, y,
+     main = paste0("LS = red, lqnorm = blue (qpower = ",
+     fit@misc$qpower, "), truth = black"), col = "blue"))
 lmfit <- lm(y ~ x, data = ldata)
 with(ldata, lines(x,  fitted(fit), col = "blue"))
 with(ldata, lines(x, lmfit$fitted, col = "red"))

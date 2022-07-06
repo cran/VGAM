@@ -8,8 +8,8 @@
 }
 \usage{
 betageometric(lprob = "logitlink", lshape = "loglink",
-              iprob = NULL,    ishape = 0.1,
-              moreSummation = c(2, 100), tolerance = 1.0e-10, zero = NULL)
+    iprob = NULL,    ishape = 0.1,
+    moreSummation = c(2, 100), tolerance = 1.0e-10, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,9 +31,9 @@ betageometric(lprob = "logitlink", lshape = "loglink",
   }
   \item{moreSummation}{
   Integer, of length 2.
-  When computing the expected information matrix a series summation from
-  0 to \code{moreSummation[1]*max(y)+moreSummation[2]} is made, in which the
-  upper limit is an approximation to infinity.
+  When computing the expected information matrix a series summation
+  from 0 to \code{moreSummation[1]*max(y)+moreSummation[2]} is
+  made, in which the upper limit is an approximation to infinity.
   Here, \code{y} is the response.
 
 
@@ -73,7 +73,8 @@ betageometric(lprob = "logitlink", lshape = "loglink",
 
 
   The geometric distribution is a special case of the beta-geometric
-  distribution with \eqn{\phi=0}{phi=0} (see \code{\link{geometric}}).
+  distribution with \eqn{\phi=0}{phi=0}
+  (see \code{\link{geometric}}).
   However, fitting data from a geometric distribution may result in
   numerical problems because the estimate of \eqn{\log(\phi)}{log(phi)}
   will 'converge' to \code{-Inf}.
@@ -81,8 +82,10 @@ betageometric(lprob = "logitlink", lshape = "loglink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -91,7 +94,8 @@ betageometric(lprob = "logitlink", lshape = "loglink",
   Paul, S. R. (2005).
   Testing goodness of fit of the geometric distribution:
   an application to human fecundability data.
-  \emph{Journal of Modern Applied Statistical Methods}, \bold{4}, 425--433.
+  \emph{Journal of Modern Applied Statistical Methods},
+  \bold{4}, 425--433.
 
 
 }
@@ -101,7 +105,8 @@ betageometric(lprob = "logitlink", lshape = "loglink",
   The first iteration may be very slow;
   if practical, it is best for the \code{weights} argument of
   \code{\link{vglm}} etc. to be used rather than inputting a very
-  long vector as the response, i.e., \code{vglm(y ~ 1, ..., weights = wts)}
+  long vector as the response,
+  i.e., \code{vglm(y ~ 1, ..., weights = wts)}
   is to be preferred over \code{vglm(rep(y, wts) ~ 1, ...)}.
   If convergence problems occur try inputting some values of argument
   \code{ishape}.
@@ -121,9 +126,10 @@ betageometric(lprob = "logitlink", lshape = "loglink",
 
 }
 \examples{
-bdata <- data.frame(y = 0:11, wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
-fitb <- vglm(y ~ 1, betageometric, data = bdata, weight = wts, trace = TRUE)
-fitg <- vglm(y ~ 1,     geometric, data = bdata, weight = wts, trace = TRUE)
+bdata <- data.frame(y = 0:11,
+                    wts = c(227,123,72,42,21,31,11,14,6,4,7,28))
+fitb <- vglm(y ~ 1, betageometric, bdata, weight = wts, trace = TRUE)
+fitg <- vglm(y ~ 1,     geometric, bdata, weight = wts, trace = TRUE)
 coef(fitb, matrix = TRUE)
 Coef(fitb)
 sqrt(diag(vcov(fitb, untransform = TRUE)))

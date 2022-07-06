@@ -1,8 +1,8 @@
 \name{logF}
 \alias{logF}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Natural Exponential Family Generalized Hyperbolic Secant Distribution
-        Family Function
+\title{ Natural Exponential Family Generalized Hyperbolic Secant
+Distribution Family Function
 
 }
 \description{
@@ -52,16 +52,17 @@
   where \eqn{y} is real,
   \eqn{\alpha > 0},
   \eqn{\beta > 0},
-  \eqn{B(., .)} is the beta function \code{\link[base:Special]{beta}}.
+  \eqn{B(., .)} is the beta function
+  \code{\link[base:Special]{beta}}.
 
 
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}} and \code{\link{vgam}}.
 
 
 }
@@ -100,11 +101,11 @@
 
 \examples{
 nn <- 1000
-ldata <- data.frame(y1 = rnorm(nn, m = +1, sd = exp(2)),  # Not proper data
-                    x2 = rnorm(nn, m = -1, sd = exp(2)),
-                    y2 = rnorm(nn, m = -1, sd = exp(2)))  # Not proper data
-fit1 <- vglm(y1 ~ 1 , logF, data = ldata, trace = TRUE)
-fit2 <- vglm(y2 ~ x2, logF, data = ldata, trace = TRUE)
+ldata <- data.frame(y1 = rnorm(nn, +1, sd = exp(2)),  # Not proper data
+                    x2 = rnorm(nn, -1, sd = exp(2)),
+                    y2 = rnorm(nn, -1, sd = exp(2)))  # Not proper data
+fit1 <- vglm(y1 ~ 1 , logF, ldata, trace = TRUE)
+fit2 <- vglm(y2 ~ x2, logF, ldata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 summary(fit2)
 vcov(fit2)

@@ -9,7 +9,8 @@
 \usage{
 inv.lomax(lscale = "loglink", lshape2.p = "loglink", iscale = NULL,
     ishape2.p = NULL, imethod = 1, gscale = exp(-5:5),
-    gshape2.p = exp(-5:5), probs.y = c(0.25, 0.5, 0.75), zero = "shape2.p")
+    gshape2.p = exp(-5:5), probs.y = c(0.25, 0.5, 0.75),
+    zero = "shape2.p")
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -42,11 +43,13 @@ inv.lomax(lscale = "loglink", lshape2.p = "loglink", iscale = NULL,
 }
 \details{
   The 2-parameter inverse Lomax distribution is the 4-parameter
-  generalized beta II distribution with shape parameters \eqn{a=q=1}.
+  generalized beta II distribution with shape parameters
+  \eqn{a=q=1}.
   It is also the 3-parameter Dagum distribution
   with shape parameter \eqn{a=1}, as well as the
   beta distribution of the second kind with \eqn{q=1}.
   More details can be found in Kleiber and Kotz (2003).
+
 
 
 The inverse Lomax distribution has density
@@ -62,14 +65,17 @@ This family function handles multiple responses.
 
 
 % 20140826
-% The mean does not exist; \code{NA}s are returned as the fitted values.
+% The mean does not exist;
+% \code{NA}s are returned as the fitted values.
 
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -78,7 +84,7 @@ This family function handles multiple responses.
 
 Kleiber, C. and Kotz, S. (2003).
 \emph{Statistical Size Distributions in Economics and
-             Actuarial Sciences},
+      Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -107,7 +113,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
-idata <- data.frame(y = rinv.lomax(n = 2000, scale = exp(2), exp(1)))
+idata <- data.frame(y = rinv.lomax(2000, sc = exp(2), exp(1)))
 fit <- vglm(y ~ 1, inv.lomax, data = idata, trace = TRUE)
 fit <- vglm(y ~ 1, inv.lomax(iscale = exp(3)), data = idata,
             trace = TRUE, epsilon = 1e-8, crit = "coef")

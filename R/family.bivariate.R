@@ -55,7 +55,8 @@
   qform <- mux5(x = ymatt, cc = Sigmainv, M = 3, matrix.arg = TRUE)
 
   logpdf <- -1.5 * log(2 * pi) - 0.5 * logdet - 0.5 * c(qform)
-  logpdf[is.infinite(x1) | is.infinite(x2) | is.infinite(x3)] <- log(0)
+  logpdf[is.infinite(x1) | is.infinite(x2) |
+        is.infinite(x3)] <- log(0)
 
   if (log.arg) logpdf else exp(logpdf)
 }
@@ -84,7 +85,7 @@ rtrinorm <- function(n, mean1 = 0, mean2 = 0, mean3 = 0,
 
 
 trinormal.control <-
-  function(summary.HDEtest = FALSE,  # Overwrites the summary() default.
+  function(summary.HDEtest = FALSE,
            ...) {
   list(summary.HDEtest = summary.HDEtest)
 }
@@ -176,7 +177,6 @@ trinormal.control <-
             namesof("rho23", lrho23, earg = erho23 ), ", ",
             namesof("rho13", lrho13, earg = erho13 )),
   constraints = eval(substitute(expression({
-
     constraints.orig <- constraints
     M1 <- 9
     NOS <- M / M1
@@ -194,7 +194,8 @@ trinormal.control <-
 
     cm1.s <-
     cmk.s <- kronecker(diag(NOS),
-                       rbind(matrix(0, 3, 3), diag(3), matrix(0, 3, 3)))
+                       rbind(matrix(0, 3, 3), diag(3),
+                             matrix(0, 3, 3)))
     con.s <- cm.VGAM(kronecker(diag(NOS), eijfun(4:6, 9)),
                      x = x,
                      bool = .eq.sd ,  #
@@ -207,7 +208,8 @@ trinormal.control <-
 
     cm1.r <-
     cmk.r <- kronecker(diag(NOS),
-                       rbind(matrix(0, 3, 3), matrix(0, 3, 3), diag(3)))
+                       rbind(matrix(0, 3, 3),
+                             matrix(0, 3, 3), diag(3)))
     con.r <- cm.VGAM(kronecker(diag(NOS), eijfun(7:9, 9)),
                      x = x,
                      bool = .eq.cor ,  #
@@ -396,12 +398,13 @@ trinormal.control <-
         ll.elts
       }
     }
-  } , list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
-            .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
-            .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
-            .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
-            .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
+    } ,
+    list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
+          .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
+          .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
+          .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
+          .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
+          .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
   vfamily = c("trinormal"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
@@ -425,12 +428,13 @@ trinormal.control <-
              all(0 < 1 - Rho12^2 - Rho13^2 - Rho23^2 +
                      2 * Rho12 * Rho13 * Rho23)
     okay1
-  } , list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
-            .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
-            .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
-            .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
-            .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
+  } ,
+  list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
+        .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
+        .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
+        .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
+        .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
 
 
 
@@ -457,12 +461,13 @@ trinormal.control <-
              cov12 = Rho12 * sd1 * sd2,
              cov23 = Rho23 * sd2 * sd3,
              cov13 = Rho13 * sd1 * sd3)
-  } , list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
-            .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
-            .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
-            .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
-            .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
+  } ,
+  list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
+        .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
+        .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
+        .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
+        .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
 
 
 
@@ -477,7 +482,8 @@ trinormal.control <-
     rho12 <- eta2theta(eta[, 7], .lrho12 , earg = .erho12 )
     rho23 <- eta2theta(eta[, 8], .lrho23 , earg = .erho23 )
     rho13 <- eta2theta(eta[, 9], .lrho13 , earg = .erho13 )
-    bbb <- 1 - rho12^2 - rho13^2 - rho23^2 + 2 * rho12 * rho13 * rho23
+    bbb <- 1 - rho12^2 - rho13^2 - rho23^2 +
+        2 * rho12 * rho13 * rho23
 
 
 
@@ -494,44 +500,58 @@ trinormal.control <-
 
  
     dem <- bbb * (sd1 * sd2 * sd3)^2
-    ymat.cen <- y - cbind(mean1, mean2, mean3)  # Usual dimensions n x 3
+    ymat.cen <- y - cbind(mean1, mean2, mean3)  # Usual dim n x 3
     ymatt.cen <- t(ymat.cen)
-    dim(ymatt.cen) <- c(nrow(ymatt.cen), 1, ncol(ymatt.cen))  # 4 mux5()
-    dl.dmeans <- mux22(t(Sigmainv), ymat.cen, M = 3, as.matrix = TRUE)
+    dim(ymatt.cen) <- c(nrow(ymatt.cen), 1,
+                        ncol(ymatt.cen))  # 4 mux5()
+    dl.dmeans <- mux22(t(Sigmainv), ymat.cen, M = 3,
+                       as.matrix = TRUE)
 
 
 
   SI.sd1 <- Sigmainv * 0
-  SI.sd1[, iam(1, 1, M = 3)] <- -2 * Sigmainv[, iam(1, 1, M = 3)] / sd1
+  SI.sd1[, iam(1, 1, M = 3)] <-
+      -2 * Sigmainv[, iam(1, 1, M = 3)] / sd1
   SI.sd1[, iam(2, 2, M = 3)] <- 0
   SI.sd1[, iam(3, 3, M = 3)] <- 0
-  SI.sd1[, iam(1, 2, M = 3)] <- -1 * Sigmainv[, iam(1, 2, M = 3)] / sd1
+  SI.sd1[, iam(1, 2, M = 3)] <- -1 *
+      Sigmainv[, iam(1, 2, M = 3)] / sd1
   SI.sd1[, iam(2, 3, M = 3)] <- 0
-  SI.sd1[, iam(1, 3, M = 3)] <- -1 * Sigmainv[, iam(1, 3, M = 3)] / sd1
+  SI.sd1[, iam(1, 3, M = 3)] <- -1 *
+      Sigmainv[, iam(1, 3, M = 3)] / sd1
 
   SI.sd2 <- Sigmainv * 0
-  SI.sd2[, iam(2, 2, M = 3)] <- -2 * Sigmainv[, iam(2, 2, M = 3)] / sd2
+  SI.sd2[, iam(2, 2, M = 3)] <- -2 *
+      Sigmainv[, iam(2, 2, M = 3)] / sd2
   SI.sd2[, iam(1, 1, M = 3)] <- 0
   SI.sd2[, iam(3, 3, M = 3)] <- 0
-  SI.sd2[, iam(1, 2, M = 3)] <- -1 * Sigmainv[, iam(1, 2, M = 3)] / sd2
+  SI.sd2[, iam(1, 2, M = 3)] <- -1 *
+      Sigmainv[, iam(1, 2, M = 3)] / sd2
   SI.sd2[, iam(1, 3, M = 3)] <- 0
-  SI.sd2[, iam(2, 3, M = 3)] <- -1 * Sigmainv[, iam(2, 3, M = 3)] / sd2
+  SI.sd2[, iam(2, 3, M = 3)] <- -1 *
+      Sigmainv[, iam(2, 3, M = 3)] / sd2
 
   SI.sd3 <- Sigmainv * 0
-  SI.sd3[, iam(3, 3, M = 3)] <- -2 * Sigmainv[, iam(3, 3, M = 3)] / sd3
+  SI.sd3[, iam(3, 3, M = 3)] <- -2 *
+      Sigmainv[, iam(3, 3, M = 3)] / sd3
   SI.sd3[, iam(2, 2, M = 3)] <- 0
   SI.sd3[, iam(1, 1, M = 3)] <- 0
-  SI.sd3[, iam(1, 3, M = 3)] <- -1 * Sigmainv[, iam(1, 3, M = 3)] / sd3
+  SI.sd3[, iam(1, 3, M = 3)] <- -1 *
+      Sigmainv[, iam(1, 3, M = 3)] / sd3
   SI.sd3[, iam(1, 2, M = 3)] <- 0
-  SI.sd3[, iam(2, 3, M = 3)] <- -1 * Sigmainv[, iam(2, 3, M = 3)] / sd3
+  SI.sd3[, iam(2, 3, M = 3)] <- -1 *
+      Sigmainv[, iam(2, 3, M = 3)] / sd3
 
 
     dl.dsd1   <- -1 / sd1 - 0.5 *
-      c(mux5(x = ymatt.cen, cc = SI.sd1, M = 3, matrix.arg = TRUE))
+      c(mux5(x = ymatt.cen, cc = SI.sd1,
+             M = 3, matrix.arg = TRUE))
     dl.dsd2   <- -1 / sd2 - 0.5 *
-      c(mux5(x = ymatt.cen, cc = SI.sd2, M = 3, matrix.arg = TRUE))
+      c(mux5(x = ymatt.cen, cc = SI.sd2,
+             M = 3, matrix.arg = TRUE))
     dl.dsd3   <- -1 / sd3 - 0.5 *
-      c(mux5(x = ymatt.cen, cc = SI.sd3, M = 3, matrix.arg = TRUE))
+      c(mux5(x = ymatt.cen, cc = SI.sd3,
+             M = 3, matrix.arg = TRUE))
 
 
   dbbb.drho12 <- 2 * (rho13 * rho23 - rho12)
@@ -557,7 +577,8 @@ trinormal.control <-
 
   SI.rho23 <- Sigmainv * 0
   SI.rho23[, iam(1, 1, M = 3)] <-
-    (-2 * rho23 - (1 - rho23^2) * dbbb.drho23 / bbb) / (bbb * sd1^2)
+      (-2 * rho23 - (1 - rho23^2) * dbbb.drho23 / bbb) / (
+          bbb * sd1^2)
   SI.rho23[, iam(2, 2, M = 3)] <-
     -1 * Sigmainv[, iam(2, 2, M = 3)] * dbbb.drho23 / bbb
   SI.rho23[, iam(3, 3, M = 3)] <-
@@ -576,7 +597,8 @@ trinormal.control <-
   SI.rho13[, iam(1, 1, M = 3)] <-
     -1 * Sigmainv[, iam(1, 1, M = 3)] * dbbb.drho13 / bbb
   SI.rho13[, iam(2, 2, M = 3)] <-
-    (-2 * rho13 - (1 - rho13^2) * dbbb.drho13 / bbb) / (bbb * sd2^2)
+      (-2 * rho13 - (1 - rho13^2) * dbbb.drho13 / bbb) / (
+          bbb * sd2^2)
   SI.rho13[, iam(3, 3, M = 3)] <-
     -1 * Sigmainv[, iam(3, 3, M = 3)] * dbbb.drho13 / bbb
   SI.rho13[, iam(1, 2, M = 3)] <-
@@ -590,11 +612,14 @@ trinormal.control <-
      bbb * sd1 * sd3)
 
     dl.drho12 <- -0.5 * dbbb.drho12 / bbb - 0.5 *
-      c(mux5(x = ymatt.cen, cc = SI.rho12, M = 3, matrix.arg = TRUE))
+      c(mux5(x = ymatt.cen, cc = SI.rho12,
+             M = 3, matrix.arg = TRUE))
     dl.drho23 <- -0.5 * dbbb.drho23 / bbb - 0.5 *
-      c(mux5(x = ymatt.cen, cc = SI.rho23, M = 3, matrix.arg = TRUE))
+      c(mux5(x = ymatt.cen, cc = SI.rho23,
+             M = 3, matrix.arg = TRUE))
     dl.drho13 <- -0.5 * dbbb.drho13 / bbb - 0.5 *
-      c(mux5(x = ymatt.cen, cc = SI.rho13, M = 3, matrix.arg = TRUE))
+      c(mux5(x = ymatt.cen, cc = SI.rho13,
+             M = 3, matrix.arg = TRUE))
 
 
     dmean1.deta <- dtheta.deta(mean1, .lmean1 )
@@ -622,12 +647,13 @@ trinormal.control <-
                  dl.drho12,
                  dl.drho23,
                  dl.drho13) * dThetas.detas
-  }), list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
-            .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
-            .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
-            .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
-            .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
+  }),
+  list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
+        .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
+        .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
+        .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
+        .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))),
 
   weight = eval(substitute(expression({
     wz <- matrix(0, n, dimm(M))
@@ -662,17 +688,17 @@ if (FALSE) {
     d2bbb.drho12.23 <-  2 * rho13
     d2bbb.drho13.23 <-  2 * rho12
     wz[, iam(7, 7, M)] <-
-      0.5 * (d2bbb.drho12.12 - dbbb.drho12 * dbbb.drho12 / bbb) / bbb
+ 0.5 * (d2bbb.drho12.12 - dbbb.drho12 * dbbb.drho12 / bbb) / bbb
     wz[, iam(8, 8, M)] <-
-      0.5 * (d2bbb.drho23.23 - dbbb.drho23 * dbbb.drho23 / bbb) / bbb
+ 0.5 * (d2bbb.drho23.23 - dbbb.drho23 * dbbb.drho23 / bbb) / bbb
     wz[, iam(9, 9, M)] <-
-      0.5 * (d2bbb.drho13.13 - dbbb.drho13 * dbbb.drho13 / bbb) / bbb
+ 0.5 * (d2bbb.drho13.13 - dbbb.drho13 * dbbb.drho13 / bbb) / bbb
     wz[, iam(7, 8, M)] <-
-      0.5 * (d2bbb.drho12.23 - dbbb.drho12 * dbbb.drho23 / bbb) / bbb
+ 0.5 * (d2bbb.drho12.23 - dbbb.drho12 * dbbb.drho23 / bbb) / bbb
     wz[, iam(7, 9, M)] <-
-      0.5 * (d2bbb.drho12.13 - dbbb.drho12 * dbbb.drho13 / bbb) / bbb
+ 0.5 * (d2bbb.drho12.13 - dbbb.drho12 * dbbb.drho13 / bbb) / bbb
     wz[, iam(8, 9, M)] <-
-      0.5 * (d2bbb.drho13.23 - dbbb.drho13 * dbbb.drho23 / bbb) / bbb
+ 0.5 * (d2bbb.drho13.23 - dbbb.drho13 * dbbb.drho23 / bbb) / bbb
 }
 
 
@@ -821,12 +847,14 @@ if (FALSE) {
   wz <- wz * dThetas.detas[, ind5$row.index] *
              dThetas.detas[, ind5$col.index]
   c(w) * wz
-  }), list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
-            .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
-            .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
-            .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
-            .erho12 = erho12, .erho13 = erho13, .erho23 = erho23 ))))
+  }),
+  list( .lmean1 = lmean1, .lmean2 = lmean2, .lmean3 = lmean3,
+        .emean1 = emean1, .emean2 = emean2, .emean3 = emean3,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lsd3   = lsd3  ,
+        .esd1   = esd1  , .esd2   = esd2  , .esd3   = esd3  ,
+        .lrho12 = lrho12, .lrho13 = lrho13, .lrho23 = lrho23,
+        .erho12 = erho12, .erho13 = erho13, .erho23 = erho23
+       ))))
 }  # trinormal
 
 
@@ -1151,7 +1179,12 @@ rbiclaytoncop <- function(n, apar = 0) {
 
 
 
-dbistudentt <- function(x1, x2, df, rho = 0, log = FALSE) {
+
+
+
+dbistudentt <-
+  function(x1, x2, df, rho = 0, log = FALSE) {
+
 
 
 
@@ -1249,7 +1282,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
                            constraints = constraints,
                            apply.int = .apply.parint )
 
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                                M = M,
                                 predictors.names = predictors.names,
                                 M1 = 2)
   }), list( .zero = zero,
@@ -1263,9 +1297,10 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
          apply.parint = .apply.parint ,
          parallel = .parallel ,
          zero = .zero )
-  }, list( .zero = zero,
-           .apply.parint = apply.parint,
-           .parallel = parallel ))),
+  },
+  list( .zero = zero,
+        .apply.parint = apply.parint,
+        .parallel = parallel ))),
 
   initialize = eval(substitute(expression({
     M1 <- 2
@@ -1349,9 +1384,11 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     NOS <- ncol(eta) / c(M1 = 2)
     Q1 <- 2
     fv.mat <- matrix(0, nrow(eta), Q1 * NOS)
-    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
-  }  , list( .lrho = lrho, .ldof = ldof,
-             .erho = erho, .edof = edof ))),
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y,
+                 NOS = NOS)
+  }  ,
+  list( .lrho = lrho, .ldof = ldof,
+        .erho = erho, .edof = edof ))),
 
   last = eval(substitute(expression({
 
@@ -1360,7 +1397,8 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     misc$link <-
       c(rep_len( .ldof , M / M1),
         rep_len( .lrho , M / M1))[interleave.VGAM(M, M1 = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M,
+                                                        M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -1378,11 +1416,12 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     misc$apply.parint <- .apply.parint
     misc$multipleResponses <- TRUE
 
-  }) , list( .imethod = imethod,
-             .parallel = parallel,
-             .apply.parint = apply.parint,
-             .lrho = lrho, .ldof = ldof,
-             .erho = erho, .edof = edof ))),
+  }) ,
+  list( .imethod = imethod,
+        .parallel = parallel,
+        .apply.parint = apply.parint,
+        .lrho = lrho, .ldof = ldof,
+        .erho = erho, .edof = edof ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -1489,22 +1528,25 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
              beta(3, Dof / 2) / (4 * (1 - Rho^2)^2)
     wz22 <- wz22 + (Dof^2 + 2 * Dof) * (2 - 3 * Rho^2 + Rho^6) *
             beta(3, Dof / 2) / (16 * (1 - Rho^2)^4)
-    wz22 <- wz22 + (Dof^2 + 2 * Dof) * (1 + Rho^2) *  # Replace - by + ???
-            beta(2, Dof / 2) / (4 * (1 - Rho^2)^2)  # denom == 4 or 2 ???
+    wz22 <- wz22 + (Dof^2 + 2 * Dof) *
+      (1 + Rho^2) *  # Replace - by + ???
+      beta(2, Dof / 2) / (4 * (1 - Rho^2)^2)  # denom == 4 or 2???
     ned2l.ddof2   <- wz11
     ned2l.ddofrho <- wz12
     ned2l.drho2   <- wz22
 
     wz <- array(c(c(w) * ned2l.ddof2 * ddof.deta^2,
                   c(w) * ned2l.drho2 * drho.deta^2,
-                  c(w) * ned2l.ddofrho * ddof.deta * drho.deta),
+                  c(w) * ned2l.ddofrho * ddof.deta *
+                                         drho.deta),
                 dim = c(n, M / M1, 3))
     wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list( .lrho = lrho, .ldof = ldof,
-            .erho = erho, .edof = edof,
-            .imethod = imethod ))))
-}
+  }),
+  list( .lrho = lrho, .ldof = ldof,
+        .erho = erho, .edof = edof,
+        .imethod = imethod ))))
+}  # bistudentt
 
 
 
@@ -1906,10 +1948,12 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
                                          rep_len(locat.init1, n)
       loc2.init <- if (length( .iloc2 )) rep_len( .iloc2 , n) else
                                          rep_len(locat.init2, n)
-      scale1.init <- if (length( .iscale1 )) rep_len( .iscale1 , n) else
-                                             rep_len(1, n)
-      scale2.init <- if (length( .iscale2 )) rep_len( .iscale2 , n) else
-                                             rep_len(1, n)
+      scale1.init <- if (length( .iscale1 ))
+                         rep_len( .iscale1 , n) else
+                         rep_len(1, n)
+      scale2.init <- if (length( .iscale2 ))
+                         rep_len( .iscale2 , n) else
+                         rep_len(1, n)
 
       if ( .llocat == "loglink")
         locat.init1 <- abs(locat.init1) + 0.001
@@ -2128,7 +2172,8 @@ pbilogis <-
 
 
 
-rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
+rbilogis <-
+    function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
   y1 <- rlogis(n = n, location = loc1, scale = scale1)
@@ -2139,6 +2184,8 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   ans[scale2 <= 0, ] <- NA
   ans
 }
+
+
 
 
 
@@ -2180,7 +2227,8 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   constraints = eval(substitute(expression({
     M1 <- 4
     Q1 <- 2
-    constraints <- cm.VGAM(matrix(c(1, 1,0,0, 0,0, 1, 1), M, 2), x = x,
+    constraints <- cm.VGAM(matrix(c(1, 1,0,0, 0,0, 1, 1), M, 2),
+                           x = x,
                            bool = .independent ,
                            constraints = constraints,
                            apply.int = TRUE)
@@ -2261,9 +2309,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
               theta2eta(rep_len(binit,  n), .lb  , earg = .eb  ),
               theta2eta(rep_len(bpinit, n), .lbp , earg = .ebp ))
     }
-  }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
-            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp,
-            .ia = ia, .iap = iap, .ib = ib, .ibp = ibp))),
+  }),
+  list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
+        .ea = ea, .eap = eap, .eb = eb, .ebp = ebp,
+        .ia = ia, .iap = iap, .ib = ib, .ibp = ibp))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- NCOL(eta) / c(M1 = 4)
     alpha  <- eta2theta(eta[, 1], .la,  earg = .ea  )
@@ -2276,8 +2325,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
   }, list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
            .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))),
   last = eval(substitute(expression({
-    misc$link <-    c("a" = .la , "ap" = .lap , "b" = .lb , "bp" = .lbp )
-    misc$earg <- list("a" = .ea , "ap" = .eap , "b" = .eb , "bp" = .ebp )
+      misc$link <-    c("a" = .la , "ap" = .lap ,
+                        "b" = .lb , "bp" = .lbp )
+      misc$earg <- list("a" = .ea , "ap" = .eap ,
+                        "b" = .eb , "bp" = .ebp )
 
     misc$multipleResponses <- FALSE
   }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
@@ -2368,7 +2419,7 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     c(w) * wz
   }), list( .la = la, .lap = lap, .lb = lb, .lbp = lbp,
             .ea = ea, .eap = eap, .eb = eb, .ebp = ebp ))))
-}
+}  # freund61
 
 
 
@@ -2377,14 +2428,18 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
 
 
- bigamma.mckay <- function(lscale = "loglink",
-                           lshape1 = "loglink",
-                           lshape2 = "loglink",
-                           iscale = NULL,
-                           ishape1 = NULL,
-                           ishape2 = NULL,
-                           imethod = 1,
-                           zero = "shape") {
+
+
+
+ bigamma.mckay <-
+    function(lscale = "loglink",
+             lshape1 = "loglink",
+             lshape2 = "loglink",
+             iscale = NULL,
+             ishape1 = NULL,
+             ishape2 = NULL,
+             imethod = 1,
+             zero = "shape") {
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -2462,8 +2517,8 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     extra$colnames.y  <- colnames(y)
 
     if (any(y[, 1] >= y[, 2]))
-      stop("the second column minus the first column must be a vector ",
-           "of positive values")
+      stop("the second column minus the first column must ",
+           "be a vector of positive values")
 
 
     predictors.names <-
@@ -2491,27 +2546,32 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
       }
 
       a.grid <- if (length( .iscale )) c( .iscale ) else
-         c(0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100)
+                c(0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5,
+                  10, 20, 50, 100)
       extraargs <- list(momentsY = momentsY)
       ainit <- grid.search(a.grid, objfun = mcg2.loglik,
                            y = y, x = x, w = w, maximize = TRUE,
                            extraargs = extraargs)
-      ainit <- rep_len(if (is.Numeric( .iscale )) .iscale else ainit, n)
+      ainit <- rep_len(if (is.Numeric( .iscale ))
+                           .iscale else ainit, n)
       pinit <- (1/ainit) * abs(momentsY[1]) + 0.01
       qinit <- (1/ainit) * abs(momentsY[2] - momentsY[1]) + 0.01
 
-      pinit <- rep_len(if (is.Numeric( .ishape1 )) .ishape1 else pinit, n)
-      qinit <- rep_len(if (is.Numeric( .ishape2 )) .ishape2 else qinit, n)
+      pinit <- rep_len(if (is.Numeric( .ishape1 ))
+                           .ishape1 else pinit, n)
+      qinit <- rep_len(if (is.Numeric( .ishape2 ))
+                           .ishape2 else qinit, n)
 
       etastart <-
         cbind(theta2eta(ainit, .lscale),
               theta2eta(pinit, .lshape1),
               theta2eta(qinit, .lshape2))
     }
-  }), list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
-            .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2,
-            .iscale = iscale, .ishape1 = ishape1, .ishape2 = ishape2,
-            .imethod = imethod ))),
+  }),
+  list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+        .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2,
+        .iscale = iscale, .ishape1 = ishape1, .ishape2 = ishape2,
+        .imethod = imethod ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- NCOL(eta) / c(M1 = 3)
     a <- eta2theta(eta[, 1], .lscale  ,  .escale )
@@ -2520,8 +2580,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     fv.mat <-  cbind("y1" = p*a,
                      "y2" = (p+q)*a)  # Overwrite the colnames:
     label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = NOS)
-  }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
-           .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
+  },
+  list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+        .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2
+       ))),
   last = eval(substitute(expression({
     misc$link <-    c("scale"  = .lscale ,
                       "shape1" = .lshape1 ,
@@ -2536,10 +2598,11 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
     misc$iscale <- .iscale
     misc$expected <- TRUE
     misc$multipleResponses <- FALSE
-  }), list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
-            .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2,
-            .iscale = iscale, .ishape1 = ishape1, .ishape2 = ishape2,
-            .imethod = imethod ))),
+  }),
+  list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+        .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2,
+        .iscale = iscale, .ishape1 = ishape1, .ishape2 = ishape2,
+        .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -2561,8 +2624,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
         ll.elts
       }
     }
-  }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
-           .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
+    },
+    list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+          .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2
+         ))),
   vfamily = c("bigamma.mckay"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     aparam <- eta2theta(eta[, 1], .lscale  ,  .escale )
@@ -2572,8 +2637,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
              all(is.finite(shape1)) && all(0 < shape1) &&
              all(is.finite(shape2)) && all(0 < shape2)
     okay1
-  }, list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
-           .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
+  },
+  list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+        .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2
+       ))),
   deriv = eval(substitute(expression({
     aparam <- eta2theta(eta[, 1], .lscale  ,  .escale )
     shape1 <- eta2theta(eta[, 2], .lshape1 , .eshape1 )
@@ -2581,13 +2648,16 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
 
     dl.da <- (-(shape1+shape2) + y[, 2] / aparam) / aparam
     dl.dshape1 <- -log(aparam) - digamma(shape1) + log(y[, 1])
-    dl.dshape2 <- -log(aparam) - digamma(shape2) + log(y[, 2]-y[, 1])
+    dl.dshape2 <- -log(aparam) - digamma(shape2) + log(y[, 2] -
+                                                       y[, 1])
 
     c(w) * cbind(dl.da      * dtheta.deta(aparam, .lscale),
                  dl.dshape1 * dtheta.deta(shape1, .lshape1),
                  dl.dshape2 * dtheta.deta(shape2, .lshape2))
-  }), list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
-            .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2 ))),
+  }),
+  list( .lscale = lscale, .lshape1 = lshape1, .lshape2 = lshape2,
+        .escale = escale, .eshape1 = eshape1, .eshape2 = eshape2
+       ))),
   weight = eval(substitute(expression({
     d11 <- (shape1+shape2) / aparam^2
     d22 <- trigamma(shape1)
@@ -2608,14 +2678,10 @@ rbilogis <- function(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1) {
                           dtheta.deta(shape2, .lshape2 ) * d23
 
     c(w) * wz
-  }), list( .lscale = lscale, .lshape1 = lshape1,
-                              .lshape2 = lshape2 ))))
-}
-
-
-
-
-
+  }),
+  list( .lscale = lscale, .lshape1 = lshape1,
+                          .lshape2 = lshape2 ))))
+}  # bigamma.mckay
 
 
 
@@ -2644,7 +2710,7 @@ rbifrankcop <- function(n, apar) {
                       base = apar[!index])
   ans <- matrix(c(X, Y), nrow = use.n, ncol = 2)
   if (any(index)) {
-    ans[index, 1] <- runif(sum(index))  # Uniform density for apar == 1
+    ans[index, 1] <- runif(sum(index))  # Uniform pdf 4 apar == 1
     ans[index, 2] <- runif(sum(index))
   }
   ans
@@ -2652,9 +2718,10 @@ rbifrankcop <- function(n, apar) {
 
 
 pbifrankcop <- function(q1, q2, apar) {
-  if (!is.Numeric(q1))                     stop("bad input for 'q1'")
-  if (!is.Numeric(q2))                     stop("bad input for 'q2'")
-  if (!is.Numeric(apar, positive = TRUE)) stop("bad input for 'apar'")
+  if (!is.Numeric(q1))          stop("bad input for 'q1'")
+  if (!is.Numeric(q2))          stop("bad input for 'q2'")
+  if (!is.Numeric(apar, positive = TRUE))
+    stop("bad input for 'apar'")
 
   L <- max(length(q1), length(q2), length(apar))
   if (length(apar ) != L) apar  <- rep_len(apar, L)
@@ -2668,8 +2735,8 @@ pbifrankcop <- function(q1, q2, apar) {
   ans <- as.numeric(index)
   if (any(!index))
   ans[!index] <- logb(1 + ((apar[!index])^(x[!index]) - 1)*
-                 ((apar[!index])^(y[!index]) - 1)/(apar[!index] - 1),
-                 base = apar[!index])
+         ((apar[!index])^(y[!index]) - 1)/(apar[!index] - 1),
+         base = apar[!index])
   ind2 <- (abs(apar - 1) < .Machine$double.eps)
   ans[ind2] <- x[ind2] * y[ind2]
   ans[x >= 1 & y <  1] <- y[x >= 1 & y < 1]  # P(Y2 < q2) = q2
@@ -2703,9 +2770,10 @@ dbifrankcop <- function(x1, x2, apar, log = FALSE) {
   rm(log)
 
 
-  if (!is.Numeric(x1))                     stop("bad input for 'x1'")
-  if (!is.Numeric(x2))                     stop("bad input for 'x2'")
-  if (!is.Numeric(apar, positive = TRUE)) stop("bad input for 'apar'")
+  if (!is.Numeric(x1))         stop("bad input for 'x1'")
+  if (!is.Numeric(x2))         stop("bad input for 'x2'")
+  if (!is.Numeric(apar, positive = TRUE))
+    stop("bad input for 'apar'")
 
   L <- max(length(x1), length(x2), length(apar))
   if (length(apar ) != L) apar  <- rep_len(apar, L)
@@ -2715,7 +2783,8 @@ dbifrankcop <- function(x1, x2, apar, log = FALSE) {
   if (log.arg) {
     denom <- apar-1 + (apar^x1  - 1) * (apar^x2  - 1)
     denom <- abs(denom)
-    log((apar - 1) * log(apar)) + (x1+x2)*log(apar) - 2 * log(denom)
+    log((apar - 1) * log(apar)) + (x1 + x2)*log(apar) -
+    2 * log(denom)
   } else {
     temp <- (apar - 1) + (apar^x1 - 1) * (apar^x2 - 1)
     index <- (abs(apar - 1) < .Machine$double.eps)
@@ -2723,7 +2792,7 @@ dbifrankcop <- function(x1, x2, apar, log = FALSE) {
     if (any(!index))
       ans[!index] <- (apar[!index] - 1) * log(apar[!index]) *
                      (apar[!index])^(x1[!index] +
-                                     x2[!index]) / (temp[!index])^2
+                     x2[!index]) / (temp[!index])^2
     ans[x1 <= 0 | x2 <= 0 | x1 >= 1 | x2 >= 1] <- 0
     ans[index] <- 1
     ans
@@ -2742,7 +2811,10 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
 
 
- bifrankcop <- function(lapar = "loglink", iapar = 2, nsimEIM = 250) {
+
+
+ bifrankcop <-
+    function(lapar = "loglink", iapar = 2, nsimEIM = 250) {
 
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
@@ -2789,7 +2861,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
 
     if (!length(etastart)) {
       apar.init <- rep_len(.iapar , n)
-      etastart <- cbind(theta2eta(apar.init, .lapar , earg = .eapar ))
+      etastart <- cbind(theta2eta(apar.init, .lapar , .eapar ))
     }
   }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
@@ -2853,14 +2925,18 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     apar <- eta2theta(eta, .lapar , earg = .eapar )
     dapar.deta <- dtheta.deta(apar, .lapar , earg = .eapar )
 
-    de3 <- deriv3(~ (log((apar - 1) * log(apar)) + (y1+y2)*log(apar) -
-                      2 * log(apar-1 + (apar^y1  - 1) * (apar^y2  - 1))),
+    de3 <- deriv3(~ (log((apar - 1) * log(apar)) +
+                     (y1+y2)*log(apar) -
+                     2 * log(apar-1 +
+                             (apar^y1  - 1) * (apar^y2  - 1))),
                     name = "apar", hessian = TRUE)
 
     denom <- apar-1 + (apar^y[, 1]  - 1) * (apar^y[, 2]  - 1)
     tmp700 <- 2*apar^(y[, 1]+y[, 2]) - apar^y[, 1] - apar^y[, 2]
-    numerator <- 1 + y[, 1] * apar^(y[, 1] - 1) * (apar^y[, 2]  - 1) +
-                     y[, 2] * apar^(y[, 2] - 1) * (apar^y[, 1]  - 1)
+    numerator <- 1 + y[, 1] * apar^(y[, 1] - 1) *
+                             (apar^y[, 2]  - 1) +
+                     y[, 2] * apar^(y[, 2] - 1) *
+                              (apar^y[, 1]  - 1)
     Dl.dapar <- 1/(apar - 1) + 1/(apar*log(apar)) +
                 (y[, 1]+y[, 2])/apar - 2 * numerator / denom
     c(w) * Dl.dapar * dapar.deta
@@ -2892,11 +2968,13 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
                     y[, 1]*(y[, 1] - 1) + y[, 2]*(y[, 2] - 1)) -
                     y[, 1]*(y[, 1] - 1) * apar^(y[, 1]-2) -
                     y[, 2]*(y[, 2] - 1) * apar^(y[, 2]-2)
-      D2l.dapar2 <- 1/(apar - 1)^2 + (1+log(apar))/(apar*log(apar))^2 +
+      D2l.dapar2 <- 1/(apar - 1)^2 +
+          (1+log(apar))/(apar*log(apar))^2 +
                     (y[, 1]+y[, 2])/apar^2 + 2 *
                     (nump / denom - (numerator/denom)^2)
-      d2apar.deta2 <- d2theta.deta2(apar, .lapar , earg = .eapar )
-      wz <- c(w) * (dapar.deta^2 * D2l.dapar2 - Dl.dapar * d2apar.deta2)
+      d2apar.deta2 <- d2theta.deta2(apar, .lapar , .eapar )
+      wz <- c(w) * (dapar.deta^2 * D2l.dapar2 -
+                    Dl.dapar * d2apar.deta2)
       if (TRUE && intercept.only) {
         wz <- cbind(wz)
         sumw <- sum(w)
@@ -2911,7 +2989,9 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
   }
   }), list( .lapar = lapar,
             .eapar = eapar, .nsimEIM = nsimEIM ))))
-}
+}  # bifrankcop
+
+
 
 
 
@@ -2988,7 +3068,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * (-exp(-theta) * y[, 1] / theta - theta * y[, 2])
+      ll.elts <- c(w) * (-exp(-theta) * y[, 1] / theta -
+                         theta * y[, 2])
       if (summation) {
         sum(ll.elts)
       } else {
@@ -3004,7 +3085,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
   }, list( .ltheta = ltheta, .etheta = etheta ))),
   deriv = eval(substitute(expression({
     theta <- eta2theta(eta, .ltheta , .etheta )
-    Dl.dtheta <- exp(-theta) * y[, 1] * (1+theta) / theta^2 - y[, 2]
+    Dl.dtheta <- exp(-theta) * y[, 1] *
+        (1 + theta) / theta^2 - y[, 2]
     DTHETA.deta <- dtheta.deta(theta, .ltheta , .etheta )
     c(w) * Dl.dtheta * DTHETA.deta
   }), list( .ltheta = ltheta, .etheta = etheta ))),
@@ -3022,7 +3104,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     wz
   }), list( .ltheta = ltheta,
             .etheta = etheta, .expected = expected ))))
-}
+}  # gammahyperbola
+
 
 
 
@@ -3037,7 +3120,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
   if (length(iapar) &&
      (!is.Numeric(iapar, length.arg = 1) ||
       abs(iapar) >= 1))
-    stop("argument 'iapar' must be a single number between -1 and 1")
+    stop("argument 'iapar' must be a single number in (-1, 1)")
 
   if (!is.Numeric(tola0, length.arg = 1, positive = TRUE))
       stop("argument 'tola0' must be a single positive number")
@@ -3080,7 +3163,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
         mean1 <- if ( .imethod == 1) median(y[, 1]) else mean(y[, 1])
         mean2 <- if ( .imethod == 1) median(y[, 2]) else mean(y[, 2])
         Finit <- 0.01 + mean(y[, 1] <= mean1 & y[, 2] <= mean2)
-          ((Finit+expm1(-mean1)+exp(-mean2)) / exp(-mean1-mean2) - 1) / (
+        ((Finit + expm1(-mean1) +
+          exp(-mean2)) / exp(-mean1 - mean2) - 1) / (
            expm1(-mean1) * expm1(-mean2))
           }
         etastart <-
@@ -3159,7 +3243,7 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
     }
     wz
   }), list( .lapar = lapar, .earg = earg ))))
-}
+}  # bifgmexp
 
 
 
@@ -3179,7 +3263,8 @@ rbifgmcop <- function(n, apar) {
   V2 <- runif(use.n)
   temp <- 2*y1 - 1
   A <- apar * temp - 1
-  B <- sqrt(1 - 2 * apar * temp + (apar*temp)^2 + 4 * apar * V2 * temp)
+  B <- sqrt(1 - 2 * apar * temp + (apar*temp)^2 +
+            4 * apar * V2 * temp)
   y2 <- 2 * V2 / (B - A)
   matrix(c(y1, y2), nrow = use.n, ncol = 2)
 }
@@ -3207,10 +3292,12 @@ dbifgmcop <- function(x1, x2, apar, log = FALSE) {
   ans <- 0 * x1
   xnok <- (x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)
   if ( log.arg ) {
-    ans[!xnok] <- log1p(apar[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok]))
+    ans[!xnok] <- log1p(apar[!xnok] * (1 - 2 * x1[!xnok]) *
+                       (1 - 2 * x2[!xnok]))
     ans[xnok] <- log(0)
   } else {
-    ans[!xnok] <-   1 + apar[!xnok] * (1-2*x1[!xnok]) * (1-2*x2[!xnok])
+    ans[!xnok] <- 1 + apar[!xnok] * (1 - 2 * x1[!xnok]) *
+                  (1 - 2 * x2[!xnok])
     ans[xnok] <- 0
     if (any(ans < 0))
       stop("negative values in the density (apar out of range)")
@@ -3253,8 +3340,9 @@ pbifgmcop <- function(q1, q2, apar) {
 
 
 
- bifgmcop <- function(lapar = "rhobitlink", iapar = NULL,
-                      imethod = 1) {
+ bifgmcop <-
+   function(lapar = "rhobitlink", iapar = NULL,
+            imethod = 1) {
 
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
@@ -3343,7 +3431,8 @@ pbifgmcop <- function(q1, q2, apar) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <- c(w) * dbifgmcop(x1 = y[, 1],
-                                  x2 = y[, 2], apar = alpha, log = TRUE)
+                                  x2 = y[, 2],
+                                  apar = alpha, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -3397,7 +3486,9 @@ pbifgmcop <- function(q1, q2, apar) {
   wz <- wz * dalpha.deta^2
     c(w) * wz
   }), list( .lapar = lapar, .earg = earg))))
-}
+}  # bifgmcop
+
+
 
 
 
@@ -3450,7 +3541,8 @@ pbifgmcop <- function(q1, q2, apar) {
         mean1 <- if ( .imethod == 1) median(y[, 1]) else mean(y[, 1])
         mean2 <- if ( .imethod == 1) median(y[, 2]) else mean(y[, 2])
         Finit <- 0.01 + mean(y[, 1] <= mean1 & y[, 2] <= mean2)
-        (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
+        (log(Finit + expm1(-mean1) + exp(-mean2)) +
+         mean1 + mean2) / (mean1 * mean2)
       }
       etastart <-
         theta2eta(rep_len(ainit,  n), .lapar , earg = .earg )
@@ -3495,7 +3587,8 @@ pbifgmcop <- function(q1, q2, apar) {
       if (summation) {
       sum(bad) * (-1.0e10) +
       sum(w[!bad] * (-y[!bad, 1] - y[!bad, 2] +
-          alpha[!bad] * y[!bad, 1] * y[!bad, 2] + log(denom[!bad])))
+                     alpha[!bad] * y[!bad, 1] * y[!bad, 2] +
+                     log(denom[!bad])))
       } else {
         stop("argument 'summation = FALSE' does not work yet")
       }
@@ -3538,7 +3631,7 @@ pbifgmcop <- function(q1, q2, apar) {
     }
     wz
   }), list( .lapar = lapar, .earg = earg ))))
-}
+}  # bigumbelIexp
 
 
 
@@ -3591,9 +3684,10 @@ rbiplackcop <- function(n, oratio) {
   V <- runif(use.n)
   Z <- V * (1-V)
   y2 <- (2*Z*(y1*oratio^2 + 1 - y1) + oratio * (1 - 2 * Z) -
-        (1 - 2 * V) *
-        sqrt(oratio * (oratio + 4*Z*y1*(1-y1)*(1-oratio)^2))) / (oratio +
-        Z*(1-oratio)^2)
+  (1 - 2 * V) *
+  sqrt(oratio * (oratio + 4*Z*y1*(1-y1)*
+                 (1-oratio)^2))) / (oratio +
+  Z*(1-oratio)^2)
   matrix(c(y1, 0.5 * y2), nrow = use.n, ncol = 2)
 }
 
@@ -3624,7 +3718,8 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
 
 
 
- biplackettcop <- function(link = "loglink", ioratio = NULL,
+ biplackettcop <-
+    function(link = "loglink", ioratio = NULL,
                       imethod = 1, nsimEIM = 200) {
 
   link <- as.list(substitute(link))
@@ -3674,17 +3769,18 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
             if (abs(scorp) <= 0.1) 1 else
             if (abs(scorp) <= 0.3) 3^sign(scorp) else
             if (abs(scorp) <= 0.6) 5^sign(scorp) else
-            if (abs(scorp) <= 0.8) 20^sign(scorp) else 40^sign(scorp)
+            if (abs(scorp) <= 0.8) 20^sign(scorp) else
+                                   40^sign(scorp)
           } else {
             y10 <- weighted.mean(y[, 1], w)
             y20 <- weighted.mean(y[, 2], w)
             (0.5 + sum(w[(y[, 1] <  y10) & (y[, 2] <  y20)])) *
-            (0.5 + sum(w[(y[, 1] >= y10) & (y[, 2] >= y20)])) / (
-            ((0.5 + sum(w[(y[, 1] <  y10) & (y[, 2] >= y20)])) *
-             (0.5 + sum(w[(y[, 1] >= y10) & (y[, 2] <  y20)]))))
+         (0.5 + sum(w[(y[, 1] >= y10) & (y[, 2] >= y20)])) / (
+        ((0.5 + sum(w[(y[, 1] <  y10) & (y[, 2] >= y20)])) *
+         (0.5 + sum(w[(y[, 1] >= y10) & (y[, 2] <  y20)]))))
           }
         }
-        etastart <- theta2eta(rep_len(orinit, n), .link , earg = .earg )
+        etastart <- theta2eta(rep_len(orinit, n), .link , .earg )
     }
   }), list( .ioratio = ioratio, .link = link, .earg = earg,
             .imethod = imethod ))),
@@ -3745,7 +3841,7 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
 
   deriv = eval(substitute(expression({
     oratio <- eta2theta(eta, .link , earg = .earg )
-    doratio.deta <- dtheta.deta(oratio, .link , earg = .earg )
+    doratio.deta <- dtheta.deta(oratio, .link , .earg )
     y1 <- y[, 1]
     y2 <- y[, 2]
     de3 <- deriv3(~ (log(oratio) + log(1+(oratio - 1) *
@@ -3783,7 +3879,9 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
     wz <- wz * doratio.deta^2
     c(w) * wz
   }), list( .link = link, .earg = earg, .nsimEIM = nsimEIM ))))
-}
+}  # biplackettcop
+
+
 
 
 
@@ -3871,8 +3969,9 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
 }
 
 
- biamhcop <- function(lapar = "rhobitlink", iapar = NULL,
-                 imethod = 1, nsimEIM = 250) {
+ biamhcop <-
+    function(lapar = "rhobitlink", iapar = NULL,
+             imethod = 1, nsimEIM = 250) {
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
   lapar <- attr(eapar, "function.name")
@@ -3880,7 +3979,7 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
 
 
   if (length(iapar) && (abs(iapar) > 1))
-    stop("'iapar' should be less than or equal to 1 in absolute value")
+    stop("'iapar' should be <= 1 in absolute value")
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
     imethod > 2)
@@ -3921,15 +4020,18 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
 
     if (!length(etastart)) {
       ainit  <- if (length( .iapar ))  .iapar else {
-          mean1 <- if ( .imethod == 1) weighted.mean(y[, 1], w) else
+          mean1 <- if ( .imethod == 1)
+                   weighted.mean(y[, 1], w) else
                    median(y[, 1])
-          mean2 <- if ( .imethod == 1) weighted.mean(y[, 2], w) else
+          mean2 <- if ( .imethod == 1)
+                   weighted.mean(y[, 2], w) else
                    median(y[, 2])
-          Finit <- weighted.mean(y[, 1] <= mean1 & y[, 2] <= mean2, w)
+          Finit <- weighted.mean(y[, 1] <= mean1 &
+                                 y[, 2] <= mean2, w)
           (1 - (mean1 * mean2 / Finit)) / ((1-mean1) * (1-mean2))
       }
       ainit <- min(0.95, max(ainit, -0.95))
-      etastart <- theta2eta(rep_len(ainit, n), .lapar , earg = .eapar )
+      etastart <- theta2eta(rep_len(ainit, n), .lapar , .eapar )
     }
   }), list( .lapar = lapar, .eapar = eapar, .iapar = iapar,
             .imethod = imethod))),
@@ -4033,15 +4135,7 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
     c(w) * wz
   }), list( .lapar = lapar,
             .eapar = eapar, .nsimEIM = nsimEIM ))))
-}
-
-
-
-
-
-
-
-
+}  # biamhcop
 
 
 
@@ -4066,11 +4160,10 @@ dbinorm <- function(x1, x2, mean1 = 0, mean2 = 0,
   zedd1 <- (x1 - mean1) / sd1
   zedd2 <- (x2 - mean2) / sd2
   logpdf <- -log(2 * pi) - log(sd1) - log(sd2) -
-         0.5 * log1p(-rho^2) +
-       -(0.5 / temp5)  * (zedd1^2 + (-2 * rho * zedd1 + zedd2) * zedd2)
+     0.5 * log1p(-rho^2) +
+   -(0.5 / temp5)  * (zedd1^2 + (-2 * rho * zedd1 + zedd2) * zedd2)
 
-  logpdf[is.infinite(x1) | is.infinite(x2)] <- log(0)  # 20141216 KaiH
-
+  logpdf[is.infinite(x1) | is.infinite(x2)] <- log(0)
   if (log.arg) logpdf else exp(logpdf)
 }
 
@@ -4179,7 +4272,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     cm1.m <-
     cmk.m <- kronecker(diag(NOS),
                        rbind(diag(2),
-                             matrix(0, ifelse( .est.rho , 3, 2), 2)))
+                       matrix(0, ifelse( .est.rho , 3, 2), 2)))
     con.m <- cm.VGAM(kronecker(diag(NOS),
                                rbind(1, 1, 0, 0,
                                      if ( .est.rho ) 0 else NULL)),
@@ -4195,7 +4288,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     cmk.s <- kronecker(diag(NOS),
                        rbind(matrix(0, 2, 2),
                              diag(2),
-                             if ( .est.rho ) matrix(0, 1, 2) else NULL))
+                    if ( .est.rho ) matrix(0, 1, 2) else NULL))
     con.s <- cm.VGAM(kronecker(diag(NOS),
                                rbind(0, 0, 1, 1,
                                      if ( .est.rho ) 0 else NULL)),
@@ -4213,7 +4306,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
         cbind(con.m[[klocal]],
               con.s[[klocal]],
               if ( .est.rho )
-                kronecker(matrix(1, NOS, 1), diag(5)[, 5]) else NULL)
+          kronecker(matrix(1, NOS, 1), diag(5)[, 5]) else NULL)
 
     }
   constraints <-
@@ -4265,7 +4358,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
       namesof("sd1",   .lsd1 ,   earg = .esd1 ,   short = TRUE),
       namesof("sd2",   .lsd2 ,   earg = .esd2 ,   short = TRUE),
       if ( .est.rho )
-      namesof("rho",   .lrho ,   earg = .erho ,   short = TRUE) else
+      namesof("rho",   .lrho ,   .erho ,   short = TRUE) else
       NULL)
 
     extra$colnames.y  <- colnames(y)
@@ -4516,7 +4609,8 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
 gumbelI <-
-  function(la = "identitylink", earg = list(), ia = NULL, imethod = 1) {
+    function(la = "identitylink", earg = list(),
+             ia = NULL, imethod = 1) {
 
   la <- as.list(substitute(la))
   earg  <- link2list(la)
@@ -4550,13 +4644,13 @@ gumbelI <-
     predictors.names <-
       c(namesof("a", .la, earg =  .earg , short = TRUE))
     if (!length(etastart)) {
-        ainit  <- if (length( .ia ))  rep_len( .ia , n) else {
-            mean1 <- if ( .imethod == 1) median(y[,1]) else mean(y[,1])
-            mean2 <- if ( .imethod == 1) median(y[,2]) else mean(y[,2])
-                Finit <- 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
-      (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
-            }
-            etastart <- theta2eta(rep_len(ainit, n), .la , earg = .earg )
+      ainit  <- if (length( .ia ))  rep_len( .ia , n) else {
+        mean1 <- if ( .imethod == 1) median(y[,1]) else mean(y[,1])
+        mean2 <- if ( .imethod == 1) median(y[,2]) else mean(y[,2])
+        Finit <- 0.01 + mean(y[,1] <= mean1 & y[,2] <= mean2)
+    (log(Finit+expm1(-mean1)+exp(-mean2))+mean1+mean2)/(mean1*mean2)
+      }
+      etastart <- theta2eta(rep_len(ainit, n), .la , .earg )
       }
   }), list( .ia = ia,
             .la = la, .earg = earg, .imethod = imethod ))),
@@ -4589,7 +4683,8 @@ gumbelI <-
         flush.console()
           denom[bad] <- 2 * mytolerance
       }
-      ll.elts <- c(w) * (-y[,1] - y[,2] + alpha*y[,1]*y[,2] + log(denom))
+      ll.elts <- c(w) * (-y[,1] - y[,2] +
+                         alpha*y[,1]*y[,2] + log(denom))
       if (summation) {
         sum(ll.elts)
       } else {
@@ -4605,7 +4700,8 @@ gumbelI <-
   } , list( .la = la, .earg = earg ))),
   deriv = eval(substitute(expression({
       alpha  <- eta2theta(eta, .la, earg =  .earg )
-      numerator <- (alpha*y[,1] - 1)*y[,2] + (alpha*y[,2] - 1)*y[,1] + 1
+      numerator <- (alpha*y[,1] - 1) * y[,2] +
+                   (alpha*y[,2] - 1)*y[,1] + 1
       denom <- (alpha*y[,1] - 1) * (alpha*y[,2] - 1) + alpha
       denom <- abs(denom)
       dl.dalpha <- numerator / denom + y[,1]*y[,2]
@@ -4615,7 +4711,8 @@ gumbelI <-
   weight = eval(substitute(expression({
     d2l.dalpha2 <- (numerator/denom)^2 - 2*y[,1]*y[,2] / denom
     d2alpha.deta2 <- d2theta.deta2(alpha, .la, earg =  .earg )
-    wz <- w * (dalpha.deta^2 * d2l.dalpha2 - d2alpha.deta2 * dl.dalpha)
+    wz <- w * (dalpha.deta^2 * d2l.dalpha2 -
+               d2alpha.deta2 * dl.dalpha)
     if (TRUE &&
         intercept.only) {
         wz <- cbind(wz)
@@ -4628,12 +4725,15 @@ gumbelI <-
         pooled.weight <- FALSE
     wz
   }), list( .la = la, .earg = earg ))))
-}
+}  # gumbelI
 
 
 
 
-kendall.tau <- function(x, y, exact = FALSE, max.n = 3000) {
+
+
+kendall.tau <-
+    function(x, y, exact = FALSE, max.n = 3000) {
 
   if ((N <- length(x)) != length(y))
     stop("arguments 'x' and 'y' do not have equal lengths")

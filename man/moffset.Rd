@@ -61,7 +61,8 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
 
   This function is applicable to, e.g.,
   \code{\link{alcoff}},
-  where it is useful to define the \emph{effective day} as starting
+  where it is useful to define the \emph{effective day}
+  as starting
   at some other hour than midnight, e.g., 6.00am.
   This is because partying on Friday night continues on into
   Saturday morning, therefore it is more interpretable to use
@@ -71,7 +72,8 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
   This is a data preprocessing function for \code{\link{rcim}}
   and \code{\link{plotrcim0}}.  The differences between
   \code{\link{Rcim}} and \code{\link{moffset}} is that
-  \code{\link{Rcim}} only reorders the level of the rows and columns
+  \code{\link{Rcim}} only reorders the level of the
+  rows and columns
   so that the data is shifted but not moved.
   That is, a value in one row stays in that row,
   and ditto for column.
@@ -97,7 +99,8 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
 }
 \note{
 % This function was originally for a 24 x 7 dimensional matrix
-% (24 hours of the day by 7 days per week) such as \code{\link{alcoff}}.
+% (24 hours of the day by 7 days per week)
+% such as \code{\link{alcoff}}.
 % Of course, this function can be applied to any moderately
 % large matrix.
 
@@ -116,19 +119,23 @@ moffset(mat, roffset = 0, coffset = 0, postfix = "",
 
 }
 \examples{
-moffset(alcoff, 3, 2, "*")  # Some day's data is moved to previous day.
+# Some day's data is moved to previous day:
+moffset(alcoff, 3, 2, "*")
 Rcim(alcoff, 3 + 1, 2 + 1)  # Data does not move as much.
 alcoff  # Original data
-moffset(alcoff, 3, 2, "*") - Rcim(alcoff, 3+1, 2+1)  # Note the differences
+moffset(alcoff, 3, 2, "*") -
+Rcim(alcoff, 3+1, 2+1)  # Note the differences
 
 # An 'effective day' data set:
 alcoff.e <- moffset(alcoff, roffset = "6", postfix = "*")
-fit.o <- rcim(alcoff)    # default baselines are first row and col
-fit.e <- rcim(alcoff.e)  # default baselines are first row and col
+fit.o <- rcim(alcoff)    # default baselines are 1st row and col
+fit.e <- rcim(alcoff.e)  # default baselines are 1st row and col
 
 \dontrun{ par(mfrow = c(2, 2), mar = c(9, 4, 2, 1))
-plot(fit.o, rsub = "Not very interpretable", csub = "Not very interpretable")
-plot(fit.e, rsub = "More interpretable", csub = "More interpretable")
+plot(fit.o, rsub = "Not very interpretable",
+            csub = "Not very interpretable")
+plot(fit.e, rsub = "More interpretable",
+            csub = "More interpretable")
 }
 
 # Some checking

@@ -1,7 +1,8 @@
 \name{bifgmcop}
 \alias{bifgmcop}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Farlie-Gumbel-Morgenstern's Bivariate Distribution Family Function }
+\title{ Farlie-Gumbel-Morgenstern's Bivariate Distribution
+        Family Function }
 \description{
   Estimate the association parameter of
   Farlie-Gumbel-Morgenstern's bivariate
@@ -28,9 +29,9 @@ bifgmcop(lapar = "rhobitlink", iapar = NULL, imethod = 1)
         y1 * y2 * ( 1 + alpha * (1 - y1) * (1 - y2) ) }
   for \eqn{-1 < \alpha < 1}{-1 < alpha < 1}.
   The support of the function is the unit square.
-  The marginal distributions are the standard uniform distributions.
-  When \eqn{\alpha = 0}{alpha=0} the random variables are
-  independent.
+  The marginal distributions are the standard uniform
+  distributions.  When \eqn{\alpha = 0}{alpha=0} the random
+  variables are independent.
 
 
 % A variant of Newton-Raphson is used, which only seems to work for an
@@ -41,8 +42,10 @@ bifgmcop(lapar = "rhobitlink", iapar = NULL, imethod = 1)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -50,8 +53,10 @@ bifgmcop(lapar = "rhobitlink", iapar = NULL, imethod = 1)
 
 \references{
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
-\emph{Extreme Value and Related Models with Applications in Engineering and Science},
+Castillo, E., Hadi, A. S.,
+Balakrishnan, N. and Sarabia, J. S. (2005).
+\emph{Extreme Value and Related Models with
+      Applications in Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -67,8 +72,8 @@ Invariance theorems for Fisher information.
 \note{
   The response must be a two-column matrix.  Currently, the fitted
   value is a matrix with two columns and values equal to 0.5.
-  This is because each marginal distribution corresponds to a standard
-  uniform distribution.
+  This is because each marginal distribution corresponds to a
+  standard uniform distribution.
 
 
 % This \pkg{VGAM} family function should be used with caution.
@@ -85,7 +90,7 @@ Invariance theorems for Fisher information.
 
 }
 \examples{
-ymat <- rbifgmcop(n = 1000, apar = rhobitlink(3, inverse = TRUE))
+ymat <- rbifgmcop(1000, apar = rhobitlink(3, inverse = TRUE))
 \dontrun{plot(ymat, col = "blue")}
 fit <- vglm(ymat ~ 1, fam = bifgmcop, trace = TRUE)
 coef(fit, matrix = TRUE)

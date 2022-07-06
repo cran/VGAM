@@ -4,15 +4,15 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log-gamma Distribution Family Function }
 \description{
-  Estimation of the parameter of the standard and nonstandard log-gamma
-  distribution.
+  Estimation of the parameter of the standard and nonstandard
+  log-gamma distribution.
 
 }
 \usage{
 lgamma1(lshape = "loglink", ishape = NULL)
-lgamma3(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
-        ilocation = NULL, iscale = NULL, ishape = 1,
-        zero = c("scale", "shape"))
+lgamma3(llocation = "identitylink", lscale = "loglink",
+   lshape = "loglink", ilocation = NULL, iscale = NULL, ishape = 1,
+   zero = c("scale", "shape"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,7 +40,8 @@ lgamma3(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
 
   }
   \item{ilocation, iscale}{ Initial value for \eqn{a} and \eqn{b}.
-  The defaults mean an initial value is determined internally for each.
+  The defaults mean an initial value is determined internally
+  for each.
 
 
   }
@@ -55,13 +56,14 @@ lgamma3(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
   }
 }
 \details{
-  The probability density function of the standard log-gamma distribution
-  is given by
+  The probability density function of the standard log-gamma
+  distribution is given by
   \deqn{f(y;k)=\exp[ky - \exp(y)] / \Gamma(k),}{%
         f(y;k) = exp[ky - exp(y)]/gamma(k),}
   for parameter \eqn{k>0}{k>0} and all real \eqn{y}.
   The mean of \eqn{Y} is \code{digamma(k)} (returned as
   the fitted values) and its variance is \code{trigamma(k)}.
+
 
 
   For the non-standard log-gamma distribution, one replaces \eqn{y}
@@ -70,15 +72,18 @@ lgamma3(llocation = "identitylink", lscale = "loglink", lshape = "loglink",
   Then the density function is
     \deqn{f(y)=\exp[k(y-a)/b - \exp((y-a)/b)] / (b \, \Gamma(k)).}{%
           f(y) = exp[k(y-a)/b - exp((y-a)/b)]/(b*gamma(k)).}
-  The mean and variance of \eqn{Y} are \code{a + b*digamma(k)} (returned as
+  The mean and variance of \eqn{Y} are \code{a + b*digamma(k)}
+  (returned as
   the fitted values) and \code{b^2 * trigamma(k)}, respectively.
 
 
 }
 
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -108,8 +113,8 @@ New York: Wiley.
 
 
   The standard log-gamma distribution is fitted with \code{lgamma1}
-  and the non-standard (3-parameter) log-gamma distribution is fitted
-  with \code{lgamma3}.
+  and the non-standard (3-parameter) log-gamma distribution is
+  fitted with \code{lgamma3}.
 
 
 }
@@ -124,14 +129,14 @@ New York: Wiley.
 }
 \examples{
 ldata <- data.frame(y = rlgamma(100, shape = exp(1)))
-fit <- vglm(y ~ 1, lgamma1, data = ldata, trace = TRUE, crit = "coef")
+fit <- vglm(y ~ 1, lgamma1, ldata, trace = TRUE, crit = "coef")
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)
 
 ldata <- data.frame(x2 = runif(nn <- 5000))  # Another example
 ldata <- transform(ldata, loc = -1 + 2 * x2, Scale = exp(1))
-ldata <- transform(ldata, y = rlgamma(nn, loc, scale = Scale, shape = exp(0)))
+ldata <- transform(ldata, y = rlgamma(nn, loc, sc = Scale, sh = exp(0)))
 fit2 <- vglm(y ~ x2, lgamma3, data = ldata, trace = TRUE, crit = "c")
 coef(fit2, matrix = TRUE)
 }

@@ -5,8 +5,8 @@
 \alias{qgaitdpois}
 \alias{rgaitdpois}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and --Deflated
-  Poisson Distribution
+\title{ Generally--Altered, --Inflated, --Truncated
+  and --Deflated Poisson Distribution
 
 
 
@@ -16,14 +16,19 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated, --truncated and --deflated
+  for the generally--altered, --inflated, --truncated
+  and --deflated
   Poisson distribution.
   Both parametric and nonparametric variants are supported;
   these are based on
   finite mixtures of the parent with itself
   and the multinomial logit model (MLM) respectively.
-  Altogether it can be abbreviated as
-  GAAIITDD--Pois(lambda.p)--Pois(lambda.a)--MLM--Pois(lambda.i)--MLM--Pois(lambda.d)--MLM.
+
+
+
+% Altogether it can be abbreviated as
+% GAAIITDD--Pois(lambda.p)--Pois(lambda.a)--MLM--
+% Pois(lambda.i)--MLM--Pois(lambda.d)--MLM.
 
 
 
@@ -34,27 +39,27 @@
 }
 \usage{
 dgaitdpois(x, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
-           i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
-           max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
-           pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
-           lambda.a = lambda.p, lambda.i = lambda.p,
-           lambda.d = lambda.p, log = FALSE)
+       i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
+       max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
+       pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
+       lambda.a = lambda.p, lambda.i = lambda.p,
+       lambda.d = lambda.p, log = FALSE)
 pgaitdpois(q, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
-           i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
-           max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
-           pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
-           lambda.a = lambda.p, lambda.i = lambda.p,
-           lambda.d = lambda.p, lower.tail = TRUE)
+       i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
+       max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
+       pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
+       lambda.a = lambda.p, lambda.i = lambda.p,
+       lambda.d = lambda.p, lower.tail = TRUE)
 qgaitdpois(p, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
-           i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
-           max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
-           pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
-           lambda.a = lambda.p, lambda.i = lambda.p, lambda.d = lambda.p)
+       i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
+       max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
+       pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
+       lambda.a = lambda.p, lambda.i = lambda.p, lambda.d = lambda.p)
 rgaitdpois(n, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
-           i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
-           max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
-           pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
-           lambda.a = lambda.p, lambda.i = lambda.p, lambda.d = lambda.p)
+       i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
+       max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
+       pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
+       lambda.a = lambda.p, lambda.i = lambda.p, lambda.d = lambda.p)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,14 +88,15 @@ rgaitdpois(n, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
   }
   \item{truncate, max.support}{
     numeric; these specify the set of truncated values.
-  The default value of \code{NULL} means an empty set for the former.
+    The default value of \code{NULL} means an empty set
+    for the former.
   The latter is the
     maximum support value so that any value larger
   has been truncated (necessary because
   \code{truncate = (max.support + 1):Inf} is not allowed),
-  hence is needed for truncating the upper tail of the distribution.
-  Note that \code{max(truncate) < max.support} must be satisfied
-  otherwise an error message will be issued.
+  hence is needed for truncating the upper tail of the
+  distribution.  Note that \code{max(truncate) < max.support}
+  must be satisfied otherwise an error message will be issued.
 
 
   
@@ -162,7 +168,8 @@ rgaitdpois(n, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
 %%% This paragraph only holds if inflation is the sole operator:
 % One can think of this matrix as comprising of
 % \emph{structural} probabilities.
-% Then the matrix augmented with one more column on the RHS so it has
+% Then the matrix augmented with one more column on
+% the RHS so it has
 % dimension \code{n x (length(inflate) + 1)}
 % and whose \code{\link[base]{rowSums}} is a vector of 1s.
 % Finally,
@@ -198,7 +205,8 @@ rgaitdpois(n, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
   truncation, alteration, inflation and deflation.
 The precedence is
 truncation, then alteration and lastly inflation and deflation.
-Informally, deflation can be thought of as the opposite of inflation.
+Informally, deflation can be thought of as the
+opposite of inflation.
 This order minimizes the potential interference among the operators.
 Loosely, a set of probabilities is set to 0 by truncation
 and the remaining probabilities are scaled up.
@@ -242,7 +250,8 @@ increases or decreases relative to the parent distribution.
 An inflated special value means that its probability has
 increased, provided alteration elsewhere has not made it decrease
 in the first case.
-There are seven types of special values and they are represented by
+There are seven types of special values and they are
+represented by
 \code{a.mix},
 \code{a.mlm},
 \code{i.mix},
@@ -310,11 +319,12 @@ nonparametric possible.
 %  The mean therefore is
 %  \deqn{\lambda / (1-\exp(-\lambda)).}{%
 %         lambda / (1-exp(-lambda)).}
-%  As \eqn{\lambda}{lambda} increases, the positive-Poisson and Poisson
+%  As \eqn{\lambda}{lambda} increases,
+%  the positive-Poisson and Poisson
 %  distributions become more similar.
 
-% Unlike similar functions for the Poisson distribution, a zero value
-% of \code{lambda} is not permitted here.
+% Unlike similar functions for the Poisson distribution,
+% a zero value of \code{lambda} is not permitted here.
 
 
 % These functions merge
@@ -343,7 +353,8 @@ nonparametric possible.
 
   
 
-% because the arguments \code{alter}, \code{inflate} and \code{truncate}
+% because the arguments \code{alter}, \code{inflate} and
+% \code{truncate}
 % have been included in one function.
 
 }
@@ -486,7 +497,8 @@ dvec <- 13; pdip.mlm <- 0.05; pobs.mlm <- 0.05
 \keyword{distribution}
 
 
-% 20200317; checked identical results to gaitdpois.mix() & gaitdpois.mlm().
+% 20200317; checked identical results to
+% gaitdpois.mix() & gaitdpois.mlm().
 
 
 

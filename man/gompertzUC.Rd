@@ -30,7 +30,8 @@ rgompertz(n, scale = 1, shape)
   }
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -74,8 +75,8 @@ max(abs(pgompertz(qgompertz(p = probs, Scale, shape = Shape),
                   Scale, shape = Shape) - probs))  # Should be 0
 
 \dontrun{ x <- seq(-0.1, 1.0, by = 0.001)
-plot(x, dgompertz(x, Scale,shape = Shape), type = "l", col = "blue", las = 1,
-     main = "Blue is density, orange is cumulative distribution function",
+plot(x, dgompertz(x, Scale,shape = Shape), type = "l", las = 1,
+     main = "Blue is density, orange is the CDF", col = "blue",
      sub = "Purple lines are the 10,20,...,90 percentiles",
      ylab = "")
 abline(h = 0, col = "blue", lty = 2)

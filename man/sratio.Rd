@@ -76,12 +76,20 @@ Agresti, A. (2013).
 \emph{Categorical Data Analysis},
 3rd ed. Hoboken, NJ, USA: Wiley.
 
-Simonoff, J. S. (2003).
-\emph{Analyzing Categorical Data},
-New York, USA: Springer-Verlag.
+
+%Simonoff, J. S. (2003).
+%\emph{Analyzing Categorical Data},
+%New York, USA: Springer-Verlag.
+
 
 McCullagh, P. and Nelder, J. A. (1989).
 \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+
+
+Tutz, G. (2012).
+\emph{Regression for Categorical Data},
+Cambridge: Cambridge University Press.
+
 
 
 Yee, T. W. (2010).

@@ -162,7 +162,7 @@
         dl.dlambda[fix.up] <-
           mills.ratio(-zedd) / sqrt(lambda[fix.up])
       }
-    }
+    }  # cenU
     if (any(cenL)) {
       yulim[cenL] <- y[cenL, 1] - 1
       densm0 <- dpois(yulim, lambda)
@@ -176,7 +176,7 @@
           -mills.ratio(yulim[fix.up] / sqrt(lambda[fix.up]) -
                         sqrt(lambda[fix.up])) / sqrt(lambda[fix.up])
       }
-    }
+    }  # cenL
     if (any(cenI)) {
       yllim[cenI] <- y[cenI, 1] + 1
       yulim[cenI] <- y[cenI, 2]
@@ -186,7 +186,7 @@
       densm12 <- dpois(yllim-1, lambda)
       dl.dlambda[cenI] <-
         (-densm02[cenI]+densm12[cenI]) / (Queue2[cenI]-Queue1[cenI])
-    }
+    }  # cenI
 
     dlambda.deta <- dtheta.deta(theta = lambda,
                                 link =  .link , earg = .earg )
@@ -217,7 +217,7 @@
         (mills.ratio(-zeddm2) -
          mills.ratio(-zeddm1)) / sqrt(lambda[fix.up])
       }
-    }
+    }  # cenU
 
     if (any(cenL)) {
       densm1 <- dpois(yulim-1, lambda)
@@ -231,16 +231,17 @@
          mills.ratio((yulim[fix.up] - 1) / sqrt(lambda[fix.up]) -
                       sqrt(lambda[fix.up]))) / sqrt(lambda[fix.up])
       }
+    }  # cenL
 
-    }
     if (any(cenI)) {
       densm03 <- dpois(yulim-1, lambda)
       densm13 <- dpois(yllim-2, lambda)
       d2l.dlambda2[cenI] <- (dl.dlambda[cenI])^2 -
           (densm13[cenI]-densm12[cenI]-densm03[cenI] +
            densm02[cenI]) / (Queue2[cenI]-Queue1[cenI])
-    }
-    wz <-  c(w) * ((dlambda.deta^2) * d2l.dlambda2)
+    }  # cenI
+
+    wz <-  c(w) * (dlambda.deta^2) * d2l.dlambda2
     wz
   }), list( .link = link, .earg = earg,
             .biglambda = biglambda ,

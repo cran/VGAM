@@ -7,7 +7,8 @@
 \title{The Fisk Distribution}
 \description{
   Density, distribution function, quantile function and random
-  generation for the Fisk distribution with shape parameter \code{a}
+  generation for the Fisk distribution with
+  shape parameter \code{a}
   and scale parameter \code{scale}.
 
 }
@@ -21,12 +22,14 @@ rfisk(n, scale = 1, shape1.a)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required.}
+    If \code{length(n) > 1} then the length is taken to be
+    the number required.}
   \item{shape1.a}{shape parameter.}
   \item{scale}{scale parameter.}
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the
+  density is returned.
 
   }
   \item{lower.tail, log.p}{
@@ -72,7 +75,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 
 }
 \examples{
-fdata <- data.frame(y = rfisk(n = 1000, shape = exp(1), scale = exp(2)))
+fdata <- data.frame(y = rfisk(1000, shape = exp(1), scale = exp(2)))
 fit <- vglm(y ~ 1, fisk(lss = FALSE), data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)

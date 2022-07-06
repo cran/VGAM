@@ -15,8 +15,10 @@ erlang(shape.arg, lscale = "loglink", imethod = 1, zero = NULL)
 \arguments{
   \item{shape.arg}{
   The shape parameters.
-  The user must specify a positive integer, or integers for multiple responses.
-  They are recycled \code{by.row = TRUE} according to \code{\link[base]{matrix}}.
+  The user must specify a positive integer,
+  or integers for multiple responses.
+  They are recycled \code{by.row = TRUE}
+  according to \code{\link[base]{matrix}}.
 
 
   }
@@ -34,18 +36,24 @@ erlang(shape.arg, lscale = "loglink", imethod = 1, zero = NULL)
 
 }
 \details{
-  The Erlang distribution is a special case of the gamma distribution
-  with \emph{shape} that is a positive integer. If \code{shape.arg = 1}
-  then it simplifies to the exponential distribution. As illustrated
-  in the example below, the Erlang distribution is the distribution of
-  the sum of \code{shape.arg} independent and identically distributed
+  The Erlang distribution is a special case of
+  the gamma distribution
+  with \emph{shape} that is a positive integer.
+  If \code{shape.arg = 1}
+  then it simplifies to the exponential distribution.
+  As illustrated
+  in the example below, the Erlang distribution is
+  the distribution of
+  the sum of \code{shape.arg} independent and
+  identically distributed
   exponential random variates.
 
 
   The probability density function of the Erlang
   distribution is given by
-  \deqn{f(y) = \exp(-y/scale) y^{shape-1} scale^{-shape} / \Gamma(shape)}{%
-        f(y) =  exp(-y/scale) y^(shape-1) scale^(-shape) / gamma(shape)}
+  \deqn{f(y) = \exp(-y/scale)
+    y^{shape-1} scale^{-shape} / \Gamma(shape)}{%
+f(y) =  exp(-y/scale) y^(shape-1) scale^(-shape) / gamma(shape)}
   for known positive integer \eqn{shape},
   unknown \eqn{scale > 0}  and \eqn{y > 0}.
   Here,
@@ -60,8 +68,10 @@ erlang(shape.arg, lscale = "loglink", imethod = 1, zero = NULL)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -99,7 +109,7 @@ rate <- exp(2); myshape <- 3
 edata <- data.frame(y = rep(0, nn <- 1000))
 for (ii in 1:myshape)
   edata <- transform(edata, y = y + rexp(nn, rate = rate))
-fit <- vglm(y ~ 1, erlang(shape = myshape), data = edata, trace = TRUE)
+fit <- vglm(y ~ 1, erlang(shape = myshape), edata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)  # Answer = 1/rate
 1/rate

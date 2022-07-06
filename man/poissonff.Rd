@@ -14,10 +14,10 @@
 
 }
 \usage{
-poissonff(link = "loglink", imu = NULL,
-          imethod = 1, parallel = FALSE, zero = NULL, bred = FALSE,
+poissonff(link = "loglink", imu = NULL, imethod = 1,
+          parallel = FALSE, zero = NULL, bred = FALSE,
           earg.link = FALSE, type.fitted = c("mean", "quantiles"),
-                       percentiles = c(25, 50, 75))
+          percentiles = c(25, 50, 75))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -13,9 +13,10 @@
 
 
 
- A1A2A3 <- function(link = "logitlink",
-                    inbreeding = FALSE,  # HWE assumption is the default
-                    ip1 = NULL, ip2 = NULL, iF = NULL) {
+ A1A2A3 <-
+  function(link = "logitlink",
+           inbreeding = FALSE,  # HWE assumption is the default
+           ip1 = NULL, ip2 = NULL, iF = NULL) {
 
 
 
@@ -88,11 +89,11 @@
                        mustart[, 2] * mustart[, 5] +
                        mustart[, 3] * mustart[, 5], w)
       p1 <- if (is.numeric( .ip1 )) rep_len( .ip1 , n) else
-            weighted.mean(mustart[, 2] * mustart[, 3], w) / mydeterminant
+   weighted.mean(mustart[, 2] * mustart[, 3], w) / mydeterminant
       p2 <- if (is.numeric( .ip2 )) rep_len( .ip2 , n) else
-            weighted.mean(mustart[, 2] * mustart[, 5], w) / mydeterminant
+   weighted.mean(mustart[, 2] * mustart[, 5], w) / mydeterminant
       ff <- if (is.numeric( .iF  )) rep_len( .iF  , n) else
-            weighted.mean(abs(1 - mustart[, 2] / (2 * p1 * p2)), w)
+   weighted.mean(abs(1 - mustart[, 2] / (2 * p1 * p2)), w)
       p1 <- rep_len(p1, n)
       p2 <- rep_len(p2, n)
       ff <- rep_len(ff, n)
@@ -118,7 +119,7 @@
     p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
     p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
     f  <- if ( .inbreeding )
-          eta2theta(eta[, 3], link = .link , earg = .earg ) else 0
+      eta2theta(eta[, 3], link = .link , earg = .earg ) else 0
     p3 <- abs(1 - p1 - p2)
       cbind("A1A1" = f*p1+(1-f)*p1^2,
             "A1A2" = 2*p1*p2*(1-f),
@@ -126,7 +127,8 @@
             "A2A2" = f*p2+(1-f)*p2^2,
             "A2A3" = 2*p2*p3*(1-f),
             "A3A3" = f*p3+(1-f)*p3^2)
-  }, list( .link = link, .earg = earg, .inbreeding = inbreeding))),
+  }, list( .link = link, .earg = earg,
+           .inbreeding = inbreeding))),
 
   last = eval(substitute(expression({
     if ( .inbreeding ) {
@@ -138,7 +140,8 @@
     }
 
     misc$expected <- TRUE
-  }), list( .link = link, .earg = earg, .inbreeding = inbreeding ))),
+  }), list( .link = link, .earg = earg,
+            .inbreeding = inbreeding ))),
 
   loglikelihood = function(mu, y, w, residuals = FALSE,
                            eta, extra = NULL)
@@ -160,7 +163,8 @@
       all(is.finite(f)) && all(0 <= f)  # && all(f < 1)
     } else TRUE
     okay1 && okay2
-  }, list( .link = link, .earg = earg, .inbreeding = inbreeding) )),
+  }, list( .link = link, .earg = earg,
+           .inbreeding = inbreeding) )),
   deriv = eval(substitute(expression({
     p1 <- eta2theta(eta[, 1], link = .link , earg = .earg )
     p2 <- eta2theta(eta[, 2], link = .link , earg = .earg )
@@ -194,7 +198,8 @@
       c(w) * cbind(dl.dp1 * dp1.deta,
                    dl.dp2 * dp2.deta)
     }
-  }), list( .link = link, .earg = earg, .inbreeding = inbreeding ))),
+  }), list( .link = link, .earg = earg,
+            .inbreeding = inbreeding ))),
   weight = eval(substitute(expression({
     if ( .inbreeding ) {
       dPP <- array(c(dP1, dP2, dP3), c(n, 6, 3))
@@ -217,8 +222,9 @@
       wz[, iam(1, 2, M)] <- ned2l.dp1dp2 * dp1.deta * dp2.deta
     }
     c(w) * wz
-  }), list( .link = link, .earg = earg, .inbreeding = inbreeding ))))
-}
+  }), list( .link = link, .earg = earg,
+            .inbreeding = inbreeding ))))
+}  # A1A2A3
 
 
 
@@ -236,7 +242,8 @@
 
 
   new("vglmff",
-  blurb = c("MNSs Blood Group System (MS-Ms-MNS-MNs-NS-Ns phenotype)\n\n",
+  blurb = c("MNSs Blood Group System ",
+            "(MS-Ms-MNS-MNs-NS-Ns phenotype)\n\n",
             "Links:    ",
             namesof("mS", link, earg = earg), ", ",
             namesof("ms", link, earg = earg), ", ",
@@ -302,7 +309,8 @@
   }), list( .link = link, .earg = earg))),
 
 
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
+  loglikelihood =
+    function(mu, y, w, residuals = FALSE, eta, extra = NULL)
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
       sum(dmultinomial(x = w * y, size = w, prob = mu,
@@ -347,16 +355,17 @@
     }
     c(w) * wz
   }), list( .link = link, .earg = earg))))
-}
+}  # MNSs
 
 
 
 
 
 
- ABO <- function(link.pA = "logitlink", link.pB = "logitlink",
-                 ipA = NULL, ipB = NULL, ipO = NULL,
-                 zero = NULL) {
+ ABO <-
+  function(link.pA = "logitlink", link.pB = "logitlink",
+           ipA = NULL, ipB = NULL, ipO = NULL,
+           zero = NULL) {
   link.pA <- as.list(substitute(link.pA))
   earg.pA <- link2list(link.pA)
   link.pA <- attr(earg.pA, "function.name")
@@ -369,14 +378,14 @@
   new("vglmff",
   blurb = c("ABO Blood Group System (A-B-AB-O phenotype)\n\n",
             "Links:    ",
-            namesof("pA", link.pA, earg = earg.pA, tag = FALSE), ", ",
-            namesof("pB", link.pB, earg = earg.pB, tag = FALSE)),
+            namesof("pA", link.pA, earg.pA, tag = FALSE), ", ",
+            namesof("pB", link.pB, earg.pB, tag = FALSE)),
   deviance = Deviance.categorical.data.vgam,
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -406,8 +415,9 @@
     if (length(col.ny <- colnames(y)) == length(ok.col.ny) &&
         setequal(ok.col.ny, col.ny)) {
       if (!all(ok.col.ny == col.ny))
-        stop("the columns of the response matrix should have names ",
-             "(output of colnames()) ordered as c('A', 'B', 'AB', 'O')")
+        stop("the columns of the response matrix should ",
+             "have names (output of colnames()) ordered ",
+             "as c('A', 'B', 'AB', 'O')")
     }
 
 
@@ -420,12 +430,13 @@
       pO <- if (is.Numeric( .ipO )) rep_len( .ipO , n) else
         rep_len(c(sqrt( weighted.mean(mustart[, 4], w)) ), n)
       pA <- if (is.Numeric( .ipA )) rep_len( .ipA , n) else
-              rep_len(c(1 - sqrt(weighted.mean(mustart[, 2] +
-                                               mustart[, 4], w))), n)
+            rep_len(c(1 -
+                    sqrt(weighted.mean(mustart[, 2] +
+                                       mustart[, 4], w))), n)
       pB <- if (is.Numeric( .ipB )) rep_len( .ipB , n) else
             abs(1 - pA - pO)
-      etastart <- cbind(theta2eta(pA, .link.pA , earg = .earg.pA ),
-                        theta2eta(pB, .link.pB , earg = .earg.pB ))
+      etastart <- cbind(theta2eta(pA, .link.pA , .earg.pA ),
+                        theta2eta(pB, .link.pB , .earg.pB ))
       mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .link.pA = link.pA, .link.pB = link.pB,
@@ -434,8 +445,8 @@
 
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
-      pA <- eta2theta(eta[, 1], link = .link.pA , earg = .earg.pA )
-      pB <- eta2theta(eta[, 2], link = .link.pB , earg = .earg.pB )
+      pA <- eta2theta(eta[, 1], link = .link.pA , .earg.pA )
+      pB <- eta2theta(eta[, 2], link = .link.pB , .earg.pB )
       pO <- abs(1 - pA - pB)
       cbind(A  = pA*(pA+2*pO),
             B  = pB*(pB+2*pO),
@@ -461,9 +472,10 @@
     },
 
   vfamily = c("ABO", "vgenetic"),
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    ppp <- eta2theta(eta[, 1], link = .link.pA , earg = .earg.pA )
-    qqq <- eta2theta(eta[, 2], link = .link.pB , earg = .earg.pB )
+  validparams = eval(substitute(
+    function(eta, y, extra = NULL) {
+    ppp <- eta2theta(eta[, 1], link = .link.pA , .earg.pA )
+    qqq <- eta2theta(eta[, 2], link = .link.pB , .earg.pB )
     rrr <- 1 - ppp - qqq  # abs(1 - ppp - qqq) prior to 20160624
     okay1 <- all(is.finite(ppp)) && all(0 < ppp & ppp < 1) &&
              all(is.finite(qqq)) && all(0 < qqq & qqq < 1) &&
@@ -473,8 +485,8 @@
            .earg.pA = earg.pA, .earg.pB = earg.pB ))),
 
   deriv = eval(substitute(expression({
-    ppp <- eta2theta(eta[, 1], link = .link.pA , earg = .earg.pA )
-    qqq <- eta2theta(eta[, 2], link = .link.pB , earg = .earg.pB )
+    ppp <- eta2theta(eta[, 1], link = .link.pA , .earg.pA )
+    qqq <- eta2theta(eta[, 2], link = .link.pB , .earg.pB )
     rrr <- 1 - ppp - qqq  # abs(1 - ppp - qqq)
 
 
@@ -487,8 +499,8 @@
 
     dl.dp <- (naa+nab)/ppp -   naa/pbar - 2*nbb/qbar - 2*noo/rrr
     dl.dq <- (nbb+nab)/qqq - 2*naa/pbar -   nbb/qbar - 2*noo/rrr
-    dp.deta <- dtheta.deta(ppp, link = .link.pA , earg = .earg.pA )
-    dq.deta <- dtheta.deta(qqq, link = .link.pB , earg = .earg.pB )
+    dp.deta <- dtheta.deta(ppp, link = .link.pA , .earg.pA )
+    dq.deta <- dtheta.deta(qqq, link = .link.pB , .earg.pB )
 
     c(w) * cbind(dl.dp * dp.deta,
                  dl.dq * dq.deta)
@@ -508,7 +520,7 @@
     c(w) * wz
   }), list( .link.pA = link.pA, .link.pB = link.pB,
             .earg.pA = earg.pA, .earg.pB = earg.pB ))))
-}
+}  # ABO
 
 
 
@@ -521,7 +533,8 @@
 
   new("vglmff",
   blurb = c("AB-Ab-aB-ab phenotype\n\n",
-            "Links:    ", namesof("p", link, earg = earg, tag = TRUE)),
+            "Links:    ",
+            namesof("p", link, earg = earg, tag = TRUE)),
   deviance = Deviance.categorical.data.vgam,
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
@@ -542,11 +555,12 @@
                "c('AB','Ab','aB','ab')")
     }
 
-    predictors.names <- namesof("p", .link , earg = .earg , tag = FALSE)
+    predictors.names <- namesof("p", .link , .earg , tag = FALSE)
     mustart <- (y + mustart) / 2
 
     if (is.null(etastart)) {
-      p.init <- if (is.numeric( .init.p )) rep_len( .init.p , n) else
+      p.init <- if (is.numeric( .init.p ))
+                    rep_len( .init.p , n) else
         rep_len(c(sqrt(4 * weighted.mean(mustart[, 4], w))), n)
 
       etastart <- cbind(theta2eta(p.init, .link , earg = .earg ))
@@ -572,7 +586,8 @@
    }), list( .link = link, .earg = earg))),
 
 
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
+  loglikelihood = function(mu, y, w, residuals = FALSE,
+                           eta, extra = NULL)
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
       sum(dmultinomial(x = w * y, size = w, prob = mu,
@@ -604,7 +619,7 @@
     wz <- cbind((dp.deta^2) * ned2l.dp2)
     c(w) * wz
   }), list( .link = link, .earg = earg))))
-}
+}  # AB.Ab.aB.ab
 
 
 
@@ -657,8 +672,9 @@
                 if ( .inbreeding ) "f" else NULL),
          expected = TRUE,
          zero = .zero ,
-         link = if ( .inbreeding ) c("pA" = .linkp , "f" = .linkf ) else
-                                   c("pA" = .linkp ))
+         link = if ( .inbreeding )
+                    c("pA" = .linkp , "f" = .linkf ) else
+                    c("pA" = .linkp ))
   }, list( .linkp = linkp,
            .linkf = linkf, .inbreeding = inbreeding,
            .zero = zero ))),
@@ -677,14 +693,14 @@
       setequal(ok.col.ny, col.ny)) {
       if (!all(ok.col.ny == col.ny))
         stop("the columns of the response matrix ",
-             "should have names ",
-             "(output of colnames()) ordered as c('AA','Aa','aa')")
+             "should have names (output of ",
+             "colnames()) ordered as c('AA','Aa','aa')")
     }
 
     predictors.names <-
-      c(namesof("pA", .linkp , earg = .eargp , tag = FALSE),
+      c(namesof("pA", .linkp , .eargp , tag = FALSE),
         if ( .inbreeding )
-        namesof("f",  .linkf , earg = .eargf , tag = FALSE) else NULL)
+        namesof("f",  .linkf , .eargf , tag = FALSE) else NULL)
     mustart <- (y + mustart) / 2
 
 
@@ -693,9 +709,9 @@
               rep_len(c(sqrt( weighted.mean(mustart[, 1], w))), n)
       fp <- if (is.numeric( .ifp )) rep_len( .ifp , n) else
               runif(n)  # 1- mustart[, 2]/(2*pA*(1-pA))
-      etastart <- cbind(theta2eta(pA, .linkp , earg = .eargp ),
+      etastart <- cbind(theta2eta(pA, .linkp , .eargp ),
                         if ( .inbreeding )
-                        theta2eta(fp, .linkf , earg = .eargf ) else NULL)
+                        theta2eta(fp, .linkf , .eargf ) else NULL)
       mustart <- NULL  # Since etastart has been computed.
     }
   }), list( .linkp = linkp, .linkf = linkf,
@@ -703,9 +719,9 @@
             .eargp = eargp, .eargf = eargf ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     eta <- as.matrix(eta)
-    pA <- eta2theta(eta[, 1], link = .linkp , earg = .eargp )
+    pA <- eta2theta(eta[, 1], link = .linkp , .eargp )
     fp <- if ( .inbreeding )
-          eta2theta(eta[, 2], link = .linkf , earg = .eargf ) else 0
+          eta2theta(eta[, 2], link = .linkf , .eargf ) else 0
 
     cbind(AA = pA^2 + pA * (1-pA) * fp,
           Aa = 2 * pA * (1-pA) * (1 - fp),
@@ -729,7 +745,8 @@
 
 
 
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta, extra = NULL)
+  loglikelihood = function(mu, y, w, residuals = FALSE,
+                           eta, extra = NULL)
     if (residuals)
       stop("loglikelihood residuals not implemented yet") else {
         sum(dmultinomial(x = w * y, size = w, prob = mu,
@@ -751,9 +768,9 @@
            .inbreeding = inbreeding ))),
   deriv = eval(substitute(expression({
     eta <- as.matrix(eta)
-    pA <- eta2theta(eta[, 1], link = .linkp , earg = .eargp )
+    pA <- eta2theta(eta[, 1], link = .linkp , .eargp )
     fp <- if ( .inbreeding )
-          eta2theta(eta[, 2], link = .linkf , earg = .eargf ) else 0
+          eta2theta(eta[, 2], link = .linkf , .eargf ) else 0
 
     if ( .inbreeding ) {
       dP1 <- cbind(2*pA*(1-fp) + fp,
@@ -784,8 +801,8 @@
   weight = eval(substitute(expression({
     if ( .inbreeding ) {
       dPP <- array(c(dP1, dP2), c(n, 3, 2))
-      dPP.deta <- cbind(dtheta.deta(pA, link = .linkp , earg = .eargp ),
-                        dtheta.deta(fp, link = .linkf , earg = .eargf ))
+      dPP.deta <- cbind(dtheta.deta(pA, link = .linkp , .eargp ),
+                        dtheta.deta(fp, link = .linkf , .eargf ))
       wz <- matrix(NA_real_, n, dimm(M))  # dimm(M)==3 because M==2
       for (i1 in 1:M)
         for (i2 in i1:M) {
@@ -804,6 +821,24 @@
             .eargp = eargp, .eargf = eargf,
             .inbreeding = inbreeding ))))
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

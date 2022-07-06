@@ -8,20 +8,21 @@
 
 }
 \usage{
-posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
-               mds.min = 0.001, nsimEIM = 500, cutoff.prob = 0.999,
-               eps.trig = 1e-07, max.support = 4000, max.chunk.MB = 30,
-               lmunb = "loglink", lsize = "loglink", imethod = 1,
-               imunb = NULL, iprobs.y = NULL,
-               gprobs.y = ppoints(8), isize = NULL,
-               gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
+posnegbinomial(zero = "size",
+   type.fitted = c("mean", "munb", "prob0"),
+   mds.min = 0.001, nsimEIM = 500, cutoff.prob = 0.999,
+   eps.trig = 1e-07, max.support = 4000, max.chunk.MB = 30,
+   lmunb = "loglink", lsize = "loglink", imethod = 1,
+   imunb = NULL, iprobs.y = NULL,
+   gprobs.y = ppoints(8), isize = NULL,
+   gsize.mux = exp(c(-30, -20, -15, -10, -6:3)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lmunb}{
-  Link function applied to the \code{munb} parameter, which is the mean
-  \eqn{\mu_{nb}}{munb} of an ordinary negative binomial distribution.
-  See \code{\link{Links}} for more choices.
+  Link function applied to the \code{munb} parameter, which is
+  the mean \eqn{\mu_{nb}}{munb} of an ordinary negative binomial
+  distribution.  See \code{\link{Links}} for more choices.
 
 
   }
@@ -37,10 +38,10 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
   The value \code{1/k} is known as a dispersion parameter.
   If failure to converge occurs try different values (and/or use
   \code{imethod}).
-  If necessary this vector is recycled to length equal to the number
-  of responses.
-  A value \code{NULL} means an initial value for each response is
-  computed internally using a range of values.
+  If necessary this vector is recycled to length equal to the
+  number of responses.
+  A value \code{NULL} means an initial value for each response
+  is computed internally using a range of values.
 
 
   }
@@ -76,31 +77,36 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
   }
 }
 \details{
-  The positive negative binomial distribution is an ordinary negative
-  binomial distribution but with the probability of a zero response
-  being zero. The other probabilities are scaled to sum to unity.
+  The positive negative binomial distribution is an ordinary
+  negative binomial distribution but with the probability of a
+  zero response being zero. The other probabilities are scaled
+  to sum to unity.
 
 
-  This family function is based on \code{\link{negbinomial}} and most
-  details can be found there. To avoid confusion, the parameter
-  \code{munb} here corresponds to the mean of an ordinary negative
-  binomial distribution \code{\link{negbinomial}}. The mean of
-  \code{posnegbinomial} is
+
+  This family function is based on \code{\link{negbinomial}}
+  and most details can be found there. To avoid confusion, the
+  parameter \code{munb} here corresponds to the mean of an ordinary
+  negative binomial distribution \code{\link{negbinomial}}. The
+  mean of \code{posnegbinomial} is
   \deqn{\mu_{nb} / (1-p(0))}{%
             munb / (1-p(0))}
-  where \eqn{p(0) = (k/(k + \mu_{nb}))^k}{p(0) = (k/(k + munb))^k} is the
-  probability an ordinary negative binomial distribution has a zero value.
+  where
+\eqn{p(0) = (k/(k + \mu_{nb}))^k}{p(0) = (k/(k + munb))^k} is the
+  probability an ordinary negative binomial distribution has a
+  zero value.
 
 
-  The parameters \code{munb} and \code{k} are not independent in the
-  positive negative binomial distribution, whereas they are in the
-  ordinary negative binomial distribution.
+  The parameters \code{munb} and \code{k} are not independent in
+  the positive negative binomial distribution, whereas they are
+  in the ordinary negative binomial distribution.
 
 
-  This function handles \emph{multiple} responses, so that a matrix
-  can be used as the response. The number of columns is the number
-  of species, say, and setting \code{zero = -2} means that \emph{all}
-  species have a \code{k} equalling a (different) intercept only.
+  This function handles \emph{multiple} responses, so that a
+  matrix can be used as the response. The number of columns is
+  the number of species, say, and setting \code{zero = -2} means
+  that \emph{all} species have a \code{k} equalling a (different)
+  intercept only.
 
 
 }
@@ -121,11 +127,11 @@ posnegbinomial(zero = "size", type.fitted = c("mean", "munb", "prob0"),
 
 
 
-The negative binomial distribution (NBD) is a strictly unimodal distribution.
-Any data set that does not exhibit a mode (in the middle) makes the
-estimation problem difficult.
-The positive NBD inherits this feature.
-Set \code{trace = TRUE} to monitor convergence.
+The negative binomial distribution (NBD) is a strictly unimodal
+distribution.  Any data set that does not exhibit a mode (in the
+middle) makes the estimation problem difficult.  The positive
+NBD inherits this feature.  Set \code{trace = TRUE} to monitor
+convergence.
 
 
 
@@ -151,8 +157,10 @@ Set \code{trace = TRUE} to monitor convergence.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}} and \code{\link{vgam}}.
 
 
@@ -216,7 +224,7 @@ pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata,
   y1 = rgaitdnbinom(nn, exp(1), munb.p = exp(0+2*x2), truncate = 0),
   y2 = rgaitdnbinom(nn, exp(3), munb.p = exp(1+2*x2), truncate = 0))
-fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, data = pdata, trace = TRUE)
+fit <- vglm(cbind(y1, y2) ~ x2, posnegbinomial, pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 dim(depvar(fit))  # Using dim(fit@y) is not recommended
 
@@ -224,31 +232,34 @@ dim(depvar(fit))  # Using dim(fit@y) is not recommended
 # Another artificial data example
 pdata2 <- data.frame(munb = exp(2), size = exp(3)); nn <- 1000
 pdata2 <- transform(pdata2,
-                    y3 = rgaitdnbinom(nn, size, munb.p = munb, truncate = 0))
+                    y3 = rgaitdnbinom(nn, size, munb.p = munb,
+                                      truncate = 0))
 with(pdata2, table(y3))
 fit <- vglm(y3 ~ 1, posnegbinomial, data = pdata2, trace = TRUE)
 coef(fit, matrix = TRUE)
 with(pdata2, mean(y3))  # Sample mean
-head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1)  # Population mean
+head(with(pdata2, munb/(1-(size/(size+munb))^size)), 1)  # Popn mean
 head(fitted(fit), 3)
 head(predict(fit), 3)
 
 
 # Example: Corbet (1943) butterfly Malaya data
-fit <- vglm(ofreq ~ 1, posnegbinomial, weights = species, data = corbet)
+fit <- vglm(ofreq ~ 1, posnegbinomial, weights = species, corbet)
 coef(fit, matrix = TRUE)
 Coef(fit)
 (khat <- Coef(fit)["size"])
-pdf2 <- dgaitdnbinom(with(corbet, ofreq), khat, munb.p = fitted(fit), truncate = 0)
-print(with(corbet, cbind(ofreq, species, fitted = pdf2*sum(species))), dig = 1)
+pdf2 <- dgaitdnbinom(with(corbet, ofreq), khat,
+                     munb.p = fitted(fit), truncate = 0)
+print(with(corbet,
+           cbind(ofreq, species, fitted = pdf2*sum(species))), dig = 1)
 \dontrun{ with(corbet,
 matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
-        xlab = "Observed frequency (of individual butterflies)",
-        type = "b", ylab = "Number of species", col = c("blue", "orange"),
-        main = "blue 1s = observe; orange 2s = fitted")) }
+   xlab = "Observed frequency (of individual butterflies)",
+   type = "b", ylab = "Number of species", col = c("blue", "orange"),
+   main = "blue 1s = observe; orange 2s = fitted")) }
 
 \dontrun{
-# This data (courtesy of Maxim Gerashchenko) causes posbinomial() to fail
+# Data courtesy of Maxim Gerashchenko causes posbinomial() to fail
 pnbd.fail <- data.frame(
  y1 = c(1:16, 18:21, 23:28, 33:38, 42, 44, 49:51, 55, 56, 58,
  59, 61:63, 66, 73, 76, 94, 107, 112, 124, 190, 191, 244),
@@ -268,13 +279,14 @@ fit.fail <- vglm(y1 ~ 1, weights = ofreq, posnegbinomial,
 
 
 %posnegbinomial(lmunb = "loglink", lsize = "loglink", imunb = NULL,
-%               isize = NULL, zero = "size", nsimEIM = 250,
-%               probs.y = 0.75, cutoff.prob = 0.999,
-%               max.support = 2000, max.chunk.MB = 30,
-%               gsize = exp((-4):4), ishrinkage = 0.95, imethod = 1)
-% pdata <- transform(pdata, y1 = rposnegbin(nn, munb = exp(0+2*x2), size = exp(1)),
-%                           y2 = rposnegbin(nn, munb = exp(1+2*x2), size = exp(3)))
-% pdf2 <- dposnegbin(x = with(corbet, ofreq), mu = fitted(fit), size = khat)
+%  isize = NULL, zero = "size", nsimEIM = 250,
+%  probs.y = 0.75, cutoff.prob = 0.999,
+%  max.support = 2000, max.chunk.MB = 30,
+%  gsize = exp((-4):4), ishrinkage = 0.95, imethod = 1)
+% pdata <- transform(pdata,
+%    y1 = rposnegbin(nn, munb = exp(0+2*x2), exp(1)),
+%    y2 = rposnegbin(nn, munb = exp(1+2*x2), exp(3)))
+% pdf2 <- dposnegbin(x = with(corbet, ofreq), mu = fitted(fit), khat)
 
 
 

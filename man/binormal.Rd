@@ -80,8 +80,10 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -103,7 +105,8 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 \note{
   If both equal means and equal standard deviations are desired
   then use something like
-\code{constraints = list("(Intercept)" = matrix(c(1,1,0,0,0, 0,0,1,1,0 ,0,0,0,0,1), 5, 3))}
+\code{constraints = list("(Intercept)" = }
+\code{matrix(c(1,1,0,0,0, 0,0,1,1,0 ,0,0,0,0,1), 5, 3))}
   and maybe
   \code{zero = NULL}
   etc.
@@ -135,9 +138,9 @@ constraints(fit1)
 summary(fit1)
 
 # Estimated P(Y1 <= y1, Y2 <= y2) under the fitted model
-var1  <- loglink(2 * predict(fit1)[, "loglink(sd1)"], inverse = TRUE)
-var2  <- loglink(2 * predict(fit1)[, "loglink(sd2)"], inverse = TRUE)
-cov12 <- rhobitlink(predict(fit1)[, "rhobitlink(rho)"], inverse = TRUE)
+var1  <- loglink(2 * predict(fit1)[, "loglink(sd1)"], inv = TRUE)
+var2  <- loglink(2 * predict(fit1)[, "loglink(sd2)"], inv = TRUE)
+cov12 <- rhobitlink(predict(fit1)[, "rhobitlink(rho)"], inv = TRUE)
 head(with(bdata, pbinorm(y1, y2,
                          mean1 = predict(fit1)[, "mean1"],
                          mean2 = predict(fit1)[, "mean2"],

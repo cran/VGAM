@@ -21,10 +21,10 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 
   }
   \item{trim}{
-  An argument which is fed into \code{mean()}; it is the fraction (0
-  to 0.5) of observations to be trimmed from each end of the response
-  \code{y} before the mean is computed. This is used when computing
-  initial values, and guards against outliers.
+  An argument which is fed into \code{mean()}; it is the fraction
+  (0 to 0.5) of observations to be trimmed from each end of the
+  response \code{y} before the mean is computed. This is used
+  when computing initial values, and guards against outliers.
 
 
   }
@@ -44,10 +44,11 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 \details{
   The two-parameter beta distribution is given by
   \eqn{f(y) =}
-    \deqn{(y-A)^{shape1-1} \times (B-y)^{shape2-1} / [Beta(shape1,shape2)
-                 \times (B-A)^{shape1+shape2-1}]}{%
-          (y-A)^(shape1-1) * (B-y)^(shape2-1) / [Beta(shape1,shape2) *
-                 (B-A)^(shape1+shape2-1)]}
+\deqn{(y-A)^{shape1-1} \times
+      (B-y)^{shape2-1} / [Beta(shape1,shape2)
+      \times (B-A)^{shape1+shape2-1}]}{%
+(y-A)^(shape1-1) * (B-y)^(shape2-1) / [Beta(shape1,shape2) *
+(B-A)^(shape1+shape2-1)]}
     for \eqn{A < y < B}, and \eqn{Beta(.,.)} is the beta function
     (see \code{\link[base:Special]{beta}}).
   The shape parameters are positive, and
@@ -58,8 +59,9 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 
 
   For the standard beta distribution the variance of \eqn{Y} is
-  \eqn{shape1 \times shape2 / [(1+shape1+shape2) \times (shape1+shape2)^2]}{
-       shape1 * shape2 / ((1+shape1+shape2) * (shape1+shape2)^2)}.
+\eqn{shape1 \times
+     shape2 / [(1+shape1+shape2) \times (shape1+shape2)^2]}{
+     shape1 * shape2 / ((1+shape1+shape2) * (shape1+shape2)^2)}.
   If \eqn{\sigma^2= 1 / (1+shape1+shape2)}
   then the variance of \eqn{Y} can be written
   \eqn{\sigma^2 \mu (1-\mu)}{mu*(1-mu)*sigma^2} where
@@ -79,8 +81,10 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -112,8 +116,9 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 }
 \author{ Thomas W. Yee }
 \note{
-  The response must have values in the interval (\eqn{A}, \eqn{B}).
-  \pkg{VGAM} 0.7-4 and prior called this function \code{\link{betaff}}.
+  The response must have values in the interval (\eqn{A},
+  \eqn{B}).  \pkg{VGAM} 0.7-4 and prior called this function
+  \code{\link{betaff}}.
 
 
 }
@@ -135,9 +140,9 @@ betaR(lshape1 = "loglink", lshape2 = "loglink",
 
 }
 \examples{
-bdata <- data.frame(y = rbeta(n = 1000, shape1 = exp(0), shape2 = exp(1)))
-fit <- vglm(y ~ 1, betaR(lshape1 = "identitylink", lshape2 = "identitylink"),
-            data = bdata, trace = TRUE, crit = "coef")
+bdata <- data.frame(y = rbeta(1000, shape1 = exp(0), shape2 = exp(1)))
+fit <- vglm(y ~ 1, betaR(lshape1 = "identitylink",
+            lshape2 = "identitylink"), bdata, trace = TRUE, crit = "coef")
 fit <- vglm(y ~ 1, betaR, data = bdata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)  # Useful for intercept-only models
@@ -151,8 +156,10 @@ c(meanY = with(bdata, mean(Y)), head(fitted(fit),2))
 \keyword{regression}
 
 % 3/1/06; this works well:
-% fit <- vglm(y~1, beta.abqn(link = logofflink(offset = 1), tr = TRUE, crit = "c")
+% fit <- vglm(y~1, beta.abqn(link = logofflink(offset = 1),
+%             tr = TRUE, crit = "c")
 % 3/1/06; this does not work so well:
-%  it <- vglm(y~1, beta.abqn(link = logofflink(offset = 0), tr = TRUE, crit = "c")
+%  it <- vglm(y~1, beta.abqn(link = logofflink(offset = 0),
+%             tr = TRUE, crit = "c")
 % Interesting!!
 

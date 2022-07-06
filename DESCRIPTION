@@ -1,12 +1,13 @@
 Package: VGAM
-Version: 1.1-6
-Date: 2022-02-02
+Version: 1.1-7
+Date: 2022-07-04
 Title: Vector Generalized Linear and Additive Models
 Authors@R: c(person("Thomas", "Yee", role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0002-9970-3907"),
                     email = "t.yee@auckland.ac.nz"),
              person("Cleve", "Moler", role = "ctb",
                     comment = "author of several LINPACK routines"))
-Author: Thomas Yee [aut, cre],
+Author: Thomas Yee [aut, cre] (<https://orcid.org/0000-0002-9970-3907>),
   Cleve Moler [ctb] (author of several LINPACK routines)
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
 Depends: R (>= 3.5.0), methods, stats, stats4, splines
@@ -38,6 +39,6 @@ NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2022-02-02 08:17:53 UTC; tyee001
+Packaged: 2022-07-06 04:22:28 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2022-02-14 10:10:20 UTC
+Date/Publication: 2022-07-06 09:50:02 UTC

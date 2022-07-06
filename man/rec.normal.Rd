@@ -22,23 +22,29 @@ rec.normal(lmean = "identitylink", lsd = "loglink",
   }
   \item{imean, isd}{
   Numeric. Optional initial values for the mean and sd.
-  The default value \code{NULL} means they are computed internally,
+  The default value \code{NULL} means they are
+  computed internally,
   with the help of \code{imethod}.
 
 
   }
   \item{imethod}{
-  Integer, either 1 or 2 or 3. Initial method, three algorithms are
-  implemented. Choose the another value if convergence fails, or use
+    Integer, either 1 or 2 or 3. Initial method,
+    three algorithms are
+    implemented. Choose the another value if
+    convergence fails, or use
   \code{imean} and/or \code{isd}.
 
 
   }
   \item{zero}{
-  Can be an integer vector, containing the value 1 or 2. If so, the mean or
-  standard deviation respectively are modelled as an intercept only.
+    Can be an integer vector, containing the value 1 or 2.
+    If so, the mean or
+    standard deviation respectively are modelled as an
+    intercept only.
   Usually, setting \code{zero = 2} will be used, if used at all.
-  The default value \code{NULL} means both linear/additive predictors
+  The default value \code{NULL} means both
+  linear/additive predictors
   are modelled as functions of the explanatory variables.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
@@ -46,20 +52,24 @@ rec.normal(lmean = "identitylink", lsd = "loglink",
   }
 }
 \details{
-  The response must be a vector or one-column matrix with strictly
+  The response must be a vector or one-column matrix
+  with strictly
   increasing values.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
 }
 \references{
-    Arnold, B. C. and Balakrishnan, N. and Nagaraja, H. N. (1998).
+  Arnold, B. C. and Balakrishnan, N. and
+  Nagaraja, H. N. (1998).
     \emph{Records},
     New York: John Wiley & Sons.
 
@@ -67,18 +77,23 @@ rec.normal(lmean = "identitylink", lsd = "loglink",
 }
 \author{ T. W. Yee }
 \note{
-  This family function tries to solve a difficult problem, and the
-  larger the data set the better.
+  This family function tries to solve a difficult problem,
+  and the larger the data set the better.
   Convergence failure can commonly occur, and
-  convergence may be very slow, so set \code{maxit = 200, trace = TRUE}, say.
+  convergence may be very slow,
+  so set \code{maxit = 200, trace = TRUE}, say.
   Inputting good initial values are advised.
 
 
-  This family function uses the BFGS quasi-Newton update formula
-  for the working weight matrices.  Consequently the estimated
-  variance-covariance matrix may be inaccurate or simply wrong! The
-  standard errors must be therefore treated with caution; these are
-  computed in functions such as \code{vcov()} and \code{summary()}.
+  This family function uses the BFGS quasi-Newton update
+  formula for the
+  working weight matrices.  Consequently the estimated
+  variance-covariance matrix may be inaccurate or
+  simply wrong! The
+  standard errors must be therefore treated with caution;
+  these are
+  computed in functions such as \code{vcov()}
+  and \code{summary()}.
 
 
 }
@@ -92,11 +107,11 @@ rec.normal(lmean = "identitylink", lsd = "loglink",
 \examples{
 nn <- 10000; mymean <- 100
 # First value is reference value or trivial record
-Rdata <- data.frame(rawy = c(mymean, rnorm(nn, me = mymean, sd = exp(3))))
+Rdata <- data.frame(rawy = c(mymean, rnorm(nn, mymean, exp(3))))
 # Keep only observations that are records:
 rdata <- data.frame(y = unique(cummax(with(Rdata, rawy))))
 
-fit <- vglm(y ~ 1, rec.normal, data = rdata, trace = TRUE, maxit = 200)
+fit <- vglm(y ~ 1, rec.normal, rdata, trace = TRUE, maxit = 200)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)

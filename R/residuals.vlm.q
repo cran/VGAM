@@ -16,14 +16,17 @@
 
 
 
+
 residualsvlm  <-
   function(object,
-           type = c("response", "deviance", "pearson", "working")) {
+           type = c("response", "deviance", "pearson",
+                    "working")) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
-                    c("response", "deviance", "pearson", "working"))[1]
+                    c("response", "deviance", "pearson",
+                      "working"))[1]
 
   na.act <- object@na.action
   object@na.action <- list()
@@ -51,7 +54,8 @@ residualsvlm  <-
           names(ans) <- names(object@residuals)
           ans
         } else {
-          wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
+          wz.sqrt <- matrix.power(wz, M = M, power = 0.5,
+                                  fast = TRUE)
           ans <- mux22(wz.sqrt, object@residuals,
                        M = M, upper = FALSE)
           dim(ans) <- c(M, n)
@@ -83,15 +87,17 @@ residualsvlm  <-
 
 residualsvglm  <-
   function(object,
-           type = c("working", "pearson", "response", "deviance", "ldot",
-                    "stdres"),
+           type = c("working", "pearson", "response",
+                    "deviance", "ldot",
+                    "stdres",
+                    "rquantile"),
            matrix.arg = TRUE) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
           c("working", "pearson", "response", "deviance", "ldot",
-            "stdres"))[1]
+            "stdres", "rquantile"))[1]
 
   na.act <- object@na.action
   object@na.action <- list()
@@ -118,7 +124,8 @@ residualsvglm  <-
         names(ans) <- names(object@residuals)
         ans
       } else {
-        wz.sqrt <- matrix.power(wz, M = M, power = 0.5, fast = TRUE)
+        wz.sqrt <- matrix.power(wz, M = M, power = 0.5,
+                                fast = TRUE)
         ans <- mux22(wz.sqrt, object@residuals,
                      M = M, upper = FALSE)
         dim(ans) <- c(M, n)
@@ -139,7 +146,7 @@ residualsvglm  <-
         w <- rep_len(1, n)
       eta <- object@predictors
 
-      dev.fn <- object@family@deviance  # May not 'exist' for that model
+      dev.fn <- object@family@deviance  # May not 'exist'
       if (length(body(dev.fn)) > 0) {
         extra <- object@extra
         ans <- dev.fn(mu = mu,y = y, w = w,
@@ -162,7 +169,7 @@ residualsvglm  <-
     ldot = {
       n <- object@misc$n
       y <- as.matrix(object@y)
-      mu <- object@fitted
+      mu <- object@fitted.values
       w <- object@prior.weights
       if (is.null(w))
           w <- rep_len(1, n)
@@ -179,14 +186,31 @@ residualsvglm  <-
       } else {
         NULL
       }
-    },
+    },  # ldot
+    rquantile = {
+      n <- object@misc$n
+      y <- as.matrix(object@y)
+      mu <- object@fitted.values
+      w <- object@prior.weights
+      if (is.null(w))
+        w <- rep_len(1, n)
+      eta <- object@predictors
+      if (length(formals(object@family@rqresslot)) > 0) {
+        extra <- object@extra
+        object@family@rqresslot(y = y, w = w, eta = eta,
+                                mu = mu, extra = extra)
+      } else {
+        NULL
+      }
+    },  # rquantile
     stdres = {
 
 
 
       if (is(object, "vgam"))
-        stop("argument 'object' was estimated by backfitting and ",
-             "not really IRLS, hence hatvalues() is incorrect.")
+        stop("argument 'object' was estimated by backfitting",
+             " and not really IRLS, hence hatvalues()",
+             " is incorrect.")
 
 
       vfam <- object@family@vfamily
@@ -203,7 +227,7 @@ residualsvglm  <-
                        extra = object@extra, varfun = TRUE)
         ans <- (y - E1) / sqrt(vfun * (1 - c(hatvalues(object))))
       } else {
-        w <- weights(object, type = "prior")  # object@prior.weights
+        w <- weights(object, type = "prior")  # obj@prior.weights
         x <- y * c(w)
         E1 <- E1 * c(w)
 
@@ -211,7 +235,7 @@ residualsvglm  <-
 
 
         if (any(x < 0) || anyNA(x)) 
-          stop("all entries of 'x' must be nonnegative and finite")
+          stop("all entries of 'x' must be >= 0 and finite")
         if ((n <- sum(x)) == 0) 
           stop("at least one entry of 'x' must be positive")
 
@@ -239,7 +263,7 @@ residualsvglm  <-
 
 
       ans
-    },
+    },  # stdres
     response = {
       y <- object@y
 
@@ -252,7 +276,7 @@ residualsvglm  <-
       ans <- if (true.mu) y - mu else NULL
 
       ans
-    })
+    })  # switch
 
 
   if (length(answer)) {
@@ -369,6 +393,43 @@ setMethod("resid",  "vgam",
 setMethod("resid",  "qrrvglm",
           function(object, ...)
           residualsqrrvglm(object, ...))
+
+
+
+
+
+rqresidualsvlm  <-
+  function(object, matrix.arg = TRUE, ...) {
+    residualsvglm(object, type = "rquantile",
+                  matrix.arg = matrix.arg)
+}  # rqresidualsvlm 
+
+
+
+
+  setGeneric("rqresid", function(object, ...)
+             standardGeneric("rqresid"),
+             package = "VGAM")
+  setGeneric("rqresiduals", function(object, ...)
+             standardGeneric("rqresiduals"),
+             package = "VGAM")
+
+
+
+setMethod("rqresid", "vlm",
+          function(object, matrix.arg = TRUE, ...)
+          rqresidualsvlm(object, matrix.arg = matrix.arg, ...))
+
+
+
+setMethod("rqresiduals", "vlm",
+          function(object, matrix.arg = TRUE, ...)
+          rqresidualsvlm(object, matrix.arg = matrix.arg, ...))
+
+
+
+
+
 
 
 

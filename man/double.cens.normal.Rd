@@ -8,13 +8,14 @@
 
 }
 \usage{
-double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loglink",
-                   imu = NULL, isd = NULL, zero = "sd")
+double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd =
+       "loglink", imu = NULL, isd = NULL, zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{r1, r2}{
-  Integers. Number of smallest and largest values censored, respectively.
+  Integers. Number of smallest and largest values censored,
+  respectively.
 
 
   }
@@ -32,9 +33,9 @@ double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loglink",
   }
 }
 \details{
-  This family function uses the Fisher information matrix given in
-  Harter and Moore (1966). The matrix is not diagonal if either
-  \code{r1} or \code{r2} are positive.
+  This family function uses the Fisher information matrix given
+  in Harter and Moore (1966). The matrix is not diagonal if
+  either \code{r1} or \code{r2} are positive.
 
 
 
@@ -45,9 +46,9 @@ double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loglink",
 
 
 } \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 
@@ -81,7 +82,7 @@ double.cens.normal(r1 = 0, r2 = 0, lmu = "identitylink", lsd = "loglink",
 
 
 }
-\examples{\dontrun{ # Repeat the simulations described in Harter and Moore (1966)
+\examples{\dontrun{ # Repeat the simulations of Harter & Moore (1966)
 SIMS <- 100  # Number of simulations (change this to 1000)
 mu.save <- sd.save <- rep(NA, len = SIMS)
 r1 <- 0; r2 <- 4; nn <- 20
@@ -90,13 +91,13 @@ for (sim in 1:SIMS) {
   y <- y[(1+r1):(nn-r2)]  # Delete r1 smallest and r2 largest
   fit <- vglm(y ~ 1, double.cens.normal(r1 = r1, r2 = r2))
   mu.save[sim] <- predict(fit)[1, 1]
-  sd.save[sim] <- exp(predict(fit)[1, 2])  # Assumes a log link and ~ 1
+  sd.save[sim] <- exp(predict(fit)[1, 2])  # Assumes a log link & ~ 1
 }
 c(mean(mu.save), mean(sd.save))  # Should be c(0,1)
 c(sd(mu.save), sd(sd.save))
 }
 
-# Data from Sarhan and Greenberg (1962); MLEs are mu = 9.2606, sd = 1.3754
+# Data from Sarhan & Greenberg (1962); MLEs are mu=9.2606, sd=1.3754
 strontium90 <- data.frame(y = c(8.2, 8.4, 9.1, 9.8, 9.9))
 fit <- vglm(y ~ 1, double.cens.normal(r1 = 2, r2 = 3, isd = 6),
             data = strontium90, trace = TRUE)

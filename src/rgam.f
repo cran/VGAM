@@ -46,7 +46,7 @@ C Output from Public domain Ratfor, version 1.01
       if(ws(ayfnwr1v).gt.0.0d0)then
       ws(ayfnwr1v) = dsqrt(ws(ayfnwr1v))
       endif
-23001 ayfnwr1v = ayfnwr1v+1
+      ayfnwr1v = ayfnwr1v+1
       goto 23000
 23002 continue
       if(gp0xjetb .eq. 0)then
@@ -58,11 +58,9 @@ C Output from Public domain Ratfor, version 1.01
       do23007 ayfnwr1v = 3,nk-3 
       t1 = t1 + zvau2lct(ayfnwr1v) 
 23007 continue
-23008 continue
       do23009 ayfnwr1v = 3,nk-3 
       t2 = t2 + xecbg0pf(ayfnwr1v) 
 23009 continue
-23010 continue
       ratio = t1/t2
       gp0xjetb = 1
       endif
@@ -182,7 +180,6 @@ C Output from Public domain Ratfor, version 1.01
       endif
       goto 23013
       endif
-23014 continue
 90    hmayv1xt = 0.0d0
       i9mwnvqt = ratio * dexp((-2.0d0 + x*6.0d0) * dlog(16.0d0))
       qcpiaj7f = fx
@@ -209,7 +206,6 @@ C Output from Public domain Ratfor, version 1.01
       d7glzhbj(ayfnwr1v) = 0.0d0
       v2eydbxs(ayfnwr1v) = 0.0d0 
 23045 continue
-23046 continue
       ilo = 1
       do23047 ayfnwr1v = 1,nb 
       call vinterv(tb(1), nbp1 ,tb(ayfnwr1v),dqlr5bse,pqzfxw4i)
@@ -217,13 +213,11 @@ C Output from Public domain Ratfor, version 1.01
       do23049 iii = 1,4 
       yw1(iii) = g9fvdrbw(iii,3) 
 23049 continue
-23050 continue
       call vbsplvd(tb,ifour4,tb(ayfnwr1v+1),dqlr5bse,work,g9fvdrbw,three
      *3)
       do23051 iii = 1,4 
       yw2(iii) = g9fvdrbw(iii,3) - yw1(iii) 
 23051 continue
-23052 continue
       wpt = tb(ayfnwr1v+1) - tb(ayfnwr1v)
       if(dqlr5bse .ge. 4)then
       do23055 iii = 1,4 
@@ -251,7 +245,6 @@ C Output from Public domain Ratfor, version 1.01
      *+ yw2(iii)*yw2(yq6lorbx)*othird)
       endif
 23055 continue
-23056 continue
       else
       if(dqlr5bse .eq. 3)then
       do23065 iii = 1,3 
@@ -273,7 +266,6 @@ C Output from Public domain Ratfor, version 1.01
      *+ yw2(iii)*yw2(yq6lorbx)*othird)
       endif
 23065 continue
-23066 continue
       else
       if(dqlr5bse .eq. 2)then
       do23073 iii = 1,2 
@@ -289,7 +281,6 @@ C Output from Public domain Ratfor, version 1.01
      *+ yw2(iii)*yw2(yq6lorbx)*othird)
       endif
 23073 continue
-23074 continue
       else
       if(dqlr5bse .eq. 1)then
       do23079 iii = 1,1 
@@ -299,13 +290,11 @@ C Output from Public domain Ratfor, version 1.01
      *q6lorbx) + (yw2(iii)*yw1(yq6lorbx) + yw2(yq6lorbx)*yw1(iii))*0.50 
      *+ yw2(iii)*yw2(yq6lorbx)*othird)
 23079 continue
-23080 continue
       endif
       endif
       endif
       endif
 23047 continue
-23048 continue
       return
       end
       subroutine vmnweiy2(buhyalv4,fulcp8wa,plj0trqx, e5knafcg,nk,wep0oi
@@ -374,7 +363,6 @@ C Output from Public domain Ratfor, version 1.01
       wjm2(2) = fulcp8wa(3,yq6lorbx)
       wjm1(1) = fulcp8wa(4,yq6lorbx)
 23081 continue
-23082 continue
       if(iflag .eq. 0)then
       return
       endif
@@ -385,11 +373,10 @@ C Output from Public domain Ratfor, version 1.01
      *3097
       plj0trqx(yq6lorbx,yq6lorbx+gp1jxzuh-1) = fulcp8wa(5-gp1jxzuh,yq6lo
      *rbx)
-23096 gp1jxzuh = gp1jxzuh+1
+      gp1jxzuh = gp1jxzuh+1
       goto 23095
 23097 continue
 23093 continue
-23094 continue
       do23098 ayfnwr1v = 1,nk 
       yq6lorbx = nk-ayfnwr1v+1
       gp1jxzuh = yq6lorbx-4
@@ -401,11 +388,10 @@ C Output from Public domain Ratfor, version 1.01
       plj0trqx(gp1jxzuh,yq6lorbx) = 0.0d0- ( c1*plj0trqx(gp1jxzuh+3,yq6l
      *orbx) + c2*plj0trqx(gp1jxzuh+2,yq6lorbx) + c3*plj0trqx(gp1jxzuh+1,
      *yq6lorbx) )
-23101 gp1jxzuh = gp1jxzuh-1
+      gp1jxzuh = gp1jxzuh-1
       goto 23100
 23102 continue
 23098 continue
-23099 continue
       return
       end
       subroutine wmhctl9x(penalt,pjb6wfoq,x,y,w, kuzxj1lo,nk,icrit, ankc
@@ -439,27 +425,22 @@ C Output from Public domain Ratfor, version 1.01
       do23103 ayfnwr1v = 1,nk 
       coef(ayfnwr1v) = xwy(ayfnwr1v) 
 23103 continue
-23104 continue
       do23105 ayfnwr1v = 1,nk 
       buhyalv4(4,ayfnwr1v) = zvau2lct(ayfnwr1v)+i9mwnvqt*xecbg0pf(ayfnwr
      *1v) 
 23105 continue
-23106 continue
       do23107 ayfnwr1v = 1,(nk-1) 
       buhyalv4(3,ayfnwr1v+1) = f6lsuzax(ayfnwr1v)+i9mwnvqt*z4grbpiq(ayfn
      *wr1v) 
 23107 continue
-23108 continue
       do23109 ayfnwr1v = 1,(nk-2) 
       buhyalv4(2,ayfnwr1v+2) = fvh2rwtc(ayfnwr1v)+i9mwnvqt*d7glzhbj(ayfn
      *wr1v) 
 23109 continue
-23110 continue
       do23111 ayfnwr1v = 1,(nk-3) 
       buhyalv4(1,ayfnwr1v+3) = dcfir2no(ayfnwr1v)+i9mwnvqt*v2eydbxs(ayfn
      *wr1v) 
 23111 continue
-23112 continue
       call dpbfa8(buhyalv4,e5knafcg,nk,three3,info)
       if(info .ne. 0)then
       return
@@ -470,7 +451,6 @@ C Output from Public domain Ratfor, version 1.01
       xv = x(ayfnwr1v)
       call wbvalue(ankcghz2,coef, nk,ifour4,xv,izero0, sz(ayfnwr1v))
 23115 continue
-23116 continue
       if(icrit .eq. 0)then
       return
       endif
@@ -501,7 +481,6 @@ C Output from Public domain Ratfor, version 1.01
      *w(ayfnwr1v)**2
       ifys6woa(ayfnwr1v) = qtce8hzo
 23119 continue
-23120 continue
       if(icrit .eq. 1)then
       resss = 0.0d0 
       eqdf = 0.0d0 
@@ -511,7 +490,6 @@ C Output from Public domain Ratfor, version 1.01
       eqdf = eqdf + ifys6woa(ayfnwr1v)
       rxeqjn0y = rxeqjn0y + w(ayfnwr1v)*w(ayfnwr1v)
 23127 continue
-23128 continue
       qcpiaj7f = (resss/rxeqjn0y)/((1.0d0-(pjb6wfoq+penalt*eqdf)/rxeqjn0
      *y)**2)
       else
@@ -523,14 +501,12 @@ C Output from Public domain Ratfor, version 1.01
      *.0d0-ifys6woa(ayfnwr1v)))**2
       rxeqjn0y = rxeqjn0y + w(ayfnwr1v)*w(ayfnwr1v)
 23131 continue
-23132 continue
       qcpiaj7f = qcpiaj7f / rxeqjn0y
       else
       qcpiaj7f = 0.0d0
       do23133 ayfnwr1v = 1,kuzxj1lo 
       qcpiaj7f = qcpiaj7f+ifys6woa(ayfnwr1v)
 23133 continue
-23134 continue
       qcpiaj7f = 3.0d0 + (pjb6wfoq-qcpiaj7f)**2
       endif
       endif
@@ -557,7 +533,6 @@ C Output from Public domain Ratfor, version 1.01
       fvh2rwtc(ayfnwr1v) = 0.0d0 
       dcfir2no(ayfnwr1v) = 0.0d0
 23135 continue
-23136 continue
       ilo = 1
       qaltf0nz = 0.1d-9
       do23137 ayfnwr1v = 1,rvy1fpli 
@@ -610,6 +585,5 @@ C Output from Public domain Ratfor, version 1.01
       zvau2lct(yq6lorbx) = zvau2lct(yq6lorbx) + wv2svdbx3tk*g9fvdrbw(4,1
      *)
 23137 continue
-23138 continue
       return
       end

@@ -22,8 +22,12 @@
   these are based on
   finite mixtures of the parent with itself
   and the multinomial logit model (MLM) respectively.
-  Altogether it can be abbreviated as
-  GAAIIT--Zeta(shape.p)--Zeta(shape.a)--MLM--Zeta(shape.i)--MLM.
+
+
+
+% Altogether it can be abbreviated as
+% GAAIIT--Zeta(shape.p)--Zeta(shape.a)--
+% MLM--Zeta(shape.i)--MLM.
 
 
 
@@ -192,8 +196,8 @@ rgaitdzeta(n, shape.p, a.mix = NULL, a.mlm = NULL,
 
 \author{ T. W. Yee. }
 \note{
-  See \code{\link{Gaitdpois}} for general information also relevant
-  to this parent distribution.
+  See \code{\link{Gaitdpois}} for general information
+  also relevant to this parent distribution.
   
 
 % Functions \code{\link[VGAMdata]{Poszeta}} have been moved
@@ -234,17 +238,18 @@ tvec <- 15; max.support <- 25; pobs.a <- 0.10; pstr.i <- 0.15
 (ddd <- dgaitdzeta(xgrid, shape, truncate = tvec,
    max.support = max.support, pobs.mix = pobs.a,
    a.mix = avec, pstr.mix = pstr.i, i.mix = ivec))
-\dontrun{plot(xgrid, ddd, type = "n", ylab = "Probability", xlab = "x",
-              main = "GAIT PMF---Zeta Parent")
+\dontrun{plot(xgrid, ddd, type = "n", ylab = "Probability",
+              xlab = "x", main = "GAIT PMF---Zeta Parent")
 mylwd <- 0.5
 abline(v = avec, col = 'blue', lwd = mylwd)
 abline(v = ivec, col = 'purple', lwd = mylwd)
 abline(v = tvec, col = 'tan', lwd = mylwd)
 abline(v = max.support, col = 'magenta', lwd = mylwd)
 abline(h = c(pobs.a, pstr.i, 0:1), col = 'gray', lty = "dashed")
-lines(xgrid, dzeta(xgrid, shape), col = 'gray', lty = "dashed")  # f_{\pi}
+lines(xgrid, dzeta(xgrid, shape), col='gray', lty="dashed")  # f_{\pi}
 lines(xgrid, ddd, type = "h", col = "pink", lwd = 3)  # GAIT PMF
-points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16, col = 'tan', cex = 2)  }
+points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16, col = 'tan', cex = 2)
+}
 }
 \keyword{distribution}
 

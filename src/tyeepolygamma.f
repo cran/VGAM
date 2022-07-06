@@ -1,4 +1,4 @@
-C Output from Public domain Ratfor, version 1.01
+C Output from Public domain Ratfor, version 1.04
       subroutine vdgam1(x, lfu2qhid, dvhw1ulq)
       implicit logical (a-z)
       double precision x, lfu2qhid
@@ -109,7 +109,6 @@ C Output from Public domain Ratfor, version 1.01
       dvhw1ulq = okobr6tcex
       endif
 23016 continue
-23017 continue
       return
       end
       subroutine tgam1w(x, lfu2qhid, n, dvhw1ulq)
@@ -124,7 +123,6 @@ C Output from Public domain Ratfor, version 1.01
       dvhw1ulq = okobr6tcex
       endif
 23020 continue
-23021 continue
       return
       end
       subroutine cum8sum(ci1oyxas, lfu2qhid, nlfu2qhid, valong, ntot, no
@@ -143,7 +141,6 @@ C Output from Public domain Ratfor, version 1.01
       lfu2qhid(iii) = ci1oyxas(ayfnwr1v)
       endif
 23024 continue
-23025 continue
       if(iii .eq. nlfu2qhid)then
       notdvhw1ulq = 0
       else

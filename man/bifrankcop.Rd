@@ -3,8 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Frank's Bivariate Distribution Family Function }
 \description{
-  Estimate the association parameter of Frank's bivariate distribution
-  by maximum likelihood estimation.
+  Estimate the association parameter of Frank's bivariate
+  distribution by maximum likelihood estimation.
 
 }
 \usage{
@@ -34,11 +34,11 @@ bifrankcop(lapar = "loglink", iapar = 2, nsimEIM = 250)
 \details{
   The cumulative distribution function is
   \deqn{P(Y_1 \leq y_1, Y_2 \leq y_2) = H_{\alpha}(y_1,y_2) =
-             \log_{\alpha} [1 + (\alpha^{y_1}-1)(\alpha^{y_2}-1)/
-                     (\alpha-1)] }{%
-        P(Y1 <= y1, Y2 <= y2) =
-        H_{alpha}(y1,y2) =  log_{alpha} [1 + (alpha^(y1)-1)*(alpha^(y2)-1)/
-                     (alpha-1)] }
+\log_{\alpha} [1 + (\alpha^{y_1}-1)(\alpha^{y_2}-1)/
+(\alpha-1)] }{%
+P(Y1 <= y1, Y2 <= y2) =
+H_{alpha}(y1,y2) =  log_{alpha} [1 + (alpha^(y1)-1)*(alpha^(y2)-1)/
+(alpha-1)] }
   for \eqn{\alpha \ne 1}{alpha != 1}.
   Note the logarithm here is to base \eqn{\alpha}{alpha}.
   The support of the function is the unit square.
@@ -49,10 +49,10 @@ bifrankcop(lapar = "loglink", iapar = 2, nsimEIM = 250)
   is symmetric with respect to the lines \eqn{y_2=y_1}{y2=y1}
   and \eqn{y_2=1-y_1}{y2=1-y1}.
   When \eqn{\alpha > 1}{alpha>1} then
-  \eqn{h_{\alpha}(y_1,y_2) = h_{1/\alpha}(1-y_1,y_2)}{h_{1/alpha}(1-y_1,y_2)}.
+\eqn{h_{\alpha}(y_1,y_2) = h_{1/\alpha}(1-y_1,y_2)}{h_{1/alpha}(1-y_1,y_2)}.
 
 
-  If \eqn{\alpha=1}{alpha=1} then \eqn{H(y_1,y_2) = y_1 y_2}{H(y1,y2)=y1*y2},
+  \eqn{\alpha=1}{alpha=1} then \eqn{H(y_1,y_2) = y_1 y_2}{H(y1,y2)=y1*y2},
   i.e., uniform on the unit square.
   As \eqn{\alpha}{alpha} approaches 0 then
   \eqn{H(y_1,y_2) = \min(y_1,y_2)}{H(y1,y2)=min(y1,y2)}.
@@ -62,14 +62,16 @@ bifrankcop(lapar = "loglink", iapar = 2, nsimEIM = 250)
 
   The default is to use Fisher scoring implemented using
   \code{\link{rbifrankcop}}.
-  For intercept-only models an alternative is to set \code{nsimEIM=NULL}
-  so that a variant of Newton-Raphson is used.
+  For intercept-only models an alternative is to set
+  \code{nsimEIM=NULL} so that a variant of Newton-Raphson is used.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -89,8 +91,8 @@ Frank's family of bivariate distributions.
 \note{
   The response must be a two-column matrix. Currently, the fitted
   value is a matrix with two columns and values equal to a half.
-  This is because the marginal distributions correspond to a standard
-  uniform distribution.
+  This is because the marginal distributions correspond to a
+  standard uniform distribution.
 
 
 }

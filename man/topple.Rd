@@ -9,7 +9,8 @@
 }
 \usage{
 topple(lshape = "logitlink", zero = NULL, gshape = ppoints(8),
-       parallel = FALSE, type.fitted = c("mean", "percentiles", "Qlink"),
+       parallel = FALSE,
+       type.fitted = c("mean", "percentiles", "Qlink"),
        percentiles = 50)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -45,8 +46,10 @@ topple(lshape = "logitlink", zero = NULL, gshape = ppoints(8),
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -78,8 +81,8 @@ topple(lshape = "logitlink", zero = NULL, gshape = ppoints(8),
 
 }
 \examples{
-tdata <- data.frame(y = rtopple(1000, shape = logitlink(1, inverse = TRUE)))
-tfit <- vglm(y ~ 1, topple, data = tdata, trace = TRUE, crit = "coef")
+tdata <- data.frame(y = rtopple(1000, logitlink(1, inverse = TRUE)))
+tfit <- vglm(y ~ 1, topple, tdata, trace = TRUE, crit = "coef")
 coef(tfit, matrix = TRUE)
 Coef(tfit)
 }

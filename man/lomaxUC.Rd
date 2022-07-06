@@ -7,8 +7,9 @@
 \title{The Lomax Distribution}
 \description{
   Density, distribution function, quantile function and random
-  generation for the Lomax distribution with scale parameter \code{scale}
-  and shape parameter \code{q}.
+  generation for the Lomax distribution with scale parameter
+  \code{scale} and shape parameter \code{q}.
+
 }
 \usage{
 dlomax(x, scale = 1, shape3.q, log = FALSE)
@@ -81,7 +82,7 @@ max(abs(plomax(qlomax(p = probs, shape3.q =  1),
 \dontrun{ par(mfrow = c(1, 2))
 x <- seq(-0.01, 5, len = 401)
 plot(x, dexp(x), type = "l", col = "black", ylab = "", ylim = c(0, 3),
-     main = "Black is standard exponential, others are dlomax(x, shape3.q)")
+     main = "Black is std exponential, others are dlomax(x, shape3.q)")
 lines(x, dlomax(x, shape3.q = 1), col = "orange")
 lines(x, dlomax(x, shape3.q = 2), col = "blue")
 lines(x, dlomax(x, shape3.q = 5), col = "green")
@@ -89,7 +90,7 @@ legend("topright", col = c("orange","blue","green"), lty = rep(1, 3),
        legend = paste("shape3.q =", c(1, 2, 5)))
 
 plot(x, pexp(x), type = "l", col = "black", ylab = "", las = 1,
-     main = "Black is standard exponential, others are plomax(x, shape3.q)")
+     main = "Black is std exponential, others are plomax(x, shape3.q)")
 lines(x, plomax(x, shape3.q = 1), col = "orange")
 lines(x, plomax(x, shape3.q = 2), col = "blue")
 lines(x, plomax(x, shape3.q = 5), col = "green")

@@ -113,7 +113,8 @@ tailed distribution such as \code{\link{gaitdzeta}}.
 % Michael Friendly [ctb].
 
 
-  Currently, only a selected number of \pkg{VGAM} family functions
+Currently, only a selected number of \pkg{VGAM}
+family functions
   are implemented. Over time, hopefully more and more will be
   completed.
 
@@ -204,7 +205,8 @@ Kleiber, C. and Zeileis, A. (2016)
   C. Kleiber.
   Function \code{rootogram4()} is based very heavily
   on \pkg{countreg}.
-  T. W. Yee wrote code to unpack variables from many various models
+  T. W. Yee wrote code to unpack variables from
+  many various models
   and feed them into the appropriate \code{d}-type function.
 
 

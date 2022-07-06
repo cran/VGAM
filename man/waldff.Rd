@@ -37,8 +37,10 @@ waldff(llambda = "loglink", ilambda = NULL)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -69,8 +71,8 @@ New York: Wiley.
 
 }
 \examples{
-wdata <- data.frame(y = rinv.gaussian(n = 1000, mu =  1, lambda = exp(1)))
-wfit <- vglm(y ~ 1, waldff(ilambda = 0.2), data = wdata, trace = TRUE)
+wdata <- data.frame(y = rinv.gaussian(1000, mu =  1, exp(1)))
+wfit <- vglm(y ~ 1, waldff(ilambda = 0.2), wdata, trace = TRUE)
 coef(wfit, matrix = TRUE)
 Coef(wfit)
 summary(wfit)

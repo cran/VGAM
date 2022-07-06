@@ -29,7 +29,8 @@ rrayleigh(n, scale = 1)
   \item{scale}{the scale parameter \eqn{b}.}
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -68,7 +69,8 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 }
 \note{
-  The Rayleigh distribution is related to the Maxwell distribution.
+  The Rayleigh distribution is related to the
+  Maxwell distribution.
 
 
 }
@@ -81,12 +83,12 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \examples{
 \dontrun{ Scale <- 2; x <- seq(-1, 8, by = 0.1)
 plot(x, drayleigh(x, scale = Scale), type = "l", ylim = c(0,1),
-     las = 1, ylab = "",
-     main = "Rayleigh density divided into 10 equal areas; orange = cdf")
+  las = 1, ylab = "",
+  main = "Rayleigh density divided into 10 equal areas; red = CDF")
 abline(h = 0, col = "blue", lty = 2)
 qq <- qrayleigh(seq(0.1, 0.9, by = 0.1), scale = Scale)
-lines(qq, drayleigh(qq, scale = Scale), col = "purple", lty = 3, type = "h")
-lines(x, prayleigh(x, scale = Scale), col = "orange") }
+lines(qq, drayleigh(qq, scale = Scale), col = 2, lty = 3, type = "h")
+lines(x, prayleigh(x, scale = Scale), col = "red") }
 }
 \keyword{distribution}
 

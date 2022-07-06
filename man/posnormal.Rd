@@ -23,9 +23,9 @@ posnormal(lmean = "identitylink", lsd = "loglink",
   }
 
 
-%  \item{emean, esd}{
-%  List. Extra argument for each of the links.
-%  See \code{earg} in \code{\link{Links}} for general information.
+%\item{emean, esd}{
+%List. Extra argument for each of the links.
+%See \code{earg} in \code{\link{Links}} for general information.
 %emean = list(), esd = list(),
 %
 %  }
@@ -68,7 +68,8 @@ posnormal(lmean = "identitylink", lsd = "loglink",
 % linear/additive predictors are modelled as intercepts only.
 % The values must be from the set \{1,2\} corresponding
 % respectively to \eqn{\mu}{mu}, \eqn{\sigma}{sigma}.
-% If \code{zero = NULL} then all linear/additive predictors are modelled as
+% If \code{zero = NULL} then all linear/additive predictors 
+% are modelled as
 % a linear combination of the explanatory variables.
 % For many data sets having \code{zero = 2} is a good idea.
 
@@ -80,36 +81,40 @@ posnormal(lmean = "identitylink", lsd = "loglink",
 
 }
 \details{
-  The positive normal distribution is the ordinary normal distribution
-  but with the probability of zero or less being zero.
-  The rest of the probability density function is scaled up. Hence
+  The positive normal distribution is the ordinary normal
+  distribution but with the probability of zero or less being zero.
+  The rest of the probability density function is scaled up.
+  Hence
   the probability density function can be written
-  \deqn{f(y) = \frac{1}{\sqrt{2\pi} \sigma} \exp\left( -\frac12
-               (y-\mu)^2 / \sigma^2  \right) /
-               \left[ 1-\Phi(-\mu/ \sigma) \right]}{%
-        f(y) = (1/(sqrt(2*pi)*sigma)) * exp( -0.5 * (y-mu)^2/  sigma^2) /
-               [1-Phi(-mu/ sigma)] }
-  where \eqn{\Phi()}{Phi} is the cumulative distribution function of a
-  standard normal (\code{\link[stats:Normal]{pnorm}}).
+\deqn{f(y) = \frac{1}{\sqrt{2\pi} \sigma} \exp\left( -\frac12
+             (y-\mu)^2 / \sigma^2  \right) /
+             \left[ 1-\Phi(-\mu/ \sigma) \right]}{%
+  f(y) = (1/(sqrt(2*pi)*sigma)) * exp( -0.5 * (y-mu)^2/  sigma^2) /
+         [1-Phi(-mu/ sigma)] }
+  where \eqn{\Phi()}{Phi} is the cumulative distribution function
+  of a standard normal (\code{\link[stats:Normal]{pnorm}}).
   Equivalently, this is
-  \deqn{f(y) = \frac{1}{\sigma} \frac{\phi((y-\mu) / \sigma)}{
-               1-\Phi(-\mu/ \sigma)}.}{%
-        f(y) = (1/sigma) * dnorm((y-mu)/sigma) / [1-pnorm(-mu/ sigma)].}
-  where \eqn{\phi()}{dnorm()} is the probability density function of a
-  standard normal distribution (\code{\link[stats:Normal]{dnorm}}).
+\deqn{f(y) = \frac{1}{\sigma} \frac{\phi((y-\mu) / \sigma)}{
+             1-\Phi(-\mu/ \sigma)}}{%
+f(y) = (1/sigma) * dnorm((y-mu)/sigma) / [1-pnorm(-mu/ sigma)]}
+  where \eqn{\phi()}{dnorm()} is the probability
+  density function of a standard normal distribution
+  (\code{\link[stats:Normal]{dnorm}}).
 
 
   The mean of \eqn{Y} is
-  \deqn{E(Y) = \mu + \sigma \frac{\phi(-\mu/ \sigma)}{
-               1-\Phi(-\mu/ \sigma)}. }{%
-        E(Y) = mu + sigma * dnorm((y-mu)/sigma) / [1-pnorm(-mu/ sigma)]. }
+\deqn{E(Y) = \mu + \sigma \frac{\phi(-\mu/ \sigma)}{
+             1-\Phi(-\mu/ \sigma)}. }{%
+E(Y) = mu + sigma * dnorm((y-mu)/sigma) / [1-pnorm(-mu/ sigma)].}
   This family function handles multiple responses.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -130,15 +135,15 @@ posnormal(lmean = "identitylink", lsd = "loglink",
 
 
 
-  The distribution of the reciprocal of a positive normal random variable
-  is known as an alpha distribution.
+  The distribution of the reciprocal of a positive normal random
+  variable is known as an alpha distribution.
 
 
 }
 
 \section{Warning }{
-  It is recommended that \code{trace = TRUE} be used to monitor convergence;
-  sometimes the estimated mean is \code{-Inf} and the
+  It is recommended that \code{trace = TRUE} be used to monitor
+  convergence; sometimes the estimated mean is \code{-Inf} and the
   estimated mean standard deviation is \code{Inf}, especially
   when the sample size is small.
   Under- or over-flow may occur if the data is ill-conditioned.
@@ -157,12 +162,12 @@ pdata <- data.frame(Mean = 1.0, SD = exp(1.0))
 pdata <- transform(pdata, y = rposnorm(n <- 1000, m = Mean, sd = SD))
 
 \dontrun{with(pdata, hist(y, prob = TRUE, border = "blue",
-  main = paste("posnorm(m =", Mean[1], ", sd =", round(SD[1], 2),")"))) }
+  main = paste("posnorm(m =", Mean[1], ", sd =", round(SD[1], 2),")")))}
 fit <- vglm(y ~ 1, posnormal, data = pdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))
-mygrid <- with(pdata, seq(min(y), max(y), len = 200))  # Add the fit to the histogram
-\dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col = "orange")}
+mygrid <- with(pdata, seq(min(y), max(y), len = 200))
+\dontrun{lines(mygrid, dposnorm(mygrid, Cfit[1], Cfit[2]), col = "red")}
 }
 \keyword{models}
 \keyword{regression}

@@ -63,7 +63,7 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
 }
 \references{
   Originally the code was found at
-  \code{http://aksenov.freeshell.org/lerchphi/source/lerchphi.c}.
+\code{http://aksenov.freeshell.org/lerchphi/source/lerchphi.c}.
 
 
   Bateman, H. (1953).
@@ -85,7 +85,8 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
   \eqn{\zeta(s) = \Phi(x=1,s,v=1)}{zeta(s) = Phi(x=1,s,v=1)}.
   Another example is the Hurwitz zeta function
   \eqn{\zeta(s, v) = \Phi(x=1,s,v=v)}{zeta(s) = Phi(x=1,s,v=v)}.
-  The special case of \eqn{s=1} corresponds to the hypergeometric 2F1,
+  The special case of \eqn{s=1} corresponds to the hypergeometric
+  2F1,
   and this is implemented in the \pkg{gsl} package.
   The Lerch Phi function should not be confused with the
   Lerch zeta function though they are quite similar.
@@ -94,9 +95,11 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
 
 }
 \section{Warning }{
-  This function has not been thoroughly tested and contains limitations,
+  This function has not been thoroughly tested and contains
+  limitations,
   for example,
-  the zeta function cannot be computed with this function even though
+  the zeta function cannot be computed with this function even
+  though
   \eqn{\zeta(s) = \Phi(x=1,s,v=1)}{zeta(s) = Phi(x=1,s,v=1)}.
   Several numerical problems can arise,
   such as lack of convergence, overflow
@@ -125,8 +128,8 @@ lerch(x, s, v, tolerance = 1.0e-10, iter = 100)
 \examples{
 \dontrun{
 s <- 2; v <- 1; x <- seq(-1.1, 1.1, length = 201)
-plot(x, lerch(x, s = s, v = v), type = "l", col = "blue", las = 1,
-     main = paste0("lerch(x, s = ", s,", v = ", v, ")"))
+plot(x, lerch(x, s = s, v = v), type = "l", col = "blue",
+     las = 1, main = paste0("lerch(x, s = ", s,", v = ", v, ")"))
 abline(v = 0, h = 1, lty = "dashed", col = "gray")
 }
 }
@@ -135,4 +138,5 @@ abline(v = 0, h = 1, lty = "dashed", col = "gray")
 
 
 %s <- runif(100, 0, 1.5)
-%max(abs(zeta(s) - lerch(x = 1, s = s, v = 1)))  # This fails); should be 0
+% This fails); should be 0:
+%max(abs(zeta(s) - lerch(x = 1, s = s, v = 1)))

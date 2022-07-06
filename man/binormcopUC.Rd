@@ -19,8 +19,8 @@ rbinormcop(n, rho = 0)
 }
 \arguments{
   \item{x1, x2, q1, q2}{vector of quantiles.
-  The \code{x1} and \code{x2} should be in the interval \eqn{(0,1)}.
-  Ditto for \code{q1} and \code{q2}.
+  The \code{x1} and \code{x2} should be in the interval
+  \eqn{(0,1)}.  Ditto for \code{q1} and \code{q2}.
 
 
   }

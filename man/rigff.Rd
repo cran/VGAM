@@ -8,7 +8,8 @@
 
 }
 \usage{
-rigff(lmu = "identitylink", llambda = "loglink", imu = NULL, ilambda = 1)
+rigff(lmu = "identitylink", llambda = "loglink", imu = NULL,
+      ilambda = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,8 +32,10 @@ rigff(lmu = "identitylink", llambda = "loglink", imu = NULL, ilambda = 1)
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -47,7 +50,8 @@ London: Chapman & Hall
 }
 \author{ T. W. Yee }
 \note{
-  This distribution is potentially useful for dispersion modelling.
+  This distribution is potentially useful for
+  dispersion modelling.
 
 
 }
@@ -57,9 +61,9 @@ London: Chapman & Hall
 
 }
 \examples{
-rdata <- data.frame(y = rchisq(n = 100, df = 14))  # Not 'proper' data!!
+rdata <- data.frame(y = rchisq(100, df = 14))  # Not 'proper' data!!
 fit <- vglm(y ~ 1, rigff, rdata, trace = TRUE)
-fit <- vglm(y ~ 1, rigff, rdata, trace = TRUE, eps = 1e-9, crit = "c")
+fit <- vglm(y ~ 1, rigff, rdata, trace = TRUE, crit = "c")
 summary(fit)
 }
 \keyword{models}

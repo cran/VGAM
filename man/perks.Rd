@@ -11,7 +11,8 @@
 perks(lscale = "loglink", lshape = "loglink",
       iscale = NULL,   ishape = NULL,
       gscale = exp(-5:5), gshape = exp(-5:5),
-      nsimEIM = 500, oim.mean = FALSE, zero = NULL, nowarning = FALSE)
+      nsimEIM = 500, oim.mean = FALSE, zero = NULL,
+      nowarning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +35,8 @@ perks(lscale = "loglink", lshape = "loglink",
 
 % \item{eshape, escale}{
 % List. Extra argument for each of the links.
-% See \code{earg} in \code{\link{Links}} for general information.
+% See \code{earg} in \code{\link{Links}} for
+% general information.
 % }
 
 
@@ -67,14 +69,15 @@ has cumulative distribution function
 \frac{1 + \alpha}{1 + \alpha e^{\beta y}}
 \right\}^{1 / \beta}
 }{%
-F(y; alpha, beta) = 1 - ((1 + \alpha)/(1 + alpha * e^(beta * y)))^(1 / beta)
+F(y;alpha,beta)=1-((1+\alpha)/(1+alpha*e^(beta*y)))^(1/beta)
 }
 which leads to a probability density function
 \deqn{f(y; \alpha, \beta) =
 \left[ 1 + \alpha \right]^{1 / \beta}
 \alpha  e^{\beta y} / (1 + \alpha e^{\beta y})^{1 + 1 / \beta}
 }{%
-f(y; alpha, beta) = [ 1 + alpha]^(1 / \beta) * alpha * exp(beta * y) / (1 + alpha * exp(beta * y))^(1 + 1 / beta)
+f(y;alpha,beta)=
+[1+alpha]^(1/\beta)*alpha*exp(beta*y)/(1+alpha*exp(beta*y))^(1+1/beta)
 }
 for \eqn{\alpha > 0}{alpha > 0},
 \eqn{\beta > 0}{beta > 0},
@@ -92,9 +95,10 @@ Simulated Fisher scoring is used and multiple responses are handled.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions such as
+  \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 }
@@ -142,7 +146,7 @@ pdata <- transform(pdata, eta1  = -1,
                           ceta1 =  1)
 pdata <- transform(pdata, shape1 = exp(eta1),
                           scale1 = exp(ceta1))
-pdata <- transform(pdata, y1 = rperks(nn, shape = shape1, scale = scale1))
+pdata <- transform(pdata, y1 = rperks(nn, sh = shape1, sc = scale1))
 fit1 <- vglm(y1 ~ 1, perks, data = pdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1)

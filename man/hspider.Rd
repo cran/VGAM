@@ -7,14 +7,15 @@
 }
 \usage{data(hspider)}
 \format{
-  A data frame with 28 observations (sites) on the following 18 variables.
+  A data frame with 28 observations
+  (sites) on the following 18 variables.
   \describe{
     \item{WaterCon}{Log percentage of soil dry mass.}
     \item{BareSand}{Log percentage cover of bare sand.}
-    \item{FallTwig}{Log percentage cover of fallen leaves and twigs.}
-    \item{CoveMoss}{Log percentage cover of the moss layer.}
-    \item{CoveHerb}{Log percentage cover of the herb layer.}
-    \item{ReflLux}{Reflection of the soil surface with cloudless sky.}
+\item{FallTwig}{Log percentage cover of fallen leaves and twigs.}
+\item{CoveMoss}{Log percentage cover of the moss layer.}
+\item{CoveHerb}{Log percentage cover of the herb layer.}
+\item{ReflLux}{Reflection of the soil surface with cloudless sky.}
     \item{Alopacce}{Abundance of \emph{Alopecosa accentuata}.}
     \item{Alopcune}{Abundance of \emph{Alopecosa cuneata}.}
     \item{Alopfabr}{Abundance of \emph{Alopecosa fabrilis}.}
@@ -30,15 +31,21 @@
   }
 }
 \details{
-The data, which originally came from Van der Aart and Smeek-Enserink
-(1975) consists of abundances (numbers trapped over a 60 week period)
+  The data, which originally came from Van der Aart
+  and Smeek-Enserink
+  (1975) consists of abundances (numbers trapped
+  over a 60 week period)
 and 6 environmental variables. There were 28 sites.
 
 
-This data set has been often used to illustrate ordination, e.g., using
-canonical correspondence analysis (CCA). In the example below, the
-data is used for constrained quadratic ordination (CQO; formerly called
-canonical Gaussian ordination or CGO), a numerically intensive method
+This data set has been often used to illustrate
+ordination, e.g., using
+canonical correspondence analysis (CCA).
+In the example below, the
+data is used for constrained quadratic ordination
+(CQO; formerly called
+canonical Gaussian ordination or CGO),
+a numerically intensive method
 that has many superior qualities.
 See \code{\link{cqo}} for details.
 
@@ -74,7 +81,8 @@ ahsb1 <- cao(cbind(Alopcune, Arctlute, Auloalbi, Zoraspin) ~
              family = binomialff(multiple.responses = TRUE),
              df1.nl = 2.2, Bestof = 3, data = hsbin)
 par(mfrow = 2:1, las = 1)
-lvplot(ahsb1, type = "predictors", llwd=2, ylab="logitlink(p)", lcol=1:9)
+lvplot(ahsb1, type = "predictors", llwd = 2,
+       ylab = "logitlink(p)", lcol = 1:9)
 persp(ahsb1, rug = TRUE, col = 1:10, lwd = 2)
 coef(ahsb1)
 }
@@ -84,10 +92,13 @@ coef(ahsb1)
 
 %# Fit a rank-1 Poisson CQO
 %set.seed(111)  # This leads to the global solution
-%# vvv p1 = cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi, Auloalbi,
-%# vvv                Pardlugu, Pardmont, Pardnigr, Pardpull, Trocterr, Zoraspin) ~
-%# vvv          WaterCon + BareSand + FallTwig + CoveMoss + CoveHerb + ReflLux,
-%# vvv          fam = poissonff, data = hspider, Crow1posit=FALSE)
+%# vvv p1=cqo(cbind(Alopacce, Alopcune, Alopfabr,
+%# vvv  Arctlute, Arctperi, Auloalbi,
+%# vvv  Pardlugu, Pardmont, Pardnigr,
+%# vvv  Pardpull, Trocterr, Zoraspin) ~
+%# vvv  WaterCon + BareSand + FallTwig +
+%# vvv  CoveMoss + CoveHerb + ReflLux,
+%# vvv  fam = poissonff, data = hspider, Crow1posit=FALSE)
 %# vvv nos = ncol(p1@y)
 %# vvv lvplot(p1, y=TRUE, lcol=1:nos, pch=1:nos, pcol=1:nos)
 %# vvv Coef(p1)

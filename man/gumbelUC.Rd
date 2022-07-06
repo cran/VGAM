@@ -121,12 +121,12 @@ c(var(y), sigma^2 * pi^2 / 6)  # Sample and population variances
 
 \dontrun{ x <- seq(-2.5, 3.5, by = 0.01)
 loc <- 0; sigma <- 1
-plot(x, dgumbel(x, loc, sigma), type = "l", col = "blue", ylim = c(0, 1),
-     main = "Blue is density, red is cumulative distribution function",
+plot(x, dgumbel(x, loc, sigma), type = "l", col = "blue",
+     main = "Blue is density, red is the CDF", ylim = c(0, 1),
      sub = "Purple are 5,10,...,95 percentiles", ylab = "", las = 1)
 abline(h = 0, col = "blue", lty = 2)
 lines(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma),
-      dgumbel(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma), loc, sigma),
+  dgumbel(qgumbel(seq(0.05, 0.95, by = 0.05), loc, sigma), loc, sigma),
       col = "purple", lty = 3, type = "h")
 lines(x, pgumbel(x, loc, sigma), type = "l", col = "red")
 abline(h = 0, lty = 2) }

@@ -6,9 +6,10 @@
 \alias{rsinmad}
 \title{The Singh-Maddala Distribution}
 \description{
-  Density, distribution function, quantile function and random
-  generation for the Singh-Maddala distribution with shape parameters \code{a}
-  and \code{q}, and scale parameter \code{scale}.
+  Density, distribution function, quantile function and
+  random generation for the Singh-Maddala distribution with
+  shape parameters \code{a} and \code{q}, and scale parameter
+  \code{scale}.
 
 
 }

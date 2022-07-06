@@ -113,7 +113,7 @@ rrvglm.control <-
                   positive = TRUE))
     stop("bad input for 'wzepsilon'")
 
-  if (class(noRRR) != "formula" && !is.null(noRRR))
+  if (!is(noRRR, "formula") && !is.null(noRRR))
     stop("argument 'noRRR' should be a formula or a NULL")
 
 

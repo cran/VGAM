@@ -35,8 +35,8 @@ rbenf(n, ndigits = 1)
   }
   \item{ndigits}{
   Number of leading digits, either 1 or 2.
-  If 1 then the support of the distribution is \{1,\ldots,9\}, else
-  \{10,\ldots,99\}.
+  If 1 then the support of the distribution is \{1,\ldots,9\},
+  else \{10,\ldots,99\}.
 
 
   }
@@ -112,7 +112,8 @@ The Law of Anomalous Numbers.
 \bold{78}, 551--572.
 
 Newcomb, S. (1881).
-Note on the Frequency of Use of the Different Digits in Natural Numbers.
+Note on the Frequency of Use of the Different Digits in Natural
+Numbers.
 \emph{American Journal of Mathematics},
 \bold{4}, 39--40.
 
@@ -135,11 +136,11 @@ pbenf(x)
 
 \dontrun{
 xx <- 1:9
-barplot(dbenf(xx), col = "lightblue", las = 1, xlab = "Leading digit",
+barplot(dbenf(xx), col = "lightblue", xlab = "Leading digit",
         ylab = "Probability", names.arg = as.character(xx),
-        main = paste("Benford's distribution",  sep = ""))
+        main = "Benford's distribution", las = 1)
 
-hist(rbenf(n = 1000), border = "blue", prob = TRUE,
+hist(rbenf(1000), border = "blue", prob = TRUE,
      main = "1000 random variates from Benford's distribution",
      xlab = "Leading digit", sub="Red is the true probability",
      breaks = 0:9 + 0.5, ylim = c(0, 0.35), xlim = c(0, 10.0))

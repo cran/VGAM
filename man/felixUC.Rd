@@ -53,7 +53,8 @@ dfelix(x, rate = 0.25, log = FALSE)
 \details{
   See \code{\link{felix}}, the \pkg{VGAM} family function
   for estimating the parameter,
-  for the formula of the probability density function and other details.
+  for the formula of the probability density function and other
+  details.
 
 
 }

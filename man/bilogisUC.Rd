@@ -5,13 +5,14 @@
 \alias{rbilogis}
 \title{Bivariate Logistic Distribution}
 \description{
-  Density, distribution function, quantile function and random generation
-  for the 4-parameter bivariate logistic distribution.
+  Density, distribution function, quantile function and random
+  generation for the 4-parameter bivariate logistic distribution.
 
 
 }
 \usage{
-dbilogis(x1, x2, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1, log = FALSE)
+dbilogis(x1, x2, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1,
+         log = FALSE)
 pbilogis(q1, q2, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1)
 rbilogis(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1)
 }
@@ -22,11 +23,16 @@ rbilogis(n, loc1 = 0, scale1 = 1, loc2 = 0, scale2 = 1)
 
 
   }
-  \item{loc1, loc2}{the location parameters \eqn{l_1}{l1} and \eqn{l_2}{l2}.}
-  \item{scale1, scale2}{the scale parameters \eqn{s_1}{s1} and \eqn{s_2}{s2}.}
+  \item{loc1, loc2}{the location parameters \eqn{l_1}{l1} and
+  \eqn{l_2}{l2}.}
+
+  \item{scale1, scale2}{the scale parameters \eqn{s_1}{s1}
+  and \eqn{s_2}{s2}.}
+
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -51,8 +57,9 @@ Bivariate logistic distributions.
 \author{ T. W. Yee }
 \details{
   See \code{\link{bilogis}}, the \pkg{VGAM} family function for
-  estimating the four parameters by maximum likelihood estimation, for
-  the formula of the cumulative distribution function and other details.
+  estimating the four parameters by maximum likelihood estimation,
+  for the formula of the cumulative distribution function and
+  other details.
 
 
 }
@@ -62,7 +69,8 @@ Bivariate logistic distributions.
   The Type I is this one.
   The Type II belongs to the Morgenstern type.
   The \code{\link{biamhcop}} distribution has, as a special case,
-  this distribution, which is when the random variables are independent.
+  this distribution, which is when the random variables are
+  independent.
 
 
 % This note added 20140920

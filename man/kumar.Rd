@@ -9,8 +9,8 @@
 }
 \usage{
 kumar(lshape1 = "loglink", lshape2 = "loglink",
-      ishape1 = NULL,   ishape2 = NULL, gshape1 = exp(2*ppoints(5) - 1),
-      tol12 = 1.0e-4, zero = NULL)
+      ishape1 = NULL,   ishape2 = NULL,
+      gshape1 = exp(2*ppoints(5) - 1), tol12 = 1.0e-4, zero = NULL)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,8 +35,10 @@ kumar(lshape1 = "loglink", lshape2 = "loglink",
   }
   \item{tol12}{
   Numeric and positive.
-  Tolerance for testing whether the second shape parameter is either 1 or 2.
-  If so then the working weights need to handle these singularities.
+  Tolerance for testing whether the second shape parameter
+  is either 1 or 2.
+  If so then the working weights need to handle these
+  singularities.
 
   }
   \item{gshape1}{
@@ -44,7 +46,8 @@ kumar(lshape1 = "loglink", lshape2 = "loglink",
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
-% Lower and upper limits for a grid search for the first shape parameter.
+  % Lower and upper limits for a grid search
+  % for the first shape parameter.
 
 
 
@@ -64,9 +67,10 @@ kumar(lshape1 = "loglink", lshape2 = "loglink",
   The mean is \eqn{b \times Beta(1+1/a,b)}{b * Beta(1+1/a,b)}
   (returned as the fitted values) and the variance is
   \eqn{b \times Beta(1+2/a,b) -
-      (b \times Beta(1+1/a,b))^2}{b * Beta(1+2/a,b) - (b * Beta(1+1/a,b))^2}.
-  Applications of the Kumaraswamy distribution include the storage
-  volume of a water reservoir.
+    (b \times Beta(1+1/a,b))^2}{
+    b * Beta(1+2/a,b) - (b * Beta(1+1/a,b))^2}.
+  Applications of the Kumaraswamy distribution include
+  the storage volume of a water reservoir.
   Fisher scoring is implemented.
   Handles multiple responses (matrix input).
 
@@ -74,8 +78,10 @@ kumar(lshape1 = "loglink", lshape2 = "loglink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -89,8 +95,8 @@ kumar(lshape1 = "loglink", lshape2 = "loglink",
 
 
   Jones, M. C. (2009).
-  Kumaraswamy's distribution: A beta-type distribution with some
-  tractability advantages.
+  Kumaraswamy's distribution: A beta-type distribution
+  with some tractability advantages.
   \emph{Statistical Methodology},
   \bold{6}, 70--81.
 

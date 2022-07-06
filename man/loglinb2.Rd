@@ -13,8 +13,9 @@ loglinb2(exchangeable = FALSE, zero = "u12")
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{exchangeable}{ Logical.
-    If \code{TRUE}, the two marginal probabilities are constrained to
-    be equal. Should be set \code{TRUE} for ears, eyes, etc. data.
+    If \code{TRUE}, the two marginal probabilities are constrained
+    to be equal. Should be set \code{TRUE} for ears, eyes,
+    etc. data.
 
   }
   \item{zero}{ Which linear/additive predictors are modelled as
@@ -28,31 +29,36 @@ loglinb2(exchangeable = FALSE, zero = "u12")
 }
 \details{
   The model is
-  \deqn{P(Y_1=y_1,Y_2=y_2) = \exp(u_0+u_1 y_1+u_2 y_2+u_{12} y_1 y_2)}{%
+  \deqn{P(Y_1=y_1,Y_2=y_2) = \exp(u_0+
+    u_1 y_1+u_2 y_2+u_{12} y_1 y_2)}{%
     P(Y1=y1,Y2=y2) = exp(u0 + u1*y1 + u2*y2 + u12*y1*y2)}
   where \eqn{y_1}{y1} and \eqn{y_2}{y2} are 0 or 1, and
   the parameters are \eqn{u_1}{u1}, \eqn{u_2}{u2},
   \eqn{u_{12}}{u12}.
-  The normalizing parameter \eqn{u_0}{u0} can be expressed as a function
-  of the other parameters, viz.,
-\deqn{u_0 = -\log[1 + \exp(u_1) + \exp(u_2) + \exp(u_1 + u_2 + u_{12})].}{%
+  The normalizing parameter \eqn{u_0}{u0} can be expressed as a
+  function of the other parameters, viz.,
+\deqn{u_0 = -\log[1 + \exp(u_1) + \exp(u_2) +
+      \exp(u_1 + u_2 + u_{12})].}{%
       u0 = -log[1 + exp(u1) + exp(u2) + exp(u1 + u2 + u12)].}
   The linear/additive predictors are
-  \eqn{(\eta_1,\eta_2,\eta_3)^T = (u_1,u_2,u_{12})^T}{(eta1,eta2,eta3) =
-       (u1,u2,u12)}.
+\eqn{(\eta_1,\eta_2,\eta_3)^T =
+     (u_1,u_2,u_{12})^T}{(eta1,eta2,eta3) = (u1,u2,u12)}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
 
-  When fitted, the \code{fitted.values} slot of the object contains the
-  four joint probabilities, labelled as
-  \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0), (1,1), respectively.
+  When fitted, the \code{fitted.values} slot of the object
+  contains the four joint probabilities, labelled as
+  \eqn{(Y_1,Y_2)}{(Y1,Y2)} = (0,0), (0,1), (1,0), (1,1),
+  respectively.
 
 
 }
@@ -60,15 +66,16 @@ loglinb2(exchangeable = FALSE, zero = "u12")
 \references{
 
 Yee, T. W. and Wild, C. J. (2001).
-Discussion to: ``Smoothing spline ANOVA for multivariate Bernoulli
-observations, with application to ophthalmology data (with discussion)''
+Discussion to: ``Smoothing spline ANOVA for multivariate
+Bernoulli observations, with application to ophthalmology data
+(with discussion)''
 by Gao, F., Wahba, G., Klein, R., Klein, B.
 \emph{Journal of the American Statistical Association},
 \bold{96}, 127--160.
 
 
 McCullagh, P. and Nelder, J. A. (1989).
-  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+\emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
 }

@@ -22,8 +22,12 @@
   these are based on
   finite mixtures of the parent with itself
   and the multinomial logit model (MLM) respectively.
-  Altogether it can be abbreviated as
-GAAIITDD--Binom(size.p, prob.p)--Binom(size.a, prob.a)--MLM--Binom(size.i, prob.i)--MLM--Binom(size.d, prob.d)--MLM.
+
+
+
+% Altogether it can be abbreviated as
+% GAAIITDD--Binom(size.p, prob.p)--Binom(size.a, prob.a)--MLM--
+% Binom(size.i, prob.i)--MLM--Binom(size.d, prob.d)--MLM.
 
 
 
@@ -72,7 +76,7 @@ rgaitdbinom(n, size.p, prob.p,
             size.a = size.p, size.i = size.p, size.d = size.p,
             prob.a = prob.p, prob.i = prob.p, prob.d = prob.p, ...)
 }
-%           max.support = NULL,  20220201: decided to make this unavailable.
+% max.support = NULL,  20220201: decided to make this unavailable.
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, q, p, n, log, lower.tail}{
@@ -236,8 +240,8 @@ rgaitdbinom(n, size.p, prob.p,
 ivec <- c(6, 10); avec <- c(8, 11); prob <- 0.25; xgrid <- 0:25
 tvec <- 14; pobs.a <- 0.05; pstr.i <- 0.15
 dvec <- 5; pdip.mlm <- 0.05
-(ddd <- dgaitdbinom(xgrid, size, prob.p = prob, prob.a = prob + 0.05,
-   truncate = tvec, pobs.mix = pobs.a,
+(ddd <- dgaitdbinom(xgrid, size, prob.p = prob,
+   prob.a = prob + 0.05, truncate = tvec, pobs.mix = pobs.a,
    pdip.mlm = pdip.mlm, d.mlm = dvec,
    pobs.mlm = pobs.a, a.mlm = avec,
    pstr.mix = pstr.i, i.mix = ivec))
@@ -262,7 +266,7 @@ dvec <- 5; pdip.mlm <- 0.05
 %abline(v = tvec, col = 'tan', lwd = mylwd)
 %abline(h = c(pobs.a, pstr.i, 0:1), col = 'gray', lty = "dashed")
 %lines(xgrid, dbinom(xgrid, size, prob), col = 'gray', lty = 2)
-%lines(xgrid, ddd, type = "h", col = "pink", lwd = 7)  # GAIT combo PMF
+%lines(xgrid, ddd, type = "h", col="pink",lwd=7)  # GAIT combo PMF
 %points(xgrid[ddd == 0], ddd[ddd == 0], pch = 16)  }
 
 

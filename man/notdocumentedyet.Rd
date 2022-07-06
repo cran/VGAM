@@ -12,6 +12,10 @@
 %
 %
 %
+% 202206
+\alias{rqresidualsvlm}
+\alias{rqresid}
+\alias{rqresiduals}
 % 202202
 \alias{moments.gaitdcombo.binom}
 % 202201
@@ -657,6 +661,7 @@
 \alias{fff.control}
 \alias{fill2}
 \alias{fill3}
+\alias{fill4}
 % \alias{fitted}   % 20210614 commenting this out
 \alias{fitted.values}
 %\alias{fitted.values.uqo}

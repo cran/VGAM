@@ -94,14 +94,14 @@ dvMF3 <-
   new("vglmff",
   blurb = c("von Mises-Fisher distribution on the sphere\n\n",
             "Links:    ",
-              namesof("colati", lcolati, ecolati, tag = FALSE), ", ",
-              namesof("longit", llongit, elongit, tag = FALSE), ", ",
-              namesof("concen", lconcen, econcen, tag = FALSE), "\n",
+            namesof("colati", lcolati, ecolati, tag = FALSE), ", ",
+            namesof("longit", llongit, elongit, tag = FALSE), ", ",
+            namesof("concen", lconcen, econcen, tag = FALSE), "\n",
             "Mean:     zz longit * beta(1 + 1 / colati, longit)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 3)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 3,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -541,15 +541,15 @@ cardioid.control <- function(save.weights = TRUE, ...) {
   new("vglmff",
   blurb = c("Cardioid distribution\n\n",
             "Links:    ",
-            namesof("mu",  lmu,  earg = emu,  tag = FALSE), ", ",
-            namesof("rho", lrho, earg = erho, tag = FALSE), "\n",
+            namesof("mu",  lmu,  emu,  tag = FALSE), ", ",
+            namesof("rho", lrho, erho, tag = FALSE), "\n",
             "Mean:     ",
             "pi + (rho/pi) *",
-            "((2*pi-mu)*sin(2*pi-mu)+cos(2*pi-mu)-mu*sin(mu)-cos(mu))"),
+  "((2*pi-mu)*sin(2*pi-mu)+cos(2*pi-mu)-mu*sin(mu)-cos(mu))"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
 
@@ -730,9 +730,9 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             "Mean:     location"),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
   infos = eval(substitute(function(...) {

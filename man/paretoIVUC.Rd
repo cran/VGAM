@@ -21,13 +21,14 @@
 \alias{rparetoI}
 \title{The Pareto(IV/III/II) Distributions}
 \description{
-  Density, distribution function, quantile function and random generation
-  for the Pareto(IV/III/II) distributions.
+  Density, distribution function, quantile function and random
+  generation for the Pareto(IV/III/II) distributions.
 
 
 }
 \usage{
-dparetoIV(x, location = 0, scale = 1, inequality = 1, shape = 1, log = FALSE)
+dparetoIV(x, location = 0, scale = 1, inequality = 1, shape = 1,
+          log = FALSE)
 pparetoIV(q, location = 0, scale = 1, inequality = 1, shape = 1,
           lower.tail = TRUE, log.p = FALSE)
 qparetoIV(p, location = 0, scale = 1, inequality = 1, shape = 1,
@@ -80,10 +81,11 @@ rparetoI(n, scale = 1, shape = 1)
 
 }
 \value{
-  Functions beginning with the letter \code{d} give the density,
-  functions beginning with the letter \code{p} give the distribution function,
-  functions beginning with the letter \code{q} give the quantile function, and
-  functions beginning with the letter \code{r} generates random deviates.
+  Functions beginning with the
+  letters \code{d} give the density,
+  \code{p} give the distribution function,
+  \code{q} give the quantile function, and
+  \code{r} generates random deviates.
 
 
 }
@@ -110,9 +112,9 @@ Fairland, Maryland: International Cooperative Publishing House.
 
 }
 \note{
-  The functions \code{[dpqr]paretoI} are the same as \code{[dpqr]pareto}
-  except for a slight change in notation: \eqn{s=k} and
-  \eqn{b=\alpha}{b=alpha}; see \code{\link{Pareto}}.
+  The functions \code{[dpqr]paretoI} are the same as
+  \code{[dpqr]pareto} except for a slight change in notation:
+  \eqn{s=k} and \eqn{b=\alpha}{b=alpha}; see \code{\link{Pareto}}.
 
 
 }
@@ -126,12 +128,14 @@ Fairland, Maryland: International Cooperative Publishing House.
 \dontrun{
 x <- seq(-0.2, 4, by = 0.01)
 loc <- 0; Scale <- 1; ineq <- 1; shape <- 1.0
-plot(x, dparetoIV(x, loc, Scale, ineq, shape), type = "l", col = "blue",
-     main = "Blue is density, orange is cumulative distribution function",
-     sub = "Purple are 5,10,...,95 percentiles", ylim = 0:1, las = 1, ylab = "")
+plot(x, dparetoIV(x, loc, Scale, ineq, shape), type = "l",
+     main = "Blue is density, orange is the CDF", col = "blue",
+     sub = "Purple are 5,10,...,95 percentiles", ylim = 0:1,
+     las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 Q <- qparetoIV(seq(0.05, 0.95,by = 0.05), loc, Scale, ineq, shape)
-lines(Q, dparetoIV(Q, loc, Scale, ineq, shape), col = "purple", lty = 3, type = "h")
+lines(Q, dparetoIV(Q, loc, Scale, ineq, shape), col = "purple",
+      lty = 3, type = "h")
 lines(x, pparetoIV(x, loc, Scale, ineq, shape), col = "orange")
 abline(h = 0, lty = 2)
 }

@@ -10,8 +10,8 @@
 }
 \usage{
 inv.gaussianff(lmu = "loglink", llambda = "loglink",
-               imethod = 1, ilambda = NULL,
-               parallel = FALSE, ishrinkage = 0.99, zero = NULL)
+      imethod = 1, ilambda = NULL,
+      parallel = FALSE, ishrinkage = 0.99, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 %apply.parint = FALSE,
@@ -25,8 +25,8 @@ inv.gaussianff(lmu = "loglink", llambda = "loglink",
   }
   \item{ilambda, parallel}{
   See \code{\link{CommonVGAMffArguments}} for more information.
-  If \code{parallel = TRUE} then the constraint is not applied to the
-  intercept.
+  If \code{parallel = TRUE} then the constraint is not applied
+  to the intercept.
 
 
   }
@@ -60,8 +60,10 @@ inv.gaussianff(lmu = "loglink", llambda = "loglink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -82,10 +84,11 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 }
 \author{ T. W. Yee }
 \note{
-  The inverse Gaussian distribution can be fitted (to a certain extent)
-  using the usual GLM framework involving a scale parameter. This family
-  function is different from that approach in that it estimates both
-  parameters by full maximum likelihood estimation.
+  The inverse Gaussian distribution can be fitted (to a
+  certain extent) using the usual GLM framework involving a
+  scale parameter. This family function is different from that
+  approach in that it estimates both parameters by full maximum
+  likelihood estimation.
 
 
 }
@@ -96,9 +99,10 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{bisa}}.
 
 
-  The \R{} package \pkg{SuppDists} has several functions for evaluating
-  the density, distribution function, quantile function and generating
-  random numbers from the inverse Gaussian distribution.
+  The \R{} package \pkg{SuppDists} has several functions
+  for evaluating the density, distribution function, quantile
+  function and generating random numbers from the inverse Gaussian
+  distribution.
 
 
 }
@@ -106,7 +110,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 idata <- data.frame(x2 = runif(nn <- 1000))
 idata <- transform(idata, mymu   = exp(2 + 1 * x2),
                           Lambda = exp(2 + 1 * x2))
-idata <- transform(idata, y = rinv.gaussian(nn, mu = mymu, lambda = Lambda))
+idata <- transform(idata, y = rinv.gaussian(nn, mu = mymu, Lambda))
 fit1 <-   vglm(y ~ x2, inv.gaussianff, data = idata, trace = TRUE)
 rrig <- rrvglm(y ~ x2, inv.gaussianff, data = idata, trace = TRUE)
 coef(fit1, matrix = TRUE)

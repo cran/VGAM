@@ -11,17 +11,17 @@
 
 }
 \usage{
-rposbern(n, nTimePts = 5, pvars = length(xcoeff), xcoeff = c(-2, 1, 2),
-         Xmatrix = NULL, cap.effect = 1, is.popn = FALSE,
-         link = "logitlink", earg.link = FALSE)
+rposbern(n, nTimePts = 5, pvars = length(xcoeff),
+  xcoeff = c(-2, 1, 2), Xmatrix = NULL, cap.effect = 1,
+  is.popn = FALSE, link = "logitlink", earg.link = FALSE)
 dposbern(x, prob, prob0 = prob, log = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
   response vector or matrix.
-  Should only have 0 and 1 values, at least two columns, and each row
-  should have at least one 1.
+  Should only have 0 and 1 values, at least two columns, and each
+  row should have at least one 1.
 
 
   }
@@ -33,7 +33,8 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
   }
   \item{n}{number of observations.
-  Usually a single positive integer, else the length of the vector is used.
+  Usually a single positive integer, else the length of the vector
+  is used.
   See argument \code{is.popn}.
 
 
@@ -41,11 +42,11 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
   \item{is.popn}{
   Logical.
-  If \code{TRUE} then argument \code{n} is the population size
-  and what is returned may have substantially less rows than \code{n}.
-  That is, if an animal has at least one one in its sequence then
-  it is returned, else that animal is not returned because it
-  never was captured.
+  If \code{TRUE} then argument \code{n} is the population size and
+  what is returned may have substantially less rows than \code{n}.
+  That is, if an animal has at least one one in its sequence
+  then it is returned, else that animal is not returned because
+  it never was captured.
 % Put in other words, only animals captured at least once are
 % returned in the sample.
 
@@ -68,8 +69,8 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 
 % \item{double.ch}{
 % Logical.
-% If \code{TRUE} then the values of \code{ch0}, \code{ch1}, \ldots are
-% 2 or 0, else 1 or 0.
+% If \code{TRUE} then the values of \code{ch0},
+% \code{ch1}, \ldots are 2 or 0, else 1 or 0.
 % Setting this argument \code{TRUE} means that a model can be fitted
 % with half the capture history in both denominator and numerator
 % (this is a compromise of the Huggins (1991) model where the full
@@ -80,8 +81,9 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
   the  linear predictor.
   Labelled \code{x1}, \code{x2}, \ldots,
   where the first is an intercept, and the others are
-  independent standard \code{\link[stats:Uniform]{runif}} random variates.
-  The first \code{pvars} elements of \code{xcoeff} are used.
+  independent standard \code{\link[stats:Uniform]{runif}} random
+  variates.  The first \code{pvars} elements of \code{xcoeff}
+  are used.
 
 
   }
@@ -154,8 +156,8 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 %\references{ }
 \author{ Thomas W. Yee. }
 \note{
-  The \code{r}-type function is experimental only and does not follow the
-  usual conventions of \code{r}-type R functions.
+  The \code{r}-type function is experimental only and does not
+  follow the usual conventions of \code{r}-type R functions.
   It may change a lot in the future.
   The \code{d}-type function is more conventional and is less
   likely to change.
@@ -176,8 +178,8 @@ dposbern(x, prob, prob0 = prob, log = FALSE)
 \examples{
 rposbern(n = 10)
 attributes(pdata <- rposbern(n = 100))
-M.bh <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + x3, posbernoulli.b(I2 = FALSE),
-             data = pdata, trace = TRUE)
+M.bh <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2 + x3,
+             posbernoulli.b(I2 = FALSE), pdata, trace = TRUE)
 constraints(M.bh)
 summary(M.bh)
 }

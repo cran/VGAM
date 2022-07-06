@@ -1,4 +1,4 @@
-C Output from Public domain Ratfor, version 1.01
+C Output from Public domain Ratfor, version 1.04
       subroutine dpdlyjn(psi, i9mwnvqt, mymu, sigma, kpzavbj3ative, lfu2
      *qhid)
       implicit logical (a-z)
@@ -136,7 +136,6 @@ C Output from Public domain Ratfor, version 1.01
      *t, tint)
       dint = dint + tint * wts(gp1jxzuh)
 23022 continue
-23023 continue
       else
       if(elemnt .eq. 2)then
       do23026 gp1jxzuh=1,kk 
@@ -145,7 +144,6 @@ C Output from Public domain Ratfor, version 1.01
      *t, tint)
       dint = dint + tint * wts(gp1jxzuh)
 23026 continue
-23027 continue
       else
       if(elemnt .eq. 3)then
       do23030 gp1jxzuh=1,kk 
@@ -154,7 +152,6 @@ C Output from Public domain Ratfor, version 1.01
      *t, tint)
       dint = dint + tint * wts(gp1jxzuh)
 23030 continue
-23031 continue
       endif
       endif
       endif
@@ -186,7 +183,6 @@ C Output from Public domain Ratfor, version 1.01
      *1jxzuh*xd4mybgj, wts, ahl0onwx, i9mwnvqt(ayfnwr1v), mymu(ayfnwr1v)
      *, sigma(ayfnwr1v), kk, lfu2qhid(elemnt,ayfnwr1v), elemnt)
 23038 continue
-23039 continue
       wiptsjx8 = dabs(lfu2qhid(elemnt,ayfnwr1v) - j4qgxvlk) / (1.0d0 + d
      *abs(lfu2qhid(elemnt,ayfnwr1v)))
       if(wiptsjx8 .lt. qaltf0nz)then
@@ -195,11 +191,8 @@ C Output from Public domain Ratfor, version 1.01
       j4qgxvlk = lfu2qhid(elemnt,ayfnwr1v)
       endif
 23036 continue
-23037 continue
 234   hmayv1xt = 0
 23034 continue
-23035 continue
 23032 continue
-23033 continue
       return
       end

@@ -9,8 +9,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log Link Function, and Variants }
 \description{
-  Computes the log transformation, including its inverse and the first
-  two derivatives.
+  Computes the log transformation, including its inverse and the
+  first two derivatives.
 
 
 }
@@ -46,10 +46,9 @@ logneglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \details{
   The log link function is very commonly used for parameters that
   are positive.
-  Here, all logarithms are natural logarithms, i.e., to base \eqn{e}.
-  Numerical values of \code{theta} close to 0 or out of range
-  result in
-  \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
+  Here, all logarithms are natural logarithms, i.e., to base
+  \eqn{e}.  Numerical values of \code{theta} close to 0 or out of
+  range result in \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
 
 
   The function \code{loglink} computes
@@ -66,19 +65,20 @@ logneglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 }
 \value{
   The following concerns \code{loglink}.
-  For \code{deriv = 0}, the log of \code{theta}, i.e., \code{log(theta)}
-  when \code{inverse = FALSE}, and if \code{inverse = TRUE} then
-  \code{exp(theta)}.
+  For \code{deriv = 0}, the log of \code{theta}, i.e.,
+  \code{log(theta)} when \code{inverse = FALSE}, and if
+  \code{inverse = TRUE} then \code{exp(theta)}.
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
-  if \code{inverse = FALSE},
-  else if \code{inverse = TRUE} then it returns the reciprocal.
+  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of
+  \code{theta} if \code{inverse = FALSE}, else if
+  \code{inverse = TRUE} then it returns the reciprocal.
 
 
 }
 \references{
-    McCullagh, P. and Nelder, J. A. (1989).
-    \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+  McCullagh, P. and Nelder, J. A. (1989).
+  \emph{Generalized Linear Models},
+  2nd ed. London: Chapman & Hall.
 
 
 }
@@ -87,8 +87,8 @@ logneglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
 \note{
   This function was called \code{loge} to avoid conflict with the
   \code{\link[base:Log]{log}} function.
-  Numerical instability may occur when \code{theta} is close to 0 unless
-  \code{bvalue} is used.
+  Numerical instability may occur when \code{theta} is close to
+  0 unless \code{bvalue} is used.
 
 
 }

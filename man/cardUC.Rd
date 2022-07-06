@@ -7,8 +7,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Cardioid Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the cardioid distribution.
+  Density, distribution function, quantile function and random
+  generation for the cardioid distribution.
 
 }
 \usage{
@@ -44,7 +44,8 @@ rcard(n, mu, rho, ...)
   }
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -58,8 +59,9 @@ rcard(n, mu, rho, ...)
 }
 \details{
   See \code{\link{cardioid}}, the \pkg{VGAM} family function
-  for estimating the two parameters by maximum likelihood estimation,
-  for the formula of the probability density function and other details.
+  for estimating the two parameters by maximum likelihood
+  estimation, for the formula of the probability density function
+  and other details.
 
 
 }
@@ -87,9 +89,9 @@ rcard(n, mu, rho, ...)
 \examples{
 \dontrun{
 mu <- 4; rho <- 0.4; x <- seq(0, 2*pi, len = 501)
-plot(x, dcard(x, mu, rho), type = "l", las = 1, ylim = c(0, 1), col = "blue",
+plot(x, dcard(x, mu, rho), type = "l", las = 1, ylim = c(0, 1),
      ylab = paste("[dp]card(mu=", mu, ", rho=", rho, ")"),
-     main = "Blue is density, orange is cumulative distribution function",
+     main = "Blue is density, orange is the CDF", col = "blue",
      sub = "Purple lines are the 10,20,...,90 percentiles")
 lines(x, pcard(x, mu, rho), col = "orange")
 

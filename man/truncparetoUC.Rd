@@ -6,9 +6,9 @@
 \alias{rtruncpareto}
 \title{The Truncated Pareto Distribution}
 \description{
-  Density, distribution function, quantile function and random generation
-  for the upper truncated Pareto(I) distribution with parameters
-  \code{lower}, \code{upper} and \code{shape}.
+  Density, distribution function, quantile function and random
+  generation for the upper truncated Pareto(I) distribution with
+  parameters \code{lower}, \code{upper} and \code{shape}.
 
 
 }

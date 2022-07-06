@@ -303,7 +303,8 @@ asparagus.col <- "#87a96b"
            truncate = NULL, max.support = Inf,
            zero = c("pobs", "pstr", "pdip"),  # Pruned, handles all 6
            eq.ap = TRUE, eq.ip = TRUE, eq.dp = TRUE,
-           parallel.a = FALSE, parallel.i = FALSE, parallel.d = FALSE,
+           parallel.a = FALSE, parallel.i = FALSE,
+           parallel.d = FALSE,
            lshape.p = "loglink",
            lshape.a = lshape.p,  # "logitlink", 20201117
            lshape.i = lshape.p,  # "logitlink", 20201117
@@ -366,12 +367,12 @@ asparagus.col <- "#87a96b"
   lshape.p.save <- lshape.p
 
   lpobs.mix <- "multilogitlink"  # \omega_p
-  epobs.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
+  epobs.mix <- list()  # zz NULL 4 now 20200907 coz 'multilogitlink'
   eshape.a <- link2list(lshape.a)
   lshape.a <- attr(eshape.a, "function.name")
 
   lpstr.mix <- "multilogitlink"  # \phi_p
-  epstr.mix <- list()  # zz NULL for now 20200907 coz 'multilogitlink'
+  epstr.mix <- list()  # zz NULL 4 now 20200907 coz 'multilogitlink'
   lpdip.mix <- "multilogitlink"  # zz unsure 20211002
   epdip.mix <- list()  # zz unsure 20211002
   eshape.i <- link2list(lshape.i)
@@ -415,7 +416,7 @@ asparagus.col <- "#87a96b"
     stop("argument 'parallel.d' must be a single logical")
 
 
-  if (FALSE) {  # Comment this out to allow default eq.ap = TRUE, etc.
+  if (FALSE) {  # Comment this out 2 allow default eq.ap=TRUE, etc.
   if (la.mix <= 1 && eq.ap)
     stop("<= one unstructured altered value (no 'shape.a')",
          ", so setting 'eq.ap = TRUE' is meaningless")
@@ -633,7 +634,8 @@ asparagus.col <- "#87a96b"
                        matrix(0, nrow(Use.mat),  # RHS
                                  ncol(use.mat.mlm) - 1))
       Use.mat[row(Use.mat) > nrow(use.mat.mix) &
-              col(Use.mat) > ncol(use.mat.mix)] <- use.mat.mlm[-1, -1]
+              col(Use.mat) > ncol(use.mat.mix)] <-
+          use.mat.mlm[-1, -1]
     }  # la.mlm + li.mlm + ld.mlm > 0
 
 
@@ -701,8 +703,122 @@ asparagus.col <- "#87a96b"
            .predictors.names = predictors.names,
            .M1 = M1, .lall.len = lall.len
          ))),
+
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    if (!is.matrix(eta)) eta <- as.matrix(eta)
+    la.mix <- length((a.mix <- as.vector( .a.mix )))
+    li.mix <- length((i.mix <- as.vector( .i.mix )))
+    ld.mix <- length((d.mix <- as.vector( .d.mix )))
+    la.mlm <- length((a.mlm <- as.vector( .a.mlm )))
+    li.mlm <- length((i.mlm <- as.vector( .i.mlm )))
+    ld.mlm <- length((d.mlm <- as.vector( .d.mlm )))
+    truncate <- as.vector( .truncate )
+
+    tmp3.TF <- ( .tmp3.TF )   # Logical of length 10.
+
+    lall.len <- la.mix + li.mix + ld.mix + la.mlm + li.mlm + ld.mlm
+    pobs.mix <- pstr.mix <- pdip.mix <- 0  # 4 rowSums()
+    pobs.mlm <- pstr.mlm <- pdip.mlm <- 0  # matrix(0, NROW(eta), 1)
+    shape.p <- cbind(eta2theta(eta[, 1], .lshape.p , .eshape.p ))
+    ind.shape.z <- 1  # Points to shape.p only.
+    shape.a <- shape.i <-
+    shape.d <- shape.p  # Needed and doesnt corrupt the answer
+
+    if (any(tmp3.TF[c(3, 5, 7)])) {  # At least 1 shape.[aid]
+      ind.shape.z <- extra$indeta[c(1, 3, 5, 7), 'launch']  # Vecs
+      ind.shape.z <- c(na.omit(ind.shape.z))  # At least 1 value
+
+      shape.a <- if (!tmp3.TF[ 3]) shape.p else
+        eta2theta(eta[, extra$indeta[3, 1]], .lshape.a , .eshape.a )
+      shape.i <- if (!tmp3.TF[ 5]) shape.p else
+        eta2theta(eta[, extra$indeta[5, 1]], .lshape.i , .eshape.i )
+      shape.d <- if (!tmp3.TF[ 7]) shape.p else
+        eta2theta(eta[, extra$indeta[7, 1]], .lshape.d , .eshape.d )
+    }  # la.mix + li.mix + ld.mix > 0
+
+    if (lall.len) {  # An MLM was fitted
+      allprobs <-
+        multilogitlink(eta[, -ind.shape.z, drop = FALSE],
+                       refLevel = "(Last)",  # Make sure
+                       inverse = TRUE)  # rowSums == 1
+      if (anyNA(allprobs))
+        warning("there are NAs here in slot linkinv")
+      if (min(allprobs) == 0 || max(allprobs) == 1)
+        warning("fitted probabilities numerically 0 or 1 occurred")
+
+      Nextone <- 0  # Might not be used actually; 0, not 1
+      if (tmp3.TF[ 2])
+        pobs.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 4])
+        pstr.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 6])
+        pdip.mix <- allprobs[, (Nextone <- Nextone + 1)]
+
+      if (tmp3.TF[ 8]) {
+        ind8 <- (Nextone + 1):(Nextone + la.mlm)
+        pobs.mlm <- allprobs[, ind8, drop = FALSE]
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
+        Nextone <- Nextone + la.mlm
+      }
+      if (tmp3.TF[ 9]) {
+        ind9 <- (Nextone + 1):(Nextone + li.mlm)
+        pstr.mlm <- allprobs[, ind9, drop = FALSE]
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
+        Nextone <- Nextone + li.mlm
+      }
+      if (tmp3.TF[10]) {
+        ind10 <- (Nextone + 1):(Nextone + ld.mlm)
+        pdip.mlm <- allprobs[, ind10, drop = FALSE]
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
+        Nextone <- Nextone + ld.mlm  # Not needed
+      }
+    }  # lall.len
+
+
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+        pgaitdzeta(y - 1, shape.p = shape.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  shape.a = shape.a, shape.i = shape.i, 
+                  shape.d = shape.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm),
+        pgaitdzeta(y    , shape.p = shape.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  shape.a = shape.a, shape.i = shape.i, 
+                  shape.d = shape.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm)))
+  }, list(
+    .lshape.p = lshape.p, .eshape.p = eshape.p,
+    .lshape.a = lshape.a, .eshape.a = eshape.a,
+    .lshape.i = lshape.i, .eshape.i = eshape.i,
+    .lshape.d = lshape.d, .eshape.d = eshape.d,
+    .lpstr.mix = lpstr.mix, .lpobs.mix = lpobs.mix,
+    .lpdip.mix = lpdip.mix,
+    .epstr.mix = epstr.mix, .epobs.mix = epobs.mix,
+    .epdip.mix = epdip.mix,
+    .tmp3.TF = tmp3.TF,
+    .a.mix = a.mix, .i.mix = i.mix, .d.mix = d.mix,
+    .a.mlm = a.mlm, .i.mlm = i.mlm, .d.mlm = d.mlm,
+    .truncate = truncate, .max.support = max.support ))),
+
   initialize = eval(substitute(expression({
-    extra$indeta <- ( .indeta )  # Avoids recomputing it several times
+    extra$indeta <- ( .indeta )  # Avoids recomputing it
     la.mix <- length((a.mix <- as.vector( .a.mix )))
     li.mix <- length((i.mix <- as.vector( .i.mix )))
     ld.mix <- length((d.mix <- as.vector( .d.mix )))
@@ -774,7 +890,7 @@ asparagus.col <- "#87a96b"
 
 
 
-      mux.more.a <- extra$mux.init[1]   # 0.75 Err to slightly smaller
+      mux.more.a <- extra$mux.init[1]   # 0.75 Err 2 slightly smaller
       init.pobs.mix <- numeric(n)
       if (tmp3.TF[ 2]) {  # la.mix > 0
         init.pobs.mix <- if (length( .ipobs.mix )) {
@@ -818,7 +934,8 @@ asparagus.col <- "#87a96b"
           matrix( .ipobs.mlm , n, la.mlm, byrow = .byrow.aid )
         } else {
           mux.more.a <- extra$mux.init[1]                            
-          init.pobs.mlm <- colSums(c(w) * extra$skip.mlm.a) / colSums(w)
+          init.pobs.mlm <- colSums(c(w) *
+                                   extra$skip.mlm.a) / colSums(w)
           init.pobs.mlm <- init.pobs.mlm * as.vector( mux.more.a )
           matrix(init.pobs.mlm, n, la.mlm, byrow = TRUE)
         }
@@ -1048,26 +1165,34 @@ asparagus.col <- "#87a96b"
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 4]) {  # Coln 2 or 4
-        etastart[, (extra$indeta[4, 'launch'])] <- etastart.z[, nextone]
+        etastart[, (extra$indeta[4, 'launch'])] <-
+            etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 6]) {  # Coln 2 or 4 or 6
-        etastart[, (extra$indeta[6, 'launch'])] <- etastart.z[, nextone]
+        etastart[, (extra$indeta[6, 'launch'])] <-
+           etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 8]) {
-        ind8 <- (extra$indeta[8, 'launch']):(extra$indeta[8, 'finish'])
-        etastart[, ind8] <- etastart.z[, nextone:(nextone+la.mlm - 1)]
+        ind8 <- (extra$indeta[8, 'launch']):(
+                 extra$indeta[8, 'finish'])
+        etastart[, ind8] <- etastart.z[, nextone:(nextone +
+                                                  la.mlm - 1)]
         nextone <- nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
-        ind9 <- (extra$indeta[9, 'launch']):(extra$indeta[9, 'finish'])
-        etastart[, ind9] <- etastart.z[, nextone:(nextone+li.mlm - 1)]
+        ind9 <- (extra$indeta[9, 'launch']):(
+                 extra$indeta[9, 'finish'])
+        etastart[, ind9] <- etastart.z[, nextone:(
+            nextone + li.mlm - 1)]
         nextone <- nextone + li.mlm
       }
       if (tmp3.TF[10]) {
-        ind0 <- (extra$indeta[10, 'launch']):(extra$indeta[10, 'finish'])
-        etastart[, ind0] <- etastart.z[, nextone:(nextone + ld.mlm - 1)]
+        ind0 <- (extra$indeta[10, 'launch']):(
+                 extra$indeta[10, 'finish'])
+        etastart[, ind0] <- etastart.z[, nextone:(nextone +
+                                                  ld.mlm - 1)]
         if (ncol(etastart.z) != nextone + ld.mlm - 1)
           stop("miscalculation")
       }
@@ -1178,19 +1303,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1258,7 +1386,8 @@ asparagus.col <- "#87a96b"
               matrix(shape.a, n.obs, la.mix)) / (
         c(Bits[["SumA0.mix.a"]]))
       dim(tmp13) <- c(n.obs, la.mix)
-      dimnames(tmp13) <- list(rownames(eta), as.character(a.mix))
+      dimnames(tmp13) <- list(rownames(eta),
+                              as.character(a.mix))
       propn.mat.a <- tmp13
     }  # la.mix
 
@@ -1268,7 +1397,8 @@ asparagus.col <- "#87a96b"
               matrix(shape.i, n.obs, li.mix)) / (
         c(Bits[["SumI0.mix.i"]]))
       dim(tmp55) <- c(n.obs, li.mix)
-      dimnames(tmp55) <- list(rownames(eta), as.character(i.mix))
+      dimnames(tmp55) <- list(rownames(eta),
+                              as.character(i.mix))
       propn.mat.i <- tmp55  # Correct dimension
     }  # li.mix
 
@@ -1279,7 +1409,8 @@ asparagus.col <- "#87a96b"
               matrix(shape.d, n.obs, ld.mix)) / (
         c(Bits[["SumD0.mix.d"]]))
       dim(tmp55) <- c(n.obs, ld.mix)
-      dimnames(tmp55) <- list(rownames(eta), as.character(d.mix))
+      dimnames(tmp55) <- list(rownames(eta),
+                              as.character(d.mix))
       propn.mat.d <- tmp55  # Correct dimension
     }  # ld.mix
 
@@ -1358,7 +1489,7 @@ asparagus.col <- "#87a96b"
     for (jay in seq(M))
       predictors.names <- c(predictors.names,
         namesof(parameter.names[jay], link.names[jay], tag = FALSE,
-                earg = list()))  # This line isnt perfect; info is lost
+                earg = list()))  # This isnt perfect; info is lost
     misc$predictors.names <- predictors.names  # Useful for coef()
     misc$link <- link.names  # 
     names(misc$link) <- parameter.names  # 
@@ -1462,19 +1593,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1560,19 +1694,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1659,19 +1796,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -1775,19 +1915,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -2134,11 +2277,16 @@ asparagus.col <- "#87a96b"
         tmp9i <- d0B.PI.mlm[, jay] / DELTA.i.mlm[, jay]
         n.tmp <- -tmp9i[is.inf.j.mlm]
         p.tmp <- +tmp9i[is.inf.j.mlm]
-        if (tmp3.TF[ 8] && la.mlm) dl.dpobs.mlm[is.inf.j.mlm, ] <- n.tmp
-        if (tmp3.TF[ 2] && la.mix) dl.dpobs.mix[is.inf.j.mlm  ] <- n.tmp
-        if (tmp3.TF[ 4] && li.mix) dl.dpstr.mix[is.inf.j.mlm  ] <- n.tmp
-        if (tmp3.TF[10] && ld.mlm) dl.dpdip.mlm[is.inf.j.mlm, ] <- p.tmp
-        if (tmp3.TF[ 6] && ld.mix) dl.dpdip.mix[is.inf.j.mlm  ] <- p.tmp
+        if (tmp3.TF[ 8] && la.mlm)
+            dl.dpobs.mlm[is.inf.j.mlm, ] <- n.tmp
+        if (tmp3.TF[ 2] && la.mix)
+            dl.dpobs.mix[is.inf.j.mlm  ] <- n.tmp
+        if (tmp3.TF[ 4] && li.mix)
+            dl.dpstr.mix[is.inf.j.mlm  ] <- n.tmp
+        if (tmp3.TF[10] && ld.mlm)
+            dl.dpdip.mlm[is.inf.j.mlm, ] <- p.tmp
+        if (tmp3.TF[ 6] && ld.mix)
+            dl.dpdip.mix[is.inf.j.mlm  ] <- p.tmp
 
 
         tmp8 <- (1 - d0B.PI.mlm[, jay]) / DELTA.i.mlm[, jay]
@@ -2163,12 +2311,17 @@ asparagus.col <- "#87a96b"
         tmp9d <- d0B.PD.mlm[, jay] / DELTA.d.mlm[, jay]
         p.tmp <- +tmp9d[is.def.j.mlm]
         n.tmp <- -tmp9d[is.def.j.mlm]
-        if (tmp3.TF[ 9] && li.mlm) dl.dpstr.mlm[is.def.j.mlm, ] <- n.tmp
-        if (tmp3.TF[ 4] && li.mix) dl.dpstr.mix[is.def.j.mlm  ] <- n.tmp
-        if (tmp3.TF[ 8] && la.mlm) dl.dpobs.mlm[is.def.j.mlm, ] <- n.tmp
-        if (tmp3.TF[ 2] && la.mix) dl.dpobs.mix[is.def.j.mlm  ] <- n.tmp
-        if (tmp3.TF[ 6] && ld.mix) dl.dpdip.mix[is.def.j.mlm  ] <- p.tmp
-                                   dl.dpdip.mlm[is.def.j.mlm, ] <- p.tmp
+        if (tmp3.TF[ 9] && li.mlm)
+            dl.dpstr.mlm[is.def.j.mlm, ] <- n.tmp
+        if (tmp3.TF[ 4] && li.mix)
+            dl.dpstr.mix[is.def.j.mlm  ] <- n.tmp
+        if (tmp3.TF[ 8] && la.mlm)
+            dl.dpobs.mlm[is.def.j.mlm, ] <- n.tmp
+        if (tmp3.TF[ 2] && la.mix)
+            dl.dpobs.mix[is.def.j.mlm  ] <- n.tmp
+        if (tmp3.TF[ 6] && ld.mix)
+            dl.dpdip.mix[is.def.j.mlm  ] <- p.tmp
+        dl.dpdip.mlm[is.def.j.mlm, ] <- p.tmp
         dl.dpdip.mlm[is.def.j.mlm, jay] <-
         dl.dpdip.mlm[is.def.j.mlm, jay] -
         1 / DELTA.d.mlm[is.def.j.mlm, jay]
@@ -3438,11 +3591,12 @@ asparagus.col <- "#87a96b"
 
 
 
-      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored columnwise
-      for (want in seq(M.mlm)) {  # Want the equivalent of rowSums(Qf2a)
+      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored colwise
+      for (want in seq(M.mlm)) {  # Want the \equiv of rowSums(Qf2a)
         iamvec <- iam(want, 1:M.mlm, M = M.mlm)  # Diagonals included
-        Qf2rowsums[, want] <- rowSums(filling[, iamvec, drop = FALSE] *
-                                      allprobs[1:n.use, 1:M.mlm])
+        Qf2rowsums[, want] <-
+          rowSums(filling[, iamvec, drop = FALSE] *
+                  allprobs[1:n.use, 1:M.mlm])
       }  # want
       Qf2a <- Qf2rowsums[, iamlist$row]
       Qf2b <- Qf2rowsums[, iamlist$col]
@@ -3477,14 +3631,15 @@ asparagus.col <- "#87a96b"
                           if (tmp3.TF[ 7]) dshape.d.deta else NULL)
       iptr <- 0
       if (length(ind.shape.z))
-      for (uuu in ind.shape.z) {  # Could delete 3 for shape.a (orthog)
+      for (uuu in ind.shape.z) {  # Could delete 3 4 shape.a (orthog)
         iptr <- iptr + 1
         for (ttt in seq(lind.rc)) {
           wz.6[, iam(uuu, ind.rc[ttt], M)] <- 0  # Initialize
           for (sss in seq(lind.rc)) {
             wz.6[, iam(uuu, ind.rc[ttt], M)] <-
             wz.6[, iam(uuu, ind.rc[ttt], M)] +
-              allprobs[, sss] * (max(0, sss == ttt) - allprobs[, ttt]) *
+              allprobs[, sss] * (max(0, sss == ttt) -
+                                 allprobs[, ttt]) *
               wz[, iam(uuu, ind.rc[sss], M)] * dstar.deta[, iptr]
           }  # sss
         }  # ttt
@@ -3557,9 +3712,10 @@ asparagus.col <- "#87a96b"
            a.mlm = NULL, i.mlm = NULL,  # Unstructured probs are
            d.mlm = NULL,                # contiguous
            truncate = NULL, max.support = Inf,
-           zero = c("pobs", "pstr", "pdip"),  # Pruned, handles all 6
+      zero = c("pobs", "pstr", "pdip"),  # Pruned, handles all 6
            eq.ap = TRUE, eq.ip = TRUE, eq.dp = TRUE,
-           parallel.a = FALSE, parallel.i = FALSE, parallel.d = FALSE,
+           parallel.a = FALSE, parallel.i = FALSE,
+           parallel.d = FALSE,
            lshape.p = "logitlink",
            lshape.a = lshape.p,  # "logitlink", 20201117
            lshape.i = lshape.p,  # "logitlink", 20201117
@@ -3930,7 +4086,7 @@ asparagus.col <- "#87a96b"
          max.support = as.vector( .max.support ),
          Support  = c( .lowsup , Inf, 1),  # a(b)c format as a,c,b.
          expected = TRUE,
-         multipleResponses = FALSE,  # poissonff can be called if TRUE
+         multipleResponses = FALSE,  # poissonff can b called ifTRUE
          parameters.names = names( .predictors.names ),
          parent.name = c("logff", "log"),
          type.fitted  = as.vector( .type.fitted ),
@@ -3952,8 +4108,122 @@ asparagus.col <- "#87a96b"
            .predictors.names = predictors.names,
            .M1 = M1, .lall.len = lall.len
          ))),
+
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    if (!is.matrix(eta)) eta <- as.matrix(eta)
+    la.mix <- length((a.mix <- as.vector( .a.mix )))
+    li.mix <- length((i.mix <- as.vector( .i.mix )))
+    ld.mix <- length((d.mix <- as.vector( .d.mix )))
+    la.mlm <- length((a.mlm <- as.vector( .a.mlm )))
+    li.mlm <- length((i.mlm <- as.vector( .i.mlm )))
+    ld.mlm <- length((d.mlm <- as.vector( .d.mlm )))
+    truncate <- as.vector( .truncate )
+
+    tmp3.TF <- ( .tmp3.TF )   # Logical of length 10.
+
+    lall.len <- la.mix + li.mix + ld.mix + la.mlm + li.mlm + ld.mlm
+    pobs.mix <- pstr.mix <- pdip.mix <- 0  # 4 rowSums()
+    pobs.mlm <- pstr.mlm <- pdip.mlm <- 0  # matrix(0, NROW(eta), 1)
+    shape.p <- cbind(eta2theta(eta[, 1], .lshape.p , .eshape.p ))
+    ind.shape.z <- 1  # Points to shape.p only.
+    shape.a <- shape.i <-
+    shape.d <- shape.p  # Needed and doesnt corrupt the answer
+
+    if (any(tmp3.TF[c(3, 5, 7)])) {  # At least 1 shape.[aid]
+      ind.shape.z <- extra$indeta[c(1, 3, 5, 7), 'launch']  # Vecs
+      ind.shape.z <- c(na.omit(ind.shape.z))  # At least 1 value
+
+      shape.a <- if (!tmp3.TF[ 3]) shape.p else
+        eta2theta(eta[, extra$indeta[3, 1]], .lshape.a , .eshape.a )
+      shape.i <- if (!tmp3.TF[ 5]) shape.p else
+        eta2theta(eta[, extra$indeta[5, 1]], .lshape.i , .eshape.i )
+      shape.d <- if (!tmp3.TF[ 7]) shape.p else
+        eta2theta(eta[, extra$indeta[7, 1]], .lshape.d , .eshape.d )
+    }  # la.mix + li.mix + ld.mix > 0
+
+    if (lall.len) {  # An MLM was fitted
+      allprobs <-
+        multilogitlink(eta[, -ind.shape.z, drop = FALSE],
+                       refLevel = "(Last)",  # Make sure
+                       inverse = TRUE)  # rowSums == 1
+      if (anyNA(allprobs))
+        warning("there are NAs here in slot linkinv")
+      if (min(allprobs) == 0 || max(allprobs) == 1)
+        warning("fitted probabilities numerically 0 or 1 occurred")
+
+      Nextone <- 0  # Might not be used actually; 0, not 1
+      if (tmp3.TF[ 2])
+        pobs.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 4])
+        pstr.mix <- allprobs[, (Nextone <- Nextone + 1)]
+      if (tmp3.TF[ 6])
+        pdip.mix <- allprobs[, (Nextone <- Nextone + 1)]
+
+      if (tmp3.TF[ 8]) {
+        ind8 <- (Nextone + 1):(Nextone + la.mlm)
+        pobs.mlm <- allprobs[, ind8, drop = FALSE]
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
+        Nextone <- Nextone + la.mlm
+      }
+      if (tmp3.TF[ 9]) {
+        ind9 <- (Nextone + 1):(Nextone + li.mlm)
+        pstr.mlm <- allprobs[, ind9, drop = FALSE]
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
+        Nextone <- Nextone + li.mlm
+      }
+      if (tmp3.TF[10]) {
+        ind10 <- (Nextone + 1):(Nextone + ld.mlm)
+        pdip.mlm <- allprobs[, ind10, drop = FALSE]
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
+        Nextone <- Nextone + ld.mlm  # Not needed
+      }
+    }  # lall.len
+
+
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+        pgaitdlog(y - 1, shape.p = shape.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  shape.a = shape.a, shape.i = shape.i, 
+                  shape.d = shape.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm),
+        pgaitdlog(y    , shape.p = shape.p,
+                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
+                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
+                  truncate = truncate,
+                  max.support = as.vector( .max.support ),
+                  shape.a = shape.a, shape.i = shape.i, 
+                  shape.d = shape.d,
+                  pobs.mix = pobs.mix, pstr.mix = pstr.mix,
+                  pdip.mix = pdip.mix,
+                  pobs.mlm = pobs.mlm, pstr.mlm = pstr.mlm,
+                  pdip.mlm = pdip.mlm)))
+  }, list(
+    .lshape.p = lshape.p, .eshape.p = eshape.p,
+    .lshape.a = lshape.a, .eshape.a = eshape.a,
+    .lshape.i = lshape.i, .eshape.i = eshape.i,
+    .lshape.d = lshape.d, .eshape.d = eshape.d,
+    .lpstr.mix = lpstr.mix, .lpobs.mix = lpobs.mix,
+    .lpdip.mix = lpdip.mix,
+    .epstr.mix = epstr.mix, .epobs.mix = epobs.mix,
+    .epdip.mix = epdip.mix,
+    .tmp3.TF = tmp3.TF,
+    .a.mix = a.mix, .i.mix = i.mix, .d.mix = d.mix,
+    .a.mlm = a.mlm, .i.mlm = i.mlm, .d.mlm = d.mlm,
+    .truncate = truncate, .max.support = max.support ))),
+
   initialize = eval(substitute(expression({
-    extra$indeta <- ( .indeta )  # Avoids recomputing it several times
+    extra$indeta <- ( .indeta )  # Avoids recomputing it
     la.mix <- length((a.mix <- as.vector( .a.mix )))
     li.mix <- length((i.mix <- as.vector( .i.mix )))
     ld.mix <- length((d.mix <- as.vector( .d.mix )))
@@ -4010,7 +4280,8 @@ asparagus.col <- "#87a96b"
           sum(c(w) * dlog(x = y, shape = shapeval, log = TRUE))
         }
         shape.p.grid <- ( .gshape.p )
-        grid.search(shape.p.grid, objfun = logff.Loglikfun, y = y, w = w)
+          grid.search(shape.p.grid,
+                      objfun = logff.Loglikfun, y = y, w = w)
       }
       shape.p.init <- rep(shape.p.init, length = n)
 
@@ -4024,7 +4295,7 @@ asparagus.col <- "#87a96b"
 
 
 
-      mux.more.a <- extra$mux.init[1]   # 0.75 Err to slightly smaller
+      mux.more.a <- extra$mux.init[1]   # 0.75 Err 2 bit smaller
       init.pobs.mix <- numeric(n)
       if (tmp3.TF[ 2]) {  # la.mix > 0
         init.pobs.mix <- if (length( .ipobs.mix )) {
@@ -4068,7 +4339,8 @@ asparagus.col <- "#87a96b"
           matrix( .ipobs.mlm , n, la.mlm, byrow = .byrow.aid )
         } else {
           mux.more.a <- extra$mux.init[1]                            
-          init.pobs.mlm <- colSums(c(w) * extra$skip.mlm.a) / colSums(w)
+          init.pobs.mlm <- colSums(c(w) *
+                                   extra$skip.mlm.a) / colSums(w)
           init.pobs.mlm <- init.pobs.mlm * as.vector( mux.more.a )
           matrix(init.pobs.mlm, n, la.mlm, byrow = TRUE)
         }
@@ -4298,26 +4570,34 @@ asparagus.col <- "#87a96b"
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 4]) {  # Coln 2 or 4
-        etastart[, (extra$indeta[4, 'launch'])] <- etastart.z[, nextone]
+          etastart[, (extra$indeta[4, 'launch'])] <-
+              etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 6]) {  # Coln 2 or 4 or 6
-        etastart[, (extra$indeta[6, 'launch'])] <- etastart.z[, nextone]
+          etastart[, (extra$indeta[6, 'launch'])] <-
+              etastart.z[, nextone]
         nextone <- nextone + 1
       }
       if (tmp3.TF[ 8]) {
-        ind8 <- (extra$indeta[8, 'launch']):(extra$indeta[8, 'finish'])
-        etastart[, ind8] <- etastart.z[, nextone:(nextone+la.mlm - 1)]
+          ind8 <- (extra$indeta[8, 'launch']):(
+              extra$indeta[8, 'finish'])
+          etastart[, ind8] <- etastart.z[, nextone:(nextone+
+                                                    la.mlm - 1)]
         nextone <- nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
-        ind9 <- (extra$indeta[9, 'launch']):(extra$indeta[9, 'finish'])
-        etastart[, ind9] <- etastart.z[, nextone:(nextone+li.mlm - 1)]
+          ind9 <- (extra$indeta[9, 'launch']):(
+              extra$indeta[9, 'finish'])
+          etastart[, ind9] <- etastart.z[, nextone:(nextone+
+                                                    li.mlm - 1)]
         nextone <- nextone + li.mlm
       }
       if (tmp3.TF[10]) {
-        ind0 <- (extra$indeta[10, 'launch']):(extra$indeta[10, 'finish'])
-        etastart[, ind0] <- etastart.z[, nextone:(nextone + ld.mlm - 1)]
+          ind0 <- (extra$indeta[10, 'launch']):(
+              extra$indeta[10, 'finish'])
+          etastart[, ind0] <- etastart.z[, nextone:(nextone +
+                                                    ld.mlm - 1)]
         if (ncol(etastart.z) != nextone + ld.mlm - 1)
           stop("miscalculation")
       }
@@ -4428,19 +4708,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -4508,7 +4791,8 @@ asparagus.col <- "#87a96b"
              matrix(shape.a, n.obs, la.mix)) / (
         c(Bits[["SumA0.mix.a"]]))
       dim(tmp13) <- c(n.obs, la.mix)
-      dimnames(tmp13) <- list(rownames(eta), as.character(a.mix))
+      dimnames(tmp13) <- list(rownames(eta),
+                              as.character(a.mix))
       propn.mat.a <- tmp13
     }  # la.mix
 
@@ -4518,7 +4802,8 @@ asparagus.col <- "#87a96b"
              matrix(shape.i, n.obs, li.mix)) / (
         c(Bits[["SumI0.mix.i"]]))
       dim(tmp55) <- c(n.obs, li.mix)
-      dimnames(tmp55) <- list(rownames(eta), as.character(i.mix))
+      dimnames(tmp55) <- list(rownames(eta),
+                              as.character(i.mix))
       propn.mat.i <- tmp55  # Correct dimension
     }  # li.mix
 
@@ -4529,7 +4814,8 @@ asparagus.col <- "#87a96b"
              matrix(shape.d, n.obs, ld.mix)) / (
         c(Bits[["SumD0.mix.d"]]))
       dim(tmp55) <- c(n.obs, ld.mix)
-      dimnames(tmp55) <- list(rownames(eta), as.character(d.mix))
+      dimnames(tmp55) <- list(rownames(eta),
+                              as.character(d.mix))
       propn.mat.d <- tmp55  # Correct dimension
     }  # ld.mix
 
@@ -4608,7 +4894,7 @@ asparagus.col <- "#87a96b"
     for (jay in seq(M))
       predictors.names <- c(predictors.names,
         namesof(parameter.names[jay], link.names[jay], tag = FALSE,
-                earg = list()))  # This line isnt perfect; info is lost
+                earg = list()))  # This isnt perfect; info is lost
     misc$predictors.names <- predictors.names  # Useful for coef()
     misc$link <- link.names  # 
     names(misc$link) <- parameter.names  # 
@@ -4712,19 +4998,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -4810,19 +5099,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -4909,19 +5201,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -5025,19 +5320,22 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 8]) {
         ind8 <- (Nextone + 1):(Nextone + la.mlm)
         pobs.mlm <- allprobs[, ind8, drop = FALSE]
-        dimnames(pobs.mlm) <- list(rownames(eta), as.character(a.mlm))
+        dimnames(pobs.mlm) <- list(rownames(eta),
+                                   as.character(a.mlm))
         Nextone <- Nextone + la.mlm
       }
       if (tmp3.TF[ 9]) {
         ind9 <- (Nextone + 1):(Nextone + li.mlm)
         pstr.mlm <- allprobs[, ind9, drop = FALSE]
-        dimnames(pstr.mlm) <- list(rownames(eta), as.character(i.mlm))
+        dimnames(pstr.mlm) <- list(rownames(eta),
+                                   as.character(i.mlm))
         Nextone <- Nextone + li.mlm
       }
       if (tmp3.TF[10]) {
         ind10 <- (Nextone + 1):(Nextone + ld.mlm)
         pdip.mlm <- allprobs[, ind10, drop = FALSE]
-        dimnames(pdip.mlm) <- list(rownames(eta), as.character(d.mlm))
+        dimnames(pdip.mlm) <- list(rownames(eta),
+                                   as.character(d.mlm))
         Nextone <- Nextone + ld.mlm  # Not needed
       }
     }  # lall.len
@@ -5685,13 +5983,17 @@ asparagus.col <- "#87a96b"
                                  A8.p * (1 - A8.p) / (1 - shape.p)^2 +
     Denom2.p / Denom0.p - (Denom1.p / Denom0.p)^2) + 
     (if (tmp3.TF[ 4] && li.mix) Numer *
-    rowSums(Numer * (d1B.PI.mix^2) / DELTA.i.mix - d2B.PI.mix) else 0) +
+     rowSums(Numer * (d1B.PI.mix^2) / DELTA.i.mix - d2B.PI.mix)
+     else 0) +
     (if (tmp3.TF[ 9] && li.mlm) Numer *
-    rowSums(Numer * (d1B.PI.mlm^2) / DELTA.i.mlm - d2B.PI.mlm) else 0) +
+     rowSums(Numer * (d1B.PI.mlm^2) / DELTA.i.mlm - d2B.PI.mlm)
+     else 0) +
     (if (tmp3.TF[ 6] && ld.mix) Numer *
-    rowSums(Numer * (d1B.PD.mix^2) / DELTA.d.mix - d2B.PD.mix) else 0) +
+     rowSums(Numer * (d1B.PD.mix^2) / DELTA.d.mix - d2B.PD.mix)
+     else 0) +
     (if (tmp3.TF[10] && ld.mlm) Numer *  # nnn.
-    rowSums(Numer * (d1B.PD.mlm^2) / DELTA.d.mlm - d2B.PD.mlm) else 0)
+     rowSums(Numer * (d1B.PD.mlm^2) / DELTA.d.mlm - d2B.PD.mlm)
+     else 0)
 
 
     wz[, iam(1, 1, M)] <- ned2l.dshape.p2 * dshape.p.deta^2
@@ -5750,7 +6052,7 @@ asparagus.col <- "#87a96b"
       if (all(tmp3.TF[c(2, 4)]))
         ned2l.dpobs.mix.pstr.mix <-  # ccc
         ned2l.dpobs.mix.pstr.mix +
-          rowSums(-d0B.PI.mix * (d0A.i - d0B.PI.mix) / DELTA.i.mix)
+        rowSums(-d0B.PI.mix * (d0A.i - d0B.PI.mix) / DELTA.i.mix)
 
       if (all(tmp3.TF[c(4, 6)]))
         ned2l.dpstr.mix.pdip.mix <-
@@ -5865,7 +6167,7 @@ asparagus.col <- "#87a96b"
       if (tmp3.TF[ 2] && la.mix > 0)
         ned2l.dpobs.mix.shape.p <-
         ned2l.dpobs.mix.shape.p +
-          rowSums(d1B.PD.mix * (1 - Numer * d0B.PD.mix / DELTA.d.mix))
+        rowSums(d1B.PD.mix * (1 - Numer * d0B.PD.mix / DELTA.d.mix))
 
       ned2l.dpstr.mix.shape.p <-
       ned2l.dpstr.mix.shape.p + rowSums(
@@ -5873,7 +6175,7 @@ asparagus.col <- "#87a96b"
 
       ned2l.dpdip.mix.shape.p <-
       ned2l.dpdip.mix.shape.p - rowSums(
-        d1B.PD.mix * (1 + Numer * (d0A.d - d0B.PD.mix) / DELTA.d.mix))
+      d1B.PD.mix * (1 + Numer * (d0A.d - d0B.PD.mix) / DELTA.d.mix))
 
       if (!is.na(posn.pstr.mix)) {
         ned2l.dpstr.mix2 <-
@@ -5905,7 +6207,7 @@ asparagus.col <- "#87a96b"
 
       if (tmp3.TF[ 2]) {  # tmp3.TF[ 6] is TRUE, given tmp3.TF[ 7]
         ned2l.dpobs.mix.shape.d <-
-          rowSums(pdip.mix * d1A.d * d0B.PD.mix / DELTA.d.mix)  # nnn.
+      rowSums(pdip.mix * d1A.d * d0B.PD.mix / DELTA.d.mix)  # nnn.
         wz[, iam(posn.pobs.mix, posn.shape.d, M)] <-
           ned2l.dpobs.mix.shape.d  # link done later
       }
@@ -5918,7 +6220,7 @@ asparagus.col <- "#87a96b"
       }
 
         ned2l.dpdip.mix.shape.d <- rowSums(
-          d1A.d * (1 + pdip.mix * (d0A.d - d0B.PD.mix) / DELTA.d.mix))
+        d1A.d * (1 + pdip.mix * (d0A.d - d0B.PD.mix) / DELTA.d.mix))
         wz[, iam(posn.pdip.mix, posn.shape.d, M)] <-
           ned2l.dpdip.mix.shape.d  # * dshape.d.deta done later
 
@@ -7252,7 +7554,7 @@ asparagus.col <- "#87a96b"
       suma <- suma + pmf.p  # cumulative; part i
       if (any(vecTF <- (is.finite(q) & aval <= q))) {
         offset.a[vecTF] <- offset.a[vecTF] + pobs.mlm[vecTF, jay]
-        fudge.a[vecTF] <- fudge.a[vecTF] + pmf.p[vecTF]  # cumulative
+        fudge.a[vecTF] <- fudge.a[vecTF] + pmf.p[vecTF]  # cmtive
       }
     }  # jay
   }  # la.mlm
@@ -7356,7 +7658,8 @@ asparagus.col <- "#87a96b"
 
 
 
-  numer1 <- 1 - sum.i - sum.a - pstr.mix - pobs.mix + sum.d + pdip.mix
+  numer1 <- 1 - sum.i - sum.a - pstr.mix - pobs.mix +
+            sum.d + pdip.mix
   denom1 <- cdf.max.s - sumt - suma
   ans <- numer1 * (pbinom(q, size.p, prob.p) - fudge.t -
                    fudge.a) / denom1 +
@@ -7767,13 +8070,16 @@ asparagus.col <- "#87a96b"
   if (nparams == 2) {
     if(la.mix == 2)
       stop("overfitting: trying to fit a ", nparams, "-parameter ",
-           "distribution based on length(a.mix) == ", la.mix, " points")
+           "distribution based on length(a.mix) == ", la.mix,
+           " points")
     if (li.mix == 2)
       stop("overfitting: trying to fit a ", nparams, "-parameter ",
-           "distribution based on length(i.mix) == ", li.mix, " points")
+           "distribution based on length(i.mix) == ", li.mix,
+           " points")
     if (ld.mix == 2)
       stop("overfitting: trying to fit a ", nparams, "-parameter ",
-           "distribution based on length(d.mix) == ", ld.mix, " points")
+           "distribution based on length(d.mix) == ", ld.mix,
+           " points")
   }
 
 
@@ -7883,11 +8189,14 @@ asparagus.col <- "#87a96b"
   if (LDEF.MIX)
     use.pdip.mix <- matrix(pdip.mix, nnn, 1)
   if (LALT.MLM)
-    use.pobs.mlm <- matrix(pobs.mlm, nnn, LALT.MLM, byrow = byrow.aid)
+    use.pobs.mlm <- matrix(pobs.mlm, nnn, LALT.MLM,
+                           byrow = byrow.aid)
   if (LINF.MLM)
-    use.pstr.mlm <- matrix(pstr.mlm, nnn, LINF.MLM, byrow = byrow.aid)
+    use.pstr.mlm <- matrix(pstr.mlm, nnn, LINF.MLM,
+                           byrow = byrow.aid)
   if (LDEF.MLM)
-    use.pdip.mlm <- matrix(pdip.mlm, nnn, LDEF.MLM, byrow = byrow.aid)
+    use.pdip.mlm <- matrix(pdip.mlm, nnn, LDEF.MLM,
+                           byrow = byrow.aid)
 
 
   if (LALT.MIX) {
@@ -8154,7 +8463,8 @@ asparagus.col <- "#87a96b"
            pstr.mix = pstr.mix, pstr.mlm = pstr.mlm,
            pdip.mix = pdip.mix, pdip.mlm = pdip.mlm,
            byrow.aid = byrow.aid,  # type.fitted = type.fitted,
-           theta.a = lambda.a, theta.i = lambda.i, theta.d = lambda.d,
+           theta.a = lambda.a, theta.i = lambda.i,
+           theta.d = lambda.d,
            moments2 = moments2,
            rmlife1 = rmlife1, rmlife2 = rmlife2,
            dfun = "dpois")
@@ -8288,7 +8598,7 @@ asparagus.col <- "#87a96b"
          aprd1.mix + iprd1.mix + aprd1.mlm + iprd1.mlm -
                      dprd1.mix             - dprd1.mlm +
          use.this *
-         (ifelse(shape.p > 1, zeta(shape.p) / zeta(shape.p + 1), NA) -
+  (ifelse(shape.p > 1, zeta(shape.p) / zeta(shape.p + 1), NA) -
           SumA1.mix.p - SumA1.mlm.p - SumT1.p) / (
           cdf.max.s - SumA0.mix.p - SumA0.mlm.p - SumT0.p))
   if (type.fitted == "mean") {

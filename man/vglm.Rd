@@ -10,7 +10,8 @@
 
 }
 \usage{
-vglm(formula, family = stop("argument 'family' needs to be assigned"),
+vglm(formula,
+     family = stop("argument 'family' needs to be assigned"),
      data = list(), weights = NULL, subset = NULL,
      na.action = na.fail, etastart = NULL, mustart = NULL,
      coefstart = NULL, control = vglm.control(...), offset = NULL,
@@ -32,15 +33,19 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{family}{
-  a function of class \code{"vglmff"} (see \code{\link{vglmff-class}})
-  describing what statistical model is to be fitted. This is called a
+    a function of class \code{"vglmff"}
+    (see \code{\link{vglmff-class}})
+    describing what statistical model is to be fitted.
+    This is called a
   ``\pkg{VGAM} family function''.
   See \code{\link{CommonVGAMffArguments}}
-  for general information about many types of arguments found in this
+  for general information about many types of
+  arguments found in this
   type of function.
   The argument name \code{"family"} is used loosely and for
   the ease of existing \code{\link[stats]{glm}} users;
-  there is no concept of a formal ``error distribution'' for VGLMs.
+  there is no concept of a
+  formal ``error distribution'' for VGLMs.
   Possibly the argument name should be better \code{"model"}
   but unfortunately
   that name has already been taken.
@@ -84,15 +89,16 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
 
 % Creates CRAN problems:
-% \url{https://cran.r-project.org/web/packages/svyVGAM/vignettes/theory.html}.
+% \url{cran.r-project.org/web/packages/
+%      svyVGAM/vignettes/theory.html}.
 
 
 
 
 
 % 20140507:
-% Currently the \code{weights} argument does not support sampling
-% weights from complex sampling designs.
+% Currently the \code{weights} argument does not support
+% sampling weights from complex sampling designs.
 % And currently sandwich estimators are not computed in any
 % shape or form.
 % The present weights are multiplied by the corresponding
@@ -105,7 +111,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
 
 % If \code{weights} is a matrix,
-% then it should be must be in \emph{matrix-band} form, whereby the
+% then it should be must be in \emph{matrix-band} form,
+% whereby the
 % first \eqn{M} columns of the matrix are the diagonals,
 % followed by the upper-diagonal band, followed by the
 % band above that, etc. In this case, there can be up to
@@ -134,10 +141,12 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
   \item{etastart}{
   optional starting values for the linear predictors.
-  It is a \eqn{M}-column matrix with the same number of rows as
+  It is a \eqn{M}-column matrix with the same
+  number of rows as
   the response.
   If \eqn{M = 1} then it may be a vector.
-  Note that \code{etastart} and the output of \code{predict(fit)}
+  Note that \code{etastart} and the output
+  of \code{predict(fit)}
   should be comparable.
   Here, \code{fit} is the fitted object.
   Almost all \pkg{VGAM} family functions are self-starting.
@@ -148,7 +157,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   \item{mustart}{
   optional starting values for the fitted values.
   It can be a vector or a matrix;
-  if a matrix, then it has the same number of rows as the response.
+  if a matrix, then it has the same number of rows
+  as the response.
   Usually \code{mustart} and the output of \code{fitted(fit)}
   should be comparable.
   Most family functions do not make use of this argument
@@ -178,7 +188,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{method}{
-  the method to be used in fitting the model.  The default (and
+    the method to be used in fitting the model.
+    The default (and
   presently only) method \code{vglm.fit()} uses iteratively
   reweighted least squares (IRLS).
 
@@ -211,8 +222,10 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   an optional \code{\link[base]{list}} of constraint matrices.
   The components of the list must be named (labelled)
   with the term it corresponds to
-  (and it must match in character format \emph{exactly}---see below).
-  There are two types of input: \code{"lm"}-type and \code{"vlm"}-type.
+  (and it must match in
+  character format \emph{exactly}---see below).
+  There are two types of input:
+  \code{"lm"}-type and \code{"vlm"}-type.
   The former is a subset of the latter.
   The former has a matrix for each term of the LM matrix.
   The latter has a matrix for each column of the big VLM matrix.
@@ -242,7 +255,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   the \eqn{M} by \eqn{M} identity matrix unless arguments
   in the family function itself override these values, e.g.,
   \code{parallel} (see  \code{\link{CommonVGAMffArguments}}).
-  If \code{constraints} is used then it must contain \emph{all}
+  If \code{constraints} is used then it
+  must contain \emph{all}
   the terms; an incomplete list is not accepted.
 
 
@@ -265,19 +279,24 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{extra}{
-  an optional list with any extra information that might be needed by
+    an optional list with any extra information that
+    might be needed by
   the \pkg{VGAM} family function.
 
 
   }
   \item{form2}{
   the second (optional) formula.
-  If argument \code{xij} is used (see \code{\link{vglm.control}}) then
+  If argument \code{xij} is used
+  (see \code{\link{vglm.control}}) then
   \code{form2} needs to have \emph{all} terms in the model.
-  Also, some \pkg{VGAM} family functions such as \code{\link{micmen}}
+  Also, some \pkg{VGAM} family functions
+  such as \code{\link{micmen}}
   use this argument to input the regressor variable.
-  If given, the slots \code{@Xm2} and \code{@Ym2} may be assigned.
-  Note that smart prediction applies to terms in \code{form2} too.
+  If given, the slots \code{@Xm2} and \code{@Ym2}
+  may be assigned.
+  Note that smart prediction applies to terms
+  in \code{form2} too.
 
 
   }
@@ -324,7 +343,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   The function \code{vglm.fit} actually does the work.
 
 
-% If more than one of \code{etastart}, \code{start} and \code{mustart}
+  % If more than one of \code{etastart},
+  % \code{start} and \code{mustart}
 % is specified, the first in the list will be used.
 
 
@@ -361,10 +381,12 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
   \item{misc}{a list to hold miscellaneous parameters.}
   \item{model}{the model frame.}
-  \item{na.action}{a list holding information about missing values.}
+  \item{na.action}{a list holding information
+    about missing values.}
   \item{offset}{if non-zero, a \eqn{M}-column matrix of offsets.}
   \item{post}{a list where post-analysis results may be put.}
-  \item{preplot}{used by \code{\link{plotvgam}}, the plotting parameters
+  \item{preplot}{used by \code{\link{plotvgam}},
+    the plotting parameters
         may be put here.}
   \item{prior.weights}{
   initially supplied weights
@@ -378,7 +400,8 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
   \item{rank}{numerical rank of the fitted model.}
   \item{residuals}{the \emph{working} residuals at the
     final IRLS iteration.}
-  \item{ResSS}{residual sum of squares at the final IRLS iteration with
+  \item{ResSS}{residual sum of squares at the
+    final IRLS iteration with
   the adjusted dependent vectors and weight matrices.}
   \item{smart.prediction}{
   a list of data-dependent parameters (if any)
@@ -386,10 +409,12 @@ vglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{terms}{the \code{\link[stats]{terms}} object used.}
-  \item{weights}{the working weight matrices at the final IRLS iteration.
+  \item{weights}{the working weight matrices at
+    the final IRLS iteration.
     This is in matrix-band form.}
   \item{x}{the model matrix (linear model LM, not VGLM).}
-  \item{xlevels}{the levels of the factors, if any, used in fitting.}
+  \item{xlevels}{the levels of the factors, if any,
+    used in fitting.}
   \item{y}{the response, in matrix form.}
 
 
@@ -415,13 +440,15 @@ Reduced-rank vector generalized linear models.
 
 Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+  Series B, Methodological},
 \bold{58}, 481--493.
 
 
 
 Yee, T. W. (2014).
-Reduced-rank vector generalized linear models with two linear predictors.
+Reduced-rank vector generalized linear models
+with two linear predictors.
 \emph{Computational Statistics and Data Analysis},
 \bold{71}, 889--902.
 
@@ -442,15 +469,23 @@ The \code{VGAM} Package.
 
 \author{ Thomas W. Yee }
 \note{
-  This function can fit a wide variety of statistical models. Some of
-  these are harder to fit than others because of inherent numerical
-  difficulties associated with some of them. Successful model fitting
-  benefits from cumulative experience. Varying the values of arguments
-  in the \pkg{VGAM} family function itself is a good first step if
-  difficulties arise, especially if initial values can be inputted.
-  A second, more general step, is to vary the values of arguments in
+  This function can fit a wide variety of
+  statistical models. Some of
+  these are harder to fit than others because
+  of inherent numerical
+  difficulties associated with some of them.
+  Successful model fitting
+  benefits from cumulative experience.
+  Varying the values of arguments
+  in the \pkg{VGAM} family function itself
+  is a good first step if
+  difficulties arise, especially if initial
+  values can be inputted.
+  A second, more general step, is to vary the
+  values of arguments in
   \code{\link{vglm.control}}.
-  A third step is to make use of arguments such as \code{etastart},
+  A third step is to make use of arguments such
+  as \code{etastart},
   \code{coefstart} and \code{mustart}.
 
 
@@ -471,33 +506,40 @@ The \code{VGAM} Package.
 
 
 
-  The smart prediction (\code{\link{smartpred}}) library is incorporated
+The smart prediction (\code{\link{smartpred}})
+library is incorporated
   within the \pkg{VGAM} library.
 
 
 
-  The theory behind the scaling parameter is currently being made more
-  rigorous, but it it should give the same value as the scale parameter
+  The theory behind the scaling parameter is
+  currently being made more
+  rigorous, but it it should give the same value
+  as the scale parameter
   for GLMs.
 
 
 
-  In Example 5 below, the \code{xij} argument to illustrate covariates
-  that are specific to a linear predictor. Here, \code{lop}/\code{rop}
+  In Example 5 below, the \code{xij} argument to
+  illustrate covariates
+  that are specific to a linear predictor.
+  Here, \code{lop}/\code{rop}
   are
-  the ocular pressures of the left/right eye (artificial data).
-  Variables \code{leye} and \code{reye} might be the presence/absence of
+  the ocular pressures of the left/right eye
+  (artificial data).
+  Variables \code{leye} and \code{reye} might be
+  the presence/absence of
   a particular disease on the LHS/RHS eye respectively.
   See
   \code{\link{vglm.control}}
   and
-  \code{\link{fill}}
+  \code{\link{fill1}}
   for more details and examples.
 
 
 }
 
-%~Make other sections like WARNING with \section{WARNING }{....} ~
+%~Make other sections like WARNING with \section{WARNING }{..}~
 \section{WARNING}{
   See warnings in \code{\link{vglm.control}}.
   Also, see warnings under \code{weights} above regarding
@@ -514,7 +556,7 @@ The \code{VGAM} Package.
   \code{\link{vglmff-class}},
   \code{\link{smartpred}},
   \code{vglm.fit},
-  \code{\link{fill}},
+  \code{\link{fill1}},
   \code{\link{rrvglm}},
   \code{\link{vgam}}.
   Methods functions include
@@ -548,25 +590,25 @@ The \code{VGAM} Package.
 
 \examples{
 # Example 1. See help(glm)
-print(d.AD <- data.frame(treatment = gl(3, 3),
-                         outcome = gl(3, 1, 9),
-                         counts = c(18,17,15,20,10,20,25,13,12)))
-vglm.D93 <- vglm(counts ~ outcome + treatment, family = poissonff,
+(d.AD <- data.frame(treatment = gl(3, 3),
+                    outcome = gl(3, 1, 9),
+                    counts = c(18,17,15,20,10,20,25,13,12)))
+vglm.D93 <- vglm(counts ~ outcome + treatment, poissonff,
                  data = d.AD, trace = TRUE)
 summary(vglm.D93)
 
 
 # Example 2. Multinomial logit model
 pneumo <- transform(pneumo, let = log(exposure.time))
-vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo)
+vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo)
 
 
 # Example 3. Proportional odds model
-fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, data = pneumo)
+fit3 <- vglm(cbind(normal, mild, severe) ~ let, propodds, pneumo)
 coef(fit3, matrix = TRUE)
 constraints(fit3)
 model.matrix(fit3, type = "lm")  # LM model matrix
-model.matrix(fit3)               # Larger VGLM (or VLM) model matrix
+model.matrix(fit3)               # Larger VGLM (or VLM) matrix
 
 
 # Example 4. Bivariate logistic model
@@ -585,14 +627,14 @@ eyesdat <- round(data.frame(lop = runif(nn),
 eyesdat <- transform(eyesdat, eta1 = -1 + 2 * lop,
                               eta2 = -1 + 2 * lop)
 eyesdat <- transform(eyesdat,
-           leye = rbinom(nn, size = 1, prob = logitlink(eta1, inverse = TRUE)),
-           reye = rbinom(nn, size = 1, prob = logitlink(eta2, inverse = TRUE)))
+           leye = rbinom(nn, 1, prob = logitlink(eta1, inv = TRUE)),
+           reye = rbinom(nn, 1, prob = logitlink(eta2, inv = TRUE)))
 head(eyesdat)
 fit5 <- vglm(cbind(leye, reye) ~ op,
              binom2.or(exchangeable = TRUE, zero = 3),
              data = eyesdat, trace = TRUE,
-             xij = list(op ~ lop + rop + fill(lop)),
-             form2 = ~  op + lop + rop + fill(lop))
+             xij = list(op ~ lop + rop + fill1(lop)),
+             form2 = ~  op + lop + rop + fill1(lop))
 coef(fit5)
 coef(fit5, matrix = TRUE)
 constraints(fit5)
@@ -611,8 +653,8 @@ coef(fit1, matrix = TRUE)  # Check
 \keyword{models}
 \keyword{regression}
 
-%eyesdat$leye <- ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
-%eyesdat$reye <- ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)
+%eyesdat$leye=ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
+%eyesdat$reye=ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)
 %coef(fit, matrix = TRUE, compress = FALSE)
 
 
@@ -630,28 +672,30 @@ coef(fit1, matrix = TRUE)  # Check
 %}
 %
 %fit6 <- vglm(cbind(leye, reye) ~ POLY3(op), trace = TRUE,
-%            fam = binom2.or(exchangeable = TRUE, zero=3),  data=eyesdat,
-%            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
-%                                   fill(POLY3(lop,rop))),
-%            form2 = ~  POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
-%                       fill(POLY3(lop,rop)))
+%       binom2.or(exchangeable = TRUE, zero=3),  data=eyesdat,
+%       xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
+%                              fill(POLY3(lop,rop))),
+%       form2 = ~  POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
+%                  fill(POLY3(lop,rop)))
 %coef(fit6)
 %coef(fit6, matrix = TRUE)
 %head(predict(fit6))
 %\dontrun{
-%plotvgam(fit6, se = TRUE)  # Wrong since it plots against op, not lop.
+%plotvgam(fit6, se = TRUE)  # Wrong: it plots against op, not lop.
 %}
 %
 %
 %# Example 7. The use of the xij argument (simple case).
 %# Each constraint matrix has 4 columns.
 %ymat <- rdiric(n <- 1000, shape=c(4,7,3,1))
-%mydat <- data.frame(x1=runif(n), x2=runif(n), x3=runif(n), x4=runif(n),
-%                   z1=runif(n), z2=runif(n), z3=runif(n), z4=runif(n),
+%mydat <- data.frame(x1=runif(n), x2=runif(n), x3=runif(n),
+%                    x4=runif(n),
+%                   z1=runif(n), z2=runif(n), z3=runif(n),
+%                   z4=runif(n),
 %                   X2=runif(n), Z2=runif(n))
 %mydat <- round(mydat, dig=2)
 %fit7 <- vglm(ymat ~ X2 + Z2, data=mydat, crit="c",
-%           fam = dirichlet(parallel = TRUE),  # Intercept is also parallel.
+%     dirichlet(parallel = TRUE),  # Intercept is also parallel.
 %           xij = list(Z2 ~ z1 + z2 + z3 + z4,
 %                      X2 ~ x1 + x2 + x3 + x4),
 %           form2 =  ~ Z2 + z1 + z2 + z3 + z4 +
@@ -660,7 +704,7 @@ coef(fit1, matrix = TRUE)  # Check
 %head(model.matrix(fit7, type="vlm"))  # Big VLM model matrix
 %coef(fit7)
 %coef(fit7, matrix = TRUE)
-%max(abs(predict(fit7)-predict(fit7, new=mydat)))  # Predicts correctly
+%max(abs(predict(fit7)-predict(fit7, new=mydat)))  # Predicts okay
 %summary(fit7)
 
 

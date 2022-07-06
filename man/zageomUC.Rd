@@ -7,8 +7,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Altered Geometric Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the zero-altered geometric distribution with parameter \code{pobs0}.
+  Density, distribution function, quantile function and random
+  generation for the zero-altered geometric distribution with
+  parameter \code{pobs0}.
 
 }
 \usage{
@@ -22,7 +23,9 @@ rzageom(n, prob, pobs0 = 0)
   \item{x, q}{vector of quantiles.}
   \item{p}{vector of probabilities.}
   \item{n}{number of observations.
-  If \code{length(n) > 1} then the length is taken to be the number required.
+  If \code{length(n) > 1} then the length is taken to be the
+  number required.
+
   }
   \item{prob, log}{
   Parameters from the ordinary geometric distribution
@@ -37,10 +40,8 @@ rzageom(n, prob, pobs0 = 0)
   }
 }
 \details{
-  The probability function of \eqn{Y} is 0 with probability \code{pobs0},
-  else a positive
-  geometric(prob)
-  distribution.
+  The probability function of \eqn{Y} is 0 with probability
+  \code{pobs0}, else a positive geometric(prob) distribution.
 
 }
 \value{
@@ -53,8 +54,8 @@ rzageom(n, prob, pobs0 = 0)
 %\references{ }
 \author{ T. W. Yee }
 \note{
-    The argument \code{pobs0} is recycled to the required length, and
-    must have values which lie in the interval \eqn{[0,1]}.
+  The argument \code{pobs0} is recycled to the required length,
+  and must have values which lie in the interval \eqn{[0,1]}.
 
 }
 
@@ -72,8 +73,8 @@ table(rzageom(100, prob = prob, pobs0 = pobs0))
 
 \dontrun{ x <- 0:10
 barplot(rbind(dzageom(x, prob = prob, pobs0 = pobs0),
-                dgeom(x, prob = prob)),
-        beside = TRUE, col = c("blue", "orange"), cex.main = 0.7, las = 1,
+                dgeom(x, prob = prob)), las = 1,
+        beside = TRUE, col = c("blue", "orange"), cex.main = 0.7,
         ylab = "Probability", names.arg = as.character(x),
         main = paste("ZAG(prob = ", prob, ", pobs0 = ", pobs0,
                    ") [blue] vs",  " Geometric(prob = ", prob,

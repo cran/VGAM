@@ -89,6 +89,7 @@ setClass("vglmff", representation(
       "simslot"       = "function",
       "hadof"         = "function",
       "charfun"       = "function",
+      "rqresslot"     = "function",
       "deriv"         = "expression",
       "weight"        = "expression"),  #  "call"
          prototype = .VGAM.prototype.list )
@@ -665,11 +666,9 @@ if (!isGeneric("predictvglmS4VGAM"))
 
 
 if (!isGeneric("Rank"))
-    setGeneric("Rank",
-               function(object,
-                        ...)
-                 standardGeneric("Rank"),
-               package = "VGAM")
+  setGeneric("Rank", function(object, ...)
+             standardGeneric("Rank"),
+             package = "VGAM")
 
 
 

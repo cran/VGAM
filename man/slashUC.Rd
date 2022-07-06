@@ -11,7 +11,8 @@
 
 }
 \usage{
-dslash(x, mu = 0, sigma = 1, log = FALSE, smallno = .Machine$double.eps*1000)
+dslash(x, mu = 0, sigma = 1, log = FALSE,
+       smallno = .Machine$double.eps*1000)
 pslash(q, mu = 0, sigma = 1, very.negative = -10000,
        lower.tail = TRUE, log.p = FALSE)
 rslash(n, mu = 0, sigma = 1)

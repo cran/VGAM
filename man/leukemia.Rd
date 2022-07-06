@@ -5,6 +5,7 @@
 \docType{data}
 \title{Acute Myelogenous Leukemia Survival Data}
 \description{Survival in patients with Acute Myelogenous Leukemia}
+
 \usage{
 %data(aml)
 data(leukemia)
@@ -27,8 +28,8 @@ data(leukemia)
 
 }
 \note{
-  This data set has been transferred from \pkg{survival} and renamed
-  from \code{aml} to \code{leukemia}.
+  This data set has been transferred from \pkg{survival} and
+  renamed from \code{aml} to \code{leukemia}.
 
 
 }

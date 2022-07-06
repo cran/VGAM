@@ -142,7 +142,8 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
   The object is used by modelling functions such as
   \code{\link{vglm}},
   \code{\link{vgam}},

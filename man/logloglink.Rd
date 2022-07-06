@@ -5,8 +5,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Log-log and Log-log-log Link Functions }
 \description{
-  Computes the two transformations, including their inverse and the
-  first two derivatives.
+  Computes the two transformations, including their inverse and
+  the first two derivatives.
 
 }
 \usage{
@@ -57,11 +57,11 @@ loglogloglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   of \code{\link{negbinomial}} to Poisson-like data but with
   only a small amount of overdispersion; then \eqn{k} is
   a large number relative to \code{munb}.
-  In such situations a \code{\link{loglink}} or \code{\link{loglog}}
-  link may not be sufficient to draw the estimate toward
-  the interior of the parameter space.
-  Using a more stronger link function can help mitigate the
-  Hauck-Donner effect \code{\link{hdeff}}.
+  In such situations a \code{\link{loglink}} or
+  \code{\link{loglog}} link may not be sufficient to draw the
+  estimate toward the interior of the parameter space.  Using a
+  more stronger link function can help mitigate the Hauck-Donner
+  effect \code{\link{hdeff}}.
 
   
 
@@ -85,12 +85,14 @@ loglogloglink(theta, bvalue = NULL, inverse = FALSE, deriv = 0,
   
 
   For \code{deriv = 1}, then the function returns
-  \emph{d} \code{theta} / \emph{d} \code{eta} as a function of \code{theta}
+  \emph{d} \code{theta} / \emph{d} \code{eta} as a function
+  of \code{theta}
   if \code{inverse = FALSE},
   else if \code{inverse = TRUE} then it returns the reciprocal.
 
 
-  Here, all logarithms are natural logarithms, i.e., to base \emph{e}.
+  Here, all logarithms are natural logarithms, i.e., to base
+  \emph{e}.
 
 
 }
@@ -124,7 +126,7 @@ logloglink(x, bvalue = 1.0 + .Machine$double.eps)  # Has no NAs
 
 x <- seq(1.01, 10, len = 100)
 logloglink(x)
-max(abs(logloglink(logloglink(x), inverse = TRUE) - x))  # Should be 0
+max(abs(logloglink(logloglink(x), inverse = TRUE) - x))  # 0?
 }
 \keyword{math}
 \keyword{models}

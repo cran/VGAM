@@ -377,14 +377,14 @@ Some new results concerning the Hauck-Donner effect.
 
 
   
-  Yee (2018) gives details about HDE detection for the
-  entire VGLM class, and proves a tipping point theorem with
-  tipping points 1/4 and 3/5. The HDE severity measures
-  allow partitioning of the parameter space into 6 regions
-  from the interior and going outwards towards the boundary edges.
-  It is also shown that with 1-parameter binary regression
-  the HDE cannot occur unless the log odds ratio is at least 2.40,
-  which corresponds to an odds ratio of 11.0 or more.
+% Yee (2022) gives details about HDE detection for the
+% entire VGLM class, and proves a tipping point theorem with
+% tipping points 1/4 and 3/5. The HDE severity measures
+% allow partitioning of the parameter space into 6 regions
+% from the interior and going outwards towards the boundary edges.
+% It is also shown that with 1-parameter binary regression
+% the HDE cannot occur unless the log odds ratio is at least 2.40,
+% which corresponds to an odds ratio of 11.0 or more.
 
 
 

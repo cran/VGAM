@@ -7,9 +7,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Zero-Inflated Negative Binomial Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the zero-inflated negative binomial distribution with
-  parameter \code{pstr0}.
+  Density, distribution function, quantile function and random
+  generation for the zero-inflated negative binomial distribution
+  with parameter \code{pstr0}.
 
 
 }
@@ -28,8 +28,8 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
   Arguments matching \code{\link[stats:NegBinomial]{dnbinom}}.
   The argument \code{munb} corresponds to \code{mu} in
   \code{\link[stats:NegBinomial]{dnbinom}} and has been renamed
-  to emphasize the fact that it is the mean of the negative binomial
-  \emph{component}.
+  to emphasize the fact that it is the mean of the negative
+  binomial \emph{component}.
 
   }
   \item{pstr0}{
@@ -89,18 +89,18 @@ rzinegbin(n, size, prob = NULL, munb = NULL, pstr0 = 0)
 \examples{
 munb <- 3; pstr0 <- 0.2; size <- k <- 10; x <- 0:10
 (ii <- dzinegbin(x, pstr0 = pstr0, mu = munb, size = k))
-max(abs(cumsum(ii) - pzinegbin(x, pstr0 = pstr0, mu = munb, size = k)))  # 0
+max(abs(cumsum(ii) - pzinegbin(x, pstr0 = pstr0, mu = munb, size = k)))
 table(rzinegbin(100, pstr0 = pstr0, mu = munb, size = k))
 
 table(qzinegbin(runif(1000), pstr0 = pstr0, mu = munb, size = k))
-round(dzinegbin(x, pstr0 = pstr0, mu = munb, size = k) * 1000)  # Should be similar
+round(dzinegbin(x, pstr0 = pstr0, mu = munb, size = k) * 1000)  # Similar?
 
 \dontrun{barplot(rbind(dzinegbin(x, pstr0 = pstr0, mu = munb, size = k),
                 dnbinom(x, mu = munb, size = k)), las = 1,
-        beside = TRUE, col = c("blue", "green"), ylab = "Probability",
-        main = paste("ZINB(mu = ", munb, ", k = ", k, ", pstr0 = ", pstr0,
-                   ") (blue) vs NB(mu = ", munb,
-                   ", size = ", k, ") (green)", sep = ""),
-        names.arg = as.character(x)) }
+    beside = TRUE, col = c("blue", "green"), ylab = "Probability",
+    main = paste("ZINB(mu = ", munb, ", k = ", k, ", pstr0 = ", pstr0,
+                 ") (blue) vs NB(mu = ", munb,
+                 ", size = ", k, ") (green)", sep = ""),
+    names.arg = as.character(x)) }
 }
 \keyword{distribution}

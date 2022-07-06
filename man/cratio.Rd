@@ -76,27 +76,7 @@ cratio(link = "logitlink", parallel = FALSE, reverse = FALSE, zero = NULL,
 
 }
 \references{
-
-Agresti, A. (2013).
-\emph{Categorical Data Analysis},
-3rd ed. Hoboken, NJ, USA: Wiley.
-
-
-McCullagh, P. and Nelder, J. A. (1989).
-\emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
-
-
-Yee, T. W. (2010).
-The \pkg{VGAM} package for categorical data analysis.
-\emph{Journal of Statistical Software},
-\bold{32}, 1--34.
-\doi{10.18637/jss.v032.i10}.
-
-
-
-% \url{https://www.jstatsoft.org/article/view/v032i10/}.
-% \url{https://www.jstatsoft.org/v32/i10/}.
-
+See \code{\link{sratio}}.
 
 
 }

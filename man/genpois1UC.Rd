@@ -66,11 +66,11 @@ rgenpois2(n, meanpar, disppar = 0)
 % }
 }
 \value{
-  \code{dgenpois1} and \code{dgenpois2} give the density,
-  \code{pgenpois1} and \code{dgenpois2} give the distribution function,
-  \code{qgenpois1} and \code{dgenpois2} give the quantile function, and
-  \code{rgenpois1} and \code{dgenpois2} generate random deviates.
-  See \code{\link{Genpois0}} for more information.
+\code{dgenpois1} and \code{dgenpois2} give the density,
+\code{pgenpois1} and \code{dgenpois2} give the distribution function,
+\code{qgenpois1} and \code{dgenpois2} give the quantile function, and
+\code{rgenpois1} and \code{dgenpois2} generate random deviates.
+See \code{\link{Genpois0}} for more information.
 
 
 

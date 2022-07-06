@@ -10,8 +10,10 @@
 
 }
 \usage{
-    identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
- negidentitylink(theta, inverse = FALSE, deriv = 0, short = TRUE, tag = FALSE)
+    identitylink(theta, inverse = FALSE, deriv = 0, short = TRUE,
+                 tag = FALSE)
+ negidentitylink(theta, inverse = FALSE, deriv = 0, short = TRUE,
+                 tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -65,8 +67,8 @@
 
 }
 \references{
-    McCullagh, P. and Nelder, J. A. (1989).
-    \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+  McCullagh, P. and Nelder, J. A. (1989).
+  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
 
 
 }

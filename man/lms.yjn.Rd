@@ -7,29 +7,30 @@
 \description{
   LMS quantile regression with the Yeo-Johnson transformation
   to normality.
-  This family function is experimental and the LMS-BCN family function
-  is recommended instead.
+  This family function is experimental and the LMS-BCN family
+  function is recommended instead.
 
 
 
 }
 \usage{
 lms.yjn(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
-        llambda = "identitylink", lsigma = "loglink",
-        idf.mu = 4, idf.sigma = 2,
-        ilambda = 1, isigma = NULL, rule = c(10, 5),
-        yoffset = NULL, diagW = FALSE, iters.diagW = 6)
+   llambda = "identitylink", lsigma = "loglink",
+   idf.mu = 4, idf.sigma = 2,
+   ilambda = 1, isigma = NULL, rule = c(10, 5),
+   yoffset = NULL, diagW = FALSE, iters.diagW = 6)
 lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
-         llambda = "identitylink", lmu = "identitylink", lsigma = "loglink",
-         idf.mu = 4, idf.sigma = 2, ilambda = 1.0,
-         isigma = NULL, yoffset = NULL, nsimEIM = 250)
+   llambda = "identitylink", lmu = "identitylink", lsigma = "loglink",
+   idf.mu = 4, idf.sigma = 2, ilambda = 1.0,
+   isigma = NULL, yoffset = NULL, nsimEIM = 250)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
   \item{percentiles}{
   A numerical vector containing values between 0 and 100,
-  which are the quantiles. They will be returned as `fitted values'.
+  which are the quantiles. They will be returned as `fitted
+  values'.
 
   }
   \item{zero}{
@@ -55,27 +56,29 @@ lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
   scheme to work out elements of the weight matrices.
   The values given are the possible choices, with the first value
   being the default.
-  The larger the value, the more accurate the approximation is likely
-  to be but involving more computational expense.
+  The larger the value, the more accurate the approximation is
+  likely to be but involving more computational expense.
 
   }
   \item{yoffset}{
   A value to be added to the response y, for the purpose
   of centering the response before fitting the model to the data.
-  The default value, \code{NULL}, means \code{-median(y)} is used, so that
-  the response actually used has median zero. The \code{yoffset} is
-  saved on the object and used during prediction.
+  The default value, \code{NULL}, means \code{-median(y)} is
+  used, so that the response actually used has median zero. The
+  \code{yoffset} is saved on the object and used during prediction.
 
   }
   \item{diagW}{
   Logical.
-  This argument is offered because the expected information matrix may not
-  be positive-definite. Using the diagonal elements of this matrix results
-  in a higher chance of it being positive-definite, however convergence will
-  be very slow.
-  If \code{TRUE}, then the first \code{iters.diagW} iterations will
-  use the diagonal of the expected information matrix.
+  This argument is offered because the expected information matrix
+  may not be positive-definite. Using the diagonal elements of this
+  matrix results in a higher chance of it being positive-definite,
+  however convergence will be very slow.
+
+  If \code{TRUE}, then the first \code{iters.diagW} iterations
+  will use the diagonal of the expected information matrix.
   The default is \code{FALSE}, meaning faster convergence.
+
 
   }
   \item{iters.diagW}{
@@ -90,20 +93,22 @@ lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
   }
 }
 \details{
- Given a value of the covariate, this function applies a Yeo-Johnson
- transformation to the response to best obtain normality. The parameters
- chosen to do this are estimated by maximum likelihood or penalized
- maximum likelihood.
+ Given a value of the covariate, this function applies a
+ Yeo-Johnson transformation to the response to best obtain
+ normality. The parameters chosen to do this are estimated by
+ maximum likelihood or penalized maximum likelihood.
  The function \code{lms.yjn2()} estimates the expected information
  matrices using simulation (and is consequently slower) while
  \code{lms.yjn()} uses numerical integration.
-  Try the other if one function fails.
+ Try the other if one function fails.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -111,13 +116,16 @@ lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
 }
 \references{
 Yeo, I.-K. and Johnson, R. A. (2000).
-A new family of power transformations to improve normality or symmetry.
+A new family of power transformations to improve normality or
+symmetry.
 \emph{Biometrika},
 \bold{87}, 954--959.
+
 
 Yee, T. W. (2004).
 Quantile regression via vector generalized additive models.
 \emph{Statistics in Medicine}, \bold{23}, 2295--2315.
+
 
 Yee, T. W. (2002).
 An Implementation for Regression Quantile Estimation.
@@ -156,8 +164,8 @@ The generic function \code{predict}, when applied to a
 
 
 As described above,
-  this family function is experimental and the LMS-BCN family function
-  is recommended instead.
+this family function is experimental and the LMS-BCN family
+function is recommended instead.
 
 
 
@@ -190,12 +198,12 @@ qtplot(fit, percentiles = c(5, 50, 90, 99), main = "Quantiles",
 # Density plot
 ygrid <- seq(15, 43, len = 100)  # BMI ranges
 par(mfrow = c(1, 1), lwd = 2)
-(aa <- deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
-    main = "Density functions at Age = 20 (black), 42 (red) and 55 (blue)"))
-aa <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
-aa <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
-             Attach = TRUE)
-with(aa@post, deplot)  # Contains density function values; == a@post$deplot
+(Z <- deplot(fit, x0 = 20, y = ygrid, xlab = "BMI", col = "black",
+    main = "PDFs at Age = 20 (black), 42 (red) and 55 (blue)"))
+Z <- deplot(fit, x0 = 42, y = ygrid, add = TRUE, llty = 2, col = "red")
+Z <- deplot(fit, x0 = 55, y = ygrid, add = TRUE, llty = 4, col = "blue",
+            Attach = TRUE)
+with(Z@post, deplot)  # Contains PDF values; == a@post$deplot
 }
 }
 \keyword{models}

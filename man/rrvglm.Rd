@@ -1,11 +1,13 @@
 \name{rrvglm}
 \alias{rrvglm}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{ Fitting Reduced-Rank Vector Generalized Linear Models (RR-VGLMs) }
+\title{Fitting Reduced-Rank Vector Generalized Linear Models
+       (RR-VGLMs)}
 \description{
-  A \emph{reduced-rank vector generalized linear model} (RR-VGLM) is fitted.
-  RR-VGLMs are VGLMs but some of the constraint matrices are estimated.
-  In this documentation, \eqn{M} is the number of linear predictors.
+  A \emph{reduced-rank vector generalized linear model} (RR-VGLM)
+  is fitted.  RR-VGLMs are VGLMs but some of the constraint
+  matrices are estimated.  In this documentation, \eqn{M} is the
+  number of linear predictors.
 
 }
 \usage{
@@ -27,8 +29,9 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   \item{data}{
   an optional data frame containing the variables in the model.
-  By default the variables are taken from \code{environment(formula)},
-  typically the environment from which \code{rrvglm} is called.
+  By default the variables are taken from
+  \code{environment(formula)}, typically the environment from
+  which \code{rrvglm} is called.
 
   }
   \item{subset, na.action}{
@@ -55,8 +58,8 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{x.arg, y.arg}{
-  logical values indicating whether
-  the model matrix and response vector/matrix used in the fitting
+  logical values indicating whether the model matrix
+  and response vector/matrix used in the fitting
   process should be assigned in the \code{x} and \code{y} slots.
   Note the model matrix is the LM model matrix; to get the VGLM
   model matrix type \code{model.matrix(vglmfit)} where
@@ -80,14 +83,15 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
   The central formula is given by
   \deqn{\eta = B_1^T x_1 + A \nu}{%
          eta = B_1^T x_1 + A nu}
-  where \eqn{x_1}{x1} is a vector (usually just a 1 for an intercept),
+  where \eqn{x_1}{x1} is a vector
+  (usually just a 1 for an intercept),
   \eqn{x_2}{x2} is another vector of explanatory variables, and
   \eqn{\nu = C^T x_2}{nu = C^T x_2} is an \eqn{R}-vector of
   latent variables.
   Here, \eqn{\eta}{eta} is a vector of linear predictors,
   e.g., the \eqn{m}th element is
-  \eqn{\eta_m = \log(E[Y_m])}{eta_m = log(E[Y_m])} for the \eqn{m}th
-  Poisson response.  The matrices \eqn{B_1}, \eqn{A} and
+  \eqn{\eta_m = \log(E[Y_m])}{eta_m = log(E[Y_m])} for the
+  \eqn{m}th Poisson response.  The matrices \eqn{B_1}, \eqn{A} and
   \eqn{C} are estimated from the data, i.e., contain the
   regression coefficients.  For ecologists, the central
   formula represents a \emph{constrained linear ordination}
@@ -143,14 +147,16 @@ canonical Gaussian ordination.
 
 Anderson, J. A. (1984).
 Regression and ordered categorical variables.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+      Series B, Methodological},
 \bold{46}, 1--30.
 
 
-  Yee, T. W. (2014).
-  Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis},
-  \bold{71}, 889--902.
+Yee, T. W. (2014).
+Reduced-rank vector generalized linear models with
+two linear predictors.
+\emph{Computational Statistics and Data Analysis},
+\bold{71}, 889--902.
 
 
 
@@ -162,8 +168,8 @@ Regression and ordered categorical variables.
 
 \author{ Thomas W. Yee }
 \note{
-  The arguments of \code{rrvglm} are in general the same as
-  those of \code{\link{vglm}} but with some extras in
+  The arguments of \code{rrvglm} are in general the same
+  as those of \code{\link{vglm}} but with some extras in
   \code{\link{rrvglm.control}}.
 
 
@@ -204,7 +210,8 @@ Regression and ordered categorical variables.
 
 }
 
-% zzz; arguments of \code{\link{vglm}} are definitive. They're copied here.
+% zzz; arguments of \code{\link{vglm}} are definitive. They're 
+% copied here.
 
 \seealso{
     \code{\link{rrvglm.control}},
@@ -242,7 +249,7 @@ Regression and ordered categorical variables.
 
 \examples{
 \dontrun{
-# Example 1: RR negative binomial with Var(Y) = mu + delta1 * mu^delta2
+# Example 1: RR NB with Var(Y) = mu + delta1 * mu^delta2
 nn <- 1000       # Number of observations
 delta1 <- 3.0    # Specify this
 delta2 <- 1.5    # Specify this; should be greater than unity
@@ -280,7 +287,7 @@ lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "orange")
 # Example 2: stereotype model (reduced-rank multinomial logit model)
 data(car.all)
 scar <- subset(car.all,
-               is.element(Country, c("Germany", "USA", "Japan", "Korea")))
+          is.element(Country, c("Germany", "USA", "Japan", "Korea")))
 fcols <- c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
 scar[, -fcols] <- scale(scar[, -fcols])  # Standardize all numerical vars
 ones <- matrix(1, 3, 1)
@@ -309,5 +316,5 @@ biplot(fit, chull = TRUE, scores = TRUE, clty = 2, Ccex = 2,
 
 
 %scar <- subset(car.all,
-%               is.element(Country, c("Germany", "USA", "Japan", "Korea")) |
-%               is.na(Country))
+%     is.element(Country, c("Germany", "USA", "Japan", "Korea")) |
+%     is.na(Country))

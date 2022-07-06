@@ -61,15 +61,17 @@ brat(refgp = "last", refvalue = 1, ialpha = 1)
   The Bradley Terry model can be fitted by logistic
   regression, but this approach is not taken here.
   The Bradley Terry model can be fitted with covariates,
-  e.g., a home advantage variable, but unfortunately, this
-  lies outside the VGLM theoretical framework and therefore
-  cannot be handled with this code.
+  e.g., a home advantage variable, but unfortunately, this lies
+  outside the VGLM theoretical framework and therefore cannot be
+  handled with this code.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}.
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}.
 
 
 }

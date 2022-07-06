@@ -1,17 +1,19 @@
 \name{freund61}
 \alias{freund61}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Freund's (1961) Bivariate Extension of the Exponential Distribution }
+\title{ Freund's (1961) Bivariate Extension of the
+  Exponential Distribution }
 \description{
-  Estimate the four parameters of the Freund (1961) bivariate extension
+  Estimate the four parameters of the Freund (1961)
+  bivariate extension
   of the exponential distribution
   by maximum likelihood estimation.
 
 }
 \usage{
-freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
-         ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
-         independent = FALSE, zero = NULL)
+freund61(la = "loglink",  lap = "loglink",  lb = "loglink",
+         lbp = "loglink", ia = NULL, iap = NULL, ib = NULL,
+         ibp = NULL, independent = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,9 +33,13 @@ freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
 
   }
   \item{independent}{
-  Logical. If \code{TRUE} then the parameters are constrained to satisfy
-  \eqn{\alpha=\alpha'}{alpha=alpha'} and \eqn{\beta=\beta'}{beta=beta'},
-  which implies that \eqn{y_1}{y1} and \eqn{y_2}{y2} are independent
+    Logical.
+    If \code{TRUE} then the parameters are constrained
+    to satisfy
+    \eqn{\alpha=\alpha'}{alpha=alpha'} and
+    \eqn{\beta=\beta'}{beta=beta'},
+    which implies that \eqn{y_1}{y1} and
+    \eqn{y_2}{y2} are independent
   and each have an ordinary exponential distribution.
 
 
@@ -49,23 +55,30 @@ freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
   }
 }
 \details{
-  This model represents one type of bivariate extension of the exponential
-  distribution that is applicable to certain problems, in particular,
-  to two-component systems which can function if one of the components
-  has failed. For example, engine failures in two-engine planes, paired
+  This model represents one type of bivariate extension
+  of the exponential
+  distribution that is applicable to certain problems,
+  in particular,
+  to two-component systems which can function if one of
+  the components
+  has failed. For example, engine failures in
+  two-engine planes, paired
   organs such as peoples' eyes, ears and kidneys.
   Suppose \eqn{y_1}{y1} and \eqn{y_2}{y2} are random variables
-  representing the lifetimes of two components \eqn{A} and \eqn{B}
+  representing the lifetimes of
+  two components \eqn{A} and \eqn{B}
   in a two component system.
   The dependence between \eqn{y_1}{y1} and \eqn{y_2}{y2}
   is essentially such that the failure of the \eqn{B} component
   changes the parameter of the exponential life distribution
   of the \eqn{A}  component from \eqn{\alpha}{alpha} to
-  \eqn{\alpha'}{alpha'}, while the failure of the \eqn{A}  component
+  \eqn{\alpha'}{alpha'}, while the failure of
+  the \eqn{A}  component
   changes the parameter of the exponential life distribution
   of the \eqn{B}  component from \eqn{\beta}{beta} to
   \eqn{\beta'}{beta'}.
 
+  
 
   The joint probability density function is given by
   \deqn{f(y_1,y_2) = \alpha \beta' \exp(-\beta' y_2 -
@@ -78,7 +91,8 @@ freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
         f(y1,y2) = beta * alpha' * exp(-alpha' * y1 -
                       (alpha+beta-alpha') * y2) }
   for \eqn{0 < y_2 < y_1}{0 < y2 < y1}.
-  Here, all four parameters are positive, as well as the responses
+  Here, all four parameters are positive, as well
+  as the responses
   \eqn{y_1}{y1} and \eqn{y_2}{y2}.
   Under this model, the probability that component \eqn{A}
   is the first to fail is
@@ -112,14 +126,17 @@ freund61(la = "loglink",  lap = "loglink",  lb = "loglink", lbp = "loglink",
 
 
   Fisher scoring is used,
-  and the initial values correspond to the MLEs of an intercept model.
+  and the initial values correspond to the MLEs of
+  an intercept model.
   Consequently, convergence may take only one iteration.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -144,10 +161,12 @@ A bivariate extension of the exponential distribution.
   \eqn{y_1}{y1} and \eqn{y_2}{y2}.
   Currently, the fitted value is a matrix with two columns; the
   first column has values
-  \eqn{(\alpha'+\beta)/(\alpha' (\alpha+\beta))}{(alpha'+beta)/(alpha' * (alpha+beta))}
+  \eqn{(\alpha'+\beta)/(\alpha' (\alpha+\beta))}{
+    (alpha'+beta)/(alpha' * (alpha+beta))}
   for the mean of \eqn{y_1}{y1},
   while the second column has values
-  \eqn{(\beta'+\alpha)/(\beta' (\alpha+\beta))}{(beta'+alpha)/(beta' * (alpha+beta))}
+  \eqn{(\beta'+\alpha)/(\beta' (\alpha+\beta))}{
+    (beta'+alpha)/(beta' * (alpha+beta))}
   for the mean of \eqn{y_2}{y2}.
   The variance of \eqn{y_1}{y1} is
   \deqn{ \frac{(\alpha')^2 + 2 \alpha \beta + \beta^2}{
@@ -178,7 +197,7 @@ A bivariate extension of the exponential distribution.
 \examples{
 fdata <- data.frame(y1 = rexp(nn <- 1000, rate = exp(1)))
 fdata <- transform(fdata, y2 = rexp(nn, rate = exp(2)))
-fit1 <- vglm(cbind(y1, y2) ~ 1, fam = freund61, data = fdata, trace = TRUE)
+fit1 <- vglm(cbind(y1, y2) ~ 1, freund61, fdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 vcov(fit1)
@@ -191,7 +210,8 @@ fit2 <- vglm(cbind(y1, y2) ~ 1, freund61(indep = TRUE),
 coef(fit2, matrix = TRUE)
 constraints(fit2)
 pchisq(2 * (logLik(fit1) - logLik(fit2)),  # p-value
-       df = df.residual(fit2) - df.residual(fit1), lower.tail = FALSE)
+       df = df.residual(fit2) - df.residual(fit1),
+       lower.tail = FALSE)
 lrtest(fit1, fit2)  # Better alternative
 }
 \keyword{models}

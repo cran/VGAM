@@ -6,7 +6,10 @@
 \title{Plackett's Bivariate Copula }
 \description{
   Density, distribution function, and random
-  generation for the (one parameter) bivariate Plackett copula.  %distribution.
+  generation for the (one parameter) bivariate Plackett copula.
+
+
+ %distribution.
 
 }
 \usage{
@@ -32,7 +35,8 @@ rbiplackcop(n, oratio)
 \value{
   \code{dbiplackcop} gives the density,
   \code{pbiplackcop} gives the distribution function, and
-  \code{rbiplackcop} generates random deviates (a two-column matrix).
+  \code{rbiplackcop} generates random deviates (a two-column
+  matrix).
 
 
 }
@@ -50,8 +54,8 @@ Some contributions to contingency-type distributions.
 \details{
   See \code{\link{biplackettcop}}, the \pkg{VGAM}
   family functions for estimating the
-  parameter by maximum likelihood estimation, for the formula of the
-  cumulative distribution function and other details.
+  parameter by maximum likelihood estimation, for the formula of
+  the cumulative distribution function and other details.
 
 
 }

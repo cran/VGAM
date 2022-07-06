@@ -106,7 +106,8 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
                     integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
-      warning("'nsimEIM' should be an integer greater than 10, say")
+      warning("'nsimEIM' should be an integer greater ",
+              "than 10, say")
   }
 
   new("vglmff",
@@ -117,9 +118,9 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
             "Mean:       mu", "\n",
             "Variance:   mu*(1-mu)*(1+(w-1)*rho)/w"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 3)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 3,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
 
@@ -556,15 +557,16 @@ betabinomial.control <- function(save.weights = TRUE, ...) {
             namesof("oratio", loratio, earg = eoratio)),
   constraints = eval(substitute(expression({
     cm.intercept.default <- diag(3)
-    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2), x = x,
-                           bool = .exchangeable ,
-                           constraints = constraints,
-                           apply.int = TRUE,
-                           cm.default           = cm.intercept.default,
-                           cm.intercept.default = cm.intercept.default)
-      constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                  predictors.names = predictors.names,
-                                  M1 = 3)
+    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2),
+                     x = x,
+                     bool = .exchangeable ,
+                     constraints = constraints,
+                     apply.int = TRUE,
+                     cm.default           = cm.intercept.default,
+                     cm.intercept.default = cm.intercept.default)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 3,
+                     predictors.names = predictors.names)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
@@ -970,13 +972,14 @@ binom2.rho.control <- function(save.weights = TRUE, ...) {
             namesof("mu2", lmu12, earg = emu12), ", ",
             namesof("rho", lrho,  earg = erho)),
   constraints = eval(substitute(expression({
-    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2), x = x,
+    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2),
+                           x = x,
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 3)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 3,
+                     predictors.names = predictors.names)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
@@ -1867,7 +1870,8 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                     integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
-      warning("'nsimEIM' should be an integer greater than 10, say")
+      warning("'nsimEIM' should be an integer ",
+              "greater than 10, say")
   }
 
 
@@ -1880,9 +1884,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             "Variance: mu * (1-mu) * (1+(w-1)*rho) / w, ",
                        "where rho = 1 / (shape1+shape2+1)"),
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
 
@@ -2149,9 +2153,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             namesof("shape", lshape, earg = eshape)),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
   }), list( .zero = zero ))),
 
 
@@ -2370,9 +2374,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
                            bool = .parallel ,
                            constraints = constraints,
                            apply.int = .apply.parint )
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
   }), list( .parallel = parallel,
             .apply.parint = apply.parint,
             .zero = zero ))),
@@ -2568,9 +2572,9 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             namesof("oratio", loratio, earg = eoratio)),
 
   constraints = eval(substitute(expression({
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 3)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 3,
+                     predictors.names = predictors.names)
     }), list( .zero = zero ))),
 
 
@@ -2994,13 +2998,14 @@ betabinomialff.control <- function(save.weights = TRUE, ...) {
             namesof("mu2", lmu12, earg = emu12), ", ",
             namesof("rho", l.rho, earg = e.rho)),
   constraints = eval(substitute(expression({
-    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2), x = x,
+    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2),
+                           x = x,
                            bool = .exchangeable ,
                            constraints = constraints,
                            apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 3)
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 3,
+                     predictors.names = predictors.names)
   }), list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {

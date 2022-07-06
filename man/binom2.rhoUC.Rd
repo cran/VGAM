@@ -11,14 +11,14 @@
 }
 \usage{
 rbinom2.rho(n, mu1,
-           mu2 = if (exchangeable) mu1 else stop("argument 'mu2' not specified"),
-           rho = 0, exchangeable = FALSE, twoCols = TRUE,
-           colnames = if (twoCols) c("y1","y2") else c("00", "01", "10", "11"),
-           ErrorCheck = TRUE)
+  mu2 = if (exchangeable) mu1 else stop("argument 'mu2' not specified"),
+  rho = 0, exchangeable = FALSE, twoCols = TRUE,
+  colnames = if (twoCols) c("y1","y2") else c("00", "01", "10", "11"),
+  ErrorCheck = TRUE)
 dbinom2.rho(mu1,
-           mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
-           rho = 0, exchangeable = FALSE,
-           colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
+  mu2 = if (exchangeable) mu1 else stop("'mu2' not specified"),
+  rho = 0, exchangeable = FALSE,
+  colnames = c("00", "01", "10", "11"), ErrorCheck = TRUE)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -26,8 +26,8 @@ dbinom2.rho(mu1,
   \item{n}{
     number of observations.
     Same as in \code{\link[stats]{runif}}.
-    The arguments \code{mu1}, \code{mu2}, \code{rho} are recycled to
-    this value.
+    The arguments \code{mu1}, \code{mu2}, \code{rho} are recycled
+    to this value.
 
 
 
@@ -45,8 +45,8 @@ dbinom2.rho(mu1,
 
   }
   \item{exchangeable}{
-   Logical. If \code{TRUE}, the two marginal probabilities are constrained
-   to be equal.
+   Logical. If \code{TRUE}, the two marginal probabilities are
+   constrained to be equal.
 
   }
   \item{twoCols}{
@@ -59,7 +59,8 @@ dbinom2.rho(mu1,
   }
   \item{colnames}{
   The \code{dimnames} argument of
-  \code{\link[base]{matrix}} is assigned \code{list(NULL, colnames)}.
+  \code{\link[base]{matrix}} is assigned
+  \code{list(NULL, colnames)}.
 
 
   }
@@ -71,26 +72,27 @@ dbinom2.rho(mu1,
 
 }
 \details{
-  The function \code{rbinom2.rho} generates data coming from a bivariate
-  probit model.
+  The function \code{rbinom2.rho} generates data coming from a
+  bivariate probit model.
   The data might be fitted with the \pkg{VGAM} family function
   \code{\link{binom2.rho}}.
 
 
-  The function \code{dbinom2.rho} does not really compute the density
-  (because that does not make sense here) but rather returns the
-  four joint probabilities.
+  The function \code{dbinom2.rho} does not really compute the
+  density (because that does not make sense here) but rather
+  returns the four joint probabilities.
 
 
 }
 \value{
   The function \code{rbinom2.rho} returns
-  either a 2 or 4 column matrix of 1s and 0s, depending on the argument
-  \code{twoCols}.
+  either a 2 or 4 column matrix of 1s and 0s, depending on the
+  argument \code{twoCols}.
 
 
   The function \code{dbinom2.rho} returns
-  a 4 column matrix of joint probabilities; each row adds up to unity.
+  a 4 column matrix of joint probabilities; each row adds up
+  to unity.
 
 
 }
@@ -102,14 +104,15 @@ dbinom2.rho(mu1,
 }
 \examples{
 (myrho <- rhobitlink(2, inverse = TRUE))  # Example 1
-ymat <- rbinom2.rho(nn <- 2000, mu1 = 0.8, rho = myrho, exch = TRUE)
+nn <- 2000
+ymat <- rbinom2.rho(nn, mu1 = 0.8, rho = myrho, exch = TRUE)
 (mytab <- table(ymat[, 1], ymat[, 2], dnn = c("Y1", "Y2")))
 fit <- vglm(ymat ~ 1, binom2.rho(exch = TRUE))
 coef(fit, matrix = TRUE)
 
 bdata <- data.frame(x2 = sort(runif(nn)))  # Example 2
-bdata <- transform(bdata, mu1 = probitlink(-2+4*x2, inverse = TRUE),
-                          mu2 = probitlink(-1+3*x2, inverse = TRUE))
+bdata <- transform(bdata, mu1 = probitlink(-2+4*x2, inv = TRUE),
+                          mu2 = probitlink(-1+3*x2, inv = TRUE))
 dmat <- with(bdata, dbinom2.rho(mu1, mu2, myrho))
 ymat <- with(bdata, rbinom2.rho(nn, mu1, mu2, myrho))
 fit2 <- vglm(ymat ~ x2, binom2.rho, data = bdata)

@@ -67,15 +67,16 @@ rzoabeta(n, shape1, shape2, pobs0 = 0, pobs1 = 0,
   This distribution is a mixture of a discrete distribution
   with a continuous distribution.
   The cumulative distribution function of \eqn{Y} is
-  \deqn{F(y) =(1 - \omega_0 -\omega_1) B(y) + \omega_0 \times I[0 \leq y] +
-        \omega_1 \times I[1 \leq y]}{%
-        F(y) =(1 -  omega_0 - omega_1) B(y) +  omega_0 * I[0 <= y] +
-        omega_1 * I[1 <= y]}
+\deqn{F(y) =(1 - \omega_0 -\omega_1) B(y) +
+            \omega_0 \times I[0 \leq y] +
+      \omega_1 \times I[1 \leq y]}{%
+      F(y) =(1 -  omega_0 - omega_1) B(y) +  omega_0 * I[0 <= y] +
+      omega_1 * I[1 <= y]}
   where \eqn{B(y)} is the cumulative distribution function
   of the beta distribution with the same shape parameters
   (\code{\link[stats]{pbeta}}),
-  \eqn{\omega_0}{omega_0} is the inflated probability at 0
-  and \eqn{\omega_1}{omega_1} is the inflated probability at 1.
+  \eqn{\omega_0}{omega_0} is the inflated probability at 0 and
+  \eqn{\omega_1}{omega_1} is the inflated probability at 1.
   The default values of \eqn{\omega_j}{omega_j} mean that these
   functions behave like the ordinary \code{\link[stats]{Beta}}
   when only the essential arguments are inputted.
@@ -120,8 +121,9 @@ lines(seq(0, 1, length = Ngrid), col = "blue",
 
 
 %set.seed(1234); k <- runif(1000)
-%sum(abs(qzoabeta(k,  2, 3) - qbeta(k, 2,  3)) > .Machine$double.eps)  # Should be 0
-%sum(abs(pzoabeta(k, 10, 7) - pbeta(k, 10, 7)) > .Machine$double.eps)  # Should be 0
+%# Should be 0:
+%sum(abs(qzoabeta(k,  2, 3) - qbeta(k, 2,  3)) > .Machine$double.eps)
+%sum(abs(pzoabeta(k, 10, 7) - pbeta(k, 10, 7)) > .Machine$double.eps)
 
 
 

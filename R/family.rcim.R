@@ -680,7 +680,9 @@ setMethod("plot", "rcim",
 
 Confint.rrnb <- function(rrnb2, level = 0.95) {
 
-  if (class(rrnb2) != "rrvglm")
+
+
+  if (!is(rrnb2, "rrvglm"))
     stop("argument 'rrnb2' does not appear to be a rrvglm() object")
 
   if (!any(rrnb2@family@vfamily == "negbinomial"))
@@ -726,7 +728,7 @@ Confint.nb1 <- function(nb1, level = 0.95) {
 
 
 
-  if (class(nb1) != "vglm")
+  if (!is(nb1, "vglm"))
     stop("argument 'nb1' does not appear to be a vglm() object")
 
   if (!any(nb1@family@vfamily == "negbinomial"))
@@ -784,7 +786,7 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
 
 
-  if (class(rrvglm2) != "rrvglm")
+  if (!is(rrvglm2, "rrvglm"))
     stop("argument 'rrvglm2' does not appear to be a rrvglm() object")
 
   if (rrvglm2@control$Rank != 1)

@@ -71,7 +71,8 @@ meplot.vlm(object, ...)
         E(Y-u|Y>u) = \frac{\sigma+ xi*u}{1- xi}.}
   It is a linear function in \eqn{u}, the threshold.
   Note that \eqn{Y-u} is called the \emph{excess} and
-  values of \eqn{Y} greater than \eqn{u} are called \emph{exceedances}.
+  values of \eqn{Y} greater than \eqn{u} are
+  called \emph{exceedances}.
   The empirical versions used by these functions is to use
   sample means to estimate the left hand side of the equation.
   Values of \eqn{u} in the plot are the values of \eqn{y} itself.
@@ -104,7 +105,8 @@ meplot.vlm(object, ...)
 
   \item{plusminus }{The amount which is added or subtracted
   from the mean excess to give the confidence interval.
-  The last value is a \code{NA} because it is based on one observation.
+  The last value is a \code{NA} because it is based
+  on one observation.
 
 
   }
@@ -113,7 +115,8 @@ meplot.vlm(object, ...)
 \references{
 Davison, A. C. and Smith, R. L. (1990).
 Models for exceedances over high thresholds (with discussion).
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society, Series B,
+  Methodological},
 \bold{52}, 393--442.
 
 

@@ -16,15 +16,17 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated, --truncated and --deflated
-  negative binomial (GAITD-NB) distribution.
+  for the generally--altered, --inflated, --truncated and
+  --deflated negative binomial (GAITD-NB) distribution.
   Both parametric and nonparametric variants are supported;
-  these are based on
-  finite mixtures of the parent with itself
+  these are based on finite mixtures of the parent with itself
   and the multinomial logit model (MLM) respectively.
-  Altogether it can be abbreviated as
-  GAAIITDD--NB(size.p, munb.p)--NB(size.a, munb.a)--MLM--NB(size.i,
-  munb.i)--MLM--NB(size.d, munb.d)--MLM.
+
+
+
+% Altogether it can be abbreviated as
+% GAAIITDD--NB(size.p, munb.p)--NB(size.a, munb.a)--MLM--NB(size.i,
+% munb.i)--MLM--NB(size.d, munb.d)--MLM.
 
 
 
@@ -203,8 +205,8 @@ rgaitdnbinom(n, size.p, munb.p,
   Four functions were moved from \pkg{VGAM} to \pkg{VGAMdata};
   they can be seen at \code{\link[VGAMdata]{Posnegbin}}.
   It is preferable to use
-  \code{dgaitdnbinom(x, size, munb.p = munb, truncate = 0)} instead of
-  \code{dposnbinom(x, size, munb = munb)}, etc.
+  \code{dgaitdnbinom(x, size, munb.p = munb, truncate = 0)}
+  instead of \code{dposnbinom(x, size, munb = munb)}, etc.
 
 
 
@@ -232,9 +234,9 @@ rgaitdnbinom(n, size.p, munb.p,
 % \code{\link{Pospois}}
 % \code{\link[stats:Poisson]{Poisson}};
   
-%  \code{\link{Gaitlog.mix}}  and \code{\link{Gaitlog.mlm}},
-%  \code{\link{Gaitdpois.mix}} and \code{\link{Gaitdpois.mlm}},
-%  \code{\link{Gaitdnbinom.mlm}},
+%\code{\link{Gaitlog.mix}}  and \code{\link{Gaitlog.mlm}},
+%\code{\link{Gaitdpois.mix}} and \code{\link{Gaitdpois.mlm}},
+%\code{\link{Gaitdnbinom.mlm}},
 
 % \code{\link{gaitpoisson.mlm}},
 % \code{\link{Gtpois}},
@@ -246,8 +248,8 @@ rgaitdnbinom(n, size.p, munb.p,
 
 
 }
-\examples{size <- 10
-ivec <- c(5, 6, 10, 14); avec <- c(8, 11); munb <- 10; xgrid <- 0:25
+\examples{size <- 10; xgrid <- 0:25
+ivec <- c(5, 6, 10, 14); avec <- c(8, 11); munb <- 10
 tvec <- 15; pobs.a <- 0.05; pstr.i <- 0.25
 dvec <- 13; pdip.mlm <- 0.03; pobs.mlm <- 0.05
 (ddd <- dgaitdnbinom(xgrid, size, munb.p = munb, munb.a = munb + 5,

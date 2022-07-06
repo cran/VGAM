@@ -7,8 +7,9 @@
 
 }
 \usage{
-foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
-           a1 = 1, a2 = 1, nsimEIM = 500, imethod = 1, zero = NULL)
+foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL,
+   isd = NULL, a1 = 1, a2 = 1, nsimEIM = 500, imethod = 1,
+   zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,7 +31,8 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
 
 
   \item{imean, isd}{
-  Optional initial values for \eqn{\mu}{mu} and \eqn{\sigma}{sigma}.
+    Optional initial values for \eqn{\mu}{mu}
+    and \eqn{\sigma}{sigma}.
   A \code{NULL} means a value is computed internally.
   See \code{\link{CommonVGAMffArguments}}.
 
@@ -49,18 +51,22 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
   }
 }
 \details{
-  If a random variable has an ordinary univariate normal distribution
-  then the absolute value of that random variable has an ordinary
-  \emph{folded normal distribution}. That is, the sign has not been
+
+
+  If a random variable has an ordinary univariate normal
+  distribution then the absolute value of that random
+  variable has an ordinary \emph{folded normal distribution}.
+  That is, the sign has not been
   recorded; only the magnitude has been measured.
 
 
-  More generally, suppose \eqn{X} is normal with mean \code{mean} and
+More generally, suppose \eqn{X} is normal with
+mean \code{mean} and
   standard deviation \code{sd}.
   Let \eqn{Y=\max(a_1 X, -a_2 X)}{Y=max(a1*X, -a2*X)}
   where \eqn{a_1}{a1} and \eqn{a_2}{a2} are positive weights.
-  This means that \eqn{Y = a_1 X}{Y = a1*X} for \eqn{X > 0}, and
-  \eqn{Y = a_2 X}{Y = a2*X} for \eqn{X < 0}.
+  This means that \eqn{Y = a_1 X}{Y = a1*X} for \eqn{X > 0},
+  and \eqn{Y = a_2 X}{Y = a2*X} for \eqn{X < 0}.
   Then \eqn{Y} is said to have a
   \emph{generalized folded normal distribution}.
   The ordinary folded normal distribution corresponds to the
@@ -72,7 +78,8 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
   can be written
   \code{dnorm(y, mean, sd) + dnorm(y, -mean, sd)} for
   \eqn{y \ge 0}.
-  By default, \code{mean} and \code{log(sd)} are the linear/additive
+  By default, \code{mean} and \code{log(sd)} are the
+  linear/additive
   predictors.
   Having \code{mean=0} and \code{sd=1} results in the
   \emph{half-normal} distribution.
@@ -82,21 +89,25 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
         E(Y) = sigma*sqrt(2/pi)*exp(-mu^2/(2*sigma^2)) +
                mu*[1-2*Phi(-mu/sigma)] }
   and these are returned as the fitted values.
-  Here, \eqn{\Phi()}{Phi} is the cumulative distribution function of a
+  Here, \eqn{\Phi()}{Phi} is the cumulative distribution
+  function of a
   standard normal (\code{\link[stats:Normal]{pnorm}}).
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions such
+  as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
 }
 \references{
   Lin, P. C. (2005).
-  Application of the generalized folded-normal distribution to the process
+  Application of the generalized folded-normal
+  distribution to the process
   capability measures.
   \emph{International Journal of Advanced Manufacturing Technology},
   \bold{26}, 825--830.
@@ -120,13 +131,16 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
   Fisher scoring using simulation is implemented.
 
 
-  See \code{\link{CommonVGAMffArguments}} for general information about
+  See \code{\link{CommonVGAMffArguments}} for
+  general information about
   many of these arguments.
 
 
   Yet to do: implement the results of Johnson (1962) which gives
-  expressions for the EIM, albeit, under a different parameterization.
-  Also, one element of the EIM appears to require numerical integration.
+  expressions for the EIM, albeit, under a different
+  parameterization.
+  Also, one element of the EIM appears to require
+  numerical integration.
 
 
 
@@ -151,8 +165,8 @@ foldnormal(lmean = "identitylink", lsd = "loglink", imean = NULL, isd = NULL,
 \examples{
 \dontrun{ m <-  2; SD <- exp(1)
 fdata <- data.frame(y = rfoldnorm(n <- 1000, m = m, sd = SD))
-hist(with(fdata, y), prob = TRUE, main = paste("foldnormal(m = ", m,
-     ", sd = ", round(SD, 2), ")"))
+hist(with(fdata, y), prob = TRUE, main = paste("foldnormal(m = ",
+     m, ", sd = ", round(SD, 2), ")"))
 fit <- vglm(y ~ 1, foldnormal, data = fdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 (Cfit <- Coef(fit))

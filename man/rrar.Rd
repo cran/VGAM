@@ -17,9 +17,9 @@ rrar(Ranks = 1, coefstart = NULL)
   \item{Ranks}{
   Vector of integers: the ranks of the model.
   Each value must be at least one and no more than \code{M},
-  where \code{M} is the number of response variables in the time series.
-  The length of \code{Ranks} is the \emph{lag}, which is often denoted by
-  the symbol \emph{L} in the literature.
+  where \code{M} is the number of response variables in the
+  time series.  The length of \code{Ranks} is the \emph{lag},
+  which is often denoted by the symbol \emph{L} in the literature.
 
 
   }
@@ -32,20 +32,20 @@ rrar(Ranks = 1, coefstart = NULL)
 }
 \details{
    Full details are given in Ahn and Reinsel (1988).
-   Convergence may be very slow, so setting \code{maxits = 50}, say, may help.
-   If convergence is not obtained, you might like to try inputting different
-   initial values.
+   Convergence may be very slow, so setting \code{maxits = 50},
+   say, may help.  If convergence is not obtained, you might like
+   to try inputting different initial values.
 
 
-   Setting \code{trace = TRUE} in \code{\link{vglm}} is useful for monitoring
-   the progress at each iteration.
+   Setting \code{trace = TRUE} in \code{\link{vglm}} is useful
+   for monitoring the progress at each iteration.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}} and \code{\link{vgam}}.
 
 
 }
@@ -74,8 +74,8 @@ time series.
   \code{D},
   \code{omegahat},
   \code{Phi},
-  etc. as slots, and then \code{show.Coef.rrar} would also need to be
-  written.
+  etc. as slots, and then \code{show.Coef.rrar} would also need
+  to be written.
 
 
 }

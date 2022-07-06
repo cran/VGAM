@@ -64,7 +64,8 @@
         allowfun <- function(z, maxtol = 1)
           sign(z) * pmin(abs(z), maxtol)
         mu.init[, jay] <- locn.est + (1 - ishrinkage ) *
-                          allowfun(y[, jay] - locn.est, maxtol = medabsres)
+            allowfun(y[, jay] - locn.est,
+                     maxtol = medabsres)
 
         mu.init[, jay] <- abs(mu.init[, jay]) + 1 / 1024
       }
@@ -102,7 +103,8 @@ EIM.NB.specialp <-
   }
 
   Y.mat <- if (intercept.only) y.min:y.max else
-           matrix(y.min:y.max, length(mu), y.max-y.min+1, byrow = TRUE)
+           matrix(y.min:y.max, length(mu), y.max-y.min+1,
+                  byrow = TRUE)
   neff.row <- ifelse(intercept.only, 1, nrow(Y.mat))
   neff.col <- ifelse(intercept.only, length(Y.mat), ncol(Y.mat))
 
@@ -114,8 +116,8 @@ EIM.NB.specialp <-
     check2
   } else {
   check2 <-
-    rowSums(pnbinom(Y.mat, size = size, mu = mu, lower.tail = FALSE)
-            / (Y.mat + size)^2)
+    rowSums(pnbinom(Y.mat, size = size, mu = mu,
+                    lower.tail = FALSE) / (Y.mat + size)^2)
   check2
   }
   }  # FALSE
@@ -126,7 +128,8 @@ EIM.NB.specialp <-
       as.integer(intercept.only),
       as.double(neff.row), as.double(neff.col),
       as.double(size),
-      as.double(pnbinom(Y.mat, size = size, mu = mu, lower.tail = FALSE)),
+      as.double(pnbinom(Y.mat, size = size, mu = mu,
+                        lower.tail = FALSE)),
       rowsums = double(neff.row))
     trigg.term <- answerC$rowsums
   }  # TRUE
@@ -167,12 +170,14 @@ EIM.NB.speciald <-
   }
 
   Y.mat <- if (intercept.only) y.min:y.max else
-           matrix(y.min:y.max, length(mu), y.max-y.min+1, byrow = TRUE)
+           matrix(y.min:y.max, length(mu),
+                  y.max-y.min+1, byrow = TRUE)
   trigg.term <- if (intercept.only) {
-     dnbinom(Y.mat, size = size, mu = mu) %*% trigamma(Y.mat + size)
+     dnbinom(Y.mat, size, mu = mu) %*% trigamma(Y.mat + size)
   } else {
-     .rowSums(dnbinom(Y.mat, size = size, mu = mu) * trigamma(Y.mat + size),
-              NROW(Y.mat), NCOL(Y.mat))
+    .rowSums(dnbinom(Y.mat, size = size, mu = mu) *
+             trigamma(Y.mat + size),
+             NROW(Y.mat), NCOL(Y.mat))
   }
   ned2l.dk2 <- trigamma(size) - trigg.term
   if (extra.bit)
@@ -222,6 +227,10 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
 
+
+
+
+
  negbinomial <-
   function(
            zero = "size",  # Reinstated
@@ -254,7 +263,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       stop("argument 'imethod' must be 1 or 2")
 
 
-  if (!is.logical( deviance.arg ) || length( deviance.arg ) != 1)
+  if (!is.logical( deviance.arg ) ||
+      length( deviance.arg ) != 1)
     stop("argument 'deviance.arg' must be TRUE or FALSE")
 
 
@@ -276,7 +286,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
   if (!is.Numeric(eps.trig, length.arg = 1,
                   positive = TRUE) || eps.trig > 1e-5)
-    stop("argument 'eps.trig' must be positive and smaller in value")
+    stop("argument 'eps.trig' must be positive and ",
+         "smaller in value")
 
   if (length(imunb) && !is.Numeric(imunb, positive = TRUE))
     stop("bad input for argument 'imu'")
@@ -326,7 +337,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       }
       munb
     } else {
-      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , earg = .emunb )
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , .emunb )
     }
 
     if (varfun) {
@@ -379,6 +390,24 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
            .max.chunk.MB = max.chunk.MB,
            .nsimEIM = nsimEIM ))),
 
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    vecTF <- c(TRUE, FALSE)
+    M1 <- 2
+    NOS <- ncol(eta) / M1
+    kmat <- eta2theta(eta[, !vecTF, drop = FALSE], .lsize , .esize )
+    munb <- if ( .lmunb == "nbcanlink") {
+      kmat / expm1(-eta[, vecTF, drop = FALSE])
+    } else {
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , .emunb )
+    }
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+                pnbinom(y - 1, mu = munb, size = kmat),
+                pnbinom(y    , mu = munb, size = kmat)))
+  }, list( .lmunb = lmunb, .emunb = emunb,
+           .lsize = lsize, .esize = esize ))),
+
   initialize = eval(substitute(expression({
     M1 <- 2
 
@@ -414,7 +443,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
                 .lmunb , earg = .emunb , tag = FALSE),
        namesof(param.names("size", NOS, skip1 = TRUE),
                 .lsize , earg = .esize , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M,
+                                                         M1 = M1)]
 
     gprobs.y <- .gprobs.y
     imunb <- .imunb  # Default is NULL
@@ -449,9 +479,9 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
         try.this <-
           grid.search2(munb.init.jay, gsize,
-                       objfun = NBD.Loglikfun2,
-                       y = y[, jay], w = w[, jay],
-                       ret.objfun = TRUE)  # Last value is the loglik
+            objfun = NBD.Loglikfun2,
+            y = y[, jay], w = w[, jay],
+            ret.objfun = TRUE)  # Last value is the loglik
 
         munb.init[, jay] <- try.this["Value1"]
         size.init[, jay] <- try.this["Value2"]
@@ -465,8 +495,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       }
 
       etastart <-
-        cbind(theta2eta(munb.init, link = .lmunb , earg = newemu ),
-              theta2eta(size.init, link = .lsize , earg = .esize ))
+        cbind(theta2eta(munb.init, link = .lmunb , newemu ),
+              theta2eta(size.init, link = .lsize , .esize ))
 
 
       if ( .lmunb == "nbcanlink") {
@@ -512,7 +542,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
                 .lmunb , earg = .emunb )
     }
 
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+   type.fitted <- if (length(extra$type.fitted))
+                     extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning the 'mean'.")
                      "mean"
@@ -592,19 +623,21 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
     if ( .lmunb == "nbcanlink") {
-      newemu$size <- eta2theta(eta.size, .lsize , earg = .esize )
+      newemu$size <- eta2theta(eta.size, .lsize , .esize )
     }
 
 
 
     eta.munb <- theta2eta(mu, .lmunb , earg = newemu)
-    eta.size <- theta2eta(if (is.numeric( .isize )) .isize else 1.0,
+    eta.size <- theta2eta(if (is.numeric( .isize ))
+                          .isize else 1.0,
                           .lsize , earg = .esize )
     eta.size <- 0 * eta.munb + eta.size  # Right dimension now.
 
 
     eta.temp <- cbind(eta.munb, eta.size)
-    eta.temp[, interleave.VGAM(ncol(eta.temp), M1 = M1), drop = FALSE]
+    eta.temp[, interleave.VGAM(ncol(eta.temp), M1 = M1),
+             drop = FALSE]
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize,
                            .isize = isize ))),
@@ -613,7 +646,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
     function(mu, y, w, residuals = FALSE,  eta,
              extra = NULL, summation = TRUE) {
     vecTF <-  c(TRUE, FALSE)
-    kmat <- eta2theta(eta[, !vecTF, drop=FALSE], .lsize , earg = .esize )
+    kmat <- eta2theta(eta[, !vecTF, drop=FALSE], .lsize , .esize )
 
 
     munb <- if ( .lmunb == "nbcanlink") {
@@ -632,7 +665,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
       munb
     } else {
-      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , earg = .emunb )
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , .emunb )
     }
 
 
@@ -663,8 +696,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       warning("ignoring prior weights")
     eta <- predict(object)
     vecTF <- c(TRUE, FALSE)
-    munb <- cbind(eta2theta(eta[,  vecTF], .lmunb , earg = .emunb ))
-    size <- cbind(eta2theta(eta[, !vecTF], .lsize , earg = .esize ))
+    munb <- cbind(eta2theta(eta[,  vecTF], .lmunb , .emunb ))
+    size <- cbind(eta2theta(eta[, !vecTF], .lsize , .esize ))
     rnbinom(nsim * length(munb), mu = munb, size = size)
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize ))),
@@ -698,7 +731,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
                all(eta[, c(TRUE, FALSE)] < 0) else TRUE
 
 
-    overdispersion <- if (okay1) all(smallval < munb / size) else FALSE
+    overdispersion <- if (okay1)
+      all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values relative ",
               "to 'mu'; ",
@@ -719,8 +753,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
   if (iter == 1 && .deviance.arg ) {
     if (control$criterion != "coefficients" &&
         control$half.step)
-      warning("Argument 'criterion' should be 'coefficients' or ",
-        "'half.step' should be 'FALSE' when 'deviance.arg = TRUE'")
+      warning("Argument 'criterion' should be 'coefficients' ",
+   "or 'half.step' should be 'FALSE' when 'deviance.arg = TRUE'")
 
      nconstraints <- names(constraints)
 
@@ -760,7 +794,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
       munb
     } else {
-      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , earg = .emunb )
+      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , .emunb )
     }
 
 
@@ -777,7 +811,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
     dl.dmunb <- y / munb - (1 + y/kmat) / (1 + munb/kmat)
     dl.dsize <- digamma(y + kmat) - digamma(kmat) +
-                log1p(-munb / (kmat + munb)) - (y - munb) / (munb + kmat)
+      log1p(-munb / (kmat + munb)) - (y - munb) / (munb + kmat)
     if (any(big.size)) {
       dl.dsize[big.size] <- 1e-8  # A small number
     }
@@ -805,7 +839,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
     myderiv
   }), list( .lmunb = lmunb, .lsize = lsize,
             .emunb = emunb, .esize = esize,
-            .deviance.arg = deviance.arg, .mds.min = mds.min ))),
+            .deviance.arg = deviance.arg,
+            .mds.min = mds.min ))),
 
 
 
@@ -850,11 +885,11 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
           upr.ptr <- min(upr.ptr + chunk.rows, NN)
           sind2 <- wind2[lwr.ptr:upr.ptr]
           wz[sind2, M1*jay] <-
-            EIM.NB.specialp(mu          = munb[sind2, jay],
-                            size        = kmat[sind2, jay],
-                            y.max = max(Q.maxs[sind2]),
-                            cutoff.prob = .cutoff.prob ,
-                            intercept.only = intercept.only)
+            EIM.NB.specialp(mu = munb[sind2, jay],
+                  size        = kmat[sind2, jay],
+                  y.max = max(Q.maxs[sind2]),
+                  cutoff.prob = .cutoff.prob ,
+                  intercept.only = intercept.only)
 
 
           if (any(eim.kk.TF <- wz[sind2, M1*jay] <= 0)) {
@@ -885,7 +920,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
         muvec <-   munb[ii.TF, jay]
         for (ii in 1:( .nsimEIM )) {
           ysim <- rnbinom(sum(ii.TF), mu = muvec, size = kkvec)
-          dl.dsize <- digamma(ysim + kkvec) - digamma(kkvec) -
+          dl.dsize <- digamma(ysim + kkvec) -
+                      digamma(kkvec) -
                       (ysim - muvec) / (muvec + kkvec) +
                       log1p( -muvec / (kkvec + muvec))
           run.varcov <- run.varcov + dl.dsize^2
@@ -1041,7 +1077,8 @@ polya.control <- function(save.weights = FALSE, ...) {
 
   if (!is.Numeric(eps.trig, length.arg = 1,
                   positive = TRUE) || eps.trig > 0.001)
-    stop("argument 'eps.trig' must be positive and smaller in value")
+    stop("argument 'eps.trig' must be positive and smaller ",
+         "in value")
 
   if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE))
@@ -1089,6 +1126,25 @@ polya.control <- function(save.weights = FALSE, ...) {
            .type.fitted = type.fitted,
            .mds.min = mds.min))),
 
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    pmat  <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
+                       .lprob , earg = .eprob )
+    temp300 <-         eta[, c(FALSE, TRUE), drop = FALSE]
+    if ( .lsize == "loglink") {
+      bigval <- 68
+      temp300[temp300 >  bigval] <-  bigval
+      temp300[temp300 < -bigval] <- -bigval
+    }
+    kmat <- eta2theta(temp300, .lsize , earg = .esize )
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+                pnbinom(y - 1, prob = pmat, size = kmat),
+                pnbinom(y    , prob = pmat, size = kmat)))
+  }, list( .lsize = lsize, .lprob = lprob,
+           .esize = esize, .eprob = eprob ))),
+
+
   initialize = eval(substitute(expression({
     M1 <- 2
     if (any(function.name == c("cqo", "cao")))
@@ -1117,7 +1173,8 @@ polya.control <- function(save.weights = FALSE, ...) {
                 .lprob , earg = .eprob , tag = FALSE),
         namesof(param.names("size", NOS, skip1 = TRUE),
                 .lsize , earg = .esize , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M,
+                                                         M1 = M1)]
 
     if (is.null( .nsimEIM )) {
        save.weights <- control$save.weights <- FALSE
@@ -1150,7 +1207,7 @@ polya.control <- function(save.weights = FALSE, ...) {
 
 
         gsize <- gsize.mux * 0.5 * (mean(munb.init.jay) +
-                                    weighted.mean(y[, jay], w = w[, jay]))
+                          weighted.mean(y[, jay], w = w[, jay]))
         if (length( .isize ))
           gsize <- .isize  # isize is on an absolute scale
 
@@ -1159,7 +1216,7 @@ polya.control <- function(save.weights = FALSE, ...) {
           grid.search2(munb.init.jay, gsize,
                        objfun = NBD.Loglikfun2,
                        y = y[, jay], w = w[, jay],
-                       ret.objfun = TRUE)  # Last value is the loglik
+                       ret.objfun = TRUE)  # Last value is \ell
 
         munb.init[, jay] <- try.this["Value1"]
         size.init[, jay] <- try.this["Value2"]
@@ -1171,7 +1228,8 @@ polya.control <- function(save.weights = FALSE, ...) {
 
 
       prob.init <- if (length( .iprob ))
-                   matrix( .iprob , nrow(y), ncol(y), byrow = TRUE) else
+                       matrix( .iprob , nrow(y), ncol(y),
+                              byrow = TRUE) else
                    size.init / (size.init + munb.init)
 
 
@@ -1197,7 +1255,8 @@ polya.control <- function(save.weights = FALSE, ...) {
     kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                       .lsize , earg = .esize )
 
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+    type.fitted <- if (length(extra$type.fitted))
+                       extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning the 'mean'.")
                      "mean"
@@ -1215,7 +1274,7 @@ polya.control <- function(save.weights = FALSE, ...) {
   }, list( .lprob = lprob, .eprob = eprob,
            .lsize = lsize, .esize = esize))),
   last = eval(substitute(expression({
-    control$save.weights <- save.weights  # Latter assigned in @weights
+    control$save.weights <- save.weights  # Latter
 
     temp0303 <- c(rep_len( .lprob , NOS),
                   rep_len( .lsize , NOS))
@@ -1246,7 +1305,7 @@ polya.control <- function(save.weights = FALSE, ...) {
              extra = NULL,
              summation = TRUE) {
     pmat  <- eta2theta(eta[, c(TRUE, FALSE), drop = FALSE],
-                       .lprob , earg = .eprob)
+                       .lprob , earg = .eprob )
     temp300 <-         eta[, c(FALSE, TRUE), drop = FALSE]
     if ( .lsize == "loglink") {
       bigval <- 68
@@ -1257,7 +1316,8 @@ polya.control <- function(save.weights = FALSE, ...) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dnbinom(y, prob = pmat, size = kmat, log = TRUE)
+      ll.elts <- c(w) * dnbinom(y, prob = pmat, size = kmat,
+                                log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1265,7 +1325,7 @@ polya.control <- function(save.weights = FALSE, ...) {
       }
     }
   }, list( .lsize = lsize, .lprob = lprob,
-           .esize = esize, .eprob = eprob ))),
+           .esize = esize, .eprob = eprob))),
   vfamily = c("polya"),
 
 
@@ -1294,7 +1354,8 @@ polya.control <- function(save.weights = FALSE, ...) {
     okay1 <- all(is.finite(munb)) && all(0 < munb) &&
              all(is.finite(size)) && all(0 < size) &&
              all(is.finite(pmat)) && all(0 < pmat & pmat < 1)
-    overdispersion <- if (okay1) all(smallval < munb / size) else FALSE
+    overdispersion <- if (okay1)
+      all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values; ",
               "try fitting a quasi-Poisson ",
@@ -1400,19 +1461,21 @@ polya.control <- function(save.weights = FALSE, ...) {
         muvec <-   mu[ii.TF, jay]
         for (ii in 1:( .nsimEIM )) {
           ysim <- rnbinom(sum(ii.TF), mu = muvec, size = kkvec)
-          dl.dk <- digamma(ysim + kkvec) - digamma(kkvec) + log(ppvec)
+          dl.dk <- digamma(ysim + kkvec) -
+                   digamma(kkvec) + log(ppvec)
           run.varcov <- run.varcov + dl.dk^2
         }  # end of for loop
 
         run.varcov <- c(run.varcov / .nsimEIM )
-        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else run.varcov
+        ned2l.dk2 <- if (intercept.only)
+                     mean(run.varcov) else run.varcov
 
         wz[ii.TF, M1*jay] <- ned2l.dk2  # * (dk.deta2[ii.TF, jay])^2
       }
     }
 
 
-    wz[,     M1*(1:NOS)    ] <- wz[,      M1 * (1:NOS)] * dkayy.deta^2
+    wz[, M1*(1:NOS)] <- wz[, M1 * (1:NOS)] * dkayy.deta^2
 
 
     if (any(!ind2))
@@ -1424,7 +1487,8 @@ polya.control <- function(save.weights = FALSE, ...) {
     wz[,     M1*(1:NOS) - 1] <- ned2l.dprob2 * dprob.deta^2
 
     ned2l.dkayyprob <- -1 / pmat
-    wz[, M + M1*(1:NOS) - 1] <- ned2l.dkayyprob * dkayy.deta * dprob.deta
+    wz[, M + M1*(1:NOS) - 1] <- ned2l.dkayyprob * dkayy.deta *
+                                                  dprob.deta
 
 
 
@@ -1526,7 +1590,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
   if (!is.Numeric(eps.trig, length.arg = 1,
                   positive = TRUE) || eps.trig > 0.001)
-    stop("argument 'eps.trig' must be positive and smaller in value")
+    stop("argument 'eps.trig' must be positive and ",
+         "smaller in value")
 
 
   if (length(iprob) && !is.Numeric(iprob, positive = TRUE))
@@ -1580,6 +1645,25 @@ polyaR.control <- function(save.weights = TRUE, ...) {
            .type.fitted = type.fitted,
            .mds.min = mds.min))),
 
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    pmat  <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
+                       .lprob , earg = .eprob)
+    temp300 <-         eta[, c(TRUE, FALSE), drop = FALSE]
+    if ( .lsize == "loglink") {
+      bigval <- 68
+      temp300[temp300 >  bigval] <-  bigval
+      temp300[temp300 < -bigval] <- -bigval
+    }
+    kmat <- eta2theta(temp300, .lsize , earg = .esize )
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+                pnbinom(y - 1, prob = pmat, size = kmat),
+                pnbinom(y    , prob = pmat, size = kmat)))
+  }, list( .lsize = lsize, .lprob = lprob,
+           .esize = esize, .eprob = eprob ))),
+
+
   initialize = eval(substitute(expression({
     M1 <- 2
     if (any(function.name == c("cqo", "cao")))
@@ -1608,7 +1692,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
                 .lsize , earg = .esize , tag = FALSE),
         namesof(param.names("prob", NOS, skip1 = TRUE),
                 .lprob , earg = .eprob , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
+    predictors.names <- predictors.names[interleave.VGAM(M,
+                                                         M1 = M1)]
 
     if (is.null( .nsimEIM )) {
        save.weights <- control$save.weights <- FALSE
@@ -1642,16 +1727,16 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
         gsize <- gsize.mux * 0.5 * (mean(munb.init.jay) +
-                                    weighted.mean(y[, jay], w = w[, jay]))
+                           weighted.mean(y[, jay], w = w[, jay]))
         if (length( .isize ))
           gsize <- .isize  # isize is on an absolute scale
 
 
         try.this <-
           grid.search2(munb.init.jay, gsize,
-                       objfun = NBD.Loglikfun2,
-                       y = y[, jay], w = w[, jay],
-                       ret.objfun = TRUE)  # Last value is the loglik
+            objfun = NBD.Loglikfun2,
+            y = y[, jay], w = w[, jay],
+            ret.objfun = TRUE)  # Last value is the loglik
 
         munb.init[, jay] <- try.this["Value1"]
         size.init[, jay] <- try.this["Value2"]
@@ -1663,7 +1748,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
       prob.init <- if (length( .iprob ))
-                   matrix( .iprob , nrow(y), ncol(y), byrow = TRUE) else
+                     matrix( .iprob , nrow(y), ncol(y),
+                            byrow = TRUE) else
                    size.init / (size.init + munb.init)
 
 
@@ -1690,7 +1776,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     pmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                       .lprob , earg = .eprob )
 
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+    type.fitted <- if (length(extra$type.fitted))
+                     extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning the 'mean'.")
                      "mean"
@@ -1746,7 +1833,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dnbinom(y, prob = pmat, size = kmat, log = TRUE)
+      ll.elts <- c(w) * dnbinom(y, prob = pmat, size = kmat,
+                                log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1840,7 +1928,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
       eps.trig <- .eps.trig
-      Q.MAXS <-      pmax(10, ceiling(1 / sqrt(eps.trig) - kmat[, jay]))
+      Q.MAXS <- pmax(10, ceiling(1 / sqrt(eps.trig) - kmat[, jay]))
       Q.maxs <- pmin(Q.maxs, Q.MAXS)
 
 
@@ -1890,14 +1978,16 @@ polyaR.control <- function(save.weights = TRUE, ...) {
         muvec <-   mu[ii.TF, jay]
         for (ii in 1:( .nsimEIM )) {
           ysim <- rnbinom(sum(ii.TF), mu = muvec, size = kkvec)
-          dl.dk <- digamma(ysim + kkvec) - digamma(kkvec) + log(ppvec)
+          dl.dk <- digamma(ysim + kkvec) -
+                   digamma(kkvec) + log(ppvec)
           run.varcov <- run.varcov + dl.dk^2
         }  # end of for loop
 
         run.varcov <- c(run.varcov / .nsimEIM )
-        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else run.varcov
+        ned2l.dk2 <- if (intercept.only)
+                       mean(run.varcov) else run.varcov
 
-        wz[ii.TF, M1*jay - 1] <- ned2l.dk2  # * (dk.deta2[ii.TF, jay])^2
+  wz[ii.TF, M1*jay - 1] <- ned2l.dk2  # * (dk.deta2[ii.TF, jay])^2
       }
     }
 
@@ -1912,7 +2002,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     wz[,     M1*(1:NOS)    ] <- ned2l.dprob2 * dprob.deta^2
 
     ned2l.dkayyprob <- -1 / pmat
-    wz[, M + M1*(1:NOS) - 1] <- ned2l.dkayyprob * dkayy.deta * dprob.deta
+    wz[, M + M1*(1:NOS) - 1] <- ned2l.dkayyprob * dkayy.deta *
+                                                  dprob.deta
 
 
 
@@ -1969,12 +2060,13 @@ polyaR.control <- function(save.weights = TRUE, ...) {
 
 
 
- negbinomial.size <- function(size = Inf,
-                              lmu = "loglink",
-                              imu = NULL,
-                              iprobs.y = 0.35,
-                              imethod = 1,
-                              ishrinkage = 0.95, zero = NULL) {
+ negbinomial.size <-
+  function(size = Inf,
+           lmu = "loglink",
+           imu = NULL,
+           iprobs.y = 0.35,
+           imethod = 1,
+           ishrinkage = 0.95, zero = NULL) {
 
 
 
@@ -2031,6 +2123,16 @@ polyaR.control <- function(save.weights = TRUE, ...) {
            .ishrinkage = ishrinkage,
            .zero = zero ))),
 
+  rqresslot = eval(substitute(
+    function(mu, y, w, eta, extra = NULL) {
+    kmat <- matrix( .size , nrow(eta), ncol(eta), byrow = TRUE)
+    munb <- cbind(mu)
+    scrambleseed <- runif(1)  # To scramble the seed
+    qnorm(runif(length(y),
+                pnbinom(y - 1, mu = munb, size = kmat),
+                pnbinom(y    , mu = munb, size = kmat)))
+  }, list( .size = size ))),
+
   initialize = eval(substitute(expression({
     M1 <- 1
 
@@ -2049,7 +2151,7 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     M <- M1 * ncol(y)
     NOS <- ncoly <- ncol(y)  # Number of species
     mynames1 <- param.names("mu", NOS, skip1 = TRUE)
-    predictors.names <- namesof(mynames1, .lmu , earg = .emu , tag = FALSE)
+    predictors.names <- namesof(mynames1, .lmu , .emu , tag = FALSE)
 
 
     if (is.numeric( .mu.init ))
@@ -2155,11 +2257,12 @@ polyaR.control <- function(save.weights = TRUE, ...) {
       for (kk in 1:NOS) {
         ind1 <- is.finite(kmat[, kk])
         ans1 <- ans1 +
-                sum(w[ind1] * dnbinom(x = y[ind1, kk], mu = mu[ind1, kk],
-                                      size = kmat[ind1, kk], log = TRUE))
+            sum(w[ind1] * dnbinom(y[ind1, kk],
+                                  mu = mu[ind1, kk],
+                         size = kmat[ind1, kk], log = TRUE))
         ans2 <- ans2 +
-                sum(w[!ind1] * dpois(x = y[!ind1, kk],
-                                     lambda  = mu[!ind1, kk], log = TRUE))
+                sum(w[!ind1] * dpois(y[!ind1, kk],
+                        lambda  = mu[!ind1, kk], log = TRUE))
       }
 
       ans <- ans1 + ans2

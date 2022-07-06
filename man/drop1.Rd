@@ -49,11 +49,12 @@
   and
   \code{\link[stats]{drop1.glm}}
   for \code{\link{vglm-class}} objects.
-  For \code{drop1} methods, a missing \code{scope} is taken to be all
-  terms in the model. The hierarchy is respected when considering terms
-  to be added or dropped: all main effects contained in a second-order
-  interaction must remain, and so on.
-  In a \code{scope} formula \code{.} means \sQuote{what is already there}.
+  For \code{drop1} methods, a missing \code{scope} is taken to
+  be all terms in the model. The hierarchy is respected when
+  considering terms to be added or dropped: all main effects
+  contained in a second-order interaction must remain, and so on.
+  In a \code{scope} formula \code{.} means \sQuote{what is
+  already there}.
 
 
   
@@ -72,9 +73,9 @@ of terms.
 
 
   
-%  The methods for \code{\link{lm}} and \code{\link{glm}} are more
-%  efficient in that they do not recompute the model matrix and call the
-%  \code{fit} methods directly.
+%The methods for \code{\link{lm}} and \code{\link{glm}} are more
+%efficient in that they do not recompute the model matrix and
+%call the \code{fit} methods directly.
 
 
   
@@ -85,27 +86,28 @@ of terms.
 
 
 
-% For linear Gaussian models
-% with fixed scale, the constant is chosen to give Mallows' \eqn{C_p}{Cp},
-% \eqn{RSS/scale + 2p - n}.  Where \eqn{C_p}{Cp} is used,
-% the column is labelled as \code{Cp} rather than \code{AIC}.
+%For linear Gaussian models
+%with fixed scale, the constant is chosen to give Mallows'
+%\eqn{C_p}{Cp}, \eqn{RSS/scale + 2p - n}.  Where \eqn{C_p}{Cp} is
+%used, the column is labelled as \code{Cp} rather than \code{AIC}.
 
-% The F tests for the \code{"glm"} methods are based on analysis of
-% deviance tests, so if the dispersion is estimated it is based on the
-% residual deviance, unlike the F tests of \code{\link{anova.glm}}.
+%The F tests for the \code{"glm"} methods are based on analysis
+%of deviance tests, so if the dispersion is estimated it
+%is based on the residual deviance, unlike the F tests of
+%\code{\link{anova.glm}}.
 
 
 
 }
 \value{
-  An object of class \code{"anova"} summarizing the differences in fit
-  between the models.
+  An object of class \code{"anova"} summarizing the differences
+  in fit between the models.
 
 
 }
 %\author{
-% The design was inspired by the S functions of the same names described
-%  in Chambers (1992).
+% The design was inspired by the S functions of the same
+% names described in Chambers (1992).
 %}
 
 
@@ -121,22 +123,23 @@ of terms.
 
 
 \note{
-  Most \pkg{VGAM} family functions do not compute a deviance, but
-  instead the likelihood function is evaluated at the MLE.
-  Hence a column name \code{"Deviance"} only appears for a few
-  models; and almost always there is a column labelled
+  Most \pkg{VGAM} family functions do not compute a deviance,
+  but instead the likelihood function is evaluated at the MLE.
+  Hence a column name \code{"Deviance"} only appears for a
+  few models; and almost always there is a column labelled
   \code{"logLik"}.
 
 
   
-% These are not fully equivalent to the functions in S.  There is no
-% \code{keep} argument, and the methods used are not quite so
-% computationally efficient.
+%These are not fully equivalent to the functions in S.  There is
+%no \code{keep} argument, and the methods used are not quite so
+%computationally efficient.
 
 
   
-% Their authors' definitions of Mallows' \eqn{C_p}{Cp} and Akaike's AIC
-% are used, not those of the authors of the models chapter of S.
+%Their authors' definitions of Mallows' \eqn{C_p}{Cp} and
+%Akaike's AIC are used, not those of the authors of the models
+%chapter of S.
 
 
 
@@ -150,9 +153,9 @@ of terms.
   \code{\link[stats]{add1.glm}} and
   \code{\link[stats]{drop1.glm}}
   apply here.
-  Furthermore, these functions have not been rigorously
-  tested for all models, so treat the results cautiously and
-  please report any bugs.
+  Furthermore, these functions have not been rigorously tested
+  for all models, so treat the results cautiously and please
+  report any bugs.
 
 
 
@@ -176,9 +179,9 @@ of terms.
 
 
   
-%  The default methods make calls to the function \code{\link{nobs}} to
-%  check that the number of observations involved in the fitting process
-%  remained unchanged.
+%The default methods make calls to the function \code{\link{nobs}} to
+%check that the number of observations involved in the fitting process
+%remained unchanged.
 
 
 

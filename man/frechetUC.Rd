@@ -31,7 +31,8 @@ rfrechet(n, location = 0, scale = 1, shape)
   scale parameter \eqn{b}, and shape parameter \eqn{s}.}
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density
+  is returned.
 
 
   }
@@ -53,7 +54,8 @@ rfrechet(n, location = 0, scale = 1, shape)
 }
 \references{
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
+  Castillo, E., Hadi, A. S.,
+  Balakrishnan, N. and Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
@@ -64,7 +66,8 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \author{ T. W. Yee and Kai Huang }
 \details{
   See \code{\link{frechet}}, the \pkg{VGAM}
-  family function for estimating the 2 parameters (without location
+  family function for estimating the 2 parameters
+  (without location
   parameter) by maximum likelihood estimation, for the formula
   of the probability density function and range restrictions on
   the parameters.
@@ -84,11 +87,12 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 \dontrun{ shape <- 5
 x <- seq(-0.1, 3.5, length = 401)
-plot(x, dfrechet(x, shape = shape), type = "l", ylab = "", las = 1,
-     main = "Frechet density divided into 10 equal areas; orange = cdf")
+plot(x, dfrechet(x, shape = shape), type = "l", ylab = "",
+  main = "Frechet density divided into 10 equal areas",
+  sub = "Orange = CDF", las = 1)
 abline(h = 0, col = "blue", lty = 2)
 qq <- qfrechet(seq(0.1, 0.9, by = 0.1), shape = shape)
-lines(qq, dfrechet(qq, shape = shape), col = "purple", lty = 3, type = "h")
+lines(qq, dfrechet(qq, shape = shape), col = 2, lty = 2, type = "h")
 lines(x, pfrechet(q = x, shape = shape), col = "orange")
 }
 }

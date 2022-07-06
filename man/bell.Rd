@@ -73,7 +73,7 @@ T. W. Yee
 
 %}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+%% Warning with \section{Warning }{....} ~
 
 \seealso{
   \code{\link[VGAMdata]{bellff}},
@@ -84,7 +84,7 @@ T. W. Yee
 
 }
 \examples{ \dontrun{
-plot(0:10, bell(0:10), log = "y", type = "h", las = 1, col = "blue")
+plot(0:10, bell(0:10), log = "y", type = "h", col = "blue")
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

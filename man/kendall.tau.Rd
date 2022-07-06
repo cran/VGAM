@@ -6,7 +6,8 @@ Kendall's Tau Statistic
 
 }
 \description{
-  Computes Kendall's Tau, which is a rank-based correlation measure,
+  Computes Kendall's Tau, which is a rank-based
+  correlation measure,
   between two vectors.
 
 
@@ -37,11 +38,15 @@ kendall.tau(x, y, exact = FALSE, max.n = 3000)
 }
 }
 \details{
-  Kendall's tau is a measure of dependency in a bivariate distribution.
-  Loosely, two random variables are \emph{concordant} if large values
-  of one random variable are associated with large values of the
+  Kendall's tau is a measure of dependency in a
+  bivariate distribution.
+  Loosely, two random variables are \emph{concordant}
+  if large values
+  of one random variable are associated with large
+  values of the
   other random variable.
-  Similarly, two random variables are \emph{disconcordant} if large values
+  Similarly, two random variables are \emph{disconcordant}
+  if large values
   of one random variable are associated with small values of the
   other random variable.
   More formally, if \code{(x[i] - x[j])*(y[i] - y[j]) > 0} then
@@ -84,7 +89,8 @@ kendall.tau(x, y, exact = FALSE, max.n = 3000)
   If \code{length(x)} is large then
   the cost is \eqn{O(N^2)}, which is expensive!
   Under these circumstances
-  it is not advisable to set \code{exact = TRUE} or \code{max.n} to a very
+  it is not advisable to set \code{exact = TRUE}
+  or \code{max.n} to a very
   large number.
 
 
@@ -111,7 +117,7 @@ kendall.tau(x, y)  # A random sample is taken here
 kendall.tau(x, y, exact = TRUE)  # Costly if length(x) is large
 kendall.tau(x, y, max.n = N)     # Same as exact = TRUE
 
-(rhohat <- sin(kendall.tau(x, y) * pi / 2))  # This formula holds for N_2 actually
+(rhohat <- sin(kendall.tau(x, y) * pi / 2))  # Holds for N_2 actually
 true.rho  # rhohat should be near this value
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

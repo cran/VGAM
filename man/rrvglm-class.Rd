@@ -26,6 +26,7 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   \item{\code{predictors}:}{
   Object of class \code{"matrix"}
   with \eqn{M} columns which holds the \eqn{M} linear predictors.
+
   }
   \item{\code{assign}:}{
   Object of class \code{"list"},
@@ -87,8 +88,8 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   \item{\code{fitted.values}:}{
   Object of class
   \code{"matrix"}, from class \code{ "vlm"}.
-  The fitted values. This is usually the mean but may be
-  quantiles, or the location parameter, e.g., in the Cauchy model.
+  The fitted values. This is usually the mean but may be quantiles,
+  or the location parameter, e.g., in the Cauchy model.
 
   }
   \item{\code{misc}:}{
@@ -207,8 +208,8 @@ Class \code{"vlm"}, by class "vglm".
 \section{Methods}{
   \describe{
     \item{biplot}{\code{signature(x = "rrvglm")}: biplot. }
-    \item{Coef}{\code{signature(object = "rrvglm")}: more detailed
-       coefficients giving \bold{A},
+    \item{Coef}{\code{signature(object = "rrvglm")}:
+       more detailed coefficients giving \bold{A},
        \eqn{\bold{B}_1}{\bold{B}1}, \bold{C}, etc.
     }
   \item{biplot}{\code{signature(object = "rrvglm")}:
@@ -228,7 +229,8 @@ Reduced-rank vector generalized linear models.
 
 Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society, Series B,
+      Methodological},
 \bold{58}, 481--493.
 
 
@@ -246,7 +248,8 @@ Vector generalized additive models.
 }
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
-% zzz need to make sure this function matches \code{\link{vglm-class}},
+% zzz need to make sure this 
+% function matches \code{\link{vglm-class}},
 %where \code{\link{vglm-class}} is definitive.
 
 \seealso{
@@ -260,7 +263,7 @@ Vector generalized additive models.
 \examples{
 \dontrun{ # Rank-1 stereotype model of Anderson (1984)
 pneumo <- transform(pneumo, let = log(exposure.time),
-                            x3  = runif(nrow(pneumo)))  # x3 is unrelated
+                            x3  = runif(nrow(pneumo)))  # Unrelated
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, data = pneumo, Rank = 1)
 Coef(fit)

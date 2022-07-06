@@ -3,16 +3,16 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Beta-binomial Distribution Family Function }
 \description{
-  Fits a beta-binomial distribution by maximum likelihood estimation.
-  The two parameters here are the shape parameters of the underlying
-  beta distribution.
+  Fits a beta-binomial distribution by maximum likelihood
+  estimation.  The two parameters here are the shape parameters
+  of the underlying beta distribution.
 
 
 }
 \usage{
-betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
-               ishape2 = NULL, imethod = 1, ishrinkage = 0.95,
-               nsimEIM = NULL, zero = NULL)
+betabinomialff(lshape1 = "loglink", lshape2 = "loglink",
+   ishape1 = 1, ishape2 = NULL, imethod = 1, ishrinkage = 0.95,
+   nsimEIM = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,38 +25,38 @@ betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
   }
   \item{ishape1, ishape2}{
   Initial value for the shape parameters.
-  The first must be positive, and is recyled to the necessary length.
-  The second is optional.
-  If a failure to converge occurs, try assigning a different value
-  to \code{ishape1} and/or using \code{ishape2}.
+  The first must be positive, and is recyled to the necessary
+  length.  The second is optional.  If a failure to converge
+  occurs, try assigning a different value to \code{ishape1}
+  and/or using \code{ishape2}.
 
 
   }
   \item{zero}{
   Can be
-  an integer specifying which linear/additive predictor is to be modelled
-  as an intercept only. If assigned, the single value should be either
-  \code{1} or \code{2}. The default is to model both shape parameters
-  as functions of the covariates. If a failure to converge occurs,
-  try \code{zero = 2}.
+  an integer specifying which linear/additive predictor
+  is to be modelled as an intercept only. If assigned, the
+  single value should be either \code{1} or \code{2}. The
+  default is to model both shape parameters as functions of the
+  covariates. If a failure to converge occurs, try \code{zero = 2}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
   \item{ishrinkage, nsimEIM, imethod}{
   See \code{\link{CommonVGAMffArguments}} for more information.
-  The argument \code{ishrinkage} is used only if \code{imethod = 2}.
-  Using the argument \code{nsimEIM} may offer large advantages for large
-  values of \eqn{N} and/or large data sets.
+  The argument \code{ishrinkage} is used only if \code{imethod
+  = 2}.  Using the argument \code{nsimEIM} may offer large
+  advantages for large values of \eqn{N} and/or large data sets.
 
 
   }
 }
 \details{
-  There are several parameterizations of the beta-binomial distribution.
-  This family function directly models the two shape parameters of the
-  associated beta distribution rather than the probability of
-  success (however, see \bold{Note} below).
+  There are several parameterizations of the beta-binomial
+  distribution.  This family function directly models the two
+  shape parameters of the associated beta distribution rather than
+  the probability of success (however, see \bold{Note} below).
   The model can be written
   \eqn{T|P=p \sim Binomial(N,p)}{T|P=p ~ Binomial(N,p)}
   where \eqn{P} has a beta distribution with shape parameters
@@ -81,18 +81,19 @@ betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
    Recall \eqn{Y = T/N} is the real response being modelled.
 
 
-  The default model is \eqn{\eta_1 = \log(\alpha)}{eta1 = log(alpha)}
+  The default model
+  is \eqn{\eta_1 = \log(\alpha)}{eta1 = log(alpha)}
   and \eqn{\eta_2 = \log(\beta)}{eta2 = log(beta)} because both
   parameters are positive.
   The mean (of \eqn{Y}) is
-  \eqn{p = \mu = \alpha / (\alpha + \beta)}{p = mu = alpha / (alpha + beta)}
+\eqn{p=\mu=\alpha/(\alpha+\beta)}{p = mu = alpha / (alpha + beta)}
   and the variance (of \eqn{Y}) is
   \eqn{\mu(1-\mu)(1+(N-1)\rho)/N}{mu(1-mu)(1+(N-1)rho)/N}.
   Here, the correlation \eqn{\rho}{rho} is given by
   \eqn{1/(1 + \alpha + \beta)}{1/(1 + alpha + beta)}
   and is the correlation between the \eqn{N} individuals
-  within a litter. A \emph{litter effect} is typically reflected by a
-  positive value of \eqn{\rho}{rho}. It is known as the
+  within a litter. A \emph{litter effect} is typically reflected
+  by a positive value of \eqn{\rho}{rho}. It is known as the
   \emph{over-dispersion parameter}.
 
 
@@ -106,8 +107,10 @@ betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}.
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}.
 
 
   Suppose \code{fit} is a fitted beta-binomial model. Then
@@ -127,12 +130,12 @@ betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
   \bold{47}, 383--401.
 
 
-  Prentice, R. L. (1986).
-    Binary regression using an extended beta-binomial distribution,
-    with discussion of correlation induced by
-    covariate measurement errors.
-    \emph{Journal of the American Statistical Association},
-    \bold{81}, 321--327.
+Prentice, R. L. (1986).
+Binary regression using an extended beta-binomial distribution,
+with discussion of correlation induced by
+covariate measurement errors.
+\emph{Journal of the American Statistical Association},
+\bold{81}, 321--327.
 
 
 }
@@ -147,29 +150,30 @@ betabinomialff(lshape1 = "loglink", lshape2 = "loglink", ishape1 = 1,
   \code{subset} argument of \code{\link{vglm}}.
 
 
-  Although the two linear/additive predictors given
-  above are in terms of \eqn{\alpha}{alpha} and \eqn{\beta}{beta},
-  basic algebra shows that the default amounts to
-  fitting a logit link to the probability of success; subtracting
-  the second linear/additive predictor from the first gives that
-  logistic regression linear/additive predictor.
-  That is, \eqn{logit(p) = \eta_1 - \eta_2}{logit(p) = eta1 - eta2}.
-  This is illustated in one of the examples below.
+  Although the two linear/additive predictors given above are
+  in terms of \eqn{\alpha}{alpha} and \eqn{\beta}{beta}, basic
+  algebra shows that the default amounts to fitting a logit
+  link to the probability of success; subtracting the second
+  linear/additive predictor from the first gives that logistic
+  regression linear/additive predictor.  That is, \eqn{logit(p)
+  = \eta_1 - \eta_2}{logit(p) = eta1 - eta2}.  This is illustated
+  in one of the examples below.
 
 
-  The \emph{extended} beta-binomial distribution of Prentice (1986)
-  is currently not implemented in the \pkg{VGAM} package as it has
-  range-restrictions for the correlation parameter that are currently
-  too difficult to handle in this package.
+  The \emph{extended} beta-binomial distribution of Prentice
+  (1986) is currently not implemented in the \pkg{VGAM} package
+  as it has range-restrictions for the correlation parameter that
+  are currently too difficult to handle in this package.
 
 
 }
 \section{Warning }{
-  This family function is prone to numerical difficulties
-  due to the expected information matrices not being positive-definite
+  This family function is prone to numerical difficulties due to
+  the expected information matrices not being positive-definite
   or ill-conditioned over some regions of the parameter space.
   If problems occur try setting \code{ishape1} to be some other
-  positive value, using \code{ishape2} and/or setting \code{zero = 2}.
+  positive value, using \code{ishape2} and/or setting \code{zero
+  = 2}.
 
 
   This family function may be renamed in the future.
@@ -208,7 +212,7 @@ fit@misc$rho  # The correlation parameter
 t(fitted(fit))
 t(depvar(fit))
 t(weights(fit, type = "prior"))
-# A "loglink" link for the 2 shape parameters is a logistic regression:
+# A "loglink" link for the 2 shape params is a logistic regression:
 all.equal(c(fitted(fit)),
           as.vector(logitlink(predict(fit)[, 1] -
                           predict(fit)[, 2], inverse = TRUE)))
@@ -223,12 +227,12 @@ coef(fit2, matrix = TRUE)
 coef(fit2, matrix = TRUE)[, 1] -
 coef(fit2, matrix = TRUE)[, 2]  # logitlink(p)
 \dontrun{ with(lirat, plot(hb[N > 1], fit2@misc$rho,
-                 xlab = "Hemoglobin", ylab = "Estimated rho",
-                 pch = as.character(grp[N > 1]), col = grp[N > 1])) }
+   xlab = "Hemoglobin", ylab = "Estimated rho",
+   pch = as.character(grp[N > 1]), col = grp[N > 1])) }
 \dontrun{  # cf. Figure 3 of Moore and Tsiatis (1991)
-with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp, las = 1,
-            xlab = "Hemoglobin level", ylab = "Proportion Dead",
-            main = "Fitted values (lines)"))
+with(lirat, plot(hb, R / N, pch = as.character(grp), col = grp,
+   xlab = "Hemoglobin level", ylab = "Proportion Dead", las = 1,
+   main = "Fitted values (lines)"))
 
 smalldf <- with(lirat, lirat[N > 1, ])
 for (gp in 1:4) {

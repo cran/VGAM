@@ -6,10 +6,10 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The Laplace Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the 3-parameter asymmetric Laplace distribution with location
-  parameter \code{location}, scale parameter \code{scale},
-  and asymmetry parameter \code{kappa}.
+  Density, distribution function, quantile function and random
+  generation for the 3-parameter asymmetric Laplace distribution
+  with location parameter \code{location}, scale parameter
+  \code{scale}, and asymmetry parameter \code{kappa}.
 
 
 }
@@ -72,12 +72,12 @@ ralap(n, location = 0, scale = 1, tau = 0.5, kappa = sqrt(tau/(1-tau)))
 
 }
 \details{
-  There are many variants of asymmetric Laplace distributions (ALDs) and
-  this one is known as \emph{the} ALD by Kotz et al. (2001).
-  See \code{\link{alaplace3}}, the \pkg{VGAM} family function
-  for estimating the three parameters by maximum likelihood estimation,
-  for formulae and details.
-  The ALD density may be approximated by \code{\link{dextlogF}}.
+  There are many variants of asymmetric Laplace distributions
+  (ALDs) and this one is known as \emph{the} ALD by Kotz et
+  al. (2001).  See \code{\link{alaplace3}}, the \pkg{VGAM}
+  family function for estimating the three parameters by maximum
+  likelihood estimation, for formulae and details.  The ALD
+  density may be approximated by \code{\link{dextlogF}}.
 
 
 
@@ -119,7 +119,7 @@ Boston: Birkhauser.
 x <- seq(-5, 5, by = 0.01)
 loc <- 0; sigma <- 1.5; kappa <- 2
 \dontrun{ plot(x, dalap(x, loc, sigma, kappa = kappa), type = "l",
-     main = "Blue is density, orange is cumulative distr. function",
+     main = "Blue is density, orange is the CDF",
      ylim = c(0, 1), sub = "Purple are 5, 10, ..., 95 percentiles",
      las = 1, ylab = "", cex.main = 0.5, col = "blue")
 abline(h = 0, col = "blue", lty = 2)

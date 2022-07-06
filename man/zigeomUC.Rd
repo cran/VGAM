@@ -8,7 +8,8 @@
 \title{ Zero-Inflated Geometric Distribution }
 \description{
   Density, and random generation
-  for the zero-inflated geometric distribution with parameter \code{pstr0}.
+  for the zero-inflated geometric distribution with parameter
+  \code{pstr0}.
 
 
 }
@@ -25,9 +26,10 @@ rzigeom(n, prob, pstr0 = 0)
   \item{prob}{see \code{\link[stats]{dgeom}}.}
   \item{n}{ Same as in \code{\link[stats]{runif}}.  }
   \item{pstr0}{
-  Probability of structural zero (ignoring the geometric distribution),
-  called \eqn{\phi}{phi}. The default value corresponds
-  to the response having an ordinary geometric distribution.
+  Probability of structural zero (ignoring the geometric
+  distribution), called \eqn{\phi}{phi}. The default value
+  corresponds to the response having an ordinary geometric
+  distribution.
 
   }
   \item{log}{ Logical. Return the logarithm of the answer? }
@@ -53,8 +55,8 @@ rzigeom(n, prob, pstr0 = 0)
 %\references{ }
 \author{ T. W. Yee }
 \note{
-    The argument \code{pstr0} is recycled to the required length, and
-    must have values which lie in the interval \eqn{[0,1]}.
+  The argument \code{pstr0} is recycled to the required length,
+  and must have values which lie in the interval \eqn{[0,1]}.
 
   These functions actually allow for \emph{zero-deflation}.
   That is, the resulting probability of a zero count
@@ -79,11 +81,10 @@ table(rzigeom(1000, prob, pstr0))
 
 \dontrun{ x <- 0:10
 barplot(rbind(dzigeom(x, prob, pstr0), dgeom(x, prob)),
-        beside = TRUE, col = c("blue","orange"),
-        ylab = "P[Y = y]", xlab = "y", las = 1,
-        main = paste("zigeometric(", prob, ", pstr0 = ", pstr0,
-                     ") (blue) vs",
-                     " geometric(", prob, ") (orange)", sep = ""),
-        names.arg = as.character(x)) }
+   beside = TRUE, col = c("blue","orange"),
+   ylab = "P[Y = y]", xlab = "y", las = 1,
+   main = paste0("zigeometric(", prob, ", pstr0 = ", pstr0,
+                 ") (blue) vs", " geometric(", prob, ") (orange)"),
+   names.arg = as.character(x)) }
 }
 \keyword{distribution}

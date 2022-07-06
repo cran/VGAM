@@ -5,17 +5,17 @@
 \title{ Positive Bernoulli Family Function with Behavioural Effects }
 \description{
   Fits a GLM-/GAM-like model to multiple Bernoulli responses where
-  each row in the capture history matrix response has at least one success
-  (capture).
+  each row in the capture history matrix response has at least
+  one success (capture).
   Capture history behavioural effects are accommodated.
 
 
 }
 \usage{
 posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
-               type.fitted = c("likelihood.cond", "mean.uncond"), I2 = FALSE,
-               ipcapture = NULL, iprecapture = NULL,
-               p.small = 1e-4, no.warning = FALSE)
+   type.fitted = c("likelihood.cond", "mean.uncond"), I2 = FALSE,
+   ipcapture = NULL, iprecapture = NULL,
+   p.small = 1e-4, no.warning = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 % apply.parint = FALSE,
@@ -24,13 +24,15 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
 
   See \code{\link{CommonVGAMffArguments}} for information about
   these arguments.
-  By default the parallelism assumption does not apply to the intercept.
+  By default the parallelism assumption does not apply to the
+  intercept.
   With an intercept-only model
-  setting \code{drop.b = TRUE ~ 1} results in the \eqn{M_0}/\eqn{M_h} model.
+  setting \code{drop.b = TRUE ~ 1} results in the
+  \eqn{M_0}/\eqn{M_h} model.
 
 
-% it just deletes the 2nd column of the constraint matrix corresponding
-% to the intercept.
+% it just deletes the 2nd column of the constraint
+% matrix corresponding to the intercept.
 
 
 % The default value of \code{zero} means that the behavioural
@@ -39,7 +41,8 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
 
 
 % That is, it is modelled through the intercept, and a
-% negative value of the second linear/additive predictor means trap shy, etc.
+% negative value of the second linear/additive predictor
+% means trap shy, etc.
 
 
 
@@ -49,7 +52,8 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
   This argument is used for terms that are not parallel.
   If \code{TRUE} then the constraint matrix \code{diag(2)}
   (the general default constraint matrix in \pkg{VGAM}) is used,
-  else \code{cbind(0:1, 1)}. The latter means the first element/column
+  else \code{cbind(0:1, 1)}.
+  The latter means the first element/column
   corresponds to the behavioural effect.
   Consequently it and its standard error etc. can be accessed
   directly without subtracting two quantities.
@@ -80,27 +84,32 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
   Once an animal is captured for the first time,
   it is marked/tagged so that its future
   capture history can be recorded. The effect of the recapture
-  probability is modelled through a second linear/additive predictor.
-  It is well-known that some species of animals are affected by capture,
+  probability is modelled through a second linear/additive
+  predictor.  It is well-known that some species of animals are
+  affected by capture,
   e.g., trap-shy or trap-happy. This \pkg{VGAM} family function
   \emph{does} allow the capture history to be modelled via such
   behavioural effects.
-  So does \code{\link{posbernoulli.tb}} but \code{\link{posbernoulli.t}} cannot.
+  So does \code{\link{posbernoulli.tb}} but
+  \code{\link{posbernoulli.t}} cannot.
 
 
 
-% If \code{drop.b = TRUE} the parallelism does not apply to the intercept.
+% If \code{drop.b = TRUE} the parallelism
+% does not apply to the intercept.
+
 
 
   The number of linear/additive predictors is \eqn{M = 2},
-  and the default links
-  are \eqn{(logit \,p_c, logit \,p_r)^T}{(logit p_c, logit p_r)^T}
+  and the default links are
+\eqn{(logit \,p_c, logit \,p_r)^T}{(logit p_c, logit p_r)^T}
   where \eqn{p_c} is the probability of capture and
         \eqn{p_r} is the probability of recapture.
   The fitted value returned is of the same dimension as
   the response matrix, and depends on the capture history:
   prior to being first captured, it is \code{pcapture}.
   Afterwards, it is \code{precapture}.
+
 
 
   By default, the constraint matrices for the intercept term
@@ -112,14 +121,18 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
   Then it allows an estimate of the trap-happy/trap-shy effect;
   these are positive/negative values respectively.
   If \code{I2 = FALSE} then
-  the (nonstandard) constraint matrix used is \code{cbind(0:1, 1)},
-  meaning the first element can be interpreted as the behavioural effect.
+  the (nonstandard) constraint matrix used is
+  \code{cbind(0:1, 1)},
+  meaning the first element can be interpreted as the behavioural
+  effect.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+ (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -183,7 +196,7 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
 # Fit a M_b model
 M.b <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ 1,
             posbernoulli.b, data = deermice, trace = TRUE)
-coef(M.b)["(Intercept):1"]  # Behavioural effect on the logit scale
+coef(M.b)["(Intercept):1"]  # Behavioural effect on logit scale
 coef(M.b, matrix = TRUE)
 constraints(M.b, matrix = TRUE)
 summary(M.b, presid = FALSE)
@@ -192,9 +205,10 @@ summary(M.b, presid = FALSE)
 M.bh <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ sex + weight,
              posbernoulli.b, data = deermice, trace = TRUE)
 coef(M.bh, matrix = TRUE)
-coef(M.bh)["(Intercept):1"]  # Behavioural effect on the logit scale
-constraints(M.bh)  # (2,1) element of "(Intercept)" is for the behavioural effect
-summary(M.bh, presid = FALSE)  # Significant positive (trap-happy) behavioural effect
+coef(M.bh)["(Intercept):1"]  # Behavioural effect on logit scale
+# (2,1) elt is for the behavioural effect:
+constraints(M.bh)[["(Intercept)"]]
+summary(M.bh, presid = FALSE)  # Significant trap-happy effect
 # Approx. 95 percent confidence for the behavioural effect:
 SE.M.bh <- coef(summary(M.bh))["(Intercept):1", "Std. Error"]
 coef(M.bh)["(Intercept):1"] + c(-1, 1) * 1.96 * SE.M.bh
@@ -217,8 +231,8 @@ summary(M.0, presid = FALSE)
 
 # Simulated data set ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 set.seed(123); nTimePts <- 5; N <- 1000  # N is the popn size
-pdata <- rposbern(n = N, nTimePts = nTimePts, pvars = 2, is.popn = TRUE)
-nrow(pdata)  # Less than N (because some animals were never captured)
+pdata <- rposbern(N, nTimePts=nTimePts, pvars=2, is.popn=TRUE)
+nrow(pdata)  # < N (because some animals were never captured)
 # The truth: xcoeffs are c(-2, 1, 2) and cap.effect = +1
 
 M.bh.2 <- vglm(cbind(y1, y2, y3, y4, y5) ~ x2,
@@ -238,17 +252,18 @@ summary(pdata)
 dim(depvar(M.bh.2))
 vcov(M.bh.2)
 
-M.bh.2@extra$N.hat     # Estimate of the population size; should be about N
+M.bh.2@extra$N.hat  # Population size estimate; should be about N
 M.bh.2@extra$SE.N.hat  # SE of the estimate of the population size
 # An approximate 95 percent confidence interval:
-round(M.bh.2@extra$N.hat + c(-1, 1) * 1.96 *  M.bh.2@extra$SE.N.hat, 1)
+round(M.bh.2@extra$N.hat + c(-1, 1)*1.96* M.bh.2@extra$SE.N.hat, 1)
 }
 \keyword{models}
 \keyword{regression}
 
 %# Compare the models using a LRT
 %lrtest(M.bh, M.h)
-%(wald.pvalue <- 2 * pnorm(abs(summary(M.bh)@coef3["(Intercept):2", "z value"]),
+%(wald.pvalue <- 2 * pnorm(abs(summary(M.bh)@coef3["(Intercept):2",
+%                                                  "z value"]),
 %                          lower.tail = FALSE))  # Two-sided pvalue
 
 

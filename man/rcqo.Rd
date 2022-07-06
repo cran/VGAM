@@ -50,15 +50,19 @@ rcqo(n, p, S, Rank = 1,
     If binomial then a 0 means absence and 1 means presence.
     If ordinal then the \code{breaks} argument is passed into
     the \code{breaks} argument of \code{\link[base]{cut}}.
-    Note that either the Poisson or negative binomial distributions
-    are used to generate binomial and ordinal data, and that
-    an upper-case choice is used for the negative binomial distribution
+    Note that either the Poisson or
+    negative binomial distributions
+    are used to generate binomial and
+    ordinal data, and that
+    an upper-case choice is used for the
+    negative binomial distribution
     (this makes it easier for the user).
-    If \code{"gamma2"} then this is the 2-parameter gamma distribution.
+    If \code{"gamma2"} then this is the
+    2-parameter gamma distribution.
 
 %    ,
 %    and the resulting values are
-%    1,2,\ldots,\code{breaks} if \code{breaks} is a single integer zz
+% 1,2,\ldots,\code{breaks} if \code{breaks} is a single integer zz
 %    else zz.
 
   }
@@ -70,7 +74,8 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{eq.tolerances}{
     Logical. Does each species have the
-    same tolerance? If \code{TRUE} then the common value is 1 along
+    same tolerance? If \code{TRUE} then the common
+    value is 1 along
     every latent variable, i.e., all species' tolerance matrices
     are the order-\eqn{R} identity matrix.
 
@@ -81,7 +86,8 @@ rcqo(n, p, S, Rank = 1,
     If \code{TRUE} then the quantity
     \eqn{S^{1/R}}{S^(1/R)} must be an
     integer with value 2 or more. That is, there has to be an
-    appropriate number of species in total. This is so that a grid
+    appropriate number of species in total.
+    This is so that a grid
     of optimum values is possible in \eqn{R}-dimensional
     latent variable space
     in order to place the species' optimums.
@@ -120,9 +126,11 @@ rcqo(n, p, S, Rank = 1,
     the optimums of the species are generated from a
     normal distribution centered about 0.
     If \code{es.optimums = TRUE} then the \eqn{S} optimums
-    are equally spaced about 0 along every latent variable axis.
+    are equally spaced about 0 along every
+    latent variable axis.
     Regardless of the value of \code{es.optimums}, the optimums
-    are then scaled to give standard deviation \code{sd.optimums[r]}.
+    are then scaled to give standard deviation
+    \code{sd.optimums[r]}.
 
   }
   \item{sd.tolerances}{
@@ -134,7 +142,8 @@ rcqo(n, p, S, Rank = 1,
     \code{sd.tolerances[r]}.
     However, the first species \code{y1} has its tolerance matrix
     set equal to the order-\eqn{R} identity matrix.
-    All tolerance matrices for all species are diagonal in this function.
+    All tolerance matrices for all species are
+    diagonal in this function.
     This argument is ignored if \code{eq.tolerances} is \code{TRUE},
     otherwise it is recycled to length \eqn{R} if necessary.
 
@@ -143,34 +152,47 @@ rcqo(n, p, S, Rank = 1,
     A vector of positive \eqn{k} values (recycled to length \eqn{S}
     if necessary) for the negative binomial distribution
     (see \code{\link{negbinomial}} for details).
-    Note that a natural default value does not exist, however the default
-    value here is probably a realistic one, and that for large values
-    of \eqn{\mu} one has \eqn{Var(Y) = \mu^2 / k}{Var(Y) = mu^2 / k}
+    Note that a natural default value does not exist,
+    however the default
+    value here is probably a realistic one, and that
+    for large values
+    of \eqn{\mu} one has \eqn{Var(Y)=\mu^2/k}{Var(Y) = mu^2 / k}
     approximately.
 
   }
   \item{Shape}{
-    A vector of positive \eqn{\lambda}{lambda} values (recycled to length
-    \eqn{S} if necessary) for the 2-parameter gamma distribution (see
-    \code{\link{gamma2}} for details).  Note that a natural default value
-    does not exist, however the default value here is probably a realistic
-    one, and that \eqn{Var(Y) = \mu^2 / \lambda}{Var(Y) = mu^2 / lambda}.
+    A vector of positive \eqn{\lambda}{lambda}
+    values (recycled to length
+    \eqn{S} if necessary) for the 2-parameter gamma
+    distribution (see
+    \code{\link{gamma2}} for details).
+    Note that a natural default value
+    does not exist, however the default value
+    here is probably a realistic
+    one, and that
+    \eqn{Var(Y) = \mu^2 / \lambda}{Var(Y) = mu^2 / lambda}.
 
   }
   \item{sqrt.arg}{
-    Logical. Take the square-root of the negative binomial counts?
-    Assigning \code{sqrt.arg = TRUE} when \code{family="negbinomial"} means
-    that the resulting species data can be considered very crudely to be
+    Logical. Take the square-root of the
+    negative binomial counts?
+    Assigning \code{sqrt.arg = TRUE}
+    when \code{family="negbinomial"} means
+    that the resulting species data can be
+    considered very crudely to be
     approximately Poisson distributed.
-    They will not integers in general but much easier (less numerical
+    They will not integers in general but much easier
+    (less numerical
     problems) to estimate using something like
     \code{cqo(..., family="poissonff")}.
 
   }
   \item{log.arg}{
     Logical. Take the logarithm of the gamma random variates?
-    Assigning \code{log.arg = TRUE} when \code{family="gamma2"} means
-    that the resulting species data can be considered very crudely to be
+    Assigning \code{log.arg = TRUE}
+    when \code{family="gamma2"} means
+    that the resulting species data can be
+    considered very crudely to be
     approximately Gaussian distributed about its (quadratic) mean.
 
 
@@ -189,9 +211,9 @@ rcqo(n, p, S, Rank = 1,
     The correlation matrix is a matrix of 1's along the diagonal
     and \code{rhox} in the off-diagonals.
     Note that each environmental variable is normally distributed
-    with mean 0. The standard deviation of each environmental variable
-    is chosen so that the site scores have the determined standard
-    deviation, as given by argument \code{sd.latvar}.
+    with mean 0. The standard deviation of each environmental
+    variable is chosen so that the site scores have the determined
+    standard deviation, as given by argument \code{sd.latvar}.
 
   }
   \item{breaks}{
@@ -206,11 +228,13 @@ rcqo(n, p, S, Rank = 1,
     If set, the value is saved as the \code{"seed"}
     attribute of the returned value. The default will
     not change the random generator state, and return
-    \code{\link[base:Random]{.Random.seed}} as \code{"seed"} attribute.
+    \code{\link[base:Random]{.Random.seed}}
+    as \code{"seed"} attribute.
 
   }
   \item{optimums1.arg}{
-    If assigned and \code{Rank = 1} then these are the explicity optimums.
+    If assigned and \code{Rank = 1} then these are
+    the explicity optimums.
     Recycled to length \code{S}.
 
 
@@ -233,31 +257,37 @@ rcqo(n, p, S, Rank = 1,
   }
 }
 \details{
-  This function generates data coming from a constrained quadratic
+  This function generates data coming from a
+  constrained quadratic
   ordination (CQO) model. In particular,
-  data coming from a \emph{species packing model} can be generated
+  data coming from a \emph{species packing model}
+  can be generated
   with this function.
-  The species packing model states that species have equal tolerances,
-  equal maximums, and optimums which are uniformly distributed over
-  the latent variable space. This can be achieved by assigning
-  the arguments \code{es.optimums = TRUE}, \code{eq.maximums = TRUE},
-  \code{eq.tolerances = TRUE}.
+  The species packing model states that species have equal
+  tolerances, equal maximums, and optimums which are uniformly
+  distributed over the latent variable space. This can be
+  achieved by assigning the arguments \code{es.optimums = TRUE},
+  \code{eq.maximums = TRUE}, \code{eq.tolerances = TRUE}.
 
-  At present, the Poisson and negative binomial abundances are
-  generated first using \code{lo.abundance} and \code{hi.abundance},
-  and if \code{family} is binomial or ordinal then it is converted into
-  these forms.
 
-  In CQO theory the \eqn{n} by \eqn{p} matrix \eqn{X} is partitioned
-  into two parts \eqn{X_1} and \eqn{X_2}. The matrix
+  
+  At present, the Poisson and negative binomial abundances
+  are generated first using \code{lo.abundance} and
+  \code{hi.abundance}, and if \code{family} is binomial or ordinal
+  then it is converted into these forms.
+
+  
+
+  In CQO theory the \eqn{n} by \eqn{p} matrix \eqn{X} is
+  partitioned into two parts \eqn{X_1} and \eqn{X_2}. The matrix
   \eqn{X_2} contains the `real' environmental variables whereas
   the variables in \eqn{X_1} are just for adjustment purposes;
   they contain the intercept terms and other variables that one
-  wants to adjust for when (primarily) looking at the
-  variables in \eqn{X_2}.
-  This function has \eqn{X_1} only being a matrix of ones,
-  i.e., containing an intercept only.
+  wants to adjust for when (primarily) looking at the variables
+  in \eqn{X_2}.  This function has \eqn{X_1} only being a matrix
+  of ones, i.e., containing an intercept only.
 
+  
 }
 \value{
   A \eqn{n} by \eqn{p-1+S} data frame with
@@ -267,8 +297,8 @@ rcqo(n, p, S, Rank = 1,
   \item{x2, x3, x4, \ldots, xp}{
     The environmental variables. This makes up the
     \eqn{n} by \eqn{p-1} \eqn{X_2} matrix.
-    Note that \code{x1} is not present; it is effectively a vector
-    of ones since it corresponds to an intercept term when
+    Note that \code{x1} is not present; it is effectively a
+    vector of ones since it corresponds to an intercept term when
     \code{\link{cqo}} is applied to the data.
 
   }
@@ -289,8 +319,8 @@ rcqo(n, p, S, Rank = 1,
   \item{"formula"}{
     The formula involving the species and environmental
     variable names.
-    This can be used directly in the \code{formula} argument of
-    \code{\link{cqo}}.
+    This can be used directly in the \code{formula} argument
+    of \code{\link{cqo}}.
 
   }
   \item{"log.maximums"}{
@@ -317,10 +347,9 @@ rcqo(n, p, S, Rank = 1,
   }
   \item{"tolerances"}{
     The \eqn{S} by \eqn{R} matrix of species' tolerances.
-    These are the
-    square root of the diagonal elements of the tolerance matrices
-    (recall that all tolerance matrices are restricted to being
-    diagonal in this function).
+    These are the square root of the diagonal elements of the
+    tolerance matrices (recall that all tolerance matrices are
+    restricted to being diagonal in this function).
 
   }
   Other attributes are \code{"break"},
@@ -387,7 +416,7 @@ names(mydata)
 fit <- cqo(myform, poissonff, mydata, Bestof = 3)  # eq.tol = TRUE
 matplot(attr(mydata, "latvar"), mydata[,-(1:(p-1))], col = 1:S)
 persp(fit, col = 1:S, add = TRUE)
-lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)  # The same plot as above
+lvplot(fit, lcol = 1:S, y = TRUE, pcol = 1:S)  # Same plot as above
 
 # Compare the fitted model with the 'truth'
 concoef(fit)  # The fitted model

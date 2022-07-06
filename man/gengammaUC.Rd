@@ -89,7 +89,7 @@ Parameter estimation for a generalized gamma distribution.
 \dontrun{ x <- seq(0, 14, by = 0.01); d <- 1.5; Scale <- 2; k <- 6
 plot(x, dgengamma.stacy(x, Scale, d = d, k = k), type = "l",
      col = "blue", ylim = 0:1,
-     main = "Blue is density, orange is cumulative distribution function",
+     main = "Blue is density, orange is the CDF",
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qgengamma.stacy(seq(0.05, 0.95, by = 0.05), Scale, d = d, k = k),

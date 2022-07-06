@@ -54,6 +54,23 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   Deviance residuals are returned if \code{residuals = TRUE}.
 
   }
+
+
+  \item{\code{rqresslot}:}{
+  Object of class \code{"function"}
+  returning the randomized quantile residuals of the distibution.
+  This slot is optional.
+  If present, the function must have arguments
+  \code{function(mu, y, w, eta, extra = NULL)}.
+
+
+% 20220518; rquantile is another keyword.
+
+
+
+  }
+
+
   \item{\code{fini}:}{
   Object of class \code{"expression"} to insert
   code at a special position in \code{vglm.fit} or

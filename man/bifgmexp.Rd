@@ -1,15 +1,17 @@
 \name{bifgmexp}
 \alias{bifgmexp}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Bivariate Farlie-Gumbel-Morgenstern Exponential Distribution
-        Family Function }
+\title{ Bivariate Farlie-Gumbel-Morgenstern Exponential
+        Distribution Family Function }
 \description{
   Estimate the association parameter of FGM bivariate
   exponential distribution by maximum likelihood estimation.
 
 }
 \usage{
-bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01, imethod = 1)
+bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01,
+         imethod = 1)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,8 +43,9 @@ bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01, imethod = 1)
   }
   \item{imethod}{
   An integer with value \code{1} or \code{2} which
-  specifies the initialization method. If failure to converge occurs
-  try the other value, or else specify a value for \code{ia}.
+  specifies the initialization method. If failure to converge
+  occurs try the other value, or else specify a value for
+  \code{ia}.
 
 
   }
@@ -66,15 +69,17 @@ bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01, imethod = 1)
   parameter.
 
 
-  A variant of Newton-Raphson is used, which only seems to work for an
-  intercept model.
+  A variant of Newton-Raphson is used, which only seems to
+  work for an intercept model.
   It is a very good idea to set \code{trace = TRUE}.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}}
   and \code{\link{vgam}}.
 
 
@@ -83,7 +88,8 @@ bifgmexp(lapar = "rhobitlink", iapar = NULL, tola0 = 0.01, imethod = 1)
 \references{
 
 
-Castillo, E., Hadi, A. S., Balakrishnan, N. Sarabia, J. S. (2005).
+Castillo, E., Hadi, A. S.,
+Balakrishnan, N. and Sarabia, J. S. (2005).
 \emph{Extreme Value and Related Models with Applications in
       Engineering and Science},
 Hoboken, NJ, USA: Wiley-Interscience.
@@ -113,7 +119,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 N <- 1000; mdata <- data.frame(y1 = rexp(N), y2 = rexp(N))
 \dontrun{plot(ymat)}
 fit <- vglm(cbind(y1, y2) ~ 1, bifgmexp, data = mdata, trace = TRUE)
-fit <- vglm(cbind(y1, y2) ~ 1, bifgmexp, data = mdata, # This may fail
+fit <- vglm(cbind(y1, y2) ~ 1, bifgmexp, data = mdata, # May fail
             trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)

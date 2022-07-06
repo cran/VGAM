@@ -28,8 +28,8 @@
            pstr.mlm = 0,  # matrix
            pdip.mix = 0,  # vector
            pdip.mlm = 0,  # matrix
-           byrow.aid = FALSE,  # Applies to 'pobs.mlm' & 'pstr.mlm'
-           shape.a = shape.p, shape.i = shape.p, shape.d = shape.p,
+       byrow.aid = FALSE,  # Applies to 'pobs.mlm' & 'pstr.mlm'
+       shape.a = shape.p, shape.i = shape.p, shape.d = shape.p,
            log = FALSE) {
 
 

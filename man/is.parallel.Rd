@@ -46,8 +46,8 @@ is.parallel.vglm(object, type = c("term", "lm"), \dots)
   Note that parallelism can still be thought of as holding if
   the constraint matrix has a non-zero but constant values, however,
   this is currently not implemented.
-  No checking is done that the constraint matrices have the
-  same number of rows.
+  No checking is done that the constraint matrices have the same
+  number of rows.
 
 
 }

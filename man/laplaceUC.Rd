@@ -6,9 +6,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ The Laplace Distribution }
 \description{
-  Density, distribution function, quantile function and random generation
-  for the Laplace distribution with location parameter \code{location}
-  and scale parameter \code{scale}.
+  Density, distribution function, quantile function and random
+  generation for the Laplace distribution with location parameter
+  \code{location} and scale parameter \code{scale}.
 
 }
 \usage{
@@ -38,7 +38,8 @@ rlaplace(n, location = 0, scale = 1)
   }
   \item{log}{
   Logical.
-  If \code{log = TRUE} then the logarithm of the density is returned.
+  If \code{log = TRUE} then the logarithm of the density is
+  returned.
 
 
   }
@@ -52,8 +53,8 @@ rlaplace(n, location = 0, scale = 1)
 }
 \details{
   The Laplace distribution is often known as the double-exponential
-  distribution and, for modelling, has heavier tail
-  than the normal distribution.
+  distribution and, for modelling, has heavier tail than the
+  normal distribution.
   The Laplace density function is
   \deqn{f(y) = \frac{1}{2b} \exp \left( - \frac{|y-a|}{b}
                     \right) }{%
@@ -62,6 +63,7 @@ rlaplace(n, location = 0, scale = 1)
   \eqn{-\infty<a<\infty}{-Inf<a<Inf} and
   \eqn{b>0}.
   The mean is \eqn{a}{a} and the variance is \eqn{2b^2}.
+
 
 
   See \code{\link{laplace}}, the \pkg{VGAM} family function
@@ -108,8 +110,8 @@ var(y)   # sample variance
 2 * b^2  # population variance
 
 \dontrun{ loc <- 0; b <- 1.5; x <- seq(-5, 5, by = 0.01)
-plot(x, dlaplace(x, loc, b), type = "l", col = "blue", ylim = c(0,1),
-     main = "Blue is density, orange is cumulative distribution function",
+plot(x, dlaplace(x, loc, b), type = "l", col = "blue",
+     main = "Blue is density, orange is the CDF", ylim = c(0,1),
      sub = "Purple are 5,10,...,95 percentiles", las = 1, ylab = "")
 abline(h = 0, col = "blue", lty = 2)
 lines(qlaplace(seq(0.05,0.95,by = 0.05), loc, b),

@@ -12,16 +12,17 @@
 
 }
 \usage{
-uninormal(lmean = "identitylink", lsd = "loglink", lvar = "loglink",
-          var.arg = FALSE, imethod = 1, isd = NULL, parallel = FALSE,
-          smallno = 1e-05, zero = if (var.arg) "var" else "sd")
+uninormal(lmean = "identitylink", lsd = "loglink", lvar =
+          "loglink", var.arg = FALSE, imethod = 1, isd = NULL,
+          parallel = FALSE, smallno = 1e-05, zero = if (var.arg)
+          "var" else "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 %         apply.parint = FALSE,
 \arguments{
   \item{lmean, lsd, lvar}{
-  Link functions applied to the mean and standard deviation/variance.
-  See \code{\link{Links}} for more choices.
+  Link functions applied to the mean and standard
+  deviation/variance.  See \code{\link{Links}} for more choices.
   Being positive quantities, a log link is the default for the
   standard deviation and variance (see \code{var.arg}).
 
@@ -65,18 +66,21 @@ uninormal(lmean = "identitylink", lsd = "loglink", lvar = "loglink",
 
 }
 \details{
-  This fits a linear model (LM) as the first linear/additive predictor.
+  This fits a linear model (LM) as the first linear/additive
+  predictor.
   So, by default, this is just the mean.
   By default,
-  the log of the standard deviation is the second linear/additive predictor.
-  The Fisher information matrix is diagonal.
+  the log of the standard deviation is the second linear/additive
+  predictor.  The Fisher information matrix is diagonal.
   This \pkg{VGAM} family function can handle multiple responses.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -158,23 +162,23 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \examples{
 udata <- data.frame(x2 = rnorm(nn <- 200))
 udata <- transform(udata,
-                   y1  = rnorm(nn, m = 1 - 3*x2, sd = exp(1 + 0.2*x2)),
-                   y2a = rnorm(nn, m = 1 + 2*x2, sd = exp(1 + 2.0*x2)^0.5),
-                   y2b = rnorm(nn, m = 1 + 2*x2, sd = exp(1 + 2.0*x2)^0.5))
-fit1 <- vglm(y1 ~ x2, uninormal(zero = NULL), data = udata, trace = TRUE)
+           y1  = rnorm(nn, m = 1 - 3*x2, sd = exp(1 + 0.2*x2)),
+           y2a = rnorm(nn, m = 1 + 2*x2, sd = exp(1 + 2.0*x2)^0.5),
+           y2b = rnorm(nn, m = 1 + 2*x2, sd = exp(1 + 2.0*x2)^0.5))
+fit1 <- vglm(y1 ~ x2, uninormal(zero = NULL), udata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 fit2 <- vglm(cbind(y2a, y2b) ~ x2, data = udata, trace = TRUE,
              uninormal(var = TRUE, parallel = TRUE ~ x2,
                        zero = NULL))
 coef(fit2, matrix = TRUE)
 
-# Generate data from N(mu = theta = 10, sigma = theta) and estimate theta.
+# Generate data from N(mu=theta=10, sigma=theta) and estimate theta.
 theta <- 10
 udata <- data.frame(y3 = rnorm(100, m = theta, sd = theta))
 fit3a <- vglm(y3 ~ 1, uninormal(lsd = "identitylink"), data = udata,
              constraints = list("(Intercept)" = rbind(1, 1)))
-fit3b <- vglm(y3 ~ 1, uninormal(lsd = "identitylink", parallel = TRUE ~ 1,
-                                zero = NULL), data = udata)
+fit3b <- vglm(y3 ~ 1, uninormal(lsd = "identitylink",
+                        parallel = TRUE ~ 1, zero = NULL), udata)
 coef(fit3a, matrix = TRUE)
 coef(fit3b, matrix = TRUE)  # Same as fit3a
 }
