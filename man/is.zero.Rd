@@ -50,7 +50,8 @@ is.zero.vglm(object, \dots)
 }
 \seealso{
   \code{\link{constraints}},
-  \code{\link{vglm}}.
+  \code{\link{vglm}},
+  \code{\link{CommonVGAMffArguments}}.
 
 
 }

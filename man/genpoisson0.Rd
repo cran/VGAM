@@ -108,7 +108,7 @@ it not being normalized, so this family function restricts
 
 This original parameterization is called the GP-0 by \pkg{VGAM},
 partly because there are two other common parameterizations
-called the GP-1 and GP-2 (see Yang et al. (2009),
+called the GP-1 and GP-2 (see Yang et al. (2009)),
 \code{\link{genpoisson1}}
 and \code{\link{genpoisson2}})
 that are more suitable for regression.

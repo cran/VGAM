@@ -22,7 +22,7 @@
 \usage{
 vcov(object, \dots)
 vcovvlm(object, dispersion = NULL, untransform = FALSE,
-        complete = TRUE)
+        complete = TRUE, \dots)
 vcovqrrvglm(object, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -53,8 +53,14 @@ vcovqrrvglm(object, \dots)
 
   }
  \item{complete}{An argument that is currently ignored.
-   Added only so that \code{\link[car]{linearHypothesis}}
+   Added only so that
+   \code{linearHypothesis()} in \pkg{car}
    can be called.
+
+
+%  20230309; was:
+%  \code{\link[car]{linearHypothesis}}
+
 
 
 

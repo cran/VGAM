@@ -11,18 +11,19 @@
 }
 \usage{
 zapoisson(lpobs0 = "logitlink", llambda = "loglink", type.fitted =
-          c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
-          ipobs0 = NULL, ilambda = NULL, ishrinkage = 0.95, probs.y = 0.35,
-          zero = NULL)
+    c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
+    ipobs0 = NULL, ilambda = NULL, ishrinkage = 0.95, probs.y = 0.35,
+    zero = NULL)
 zapoissonff(llambda = "loglink", lonempobs0 = "logitlink", type.fitted =
-            c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
-            ilambda = NULL, ionempobs0 = NULL, ishrinkage = 0.95,
-            probs.y = 0.35, zero = "onempobs0")
+    c("mean", "lambda", "pobs0", "onempobs0"), imethod = 1,
+    ilambda = NULL, ionempobs0 = NULL, ishrinkage = 0.95,
+    probs.y = 0.35, zero = "onempobs0")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lpobs0}{
-  Link function for the parameter \eqn{p_0}{pobs0}, called \code{pobs0} here.
+  Link function for the parameter \eqn{p_0}{pobs0}, called
+  \code{pobs0} here.
   See \code{\link{Links}} for more choices.
 
   }
@@ -148,7 +149,8 @@ A Bayesian analysis of zero-inflated generalized Poisson model.
 
 
   Yee, T. W. (2014).
-  Reduced-rank vector generalized linear models with two linear predictors.
+  Reduced-rank vector generalized linear models with two linear
+  predictors.
   \emph{Computational Statistics and Data Analysis},
   \bold{71}, 889--902.
 

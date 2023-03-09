@@ -104,7 +104,7 @@ Lemonte, A. J. and Cribari-Neto, F. and
 Vasconcellos, K. L. P. (2007).
 Improved statistical inference for the two-parameter
 Birnbaum-Saunders distribution.
-\emph{Computational Statistics and Data Analysis},
+\emph{Computational Statistics & Data Analysis},
 \bold{51}, 4656--4681.
 
 

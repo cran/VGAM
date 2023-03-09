@@ -240,8 +240,8 @@ vglm(formula,
 
   If the \code{constraints} argument is used then the
   family function's \code{zero} argument (if it exists)
-  needs to be set to
-  \code{NULL}. This avoids what could be a probable contradiction.
+  needs to be set to \code{NULL}.
+  This avoids what could be a probable contradiction.
   Sometimes setting other arguments related to constraint
   matrices to \code{FALSE} is also a good idea, e.g.,
   \code{parallel = FALSE},

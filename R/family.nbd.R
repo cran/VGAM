@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -683,7 +683,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize))),
 
-  vfamily = c("negbinomial"),
+  vfamily = c("negbinomial",
+              "VGAMcategorical"),  # For "margeff"
 
 
 

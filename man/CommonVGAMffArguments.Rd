@@ -5,12 +5,12 @@
 \description{
   Here is a description of some common and typical arguments found
   in many \pkg{VGAM} family functions, e.g.,
+  \code{zero},
   \code{lsigma},
   \code{isigma},
   \code{gsigma},
-  \code{nsimEI},
-  \code{parallel} and
-  \code{zero}.
+  \code{nsimEI} and
+  \code{parallel}.
 
 }
 \usage{
@@ -361,6 +361,7 @@ except for \eqn{X_2}.
   a matrix of responses).
 
 
+
   
   Suppose \code{zero = zerovec} where \code{zerovec} is a vector
   of negative values. If \eqn{G} is the usual \eqn{M} value for
@@ -419,6 +420,21 @@ In the future, most \pkg{VGAM} family functions might be converted
 % When programming a \pkg{VGAM} family function that allows character
 % input, the variables \code{parameters.names}
 % and \code{Q1}
+
+
+
+
+% 20230209; the following paragraph comes from Comm*Rd:
+
+
+  If the \code{constraints} argument is used then the
+  family function's \code{zero} argument (if it exists)
+  needs to be set to
+  \code{NULL}. This avoids what could be a probable contradiction.
+  Sometimes setting other arguments related to constraint
+  matrices to \code{FALSE} is also a good idea, e.g.,
+  \code{parallel = FALSE},
+  \code{exchangeable = FALSE}.
 
 
 

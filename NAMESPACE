@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,6 +14,11 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
+
+
+
+
+export(CMs.equidistant)
 importFrom("stats", "pexp")
 exportMethods(rqresid)
 exportMethods(rqresiduals)
@@ -254,7 +259,8 @@ S3method(coef, vlm, coefvlm)
 S3method(df.residual, vlm, df.residual_vlm)
 S3method(model.matrix, vlm, model.matrixvlm)
 S3method(formula, vlm, formulavlm)
-export(vcov.vlm, coef.vlm, formula.vlm, model.matrix.vlm)
+  export(vcov.vlm, coef.vlm)
+export(formula.vlm, model.matrix.vlm)
 export(has.interceptvlm)
 exportMethods(has.intercept)
 export(term.namesvlm)
@@ -321,8 +327,12 @@ export(nparam, nparam.vlm, nparam.vgam, nparam.rrvglm, nparam.qrrvglm, nparam.rr
 export(linkfunvlm)
 exportMethods(linkfun)
 export(sm.bs, sm.ns, sm.scale.default, sm.poly, sm.scale)
+
+
 exportMethods(coefficients, coef)
 importFrom("stats", coefficients, coef)
+
+
 
 
 export(expected.betabin.ab, grid.search, grid.search2, grid.search3, grid.search4)
@@ -401,8 +411,8 @@ exportMethods(nobs)
 
 
 
-importFrom("stats4", AIC, coef, summary, plot, logLik, vcov)
-exportMethods(AIC, AICc, coef, summary, plot, logLik, vcov)
+importFrom("stats4", AIC, summary, plot, logLik, coef, vcov)
+exportMethods(AIC, AICc,  summary, plot, logLik, coef, vcov)
 
 
 export(npred, npred.vlm)
@@ -988,12 +998,11 @@ terms,
 model.frame,
 model.matrix,
 summary,
-coef,
+coef, vcov,
 AIC,
 AICc,
 plot,
 logLik,
-vcov,
 deviance,
 cdf, df.residual,
 lv, latvar, Max, Opt, Tol,
@@ -1004,6 +1013,6 @@ weights,
 persp)
 
 
- exportMethods(AIC, AICc, coef, summary, plot, logLik, vcov)
+ exportMethods(AIC, AICc, summary, plot, logLik, coef, vcov)
 
 

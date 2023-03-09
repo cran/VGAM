@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -784,7 +784,9 @@ setMethod("summaryvglmS4VGAM",  signature(VGAMff = "binom2.or"),
            VGAMff,
            ...) {
 
-  cfit <- coef.vlm(object, matrix = TRUE)
+
+  cfit <- coefvlm(object, matrix.out = TRUE)
+
   if (rownames(cfit)[1] == "(Intercept)" &&
       all(cfit[-1, 3] == 0)) {
     object@post$oratio <- eta2theta(cfit[1, 3],

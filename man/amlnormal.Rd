@@ -6,8 +6,8 @@
   Asymmetric least squares,
   a special case of maximizing an asymmetric
   likelihood function of a normal distribution.
-  This allows for expectile/quantile regression using asymmetric least
-  squares error loss.
+  This allows for expectile/quantile regression using asymmetric
+  least squares error loss.
 
 }
 \usage{
@@ -27,10 +27,10 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
   }
   \item{parallel}{
   If \code{w.aml} has more than one value then
-  this argument allows the quantile curves to differ by the same amount
-  as a function of the covariates.
-  Setting this to be \code{TRUE} should force the quantile curves to
-  not cross (although they may not cross anyway).
+  this argument allows the quantile curves to differ
+  by the same amount as a function of the covariates.
+  Setting this to be \code{TRUE} should force the quantile
+  curves to not cross (although they may not cross anyway).
   See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
@@ -44,9 +44,9 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 
   }
   \item{digw }{
-  Passed into \code{\link[base]{Round}} as the \code{digits} argument
-  for the \code{w.aml} values;
-  used cosmetically for labelling.
+  Passed into \code{\link[base]{Round}} as the \code{digits}
+  argument for the \code{w.aml} values; used cosmetically for
+  labelling.
 
   }
 }
@@ -67,9 +67,9 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}} and \code{\link{vgam}}.
 
 
 }
@@ -84,33 +84,36 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 
 \author{ Thomas W. Yee }
 \note{
-  On fitting, the \code{extra} slot has list components \code{"w.aml"} and
-  \code{"percentile"}. The latter is the percent of observations below
-  the ``w-regression plane'', which is the fitted values.
+  On fitting, the \code{extra} slot has list components
+  \code{"w.aml"} and \code{"percentile"}. The latter is the
+  percent of observations below the ``w-regression plane'',
+  which is the fitted values.
 
 
-  One difficulty is finding the \code{w.aml} value giving a specified
-  percentile. One solution is to fit the model within a root finding
-  function such as \code{\link[stats]{uniroot}}; see the example below.
+  One difficulty is finding the \code{w.aml} value giving a
+  specified percentile. One solution is to fit the model within
+  a root finding function such as \code{\link[stats]{uniroot}};
+  see the example below.
 
 
-  For \code{amlnormal} objects, methods functions for the generic functions
-  \code{qtplot} and \code{cdf} have not been written yet.
+  For \code{amlnormal} objects, methods functions for the
+  generic functions \code{qtplot} and \code{cdf} have not been
+  written yet.
 
 
-  See the note in \code{\link{amlpoisson}} on the jargon, including
-  \emph{expectiles} and \emph{regression quantiles}.
+  See the note in \code{\link{amlpoisson}} on the jargon,
+  including \emph{expectiles} and \emph{regression quantiles}.
 
 
   The \code{deviance} slot computes the total asymmetric squared error
   loss (2.5).
-  If \code{w.aml} has more than one value then the value returned by
-  the slot is the sum taken over all the \code{w.aml} values.
+  If \code{w.aml} has more than one value then the value returned
+  by the slot is the sum taken over all the \code{w.aml} values.
 
 
-  This \pkg{VGAM} family function could well be renamed \code{amlnormal()}
-  instead, given the other function names \code{\link{amlpoisson}},
-  \code{\link{amlbinomial}}, etc.
+  This \pkg{VGAM} family function could well be renamed
+  \code{amlnormal()} instead, given the other function names
+  \code{\link{amlpoisson}}, \code{\link{amlbinomial}}, etc.
 
 
   In this documentation the word \emph{quantile} can often be
@@ -146,7 +149,7 @@ amlnormal(w.aml = 1, parallel = FALSE, lexpectile = "identitylink",
 # Example 1
 ooo <- with(bmi.nz, order(age))
 bmi.nz <- bmi.nz[ooo, ]  # Sort by age
-(fit <- vglm(BMI ~ sm.bs(age), amlnormal(w.aml = 0.1), data = bmi.nz))
+(fit <- vglm(BMI ~ sm.bs(age), amlnormal(w.aml = 0.1), bmi.nz))
 fit@extra  # Gives the w value and the percentile
 coef(fit, matrix = TRUE)
 
@@ -167,8 +170,9 @@ with(bmi.nz, plot(age, BMI, col = "blue", las = 1, main =
      "25, 50 and 75 expectile-percentile curves"))
 for (myp in c(25, 50, 75)) {
 # Note: uniroot() can only find one root at a time
-  bestw <- uniroot(f = find.w, interval = c(1/10^4, 10^4), percentile = myp)
-  fit2 <- vglm(BMI ~ sm.bs(age), amlnormal(w = bestw$root), data = bmi.nz)
+  bestw <- uniroot(f = find.w, interval = c(1/10^4, 10^4),
+                   percentile = myp)
+  fit2 <- vglm(BMI ~ sm.bs(age), amlnormal(w = bestw$root), bmi.nz)
   with(bmi.nz, lines(age, c(fitted(fit2)), col = "orange"))
 }
 
@@ -185,8 +189,8 @@ coef(fit3, matrix = TRUE)
 
 # Quantile plot
 with(bmi.nz, plot(age, BMI, col="blue", main =
-     paste(paste(round(fit3@extra$percentile, digits = 1), collapse = ", "),
-           "expectile-percentile curves")))
+  paste(paste(round(fit3@extra$percentile, digits = 1), collapse = ", "),
+        "expectile-percentile curves")))
 with(bmi.nz, matlines(age, fitted(fit3), col = 1:fit3@extra$M, lwd = 2))
 with(bmi.nz, lines(age, c(fitted(fit )), col = "black"))  # For comparison
 }

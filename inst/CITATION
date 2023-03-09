@@ -6,9 +6,9 @@ year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
 
 
-citEntry(entry = "Book",
+bibentry(bibtype = "Book",
   title        = "Vector Generalized Linear and Additive Models: With an Implementation in R",
-  author       = personList(as.person("Thomas W. Yee")),
+  author       = person(c("T.", "W."), "Yee"),
   year         = "2015",
   publisher    = "Springer",
   address      = "New York, USA",
@@ -20,10 +20,10 @@ citEntry(entry = "Book",
 
 
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "Vector Generalized Additive Models",
-  author       = personList(as.person("Thomas W. Yee"),
-                            as.person("C. J. Wild")),
+  author       = c(person(c("T.", "W."), "Yee"),
+                   person(c("C.", "J."), "Wild")),
   journal      = "Journal of Royal Statistical Society, Series B",
   year         = "1996",
   volume       = "58",
@@ -38,9 +38,9 @@ citEntry(entry = "Article",
 
 
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "The {VGAM} Package for Categorical Data Analysis",
-  author       = personList(as.person("Thomas W. Yee")),
+  author       = person(c("T.", "W."), "Yee"),
   journal      = "Journal of Statistical Software",
   year         = "2010",
   volume       = "32",
@@ -59,10 +59,10 @@ citEntry(entry = "Article",
 
 
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "Row-column interaction models, with an {R} implementation",
-  author       = personList(as.person("Thomas W. Yee"),
-                            as.person("Alfian F. Hadi")),
+  author       = c(person(c("T.", "W."), "Yee"),
+                   person(c("A.", "F."), "Hadi")),
   journal      = "Computational Statistics",
   year         = "2014",
   volume       = "29",
@@ -78,9 +78,9 @@ citEntry(entry = "Article",
 
 
 
-citEntry(entry = "Manual",
+bibentry(bibtype = "Manual",
          title = "{VGAM}: Vector Generalized Linear and Additive Models",
-         author = personList(as.person("Thomas W. Yee")),
+  author       = person(c("T.", "W."), "Yee"),
          year = year,
          note = note,
          url = "https://CRAN.R-project.org/package=VGAM",
@@ -96,12 +96,14 @@ citEntry(entry = "Manual",
 
 
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "Two-parameter reduced-rank vector generalized linear models",
-  author       = personList(as.person("Thomas W. Yee")),
+  author       = person(c("T.", "W."), "Yee"),
   journal      = "Computational Statistics and Data Analysis",
   year         = "2013",
-
+  volume       = "71",
+# number       = "",    # None
+  pages        = "889--902",
   textVersion  =
   paste("Thomas W. Yee (2013).",
         "Two-parameter reduced-rank vector generalized linear models.",
@@ -111,11 +113,12 @@ citEntry(entry = "Article",
 
 
 
-citEntry(entry = "Article",
-  title        = "The {VGAM} Package for Capture-Recapture Data Using the Conditional Likelihood",
-  author       = personList(as.person("Thomas W. Yee"),
-                   as.person("Jakub Stoklosa"),
-                   as.person("Richard M. Huggins")),
+bibentry(bibtype = "Article",
+  title        = c("The {VGAM} Package for Capture-Recapture Data ",
+                   "Using the Conditional Likelihood"),
+  author       = c(person(c("T.", "W."), "Yee"),
+                   person(c("J."), "Stoklosa"),
+                   person(c("R.", "M."), "Huggins")),
   journal      = "Journal of Statistical Software",
   year         = "2015",
   volume       = "65",
@@ -133,9 +136,10 @@ citEntry(entry = "Article",
 )
 
 
-citEntry(entry = "Article",
+
+bibentry(bibtype = "Article",
   title        = "The {VGAM} package for negative binomial regression",
-  author       = personList(as.person("Thomas W. Yee")),
+  author       = person(c("T.", "W."), "Yee"),
   journal      = "Australian and New Zealand Journal of Statistics",
   year         = "2020",
   volume       = "62",

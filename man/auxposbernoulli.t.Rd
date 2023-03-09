@@ -80,7 +80,8 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
 %  Models \eqn{M_{tbh}}{M_tbh} can be fitted using the
 %  \code{xij} argument (see \code{\link{vglm.control}})
 %  to input the behavioural effect indicator variables.
-%  Rather than manually setting these up, they may be more conveniently
+%  Rather than manually setting these up, they may be
+%  more conveniently
 %  obtained by \code{\link{aux.posbernoulli.t}}. See
 %  the example below.
 %
@@ -102,7 +103,8 @@ aux.posbernoulli.t(y, check.y = FALSE, rename = TRUE, name = "bei")
 
 \examples{
 # Fit a M_tbh model to the deermice data:
-(pdata <- aux.posbernoulli.t(with(deermice, cbind(y1, y2, y3, y4, y5, y6))))
+(pdata <- aux.posbernoulli.t(with(deermice,
+                                  cbind(y1, y2, y3, y4, y5, y6))))
 
 deermice <- data.frame(deermice,
                     bei = 0,  # Add this

@@ -131,6 +131,10 @@
 \alias{margeffS4VGAM,ANY,ANY,cumulative-method}
 \alias{margeffS4VGAM,ANY,ANY,multinomial-method}
 \alias{margeffS4VGAM,ANY,ANY,tobit-method}
+% 202209:
+\alias{margeffS4VGAM,ANY,ANY,poissonff-method}
+\alias{margeffS4VGAM,ANY,ANY,negbinomial-method}
+\alias{margeffS4VGAM,ANY,ANY,posnegbinomial-method}
 %
 %\alias{margeffS4VGAM,ANY,VGAMcategorical-method}
 %\alias{margeffS4VGAM,ANY,VGAMordinal-method}

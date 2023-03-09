@@ -15,19 +15,22 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
   \item{link}{
   Link function applied to the mean response.
   The default is suitable for continuous responses.
-  The link \code{\link{loglink}} should be chosen if the data are counts.
-  The link \code{\link{reciprocal}} can be chosen if the data are counts
+  The link \code{\link{loglink}} should be chosen if the data
+  are counts.
+  The link \code{\link{reciprocal}} can be chosen if the data
+  are counts
   and the variance assumed for this is \eqn{\mu^2}{mu^2}.
   The links \code{\link{logitlink}}, \code{\link{probitlink}},
   \code{\link{clogloglink}}, and
-  \code{\link{cauchitlink}} are supported and suitable for binary responses.
+  \code{\link{cauchitlink}} are supported and suitable for
+  binary responses.
 
 
   Note that when the log or logit link is chosen:
   for log and logit,
   zero values can be replaced by \code{bvalue}.
-  See \code{\link{loglink}} and \code{\link{logitlink}} etc. for specific
-  information about each link function.
+  See \code{\link{loglink}} and \code{\link{logitlink}} etc. for
+  specific information about each link function.
 
 
   }

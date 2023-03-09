@@ -1,3 +1,32 @@
+                CHANGES IN VGAM VERSION 1.1-8
+
+NEW FEATURES
+
+    o   Warnings from R-devel addressed.
+    o   acat(), cumulative(), cratio(), sratio() have arguments
+        'thresholds', 'Tref', 'Treverse'.
+    o   hdeffsev() has been edited.
+    o   margeff() works for poissonff(), negbinomial() and
+        posnegbinomial() objects.
+    o   multilogit() did not handle 1-row arguments correctly when
+        'inverse = FALSE'. Now vglm(y, multinomial) handles a 1-row y,
+        as well as acat and cumulative and [cs]ratio.
+    o   rrvglm.fit() is more robust with respect to 'one.more'.
+    o   plot.vgam() issues an error if sm.os()/sm.ps() is used with
+        deriv.arg > 0.
+    o   New data set: budworm.
+
+
+
+BUG FIXES and CHANGES
+
+    o   rainbow.sky has a new green.
+    o   zoabetaR() handles the argument 'constraints'. Thanks
+        to Riccardo Lo Martire for helping to find the bug.
+
+
+
+
                 CHANGES IN VGAM VERSION 1.1-7
 
 NEW FEATURES

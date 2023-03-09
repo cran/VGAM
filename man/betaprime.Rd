@@ -21,8 +21,7 @@ betaprime(lshape = "loglink", ishape1 = 2, ishape2 = NULL,
 
   }
   \item{ishape1, ishape2, zero}{
-  See
-  \code{\link{CommonVGAMffArguments}}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
 % Initial values for the first and second shape parameters.

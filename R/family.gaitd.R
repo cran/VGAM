@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -6244,7 +6244,8 @@ plotdgaitd.vglm <-
            truncate = NULL,    #  max.support = Inf,
            zero = c("size", "pobs", "pstr", "pdip"),
            eq.ap = TRUE, eq.ip = TRUE, eq.dp = TRUE,
-           parallel.a = FALSE, parallel.i = FALSE, parallel.d = FALSE,
+           parallel.a = FALSE, parallel.i = FALSE,
+           parallel.d = FALSE,
            lmunb.p = "loglink",
            lmunb.a = lmunb.p, lmunb.i = lmunb.p, lmunb.d = lmunb.p,
            lsize.p = "loglink",
@@ -6260,7 +6261,7 @@ plotdgaitd.vglm <-
            gpstr.mix = ppoints(7) / 3,  # ppoints(9) / 2,
            gpstr.mlm = ppoints(7) / (3 + length(i.mlm)),
            imethod = 1,
-           mux.init = c(0.75, 0.5, 0.75, 0.5),  # Order is A, I, D, size
+           mux.init = c(0.75, 0.5, 0.75, 0.5),  # Order is A,I,D,size
            imunb.p = NULL, imunb.a = imunb.p,
            imunb.i = imunb.p, imunb.d = imunb.p,
            isize.p = NULL,    # NULL, 1 is easy but inflexible
@@ -6581,7 +6582,7 @@ plotdgaitd.vglm <-
 
  
 
-    tmp3.TF.subset <- tmp3.TF[-(12:14)]  # tmp3.TF[-(8:10)] for Poisson
+    tmp3.TF.subset <- tmp3.TF[-(12:14)]  # tmp3.TF[-(8:10)] 4 Poisson
     use.mat.mix <- use.mat.mix[tmp3.TF.subset, , drop = FALSE]
     notall0 <- function(x) !all(x == 0)
     use.mat.mix <- use.mat.mix[, apply(use.mat.mix, 2, notall0),
@@ -6607,7 +6608,8 @@ plotdgaitd.vglm <-
                        matrix(0, nrow(Use.mat),  # RHS
                                  ncol(use.mat.mlm) - 1))
       Use.mat[row(Use.mat) > nrow(use.mat.mix) &
-              col(Use.mat) > ncol(use.mat.mix)] <- use.mat.mlm[-1, -1]
+              col(Use.mat) > ncol(use.mat.mix)] <-
+          use.mat.mlm[-1, -1]
     }  # la.mlm + li.mlm + ld.mlm > 0
 
 

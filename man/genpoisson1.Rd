@@ -73,7 +73,7 @@ genpoisson1(lmeanpar = "loglink", ldispind = "logloglink",
   This is a variant of the generalized Poisson distribution (GPD)
   and is similar to the
   GP-1 referred to by some writers such as Yang, et al. (2009).
-  Compared to the original GP-0 (see \code{\link{genpoisson0}}
+  Compared to the original GP-0 (see \code{\link{genpoisson0}})
   the GP-1 has
   \eqn{\theta  = \mu / \sqrt{\varphi}} and
   \eqn{\lambda = 1 - 1 / \sqrt{\varphi}} so that

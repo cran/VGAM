@@ -8,17 +8,19 @@
 
 }
 \usage{
-genbetaII(lscale = "loglink", lshape1.a = "loglink", lshape2.p = "loglink",
-          lshape3.q = "loglink", iscale = NULL, ishape1.a = NULL,
-          ishape2.p = NULL, ishape3.q = NULL, lss = TRUE,
-          gscale = exp(-5:5), gshape1.a = exp(-5:5),
-          gshape2.p = exp(-5:5), gshape3.q = exp(-5:5),
-          zero = "shape")
+genbetaII(lscale = "loglink", lshape1.a = "loglink",
+     lshape2.p = "loglink", lshape3.q = "loglink",
+     iscale = NULL, ishape1.a = NULL,
+     ishape2.p = NULL, ishape3.q = NULL, lss = TRUE,
+     gscale = exp(-5:5), gshape1.a = exp(-5:5),
+     gshape2.p = exp(-5:5), gshape3.q = exp(-5:5), zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 %         zero = ifelse(lss, -(2:4), -c(1, 3:4))
 \arguments{
-  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  \item{lss}{
+  See \code{\link{CommonVGAMffArguments}} for important
+  information.
 
 
   }
@@ -84,18 +86,21 @@ genbetaII(lscale = "loglink", lshape1.a = "loglink", lshape2.p = "loglink",
 The 4-parameter generalized beta II distribution has density
   \deqn{f(y) = a y^{ap-1} / [b^{ap} B(p,q) \{1 + (y/b)^a\}^{p+q}]}{%
         f(y) = a y^(ap-1) / [b^(ap) B(p,q) (1 + (y/b)^a)^(p+q)]}
-  for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0}, \eqn{y \geq 0}{y >= 0}.
+for \eqn{a > 0}, \eqn{b > 0}, \eqn{p > 0}, \eqn{q > 0},
+\eqn{y \geq 0}{y >= 0}.
 Here \eqn{B} is the beta function, and
 \eqn{b} is the scale parameter \code{scale},
 while the others are shape parameters.
 The mean is
-  \deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(q - 1/a) / (\Gamma(p) \, \Gamma(q))}{%
-        E(Y) = b  gamma(p + 1/a)  gamma(q - 1/a) / ( gamma(p)  gamma(q))}
+\deqn{E(Y) = b \, \Gamma(p + 1/a) \, \Gamma(q - 1/a) / (\Gamma(p) \,
+      \Gamma(q))}{%
+      E(Y) = b  gamma(p + 1/a)  gamma(q - 1/a) / ( gamma(p)  gamma(q))}
 provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.
 
 
 %The distribution is motivated by the incomplete beta function
-%\eqn{B_y(p,q)} which is the integral from 0 to \eqn{y} of the integrand
+%\eqn{B_y(p,q)} which is the integral from 0 to \eqn{y}
+%of the integrand
 %\eqn{u^{p-1} (1-u)^{q-1}}{u^(p-1) (1-u)^(q-1)} where \eqn{y>0}.
 
 
@@ -104,9 +109,9 @@ provided \eqn{-ap < 1 < aq}; these are returned as the fitted values.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 }
@@ -146,18 +151,18 @@ see \code{\link{vglm.control}}.
 }
 \section{Warning}{
   This distribution is very flexible and it is not generally
-  recommended to use this family function when the sample size is
-  small---numerical problems easily occur with small samples.
-  Probably several hundred observations at least are needed in order
-  to estimate the parameters with any level of confidence.
+  recommended to use this family function when the sample size
+  is small---numerical problems easily occur with small samples.
+  Probably several hundred observations at least are needed in
+  order to estimate the parameters with any level of confidence.
   Neither is the inclusion of covariates recommended at all---not
-  unless there are several thousand observations.
-  The mean is finite only when \eqn{-ap < 1 < aq}, and this can be
-  easily violated by the parameter estimates for small sample sizes.
+  unless there are several thousand observations.  The mean is
+  finite only when \eqn{-ap < 1 < aq}, and this can be easily
+  violated by the parameter estimates for small sample sizes.
   Try fitting some of the special cases of this distribution
-  (e.g., \code{\link{sinmad}}, \code{\link{fisk}}, etc.) first, and
-  then possibly use those models for initial values for this
-  distribution.
+  (e.g., \code{\link{sinmad}}, \code{\link{fisk}}, etc.) first,
+  and then possibly use those models for initial values for
+  this distribution.
 
 
 

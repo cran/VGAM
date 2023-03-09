@@ -14,8 +14,9 @@
 }
 \usage{
 hdeff(object, ...)
-hdeff.vglm(object, derivative = NULL, se.arg = FALSE, subset = NULL,
-           theta0 = 0, hstep = 0.005, fd.only = FALSE, ...)
+hdeff.vglm(object, derivative = NULL, se.arg = FALSE,
+           subset = NULL, theta0 = 0, hstep = 0.005,
+           fd.only = FALSE, ...)
 hdeff.numeric(object, byrow = FALSE, ...)
 hdeff.matrix(object, ...)
 }
@@ -46,17 +47,22 @@ hdeff.matrix(object, ...)
 
   Alternatively \code{object} may represent a 2 x 2 table of
   \emph{positive} counts.
-  If so, then the first row corresponds to \eqn{x2=0} (baseline group)
+  If so, then the first row corresponds
+  to \eqn{x2=0} (baseline group)
   and the second row \eqn{x2=1}. The first column
   corresponds to \eqn{y=0} (failure) and
   the second column \eqn{y=1} (success).
 
 
 
-  Another alternative is that \code{object} is a numerical vector
-  of length 4, representing a 2 x 2 table of \emph{positive} counts.
-  If so then it is fed into \code{hdeff.matrix} using
-  the argument \code{byrow}, which matches \code{\link[base]{matrix}}.
+  Another alternative is that \code{object} is
+  a numerical vector
+  of length 4, representing a 2 x 2 table
+  of \emph{positive} counts.
+  If so then it is fed into \code{hdeff.matrix}
+  using
+  the argument \code{byrow}, which matches
+  \code{\link[base]{matrix}}.
   See the examples below.
 
 
@@ -70,7 +76,8 @@ hdeff.matrix(object, ...)
 
   \item{derivative}{
   Numeric. Either 1 or 2.
-  Currently only a few models having one linear predictor are handled
+  Currently only a few models having
+  one linear predictor are handled
   analytically for \code{derivative = 2}, e.g.,
   \code{\link{binomialff}},
   \code{\link{poissonff}}.
@@ -80,11 +87,12 @@ hdeff.matrix(object, ...)
 
   }
   \item{se.arg}{
-  Logical. If \code{TRUE} then the derivatives of the standard errors
-  are returned as well, because usually the derivatives of the
-  Wald statistics are of central interest.
-  Requires \code{derivative} to be assigned the value 1 or 2
-  for this argument to operate.
+    Logical. If \code{TRUE} then the derivatives
+    of the standard errors
+  are returned as well, because usually the derivatives of
+  the Wald statistics are of central interest.  Requires
+  \code{derivative} to be assigned the value 1 or 2 for this
+  argument to operate.
 
 
   }
@@ -95,10 +103,10 @@ hdeff.matrix(object, ...)
   Recycled if necessary if logical.
   If numeric then they should comprise
   elements from \code{1:length(coef(object))}.
-  This argument can be useful for computing the derivatives
-  of a Cox regression (\code{\link{coxph}}) fitted using
-  artificially created Poisson data; then there are
-  many coefficients that are effectively nuisance parameters.
+  This argument can be useful for computing the derivatives of a
+  Cox regression (\code{\link{coxph}}) fitted using artificially
+  created Poisson data; then there are many coefficients that
+  are effectively nuisance parameters.
 
 
   }
@@ -120,8 +128,8 @@ hdeff.matrix(object, ...)
   \item{hstep}{
     Positive numeric and recycled to length 2;
     it is the so-called \emph{step size} when using
-    finite-differences and is often called \eqn{h} in the calculus
-    literature,
+    finite-differences and is often called \eqn{h} in
+    the calculus literature,
     e.g., \eqn{f'(x)} is approximately \eqn{(f(x+h) - f(x)) / h}.
     For the 2nd-order partial derivatives, there are two step sizes
     and hence this argument is recycled to length 2.
@@ -130,7 +138,8 @@ hdeff.matrix(object, ...)
     It is recommended that a few values of this argument be tried
     because values of the first and second derivatives can
     vary accordingly.
-    If any values are too large then the derivatives may be inaccurate;
+    If any values are too large then the derivatives
+    may be inaccurate;
     and if too small then the derivatives may be unstable and
     subject to too much round-off/cancellation error
     (in fact it may create an error or a \code{NA}).
@@ -140,9 +149,9 @@ hdeff.matrix(object, ...)
   \item{fd.only}{
     Logical;
     if \code{TRUE} then finite-differences are used to estimate
-    the derivatives even if an analytical solution has been coded,
-    By default, finite-differences will be used
-    when an analytical solution has not been implemented.
+    the derivatives even if an analytical solution has been
+    coded, By default, finite-differences will be used when an
+    analytical solution has not been implemented.
 
 
 
@@ -164,9 +173,9 @@ hdeff.matrix(object, ...)
   }
   \item{byrow}{
     Logical;
-    fed into \code{\link[base]{matrix}} if \code{object} is a
-    vector of length 4 so that there are two choices in
-    the order of the elements.
+    fed into \code{\link[base]{matrix}} if \code{object} is
+    a vector of length 4 so that there are two choices in the
+    order of the elements.
 
 
 
@@ -184,29 +193,30 @@ hdeff.matrix(object, ...)
   }
 }
 \details{
-Almost all of statistical inference based on the likelihood assumes
-that the parameter estimates are located in the interior of the
-parameter space.  The nonregular case of being located on the boundary
-is not considered very much and leads to very different results from the
-regular case.  Practically, an important question is: how close is close
-to the boundary?  One might answer this as: the parameter estimates are
-too close to the boundary when the Hauck-Donner effect (HDE) is present,
+Almost all of statistical inference based on the likelihood
+assumes that the parameter estimates are located in the interior
+of the parameter space.  The nonregular case of being located
+on the boundary is not considered very much and leads to
+very different results from the regular case.  Practically,
+an important question is: how close is close to the boundary?
+One might answer this as: the parameter estimates are too close
+to the boundary when the Hauck-Donner effect (HDE) is present,
 whereby the Wald statistic becomes aberrant.
 
 
 
-Hauck and Donner (1977) first observed an aberration of the Wald test
-statistic not monotonically increasing as a function of increasing
-distance between the parameter estimate and the null value.  This
-"disturbing" and "undesirable" underappreciated effect has since been
-observed in other regression models by various authors.  This function
-computes the first, and possibly second, derivative of the Wald
-statistic for each regression coefficient.  A negative value of the
-first derivative is indicative of the HDE being present.
-More information can be obtained from \code{\link{hdeffsev}}
-regarding HDE severity: there may be none,
-faint, weak, moderate, strong and extreme amounts of HDE
-present.
+Hauck and Donner (1977) first observed an aberration of the
+Wald test statistic not monotonically increasing as a function
+of increasing distance between the parameter estimate and the
+null value.  This "disturbing" and "undesirable" underappreciated
+effect has since been observed in other regression models by
+various authors.  This function computes the first, and possibly
+second, derivative of the Wald statistic for each regression
+coefficient.  A negative value of the first derivative is
+indicative of the HDE being present.  More information can be
+obtained from \code{\link{hdeffsev}} regarding HDE severity:
+there may be none, faint, weak, moderate, strong and extreme
+amounts of HDE present.
 
 
 
@@ -266,21 +276,21 @@ does not suffer from the HDE.
   derivatives of the Wald statistics.
   Setting \code{deriv = 2} returns a 2-column matrix of first
   and second derivatives of the Wald statistics.
-  Then
-  setting \code{se.arg = TRUE} returns an additional 1 or 2 columns.
+  Then setting \code{se.arg = TRUE} returns an additional 1 or
+  2 columns.
 
 
 
-  Some 2nd derivatives are \code{NA} if
-  only a partial analytic solution has been programmed in.
+  Some 2nd derivatives are \code{NA} if only a partial analytic
+  solution has been programmed in.
 
 
 
-  For those \pkg{VGAM} family functions whose HDE test has not yet
-  been implemented explicitly (the vast majority of them),
-  finite-difference approximations
-  to the derivatives will be used---see the arguments
-  \code{hstep} and \code{fd.only} for getting some control on them.
+  For those \pkg{VGAM} family functions whose HDE test has not
+  yet been implemented explicitly (the vast majority of them),
+  finite-difference approximations to the derivatives will
+  be used---see the arguments \code{hstep} and \code{fd.only}
+  for getting some control on them.
 
 
 

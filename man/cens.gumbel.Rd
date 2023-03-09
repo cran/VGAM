@@ -52,6 +52,9 @@ cens.gumbel(llocation = "identitylink", lscale = "loglink", iscale = NULL,
   \eqn{scale}.  If \code{zero=NULL} then all linear/additive predictors
   are modelled as a linear combination of the explanatory variables.
   The default is to fit the shape parameter as an intercept only.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
+
 
   }
 }

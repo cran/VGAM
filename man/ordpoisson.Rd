@@ -56,6 +56,7 @@ ordpoisson(cutpoints, countdata = FALSE, NOS = NULL,
   }
   \item{parallel, zero, link}{
     See \code{\link{poissonff}}.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
   }
 

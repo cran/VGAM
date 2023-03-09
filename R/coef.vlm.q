@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,8 +12,11 @@ coef.vlm <- function(object, ...) {
 
 
 
-coefvlm <- function(object, matrix.out = FALSE, label = TRUE,
-                    colon = FALSE) {
+coefvlm <-
+    function(object, matrix.out = FALSE, label = TRUE,
+             colon = FALSE,
+             ...    # This line added 20230309
+            ) {
   Ans <- object@coefficients
 
   if (colon) {

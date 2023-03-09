@@ -64,15 +64,16 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
 
   }
   \item{parallel.locat, parallel.scale}{
-  See the \code{parallel} argument of \code{\link{CommonVGAMffArguments}}.
+  See the \code{parallel} argument
+  of \code{\link{CommonVGAMffArguments}}.
   These arguments apply to the location and scale parameters.
   It generally only makes sense for the scale parameters
   to be equal, hence set \code{parallel.scale = TRUE}.
   Note that
-  assigning \code{parallel.locat} the value \code{TRUE} circumvents the
-  seriously embarrassing quantile crossing problem because all
-  constraint matrices except for the intercept correspond to a
-  parallelism assumption.
+  assigning \code{parallel.locat} the value \code{TRUE}
+  circumvents the seriously embarrassing quantile crossing
+  problem because all constraint matrices except for the intercept
+  correspond to a parallelism assumption.
 
 
   }
@@ -98,8 +99,8 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
 
   }
   \item{idf.mu}{
-  Degrees of freedom for the cubic smoothing spline fit applied to
-  get an initial estimate of the location parameter.
+  Degrees of freedom for the cubic smoothing spline fit
+  applied to get an initial estimate of the location parameter.
   See \code{\link{vsmooth.spline}}.
   Used only when \code{imethod = 3}.
 
@@ -126,14 +127,15 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
   See below for an example.
 
 % This is because the expected information matrix is diagonal,
-% i.e., the location and scale parameters are asymptotically independent.
+% i.e., the location and scale parameters are
+% asymptotically independent.
 
 
   }
   \item{digt }{
-  Passed into \code{\link[base]{Round}} as the \code{digits} argument
-  for the \code{tau} values;
-  used cosmetically for labelling.
+  Passed into \code{\link[base]{Round}} as the \code{digits}
+  argument for the \code{tau} values; used cosmetically for
+  labelling.
 
 
   }
@@ -142,6 +144,7 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
     Where possible,
     the default is to model all the \eqn{\sigma}{sigma}
     and \eqn{\kappa}{kappa} as an intercept-only term.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }
@@ -162,11 +165,11 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
     \frac{\kappa}{1 + \kappa^2} \,
     \exp \left( - \frac{\sqrt{2} \, \kappa}{\sigma} |y - \xi |
                     \right) }{%
-     f(y;xi,sigma,kappa) =  (sqrt(2)/sigma) * (kappa/(1+ \kappa^2)) * exp( -
+f(y;xi,sigma,kappa) =  (sqrt(2)/sigma) * (kappa/(1+ \kappa^2)) * exp( -
      (sqrt(2) * kappa / sigma) * |y-xi| ) }
    for \eqn{y > \xi}{y > xi}.
-   Here, the ranges are
-   for all real \eqn{y} and \eqn{\xi}{xi}, positive \eqn{\sigma}{sigma}
+   Here, the ranges are for all real \eqn{y} and
+   \eqn{\xi}{xi}, positive \eqn{\sigma}{sigma}
    and positive \eqn{\kappa}{kappa}.
    The special case \eqn{\kappa = 1}{kappa = 1} corresponds to the
    (symmetric) Laplace distribution of Kotz et al. (2001).
@@ -187,8 +190,9 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
 
    It is known that the maximum likelihood estimate of the
    location parameter \eqn{\xi}{xi} corresponds to the regression
-   quantile estimate of the classical quantile regression approach of
-   Koenker and Bassett (1978). An important property of the ALD is that
+   quantile estimate of the classical quantile regression approach
+   of Koenker and Bassett (1978). An important property of the
+   ALD is that
    \eqn{P(Y \leq \xi) = \tau}{P(Y <=   xi) = tau} where
    \eqn{\tau = \kappa^2 / (1 + \kappa^2)}{tau = kappa^2 / (1 + kappa^2)}
    so that
@@ -209,9 +213,9 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}} and \code{\link{vgam}}.
 
 
   In the \code{extra} slot of the fitted object are some list
@@ -248,25 +252,26 @@ alaplace3(llocation = "identitylink", lscale = "loglink",
 \section{Warning}{
   These functions are \emph{experimental} and especially subject to
   change or withdrawal.
-  The usual MLE regularity conditions do \emph{not} hold for this
-  distribution so that misleading inferences may result,
-  e.g., in the \code{summary} and \code{vcov} of the object.
-  The 1-parameter ALD can be approximated by \code{\link{extlogF1}}
+  The usual MLE regularity conditions do \emph{not} hold for
+  this distribution so that misleading inferences may result,
+  e.g., in the \code{summary} and \code{vcov} of the object.  The
+  1-parameter ALD can be approximated by \code{\link{extlogF1}}
   which has continuous derivatives and is recommended over
   \code{\link{alaplace1}}.
 
 
 
-  Care is needed with \code{tau} values which are too small, e.g.,
-  for count data with \code{llocation = "loglink"} and if the sample
-  proportion of zeros is greater than \code{tau}.
+  Care is needed with \code{tau} values which are too small,
+  e.g., for count data with \code{llocation = "loglink"} and if
+  the sample proportion of zeros is greater than \code{tau}.
 
 
 
 }
 \note{
 % Commented out 20090326
-% The function \code{alaplace2()} is recommended over \code{alaplace1()}
+% The function \code{alaplace2()} is recommended
+% over \code{alaplace1()}
 % for quantile regression because the solution is
 % invariant to location and scale,
 % i.e., linear transformation of the response produces the
@@ -392,7 +397,7 @@ for (ii in 1:length(mytau)) {
   iloc <- ifelse(ii == 1, with(adata, median(y)), 1.0)  # Well-chosen!
   mydf <- ifelse(ii == 1, 5, 3)  # Maybe less smoothing will help
   fit3 <- vglm(usey ~ sm.ns(x2, df = mydf), data = adata, trace = TRUE,
-               alaplace2(tau = usetau[ii], lloc = "loglink", iloc = iloc))
+            alaplace2(tau = usetau[ii], lloc = "loglink", iloc = iloc))
   answer[, ii] <- (if(ii == 1) 0 else answer[, ii-1]) + fitted(fit3)
   adata <- transform(adata, offsety = answer[, ii])
 }

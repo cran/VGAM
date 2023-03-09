@@ -10,7 +10,10 @@
 }
 \usage{
 cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
-           multiple.responses = FALSE, whitespace = FALSE)
+    multiple.responses = FALSE,
+    thresholds = c("unconstrained", "equidistant"),
+    Treverse = reverse, Tref = if (Treverse) "M" else 1,
+    whitespace = FALSE)
 }
 %apply.parint = FALSE,
 %scumulative(link = "logitlink",
@@ -24,7 +27,7 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
   Link function applied to the \eqn{J} cumulative probabilities.
   See \code{\link{Links}} for more choices,
   e.g., for the cumulative
-  \code{\link{probitlink}}/\code{\link{clogloglink}}/\code{\link{cauchitlink}}/\ldots
+\code{\link{probitlink}}/\code{\link{clogloglink}}/\ldots
   models.
 
 
@@ -39,20 +42,27 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
   \item{parallel}{
   A logical or formula specifying which terms have
   equal/unequal coefficients.
-  See below for more information about the parallelism assumption.
+  See below for more information about the parallelism
+  assumption.
   The default results in what some people call the
   \emph{generalized ordered logit model} to be fitted.
-  If \code{parallel = TRUE} then it does not apply to the intercept.
+  If \code{parallel = TRUE} then it does not apply to the
+  intercept.
 
 
-  The \emph{partial proportional odds model} can be fitted by
-  assigning this argument something like
+  
+  The \emph{partial proportional odds model} can be
+  fitted by assigning this argument something like
   \code{parallel = TRUE ~ -1 + x3 + x5} so that
-  there is one regression coefficient for \code{x3} and \code{x5}.
+  there is one regression coefficient
+  for \code{x3} and \code{x5}.
   Equivalently, setting
   \code{parallel = FALSE ~ 1 + x2 + x4} means \eqn{M}
-  regression coefficients for the intercept and \code{x2} and \code{x4}.
+  regression coefficients for the intercept
+  and \code{x2} and \code{x4}.
   It is important that the intercept is never parallel.
+  See \code{\link{CommonVGAMffArguments}} for more
+  information.
 
 
 
@@ -76,6 +86,7 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
   \eqn{P(Y\geq 2)}{P(Y>=2)}, \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
   \eqn{P(Y\geq J+1)}{P(Y>=J+1)} are used.
 
+  
 
   This should be set to \code{TRUE} for \code{link=}
   \code{\link{gordlink}},
@@ -86,13 +97,15 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
   decreasing sequence.
 
 
+  
   }
   \item{multiple.responses}{
   Logical.
   Multiple responses? If \code{TRUE} then the input should be
   a matrix with values \eqn{1,2,\dots,L}, where \eqn{L=J+1} is the
   number of levels.
-  Each column of the matrix is a response, i.e., multiple responses.
+  Each column of the matrix is a response,
+  i.e., multiple responses.
   A suitable matrix can be obtained from \code{Cut}.
 
 
@@ -115,6 +128,45 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 
 % }
+
+
+  \item{thresholds}{
+    Character.
+    Enables the fitted intercepts to be equally-spaced, etc.
+    (more options might be implemented later).
+    The first choice is the default and causes the intercepts
+    to be estimated in an unconstrained manner.
+    Actually, for this model, they will be sorted either in
+    ascending (default) or descending order, depending
+    on \code{reverse}.
+    If equally-spaced then the direction and the reference
+    level are controlled
+    by \code{Treverse} and \code{Tref}.
+    If equally-spaced then the first constraint matrix
+    will be \eqn{M} by 2, with the second
+    column corresponding to the distance between
+    the thresholds.
+    Argument \code{thresholds} may not be available with
+    certain combinations of other arguments, e.g.,
+    if \code{multiple.responses = TRUE}.
+
+
+  }
+  \item{Treverse, Tref}{
+    Support arguments for \code{thresholds}
+    for equally-spaced intercepts.
+    The logical argument \code{Treverse} is applied first
+    to give the direction (i.e., ascending or descending)
+    before
+    row \code{Tref} (ultimately numeric)
+    of the first (intercept) constraint matrix
+    is set to the reference level.
+    See \code{\link{constraints}} for information.
+    
+
+
+  }
+
   \item{whitespace}{
     See \code{\link{CommonVGAMffArguments}} for information.
 
@@ -123,17 +175,18 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 }
 \details{
-  In this help file the response \eqn{Y} is assumed to be a factor
-  with ordered values \eqn{1,2,\dots,J+1}.
-  Hence \eqn{M} is the number of linear/additive predictors
-  \eqn{\eta_j}{eta_j};
+  In this help file the response \eqn{Y} is assumed
+  to be a factor with ordered values \eqn{1,2,\dots,J+1}.
+  Hence \eqn{M} is the number of linear/additive
+  predictors \eqn{\eta_j}{eta_j};
   for \code{cumulative()} one has \eqn{M=J}.
 % and for \code{scumulative()} \eqn{M=2J}.
 
 
 
   This \pkg{VGAM} family function fits the class of
-  \emph{cumulative link models} to (hopefully) an ordinal response.
+  \emph{cumulative link models} to (hopefully)
+  an ordinal response.
   By default, the \emph{non-parallel} cumulative logit model
   is fitted, i.e.,
   \deqn{\eta_j = logit(P[Y \leq j])}{%
@@ -147,11 +200,13 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 
 
-  In almost all the literature, the constraint matrices associated
-  with this family of models are known. For example, setting
+  In almost all the literature, the constraint matrices
+  associated with this family of models are known.
+  For example, setting
   \code{parallel = TRUE} will make all constraint matrices
   (except for the intercept) equal to a vector of \eqn{M} 1's.
-  If the constraint matrices are equal, unknown and to be estimated,
+  If the constraint matrices are equal, unknown and to
+  be estimated,
   then this can be achieved by fitting the model as a
   reduced-rank vector generalized
   linear model (RR-VGLM; see \code{\link{rrvglm}}).
@@ -160,9 +215,11 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 
 
-% The scaled version of \code{cumulative()}, called \code{scumulative()},
+% The scaled version of \code{cumulative()},
+% called \code{scumulative()},
 % has \eqn{J} positive scaling factors.
-% They are described in pages 154 and 177 of McCullagh and Nelder (1989);
+% They are described in pages 154 and 177 of
+% McCullagh and Nelder (1989);
 % see their equation (5.4) in particular,
 % which they call the \emph{generalized rational model}.
 
@@ -170,8 +227,10 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 
@@ -186,6 +245,19 @@ Agresti, A. (2013).
 Agresti, A. (2010).
 \emph{Analysis of Ordinal Categorical Data},
 2nd ed. Hoboken, NJ, USA: Wiley.
+
+
+
+
+%Boersch-Supan, P. H. (2021).
+%Modeling insect phenology using ordinal
+%regression and continuation ratio models.
+%\emph{ReScience C},
+%\bold{7.1}, 1--14.
+%\doi{10.18637/jss.v032.i10}.
+
+%\bold{7.1}(#5), 1--14.
+
 
 
 %Dobson, A. J. and Barnett, A. (2008).
@@ -230,19 +302,23 @@ Vector generalized additive models.
 
 %Further information and examples on categorical data analysis
 %by the \pkg{VGAM} package can be found at
-%\url{http://www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
+%\url{www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
 
 
 }
 \author{ Thomas W. Yee }
 \note{
-  The response should be either a matrix of counts (with row sums that
-  are all positive), or a factor. In both cases, the \code{y} slot
-  returned by \code{\link{vglm}}/\code{\link{vgam}}/\code{\link{rrvglm}}
+  The response should be either a matrix of counts
+  (with row sums that
+  are all positive), or a factor. In both cases,
+  the \code{y} slot
+  returned by
+  \code{\link{vglm}}/\code{\link{vgam}}/\code{\link{rrvglm}}
   is the matrix
   of counts.
   The formula must contain an intercept term.
-  Other \pkg{VGAM} family functions for an ordinal response include
+  Other \pkg{VGAM} family functions for an ordinal response
+  include
   \code{\link{acat}},
   \code{\link{cratio}},
   \code{\link{sratio}}.
@@ -252,32 +328,37 @@ Vector generalized additive models.
   
 
   With the logit link, setting \code{parallel = TRUE} will fit a
-  proportional odds model. Note that the \code{TRUE} here does
-  not apply to the intercept term.
-  In practice, the validity of the proportional odds assumption
-  needs to be checked, e.g., by a likelihood ratio test (LRT).
-  If acceptable on the data,
-  then numerical problems are less likely to occur during the fitting,
-  and there are less parameters. Numerical problems occur when
-  the linear/additive predictors cross, which results in probabilities
-  outside of \eqn{(0,1)}; setting \code{parallel = TRUE} will help avoid
-  this problem.
+  proportional odds model. Note that the \code{TRUE} here
+  does not apply to the intercept term.
+  In practice, the validity of
+  the \emph{proportional odds assumption} needs to be checked,
+  e.g., by a likelihood ratio test (LRT).
+  If acceptable on the data, then numerical
+  problems are less
+  likely to occur during the fitting, and there are less
+  parameters. Numerical problems occur when the linear/additive
+  predictors cross, which results in probabilities outside of
+  \eqn{(0,1)}; setting \code{parallel = TRUE} will help
+  avoid this problem.
 
   
 
-  Here is an example of the usage of the \code{parallel} argument.
-  If there are covariates \code{x2}, \code{x3} and \code{x4}, then
+  Here is an example of the usage of the \code{parallel}
+  argument.
+  If there are covariates \code{x2}, \code{x3} and
+  \code{x4}, then
   \code{parallel = TRUE ~ x2 + x3 -1} and
-  \code{parallel = FALSE ~ x4} are equivalent. This would constrain
-  the regression coefficients for \code{x2} and \code{x3} to be
-  equal; those of the intercepts and \code{x4} would be different.
+  \code{parallel = FALSE ~ x4} are equivalent.
+  This would constrain the regression coefficients
+  for \code{x2} and \code{x3} to be equal;
+  those of the intercepts and \code{x4} would be different.
 
   
 
   If the data is inputted in \emph{long} format
   (not \emph{wide} format, as in \code{\link{pneumo}} below)
-  and the self-starting initial values are not good enough then
-  try using
+  and the self-starting initial values are not
+  good enough then try using
   \code{mustart},
   \code{coefstart} and/or
   \code{etatstart}.
@@ -288,30 +369,48 @@ Vector generalized additive models.
   To fit the proportional odds model one can use the
   \pkg{VGAM} family function \code{\link{propodds}}.
   Note that \code{propodds(reverse)} is equivalent to
-  \code{cumulative(parallel = TRUE, reverse = reverse)} (which is
-  equivalent to
-  \code{cumulative(parallel = TRUE, reverse = reverse, link = "logitlink")}).
+  \code{cumulative(parallel = TRUE, reverse = reverse)}
+  (which is equivalent to
+  \code{cumulative(parallel =}
+  \code{TRUE, reverse = reverse, link = "logitlink")}).
   It is for convenience only. A call to
   \code{cumulative()} is preferred since it reminds the user
-  that a parallelism assumption is made, as well as being a lot
-  more flexible.
+  that a parallelism assumption is made, as well as
+  being a lot more flexible.
 
 
   
 % In the future, this family function may be renamed to
-% ``\code{cups}'' (for \bold{cu}mulative \bold{p}robabilitie\bold{s})
-% or ``\code{cute}'' (for \bold{cu}mulative probabili\bold{t}i\bold{e}s).
+% ``\code{cups}''
+% (for \bold{cu}mulative \bold{p}robabilitie\bold{s})
+% or ``\code{cute}''
+% (for \bold{cu}mulative probabili\bold{t}i\bold{e}s).
+% Please let me know if you strongly agree or disagree
+% about this.
 
-% Please let me know if you strongly agree or disagree about this.
+
+
+Category specific effects may be modelled using
+the \code{xij}-facility; see
+  \code{\link{vglm.control}} and \code{\link{fill1}}.
+
+
 
 }
 \section{Warning }{
-  No check is made to verify that the response is ordinal if the
-  response is a matrix;
+  No check is made to verify that the response is ordinal
+  if the response is a matrix;
   see \code{\link[base:factor]{ordered}}.
 
 
-  
+
+  Boersch-Supan (2021) looks at sparse data and
+  the numerical problems that result;
+  see \code{\link{sratio}}.
+
+
+
+
 }
 
 \seealso{
@@ -326,6 +425,7 @@ Vector generalized additive models.
   \code{\link{multinomial}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{pneumo}},
+  \code{\link{budworm}},
   \code{\link{Links}},
   \code{\link{hdeff.vglm}},
   \code{\link{logitlink}},
@@ -340,10 +440,10 @@ Vector generalized additive models.
 
 }
 \examples{
-# Fit the proportional odds model, p.179, in McCullagh and Nelder (1989)
+# Proportional odds model (p.179) of McCullagh and Nelder (1989)
 pneumo <- transform(pneumo, let = log(exposure.time))
 (fit <- vglm(cbind(normal, mild, severe) ~ let,
-             cumulative(parallel = TRUE, reverse = TRUE), data = pneumo))
+             cumulative(parallel = TRUE, reverse = TRUE), pneumo))
 depvar(fit)  # Sample proportions (good technique)
 fit@y        # Sample proportions (bad technique)
 weights(fit, type = "prior")  # Number of observations
@@ -357,13 +457,14 @@ R2latvar(fit)
 # Check that the model is linear in let ----------------------
 fit2 <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
              cumulative(reverse = TRUE), data = pneumo)
-\dontrun{ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2) }
+\dontrun{
+ plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2) }
 
 # Check the proportional odds assumption with a LRT ----------
 (fit3 <- vglm(cbind(normal, mild, severe) ~ let,
-              cumulative(parallel = FALSE, reverse = TRUE), data = pneumo))
-pchisq(2 * (logLik(fit3) - logLik(fit)),
-       df = length(coef(fit3)) - length(coef(fit)), lower.tail = FALSE)
+              cumulative(parallel = FALSE, reverse = TRUE), pneumo))
+pchisq(2 * (logLik(fit3) - logLik(fit)), df =
+       length(coef(fit3)) - length(coef(fit)), lower.tail = FALSE)
 lrtest(fit3, fit)  # More elegant
 
 # A factor() version of fit ----------------------------------
@@ -382,14 +483,14 @@ with(pneumo.long, table(let, symptoms))  # Should be same as pneumo
 
 (fit.long1 <- vglm(symptoms ~ let, data = pneumo.long, trace = TRUE,
                    cumulative(parallel = TRUE, reverse = TRUE)))
-coef(fit.long1, matrix = TRUE)  # Should be as coef(fit, matrix = TRUE)
+coef(fit.long1, matrix = TRUE)  # cf. coef(fit, matrix = TRUE)
 # Could try using mustart if fit.long1 failed to converge.
 mymustart <- matrix(sumNobs / sum(sumNobs),
                     nrow(pneumo.long), ncol(Nobs), byrow = TRUE)
 fit.long2 <- vglm(symptoms ~ let, mustart = mymustart,
                   cumulative(parallel = TRUE, reverse = TRUE),
                   data = pneumo.long, trace = TRUE)
-coef(fit.long2, matrix = TRUE)  # Should be as coef(fit, matrix = TRUE)
+coef(fit.long2, matrix = TRUE)  # cf. coef(fit, matrix = TRUE)
 }
 \keyword{models}
 \keyword{regression}

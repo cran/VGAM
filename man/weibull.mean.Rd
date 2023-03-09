@@ -15,9 +15,8 @@
 }
 \usage{
 weibull.mean(lmean = "loglink", lshape = "loglink",
-             imean = NULL, ishape = NULL,
-             probs.y = c(0.2, 0.5, 0.8), imethod = 1,
-             zero = "shape")
+     imean = NULL, ishape = NULL, probs.y = c(0.2, 0.5, 0.8),
+     imethod = 1, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

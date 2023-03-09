@@ -49,6 +49,7 @@ betageometric(lprob = "logitlink", lshape = "loglink",
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   If used, the value must be from the set \{1,2\}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
 
   }

@@ -566,7 +566,7 @@ predictors.
 
 Yee, T. W. (2020).
 The \pkg{VGAM} package for negative binomial regression.
-\emph{Australian and New Zealand Journal of Statistics},
+\emph{Australian & New Zealand Journal of Statistics},
 \bold{62}, 116--131.
 
 
@@ -724,6 +724,7 @@ The \pkg{VGAM} package for negative binomial regression.
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}},
   \code{\link[stats:ppoints]{ppoints}},
+  \code{\link{margeff}}.
 
 
 % \code{\link[stats:NegBinomial]{rnbinom}},

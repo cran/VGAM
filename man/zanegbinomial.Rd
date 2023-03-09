@@ -81,14 +81,8 @@ zanegbinomialff(lmunb = "loglink", lsize = "loglink", lonempobs0 = "logitlink",
 
   }
   \item{zero}{
-%   Integer valued vector, may be assigned, e.g., \eqn{-3} or \eqn{3} if
-%   the probability of an observed value is to be modelled with the
-%   covariates.
     Specifies which of the three linear predictors are
     modelled as intercept-only.
-%   By default, the \code{k} and \eqn{p_0}{pobs0}
-%   parameters for each response are modelled as
-%   single unknown numbers that are estimated.
     All parameters can be modelled as a
     function of the explanatory variables by setting \code{zero = NULL}
     (not recommended).
@@ -96,6 +90,16 @@ zanegbinomialff(lmunb = "loglink", lsize = "loglink", lonempobs0 = "logitlink",
     setting \eqn{-3} means all \code{k} are intercept-only
     for \code{zanegbinomial}.
     See \code{\link{CommonVGAMffArguments}} for more information.
+
+
+
+%   Integer valued vector, may be assigned, e.g., \eqn{-3} or \eqn{3} if
+%   the probability of an observed value is to be modelled with the
+%   covariates.
+%   By default, the \code{k} and \eqn{p_0}{pobs0}
+%   parameters for each response are modelled as
+%   single unknown numbers that are estimated.
+
 
 
   }

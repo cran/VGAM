@@ -11,11 +11,11 @@
 }
 \usage{
 zabinomial(lpobs0 = "logitlink", lprob = "logitlink",
-           type.fitted = c("mean", "prob", "pobs0"),
-           ipobs0 = NULL, iprob = NULL, imethod = 1, zero = NULL)
+     type.fitted = c("mean", "prob", "pobs0"),
+     ipobs0 = NULL, iprob = NULL, imethod = 1, zero = NULL)
 zabinomialff(lprob = "logitlink", lonempobs0 = "logitlink",
-             type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
-             iprob = NULL, ionempobs0 = NULL, imethod = 1, zero = "onempobs0")
+     type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
+     iprob = NULL, ionempobs0 = NULL, imethod = 1, zero = "onempobs0")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

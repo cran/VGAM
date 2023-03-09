@@ -23,14 +23,17 @@ seq2binomial(lprob1 = "logitlink", lprob2 = "logitlink",
 
   }
   \item{iprob1, iprob2}{
-  Optional initial value for the first and second probabilities respectively.
-  A \code{NULL} means a value is obtained in the \code{initialize} slot.
+  Optional initial value for the first and second probabilities
+  respectively.  A \code{NULL} means a value is obtained in the
+  \code{initialize} slot.
 
 
   }
   \item{parallel, zero}{
   Details at \code{\link{Links}}.
-  If \code{parallel = TRUE} then the constraint also applies to the intercept.
+  If \code{parallel = TRUE} then the constraint also applies to
+  the intercept.
+  See \code{\link{CommonVGAMffArguments}} for details.
 
 
   }
@@ -38,10 +41,11 @@ seq2binomial(lprob1 = "logitlink", lprob2 = "logitlink",
 \details{
   This \pkg{VGAM} family function fits the model described by
   Crowder and Sweeting (1989) which is described as follows.
-  Each of \eqn{m} spores has a probability \eqn{p} of germinating. Of
-  the \eqn{y_1}{y1} spores that germinate, each has a probability \eqn{q}
-  of bending in a particular direction. Let \eqn{y_2}{y2} be the number that
-  bend in the specified direction. The probability model for this data is
+  Each of \eqn{m} spores has a probability \eqn{p} of
+  germinating. Of the \eqn{y_1}{y1} spores that germinate,
+  each has a probability \eqn{q} of bending in a particular
+  direction. Let \eqn{y_2}{y2} be the number that bend in the
+  specified direction. The probability model for this data is
   \eqn{P(y_1,y_2) =}{P(y1,y2) =}
     \deqn{
 {m   \choose y_1} p^{y_1} (1-p)^{m-y_1}
@@ -56,16 +60,16 @@ seq2binomial(lprob1 = "logitlink", lprob2 = "logitlink",
   \eqn{q} is \code{prob2}.
 
 
-  Although the Authors refer to this as the \emph{bivariate binomial} model,
-  I have named it the \emph{(two-stage) sequential binomial} model.
-  Fisher scoring is used.
+  Although the Authors refer to this as the \emph{bivariate
+  binomial} model, I have named it the \emph{(two-stage)
+  sequential binomial} model.  Fisher scoring is used.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}} and \code{\link{vgam}}.
 
 
 }
@@ -86,11 +90,11 @@ seq2binomial(lprob1 = "logitlink", lprob2 = "logitlink",
   The \eqn{m} values should be inputted with the \code{weights}
   argument of \code{\link{vglm}}
   and \code{\link{vgam}}.
-  The fitted value is a two-column matrix of estimated probabilities
-  \eqn{p} and \eqn{q}.
+  The fitted value is a two-column matrix of estimated
+  probabilities \eqn{p} and \eqn{q}.
   A common form of error is when there are no trials
-  for \eqn{y_1}{y1}, e.g., if \code{mvector} below has some values
-  which are zero.
+  for \eqn{y_1}{y1},
+  e.g., if \code{mvector} below has some values which are zero.
 
 
 }

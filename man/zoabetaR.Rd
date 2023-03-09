@@ -28,6 +28,7 @@ zoabetaR(lshape1 = "loglink", lshape2 = "loglink", lpobs0 = "logitlink",
   }
   \item{trim, zero}{
   Same as \code{\link{betaR}}.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -44,15 +44,16 @@ rrvglm.control <-
 
   if (length(Norrr) != 1 || !is.na(Norrr)) {
     warning("argument 'Norrr' has been replaced by 'noRRR'. ",
-            "Assigning the latter but using 'Norrr' will become an ",
-            "error in the next VGAM version soon.")
+            "Assigning the latter but using 'Norrr' will ",
+            "become an error in the next VGAM version soon.")
     noRRR <- Norrr
   }
 
 
   if (mode(Algorithm) != "character" && mode(Algorithm) != "name")
     Algorithm <- as.character(substitute(Algorithm))
-  Algorithm <- match.arg(Algorithm, c("alternating", "derivative"))[1]
+    Algorithm <- match.arg(Algorithm, c("alternating",
+                                        "derivative"))[1]
 
   if (Svd.arg)
     Corner <- FALSE
@@ -197,7 +198,8 @@ show.summary.rrvglm <-
            signif.stars = NULL) {
 
 
-  show.summary.vglm(x, digits = digits, quote = quote, prefix = prefix)
+  show.summary.vglm(x, digits = digits,
+                    quote = quote, prefix = prefix)
 
 
   invisible(x)

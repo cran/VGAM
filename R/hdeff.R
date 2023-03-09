@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,13 +16,13 @@
 
 hdeff.vglm <-
   function(object,
-           derivative = NULL,
-           se.arg = FALSE,
-           subset = NULL,  # Useful for Cox model as a poissonff().
-           theta0 = 0,  # Recycled to the necessary length 20210406
-           hstep = 0.005,  # Formerly 'Delta', recycled to length 2
-           fd.only = FALSE,
-           ...) {
+       derivative = NULL,
+       se.arg = FALSE,
+       subset = NULL,  # Useful for Cox model as a poissonff().
+       theta0 = 0,  # Recycled to the necessary length 20210406
+       hstep = 0.005,  # Formerly 'Delta', recycled to length 2
+       fd.only = FALSE,
+       ...) {
 
   if (is.Numeric(hstep, positive = TRUE)) {
       if (length(hstep) > 2)
@@ -40,7 +40,8 @@ hdeff.vglm <-
     if (is.Numeric(derivative, length.arg = 1, positive = TRUE,
                    integer.valued = TRUE) &&
         derivative %in% 1:2)
-        "derivatives" else stop("bad input for argument 'derivative'")
+        "derivatives" else
+        stop("bad input for argument 'derivative'")
     } else {
       "logical"
     }
@@ -126,7 +127,7 @@ hdeff.vglm <-
   Param.mat       <- matrix(NA_real_, n.LM, M)
   if (link1parameter) {
     if (!fd.use) {
-    for (jay in 1:M) {      # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    for (jay in 1:M) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
       Param.mat[, jay] <-
       Param.vec <- eta2theta(eta.mat[, jay], mylinks[jay],
                              earg = object@misc$earg[[jay]])
@@ -193,7 +194,7 @@ if (FALSE) {  ###################################################
       myearg2$deriv <- 1
       Der12 <- do.call(mylinks[lastone], myearg2)
       Der1 <- wz.merge(Der11, Der12, M.1, M.2)  # Combine them
-}  # if (FALSE)  ###################################################
+}  # if (FALSE)  ##############################################
 
 
 
@@ -202,7 +203,7 @@ if (FALSE) {  ###################################################
   vecTF <- mylinks == "multilogitlink"
   Ans <- NULL  # Growing matrix data structure
   M.1 <- 0
-  offset.Param.mat <- 0  # Coz rowSums(Param.mat)==1 for multilogitlink
+  offset.Param.mat <- 0  # Coz
   iii <- 1
   while (iii <= llink) {
     first.index <- last.index <- iii  # Ordinary case
@@ -239,7 +240,8 @@ if (FALSE) {  ###################################################
       use.earg[["theta"]] <-
         Param.mat[, offset.Param.mat + (first.index:last.index)]
     use.earg$deriv <- 1
-    use.function.name <- mylinks[first.index]  # e.g., "multilogitlink"
+    use.function.name <-
+      mylinks[first.index]  # e.g., "multilogitlink"
 
     Ans2 <- do.call(use.function.name, use.earg)
     delete.coln <- FALSE
@@ -261,10 +263,13 @@ if (FALSE) {  ###################################################
  # Handle multinomial, etc.
       myearg <- object@misc$earg[[1]]  # Only ONE anyway
       build.list <- list(theta = Param.mat,
-                    inverse = TRUE, deriv = 1)  # This line is important
-      build.list <- c(build.list, myearg)  # Hopefully no dups arg names
+                         inverse = TRUE,
+                         deriv = 1)  # This line is important
+      build.list <-
+        c(build.list, myearg)  # Hopefully no dups arg names
       build.list$all.derivs <- TRUE  # For "multilogitlink".
-      Der1 <- do.call(mylinks, build.list)  # n x MM12 for multinomial
+      Der1 <- do.call(mylinks,
+                      build.list)  # n x MM12 4 multinomial
     }  # mixture.links & !mixture.links
 
  
@@ -277,7 +282,8 @@ if (FALSE) {  ###################################################
       Der2 <- wz.merge(Der21, Der22, M.1, M.2)  # Combine them
     } else {
       build.list$deriv <- 2
-      Der2 <- do.call(mylinks, build.list)  # n x M for multinomial
+      Der2 <- do.call(mylinks,
+                      build.list)  # n x M for multinomial
      } # mixture.links & !mixture.links
    }  # derivative == 2
   }  # if (link1parameter) and (!link1parameter)
@@ -292,13 +298,13 @@ if (FALSE) {  ###################################################
 
 
 
-  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
   dwz.dbetas   <-
   d2wz.dbetas2 <- 0  # Good for the first instance of use.
 
 
   wetas.kay <- which.etas(object, kay = kay)
-  for (jay in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (jay in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     vecTF.jay <- as.logical(eijfun(jay, M))
     bix.jk <- X.vlm[vecTF.jay, kay]  # An n-vector; allows for xij.
 
@@ -311,16 +317,20 @@ if (FALSE) {  ###################################################
                                    (c(1, -1)[dirr]) * hstep[1]
         temp1@fitted.values <- cbind(
           temp1@family@linkinv(eta = temp1@predictors,
-                               extra = temp1@extra))  # Make sure a matrix
+                  extra = temp1@extra))  # Make sure a matrix
         if (dirr == 1)
-          wwt.f <- weights(temp1, type = "working", ignore.slot = TRUE)
+          wwt.f <- weights(temp1, type = "working",
+                           ignore.slot = TRUE)
         if (dirr == 2)
-          wwt.b <- weights(temp1, type = "working", ignore.slot = TRUE)
+          wwt.b <- weights(temp1, type = "working",
+                           ignore.slot = TRUE)
       }  # dirr
       if (ncol(wwt.f) < MM12)
-        wwt.f <- cbind(wwt.f, matrix(0, n.LM, MM12 - ncol(wwt.f)))
+        wwt.f <- cbind(wwt.f,
+                       matrix(0, n.LM, MM12 - ncol(wwt.f)))
       if (ncol(wwt.b) < MM12)
-        wwt.b <- cbind(wwt.b, matrix(0, n.LM, MM12 - ncol(wwt.b)))
+        wwt.b <- cbind(wwt.b,
+                       matrix(0, n.LM, MM12 - ncol(wwt.b)))
 
 
       cdiff <- (wwt.f - wwt.b) / (2 * hstep[1])
@@ -344,7 +354,8 @@ if (FALSE) {  ###################################################
       use.ncol <- NCOL(dfun0)  # Reference value really
 
         if (NCOL(dfun1 ) < use.ncol)
-          dfun1  <- cbind(dfun1, matrix(0, n.LM, use.ncol - NCOL(dfun1)))
+          dfun1  <- cbind(dfun1,
+                          matrix(0, n.LM, use.ncol - NCOL(dfun1)))
         if (use.ncol < NCOL(wz.tet))
           wz.tet <- wz.tet[, 1:use.ncol, drop = FALSE]
 
@@ -352,7 +363,8 @@ if (FALSE) {  ###################################################
         M <- NCOL(nxM)
         wz <- matrix(0, NROW(nxM), M*(M+1)/2)
         for (uuu in 1:M)
-          wz[, iam(jay, uuu, M = M)] <- (1 + (jay == uuu)) * nxM[, uuu]
+          wz[, iam(jay, uuu, M = M)] <-
+            (1 + (jay == uuu)) * nxM[, uuu]
         wz
       }  # write.into.wz
 
@@ -414,15 +426,19 @@ if (FALSE) {  ###################################################
           (c(1, -1, 1, -1)[dirr]) * hstep[2]
       temp1@fitted.values <- cbind(
       temp1@family@linkinv(eta = temp1@predictors,
-                           extra = temp1@extra))  # Make sure a matrix
+                     extra = temp1@extra))  # Make sure a matrix
       if (dirr == 1)
-        wwt.1 <- weights(temp1, type = "working", ignore.slot = TRUE)
+        wwt.1 <- weights(temp1, type = "working",
+                         ignore.slot = TRUE)
       if (dirr == 2)
-        wwt.2 <- weights(temp1, type = "working", ignore.slot = TRUE)
+        wwt.2 <- weights(temp1, type = "working",
+                         ignore.slot = TRUE)
       if (dirr == 3)
-        wwt.3 <- weights(temp1, type = "working", ignore.slot = TRUE)
+        wwt.3 <- weights(temp1, type = "working",
+                         ignore.slot = TRUE)
       if (dirr == 4)
-        wwt.4 <- weights(temp1, type = "working", ignore.slot = TRUE)
+        wwt.4 <- weights(temp1, type = "working",
+                         ignore.slot = TRUE)
     }  # dirr
     if (ncol(wwt.1) < MM12)
       wwt.1 <- cbind(wwt.1, matrix(0, n.LM, MM12 - ncol(wwt.1)))
@@ -452,9 +468,11 @@ if (FALSE) {  ###################################################
                     linpred.index = jay,
                     w = pwts, dim.wz = dim.wz,
                     deriv = 2)
-      use.ncol <- if (link1parameter) NCOL(dwz.dtheta.Der1) else MM12
+      use.ncol <- if (link1parameter)
+                    NCOL(dwz.dtheta.Der1) else MM12
       if (NCOL(dfun2) < use.ncol)
-        dfun2 <- cbind(dfun2, matrix(0, n.LM, use.ncol - NCOL(dfun2)))
+        dfun2 <- cbind(dfun2,
+                       matrix(0, n.LM, use.ncol - NCOL(dfun2)))
 
       d2wz.dtheta2 <- if (link1parameter &&
                           M1 == 1 &&
@@ -497,19 +515,21 @@ if (FALSE) {  ###################################################
 
 
     small.temp1 <- dA.dbeta %*% vc2[, kay, drop = FALSE]
-    small.d1ixwx.dbeta1 <- -(vc2[kay, , drop = FALSE] %*% small.temp1)
+    small.d1ixwx.dbeta1 <- -(vc2[kay, , drop = FALSE] %*%
+                             small.temp1)
     SE2.deriv1[kay] <- small.d1ixwx.dbeta1
 
 
 
 
     vec.Wald.deriv1[kay] <- (1 - 0.5 * cobj[kay] *
-                            SE2.deriv1[kay] / SE2.kay) / SE1[kay]
+                  SE2.deriv1[kay] / SE2.kay) / SE1[kay]
 
 
 
     if (type == "derivatives" && derivative == 2) {
-      tmp.mat <- mux111(t(d2wz.dbetas2), X.vlm, M = M, upper = FALSE)
+      tmp.mat <- mux111(t(d2wz.dbetas2), X.vlm,
+                        M = M, upper = FALSE)
       d2A.dbeta2 <- crossprod(X.vlm, tmp.mat)  # p.VLM x p.VLM
 
 
@@ -521,7 +541,8 @@ if (FALSE) {  ###################################################
         vc2[kay, , drop = FALSE] %*%
         (2 * temp1 %*% dA.dbeta - d2A.dbeta2) %*%
         vc2[, kay, drop = FALSE]
-      SE2.deriv2[kay] <- if (blot.out) NA else small.d2ixwx.dbeta2
+        SE2.deriv2[kay] <- if (blot.out) NA else
+                           small.d2ixwx.dbeta2
 
 
 
@@ -531,14 +552,14 @@ if (FALSE) {  ###################################################
          (1.5 * ((SE2.deriv1[kay])^2) / SE2.kay -
                   SE2.deriv2[kay])) / (SE2.kay^1.5)
     }  # derivative == 2
-  }  # for (kay in kvec.use)  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  }  # for (kay in kvec.use)  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
 
   SE.deriv1 <- if (se.arg) 0.5 * SE2.deriv1 / SE1 else NULL
   ans <-
   switch(type,
-         logical = vec.Wald.deriv1 < 0,  # yettodo: 2nd-deriv test later
+         logical = vec.Wald.deriv1 < 0,  # yettodo
          derivatives =
            if (derivative == 1) {
              if (se.arg)
@@ -550,7 +571,7 @@ if (FALSE) {  ###################################################
                    deriv2 = vec.Wald.deriv2,
                    SE.deriv1 = if (se.arg) SE.deriv1 else NULL,
                    SE.deriv2 = if (se.arg) 0.5 * (SE2.deriv2 / SE1
-                               - 0.5 * SE2.deriv1^2  / SE2^1.5) else
+                        - 0.5 * SE2.deriv1^2  / SE2^1.5) else
                                NULL)
            })
   if (length(subset))
@@ -588,7 +609,8 @@ hdeff.matrix <-
   if (any(c(object) <= 0))
     stop("some cells are not positive valued")
   is.wholenumber <-
-    function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
+    function(x, tol = .Machine$double.eps^0.5)
+      abs(x - round(x)) < tol
   if (!all(is.wholenumber(c(object))))
     stop("some cells are not integer-valued")
 
@@ -596,11 +618,13 @@ hdeff.matrix <-
   N1 <- sum(object[2, ])
   p0 <- object[1, 2] / N0
   p1 <- object[2, 2] / N1
-  oratio <- object[1, 1] * object[2, 2] / (object[1, 2] * object[2, 1])
+  oratio <- object[1, 1] *
+            object[2, 2] / (object[1, 2] * object[2, 1])
   beta2 <- log(oratio)
   lhs <- 1 + N1 * p1 * (1 - p1) / (N0 * p0 * (1 - p0))
   rhs <- beta2 * (p1 - 0.5)
-  1 + N1 * p1 * (1 - p1) / (N0 * p0 * (1 - p0)) < beta2 * (p1 - 0.5)
+  1 + N1 * p1 * (1 - p1) / (N0 * p0 * (1 - p0)) <
+  beta2 * (p1 - 0.5)
 }  # hdeff.matrix
 
 
@@ -613,8 +637,9 @@ hdeff.numeric <-
   if (length(c(object)) > 4)
     stop("length of argument 'object' greater than 4")
   if (length(c(object)) < 4)
-    warning("length of argument 'object' less than 4, so recycling")
-  hdeff(matrix(c(object), 2, 2, byrow = byrow))  # Recycles if needed
+    warning("length of argument 'object' < 4, so recycling")
+  hdeff(matrix(c(object), 2, 2,
+               byrow = byrow))  # Recycles if needed
 }  # hdeff.numeric
 
 
@@ -646,6 +671,168 @@ setMethod("hdeff", "numeric", function(object, ...)
 
 
 
+
+
+hdeffsev <-
+  function(x, y,
+           dy, ddy,  # 1st and 2nd derivs           
+           allofit = FALSE,
+           eta0 = 0,  # NA or NULL means dont know, may be Inf
+           COPS0 = eta0,  # Assumption. May be Inf.
+           severity.table = c("None",
+                              "Faint",  # Retaining this
+                              "Weak",
+                              "Moderate",
+                              "Strong",
+                              "Extreme",  # ==Extreme1--
+                              "Undetermined")) { 
+
+
+
+  if (is.unsorted(x))
+    stop("argument 'x' must be sorted")
+
+  if (is.na(eta0) || is.null(eta0)) {
+    splinethrudata1 <- function(X)
+      spline(x, y, xout = X)$y
+    eta0 <- uniroot(splinethrudata1,
+                    interval = range(x))$root
+  }
+
+  LLL <- length(severity.table)
+  severity <- rep_len(severity.table[LLL], length(x))
+  names(severity) <- names(x)
+
+  zeta <- x + y * dy
+  dzeta.dx <- 1 + dy^2 + y * ddy
+  tanzeta <- x - y / dy
+  dtanzeta.dx <- y * ddy / dy^2
+
+
+  ind.none     <- dy >= 0   # &  # Not SSD: 20220829
+  severity[ind.none] <- severity.table[1]
+
+
+
+w10.n <- w10.p <- NULL
+ind.w10.n <- min(which(x < COPS0 & dy >= 0))
+w10.n <- x[ind.w10.n]
+ind.w10.p <- max(which(x > COPS0 & dy >= 0))
+w10.p <- x[ind.w10.p]
+
+w20.n <- w20.p <- NULL
+ind.w20.n <- min(which(x < COPS0 & ddy >= 0))
+w20.n <- x[ind.w20.n]
+ind.w20.p <- min(which(x > COPS0 & ddy >= 0))
+w20.p <- x[ind.w20.p]
+
+
+if (is.infinite(COPS0)) {
+  w10.p <- (-w10.n)  # Used for tanline
+  w20.p <- (-w20.n)  # Used for tanline
+}
+if (is.infinite(COPS0) && COPS0 < 0)
+  stop("cannot handle -Inf just now")
+
+
+
+
+
+
+
+
+  ind.faint    <- dy >= 0 &
+                  ifelse(COPS0 <= x,
+                         w20.n <= tanzeta & tanzeta <= w10.n,
+                         w10.p <= tanzeta & tanzeta <= w20.p)
+  severity[ind.faint] <- severity.table[2]
+
+
+
+
+
+  ind.weak     <- dy >= 0 &
+                  ifelse(COPS0 <= x,
+                         tanzeta <= w20.n,
+                         tanzeta >= w20.p)
+  severity[ind.weak] <- severity.table[3]
+
+
+
+
+
+
+
+  ind.moderate <- dy <= 0 &  # Note <= rather than <
+                  ifelse(COPS0 <= x,
+                         w10.p <= x & x <= w20.p,
+                         w20.n <= x & x <= w10.n)
+  severity[ind.moderate] <- severity.table[4]
+
+
+
+
+
+
+  ind.strong   <- dy <= 0 &  # Note <= rather than <
+                  ifelse(COPS0 <= x,
+                         w20.p <= x,
+                         x <= w20.n)
+  severity[ind.strong] <- severity.table[5]
+
+
+
+
+
+
+
+
+  if (any(ind.strong, na.rm = TRUE)) {
+
+
+
+
+    w20.n.next <- tanzeta[ind.w20.n]
+    w20.p.next <- tanzeta[ind.w20.p]
+    ind.extreme  <- dy <= 0 &  # Note <= rather than <
+                    ifelse(COPS0 <= x,
+                           w20.p.next <= x,
+                           x <= w20.n.next)
+    severity[ind.extreme] <- severity.table[6]
+  }  # Extreme done here.
+
+
+
+  if (FALSE && !is.na(w20.n)) {
+    w20.n.next <- 1  # zz
+    w20.n.next <- 1  # zz
+
+  }
+
+  if (allofit)
+    list(severity     = severity,
+         zeta         = zeta,
+         dzeta.dx     = dzeta.dx,
+         x            = x,
+         y            = y,
+         tanzeta      = tanzeta,
+         dtanzeta.dx  = dtanzeta.dx) else
+    severity
+}  # hdeffsev
+
+
+
+
+
+
+
+
+
+
+
+
+
+if (F)
 hdeffsev <-
   function(x, y,
            dy, ddy,  # 1st and 2nd derivs           
@@ -656,20 +843,23 @@ hdeffsev <-
                               "Undetermined")) { 
 
 
+ 
 
 
-
+  warning("20220829; original but sample size dependent!")
 
 
   severity <- rep_len(severity.table[7], length(x))  # Initialize
   names(severity) <- names(x)
   zeta <- x + y * dy
   dzeta.dx <- 1 + dy^2 + y * ddy
+  tanzeta <- x - y / dy
+  dtanzeta.dx <- y * ddy / dy^2
   ind.none     <- dy > 0 &
                   ifelse(0 <= x, ddy > 0, ddy < 0) &  # 20181105
                   dzeta.dx > 0
   severity[ind.none] <- severity.table[1]
-  severity[abs(x) < tol0] <- severity.table[1]  # Additional condition
+  severity[abs(x) < tol0] <- severity.table[1]  # Additional cond.
   ind.faint    <- dy > 0 &
                   ifelse(0 <= x, ddy <= 0, ddy >= 0) &
                   dzeta.dx > 0
@@ -690,11 +880,21 @@ hdeffsev <-
                   ifelse(0 <= x, ddy >= 0, ddy < 0) & 
                   dzeta.dx > 0
   severity[ind.extreme] <- severity.table[6]
-  if (allofit) list(severity  = severity,
-                    zeta      = zeta,
-                    dzeta.dx  = dzeta.dx) else
-               severity
-}
+  if (allofit)
+    list(severity     = severity,
+         zeta         = zeta,
+         dzeta.dx     = dzeta.dx,
+         x            = x,
+         y            = y,
+         tanzeta      = tanzeta,
+         dtanzeta.dx  = dtanzeta.dx) else
+    severity
+}  # hdeffsev (original)
+
+
+
+
+
 
 
 
@@ -705,24 +905,35 @@ seglines <-
            cex = 2,
            plot.it = TRUE,
            add.legend = TRUE,
+           cex.legend = 1,   # par()$cex,
            position.legend = "topleft",
+           eta0 = NA,
+           COPS0 = NA,  # Using eta0 instead
            lty.table = c("solid", "dashed",
                          "solid", "dashed",
                          "solid", "dashed",
-                         "solid"), 
+                         "solid"),
            col.table = rainbow.sky[-5],  # Omit "yellow"
-           pch.table = 7:1,
-           severity.table = c("None", "Faint", "Weak",
+           pch.table = 7:1,   # 7:1,
+           severity.table = c("None",
+                              "Faint",
+                              "Weak",
                               "Moderate", "Strong", "Extreme",
                               "Undetermined"),
-           tol0 = 0.1,
            FYI = FALSE,
            ...) {
 
 
+
+
+  Six <- 7
+
+
   answer <- hdeffsev(x, y, dy, ddy,
                      severity.table = severity.table,
-                     tol0 = tol0, allofit = FYI)
+                     eta0 = eta0,
+                     COPS0 = COPS0,  # Using eta0 instead
+                     allofit = FYI)
   severity <- if (FYI) answer$severity else answer
 
   if (plot.it) {
@@ -767,28 +978,31 @@ seglines <-
 
     pointsvec <- unique(pointsvec)
     use.pch.table <- pch.table
-    for (ii in 1:7)
+    for (ii in 1:Six)
       if (single.points && !any(use.pch.table[ii] == pointsvec))
         use.pch.table[ii] <- NA
 
 
     if (add.legend) {
-      if (FALSE && !any(is.element(severity,  severity.table[7]))) {
-        use.pch.table <- use.pch.table[-7]
-        col.table <- col.table[-7]
-        severity.table <- severity.table[-7]
+      if (TRUE &&
+          !any(is.element(severity,  severity.table[Six]))) {
+        use.pch.table <- use.pch.table[-Six]
+        col.table <- col.table[-Six]
+        severity.table <- severity.table[-Six]
       }
-      ind3 <- match(severity.table, severity)  # length of 1st argument
+      ind3 <- match(severity.table, severity)  # len. of 1st arg
       keep.ind <- !is.na(ind3)
       use.pch.table <- use.pch.table[keep.ind]
       col.table <- col.table[keep.ind]
       severity.table <- severity.table[keep.ind]
-      
+
       legend(position.legend, lwd = lwd, lty = lty.table,
-             pch = use.pch.table, col = col.table,
+             pch = use.pch.table,
+             col = col.table,
+             cex = cex.legend,  # Overall size
              legend = severity.table)
       invisible(severity)
-    }
+    }  # add.legend
   } else {
     return(severity)
   }

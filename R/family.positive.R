@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -586,11 +586,13 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     extra$type.fitted <- .type.fitted
     extra$colnames.y  <- colnames(y)
 
-    predictors.names <- c(namesof(param.names("munb", NOS, skip1 = TRUE),
-                                  .lmunb , earg = .emunb , tag = FALSE),
-                          namesof(param.names("size", NOS, skip1 = TRUE),
-                                  .lsize , earg = .esize , tag = FALSE))
-    predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
+    predictors.names <-
+      c(namesof(param.names("munb", NOS, skip1 = TRUE),
+                .lmunb , earg = .emunb , tag = FALSE),
+        namesof(param.names("size", NOS, skip1 = TRUE),
+                .lsize , earg = .esize , tag = FALSE))
+    predictors.names <- predictors.names[interleave.VGAM(M,
+                                                         M1 = M1)]
 
     gprobs.y <- .gprobs.y
     imunb <- .imunb  # Default in NULL
@@ -645,9 +647,10 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 
       etastart <-
         cbind(
-              theta2eta(munb.init            , .lmunb , earg = .emunb ),
-              theta2eta(size.init,             .lsize , earg = .esize ))
-      etastart <- etastart[, interleave.VGAM(M, M1 = M1), drop = FALSE]
+              theta2eta(munb.init,  .lmunb , earg = .emunb ),
+              theta2eta(size.init,  .lsize , earg = .esize ))
+      etastart <- etastart[, interleave.VGAM(M, M1 = M1),
+                           drop = FALSE]
     }
   }), list( .lmunb = lmunb, .lsize = lsize,
             .imunb = imunb, .isize = isize,
@@ -659,7 +662,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- ncol(eta) / c(M1 = 2)
-   type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+    type.fitted <- if (length(extra$type.fitted))
+                       extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning the 'mean'.")
                      "mean"
@@ -669,8 +673,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
                      c("mean", "munb", "prob0"))[1]
 
     TF <- c(TRUE, FALSE)
-    munb <- eta2theta(eta[,  TF, drop = FALSE], .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, !TF, drop = FALSE], .lsize , earg = .esize )
+    munb <- eta2theta(eta[,  TF, drop = FALSE], .lmunb , .emunb )
+    kmat <- eta2theta(eta[, !TF, drop = FALSE], .lsize , .esize )
    small.size <- 1e-10
    if (any(ind4 <- (kmat < small.size))) {
      warning("estimates of 'size' are very small. ",
@@ -685,7 +689,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     smallval <- .mds.min  # Something like this is needed
 
     if (any(big.size <- (munb / kmat < smallval))) {
-      prob0[big.size]  <- exp(-munb[big.size])  # The limit as kmat-->Inf
+      prob0[big.size]  <- exp(-munb[big.size])  # The limit
       oneminusf0[big.size] <- -expm1(-munb[big.size])
     }
 
@@ -728,8 +732,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
              extra = NULL,
              summation = TRUE) {
     TFvec <- c(TRUE, FALSE)
-    munb <- eta2theta(eta[,  TFvec, drop = FALSE], .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, !TFvec, drop = FALSE], .lsize , earg = .esize )
+    munb <- eta2theta(eta[,  TFvec, drop = FALSE], .lmunb , .emunb )
+    kmat <- eta2theta(eta[, !TFvec, drop = FALSE], .lsize , .esize )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
@@ -745,9 +749,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize ))),
 
-  vfamily = c("posnegbinomial"),
-
-
+  vfamily = c("posnegbinomial",
+              "VGAMcategorical"),  # For "margeff"
 
 
   simslot = eval(substitute(
@@ -762,7 +765,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
                       .lmunb, earg = .emunb )
     kmat <- eta2theta(eta[, c(FALSE, TRUE), drop = FALSE],
                       .lsize, earg = .esize )
-    rgaitdnbinom(nsim * length(munb), kmat, munb.p = munb, truncate = 0)
+    rgaitdnbinom(nsim * length(munb), kmat, munb.p = munb,
+                 truncate = 0)
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize ))),
 
@@ -780,7 +784,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     okay1 <- all(is.finite(munb)) && all(0 < munb) &&
              all(is.finite(size)) && all(0 < size) &&
              all(small.size.absolute < size)
-    overdispersion <- if (okay1) all(smallval < munb / size) else FALSE
+    overdispersion <- if (okay1)
+                        all(smallval < munb / size) else FALSE
     if (!overdispersion)
       warning("parameter 'size' has very large values relative ",
               "to 'munb'; ",
@@ -797,8 +802,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     NOS <- extra$NOS
 
     TFvec <- c(TRUE, FALSE)
-    munb <- eta2theta(eta[,  TFvec, drop = FALSE], .lmunb , earg = .emunb )
-    kmat <- eta2theta(eta[, !TFvec, drop = FALSE], .lsize , earg = .esize )
+    munb <- eta2theta(eta[,  TFvec, drop = FALSE], .lmunb , .emunb )
+    kmat <- eta2theta(eta[, !TFvec, drop = FALSE], .lsize , .esize )
 
 
     smallval <- .mds.min  # Something like this is needed
@@ -824,12 +829,13 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
     df0.dkmat   <- prob0 * AA16
     df02.dmunb2 <- prob0 * tempk * (1 + 1/kmat) / (1 + munb/kmat)
     df02.dkmat2 <- prob0 * ((tempm^2) / kmat + AA16^2)
-    df02.dkmat.dmunb <- -prob0 * (tempm/kmat + AA16) / (1 + munb/kmat)
+    df02.dkmat.dmunb <- -prob0 * (tempm/kmat + AA16) / (1 +
+                         munb/kmat)
 
 
 
     if (any(big.size)) {
-      prob0[big.size]  <- exp(-munb[big.size])  # The limit as kmat-->Inf
+      prob0[big.size]  <- exp(-munb[big.size])  # The limit
       oneminusf0[big.size] <- -expm1(-munb[big.size])
       df0.dmunb[big.size] <- -tempk[big.size] * prob0[big.size]
       df0.dkmat[big.size] <-  prob0[big.size] * AA16[big.size]
@@ -846,9 +852,9 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
 
     smallno <- 1e-6
     if (TRUE && any(near.boundary <- oneminusf0 < smallno)) {
-        warning("solution near the boundary; either there is no need ",
-                "to fit a positive NBD or the distribution is centred ",
-                "on the value 1")
+        warning("solution near the boundary; either there is no",
+         " need to fit a positive NBD or the distribution ",
+         "is centred on the value 1")
         oneminusf0[near.boundary] <- smallno
         prob0[near.boundary] <- 1 - oneminusf0[near.boundary]
     }
@@ -962,7 +968,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
         }  # end of for loop
 
         run.varcov <- c(run.varcov / .nsimEIM )
-        ned2l.dk2 <- if (intercept.only) mean(run.varcov) else run.varcov
+        ned2l.dk2 <- if (intercept.only)
+                       mean(run.varcov) else run.varcov
 
         wz[ii.TF, M1*jay] <- ned2l.dk2  # * (dsize.deta[ii.TF, jay])^2
       }

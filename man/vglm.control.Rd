@@ -3,7 +3,8 @@
 %- Also NEED an `\alias' for EACH other topic documented here.
 \title{ Control Function for vglm() }
 \description{
-  Algorithmic constants and parameters for running \code{vglm} are set
+  Algorithmic constants and parameters for
+  running \code{vglm} are set
   using this function.
 
 }
@@ -132,17 +133,18 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   A list of formulas.
   Each formula has a RHS giving \eqn{M} terms making up a
   covariate-dependent term (whose name is the response).
-  That is, it creates a variable
-  that takes on different values for each linear/additive predictor,
+  That is, it creates a variable that takes on
+  different values for each linear/additive predictor,
   e.g., the ocular pressure of each eye.
   The \eqn{M} terms must be unique;
-  use \code{\link{fill1}}, \code{fill2}, \code{fill3}, etc. if necessary.
+  use \code{\link{fill1}}, \code{fill2}, \code{fill3},
+  etc. if necessary.
   Each formula should have a response which is taken as the
   name of that variable, and the \eqn{M} terms are enumerated
   in sequential order.  Each of the \eqn{M} terms multiply
   each successive row of the constraint matrix.
-  When \code{xij} is used, the use of \code{form2} is also required
-  to give \emph{every} term used by the model.
+  When \code{xij} is used, the use of \code{form2} is also
+  required to give \emph{every} term used by the model.
 
 
 
@@ -161,7 +163,8 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   }
 % \item{jix}{
 % A formula or a list of formulas specifying
-% which explanatory variables are to be plotted for each \code{xij} term.
+% which explanatory variables are to be plotted for
+% each \code{xij} term.
 % For example, in the code below,
 % the term \code{BS(dumm)} could be plotted against either
 % \code{dum1} or \code{dum2}, therefore
@@ -171,8 +174,9 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 % one for each column of the constraint matrix.
 % Each formula should have a response that matches the
 % \code{formula} argument.
-% The argument \code{jix} is a reversal of \code{xij} to emphasize
-% the same framework for handling terms involving covariates that have
+% The argument \code{jix} is a reversal of \code{xij}
+% to emphasize the same framework for handling terms
+% involving covariates that have
 % different values for each linear/additive predictor.
 %
 % }
@@ -200,7 +204,8 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
   }
 \value{
-  A list with components matching the input names. A little error
+  A list with components matching the input names.
+  A little error
   checking is done, but not much.
   The list is assigned to the \code{control} slot of
   \code{vglm} objects.
@@ -257,8 +262,9 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 \examples{
 # Example 1.
 pneumo <- transform(pneumo, let = log(exposure.time))
-vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo,
-     crit = "coef", step = 0.5, trace = TRUE, epsil = 1e-8, maxit = 40)
+vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo,
+     crit = "coef", step = 0.5, trace = TRUE, epsil = 1e-8,
+     maxit = 40)
 
 
 # Example 2. The use of the xij argument (simple case).
@@ -270,7 +276,7 @@ mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n),
 mydat <- transform(mydat, X = x1, Z = z1)
 mydat <- round(mydat, digits = 2)
 fit2 <- vglm(ymat ~ X + Z,
-             dirichlet(parallel = TRUE), data = mydat, trace = TRUE,
+             dirichlet(parallel = TRUE), mydat, trace = TRUE,
              xij = list(Z ~ z1 + z2 + z3 + z4,
                         X ~ x1 + x2 + x3 + x4),
              form2 = ~  Z + z1 + z2 + z3 + z4 +
@@ -279,7 +285,7 @@ head(model.matrix(fit2, type =  "lm"))  # LM model matrix
 head(model.matrix(fit2, type = "vlm"))  # Big VLM model matrix
 coef(fit2)
 coef(fit2, matrix = TRUE)
-max(abs(predict(fit2)-predict(fit2, new = mydat)))  # Predicts correctly
+max(abs(predict(fit2)-predict(fit2, new = mydat)))  # Predicts ok
 summary(fit2)
 \dontrun{
 # plotvgam(fit2, se = TRUE, xlab = "x1", which.term = 1)  # Bug!
@@ -291,12 +297,13 @@ plotvgam(fit2, xlab = "z1")  # Correct
 
 # Example 3. The use of the xij argument (complex case).
 set.seed(123)
-coalminers <- transform(coalminers,
-                        Age = (age - 42) / 5,
-                        dum1 = round(runif(nrow(coalminers)), digits = 2),
-                        dum2 = round(runif(nrow(coalminers)), digits = 2),
-                        dum3 = round(runif(nrow(coalminers)), digits = 2),
-                        dumm = round(runif(nrow(coalminers)), digits = 2))
+coalminers <-
+  transform(coalminers,
+            Age = (age - 42) / 5,
+            dum1 = round(runif(nrow(coalminers)), digits = 2),
+            dum2 = round(runif(nrow(coalminers)), digits = 2),
+            dum3 = round(runif(nrow(coalminers)), digits = 2),
+            dumm = round(runif(nrow(coalminers)), digits = 2))
 BS <- function(x, ..., df = 3)
   sm.bs(c(x,...), df = df)[1:length(x),,drop = FALSE]
 NS <- function(x, ..., df = 3)
@@ -313,7 +320,8 @@ fit3 <- vglm(cbind(nBnW,nBW,BnW,BW) ~ Age + NS(dum1, dum2),
              xij = list(NS(dum1, dum2) ~ NS(dum1, dum2) +
                                          NS(dum2, dum1) +
                                          fill1(NS( dum1))),
-             form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) + fill1(NS(dum1)) +
+             form2 = ~  NS(dum1, dum2) + NS(dum2, dum1) +
+                        fill1(NS(dum1)) +
                         dum1 + dum2 + dum3 + Age + age + dumm,
              data = coalminers, trace = TRUE)
 head(model.matrix(fit3, type = "lm"))   # LM model matrix
@@ -321,7 +329,7 @@ head(model.matrix(fit3, type = "vlm"))  # Big VLM model matrix
 coef(fit3)
 coef(fit3, matrix = TRUE)
 \dontrun{
-plotvgam(fit3, se = TRUE, lcol = "red", scol = "blue", xlab = "dum1")
+plotvgam(fit3, se = TRUE, lcol = 2, scol = 4, xlab = "dum1")
 }
 }
 \keyword{models}
@@ -345,11 +353,11 @@ plotvgam(fit3, se = TRUE, lcol = "red", scol = "blue", xlab = "dum1")
 %
 %\dontrun{
 %fit4 <- vglm(cbind(leye,reye) ~ POLY3(op), trace=TRUE,
-%            fam = binom2.or(exchangeable=TRUE, zero=3),  data=eyesdata,
-%            xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
-%                                   fill(POLY3(lop,rop))),
-%            form2 =  ~ POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
-%                                   fill(POLY3(lop,rop)))
+%     fam = binom2.or(exchangeable=TRUE, zero=3),  data=eyesdata,
+%     xij = list(POLY3(op) ~ POLY3(lop,rop) + POLY3(rop,lop) +
+%                            fill(POLY3(lop,rop))),
+%     form2 =  ~ POLY3(op) + POLY3(lop,rop) + POLY3(rop,lop) +
+%                            fill(POLY3(lop,rop)))
 %coef(fit4)
 %coef(fit4, matrix=TRUE)
 %head(predict(fit4))

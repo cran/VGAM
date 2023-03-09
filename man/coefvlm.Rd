@@ -9,7 +9,7 @@
 
 }
 \usage{
-coefvlm(object, matrix.out = FALSE, label = TRUE, colon = FALSE)
+coefvlm(object, matrix.out = FALSE, label = TRUE, colon = FALSE, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,6 +42,9 @@ coefvlm(object, matrix.out = FALSE, label = TRUE, colon = FALSE)
     Then setting \code{colon = TRUE} will add the \code{:1}.
 
 
+  }
+  \item{\dots}{
+  Currently unused.
   }
 }
 \details{

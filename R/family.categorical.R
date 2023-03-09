@@ -1,10 +1,43 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CMs.equidistant <- function(M,
+                             Treverse = FALSE,
+                             Tref = 1) {
+  if (!is.logical(Treverse) && length(Treverse) != 1)
+    stop("bad input for argument 'Treverse'")
+  if (is.character(Tref) && Tref == "M")
+    Tref <- M
+  if (!is.numeric(Tref))
+    Tref <- as.numeric(Tref)
+  if (M <  1)
+    stop("argument 'M' should never be less than 1")
+  if (M == 1)
+    return(cbind(1))
+  H1 <- matrix(1, M, 2)
+  H1[, 2] <- if (Treverse) rev(seq(M)) else seq(M)
+  H1[, 2] <- H1[, 2] - H1[Tref, 2]
+  H1
+}  # CMs.equidistant
 
 
 
@@ -37,7 +70,8 @@
     stop("the length of 'refLevel' must be one")
 
   if ( is.numeric(refLevel) &&
-      !is.Numeric(refLevel, integer.valued = TRUE, positive = TRUE))
+      !is.Numeric(refLevel, integer.valued = TRUE,
+                  positive = TRUE))
     stop("argument 'refLevel' is not a positive integer")
 
   if (is.character(refLevel)) {
@@ -175,7 +209,7 @@
     if (use.refLevel > (M + 1))
       stop("argument 'refLevel' has a value that is too high")
     extra$use.refLevel <- use.refLevel  # Used in all other slots.
-    sd.mlm <- extra$d.mlm <- as.vector( .d.mlm )  # May be NULL, okay.
+    sd.mlm <- extra$d.mlm <- as.vector( .d.mlm )  # May be NULL, ok.
     pmone <- rep_len(1, M + 1)
     if (length(sd.mlm)) {
       pmone[sd.mlm] <- -1
@@ -192,7 +226,8 @@
       ind.d <- sd.mlm
       ind.d[use.refLevel < ind.d] <-
       ind.d[use.refLevel < ind.d] - 1  # Scrunch RHS up
-      predictors.names[ind.d] <- paste0("-", predictors.names[ind.d])
+      predictors.names[ind.d] <-
+        paste0("-", predictors.names[ind.d])
     }
 
     extra$colnames.y <- colnames(y)
@@ -202,15 +237,17 @@
     if (length(imu)) {
       mustart <- matrix(imu, n, NCOL(y), byrow = .byrow.arg )
     }
-  }), list( .refLevel = refLevel, .fillerChar = fillerChar,
-            .d.mlm = d.mlm, .imu = imu, .byrow.arg = byrow.arg,
-            .imethod = imethod, .whitespace = whitespace ))),
+  }),
+  list( .refLevel = refLevel, .fillerChar = fillerChar,
+        .d.mlm = d.mlm, .imu = imu, .byrow.arg = byrow.arg,
+        .imethod = imethod, .whitespace = whitespace ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (anyNA(eta))
       warning("there are NAs in eta in slot inverse")
     ans <-
       multilogitlink(eta,  # .refLevel , d.mlm = .d.mlm ,
-                     refLevel = extra$use.refLevel, inverse = TRUE)
+                     refLevel = extra$use.refLevel,
+                     inverse = TRUE)
     if (anyNA(ans))
       warning("there are NAs here in slot linkinv")
     if (min(ans) == 0 || max(ans) == 1)
@@ -259,7 +296,8 @@
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
+        warning("converting 'ycounts' to integer in ",
+                "@loglikelihood")
       ycounts <- round(ycounts)
       ll.elts <-
         (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
@@ -279,8 +317,8 @@
 
   hadof = eval(substitute(
   function(eta, extra = list(),
-           linpred.index = 1,
-           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           linpred.index = 1, w = 1,
+           dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
            deriv = 1, ...) {
 
 
@@ -296,10 +334,10 @@
         wz1[, iam(i1, j1, M = M)] <-  (1 - 2 * mu[, i1])  # *
       }
       if (i1 == jay && j1 != jay) {
-        wz1[, iam(i1, j1, M = M)] <- -mu[, j1]  # -(1 - 2 * mu[, i1]) *
+        wz1[, iam(i1, j1, M = M)] <- -mu[, j1]  # -
       }
       if (i1 != jay && j1 == jay) {
-        wz1[, iam(i1, j1, M = M)] <- -mu[, i1]  # -(1 - 2 * mu[, j1]) *
+        wz1[, iam(i1, j1, M = M)] <- -mu[, i1]  # -(1 - ...) *
       }
     }  # for (i)
     c(w) * wz1
@@ -321,8 +359,8 @@
       }
       if (i1 != jay && j1 == i1) {
         wz1[, iam(i1, j1, M = M)] <- -mu[, i1] * mu[, jay] *
-                                 (1 - 2 * mu[, i1] - 2 * mu[, jay] +
-                                      6 * mu[, i1] * mu[, jay])
+                           (1 - 2 * mu[, i1] - 2 * mu[, jay] +
+                                6 * mu[, i1] * mu[, jay])
                                             
       }
       if (i1 == jay && j1 != jay) {
@@ -332,8 +370,8 @@
         wz1[, iam(i1, j1, M = M)] <- zz.yettodo
       }
       if (any(is.na(wz1[, iam(i1, j1, M = M)]))) {
-        wz1[, iam(i1, j1, M = M)] <-       2 * mu[, i1]  * 
-                                               mu[, j1] * mu[, jay] *
+        wz1[, iam(i1, j1, M = M)] <-   2 * mu[, i1]  * 
+                                           mu[, j1] * mu[, jay] *
                                       (1 - 3 * mu[, jay])
       }
     }  # for (i)
@@ -370,11 +408,13 @@
          c(w) * wz
        },
        "1" = {
-         multinomial.eim.deriv1(mu.use[, -use.refLevel, drop = FALSE],
+         multinomial.eim.deriv1(mu.use[, -use.refLevel,
+                                       drop = FALSE],
                                 jay = linpred.index, w = w)
        },
        "2" = {
-         multinomial.eim.deriv2(mu.use[, -use.refLevel, drop = FALSE],
+         multinomial.eim.deriv2(mu.use[, -use.refLevel,
+                                       drop = FALSE],
                                 jay = linpred.index, w = w)
        },
        stop("argument 'deriv' must be 0 or 1 or 2"))
@@ -428,7 +468,8 @@
       index$row.index[myinc] <- index$row.index[myinc] + 1
       myinc <- (index$col.index >= use.refLevel)
       index$col.index[myinc] <- index$col.index[myinc] + 1
-      wz <- -mu[, index$row] * mu[, index$col]
+      wz <- -mu[, index$row, drop = FALSE] *
+             mu[, index$col, drop = FALSE]
       wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]  # AMLM
     }
 
@@ -574,7 +615,7 @@ Deviance.categorical.data.vgam <-
   nonz <- (y != 0)
   devy[nonz] <- y[nonz] * log(y[nonz])
 
-  devmu <- 0 * y  # filler; y*log(mu) gives a warning (fixed up anyway).
+  devmu <- 0 * y  # filler; y*log(mu) gives a warning
   if (any(smallmu <- (mu * (1 - mu) < double.eps))) {
     warning("fitted values close to 0 or 1")
     smu <- mu[smallmu]
@@ -640,7 +681,8 @@ Deviance.categorical.data.vgam <-
     if (!length(size))
       size <- round(rowSums(prob))
   }
-  logdensity <- lfactorial(size) + rowSums(x*log(prob) - lfactorial(x))
+  logdensity <- lfactorial(size) +
+                rowSums(x * log(prob) - lfactorial(x))
   if (log.arg) logdensity else exp(logdensity)
 }  # dmultinomial()
 
@@ -653,13 +695,20 @@ Deviance.categorical.data.vgam <-
 
 
 
- sratio <- function(link = "logitlink",
-                    parallel = FALSE, reverse = FALSE, zero = NULL,
-                    whitespace = FALSE) {
+
+ sratio <-
+  function(link = "logitlink",
+           parallel = FALSE, reverse = FALSE, zero = NULL,
+           thresholds = c("unconstrained", "equidistant"),
+           Treverse = reverse,
+           Tref = if (Treverse) "M" else 1,
+           whitespace = FALSE) {
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
 
+  thresholds <- match.arg(thresholds,
+      c("unconstrained", "equidistant"))[1]
 
   if (!is.logical(reverse) || length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
@@ -690,14 +739,21 @@ Deviance.categorical.data.vgam <-
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
+         thresholds = .thresholds ,
+         Tref = .Tref ,
+         Treverse = .Treverse ,
          whitespace = .whitespace ,
          zero = .zero ,
          link = .link )
-  }, list( .link = link,
-           .zero = zero,
-           .parallel = parallel,
-           .reverse = reverse,
-           .whitespace = whitespace ))),
+  },
+  list( .link = link,
+        .zero = zero,
+        .parallel = parallel,
+        .reverse = reverse,
+        .thresholds = thresholds,
+        .Tref = Tref ,
+        .Treverse = Treverse ,
+        .whitespace = whitespace ))),
 
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
@@ -706,7 +762,24 @@ Deviance.categorical.data.vgam <-
     constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
                      M = M, M1 = M,
                      predictors.names = predictors.names)
-  }), list( .parallel = parallel, .zero = zero ))),
+
+
+  thresholds <- ( .thresholds )
+  if (thresholds != "unconstrained" &&
+      names(constraints)[1] != "(Intercept)")
+    stop("argument 'thresholds' has been applied but the ",
+         "model does not have an intercept term")
+   if (thresholds != "unconstrained") {
+     constraints[["(Intercept)"]] <-
+       CMs.equidistant(M, Treverse = .Treverse ,
+                       Tref = .Tref )
+    }
+  }),
+  list( .parallel = parallel,
+        .thresholds = thresholds,
+        .Tref = Tref ,
+        .Treverse = Treverse ,
+        .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
   initialize = eval(substitute(expression({
@@ -723,20 +796,24 @@ Deviance.categorical.data.vgam <-
 
     mynames <- if ( .reverse )
       paste("P[Y", .fillerChar, "=", .fillerChar, 2:(M+1), "|Y",
-             .fillerChar, "<=", .fillerChar, 2:(M+1), "]", sep = "") else
+            .fillerChar, "<=", .fillerChar, 2:(M+1), "]",
+            sep = "") else
       paste("P[Y", .fillerChar, "=", .fillerChar, 1:M,     "|Y",
-             .fillerChar, ">=", .fillerChar, 1:M,     "]", sep = "")
+            .fillerChar, ">=", .fillerChar, 1:M,     "]",
+            sep = "")
     predictors.names <-
       namesof(mynames, .link , short = TRUE, earg = .earg )
     y.names <- param.names("mu", M+1)
 
-    extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
-                  tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
-
+    extra$mymat <- if ( .reverse )
+       tapplymat1(y, "cumsum") else
+       tapplymat1(y[, ncol(y):1, drop = FALSE],
+                  "cumsum")[, ncol(y):1, drop = FALSE]
     extra$colnames.y  <- colnames(y)
-  }), list( .earg = earg, .link = link, .reverse = reverse,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse,
+        .fillerChar = fillerChar,
+        .whitespace = whitespace ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (!is.matrix(eta))
@@ -744,14 +821,16 @@ Deviance.categorical.data.vgam <-
     fv.mat <- if ( .reverse ) {
       M <- NCOL(eta)
       djr <- eta2theta(eta, .link , earg = .earg )
-      temp <- tapplymat1(1 - djr[, M:1], "cumprod")[, M:1]
+      temp <- tapplymat1(1 - djr[, M:1, drop = FALSE],
+                         "cumprod")[, M:1, drop = FALSE]
       cbind(1, djr) * cbind(temp, 1)
     } else {
       dj <- eta2theta(eta, .link , earg = .earg )
       temp <- tapplymat1(1 - dj, "cumprod")
       cbind(dj, 1) * cbind(1, temp)
     }
-    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y,
+                 NOS = 1)
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   last = eval(substitute(expression({
     misc$link <- rep_len( .link , M)
@@ -768,21 +847,25 @@ Deviance.categorical.data.vgam <-
     misc$whitespace <- .whitespace
 
     extra <- list()  # kill what was used
-  }), list( .earg = earg, .link = link, .reverse = reverse,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse,
+        .fillerChar = fillerChar,
+        .whitespace = whitespace ))),
   linkfun = eval(substitute( function(mu, extra = NULL) {
     cump <- tapplymat1(mu, "cumsum")
     if ( .reverse ) {
-      djr <- mu[, -1] / cump[, -1]
+      djr <- mu[, -1, drop = FALSE] / cump[, -1, drop = FALSE]
       theta2eta(djr, .link , earg = .earg )
     } else {
       M <- ncol(mu) - 1
-      dj <- if (M == 1) mu[, 1] else
-           mu[, 1:M] / (1 - cbind(0, cump[, 1:(M-1)]))
+      dj <- if (M == 1)
+              mu[, 1, drop = FALSE] else
+              mu[, 1:M, drop = FALSE] / (
+              1 - cbind(0, cump[, 1:(M-1), drop = FALSE]))
       theta2eta(dj, .link , earg = .earg )
     }
-  }, list( .earg = earg, .link = link, .reverse = reverse) )),
+  },
+  list( .earg = earg, .link = link, .reverse = reverse) )),
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE)
@@ -797,7 +880,8 @@ Deviance.categorical.data.vgam <-
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
+        warning("converting 'ycounts' to integer ",
+                "in @loglikelihood")
       ycounts <- round(ycounts)
 
       ll.elts <-
@@ -818,35 +902,46 @@ Deviance.categorical.data.vgam <-
   }, list( .earg = earg, .link = link, .reverse = reverse) )),
   deriv = eval(substitute(expression({
     if (!length(extra$mymat)) {
-      extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
-                     tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
+      extra$mymat <-
+        if ( .reverse )
+          tapplymat1(y, "cumsum") else
+          tapplymat1(y[, ncol(y):1, drop = FALSE],
+                     "cumsum")[, ncol(y):1, drop = FALSE]
     }
-    if ( .reverse ) {
+    ans <- if ( .reverse ) {
       djr <- eta2theta(eta, .link , earg = .earg )
       Mp1 <- ncol(extra$mymat)
-      c(w) * (y[, -1] / djr - extra$mymat[, -Mp1] / (1 - djr)) *
+      c(w) * (y[, -1, drop = FALSE] / djr -
+              extra$mymat[, -Mp1, drop = FALSE] / (1 - djr)) *
         dtheta.deta(djr, .link , earg = .earg )
     } else {
       dj <- eta2theta(eta, .link , earg = .earg )
-      c(w) * (y[, -ncol(y)] / dj - extra$mymat[, -1] / (1 - dj)) *
+      c(w) * (y[, -ncol(y), drop = FALSE] / dj -
+              extra$mymat[, -1, drop = FALSE] / (1 - dj)) *
         dtheta.deta(dj, .link , earg = .earg )
     }
-  }), list( .earg = earg, .link = link, .reverse = reverse) )),
+    ans
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse) )),
   weight = eval(substitute(expression({
     if ( .reverse ) {
       cump <- tapplymat1(mu, "cumsum")
       ddjr.deta <- dtheta.deta(djr, .link , earg = .earg )
       wz <- c(w) * ddjr.deta^2 *
-           (mu[, -1] / djr^2 + cump[, 1:M] / (1 - djr)^2)
+            (mu[, -1, drop = FALSE] / djr^2 +
+             cump[, 1:M, drop = FALSE] / (1 - djr)^2)
     } else {
-      ccump <- tapplymat1(mu[, ncol(mu):1], "cumsum")[, ncol(mu):1]
+      ccump <- tapplymat1(mu[, ncol(mu):1, drop = FALSE],
+                          "cumsum")[, ncol(mu):1, drop = FALSE]
       ddj.deta <- dtheta.deta(dj, .link , earg = .earg )
       wz <- c(w) * ddj.deta^2 *
-           (mu[, 1:M] / dj^2 + ccump[, -1] / (1 - dj)^2)
+            (mu[, 1:M, drop = FALSE] / dj^2 +
+             ccump[, -1, drop = FALSE] / (1 - dj)^2)
     }
 
     wz
-  }), list( .earg = earg, .link = link, .reverse = reverse ))))
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse ))))
 }  # sratio()
 
 
@@ -854,13 +949,19 @@ Deviance.categorical.data.vgam <-
 
 
 
- cratio <- function(link = "logitlink",
-                    parallel = FALSE, reverse = FALSE, zero = NULL,
-                    whitespace = FALSE) {
+ cratio <-
+  function(link = "logitlink",
+           parallel = FALSE, reverse = FALSE, zero = NULL,
+           thresholds = c("unconstrained", "equidistant"),
+           Treverse = reverse,
+           Tref = if (Treverse) "M" else 1,
+           whitespace = FALSE) {
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
 
+  thresholds <- match.arg(thresholds,
+      c("unconstrained", "equidistant"))[1]
 
   if (!is.logical(reverse) || length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
@@ -893,6 +994,9 @@ Deviance.categorical.data.vgam <-
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
+         thresholds = .thresholds ,
+         Tref = .Tref ,
+         Treverse = .Treverse ,
          whitespace = .whitespace ,
          zero = .zero ,
          link = .link )
@@ -900,6 +1004,9 @@ Deviance.categorical.data.vgam <-
            .zero = zero,
            .parallel = parallel,
            .reverse = reverse,
+           .thresholds = thresholds,
+           .Tref = Tref ,
+           .Treverse = Treverse ,
            .whitespace = whitespace ))),
 
 
@@ -910,8 +1017,25 @@ Deviance.categorical.data.vgam <-
     constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
                      M = M, M1 = M,
                      predictors.names = predictors.names)
-  }), list( .parallel = parallel, .zero = zero ))),
 
+
+
+  thresholds <- ( .thresholds )
+  if (thresholds != "unconstrained" &&
+      names(constraints)[1] != "(Intercept)")
+    stop("argument 'thresholds' has been applied but the ",
+         "model does not have an intercept term")
+   if (thresholds != "unconstrained") {
+     constraints[["(Intercept)"]] <-
+       CMs.equidistant(M, Treverse = .Treverse ,
+                       Tref = .Tref )
+    }
+  }),
+  list( .parallel = parallel,
+        .thresholds = thresholds,
+        .Tref = Tref ,
+        .Treverse = Treverse ,
+        .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
 
@@ -928,21 +1052,25 @@ Deviance.categorical.data.vgam <-
 
     mynames <- if ( .reverse )
       paste("P[Y", .fillerChar, "<", .fillerChar, 2:(M+1), "|Y",
-            .fillerChar, "<=", .fillerChar, 2:(M+1), "]", sep = "") else
+            .fillerChar, "<=", .fillerChar, 2:(M+1), "]",
+            sep = "") else
       paste("P[Y", .fillerChar, ">", .fillerChar, 1:M,     "|Y",
-            .fillerChar, ">=", .fillerChar, 1:M,     "]", sep = "")
+            .fillerChar, ">=", .fillerChar, 1:M,     "]",
+            sep = "")
     predictors.names <-
       namesof(mynames, .link , earg = .earg , short = TRUE)
     y.names <-  param.names("mu", M+1)
 
     extra$mymat <- if ( .reverse )
-                   tapplymat1(y, "cumsum") else
-                   tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
+       tapplymat1(y, "cumsum") else
+       tapplymat1(y[, ncol(y):1, drop = FALSE],
+                  "cumsum")[, ncol(y):1, drop = FALSE]
 
     extra$colnames.y  <- colnames(y)
-  }), list( .earg = earg, .link = link, .reverse = reverse,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse,
+        .fillerChar = fillerChar,
+        .whitespace = whitespace ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (!is.matrix(eta))
@@ -950,15 +1078,18 @@ Deviance.categorical.data.vgam <-
     fv.mat <- if ( .reverse ) {
       M <- ncol(eta)
       djrs <- eta2theta(eta, .link , earg = .earg )
-      temp <- tapplymat1(djrs[, M:1], "cumprod")[, M:1]
+      temp <- tapplymat1(djrs[, M:1, drop = FALSE],
+                         "cumprod")[, M:1, drop = FALSE]
       cbind(1, 1 - djrs) * cbind(temp, 1)
     } else {
       djs <- eta2theta(eta, .link , earg = .earg )
       temp <- tapplymat1(djs, "cumprod")
       cbind(1 - djs, 1) * cbind(1, temp)
     }
-    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
-  }, list( .earg = earg, .link = link, .reverse = reverse) )),
+    label.cols.y(fv.mat, colnames.y = extra$colnames.y,
+                 NOS = 1)
+  },
+  list( .earg = earg, .link = link, .reverse = reverse) )),
   last = eval(substitute(expression({
 
     misc$link <- rep_len( .link , M)
@@ -976,21 +1107,26 @@ Deviance.categorical.data.vgam <-
 
 
     extra <- list()  # kill what was used
-  }), list( .earg = earg, .link = link, .reverse = reverse,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse,
+        .fillerChar = fillerChar,
+        .whitespace = whitespace ))),
   linkfun = eval(substitute( function(mu, extra = NULL) {
     cump <- tapplymat1(mu, "cumsum")
     if ( .reverse ) {
-      djrs <- 1 - mu[, -1] / cump[, -1]
+      djrs <- 1 - mu[, -1, drop = FALSE] / (
+              cump[, -1, drop = FALSE])
       theta2eta(djrs, .link , earg = .earg )
     } else {
       M <- ncol(mu) - 1
-      djs <- if (M == 1) 1 - mu[, 1] else
-             1 - mu[, 1:M] / (1 - cbind(0, cump[, 1:(M-1)]))
+      djs <- if (M == 1)
+             1 - mu[, 1, drop = FALSE] else
+             1 - mu[, 1:M, drop = FALSE] / (
+             1 - cbind(0, cump[, 1:(M-1), drop = FALSE]))
       theta2eta(djs, .link , earg = .earg )
     }
-  }, list( .earg = earg, .link = link, .reverse = reverse) )),
+  },
+  list( .earg = earg, .link = link, .reverse = reverse) )),
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
@@ -1005,7 +1141,8 @@ Deviance.categorical.data.vgam <-
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
+        warning("converting 'ycounts' to integer ",
+                "in @loglikelihood")
       ycounts <- round(ycounts)
 
       ll.elts <-
@@ -1028,35 +1165,45 @@ Deviance.categorical.data.vgam <-
 
   deriv = eval(substitute(expression({
     if (!length(extra$mymat)) {
-      extra$mymat <- if ( .reverse ) tapplymat1(y, "cumsum") else
-                     tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
+      extra$mymat <-
+        if ( .reverse )
+          tapplymat1(y, "cumsum") else
+          tapplymat1(y[, ncol(y):1, drop = FALSE],
+                     "cumsum")[, ncol(y):1, drop = FALSE]
     }
     if ( .reverse ) {
       djrs <- eta2theta(eta, .link , earg = .earg )
       Mp1 <- ncol(extra$mymat)
-      -c(w) * (y[, -1]/(1 - djrs) - extra$mymat[, -Mp1]/djrs) *
+      -c(w) * (y[, -1, drop = FALSE] / (1 - djrs) -
+               extra$mymat[, -Mp1, drop = FALSE] / djrs) *
         dtheta.deta(djrs, .link , earg = .earg )
     } else {
       djs <- eta2theta(eta, .link , earg = .earg )
-      -c(w) * (y[, -ncol(y)]/(1 - djs) - extra$mymat[, -1]/djs) *
+      -c(w) * (y[, -ncol(y), drop = FALSE] / (1 - djs) -
+               extra$mymat[, -1, drop = FALSE] / djs) *
         dtheta.deta(djs, .link , earg = .earg )
     }
-  }), list( .earg = earg, .link = link, .reverse = reverse) )),
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse) )),
 
   weight = eval(substitute(expression({
     if ( .reverse ) {
       cump <- tapplymat1(mu, "cumsum")
       ddjrs.deta <- dtheta.deta(djrs, .link , earg = .earg )
       wz <- c(w) * ddjrs.deta^2 *
-            (mu[, -1] / (1 - djrs)^2 + cump[, 1:M] / djrs^2)
+            (mu[, -1, drop = FALSE] / (1 - djrs)^2 +
+             cump[, 1:M, drop = FALSE] / djrs^2)
     } else {
-      ccump <- tapplymat1(mu[, ncol(mu):1], "cumsum")[, ncol(mu):1]
+      ccump <- tapplymat1(mu[, ncol(mu):1, drop = FALSE],
+                          "cumsum")[, ncol(mu):1, drop = FALSE]
       ddjs.deta <- dtheta.deta(djs, .link , earg = .earg )
       wz <- c(w) * ddjs.deta^2 *
-            (mu[, 1:M] / (1 - djs)^2 + ccump[, -1] / djs^2)
+            (mu[, 1:M, drop = FALSE] / (1 - djs)^2 +
+             ccump[, -1, drop = FALSE] / djs^2)
     }
     wz
-  }), list( .earg = earg, .link = link, .reverse = reverse ))))
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse ))))
 }  # cratio()
 
 
@@ -1076,7 +1223,8 @@ Deviance.categorical.data.vgam <-
 
  vglm.multinomial.control <-
   function(maxit = 21, panic = FALSE,
-           criterion = c("aic1", "aic2", names( .min.criterion.VGAM )),
+           criterion = c("aic1", "aic2",
+                         names( .min.criterion.VGAM )),
            ...) {
   if (mode(criterion) != "character" && mode(criterion) != "name")
     criterion <- as.character(substitute(criterion))
@@ -1120,7 +1268,15 @@ Deviance.categorical.data.vgam <-
            parallel = FALSE,  # Does not apply to the intercept
            reverse = FALSE,
            multiple.responses = FALSE,
+           thresholds = c("unconstrained", "equidistant"),
+           Treverse = reverse,
+           Tref = if (Treverse) "M" else 1,
            whitespace = FALSE) {
+
+  thresholds <- match.arg(thresholds,
+      c("unconstrained", "equidistant"))[1]
+  if (multiple.responses && thresholds !=  "unconstrained")
+    stop("argument 'thresholds' must be 'unconstrained'")
 
 
   apply.parint <- FALSE
@@ -1137,7 +1293,8 @@ Deviance.categorical.data.vgam <-
   fillerChar <- ifelse(whitespace, " ", "")
 
 
-  if (!is.logical(multiple.responses) || length(multiple.responses) != 1)
+  if (!is.logical(multiple.responses) ||
+      length(multiple.responses) != 1)
     stop("argument 'multiple.responses' must be a single logical")
   if (!is.logical(reverse) || length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
@@ -1148,16 +1305,16 @@ Deviance.categorical.data.vgam <-
           c(paste("Multivariate cumulative", link, "model\n\n"),
           "Links:   ",
           namesof(if (reverse)
-                  ifelse(whitespace, "P[Y1 >= j+1]", "P[Y1>=j+1]") else
-                  ifelse(whitespace, "P[Y1 <= j]",   "P[Y1<=j]"),
-                  link, earg = earg),
+            ifelse(whitespace, "P[Y1 >= j+1]", "P[Y1>=j+1]") else
+            ifelse(whitespace, "P[Y1 <= j]",   "P[Y1<=j]"),
+            link, earg = earg),
           ", ...") else
           c(paste("Cumulative", link, "model\n\n"),
           "Links:   ",
           namesof(if (reverse)
-                  ifelse(whitespace, "P[Y >= j+1]", "P[Y>=j+1]") else
-                  ifelse(whitespace, "P[Y <= j]",   "P[Y<=j]"),
-                  link, earg = earg)),
+            ifelse(whitespace, "P[Y >= j+1]", "P[Y>=j+1]") else
+            ifelse(whitespace, "P[Y <= j]",   "P[Y<=j]"),
+            link, earg = earg)),
   infos = eval(substitute(function(...) {
     list(M1 = NA,  # zz -1?
          Q1 = NA,
@@ -1167,12 +1324,18 @@ Deviance.categorical.data.vgam <-
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
+         thresholds = .thresholds ,
+         Tref = .Tref ,
+         Treverse = .Treverse ,
          whitespace = .whitespace ,
          link =  .link )
   }, list( .link = link,
            .parallel = parallel,
            .multiple.responses = multiple.responses,
            .reverse = reverse,
+           .thresholds = thresholds,
+           .Tref = Tref ,
+           .Treverse = Treverse ,
            .whitespace = whitespace ))),
 
   constraints = eval(substitute(expression({
@@ -1191,10 +1354,26 @@ Deviance.categorical.data.vgam <-
                              bool = .parallel ,
                              apply.int = .apply.parint ,
                              constraints = constraints)
+
+
+
+  thresholds <- ( .thresholds )
+  if (thresholds != "unconstrained" &&
+      names(constraints)[1] != "(Intercept)")
+    stop("argument 'thresholds' has been applied but the ",
+         "model does not have an intercept term")
+   if (thresholds != "unconstrained")
+     constraints[["(Intercept)"]] <-
+       CMs.equidistant(M, Treverse = .Treverse ,
+                       Tref = .Tref )
     }
-  }), list( .parallel = parallel,
-            .multiple.responses = multiple.responses,
-            .apply.parint = apply.parint ))),
+  }),
+  list( .parallel = parallel,
+        .multiple.responses = multiple.responses,
+        .thresholds = thresholds,
+        .Tref = Tref ,
+        .Treverse = Treverse ,
+        .apply.parint = apply.parint ))),
   deviance = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
 
@@ -1240,7 +1419,7 @@ Deviance.categorical.data.vgam <-
     if ( .multiple.responses ) {
       checkCut(y)  # Check the input; stops if there is an error.
       if (any(w != 1) || NCOL(w) != 1)
-          stop("the 'weights' argument must be a vector of all ones")
+        stop("the 'weights' argument must be a vector of all 1s")
       Llevels <- max(y)
       delete.zero.colns <- FALSE
       orig.y <- cbind(y)  # Convert y into a matrix if necessary
@@ -1260,8 +1439,10 @@ Deviance.categorical.data.vgam <-
         Y.names <- paste("Y", iii, sep = "")
         mu.names <- paste("mu", iii, ".", sep = "")
         mynames <- c(mynames, if ( .reverse )
-          paste("P[", Y.names, ">=", 2:Llevels,     "]", sep = "") else
-          paste("P[", Y.names, "<=", 1:(Llevels-1), "]", sep = ""))
+          paste("P[", Y.names, ">=", 2:Llevels,     "]",
+                sep = "") else
+          paste("P[", Y.names, "<=", 1:(Llevels-1), "]",
+                sep = ""))
         y.names <- c(y.names, param.names(mu.names, Llevels))
       }
 
@@ -1295,10 +1476,12 @@ Deviance.categorical.data.vgam <-
 
     extra$colnames.y  <- colnames(y)
   }
-  }), list( .reverse = reverse, .multiple.responses = multiple.responses,
-            .link = link, .earg = earg,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+  list( .reverse = reverse,
+        .multiple.responses = multiple.responses,
+        .link = link, .earg = earg,
+        .fillerChar = fillerChar,
+        .whitespace = whitespace ))),
 
 
     linkinv = eval(substitute( function(eta, extra = NULL) {
@@ -1338,7 +1521,8 @@ Deviance.categorical.data.vgam <-
             cump <- cbind(eta2theta(eta, .link , earg = .earg ), 1)
             cbind(cump[, 1], tapplymat1(cump, "diff"))
           }
-          label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
+          label.cols.y(fv.mat, colnames.y = extra$colnames.y,
+                       NOS = 1)
         }
         answer
     }, list( .reverse = reverse,
@@ -1396,25 +1580,30 @@ Deviance.categorical.data.vgam <-
       theta2eta(if ( .reverse ) 1-cump[, 1:M] else cump[, 1:M],
                 .link , earg = .earg )
     }
+  if (nrow(mu) == 1)
+    answer <- rbind(answer)
     answer
-  }, list(
-           .link = link, .earg = earg,
-           .reverse = reverse,
-           .multiple.responses = multiple.responses ))),
+  },
+ list( .link = link, .earg = earg,
+       .reverse = reverse,
+       .multiple.responses = multiple.responses ))),
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ycounts <- if (is.numeric(extra$orig.w)) y * w / extra$orig.w else
+      ycounts <- if (is.numeric(extra$orig.w))
+                 y * w / extra$orig.w else
                  y * w # Convert proportions to counts
-      nvec <- if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
+      nvec <- if (is.numeric(extra$orig.w))
+              round(w / extra$orig.w) else
               round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
+        warning("converting 'ycounts' to integer ",
+                "in @loglikelihood")
       ycounts <- round(ycounts)
 
       ll.elts <-
@@ -1433,8 +1622,8 @@ Deviance.categorical.data.vgam <-
 
   hadof = eval(substitute(
   function(eta, extra = list(),
-           linpred.index = 1,
-           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           linpred.index = 1, w = 1,
+           dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
            deriv = 1, ...) {
   if ( .multiple.responses )
     return(NA_real_, dim.wz[1], dim.wz[2])
@@ -1495,11 +1684,13 @@ Deviance.categorical.data.vgam <-
          wz
        },
        "1" = {
-         cumulative.eim.deriv1(mu = mu.use, jay = linpred.index, w = w,
-                               reverse = .reverse )
+           cumulative.eim.deriv1(mu = mu.use,
+                                 jay = linpred.index, w = w,
+                                 reverse = .reverse )
        },
        "2" = {
-         cumulative.eim.deriv2(mu = mu.use, jay = linpred.index, w = w)
+           cumulative.eim.deriv2(mu = mu.use,
+                                 jay = linpred.index, w = w)
        },
        stop("argument 'deriv' must be 0 or 1 or 2"))
   }, list( .link = link, .earg = earg,
@@ -1524,14 +1715,15 @@ Deviance.categorical.data.vgam <-
     okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
     if (!okay1)
       warning("It seems that the nonparallelism assumption has ",
-              "resulted in intersecting linear/additive predictors. ",
-              "Try propodds() or fitting a partial nonproportional ",
-              "odds model or choosing ",
-              "some other link function, etc.")
+        "resulted in intersecting linear/additive predictors. ",
+        "Try propodds() or fitting a partial nonproportional ",
+        "odds model or choosing ",
+        "some other link function, etc.")
     okay1
-  }, list( .link = link, .earg = earg,
-           .reverse = reverse,
-           .multiple.responses = multiple.responses ))),
+  },
+  list( .link = link, .earg = earg,
+        .reverse = reverse,
+        .multiple.responses = multiple.responses ))),
 
   deriv = eval(substitute(expression({
     mu.use <- pmax(mu, .Machine$double.eps * 1.0e-0)
@@ -1545,36 +1737,41 @@ Deviance.categorical.data.vgam <-
         aindex <- (iii-1)*(Llevels)   + 1:(Llevels-1)
         cump <- eta2theta(eta[,cindex, drop = FALSE],
                          .link , earg = .earg )
-        dcump.deta[,cindex] <- dtheta.deta(cump, .link , earg = .earg )
+        dcump.deta[,cindex] <- dtheta.deta(cump, .link ,
+                                           earg = .earg )
         resmat[,cindex] <-
-          (y[,   aindex, drop = FALSE] /mu.use[,   aindex, drop = FALSE] -
-           y[, 1+aindex, drop = FALSE] /mu.use[, 1+aindex, drop = FALSE])
+    (y[,   aindex, drop = FALSE] /mu.use[,   aindex, drop = FALSE] -
+     y[, 1+aindex, drop = FALSE] /mu.use[, 1+aindex, drop = FALSE])
       }
       (if ( .reverse ) -c(w)  else c(w)) * dcump.deta * resmat
     } else {
       cump <- eta2theta(eta, .link , earg = .earg )
       dcump.deta <- dtheta.deta(cump, .link , earg = .earg )
-      c(if ( .reverse ) -c(w)  else c(w)) *
+      c(if ( .reverse ) -c(w) else c(w)) *
       dcump.deta *
-      (y[, -(M+1)] / mu.use[, -(M+1)] - y[, -1] / mu.use[, -1])
+  (y[, -(M+1), drop = FALSE] / mu.use[, -(M+1), drop = FALSE] -
+   y[, -1, drop = FALSE] / mu.use[, -1, drop = FALSE])
     }
     deriv.answer
-  }), list( .link = link, .earg = earg,
-            .reverse = reverse,
-            .multiple.responses = multiple.responses ))),
+  }),
+  list( .link = link, .earg = earg,
+        .reverse = reverse,
+        .multiple.responses = multiple.responses ))),
   weight = eval(substitute(expression({
     if ( .multiple.responses ) {
       NOS <- extra$NOS
       Llevels <- extra$Llevels
-      wz <- matrix(0, n, NOS*(Llevels-1))  # Diag elts only for a start
+      wz <- matrix(0, n,
+                   NOS*(Llevels-1))  # Diag elts only for a start
       for (iii in 1:NOS) {
         cindex <- (iii-1)*(Llevels-1) + 1:(Llevels-1)
         aindex <- (iii-1)*(Llevels)   + 1:(Llevels-1)
-        wz[, cindex] <- c(w) * dcump.deta[, cindex, drop = FALSE]^2 *
-                        (1 / mu.use[,   aindex, drop = FALSE] +
-                         1 / mu.use[, 1+aindex, drop = FALSE])
+        wz[, cindex] <-
+            c(w) * dcump.deta[, cindex, drop = FALSE]^2 *
+            (1 / mu.use[,   aindex, drop = FALSE] +
+            1 / mu.use[, 1+aindex, drop = FALSE])
       }
-      if (Llevels-1 > 1) {
+      if (Llevels - 1 > 1) {
         iii <- 1
         oindex <- (iii-1) * (Llevels-1) + 1:(Llevels-2)
         wz <- cbind(wz, -c(w) *
@@ -1583,13 +1780,14 @@ Deviance.categorical.data.vgam <-
 
         if (NOS > 1) {
           cptrwz <- ncol(wz)  # Like a pointer
-          wz <- cbind(wz, matrix(0, nrow(wz), (NOS-1) * (Llevels-1)))
+          wz <- cbind(wz,
+                      matrix(0, nrow(wz), (NOS-1) * (Llevels-1)))
           for (iii in 2:NOS) {
-            oindex <- (iii-1)*(Llevels-1) + 1:(Llevels-2)
-            wz[,cptrwz + 1 + (1:(Llevels-2))] =
-                  -c(w) * dcump.deta[,oindex] *
-                       dcump.deta[, 1+oindex]
-            cptrwz <- cptrwz + Llevels - 1 # Move it along a bit
+            oindex <- (iii-1) * (Llevels-1) + 1:(Llevels-2)
+            wz[,cptrwz + 1 + (1:(Llevels-2))] <-
+                  -c(w) * dcump.deta[, oindex] *
+                       dcump.deta[, 1 + oindex]
+            cptrwz <- cptrwz + Llevels - 1  # Move it along a bit
           }
         }
 
@@ -1597,15 +1795,20 @@ Deviance.categorical.data.vgam <-
 
         }
     } else {
-      wz <- c(w) * dcump.deta^2 * (1/mu.use[, 1:M] + 1/mu.use[, -1])
+      wz <- c(w) * dcump.deta^2 *
+            (1 / mu.use[, 1:M, drop = FALSE] +
+             1 / mu.use[, -1, drop = FALSE])
       if (M > 1)
         wz <- cbind(wz,
-                    -c(w) * dcump.deta[, -M] *
-                    dcump.deta[, 2:M] / mu.use[, 2:M])
+                    -c(w) *
+                    dcump.deta[, -M, drop = FALSE] *
+                    dcump.deta[, 2:M, drop = FALSE] / (
+                        mu.use[, 2:M, drop = FALSE]))
     }
     wz
-  }), list( .earg = earg, .link = link,
-            .multiple.responses = multiple.responses ))))
+  }),
+ list( .earg = earg, .link = link,
+       .multiple.responses = multiple.responses ))))
 }  # cumulative()
 
 
@@ -1622,14 +1825,23 @@ Deviance.categorical.data.vgam <-
 
 
 
+
+
  acat <-
   function(link = "loglink", parallel = FALSE,
-           reverse = FALSE, zero = NULL, whitespace = FALSE) {
+           reverse = FALSE, zero = NULL,
+           thresholds = c("unconstrained", "equidistant"),
+           Treverse = reverse,
+           Tref = if (Treverse) "M" else 1,
+           whitespace = FALSE) {
 
 
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
+
+  thresholds <- match.arg(thresholds,
+      c("unconstrained", "equidistant"))[1]
 
   if (!is.logical(reverse) || length(reverse) != 1)
     stop("argument 'reverse' must be a single logical")
@@ -1660,6 +1872,9 @@ Deviance.categorical.data.vgam <-
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
+         thresholds = .thresholds ,
+         Tref = .Tref ,
+         Treverse = .Treverse ,
          whitespace = .whitespace ,
          zero = .zero ,
          link = .link )
@@ -1667,6 +1882,9 @@ Deviance.categorical.data.vgam <-
            .zero = zero,
            .parallel = parallel,
            .reverse = reverse,
+           .thresholds = thresholds,
+           .Tref = Tref ,
+           .Treverse = Treverse ,
            .whitespace = whitespace ))),
 
   constraints = eval(substitute(expression({
@@ -1676,7 +1894,24 @@ Deviance.categorical.data.vgam <-
     constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
                      M = M, M1 = M,
                      predictors.names = predictors.names)
-  }), list( .parallel = parallel, .zero = zero ))),
+
+
+  thresholds <- ( .thresholds )
+  if (thresholds != "unconstrained" &&
+      names(constraints)[1] != "(Intercept)")
+    stop("argument 'thresholds' has been applied but the ",
+         "model does not have an intercept term")
+   if (thresholds != "unconstrained") {
+     constraints[["(Intercept)"]] <-
+       CMs.equidistant(M, Treverse = .Treverse ,
+                       Tref = .Tref )
+    }
+  }),
+  list( .parallel = parallel,
+        .thresholds = thresholds,
+        .Tref = Tref ,
+        .Treverse = Treverse ,
+        .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
 
@@ -1704,9 +1939,10 @@ Deviance.categorical.data.vgam <-
     y.names <- param.names("mu", M+1)
 
     extra$colnames.y  <- colnames(y)
-  }), list( .earg = earg, .link = link, .reverse = reverse,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+ list( .earg = earg, .link = link, .reverse = reverse,
+       .fillerChar = fillerChar,
+       .whitespace = whitespace ))),
 
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (!is.matrix(eta))
@@ -1714,7 +1950,8 @@ Deviance.categorical.data.vgam <-
     M <- ncol(eta)
     fv.mat <- if ( .reverse ) {
       zetar <- eta2theta(eta, .link , earg = .earg )
-      temp <- tapplymat1(zetar[, M:1], "cumprod")[, M:1, drop = FALSE]
+      temp <- tapplymat1(zetar[, M:1],
+                         "cumprod")[, M:1, drop = FALSE]
       cbind(temp, 1) / drop(1 + temp %*% rep(1, ncol(temp)))
     } else {
       zeta <- eta2theta(eta, .link , earg = .earg )
@@ -1722,7 +1959,8 @@ Deviance.categorical.data.vgam <-
       cbind(1, temp) / drop(1 + temp %*% rep(1, ncol(temp)))
     }
    label.cols.y(fv.mat, colnames.y = extra$colnames.y, NOS = 1)
-  }, list( .earg = earg, .link = link, .reverse = reverse) )),
+  },
+  list( .earg = earg, .link = link, .reverse = reverse) )),
 
   last = eval(substitute(expression({
     misc$link <- rep_len( .link , M)
@@ -1737,15 +1975,18 @@ Deviance.categorical.data.vgam <-
     misc$reverse <- .reverse
     misc$fillerChar <- .fillerChar
     misc$whitespace <- .whitespace
-  }), list( .earg = earg, .link = link, .reverse = reverse,
-            .fillerChar = fillerChar,
-            .whitespace = whitespace ))),
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse,
+        .fillerChar = fillerChar,
+        .whitespace = whitespace ))),
   linkfun = eval(substitute( function(mu, extra = NULL) {
     M <- ncol(mu) - 1
-    theta2eta(if ( .reverse ) mu[, 1:M]  / mu[,  -1] else
-                              mu[,  -1]  / mu[, 1:M],
-              .link , earg = .earg )
-  }, list( .earg = earg, .link = link, .reverse = reverse) )),
+    theta2eta(if ( .reverse )
+        mu[, 1:M, drop = FALSE] / mu[,  -1, drop = FALSE] else
+        mu[,  -1, drop = FALSE] / mu[, 1:M, drop = FALSE],
+        .link , earg = .earg )
+  },
+  list( .earg = earg, .link = link, .reverse = reverse) )),
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
@@ -1760,7 +2001,8 @@ Deviance.categorical.data.vgam <-
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in @loglikelihood")
+        warning("converting 'ycounts' to ",
+                "integer in @loglikelihood")
       ycounts <- round(ycounts)
 
       ll.elts <-
@@ -1781,7 +2023,8 @@ Deviance.categorical.data.vgam <-
     M <- ncol(eta)
     probs <- if ( .reverse ) {
       zetar <- eta2theta(eta, .link , earg = .earg )
-      temp <- tapplymat1(zetar[, M:1], "cumprod")[, M:1, drop = FALSE]
+      temp <- tapplymat1(zetar[, M:1],
+                         "cumprod")[, M:1, drop = FALSE]
       cbind(temp, 1) / drop(1 + temp %*% rep(1, ncol(temp)))
     } else {
       zeta <- eta2theta(eta, .link , earg = .earg )
@@ -1790,48 +2033,60 @@ Deviance.categorical.data.vgam <-
     }
     okay1 <- all(is.finite(probs)) && all(0 < probs & probs < 1)
     okay1
-  }, list( .earg = earg, .link = link, .reverse = reverse) )),
+  },
+  list( .earg = earg, .link = link, .reverse = reverse) )),
   deriv = eval(substitute(expression({
-    zeta <- eta2theta(eta, .link , earg = .earg )  # May be zetar
-
+    zeta <- eta2theta(eta, .link , .earg )  # May be zetar
     dzeta.deta <- dtheta.deta(zeta, .link , earg = .earg )
 
+
+  
+    
     d1 <- acat.deriv(zeta, M = M, n = n, reverse = .reverse )
     score <- attr(d1, "gradient") / d1
-
+ 
 
     answer <- if ( .reverse ) {
       cumy <- tapplymat1(y, "cumsum")
       c(w) * dzeta.deta * (cumy[, 1:M] / zeta - score)
     } else {
-      ccumy <- tapplymat1(y[, ncol(y):1], "cumsum")[, ncol(y):1]
-      c(w) * dzeta.deta * (ccumy[, -1] / zeta - score)
+      ccumy <- tapplymat1(y[, ncol(y):1, drop = FALSE],
+                          "cumsum")[, ncol(y):1, drop = FALSE]
+      c(w) * dzeta.deta * (ccumy[, -1, drop = FALSE] / zeta -
+             score)
     }
 
 
     answer
-  }), list( .earg = earg, .link = link, .reverse = reverse) )),
+  }),
+ list( .earg = earg, .link = link, .reverse = reverse) )),
   weight = eval(substitute(expression({
     wz <- matrix(NA_real_, n, dimm(M))
 
     hess <- attr(d1, "hessian") / d1
 
     if (M > 1)
-      for (jay in 1:(M-1))
-        for (kay in (jay+1):M)
-          wz[,iam(jay, kay,M)] <-
-             (hess[, jay, kay] - score[, jay] * score[, kay]) *
-             dzeta.deta[, jay] * dzeta.deta[, kay]
+      for (jay in 1:(M - 1))
+        for (kay in (jay + 1):M)
+          wz[, iam(jay, kay, M)] <-
+            (hess[, jay, kay] -
+            score[, jay] * score[, kay]) *
+            dzeta.deta[, jay] * dzeta.deta[, kay]
     if ( .reverse ) {
       cump <- tapplymat1(mu, "cumsum")
-      wz[, 1:M] <- (cump[, 1:M] / zeta^2 - score^2) * dzeta.deta^2
+      wz[, 1:M] <- (cump[, 1:M, drop = FALSE] / zeta^2 -
+                    score^2) * dzeta.deta^2
     } else {
-      ccump <- tapplymat1(mu[, ncol(mu):1], "cumsum")[, ncol(mu):1]
-      wz[, 1:M] <- (ccump[, -1] / zeta^2 - score^2) * dzeta.deta^2
+      ccump <- tapplymat1(mu[, ncol(mu):1, drop = FALSE],
+                          "cumsum")[, ncol(mu):1, drop = FALSE]
+      wz[, 1:M] <- (ccump[, -1, drop = FALSE] / zeta^2 -
+                    score^2) * dzeta.deta^2
     }
     c(w) * wz
-  }), list( .earg = earg, .link = link, .reverse = reverse ))))
+  }),
+  list( .earg = earg, .link = link, .reverse = reverse ))))
 }  # acat()
+
 
 
 
@@ -1846,10 +2101,10 @@ acat.deriv <- function(zeta, reverse, M, n) {
   }
   alltxt <- paste(alltxt, collapse = " + ")
   alltxt <- paste(" ~ 1 +", alltxt)
-  txt <- as.formula(alltxt)
+  txt.f <- as.formula(alltxt)
 
   allvars <- param.names("zeta", M)
-  d1 <- deriv3(txt, allvars, hessian = TRUE)
+  d1 <- deriv3(txt.f, allvars, hessian = TRUE)
 
   zeta <- as.matrix(zeta)
   for (ii in 1:M)
@@ -1964,7 +2219,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-          warning("converting 'ycounts' to integer in @loglikelihood")
+        warning("converting 'ycounts' to integer ",
+                "in @loglikelihood")
       ycounts <- round(ycounts)
 
       ll.elts <-
@@ -2137,8 +2393,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
       alpha0 <- loglink(eta[ii, M], inverse = TRUE)
       alpha1 <- alpha[extra$ybrat.indices[, "rindex"]]
       alpha2 <- alpha[extra$ybrat.indices[, "cindex"]]
-       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))  #
-      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))  #
+       probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))
+      qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))
     }
     if (length(extra$dnties))
       dimnames(qprobs) <- extra$dnties
@@ -2190,15 +2446,17 @@ acat.deriv <- function(zeta, reverse, M, n) {
        probs <- rbind( probs, alpha1 / (alpha1 + alpha2 + alpha0))
       qprobs <- rbind(qprobs, alpha0 / (alpha1 + alpha2 + alpha0))
     }
-    okay1 <- all(is.finite( probs)) && all(0 <  probs &  probs < 1) &&
-             all(is.finite(qprobs)) && all(0 < qprobs & qprobs < 1)
+    okay1 <-
+      all(is.finite( probs)) && all(0 <  probs &  probs < 1) &&
+      all(is.finite(qprobs)) && all(0 < qprobs & qprobs < 1)
     okay1
   }, list( .refvalue = refvalue, .refgp = refgp) )),
   deriv = eval(substitute(expression({
     ans <- NULL
     ties <- extra$ties
     NCo <- M
-    uindex <- if ( .refgp == "last") 1:(M-1) else (1:(M))[-( .refgp )]
+    uindex <- if ( .refgp == "last")
+                1:(M-1) else (1:(M))[-( .refgp )]
     eta <- as.matrix(eta)
     for (ii in 1:nrow(eta)) {
       alpha <- .brat.alpha(eta2theta(eta[ii, -M], "loglink",
@@ -2212,8 +2470,8 @@ acat.deriv <- function(zeta, reverse, M, n) {
         Daj <- alpha[aa] + alpha[uindex] + alpha0
         pja <- alpha[uindex] / Daj
         answer <- answer + alpha[uindex] *
-             (-ymat[aa, uindex] + ymat[uindex, aa] * (1 - pja) / pja -
-             tmat[uindex, aa]) / Daj
+            (-ymat[aa, uindex] + ymat[uindex, aa] *
+             (1 - pja) / pja - tmat[uindex, aa]) / Daj
       }
       deriv0 <- 0 # deriv wrt eta[M]
       for (aa in 1:(NCo-1))
@@ -2407,11 +2665,12 @@ InverseBrat <-
 
 
 
- ordpoisson <- function(cutpoints,
-                        countdata = FALSE, NOS = NULL, Levels = NULL,
-                        init.mu = NULL, parallel = FALSE,
-                        zero = NULL,
-                        link = "loglink") {
+ ordpoisson <-
+  function(cutpoints,
+           countdata = FALSE, NOS = NULL, Levels = NULL,
+           init.mu = NULL, parallel = FALSE,
+           zero = NULL,
+           link = "loglink") {
 
   link <- as.list(substitute(link))
   earg  <- link2list(link)
@@ -2477,7 +2736,8 @@ InverseBrat <-
         stop("the 'weights' argument must be a vector of all ones")
       extra$NOS <- M <- NOS <- if (is.Numeric( .NOS )) .NOS else
           ncol(orig.y)
-      Levels <- rep_len(if (is.Numeric( .Levels )) .Levels else 0, NOS)
+      Levels <- rep_len(if (is.Numeric( .Levels ))
+                        .Levels else 0, NOS)
       if (!is.Numeric( .Levels ))
         for (iii in 1:NOS) {
           Levels[iii] <- length(unique(sort(orig.y[,iii])))
@@ -2496,8 +2756,8 @@ InverseBrat <-
     for (iii in 1:NOS) {
         y <- factor(orig.y[,iii], levels=(1:Levels[iii]))
         if ( !( .countdata )) {
-            eval(process.categorical.data.VGAM)  # Creates mustart and y
-            use.y[,cptr:(cptr+Levels[iii]-1)] <- y
+          eval(process.categorical.data.VGAM)  # Creates mustart & y
+          use.y[,cptr:(cptr+Levels[iii]-1)] <- y
         }
         use.etastart[,iii] <- if (is.Numeric(initmu))
             initmu[iii] else
@@ -2521,11 +2781,12 @@ InverseBrat <-
     mynames <- param.names("mu", M, skip1 = TRUE)
     predictors.names <-
       namesof(mynames, .link , earg = .earg , tag = FALSE)
-  }), list( .link = link, .countdata = countdata, .earg = earg,
-            .cutpoints = cutpoints, .NOS = NOS, .Levels = Levels,
-            .init.mu = init.mu))),
+  }),
+  list( .link = link, .countdata = countdata, .earg = earg,
+        .cutpoints = cutpoints, .NOS = NOS, .Levels = Levels,
+        .init.mu = init.mu))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
-    mu <- eta2theta(eta, link= .link , earg = .earg )  # Poisson means
+    mu <- eta2theta(eta, link= .link , earg = .earg )  # Pois means
     mu <- cbind(mu)
     mu
   }, list( .link = link, .earg = earg, .countdata = countdata ))),
@@ -2599,7 +2860,8 @@ InverseBrat <-
     }
     wz <- c(w) * d2l.dmu2 * dmu.deta^2
     wz
-  }), list( .earg = earg, .link = link, .countdata = countdata ))))
+  }),
+  list( .earg = earg, .link = link, .countdata = countdata ))))
 }
 
 
@@ -2616,7 +2878,8 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
   cptr <- 1
   for (iii in 1:NOS) {
     if (deriv == 1) {
-      dprob.dmu[,cptr] <- -dpois(x = cp.vector[cptr], lambda = mu[,iii])
+      dprob.dmu[,cptr] <- -dpois(x = cp.vector[cptr],
+                                 lambda = mu[,iii])
     } else {
       probs[,cptr] <- ppois(q = cp.vector[cptr], lambda = mu[,iii])
     }
@@ -2658,7 +2921,8 @@ ordpoissonProbs <- function(extra, mu, deriv = 0) {
 findFirstMethod <- function(methodsfn, charvec) {
   answer <- NULL
   for (ii in seq_along(charvec)) {
-    if (existsMethod(methodsfn, signature(VGAMff = charvec[ii]))) {
+    if (existsMethod(methodsfn,
+                     signature(VGAMff = charvec[ii]))) {
       answer <- charvec[ii]
       break
     }
@@ -2671,7 +2935,8 @@ findFirstMethod <- function(methodsfn, charvec) {
 margeff <- function(object, subset = NULL, ...) {
 
 
-  try.this <- findFirstMethod("margeffS4VGAM", object@family@vfamily)
+  try.this <- findFirstMethod("margeffS4VGAM",
+                              object@family@vfamily)
   if (length(try.this)) {
     margeffS4VGAM(object = object,
             subset = subset,
@@ -2682,6 +2947,7 @@ margeff <- function(object, subset = NULL, ...) {
          "emanating from '", object@family@vfamily[1], "'")
   }
 }
+
 
 
 
@@ -2716,6 +2982,11 @@ setClass("sratio",              contains = "VGAMordinal")
 
 
 
+
+
+
+
+
 setMethod("margeffS4VGAM",
           signature(VGAMff = "VGAMcategorical"),
   function(object,
@@ -2725,7 +2996,9 @@ setMethod("margeffS4VGAM",
   object@post$M <- M   <- object@misc$M
   object@post$n <- nnn <- object@misc$n
   invisible(object)
-  })
+  })  # "VGAMcategorical"
+
+
 
 
 
@@ -2766,11 +3039,13 @@ setMethod("margeffS4VGAM",  signature(VGAMff ="multinomial"),
     temp2 <- aperm(temp2, c(2, 1, 3))  # ppp x (M+1) x nnn
     temp3 <- pvec
     ans.mlm <- array((BB - temp2) * temp3, c(ppp, M+1, nnn),
-                     dimnames = list(dimnames(Bmat)[[1]],
-                                     dimnames(Bmat)[[2]],
-                                     dimnames(fitted(object))[[1]]))
+                 dimnames = list(dimnames(Bmat)[[1]],
+                                 dimnames(Bmat)[[2]],
+                                 dimnames(fitted(object))[[1]]))
     return(subsetarray3(ans.mlm, subset = subset))
-  })
+  })  # "multinomial"
+
+
 
 
 
@@ -2804,7 +3079,146 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "VGAMordinal"),
   object@post$hdot <- hdot
   object@post$Thetamat <- Thetamat
   object
-  })
+  })  # "VGAMordinal"
+
+
+
+
+
+setClass("poissonff",   contains = "VGAMcategorical")
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "poissonff"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+
+  etamat <- predict(object)  # nnn x M
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  if (!all(linkfunvlm(object) == "loglink"))
+    stop("Only objects using 'loglink' are permitted here")
+
+  mustar <- fitted(object)  # nnn x NOS
+  M1 <- npred(object, type = "one.response")
+  if (M1 != 1) stop("M1 should be one")
+  NOS <- M / M1
+  ymat <- depvar(object)
+  cnymat <- colnames(ymat)
+  rnymat <- rownames(ymat)
+  coefmat <- coef(object, matrix = TRUE)  # ppp x NOS
+  ppp <- nrow(coefmat)
+
+  betamat <- matrix(c(coefmat), nnn, ppp * NOS, byrow = TRUE)
+  ans <- betamat * kronecker(mustar, matrix(1, 1, ppp))
+
+  dim(ans) <- c(nnn, ppp, NOS)
+  ans <- aperm(ans, c(2, 3, 1))  # ppp x NOS x nnn
+  dimnames(ans) <- list(rownames(coefmat), cnymat, rnymat)
+
+  ans
+})  # poissonff
+
+
+
+
+
+
+
+
+setClass("negbinomial",   contains = "VGAMcategorical")
+
+
+
+
+setMethod("margeffS4VGAM",  signature(VGAMff = "negbinomial"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+  etamat <- predict(object)  # nnn x M
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  if (!all(linkfunvlm(object)[c(TRUE, FALSE)] == "loglink"))
+    stop("Only objects whose mean is modelled using ",
+         "'loglink' are permitted here")
+
+  mustar <- fitted(object)  # nnn x NOS
+  M1 <- npred(object, type = "one.response")
+  if (M1 != 2) stop("M1 should be two")
+  NOS <- M / M1
+  ymat <- depvar(object)
+  cnymat <- colnames(ymat)
+  rnymat <- rownames(ymat)
+  coefmat <- coef(object, matrix = TRUE)[, c(TRUE, FALSE),
+                          drop = FALSE]  # ppp x NOS
+  ppp <- nrow(coefmat)
+
+  betamat <- matrix(c(coefmat), nnn, ppp * NOS, byrow = TRUE)
+  ans <- betamat * kronecker(mustar, matrix(1, 1, ppp))
+
+  dim(ans) <- c(nnn, ppp, NOS)
+  ans <- aperm(ans, c(2, 3, 1))  # ppp x NOS x nnn
+  dimnames(ans) <- list(rownames(coefmat), cnymat, rnymat)
+
+  ans
+})  # negbinomial
+
+
+
+
+
+
+setClass("posnegbinomial",   contains = "VGAMcategorical")
+
+
+
+
+setMethod("margeffS4VGAM",
+          signature(VGAMff = "posnegbinomial"),
+  function(object,
+           subset = NULL,
+           VGAMff,
+           ...) {
+
+
+  etamat <- predict(object)  # nnn x M
+  nnn <- nrow(etamat)
+  M   <- ncol(etamat)
+  if (!all(linkfunvlm(object)[c(TRUE, FALSE)] == "loglink"))
+    stop("Only objects whose mean is modelled using ",
+         "'loglink' are permitted here")
+
+  mustar <- fitted(object)  # nnn x NOS
+  M1 <- npred(object, type = "one.response")
+  if (M1 != 2) stop("M1 should be two")
+  NOS <- M / M1
+  ymat <- depvar(object)
+  cnymat <- colnames(ymat)
+  rnymat <- rownames(ymat)
+  coefmat <- coef(object, matrix = TRUE)[, c(TRUE, FALSE),
+                          drop = FALSE]  # ppp x NOS
+  ppp <- nrow(coefmat)
+
+  betamat <- matrix(c(coefmat), nnn, ppp * NOS, byrow = TRUE)
+  ans <- betamat * kronecker(mustar, matrix(1, 1, ppp))
+
+  dim(ans) <- c(nnn, ppp, NOS)
+  ans <- aperm(ans, c(2, 3, 1))  # ppp x NOS x nnn
+  dimnames(ans) <- list(rownames(coefmat), cnymat, rnymat)
+
+  ans
+})  # posnegbinomial
+
+
+
+
 
 
 
@@ -2869,7 +3283,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "tobit"),
   dimnames(ans) <- list(rownames(coefmat), cnymat, rnymat)
 
   ans
-})
+})  # "tobit"
 
 
 
@@ -2930,7 +3344,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cumulative"),
     ans.cum <- aperm(ans.cum, c(1, 3, 2))  # ppp x (M+1) x nnn
 
     subsetarray3(ans.cum, subset = subset)
-  })
+  })  # "cumulative"
 
 
 
@@ -2987,7 +3401,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
     if (reverse) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
       dpMplus1.detat <- -(probMplus1^2) *
-                        rowSums(expcs.etamat[, 1:tee, drop = FALSE])
+                        rowSums(expcs.etamat[, 1:tee,
+                                drop = FALSE])
       if (jay == M+1) {
         return(dpMplus1.detat)
       }
@@ -3015,7 +3430,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
 
 
 
-  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1,
+                         etas = M))
   ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
   if (reverse) {
     probMplus1 <- 1 / (1 +  csexpcs.etavec) # Last level of Y
@@ -3047,7 +3463,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "acat"),
                                colnames(fitmat),
                                rownames(etamat))
     subsetarray3(ans.acat, subset = subset)
-  })
+  })  # "acat"
 
 
 
@@ -3136,7 +3552,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
 
 
 
-  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1,
+                         etas = M))
   ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
 
 
@@ -3200,7 +3617,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
     for (jlocal in 1:(M + 1)) {
       for (tlocal in 1:M) {
         ansarray[,, jlocal]  <- ansarray[,, jlocal] +
-                                A[,, jlocal, tlocal] * Bmat[, tlocal]
+                          A[,, jlocal, tlocal] * Bmat[, tlocal]
       }
     }
     ans.csratio <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
@@ -3208,7 +3625,9 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "cratio"),
                                   colnames(fitmat),
                                   rownames(etamat))
     subsetarray3(ans.csratio, subset = subset)  # "cratio" & "sratio"
-  })
+  })  # "cratio"
+
+
 
 
 
@@ -3256,7 +3675,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
 
 
 
-  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1,
+                         etas = M))
   ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
 
 
@@ -3325,7 +3745,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
     for (jlocal in 1:(M + 1)) {
       for (tlocal in 1:M) {
         ansarray[,, jlocal]  <- ansarray[,, jlocal] +
-                                A[,, jlocal, tlocal] * Bmat[, tlocal]
+                        A[,, jlocal, tlocal] * Bmat[, tlocal]
       }
     }
     ans.csratio <- aperm(ansarray, c(1, 3, 2))  # c(ppp, M+1, nnn)
@@ -3333,7 +3753,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
                                   colnames(fitmat),
                                   rownames(etamat))
     subsetarray3(ans.csratio, subset = subset)  # "cratio" & "sratio"
-  })
+  })  # "sratio"
 
 
 
@@ -3364,8 +3784,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
 
   oassign <- object@misc$orig.assign
   if (any(unlist(lapply(oassign, length)) > 1))
-    warning("some terms in 'object' create more than one column of ",
-            "the LM design matrix")
+    warning("some terms in 'object' create more than one ",
+            "column of the LM design matrix")
 
   nnn <- object@misc$n
   M <- object@misc$M  # ncol(B)  # length(pvec) - 1
@@ -3418,7 +3838,7 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
         ans <- array(0, c(ppp, M+1, length(ii)),
                    dimnames = list(dimnames(B)[[1]],
                                    dimnames(B)[[2]],
-                                   dimnames(fitted(object)[ii, ])[[1]]))
+                           dimnames(fitted(object)[ii, ])[[1]]))
         for (ilocal in seq_along(ii)) {
           pvec  <- fitted(object)[ii[ilocal], ]
           temp1 <- B * matrix(pvec, ppp, M+1, byrow = TRUE)
@@ -3500,7 +3920,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
 
     }  # jlocal
 
-    resmat[, M+1] <- ifelse(reverse, 1, -1) * hdot.big[, M] * cfit[, M]
+    resmat[, M+1] <- ifelse(reverse, 1, -1) *
+        hdot.big[, M] * cfit[, M]
 
     temp1 <- array(resmat, c(ppp, nnn, M+1),
                    dimnames = list(dimnames(B)[[1]],
@@ -3569,8 +3990,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
   }  # acat.derivs
 
 
-
-  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1,
+                         etas = M))
   ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
   if (reverse) {
     probMplus1 <- 1 / (1 +  csexpcs.etavec) # Last level of Y
@@ -3649,7 +4070,8 @@ setMethod("margeffS4VGAM",  signature(VGAMff = "sratio"),
   }  # cratio.derivs
 
 
-  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1, etas = M))
+  A        <- array(0, c(i = nnn, vars = ppp, probs = M + 1,
+                         etas = M))
   ansarray <- array(0, c(vars = ppp, i = nnn, probs = M + 1))
 
 
@@ -3750,7 +4172,8 @@ prplot <- function(object,
     control <- prplot.control(...)
 
 
-  object <- plot.vgam(object, plot.arg = FALSE, raw = FALSE)  # , ...
+  object <- plot.vgam(object, plot.arg = FALSE,
+                      raw = FALSE)  # , ...
 
   if (length(names(object@preplot)) != 1)
       stop("object needs to have only one term")
@@ -3791,7 +4214,7 @@ prplot <- function(object,
     rug(use.x, col=control$rcol, lwd=control$rlwd)
 
   invisible(object)
-}
+}  # prplot
 
 
 
@@ -3829,7 +4252,8 @@ is.parallel.matrix <- function(object, ...)
   all(c(object) == 1) && ncol(object) == 1
 
 
-is.parallel.vglm <- function(object, type = c("term", "lm"), ...) {
+is.parallel.vglm <-
+  function(object, type = c("term", "lm"), ...) {
 
   type <- match.arg(type, c("term", "lm"))[1]
   Hlist <- constraints(object, type = type)
@@ -3996,7 +4420,7 @@ R2latvar <- function(object) {
 
   veta1 <- var(eta1)
   veta1 / (veta1 + offset) 
-}
+}  # R2latvar
 
 
 
@@ -4059,7 +4483,7 @@ ordsup.vglm <-
   switch(vfam[1],
   uninormal = {
     if (!all(linkfns[c(TRUE, FALSE)] == "identitylink"))
-      stop("must use 'identitylink' for the mean parameter")               
+      stop("must use 'identitylink' for the mean parameter")
     if (!all(cobj.mat[-1, c(FALSE, TRUE)] == 0))
       stop("the sdev or var parameter must be intercept-only")
     sdev <- numeric(ncol(cobj.mat) / 2)

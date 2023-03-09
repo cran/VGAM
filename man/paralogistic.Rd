@@ -17,7 +17,8 @@ paralogistic(lscale = "loglink", lshape1.a = "loglink", iscale = NULL,
 %- maybe also 'usage' for other objects documented here.
 %   zero = ifelse(lss, -2, -1)
 \arguments{
-  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  \item{lss}{
+  See \code{\link{CommonVGAMffArguments}} for important information.
 
 
   }

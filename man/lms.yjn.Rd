@@ -35,6 +35,8 @@ lms.yjn2(percentiles = c(25, 50, 75), zero = c("lambda", "sigma"),
   }
   \item{zero}{
   See \code{\link{lms.bcn}}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
   \item{llambda, lmu, lsigma}{

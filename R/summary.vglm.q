@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -574,6 +574,8 @@ vcovdefault <- function(object, ...) {
 
 
 
+
+
 vcov.vlm <- function(object, ...) {
 
   vcovvlm(object, ...)
@@ -581,9 +583,20 @@ vcov.vlm <- function(object, ...) {
 
 
 
+
+
+
+
  vcovvlm <-
- function(object, dispersion = NULL, untransform = FALSE,
-          complete = TRUE) {
+   function(object,
+            dispersion = NULL, untransform = FALSE,
+            complete = TRUE,
+            ...    # This line added 20230309
+           ) {
+
+
+
+
 
 
 
@@ -626,7 +639,7 @@ vcov.vlm <- function(object, ...) {
 
 
   tvector <- numeric(M)
-  etavector <- predict(object)[1, ]  # Contains transformed parameters
+  etavector <- predict(object)[1, ]  # Contains
   LINK <- object@misc$link
   EARG <- object@misc$earg  # This could be a NULL
   if (is.null(EARG))
@@ -639,7 +652,8 @@ vcov.vlm <- function(object, ...) {
 
   if (length(LINK) != M &&
       length(LINK) != 1)
-    stop("cannot obtain the link functions to untransform 'object'")
+    stop("cannot obtain the link functions ",
+         "to untransform 'object'")
 
 
 
@@ -656,7 +670,8 @@ vcov.vlm <- function(object, ...) {
 
   level1 <- length(EARG) > 3 &&
             length(intersect(names(EARG),
-              c("theta", "inverse", "deriv", "short", "tag"))) > 3
+                             c("theta", "inverse",
+                               "deriv", "short", "tag"))) > 3
   if (level1)
     EARG <- list(oneOnly = EARG)
 
@@ -704,8 +719,7 @@ vcov.vlm <- function(object, ...) {
 
 
 setMethod("vcov", "vlm",
-         function(object, ...)
-         vcovvlm(object, ...))
+          function(object, ...) vcovvlm(object, ...))
 
 
 setMethod("vcov", "vglm",
@@ -720,7 +734,9 @@ setMethod("vcov", "vglm",
 
 
 yformat <- function(x, digits = options()$digits) {
-  format(ifelse(abs(x) < 0.001, signif(x, digits), round(x, digits)))
+    format(ifelse(abs(x) < 0.001,
+                  signif(x, digits),
+                  round(x, digits)))
 }
 
 

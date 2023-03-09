@@ -11,11 +11,11 @@
 }
 \usage{
 zageometric(lpobs0 = "logitlink", lprob = "logitlink",
-            type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
-            imethod = 1, ipobs0 = NULL, iprob = NULL, zero = NULL)
+     type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
+     imethod = 1, ipobs0 = NULL, iprob = NULL, zero = NULL)
 zageometricff(lprob = "logitlink", lonempobs0 = "logitlink",
-              type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
-              imethod = 1, iprob = NULL, ionempobs0 = NULL, zero = "onempobs0")
+     type.fitted = c("mean", "prob", "pobs0", "onempobs0"),
+     imethod = 1, iprob = NULL, ionempobs0 = NULL, zero = "onempobs0")
 
 }
 %- maybe also 'usage' for other objects documented here.

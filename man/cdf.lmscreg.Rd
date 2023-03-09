@@ -76,7 +76,8 @@ The CDF values of the model have been placed in
 \code{\link{qtplot.lmscreg}},
 \code{\link{lms.bcn}},
 \code{\link{lms.bcg}},
-\code{\link{lms.yjn}}.
+\code{\link{lms.yjn}},
+\code{\link{CommonVGAMffArguments}}.
 
 
 }

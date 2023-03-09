@@ -8,8 +8,7 @@
 
 }
 \usage{
-gamma2(lmu = "loglink", lshape = "loglink",
-       imethod = 1,  ishape = NULL,
+gamma2(lmu = "loglink", lshape = "loglink", imethod = 1,  ishape = NULL,
        parallel = FALSE, deviance.arg = FALSE, zero = "shape")
 }
 %- maybe also 'usage' for other objects documented here.

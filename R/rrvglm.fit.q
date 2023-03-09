@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -56,8 +56,10 @@ rrvglm.fit <-
     stepsize <- orig.stepsize
     old.coeffs <- coefstart
 
-    intercept.only <- ncol(x) == 1 && dimnames(x)[[2]] == "(Intercept)"
-    y.names <- predictors.names <- NULL  # May be overwritten in @initialize
+    intercept.only <- ncol(x) == 1 &&
+                      dimnames(x)[[2]] == "(Intercept)"
+    y.names <-
+    predictors.names <- NULL  # May be overwritten in @initialize
 
 
     n.save <- n
@@ -68,7 +70,7 @@ rrvglm.fit <-
     rrcontrol <- control  #
 
     if (length(slot(family, "initialize")))
-      eval(slot(family, "initialize"))  # Initlz mu & M (and optionally w)
+      eval(slot(family, "initialize"))  # Initlz mu & M (& opt'ly w)
 
 
     eval(rrr.init.expression)
@@ -114,7 +116,7 @@ rrvglm.fit <-
       eval(family@constraints)
 
 
-    special.matrix <- matrix(-34956.125, M, M)  # An unlikely used matrix
+    special.matrix <- matrix(-34956.125, M, M)  # Unlikely used matrix
 
     just.testing <- cm.VGAM(special.matrix, x, rrcontrol$noRRR,
                             constraints)
@@ -144,8 +146,8 @@ rrvglm.fit <-
         }
       names(colx1.index) <- names.colx1.index
     }  # if (sum(findex))
-    rrcontrol$colx1.index <- control$colx1.index <-
-                                     colx1.index  # Save it on the object
+    rrcontrol$colx1.index <-
+      control$colx1.index <- colx1.index  # Save it on the object
     colx2.index <- 1:ncol(x)
     names(colx2.index) <- dx2
     if (length(colx1.index))
@@ -161,7 +163,8 @@ rrvglm.fit <-
 
 
     Amat <- if (length(rrcontrol$Ainit)) rrcontrol$Ainit else
-            matrix(rnorm(M * Rank, sd = rrcontrol$sd.Cinit), M, Rank)
+            matrix(rnorm(M * Rank, sd = rrcontrol$sd.Cinit),
+                   M, Rank)
     Cmat <- if (length(rrcontrol$Cinit)) rrcontrol$Cinit else {
                 if (!rrcontrol$Use.Init.Poisson.QO) {
                   matrix(rnorm(p2 * Rank, sd = rrcontrol$sd.Cinit),
@@ -200,7 +203,8 @@ rrvglm.fit <-
              (!control$eq.tol || control$I.tolerances) &&
               all(trivial.constraints(Hlist) == 1)
 
-    Hlist <- Hlist.save <- replace.constraints(Hlist, Amat, colx2.index)
+    Hlist <- Hlist.save <-
+      replace.constraints(Hlist, Amat, colx2.index)
 
 
     ncolHlist <- unlist(lapply(Hlist, ncol))
@@ -212,8 +216,10 @@ rrvglm.fit <-
       xsmall.qrr <- tmp500$new.latvar.model.matrix
       H.list <- tmp500$constraints
       if (FALSE && modelno == 3) {
-        H.list[[1]] <- (H.list[[1]])[, c(TRUE, FALSE), drop = FALSE]  # Amat
-        H.list[[2]] <- (H.list[[2]])[, c(TRUE, FALSE), drop = FALSE]  # D
+        H.list[[1]] <- (H.list[[1]])[, c(TRUE, FALSE),
+                                     drop = FALSE]  # Amat
+        H.list[[2]] <- (H.list[[2]])[, c(TRUE, FALSE),
+                                     drop = FALSE]  # D
       }
 
       latvar.mat <- tmp500$latvar.mat
@@ -233,7 +239,8 @@ rrvglm.fit <-
       eta <- if (ncol(X.vlm.save) > 1)
                X.vlm.save %*% coefstart + offset else
                X.vlm.save  *  coefstart + offset
-      eta <- if (M > 1) matrix(eta, ncol = M, byrow = TRUE) else c(eta)
+      eta <- if (M > 1)
+               matrix(eta, ncol = M, byrow = TRUE) else c(eta)
 
 
       mu <- family@linkinv(eta, extra)
@@ -261,13 +268,15 @@ rrvglm.fit <-
     tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
     z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
 
-    c.list <- list(z = as.double(z), fit = as.double(t(eta)),
-                   one.more = TRUE,
-                   coeff = as.double(rep_len(1, ncol(X.vlm.save))),
-                   U = as.double(U),
-                   copy.X.vlm = copy.X.vlm,
-                   X.vlm = if (copy.X.vlm) as.double(X.vlm.save) else
-                           double(3))
+    c.list <-
+      list(z = as.double(z), fit = as.double(t(eta)),
+           one.more = TRUE,
+           coeff = as.double(rep_len(1, ncol(X.vlm.save))),
+           U = as.double(U),
+           copy.X.vlm = copy.X.vlm,
+           X.vlm = if (copy.X.vlm)
+                     as.double(X.vlm.save) else
+                     double(3))
 
 
 
@@ -276,7 +285,8 @@ rrvglm.fit <-
     ncol.X.vlm <- dX.vlm[[2]]
 
     if (nrow.X.vlm < ncol.X.vlm)
-      stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm, " observations")
+      stop(ncol.X.vlm, " parameters but only ", nrow.X.vlm,
+           " observations")
 
     bf.call <- expression(vlm.wfit(xmat = X.vlm.save, zedd,
             Hlist = if (control$Quadratic) H.list else Hlist,
@@ -298,7 +308,7 @@ rrvglm.fit <-
         tfit <- eval(bf.call)  # tfit$fitted.values is n x M
 
       if (!control$Quadratic) {
-        Cmat <- tfit$mat.coef[colx2.index,,drop = FALSE] %*%
+        Cmat <- tfit$mat.coef[colx2.index, , drop = FALSE] %*%
                 Amat %*% solve(t(Amat) %*% Amat)
         rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
         rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
@@ -314,7 +324,7 @@ rrvglm.fit <-
       }
 
       if (!nice31)
-        tfit$predictors <- tfit$fitted.values  # Does not contain the offset
+        tfit$predictors <- tfit$fitted.values  # Doesnt have offset
       if (!nice31)
         c.list$fit <- tfit$fitted.values
 
@@ -442,13 +452,13 @@ rrvglm.fit <-
                                 dig = round(1 - log10(epsilon))),
                          format(new.crit,
                                 dig = max(4,
-                                          round(-0 - log10(epsilon) +
-                                                log10(sqrt(eff.n))))))
+                                      round(-0 - log10(epsilon) +
+                                      log10(sqrt(eff.n))))))
 
               switch(criterion,
                      coefficients = {if (length(new.crit) > 2)
                                        cat("\n");
-                                     cat(UUUU, fill = TRUE, sep = ", ")},
+                             cat(UUUU, fill = TRUE, sep = ", ")},
                      cat(UUUU, fill = TRUE, sep = ", "))
             }
 
@@ -458,6 +468,9 @@ rrvglm.fit <-
           one.more <- eval(control$convergence)
         }
       flush.console()
+
+    if (!is.logical(one.more))
+      one.more <- FALSE
 
       if (one.more) {
         iter <- iter + 1
@@ -471,7 +484,8 @@ rrvglm.fit <-
           wz <- matrix(wz, nrow = n)
         U <- vchol(wz, M = M, n = n, silent=!trace)
         tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-        z <- eta + vbacksub(U, tvfor, M, n) - offset  # Contains \bI \bnu
+        z <- eta + vbacksub(U, tvfor, M, n) -
+            offset  # Contains \bI \bnu
 
         rrr.expression <- get(RRR.expression)
         eval(rrr.expression)
@@ -482,7 +496,8 @@ rrvglm.fit <-
       }
 
       c.list$one.more <- one.more
-      c.list$coeff <- runif(length(new.coeffs))  # 20030312; twist needed!
+      c.list$coeff <-
+        runif(length(new.coeffs))  # 20030312; twist needed!
       old.coeffs <- new.coeffs
 
     }  # End of while()
@@ -530,7 +545,8 @@ rrvglm.fit <-
       R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
       R[lower.tri(R)] <- 0
       attributes(R) <- list(dim = c(ncol.X.vlm, ncol.X.vlm),
-                            dimnames = list(cnames, cnames), rank = rank)
+                            dimnames = list(cnames, cnames),
+                            rank = rank)
     }
 
     if (nice31) {
@@ -593,7 +609,7 @@ rrvglm.fit <-
 
     fit <- list(assign = asgn,
                 coefficients = coefs,
-                constraints = if (control$Quadratic) H.list else Hlist,
+            constraints = if (control$Quadratic) H.list else Hlist,
                 df.residual = df.residual,
                 df.total = n*M,
                 effects = effects,
@@ -632,6 +648,8 @@ rrvglm.fit <-
         ncol.X.vlm = ncol.X.vlm,
         ynames = dimnames(y)[[2]])
 
+    if (!is.logical(one.more))
+      one.more <- FALSE
     if (one.more)
       misc$rrr.expression <- rrr.expression  #
 

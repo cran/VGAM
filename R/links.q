@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -252,13 +252,17 @@ ToString <- function(x)
     switch(as.character(deriv),
            "0" = {
       ans <- if (refLevel < 0) {
-        log(theta[, -ncol(theta)] / theta[, ncol(theta)])
+        log(theta[, -ncol(theta), drop = FALSE] / (
+            theta[, ncol(theta)]))
       } else {
-        use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
-        log(theta[, -( use.refLevel )] / theta[, use.refLevel ])
+        use.refLevel <- if (refLevel < 0)
+                          ncol(theta) else refLevel
+        log(theta[, -( use.refLevel ), drop = FALSE] / (
+            theta[, use.refLevel ]))
       }
 
-      if (length(d.mlm) > 0 && any(signvec[-use.refLevel] < 0)) {
+      if (length(d.mlm) > 0 &&
+          any(signvec[-use.refLevel] < 0)) {
         ind.d <- which(signvec[-use.refLevel] < 0)
         ans[, ind.d] <- (-ans[, ind.d])
       }

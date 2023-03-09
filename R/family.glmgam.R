@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1338,7 +1338,8 @@ rinv.gaussian <- function(n, mu, lambda) {
       }
     }
   }, list( .link = link, .earg = earg ))),
-  vfamily = c("poissonff", "VGAMglm"),  # For "stdres"
+  vfamily = c("poissonff", "VGAMglm",  # For "stdres"
+              "VGAMcategorical"),  # For "margeff"
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     mupo <- eta2theta(eta, link = .link , earg = .earg )
     okay1 <- all(is.finite(mupo)) && all(0 < mupo)

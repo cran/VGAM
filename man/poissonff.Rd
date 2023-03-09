@@ -196,7 +196,8 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
     \code{\link{ruge}},
     \code{\link{V1}},
     \code{\link{V2}},
-    \code{\link{residualsvglm}}.
+    \code{\link{residualsvglm}},
+    \code{\link{margeff}}.
 
 
  

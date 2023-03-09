@@ -7,7 +7,9 @@
 
 }
 \usage{
-logff(lshape = "logitlink", gshape = -expm1(-7 * ppoints(4)), zero = NULL)
+logff(lshape = "logitlink", gshape = -expm1(-7 * ppoints(4)),
+      zero = NULL)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

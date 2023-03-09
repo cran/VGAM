@@ -58,7 +58,12 @@ expint.E1(x, deriv = 0)
 }
 \references{
 
-\url{http://www.netlib.org/specfun/ei}.
+\url{https://netlib.org/specfun/ei}.
+
+
+
+% 20220823; was \url{http://www.netlib.org/specfun/ei}.
+
 
 
 

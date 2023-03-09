@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,9 +20,12 @@ plot.vgam <-
   function(x, newdata = NULL,
            y = NULL, residuals = NULL, rugplot = TRUE,
            se = FALSE, scale = 0,
-           raw = TRUE, offset.arg = 0, deriv.arg = 0, overlay = FALSE,
-       type.residuals = c("deviance", "working", "pearson", "response"),
-           plot.arg = TRUE, which.term = NULL, which.cf = NULL,
+           raw = TRUE, offset.arg = 0,
+           deriv.arg = 0, overlay = FALSE,
+           type.residuals = c("deviance", "working",
+                              "pearson", "response"),
+           plot.arg = TRUE, which.term = NULL,
+           which.cf = NULL,
            control = plotvgam.control(...),
            varxij = 1, ...) {
 
@@ -59,12 +62,17 @@ plot.vgam <-
     se <- FALSE
   }
 
+  if (deriv.arg > 0 && any(slotNames(x) == "ospsslot")) {
+    stop("derivatives are not available for objects ",
+         " with 'sm.os()' or 'sm.ps()' terms")
+  }
+
   preplot.object <- x@preplot
   if (!length(preplot.object)) {
     preplot.object <- preplotvgam(x, newdata = newdata,
                                   raw = raw,
-                                  deriv.arg = deriv.arg, se = se,
-                                  varxij = varxij)
+                                  deriv.arg = deriv.arg,
+                                  se = se, varxij = varxij)
   }
 
   x@preplot <- preplot.object
@@ -78,7 +86,8 @@ plot.vgam <-
       } else {
        residuals = resid(x, type = type.residuals)
         if (!length(residuals))
-          warning("residuals are NULL. Ignoring 'residuals = TRUE'")
+          warning("residuals are NULL. Ignoring ",
+                  "'residuals = TRUE'")
       }
     } else {
       residuals <- NULL
@@ -98,7 +107,8 @@ plot.vgam <-
                     offset.arg = offset.arg,
                     deriv.arg = deriv.arg,
                     overlay = overlay,
-                    which.term = which.term, which.cf = which.cf,
+                    which.term = which.term,
+                    which.cf = which.cf,
                     control = control)
 
   x@na.action <- na.act  # Restore its original value
@@ -133,7 +143,7 @@ getallresponses <- function(xij) {
   allres <- NULL
   for (ii in seq_along(xij))
     allres <- c(allres,
-                as.character(attr(allterms[[ii]], "variables"))[2])
+         as.character(attr(allterms[[ii]], "variables"))[2])
   allres
 }
 
@@ -168,7 +178,8 @@ getallresponses <- function(xij) {
   names(xnames) <- terms
   modes <- sapply(xvars, mode)
   for (term in terms[modes != "name"]) {
-    evars <- all.names(xvars[term], functions = FALSE, unique = TRUE)
+    evars <- all.names(xvars[term], functions = FALSE,
+                       unique = TRUE)
     if (!length(evars))
       next
     xnames[[term]] <- evars
@@ -240,9 +251,10 @@ preplotvgam <-
            raw = TRUE, deriv.arg = deriv.arg, se = FALSE,
            varxij = 1) {
 
-  result1 <- headpreplotvgam(object, newdata = newdata, terms = terms,
-                             raw = raw, deriv.arg = deriv.arg, se = se,
-                             varxij = varxij)
+  result1 <- headpreplotvgam(object, newdata = newdata,
+                             terms = terms,
+                             raw = raw, deriv.arg = deriv.arg,
+                             se = se, varxij = varxij)
 
   xvars  <- result1$xvars
   xnames <- result1$xnames
@@ -286,11 +298,11 @@ preplotvgam <-
               paste("partial for", term) else term
 
     TT <- list(x = .VGAM.x,
-               y = fits[, (if (is.null(fred)) term else fred[[term]])],
-               se.y = if (is.null(se.fit)) NULL else
-                     se.fit[, (if (is.null(fred)) term else fred[[term]])],
-               xlab = xnames[[term]],
-               ylab = myylab)
+          y = fits[, (if (is.null(fred)) term else fred[[term]])],
+          se.y = if (is.null(se.fit)) NULL else
+          se.fit[, (if (is.null(fred)) term else fred[[term]])],
+          xlab = xnames[[term]],
+          ylab = myylab)
     class(TT) <- "preplotvgam"
     gamplot[[term]] <- TT
   }
@@ -343,10 +355,11 @@ preplotvgam <-
                         control = control)
     }
   } else {
-    dummy <- function(residuals = NULL, rugplot = TRUE,
-                      se = FALSE, scale = 0,
-                      offset.arg = 0, deriv.arg = 0, overlay = FALSE,
-                      which.cf = NULL, control = plotvgam.control())
+    dummy <-
+      function(residuals = NULL, rugplot = TRUE,
+               se = FALSE, scale = 0,
+               offset.arg = 0, deriv.arg = 0, overlay = FALSE,
+               which.cf = NULL, control = plotvgam.control())
      c(list(residuals = residuals, rugplot = rugplot,
             se = se, scale = scale,
             offset.arg = offset.arg, deriv.arg = deriv.arg,
@@ -385,10 +398,11 @@ vplot.default <-
          if (is.numeric(x)) {
            vplot.numeric(as.vector(x), y, se.y, xlab, ylab,
                          residuals, rugplot, scale, se,
-                         offset.arg = offset.arg, overlay = overlay,
-                         ...)
+                         offset.arg = offset.arg,
+                         overlay = overlay, ...)
          } else {
-           warning("The 'x' component of '", ylab, "' has class '",
+           warning("The 'x' component of '", ylab,
+                   "' has class '",
                    class(x), "'; no vplot() methods available")
          }
         )  # End of switch
@@ -456,7 +470,8 @@ vplot.list <-
     default.vals <- plotvgam.control()
     return.list <- list()
     for (ii in names(default.vals)) {
-  replace.val <- !((length(ans[[ii]]) == length(default.vals[[ii]])) &&
+    replace.val <-
+      !((length(ans[[ii]]) == length(default.vals[[ii]])) &&
         (length(default.vals[[ii]]) > 0) &&
         identical(ans[[ii]], default.vals[[ii]]))
 
@@ -526,7 +541,8 @@ vplot.numeric <-
       }
     }
 
-    offset.arg <- matrix(offset.arg, nrow(y), ncol(y), byrow = TRUE)
+    offset.arg <- matrix(offset.arg, nrow(y), ncol(y),
+                         byrow = TRUE)
     y <- y + offset.arg
 
     ylab <- add.hookey(ylab, deriv.arg)
@@ -534,7 +550,8 @@ vplot.numeric <-
 
     if (xmeanAdded <-
        (se && !is.null(se.y) && !noxmean &&
-        all(substring(ylab, 1:nchar(ylab), 1:nchar(ylab)) != "("))) {
+        all(substring(ylab, 1:nchar(ylab),
+                      1:nchar(ylab)) != "("))) {
       x <- c(x, mean(x))
       y <- rbind(y, 0 * y[1, ])
       se.y <- rbind(se.y, 0 * se.y[1, ])
@@ -550,7 +567,8 @@ vplot.numeric <-
 
     xlim.orig <- xlim
     ylim.orig <- ylim
-    xlim <- range(if (length(xlim)) NULL else ux, xlim, na.rm = TRUE)
+    xlim <- range(if (length(xlim)) NULL else ux,
+                  xlim, na.rm = TRUE)
     ylim <- range(if (length(ylim)) NULL else uy[, which.cf],
                   ylim, na.rm = TRUE)
 
@@ -566,15 +584,18 @@ vplot.numeric <-
       se.upper <- uy + 2 * se.y[ooo, , drop = FALSE]
       se.lower <- uy - 2 * se.y[ooo, , drop = FALSE]
 
-      ylim <- if (length(ylim.orig)) range(ylim.orig) else
-              range(c(ylim, se.upper[, which.cf], se.lower[, which.cf]))
+      ylim <- if (length(ylim.orig))
+                range(ylim.orig) else
+                range(c(ylim, se.upper[, which.cf],
+                        se.lower[, which.cf]))
     }
 
     if (!is.null(residuals)) {
       if (length(residuals) == length(y)) {
         residuals <- as.matrix(y + residuals)
         ylim <- if (length(ylim.orig)) range(ylim.orig) else
-                range(c(ylim, residuals[, which.cf]), na.rm = TRUE)
+                range(c(ylim, residuals[, which.cf]),
+                      na.rm = TRUE)
       } else {
         residuals <- NULL
         warning("Residuals do not match 'x' in \"", ylab,
@@ -603,19 +624,21 @@ vplot.numeric <-
              lwd = llwd, col = lcol, lty = llty)
     if (!is.null(residuals)) {
       if (ncol(y) == 1) {
-        points(x, residuals, pch = pch, col = pcol, cex = pcex)
+        points(x, residuals, pch = pch, col = pcol,
+               cex = pcex)
       } else {
         matpoints(x, residuals[, which.cf],
-                  pch = pch, col = pcol, cex = pcex)  # add.arg = TRUE,
+                  pch = pch, col = pcol,
+                  cex = pcex)  # add.arg = TRUE,
       }
     }
     if (rugplot)
       rug(jx, col = rcol)
     if (se && !is.null(se.y)) {
-      matlines(ux, se.upper[, which.cf], lty =  slty, lwd = slwd,
-               col = scol)
-      matlines(ux, se.lower[, which.cf], lty =  slty, lwd = slwd,
-               col = scol)
+      matlines(ux, se.upper[, which.cf], lty =  slty,
+               lwd = slwd, col = scol)
+      matlines(ux, se.lower[, which.cf], lty =  slty,
+               lwd = slwd, col = scol)
     }
   } else {
     YLAB <- ylab
@@ -643,7 +666,8 @@ vplot.numeric <-
             ylim <- range(ylim0, se.lower[, ii], se.upper[, ii],
                           na.rm = TRUE)
           if (!is.null(residuals))
-            ylim <- range(c(ylim, residuals[, ii]), na.rm = TRUE)
+            ylim <- range(c(ylim, residuals[, ii]),
+                          na.rm = TRUE)
           ylim <- ylim.scale(ylim, scale)
         }
         if (ncol(uy) > 1 && length(separator))
@@ -669,15 +693,16 @@ vplot.numeric <-
         if (se && !is.null(se.y)) {
           if (shade) {
             polygon(c(ux, rev(ux), ux[1]),
-                c(se.upper[, ii], rev(se.lower[, ii]), se.upper[1, ii]),
-                col = shcol, border = NA)
+                    c(se.upper[, ii], rev(se.lower[, ii]),
+                      se.upper[1, ii]),
+                    col = shcol, border = NA)
             lines(ux, uy[, ii], lwd = llwd[ii], col = lcol[ii],
                   lty = llty[ii])
           } else {
-            lines(ux, se.upper[, ii], lty = slty[ii], lwd = slwd[ii],
-                  col = scol[ii])
-            lines(ux, se.lower[, ii], lty = slty[ii], lwd = slwd[ii],
-                  col = scol[ii])
+            lines(ux, se.upper[, ii], lty = slty[ii],
+                  lwd = slwd[ii], col = scol[ii])
+            lines(ux, se.lower[, ii], lty = slty[ii],
+                  lwd = slwd[ii], col = scol[ii])
           }  # !shade
         }  # se && !is.null(se.y))
       }
@@ -714,11 +739,13 @@ add.hookey <- function(ch, deriv.arg = 0) {
     return(ch)
 
   hookey <- switch(deriv.arg, "'", "''", "'''", "''''",
-                              "'''''", stop("too high a derivative"))
+                   "'''''",
+                   stop("too high a derivative"))
   nc <- nchar(ch)
   sub <- substring(ch, 1:nc, 1:nc)
   if (nc >= 2 && sub[1] == "s" && sub[2] == "(") {
-    paste("s", hookey, substring(ch, 2, nc), sep = "", coll = "")
+    paste("s", hookey, substring(ch, 2, nc),
+          sep = "", coll = "")
   } else {
     paste(ch, hookey, sep = "", collapse = "")
   }
@@ -750,13 +777,15 @@ vplot.factor <-
   if (!is.null(residuals))  {
     residuals <- as.matrix(residuals)
     if (ncol(residuals) != ncol(y)) {
-      warning("ncol(residuals) != ncol(y) so residuals are not plotted")
+      warning("ncol(residuals) != ncol(y) so residuals",
+              " are not plotted")
       residuals <- NULL
     }
   }
 
     if (overlay) {
-warning("overlay = TRUE in vplot.factor: assigning overlay <- FALSE")
+      warning("overlay = TRUE in vplot.factor: ",
+              "assigning overlay <- FALSE")
       vvplot.factor(x, y,
                     se.y = if (is.null(se.y)) NULL else se.y,
                     xlab = xlab, ylab = ylab,
@@ -806,7 +835,8 @@ vvplot.factor <-
   ux <- (leftx + rightx)/2
   delta <- (rightx - leftx)/8
 
-  jx <- runif(length(codex), (ux - delta)[codex], (ux + delta)[codex])
+  jx <- runif(length(codex),
+             (ux - delta)[codex], (ux + delta)[codex])
   nnajx <- jx[!is.na(jx)]
 
   if (rugplot)
@@ -853,12 +883,14 @@ vvplot.factor <-
   xlim <- range(c(xlim, uxx))
 
       
-  matplot(ux, uy, ylim = ylim, xlim = xlim, xlab = "", type = "n",
+  matplot(ux, uy, ylim = ylim, xlim = xlim,
+          xlab = "", type = "n",
           ylab = ylab, axes = FALSE, frame.plot = TRUE)  # , ...
   mtext(xlab, 1, 2, adj = 0.5)
   axis(side = 2)
   lpos <- par("mar")[3]
-  mtext(Levels, side = 3, line = lpos/2, at = ux, adj = 0.5, srt = 45)
+  mtext(Levels, side = 3, line = lpos/2,
+        at = ux, adj = 0.5, srt = 45)
 
   for (ii in 1:M)
     segments(uxx[, ii] - 1.0 * delta, uy[, ii],
@@ -867,9 +899,12 @@ vvplot.factor <-
     for (ii in 1:M) {
       jux <- uxx[, ii]
       jux <- jux[codex]
-      jux <- jux + runif(length(jux), -0.7*min(delta), 0.7*min(delta))
+      jux <- jux + runif(length(jux),
+                         -0.7*min(delta),
+                         0.7*min(delta))
       if (M == 1) points(jux, residuals[, ii]) else
-                  points(jux, residuals[, ii], pch = as.character(ii))
+                  points(jux, residuals[, ii],
+                         pch = as.character(ii))
     }
   }
   if (rugplot)
@@ -935,12 +970,15 @@ setMethod("plot", "vgam",
   Rank <- object@control$Rank
   Coef.object <- Coef(object, I.tolerances = I.tolerances)
   rtype <- match.arg(rtype,
-                     c("response", "pearson", "deviance", "working"))[1]
+                     c("response", "pearson",
+                       "deviance", "working"))[1]
   res <- resid(object, type = rtype)
 
-  my.ylab <- if (length(object@misc$ynames)) object@misc$ynames else
-             rep_len(" ", M)
-  Rtype <- switch(rtype, pearson = "Pearson", response = "Response",
+  my.ylab <- if (length(object@misc$ynames))
+                 object@misc$ynames else
+                 rep_len(" ", M)
+  Rtype <- switch(rtype, pearson = "Pearson",
+                  response = "Response",
                   deviance = "Deviance", working = "Working")
 
   done <- 0

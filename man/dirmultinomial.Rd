@@ -47,6 +47,7 @@ dirmultinomial(lphi = "logitlink", iphi = 0.10, parallel = FALSE,
   value \eqn{M}, which corresponds to linear/additive predictor
   associated with \eqn{\phi}{phi}.  Setting \code{zero = NULL}
   means none of the values from the set \eqn{\{1,2,\ldots,M\}}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
   }
 }

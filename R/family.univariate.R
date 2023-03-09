@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1317,10 +1317,12 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
 
 
 
- mccullagh89 <- function(ltheta = "rhobitlink",
-                         lnu = logofflink(offset = 0.5),
-                         itheta = NULL, inu = NULL,
-                         zero = NULL) {
+
+ mccullagh89 <-
+  function(ltheta = "rhobitlink",
+           lnu = logofflink(offset = 0.5),
+           itheta = NULL, inu = NULL,
+           zero = NULL) {
 
 
 
@@ -2171,7 +2173,7 @@ rdiric <- function(n, shape, dimension = NULL,
     wz <- c(w) * wz * dsh.deta[, index$row] * dsh.deta[, index$col]
     wz
   }))
-}
+}  # dirichlet
 
 
 
@@ -2460,10 +2462,11 @@ rdiric <- function(n, shape, dimension = NULL,
 
 
 
- cauchy1 <- function(scale.arg = 1, llocation = "identitylink",
-                     ilocation = NULL, imethod = 1,
-                     gprobs.y = ppoints(19),
-                     zero = NULL) {
+ cauchy1 <-
+  function(scale.arg = 1, llocation = "identitylink",
+           ilocation = NULL, imethod = 1,
+           gprobs.y = ppoints(19),
+           zero = NULL) {
 
 
   llocat <- as.list(substitute(llocation))
@@ -2671,8 +2674,9 @@ rdiric <- function(n, shape, dimension = NULL,
 
 
 
- logistic1 <- function(llocation = "identitylink",
-                       scale.arg = 1, imethod = 1) {
+ logistic1 <-
+  function(llocation = "identitylink",
+           scale.arg = 1, imethod = 1) {
   if (!is.Numeric(scale.arg, length.arg = 1, positive = TRUE))
     stop("'scale.arg' must be a single positive number")
   if (!is.Numeric(imethod, length.arg = 1,
@@ -4623,8 +4627,9 @@ simple.exponential <- function() {
 
 
 
- geometric <- function(link = "logitlink", expected = TRUE,
-                       imethod = 1, iprob = NULL, zero = NULL) {
+ geometric <-
+  function(link = "logitlink", expected = TRUE,
+           imethod = 1, iprob = NULL, zero = NULL) {
 
   if (!is.logical(expected) || length(expected) != 1)
     stop("bad input for argument 'expected'")
@@ -4934,8 +4939,9 @@ rbetageom <- function(n, shape1, shape2) {
 
 
 
- studentt <-  function(ldf = "logloglink", idf = NULL,
-                       tol1 = 0.1, imethod = 1) {
+ studentt <-
+  function(ldf = "logloglink", idf = NULL,
+           tol1 = 0.1, imethod = 1) {
 
 
 
@@ -5989,10 +5995,11 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- simplex <- function(lmu = "logitlink", lsigma = "loglink",
-                     imu = NULL, isigma = NULL,
-                     imethod = 1, ishrinkage = 0.95,
-                     zero = "sigma") {
+ simplex <-
+  function(lmu = "logitlink", lsigma = "loglink",
+           imu = NULL, isigma = NULL,
+           imethod = 1, ishrinkage = 0.95,
+           zero = "sigma") {
 
 
 
@@ -6187,8 +6194,9 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
 
 
 
- rigff <- function(lmu = "identitylink", llambda = "loglink",
-                   imu = NULL, ilambda = 1) {
+ rigff <-
+  function(lmu = "identitylink", llambda = "loglink",
+           imu = NULL, ilambda = 1) {
 
 
   if (!is.Numeric(ilambda, positive = TRUE))
@@ -6873,7 +6881,8 @@ rlgamma <- function(n, location = 0, scale = 1, shape = 1) {
 
 
 
- lgamma1 <- function(lshape = "loglink", ishape = NULL) {
+ lgamma1 <-
+  function(lshape = "loglink", ishape = NULL) {
 
 
   init.k <- ishape
@@ -7941,8 +7950,9 @@ rlevy <- function(n, location = 0, scale = 1)
 
 
 
- levy <- function(location = 0, lscale = "loglink",
-                  iscale = NULL) {
+ levy <-
+  function(location = 0, lscale = "loglink",
+           iscale = NULL) {
 
 
 
@@ -8165,11 +8175,12 @@ rlino <- function(n, shape1, shape2, lambda = 1) {
 
 
 
- lino <- function(lshape1 = "loglink",
-                  lshape2 = "loglink",
-                  llambda = "loglink",
-                  ishape1 = NULL, ishape2 = NULL, ilambda = 1,
-                  zero = NULL) {
+ lino <-
+  function(lshape1 = "loglink",
+           lshape2 = "loglink",
+           llambda = "loglink",
+           ishape1 = NULL, ishape2 = NULL, ilambda = 1,
+           zero = NULL) {
 
   if (!is.Numeric(ilambda, positive = TRUE))
     stop("bad input for argument 'ilambda'")
@@ -9495,12 +9506,13 @@ rparetoI <- function(n, scale = 1, shape = 1)
 
 
 
- paretoIV <- function(location = 0,
-                      lscale = "loglink",
-                      linequality = "loglink",
-                      lshape = "loglink",
-                      iscale = 1, iinequality = 1, ishape = NULL,
-                      imethod = 1) {
+ paretoIV <-
+  function(location = 0,
+           lscale = "loglink",
+           linequality = "loglink",
+           lshape = "loglink",
+           iscale = 1, iinequality = 1, ishape = NULL,
+           imethod = 1) {
 
   if (!is.Numeric(location))
     stop("argument 'location' must be numeric")
@@ -9705,10 +9717,11 @@ rparetoI <- function(n, scale = 1, shape = 1)
 
 
 
- paretoIII <- function(location = 0,
-                       lscale = "loglink",
-                       linequality = "loglink",
-                       iscale = NULL, iinequality = NULL) {
+ paretoIII <-
+  function(location = 0,
+           lscale = "loglink",
+           linequality = "loglink",
+           iscale = NULL, iinequality = NULL) {
 
   if (!is.Numeric(location))
       stop("argument 'location' must be numeric")
@@ -9857,10 +9870,11 @@ rparetoI <- function(n, scale = 1, shape = 1)
 
 
 
- paretoII <- function(location = 0,
-                      lscale = "loglink",
-                      lshape = "loglink",
-                      iscale = NULL, ishape = NULL) {
+ paretoII <-
+  function(location = 0,
+           lscale = "loglink",
+           lshape = "loglink",
+           iscale = NULL, ishape = NULL) {
 
   if (!is.Numeric(location))
     stop("argument 'location' must be numeric")
@@ -10122,7 +10136,8 @@ rpareto <- function(n, scale = 1, shape) {
 
 
 
- paretoff <- function(scale = NULL, lshape = "loglink") {
+ paretoff <-
+  function(scale = NULL, lshape = "loglink") {
   if (is.Numeric(scale) && scale <= 0)
     stop("argument 'scale' must be positive")
 
@@ -10483,7 +10498,8 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
 
- waldff <- function(llambda = "loglink", ilambda = NULL) {
+ waldff <-
+  function(llambda = "loglink", ilambda = NULL) {
 
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
@@ -10754,9 +10770,10 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
 
- expexpff1 <- function(lrate = "loglink",
-                       irate = NULL,
-                       ishape = 1) {
+ expexpff1 <-
+  function(lrate = "loglink",
+           irate = NULL,
+           ishape = 1) {
 
   lrate <- as.list(substitute(lrate))
   erate <- link2list(lrate)
@@ -10890,10 +10907,11 @@ rtruncpareto <- function(n, lower, upper, shape) {
 
 
 
- logistic  <- function(llocation = "identitylink",
-                       lscale = "loglink",
-                       ilocation = NULL, iscale = NULL,
-                       imethod = 1, zero = "scale") {
+ logistic <-
+  function(llocation = "identitylink",
+           lscale = "loglink",
+           ilocation = NULL, iscale = NULL,
+           imethod = 1, zero = "scale") {
 
   ilocat <- ilocation
 

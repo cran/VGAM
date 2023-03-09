@@ -36,6 +36,7 @@ negbinomial.size(size = Inf, lmu = "loglink", imu = NULL,
   }
   \item{zero, ishrinkage}{
   Same as \code{\link{negbinomial}}.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

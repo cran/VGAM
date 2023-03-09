@@ -11,13 +11,13 @@
 }
 \usage{
 seglines(x, y, dy, ddy, lwd = 2, cex = 2, plot.it = TRUE,
-         add.legend = TRUE, position.legend = "topleft",
-         lty.table = c("solid", "dashed", "solid", "dashed",
-                       "solid", "dashed", "solid"),
-         col.table = rainbow.sky[-5], pch.table = 7:1,
-         severity.table = c("None", "Faint", "Weak",
-         "Moderate", "Strong", "Extreme", "Undetermined"),
-         tol0 = 0.1, FYI = FALSE, ...)
+   add.legend = TRUE, cex.legend = 1,
+   position.legend = "topleft", eta0 = NA, COPS0 = NA,
+   lty.table = c("solid", "dashed", "solid", "dashed",
+                 "solid", "dashed", "solid"),
+   col.table = rainbow.sky[-5], pch.table = 7:1,
+   severity.table = c("None", "Faint", "Weak", "Moderate",
+   "Strong", "Extreme", "Undetermined"), FYI = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,11 +39,17 @@ seglines(x, y, dy, ddy, lwd = 2, cex = 2, plot.it = TRUE,
   }
   \item{add.legend, position.legend}{
     Logical and character; add a legend?
-    The other argument is fed into \code{\link[graphics]{legend}}.
+    The other argument is fed
+    into \code{\link[graphics]{legend}}.
     
 
   }
-  \item{severity.table, tol0}{
+  \item{cex.legend}{
+    Self-explanatory.
+
+
+  }
+  \item{severity.table, eta0, COPS0}{
   Same as \code{\link{hdeffsev}}.
 
 
@@ -53,6 +59,8 @@ seglines(x, y, dy, ddy, lwd = 2, cex = 2, plot.it = TRUE,
   \item{lty.table, col.table, pch.table}{
     Graphical parameters for the 7 different types of segments.
     Usually users should not assign anything to these arguments.
+    Setting \code{pch.table = NULL} will
+    suppress \code{pch} symbols from the legend.
 
 
   }
@@ -63,16 +71,14 @@ seglines(x, y, dy, ddy, lwd = 2, cex = 2, plot.it = TRUE,
   }
 }
 \details{
-  This function was written to complement \code{\link{hdeffsev}}
+  This function was written to
+  complement \code{\link{hdeffsev}}
   and is rough-and-ready.
-  It plots the Wald statistics as a function of
+  It plots the signed Wald statistics as a function of
   the estimates, and uses a colour-code to indicate
   the severity of the
   Hauck-Donner effect (HDE).
   This can be obtained from its first two derivatives.
-
-
-
 
 
 
@@ -114,12 +120,15 @@ deg <- 4  # myfun is a function that approximates the HDE
 myfun <- function(x, deriv = 0) switch(as.character(deriv),
   '0' = x^deg * exp(-x),
   '1' = (deg * x^(deg-1) - x^deg) * exp(-x),
-  '2' = (deg * (deg-1) * x^(deg-2) - 2*deg * x^(deg-1) + x^deg) * exp(-x))
+  '2' = (deg * (deg-1) * x^(deg-2) - 2*deg * x^(deg-1) +
+         x^deg) * exp(-x))
 \dontrun{
 curve(myfun, 0, 10, col = "white")
 xgrid <- seq(0, 10, length = 101)
 seglines(xgrid, myfun(xgrid), myfun(xgrid, deriv = 1),
-         myfun(xgrid, deriv = 2), position = "bottom")
+         COPS0 = 2,
+         myfun(xgrid, deriv = 2), pch.table = NULL,
+         position = "bottom")
 }
 }
 

@@ -67,6 +67,7 @@ zipebcom(lmu12 = "clogloglink", lphi12 = "logitlink", loratio = "loglink",
   The default has both \eqn{\phi}{phi} and the odds ratio as
   not being modelled as a function of the explanatory variables (apart
   from an intercept).
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

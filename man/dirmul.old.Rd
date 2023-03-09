@@ -35,6 +35,8 @@ dirmul.old(link = "loglink", ialpha = 0.01, parallel = FALSE,
   An integer-valued vector specifying which linear/additive
   predictors are modelled as intercepts only.  The values must
   be from the set \{1,2,\ldots,\eqn{M}\}.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+
 
   }
 }

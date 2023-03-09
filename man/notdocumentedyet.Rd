@@ -12,6 +12,8 @@
 %
 %
 %
+% 202208
+\alias{CMs.equidistant}
 % 202206
 \alias{rqresidualsvlm}
 \alias{rqresid}
@@ -273,8 +275,13 @@
 \alias{tapplymat1}
 % 201509, for a bug in car::linearHypothesis() and car:::Anova():
 \alias{as.char.expression}
-\alias{coef.vlm}
-\alias{vcov.vlm}
+%
+%
+% 20230309: wanted to comment these two out but didnt:
+  \alias{coef.vlm}
+  \alias{vcov.vlm}
+%
+%
 \alias{model.matrix.vlm}
 %\alias{has.intercept}
 %\alias{has.interceptvlm}

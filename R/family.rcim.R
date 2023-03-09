@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -23,7 +23,7 @@
            M1 = NULL,
            weights = NULL,
            which.linpred = 1,
-           Index.corner = ifelse(is.null(str0), 0, max(str0)) + 1:Rank,
+   Index.corner = ifelse(is.null(str0), 0, max(str0)) + 1:Rank,
            rprefix = "Row.",
            cprefix = "Col.",
            iprefix = "X2.",
@@ -115,8 +115,8 @@
     as(as.matrix(y), "matrix")
   }
   if (length(dim(y)) != 2 || nrow(y) < 3 || ncol(y) < 3)
-    stop("argument 'y' must be a matrix with >= 3 rows & columns, or ",
-         "a rrvglm() object")
+    stop("argument 'y' must be a matrix with >= 3 rows & ",
+         "columns, or a rrvglm() object")
 
 
   .rcim.df <-
@@ -128,8 +128,8 @@
            "must be FALSE")
 
 
-  min.row.val <- rindex[1]  # == min(rindex) since its sorted # Usually 2
-  min.col.val <- cindex[1]  # == min(cindex) since its sorted # Usually 2
+  min.row.val <- rindex[1]  # == min(rindex) since its sorted
+  min.col.val <- cindex[1]  # == min(cindex) since its sorted
   if (!noroweffects) {
     colnames( .rcim.df ) <-
       paste(rprefix, as.character(min.row.val),  # "2",
@@ -145,7 +145,7 @@
   yn1 <- if (length(dimnames(y)[[1]])) dimnames(y)[[1]] else
              param.names(iprefix, nrow(y))
   warn.save <- options()$warn
-  options(warn = -3)  # Suppress the warnings (hopefully, temporarily)
+  options(warn = -3)  # Suppress warnings (hopefully temporarily)
   if (any(!is.na(as.numeric(substring(yn1, 1, 1)))))
     yn1 <- param.names(iprefix, nrow(y))
   options(warn = warn.save)
@@ -175,8 +175,9 @@
     if (has.intercept) {
       list("(Intercept)" = matrix(1, LLL, 1))
     } else {
-      temp <- list("Row.2" = matrix(1, LLL, 1))  # Overwrite this name:
-      names(temp) <- paste(rprefix, as.character(min.row.val), sep = "")
+      temp <- list("Row.2" = matrix(1, LLL, 1))
+      names(temp) <- paste(rprefix,
+                           as.character(min.row.val), sep = "")
       temp
     }
 
@@ -211,19 +212,21 @@
                                as.character(iindex),
                              dimnames( .rcim.df )[[2]])
 
-  str1 <- paste(if (has.intercept) "~ 1 + " else "~ -1 + ", rprefix,
-                as.character(min.row.val),  # "2",
-                sep = "")
+    str1 <- paste0(if (has.intercept)
+                   "~ 1 + " else "~ -1 + ", rprefix,
+                   as.character(min.row.val))  # "2"
 
 
   if (nrow(y) > 2)
     str1 <- paste(str1,
-                  paste(rprefix, rindex[-1], sep = "", collapse = " + "),
+                  paste(rprefix, rindex[-1], sep = "",
+                        collapse = " + "),
                   sep = " + ")
 
 
     str1 <- paste(str1,
-                  paste(cprefix, cindex, sep = "", collapse = " + "),
+                  paste(cprefix, cindex, sep = "",
+                        collapse = " + "),
                   sep = " + ")
 
 
@@ -239,7 +242,8 @@
 
 
 
-  controlfun <- if (Rank == 0)   vglm.control else rrvglm.control  # orig.
+    controlfun <- if (Rank == 0)
+                    vglm.control else rrvglm.control  # orig.
 
 
   mycontrol <- controlfun(Rank = Rank,
@@ -264,7 +268,7 @@
   assign(".rcim.df", .rcim.df, envir = VGAM::VGAMenv)
 
   warn.save <- options()$warn
-  options(warn = -3)  # Suppress the warnings (hopefully, temporarily)
+  options(warn = -3)  # Suppress warnings (hopefully temporarily)
 
   if (mycontrol$trace) {
   }
@@ -281,10 +285,9 @@
       Hlist[[ii]] <- kronecker(Hlist[[ii]], kmat1)
     }
     if (has.intercept)
-      Hlist[["(Intercept)"]] <- cbind(Hlist[["(Intercept)"]],
-                                      kronecker(matrix(1, ncoly, 1),
-                                                kmat0))
-
+      Hlist[["(Intercept)"]] <-
+         cbind(Hlist[["(Intercept)"]],
+               kronecker(matrix(1, ncoly, 1), kmat0))
 
     if (mycontrol$trace) {
     }
@@ -320,7 +323,7 @@
              control = mycontrol, data = .rcim.df )
   }
 
-  options(warn = warn.save)  # Restore warnings back to prior state
+  options(warn = warn.save)  # Restore warnings to prior state
 
 
   answer <- if (summary.arg) {
@@ -404,17 +407,19 @@ setMethod("summary", "rcim",
     colnames(mat)
   }
 
-  r.index <- if (is.character(rbaseline))
-               which(rownames(mat) == rbaseline) else
-                     if (is.numeric(rbaseline)) rbaseline else
-                         stop("argement 'rbaseline' must be numeric",
-                               "or character of the level of row")
+  r.index <-
+    if (is.character(rbaseline))
+      which(rownames(mat) == rbaseline) else
+    if (is.numeric(rbaseline)) rbaseline else
+      stop("argement 'rbaseline' must be numeric",
+           "or character of the level of row")
 
-  c.index <- if (is.character(cbaseline))
-               which(colnames(mat) == cbaseline) else
-                     if (is.numeric(cbaseline)) cbaseline else
-                         stop("argement 'cbaseline' must be numeric",
-                               "or character of the level of row")
+  c.index <-
+    if (is.character(cbaseline))
+       which(colnames(mat) == cbaseline) else
+    if (is.numeric(cbaseline)) cbaseline else
+       stop("argement 'cbaseline' must be numeric",
+            "or character of the level of row")
 
   if (length(r.index) != 1)
     stop("Could not match with argument 'rbaseline'")
@@ -424,14 +429,18 @@ setMethod("summary", "rcim",
 
 
   yswap <- rbind(mat[r.index:RRR, ],
-                 if (r.index > 1) mat[1:(r.index - 1),] else NULL)
+                 if (r.index > 1) mat[1:(r.index - 1),] else
+                 NULL)
   yswap <- cbind(yswap[, c.index:CCC],
-                 if (c.index > 1) yswap[, 1:(c.index - 1)] else NULL)
+                 if (c.index > 1) yswap[, 1:(c.index - 1)] else
+                 NULL)
 
   new.rnames <- rnames[c(r.index:RRR,
-                         if (r.index > 1) 1:(r.index - 1) else NULL)]
+                         if (r.index > 1) 1:(r.index - 1) else
+                         NULL)]
   new.cnames <- cnames[c(c.index:CCC,
-                         if (c.index > 1) 1:(c.index - 1) else NULL)]
+                         if (c.index > 1) 1:(c.index - 1) else
+                         NULL)]
   colnames(yswap) <- new.cnames
   rownames(yswap) <- new.rnames
 
@@ -452,7 +461,8 @@ setMethod("summary", "rcim",
 
  plotrcim0  <- function(object,
      centered = TRUE, which.plots = c(1, 2),
-     hline0 = TRUE, hlty = "dashed", hcol = par()$col, hlwd = par()$lwd,
+     hline0 = TRUE, hlty = "dashed",
+     hcol = par()$col, hlwd = par()$lwd,
      rfirst = 1, cfirst = 1,
      rtype = "h", ctype = "h",
      rcex.lab = 1, rcex.axis = 1,  # rlabels = FALSE,
@@ -490,8 +500,10 @@ setMethod("summary", "rcim",
                    object@control$Rank == 0) length(cobj) else
                length(object@control$colx1.index)
 
-  orig.roweff <- c("Row.1" = 0, cobj[(nparff + 1) : (nparff + n.lm - 1)])
-  orig.coleff <- c("Col.1" = 0, cobj[(nparff + n.lm) : upperbound])
+ orig.roweff <- c("Row.1" = 0,
+                  cobj[(nparff + 1) : (nparff + n.lm - 1)])
+ orig.coleff <- c("Col.1" = 0,
+                  cobj[(nparff + n.lm) : upperbound])
   last.r <- length(orig.roweff)
   last.c <- length(orig.coleff)
 
@@ -540,7 +552,7 @@ setMethod("summary", "rcim",
 
   if (any(which.plots == 2, na.rm = TRUE)) {
     plot(coleff, type = ctype,
-         axes = FALSE, col = ccol, main = cmain,  # lwd = 2, xpd = FALSE,
+         axes = FALSE, col = ccol, main = cmain,
          sub  = csub, xlab = cxlab, ylab = cylab, ...)
 
     axis(1, at = seq_along(caxisl),
@@ -605,17 +617,18 @@ setMethod("plot", "rcim",
 
 
   vecmat <- c(unlist(mat))
-  ind1 <- if (is.character(roffset))
-             which(rownames(mat) == roffset) else
-                   if (is.numeric(roffset)) roffset + 1 else
-                     stop("argument 'roffset' not matched (character).",
-                           " It must be numeric, ",
-                           "else character and match the ",
-                           "row names of the response")
+  ind1 <-
+    if (is.character(roffset))
+      which(rownames(mat) == roffset) else
+      if (is.numeric(roffset)) roffset + 1 else
+      stop("argument 'roffset' not matched (character).",
+           " It must be numeric, ",
+           "else character and match the ",
+           "row names of the response")
   ind2 <- if (is.character(coffset))
              which(colnames(mat) == coffset) else
                    if (is.numeric(coffset)) coffset + 1 else
-                     stop("argument 'coffset' not matched (character).",
+             stop("argument 'coffset' not matched (character).",
                            " It must be numeric, ",
                            "else character and match the ",
                            "column names of the response")
@@ -648,8 +661,8 @@ setMethod("plot", "rcim",
 
   newrn <- if (roffset > 0)
             c(rownames.mat[c(ind1:nrow(mat))],
-              paste(rownames.mat[0:(ind1-1)], postfix, sep = "")) else
-           rownames.mat
+    paste(rownames.mat[0:(ind1-1)], postfix, sep = "")) else
+          rownames.mat
 
   newcn <- c(colnames.mat[c(ind2:ncol(mat), 0:(ind2 - 1))])
   if (roffset > 0)
@@ -683,10 +696,12 @@ Confint.rrnb <- function(rrnb2, level = 0.95) {
 
 
   if (!is(rrnb2, "rrvglm"))
-    stop("argument 'rrnb2' does not appear to be a rrvglm() object")
+      stop("argument 'rrnb2' does not appear to be a ",
+           "rrvglm() object")
 
   if (!any(rrnb2@family@vfamily == "negbinomial"))
-    stop("argument 'rrnb2' does not appear to be a negbinomial() fit")
+      stop("argument 'rrnb2' does not appear to be a ",
+           "negbinomial() fit")
 
   if (rrnb2@control$Rank != 1)
     stop("argument 'rrnb2' is not Rank-1")
@@ -695,7 +710,8 @@ Confint.rrnb <- function(rrnb2, level = 0.95) {
     stop("argument 'rrnb2' does not have M = 2")
 
   if (!all(rrnb2@misc$link == "loglink"))
-    stop("argument 'rrnb2' does not have log links for both parameters")
+    stop("argument 'rrnb2' does not have log links for ",
+         "both parameters")
 
   a21.hat <- (Coef(rrnb2)@A)["loglink(size)", 1]
   beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(mu)"]
@@ -703,10 +719,12 @@ Confint.rrnb <- function(rrnb2, level = 0.95) {
   delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat)
   delta2.hat <- 2 - a21.hat
 
-  SE.a21.hat <- sqrt(vcovrrvglm(rrnb2)["I(latvar.mat)", "I(latvar.mat)"])
+  SE.a21.hat <-
+    sqrt(vcovrrvglm(rrnb2)["I(latvar.mat)", "I(latvar.mat)"])
 
 
-  ci.a21 <- a21.hat +  c(-1, 1) * qnorm(1 - (1 - level)/2) * SE.a21.hat
+  ci.a21 <- a21.hat +
+            c(-1, 1) * qnorm(1 - (1 - level)/2) * SE.a21.hat
   (ci.delta2 <- 2 - rev(ci.a21))  # e.g., the 95 percent CI
 
   list(a21.hat    = a21.hat,
@@ -732,10 +750,12 @@ Confint.nb1 <- function(nb1, level = 0.95) {
     stop("argument 'nb1' does not appear to be a vglm() object")
 
   if (!any(nb1@family@vfamily == "negbinomial"))
-    stop("argument 'nb1' does not appear to be a negbinomial() fit")
+    stop("argument 'nb1' does not appear to be a ",
+         "negbinomial() fit")
 
   if (!all(unlist(constraints(nb1)[-1]) == 1))
-    stop("argument 'nb1' does not appear to have 'parallel = TRUE'")
+    stop("argument 'nb1' does not appear to ",
+         "have 'parallel = TRUE'")
 
   if (!all(unlist(constraints(nb1)[1]) == c(diag(nb1@misc$M))))
     stop("argument 'nb1' does not have 'parallel = FALSE' ",
@@ -745,7 +765,8 @@ Confint.nb1 <- function(nb1, level = 0.95) {
     stop("argument 'nb1' does not have M = 2")
 
   if (!all(nb1@misc$link == "loglink"))
-    stop("argument 'nb1' does not have log links for both parameters")
+    stop("argument 'nb1' does not have log links ",
+         "for both parameters")
 
   cnb1 <- coefficients(as(nb1, "vglm"), matrix = TRUE)
   mydiff <- (cnb1["(Intercept)", "loglink(size)"] -
@@ -759,12 +780,13 @@ Confint.nb1 <- function(nb1, level = 0.95) {
 
 
   myvec <- cbind(c(-1, 1, rep_len(0, nrow(myvcov) - 2)))
-  se.mydiff <- c(sqrt(t(myvec) %*% myvcov %*% myvec))  # c() to drop the 2-D
+  se.mydiff <- c(sqrt(t(myvec) %*% myvcov %*% myvec))
 
-  ci.mydiff <- mydiff + c(-1, 1) * qnorm(1 - (1 - level)/2) * se.mydiff
+  ci.mydiff <- mydiff +
+    c(-1, 1) * qnorm(1 - (1 - level)/2) * se.mydiff
 
   ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
-  (ci.phi0 <- 1 + 1 / rev(ci.delta0))  # e.g., the 95 percent CI for phi0
+  (ci.phi0 <- 1 + 1 / rev(ci.delta0))
 
   list(CI.phi0    = ci.phi0,
        CI.delta0  = ci.delta0,
@@ -787,7 +809,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
 
   if (!is(rrvglm2, "rrvglm"))
-    stop("argument 'rrvglm2' does not appear to be a rrvglm() object")
+      stop("argument 'rrvglm2' does not appear to ",
+           "be a rrvglm() object")
 
   if (rrvglm2@control$Rank != 1)
     stop("argument 'rrvglm2' is not Rank-1")
@@ -803,7 +826,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
   SE.a21.hat <- temp1$SE.a21.hat
 
 
-  SE.a21.hat <- sqrt(vcov(rrvglm2)["I(latvar.mat)", "I(latvar.mat)"])
+    SE.a21.hat <-
+        sqrt(vcov(rrvglm2)["I(latvar.mat)", "I(latvar.mat)"])
 
 
   big.ci.a21 <- a21.hat +  c(-1, 1) * se.eachway * SE.a21.hat
@@ -837,7 +861,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
 
     for (kay in 2:length(argslist[["constraints"]])) {
-       argslist[["constraints"]][[kay]] <- rbind(1, a21.matrix[ii, 1])
+      argslist[["constraints"]][[kay]] <-
+        rbind(1, a21.matrix[ii, 1])
     }
 
 
@@ -923,7 +948,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
       M <- npred(model)
       if (M < which.linpred)
-        stop("argument 'which.linpred' must be a value from the set 1:",
+          stop("argument 'which.linpred' must be a value ",
+               "from the set 1:",
              M)
 
 
@@ -934,8 +960,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
         Mdot <- ncol(Hk)
         Hk.row <- Hk[which.linpred, ]
         if (sum(Hk.row != 0) > 1)
-          stop("cannot handle rows of constraint matrices with more ",
-               "than one nonzero value")
+          stop("cannot handle rows of constraint matrices ",
+               "with more than one nonzero value")
 
         foo <- function(ii)
           switch(as.character(ii), '1'="1st", '2'="2nd", '3'="3rd",
@@ -952,7 +978,8 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
         factorname
       }
 
-      colptr <- attr(model.matrix(object, type = "vlm"), "vassign")
+      colptr <- attr(model.matrix(object, type = "vlm"),
+                     "vassign")
       colptr <- if (M > 1) {
         colptr[newfactorname]
       } else {
@@ -972,10 +999,10 @@ plota21 <- function(rrvglm2, show.plot = TRUE, nseq.a21 = 31,
 
       if (is.null(estimates)) {
         if (M > 1) {
-          estimates <- matrix(-1, nrow(contmat), 1)  # Used to be nc = Mdot
+          estimates <- matrix(-1, nrow(contmat), 1)
           ii <- 1
           estimates[, ii] <- contmat %*%
-                             (coefvlm(model)[(coef.indices[[ii]])])
+                      (coefvlm(model)[(coef.indices[[ii]])])
         } else {
           estimates <- contmat %*% (coefvlm(model)[coef.indices])
         }
@@ -1159,7 +1186,8 @@ summary.qvar <- function(object, ...) {
   estimates <- c(object@extra$attributes.y$estimates)
   if (!length(names(estimates)) &&
       is.matrix(object@extra$attributes.y$estimates))
-    names( estimates) <- rownames(object@extra$attributes.y$estimates)
+    names( estimates) <-
+      rownames(object@extra$attributes.y$estimates)
   if (!length(names(estimates)))
     names( estimates) <- param.names("Level", length(estimates))
 
@@ -1225,7 +1253,8 @@ qvar <- function(object, se = FALSE, ...) {
 
 
   if (!inherits(object, "rcim") && !inherits(object, "rcim0"))
-    warning("argument 'object' should be an 'rcim' or 'rcim0' object. ",
+      warning("argument 'object' should be an 'rcim' or ",
+              "'rcim0' object. ",
             "This call may fail.")
 
   if (!(object@family@vfamily %in% c("uninormal", "normal1")))
@@ -1248,31 +1277,33 @@ qvar <- function(object, se = FALSE, ...) {
 
 
 plotqvar <-
-qvplot   <-  function(object,
-                      interval.width = 2,
-                      ylab = "Estimate",
-                      xlab = NULL,  # x$factorname,
-                      ylim = NULL,
-                      main = "",
-                      level.names = NULL,
-                      conf.level = 0.95,
-                      warn.ratio = 10,
-                      border = "transparent",  # None
-                      points.arg = TRUE,
-                      length.arrows = 0.25, angle = 30,
-                      lwd = par()$lwd,
-                      scol = par()$col,
-                      slwd = par()$lwd,
-                      slty = par()$lty,
-                      ...) {
+qvplot   <-
+  function(object,
+           interval.width = 2,
+           ylab = "Estimate",
+           xlab = NULL,  # x$factorname,
+           ylim = NULL,
+           main = "",
+           level.names = NULL,
+           conf.level = 0.95,
+           warn.ratio = 10,
+           border = "transparent",  # None
+           points.arg = TRUE,
+           length.arrows = 0.25, angle = 30,
+           lwd = par()$lwd,
+           scol = par()$col,
+           slwd = par()$lwd,
+           slty = par()$lty,
+           ...) {
 
 
 
 
   if (!is.numeric(interval.width) &&
       !is.numeric(conf.level))
-    stop("at least one of arguments 'interval.width' and 'conf.level' ",
-          "should be numeric")
+    stop("at least one of arguments 'interval.width' and ",
+         "'conf.level' ",
+         "should be numeric")
 
 
 
@@ -1285,7 +1316,8 @@ qvplot   <-  function(object,
   estimates <- c(object@extra$attributes.y$estimates)
   if (!length(names(estimates)) &&
       is.matrix(object@extra$attributes.y$estimates))
-    names(estimates) <- rownames(object@extra$attributes.y$estimates)
+    names(estimates) <-
+      rownames(object@extra$attributes.y$estimates)
 
 
   if (length(level.names) == length(estimates)) {

@@ -34,6 +34,20 @@
   many unknown species.
 
 
+
+  Actually, 119 species had over 24 observed frequencies,
+  so this could/should be appended to the data set.
+  Hence there are 620 species in total in a
+  sample size of \eqn{n=9031} individuals.
+
+
+
+
+%%  20221003; see Anne Chao's notes, p.61.
+
+
+
+
 %%  ~~ If necessary, more details than the __description__ above
 }
 

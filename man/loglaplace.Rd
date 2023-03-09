@@ -79,6 +79,7 @@ logitlaplace1(tau = NULL, llocation = "logitlink",
   }
   \item{idf.mu, ishrinkage, Scale.arg, digt, zero}{
   See \code{\link{alaplace1}}.
+  See \code{\link{CommonVGAMffArguments}} for information.
 
 
   }

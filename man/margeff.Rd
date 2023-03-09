@@ -24,9 +24,12 @@ margeff(object, subset = NULL, ...)
   \code{\link{multinomial}},
   \code{\link{cumulative}},
   \code{\link{cratio}},
-  \code{\link{sratio}}
+  \code{\link{sratio}},
+  \code{\link{acat}},
+  \code{\link{poissonff}},
+  \code{\link{negbinomial}}
   or
-  \code{\link{acat}}.
+  \code{\link{posnegbinomial}}.
 
 
 
@@ -164,6 +167,8 @@ with some help and motivation from Stasha Rmandic.
   \code{\link{acat}},
   \code{\link{cratio}},
   \code{\link{sratio}},
+  \code{\link{poissonff}},
+  \code{\link{negbinomial}},
   \code{\link{vglm}}.
 
 

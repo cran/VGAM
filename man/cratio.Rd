@@ -8,14 +8,17 @@
 
 }
 \usage{
-cratio(link = "logitlink", parallel = FALSE, reverse = FALSE, zero = NULL,
-       whitespace = FALSE)
+cratio(link = "logitlink", parallel = FALSE, reverse = FALSE,
+    zero = NULL, thresholds = c("unconstrained", "equidistant"),
+    Treverse = reverse, Tref = if (Treverse) "M" else 1,
+    whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
   \item{link}{
-  Link function applied to the \eqn{M} continuation ratio probabilities.
+    Link function applied to
+    the \eqn{M} continuation ratio probabilities.
   See \code{\link{Links}} for more choices.
 
 
@@ -29,10 +32,10 @@ cratio(link = "logitlink", parallel = FALSE, reverse = FALSE, zero = NULL,
   \item{reverse}{
   Logical.
   By default, the continuation ratios used are
-  \eqn{\eta_j = logit(P[Y>j|Y \geq j])}{eta_j = logit(P[Y>j|Y>=j])} for
-  \eqn{j=1,\dots,M}.
+  \eqn{\eta_j = logit(P[Y>j|Y \geq j])}{eta_j = logit(P[Y>j|Y>=j])}
+  for \eqn{j=1,\dots,M}.
   If \code{reverse} is \code{TRUE}, then
-  \eqn{\eta_j = logit(P[Y<j+1|Y\leq j+1])}{eta_j=logit(P[Y<j+1|Y<=j+1])}
+\eqn{\eta_j = logit(P[Y<j+1|Y\leq j+1])}{eta_j=logit(P[Y<j+1|Y<=j+1])}
   will be used.
 
 
@@ -41,8 +44,17 @@ cratio(link = "logitlink", parallel = FALSE, reverse = FALSE, zero = NULL,
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
   The values must be from the set \{1,2,\ldots,\eqn{M}\}.
-  The default value means none are modelled as intercept-only terms.
+  The default value means none are modelled as intercept-only
+  terms.
+  See \code{\link{CommonVGAMffArguments}} for more information.
 
+
+  }
+  \item{thresholds, Treverse, Tref}{
+    See \code{\link{cumulative}} for information.
+    These arguments apply to ordinal
+    categorical regression models.
+    
 
   }
   \item{whitespace}{
@@ -52,15 +64,17 @@ cratio(link = "logitlink", parallel = FALSE, reverse = FALSE, zero = NULL,
   }
 }
 \details{
-  In this help file the response \eqn{Y} is assumed to be a factor
-  with ordered values \eqn{1,2,\dots,M+1}, so that
+  In this help file the response \eqn{Y} is assumed to be
+  a factor with ordered values \eqn{1,2,\dots,M+1}, so that
   \eqn{M} is the number of linear/additive predictors
   \eqn{\eta_j}{eta_j}.
 
 
-  There are a number of definitions for the \emph{continuation ratio}
-  in the literature. To make life easier, in the \pkg{VGAM} package,
-  we use \emph{continuation} ratios and \emph{stopping} ratios
+  There are a number of definitions for the
+  \emph{continuation ratio}
+  in the literature. To make life easier, in the \pkg{VGAM}
+  package, we use \emph{continuation} ratios and \emph{stopping}
+  ratios
   (see \code{\link{sratio}}).
   Stopping ratios deal with quantities such as
   \code{logitlink(P[Y=j|Y>=j])}.
@@ -68,8 +82,10 @@ cratio(link = "logitlink", parallel = FALSE, reverse = FALSE, zero = NULL,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+  (see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as \code{\link{vglm}},
   \code{\link{rrvglm}}
   and \code{\link{vgam}}.
 
@@ -110,6 +126,13 @@ See \code{\link{sratio}}.
   see \code{\link[base:factor]{ordered}}.
 
 
+
+  Boersch-Supan (2021) looks at sparse data and
+  the numerical problems that result;
+  see \code{\link{sratio}}.
+
+ 
+
 }
 
 \seealso{
@@ -119,6 +142,7 @@ See \code{\link{sratio}}.
   \code{\link{multinomial}},
   \code{\link{margeff}},
   \code{\link{pneumo}},
+  \code{\link{budworm}},
   \code{\link{logitlink}},
   \code{\link{probitlink}},
   \code{\link{clogloglink}},

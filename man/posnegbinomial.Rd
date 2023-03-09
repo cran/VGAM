@@ -207,7 +207,8 @@ convergence.
   \code{\link{CommonVGAMffArguments}},
   \code{\link{corbet}},
   \code{\link{logff}},
-  \code{\link{simulate.vlm}}.
+  \code{\link{simulate.vlm}},
+  \code{\link{margeff}}.
 
 
 

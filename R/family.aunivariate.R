@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -3560,6 +3560,8 @@ if (FALSE) {
 
 
 
+
+
  zoabetaR <-
   function(lshape1 = "loglink", lshape2 = "loglink",
            lpobs0 = "logitlink", lpobs1 = "logitlink",
@@ -3629,6 +3631,9 @@ if (FALSE) {
   constraints = eval(substitute(expression({
 
 
+  if (is.null(constraints)) {
+ 
+
     constraints.orig <- constraints
 
 
@@ -3685,6 +3690,8 @@ if (FALSE) {
 
 
     constraints <- con.use
+  }  # if (is.null(constraints))
+
 
 
 

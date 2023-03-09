@@ -6,8 +6,9 @@
   Fits a positive Poisson distribution.
 }
 \usage{
-pospoisson(link = "loglink", type.fitted = c("mean", "lambda", "prob0"),
-    expected = TRUE, ilambda = NULL, imethod = 1, zero = NULL, gt.1 = FALSE)
+pospoisson(link = "loglink", type.fitted = c("mean", "lambda",
+           "prob0"), expected = TRUE, ilambda = NULL, imethod = 1,
+           zero = NULL, gt.1 = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

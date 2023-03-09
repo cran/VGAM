@@ -11,9 +11,9 @@
 }
 \usage{
 genpoisson2(lmeanpar = "loglink", ldisppar = "loglink",
-           imeanpar = NULL, idisppar = NULL, imethod = c(1, 1),
-           ishrinkage = 0.95, gdisppar = exp(1:5),
-           parallel = FALSE, zero = "disppar")
+            imeanpar = NULL, idisppar = NULL, imethod = c(1, 1),
+            ishrinkage = 0.95, gdisppar = exp(1:5),
+            parallel = FALSE, zero = "disppar")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -74,7 +74,7 @@ genpoisson2(lmeanpar = "loglink", ldisppar = "loglink",
 \details{
   This is a variant of the generalized Poisson distribution (GPD)
   and called GP-2 by some writers such as Yang, et al. (2009).
-  Compared to the original GP-0 (see \code{\link{genpoisson0}}
+  Compared to the original GP-0 (see \code{\link{genpoisson0}})
   the GP-2 has
   \eqn{\theta  = \mu / (1 + \alpha \mu)} and
   \eqn{\lambda = \alpha \mu / (1 + \alpha \mu)} so that

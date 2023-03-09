@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1283,11 +1283,12 @@ pgumbel <- function(q, location = 0, scale = 1,
 
 
 
- gumbel <- function(llocation = "identitylink",
-                    lscale = "loglink",
-                    iscale = NULL,
-                    R = NA, percentiles = c(95, 99),
-                    mpv = FALSE, zero = NULL) {
+ gumbel <-
+  function(llocation = "identitylink",
+           lscale = "loglink",
+           iscale = NULL,
+           R = NA, percentiles = c(95, 99),
+           mpv = FALSE, zero = NULL) {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -1704,15 +1705,16 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
 
 
 
- gpd <- function(threshold = 0,
-          lscale = "loglink",
-          lshape = logofflink(offset = 0.5),
-          percentiles = c(90, 95),
-          iscale = NULL,
-          ishape = NULL,
-          tolshape0 = 0.001,
-          type.fitted = c("percentiles", "mean"),
-          imethod = 1,
+ gpd <-
+  function(threshold = 0,
+           lscale = "loglink",
+           lshape = logofflink(offset = 0.5),
+           percentiles = c(90, 95),
+           iscale = NULL,
+           ishape = NULL,
+           tolshape0 = 0.001,
+           type.fitted = c("percentiles", "mean"),
+           imethod = 1,
 
 
           zero = "shape") {
@@ -2242,12 +2244,13 @@ setMethod("guplot", "vlm",
 
 
 
- gumbelff <- function(llocation = "identitylink",
-                      lscale = "loglink",
-                      iscale = NULL,
-                      R = NA, percentiles = c(95, 99),
-                      zero = "scale",  # Was NULL in egumbel()
-                      mpv = FALSE) {
+ gumbelff <-
+  function(llocation = "identitylink",
+           lscale = "loglink",
+           iscale = NULL,
+           R = NA, percentiles = c(95, 99),
+           zero = "scale",  # Was NULL in egumbel()
+           mpv = FALSE) {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -2513,11 +2516,12 @@ setMethod("guplot", "vlm",
 
 
 
- cens.gumbel <- function(llocation = "identitylink",
-                         lscale = "loglink",
-                         iscale = NULL,
-                         mean = TRUE, percentiles = NULL,
-                         zero = "scale") {
+ cens.gumbel <-
+  function(llocation = "identitylink",
+           lscale = "loglink",
+           iscale = NULL,
+           mean = TRUE, percentiles = NULL,
+           zero = "scale") {
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
@@ -2743,8 +2747,9 @@ dfrechet <-
 
 
 
-pfrechet <- function(q, location = 0, scale = 1, shape,
-                     lower.tail = TRUE, log.p = FALSE) {
+pfrechet <-
+  function(q, location = 0, scale = 1, shape,
+           lower.tail = TRUE, log.p = FALSE) {
   if (!is.logical(lower.tail) || length(lower.tail ) != 1)
     stop("bad input for argument 'lower.tail'")
   if (!is.logical(log.p) || length(log.p) != 1)
@@ -2834,12 +2839,13 @@ frechet.control <- function(save.weights = TRUE, ...) {
 
 
 
- frechet <- function(location = 0,
-                     lscale = "loglink",
-                     lshape = logofflink(offset = -2),
-                     iscale = NULL, ishape = NULL,
-                     nsimEIM = 250,
-                     zero = NULL) {
+ frechet <-
+  function(location = 0,
+           lscale = "loglink",
+           lshape = logofflink(offset = -2),
+           iscale = NULL, ishape = NULL,
+           nsimEIM = 250,
+           zero = NULL) {
 
   if (!is.Numeric(location))
     stop("bad input for argument 'location'")
@@ -3078,9 +3084,10 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
 }
 
 
- rec.normal <- function(lmean = "identitylink", lsd = "loglink",
-                        imean = NULL, isd = NULL, imethod = 1,
-                        zero = NULL) {
+ rec.normal <-
+  function(lmean = "identitylink", lsd = "loglink",
+           imean = NULL, isd = NULL, imethod = 1,
+           zero = NULL) {
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
@@ -3544,9 +3551,10 @@ dpois.points <- function(x, lambda, ostatistic,
 
 
 
- gumbel1 <- function(llocation = "identitylink",
-                     iscale = 1,   # The *actual* value
-                     zero = NULL) {
+ gumbel1 <-
+  function(llocation = "identitylink",
+           iscale = 1,   # The *actual* value
+           zero = NULL) {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -17,14 +17,15 @@ replace.constraints <- function(Hlist, cm, index) {
 
 
 
- valt.control <- function(
-                 Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
-                              60, 80, 100, 125, 2^(8:12)),
-                 Criterion = c("ResSS", "coefficients"),
-                 Linesearch = FALSE,
-                 Maxit = 7,
-                 Suppress.warning = TRUE,
-                 Tolerance = 1e-7, ...) {
+valt.control <-
+    function(
+             Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
+                          60, 80, 100, 125, 2^(8:12)),
+             Criterion = c("ResSS", "coefficients"),
+             Linesearch = FALSE,
+             Maxit = 7,
+             Suppress.warning = TRUE,
+             Tolerance = 1e-7, ...) {
 
   if (mode(Criterion) != "character" && mode(Criterion) != "name")
     Criterion <- as.character(substitute(Criterion))
@@ -42,7 +43,8 @@ replace.constraints <- function(Hlist, cm, index) {
 
 
 
-qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
+qrrvglm.xprod <-
+  function(numat, Aoffset, Quadratic, I.tolerances) {
   Rank <- ncol(numat)
   moff <- NULL
   ans <- if (Quadratic) {
@@ -57,7 +59,8 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
   } else {
     as.matrix(numat)
   }
-  list(matrix = if (Aoffset > 0) ans else ans[, -(1:Rank), drop = FALSE],
+  list(matrix = if (Aoffset > 0) ans else ans[, -(1:Rank),
+                                              drop = FALSE],
        offset = moff)
 }  # qrrvglm.xprod
 
@@ -66,22 +69,23 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
 
 
 
- valt <- function(x, z, U, Rank = 1,
-                  Hlist = NULL,
-                  Cinit = NULL,
-                  Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
-                               60, 80, 100, 125, 2^(8:12)),
-                  Criterion = c("ResSS", "coefficients"),
-                  Crow1positive = rep_len(TRUE, Rank),
-                  colx1.index,
-                  Linesearch = FALSE,
-                  Maxit = 20,
-                  str0 = NULL,
-                  sd.Cinit = 0.02,
-                  Suppress.warning = FALSE,
-                  Tolerance = 1e-6,
-                  trace = FALSE,
-                  xij = NULL) {
+valt <-
+    function(x, z, U, Rank = 1,
+             Hlist = NULL,
+             Cinit = NULL,
+             Alphavec = c(2, 4, 6, 9, 12, 16, 20, 25, 30, 40, 50,
+                          60, 80, 100, 125, 2^(8:12)),
+             Criterion = c("ResSS", "coefficients"),
+             Crow1positive = rep_len(TRUE, Rank),
+             colx1.index,
+             Linesearch = FALSE,
+             Maxit = 20,
+             str0 = NULL,
+             sd.Cinit = 0.02,
+             Suppress.warning = FALSE,
+             Tolerance = 1e-6,
+             trace = FALSE,
+             xij = NULL) {
 
 
 
@@ -122,9 +126,9 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
     stop("input unconformable")
 
   clist2 <- replace.constraints(vector("list", Rank+p1),
-                                if (length(str0))
-                                diag(M)[, -str0, drop = FALSE] else
-                                diag(M), 1:Rank)
+                       if (length(str0))
+                       diag(M)[, -str0, drop = FALSE] else
+                       diag(M), 1:Rank)
   if (p1) {
     for (kk in 1:p1)
       clist2[[Rank+kk]] <- Hlist[[colx1.index[kk]]]
@@ -136,30 +140,34 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
   fit <- list(ResSS = 0)  # Only for initial old.crit below
 
   C <- Cinit  # This is input for the main iter loop
-  old.crit <- switch(Criterion, coefficients = C, ResSS = fit$ResSS)
+  old.crit <- switch(Criterion, coefficients = C,
+                     ResSS = fit$ResSS)
 
-  recover <- 0  # Allow a few iterations between different line searches
+  recover <- 0  # Allow a few iters // different line searches
   for (iter in 1:Maxit) {
     iter.save <- iter
 
-      latvar.mat <- x[, colx2.index, drop = FALSE] %*% C
-      new.latvar.model.matrix <- cbind(latvar.mat,
-                                       if (p1) x[, colx1.index] else NULL)
-      fit <- vlm.wfit(xmat = new.latvar.model.matrix, z, Hlist = clist2,
-                      U = U, matrix.out = TRUE, is.vlmX = FALSE,
-                      ResSS = FALSE, qr = FALSE, xij = xij)
+    latvar.mat <- x[, colx2.index, drop = FALSE] %*% C
+    new.latvar.model.matrix <-
+      cbind(latvar.mat,
+            if (p1) x[, colx1.index] else NULL)
+    fit <- vlm.wfit(xmat = new.latvar.model.matrix,
+                    z, Hlist = clist2,
+                    U = U, matrix.out = TRUE, is.vlmX = FALSE,
+                    ResSS = FALSE, qr = FALSE, xij = xij)
       A <- t(fit$mat.coef[1:Rank, , drop = FALSE])
 
       clist1 <- replace.constraints(Hlist, A, colx2.index)
       fit <- vlm.wfit(xmat = x, z, Hlist = clist1, U = U,
                       matrix.out = TRUE, is.vlmX = FALSE,
                       ResSS = TRUE, qr = FALSE, xij = xij)
-      C <- fit$mat.coef[colx2.index, , drop = FALSE] %*% A %*%
-           solve(t(A) %*% A)
+      C <- fit$mat.coef[colx2.index, , drop = FALSE] %*%
+           A %*% solve(t(A) %*% A)
 
       numat <- x[, colx2.index, drop = FALSE] %*% C
       evnu <- eigen(var(numat), symmetric = TRUE)
-      temp7 <- if (Rank > 1) evnu$vector %*% diag(evnu$value^(-0.5)) else
+      temp7 <- if (Rank > 1)
+                 evnu$vector %*% diag(evnu$value^(-0.5)) else
                  evnu$vector %*% evnu$value^(-0.5)
       C <- C %*% temp7
       A <- A %*% t(solve(temp7))
@@ -175,12 +183,12 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
                  ResSS = max(abs(fit$ResSS - old.crit) / (
                               Tolerance + fit$ResSS)))
 
-        if (trace) {
-          cat("   Alternating iteration", iter,
-              ",   Convergence criterion  = ", format(ratio), "\n")
-          if (!is.null(fit$ResSS))
-              cat("    ResSS  = ", fit$ResSS, "\n")
-          flush.console()
+      if (trace) {
+        cat("   Alternating iteration", iter,
+            ",   Convergence criterion  = ", format(ratio), "\n")
+        if (!is.null(fit$ResSS))
+            cat("    ResSS  = ", fit$ResSS, "\n")
+        flush.console()
       }
 
       if (ratio < Tolerance) {
@@ -192,41 +200,42 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
 
       fini.linesearch <- FALSE
       if (Linesearch && iter - recover >= 2) {
-          xnew <- C
+        xnew <- C
 
-          direction1 <- (xnew - xold)  # / sqrt(1 + sum((xnew-xold)^2))
-          ftemp <- fit$ResSS  # Most recent objective function
-          use.alpha <- 0  # The current step relative to (xold, yold)
-          for (itter in seq_along(Alphavec)) {
-            CC <- xold + Alphavec[itter] * direction1
+        direction1 <- (xnew - xold)  # /sqrt(1+sum((xnew-xold)^2))
+        ftemp <- fit$ResSS  # Most recent objective function
+        use.alpha <- 0  # The current step relative to (xold, yold)
+        for (itter in seq_along(Alphavec)) {
+          CC <- xold + Alphavec[itter] * direction1
 
-            try.latvar.mat <- x[, colx2.index, drop = FALSE] %*% CC
-            try.new.latvar.model.matrix <-
-              cbind(try.latvar.mat,
-                    if (p1) x[, colx1.index] else NULL)
+          try.latvar.mat <- x[, colx2.index, drop = FALSE] %*% CC
+          try.new.latvar.model.matrix <-
+            cbind(try.latvar.mat,
+                  if (p1) x[, colx1.index] else NULL)
 
-            try <- vlm.wfit(xmat = try.new.latvar.model.matrix, z,
-                            Hlist = clist2, U = U, matrix.out = TRUE,
-                            is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
-                            xij = xij)
-            if (try$ResSS < ftemp) {
-              use.alpha <- Alphavec[itter]
-              fit <- try
-              ftemp <- try$ResSS
-              C <- CC
-              A <- t(fit$mat.coef[1:Rank, , drop = FALSE])
-              latvar.mat <- x[, colx2.index, drop = FALSE] %*% C
-              recover <- iter  # Give it some altg iters to recover
-            } else {
-              if (trace && use.alpha > 0) {
-                cat("    Finished line search using Alpha  = ",
-                    use.alpha, "\n")
-                flush.console()
-              }
-              fini.linesearch <- TRUE
+          try <- vlm.wfit(xmat = try.new.latvar.model.matrix,
+                          z, Hlist = clist2, U = U,
+                          matrix.out = TRUE,
+                          is.vlmX = FALSE, ResSS = TRUE,
+                          qr = FALSE, xij = xij)
+          if (try$ResSS < ftemp) {
+            use.alpha <- Alphavec[itter]
+            fit <- try
+            ftemp <- try$ResSS
+            C <- CC
+            A <- t(fit$mat.coef[1:Rank, , drop = FALSE])
+            latvar.mat <- x[, colx2.index, drop = FALSE] %*% C
+            recover <- iter  # Give it some altg iters to recover
+          } else {
+            if (trace && use.alpha > 0) {
+              cat("    Finished line search using Alpha  = ",
+                  use.alpha, "\n")
+              flush.console()
             }
-          if (fini.linesearch) break
-        }  # End of itter loop
+            fini.linesearch <- TRUE
+          }
+        if (fini.linesearch) break
+      }  # End of itter loop
     }
 
     xold <- C # Do not take care of drift
@@ -263,7 +272,8 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
     combine2 <- c(control$str0,
                   if (Corner) control$Index.corner else NULL)
 
-    Qoffset <- if (Quadratic) ifelse(I.tolerances, 0, sum(1:Rank)) else 0
+    Qoffset <- if (Quadratic)
+                 ifelse(I.tolerances, 0, sum(1:Rank)) else 0
     NoA <- length(combine2) == M    # No unknown parameters in A
     clist2 <- if (NoA) {
         Aoffset <- 0
@@ -279,7 +289,8 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
       clist2 <- replace.constraints(clist2,
           if (control$eq.tolerances)
               matrix(1, M, 1) - eijfun(Dzero, M) else {
-          if (length(Dzero)) diag(M)[,-Dzero, drop = FALSE] else diag(M)},
+          if (length(Dzero))
+            diag(M)[,-Dzero, drop = FALSE] else diag(M)},
           Aoffset + (1:Qoffset))
     if (p1)
       for (kk in 1:p1)
@@ -291,8 +302,10 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
          if (Quadratic && Rank == 1 && !I.tolerances)
              "(latvar^2)" else
          if (Quadratic && Rank>1 && !I.tolerances)
-             paste("(latvar", i63$row, ifelse(i63$row == i63$col, "^2",
-             paste("*latvar", i63$col, sep = "")), ")", sep = "") else
+             paste("(latvar", i63$row,
+                   ifelse(i63$row == i63$col, "^2",
+                          paste("*latvar", i63$col, sep = "")), ")",
+                   sep = "") else
              NULL,
          if (p1) names(colx1.index) else NULL)
     }
@@ -300,9 +313,10 @@ qrrvglm.xprod <- function(numat, Aoffset, Quadratic, I.tolerances) {
     latvar.mat <- x[, control$colx2.index, drop = FALSE] %*% C
 
 
-    tmp900 <- qrrvglm.xprod(latvar.mat, Aoffset, Quadratic, I.tolerances)
+    tmp900 <- qrrvglm.xprod(latvar.mat, Aoffset,
+                            Quadratic, I.tolerances)
     new.latvar.model.matrix <- cbind(tmp900$matrix,
-                                     if (p1) x[,colx1.index] else NULL)
+                          if (p1) x[,colx1.index] else NULL)
     if (!no.thrills)
       dimnames(new.latvar.model.matrix) <- list(dimnames(x)[[1]],
                                                 names(clist2))
@@ -335,7 +349,8 @@ valt.2iter <- function(x, z, U, Hlist, A, control) {
 
 
   clist1 <- replace.constraints(Hlist, A, control$colx2.index)
-  fit <- vlm.wfit(xmat = x, z, Hlist = clist1, U = U, matrix.out = TRUE,
+  fit <- vlm.wfit(xmat = x, z, Hlist = clist1, U = U,
+                  matrix.out = TRUE,
                   is.vlmX = FALSE, ResSS = TRUE,
                   qr = FALSE, xij = control$xij)
   C <- fit$mat.coef[control$colx2.index, , drop = FALSE] %*%
@@ -345,6 +360,9 @@ valt.2iter <- function(x, z, U, Hlist, A, control) {
        fitted = fit$fitted, new.coeffs = fit$coef,
        Hlist = clist1, ResSS = fit$ResSS)
 }  # valt.2iter
+
+
+
 
 
 
@@ -361,7 +379,8 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
     Corner <- control$Corner
     I.tolerances <- control$I.tolerances
 
-    Qoffset <- if (Quadratic) ifelse(I.tolerances, 0, sum(1:Rank)) else 0
+    Qoffset <- if (Quadratic)
+                   ifelse(I.tolerances, 0, sum(1:Rank)) else 0
     tmp833 <- lm2qrrvlm.model.matrix(x = x, Hlist = Hlist, C = C,
                                      control = control)
     new.latvar.model.matrix <- tmp833$new.latvar.model.matrix
@@ -408,8 +427,8 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
         A[Index.corner,] <- diag(Rank)
 
     B1 <- if (p1)
-      fit$mat.coef[-(1:(tmp833$Aoffset+Qoffset)),, drop = FALSE] else
-      NULL
+          fit$mat.coef[-(1:(tmp833$Aoffset+Qoffset)),,
+                       drop = FALSE] else NULL
     fv <- as.matrix(fit$fitted.values)
     if (Corner)
         fv[,Index.corner] <- fv[,Index.corner] + latvar.mat
@@ -427,9 +446,14 @@ valt.1iter <- function(x, z, U, Hlist, C, control,
 
     list(Amat = A, B1 = B1, Cmat = C, Dmat = Dmat,
          fitted = if (M == 1) c(fv) else fv,
-         new.coeffs = fit$coef, constraints = clist2, ResSS = fit$ResSS,
-         offset = if (length(tmp833$offset)) tmp833$offset else NULL)
+         new.coeffs = fit$coef, constraints = clist2,
+         ResSS = fit$ResSS,
+         offset = if (length(tmp833$offset))
+                      tmp833$offset else NULL)
 }  # valt.1iter
+
+
+
 
 
 
@@ -449,7 +473,7 @@ rrr.init.expression <- expression({
               "binomialff" = 1, "quasibinomialff" = 1,
               "quasibinomial" = 1, "negbinomial" = 3,
               "gamma2" = 5, "gaussianff" = 8,
-              0)  # stop("cannot fit this model using fast algorithm")
+              0)  # stop("cant fit this model using fast algorithm")
     if (modelno == 1) modelno = get("modelno", envir = VGAMenv)
     rrcontrol$modelno = control$modelno = modelno
     if (modelno == 3 || modelno == 5) {
@@ -474,6 +498,7 @@ rrr.init.expression <- expression({
 
 
 
+
 rrr.alternating.expression <- expression({
 
     alt <- valt(x, z, U, Rank = Rank,
@@ -488,39 +513,40 @@ rrr.alternating.expression <- expression({
                 Suppress.warning = rrcontrol$Suppress.warning,
                 Tolerance = rrcontrol$Tolerance,
                 trace = trace,
-                xij = control$xij)  # This is subject to drift in A and C
+        xij = control$xij)  # This is subject to drift in A and C
 
-    ans2 <- rrr.normalize(rrcontrol = rrcontrol, A=alt$A, C=alt$C, x = x)
+    ans2 <- rrr.normalize(rrcontrol = rrcontrol,
+                          A=alt$A, C=alt$C, x = x)
 
-    Amat <- ans2$A           # Fed into Hlist below (in rrr.end.expression)
+    Amat <- ans2$A  # Fed into Hlist below (in rrr.end.expression)
     tmp.fitted <- alt$fitted # Also fed; was alt2$fitted
 
     rrcontrol$Cinit <- ans2$C   # For next valt() call
 
-    eval(rrr.end.expression)    # Put Amat into Hlist, and create new z
+    eval(rrr.end.expression)  # Put Amat into Hlist, & create new z
 })  # rrr.alternating.expression
 
 
 
 
 
-  adjust.Dmat.expression <- function(Mmat, Rank, Dmat, M) {
+adjust.Dmat.expression <- function(Mmat, Rank, Dmat, M) {
 
-    if (length(Dmat)) {
-      ind0 <- iam(NA, NA, both = TRUE, M = Rank)
-      for (kay in 1:M) {
-        elts <- Dmat[kay, , drop = FALSE]  # Manual recycling
-        if (length(elts) < Rank)
-          elts <- matrix(elts, 1, Rank)
-        Dk <- m2a(elts, M = Rank)[, , 1]
-        Dk <- matrix(Dk, Rank, Rank)
-        Dk <- t(Mmat) %*% Dk  %*% Mmat  # 20030822 Not diagonal in general
-        Dmat[kay, ] <- Dk[cbind(ind0$row.index[1:ncol(Dmat)],
-                                ind0$col.index[1:ncol(Dmat)])]
-      }
+  if (length(Dmat)) {
+    ind0 <- iam(NA, NA, both = TRUE, M = Rank)
+    for (kay in 1:M) {
+      elts <- Dmat[kay, , drop = FALSE]  # Manual recycling
+      if (length(elts) < Rank)
+        elts <- matrix(elts, 1, Rank)
+      Dk <- m2a(elts, M = Rank)[, , 1]
+      Dk <- matrix(Dk, Rank, Rank)
+      Dk <- t(Mmat) %*% Dk  %*% Mmat  # Not diagonal in general
+      Dmat[kay, ] <- Dk[cbind(ind0$row.index[1:ncol(Dmat)],
+                              ind0$col.index[1:ncol(Dmat)])]
     }
-    Dmat
-  }  # adjust.Dmat.expression
+  }
+  Dmat
+}  # adjust.Dmat.expression
 
 
 
@@ -621,7 +647,7 @@ rrr.end.expression <- expression({
     X.vlm.save <- if (control$Quadratic) {
       tmp300 <- lm2qrrvlm.model.matrix(x = x, Hlist = Hlist.save,
                                        C = Cmat, control = control)
-      latvar.mat <- tmp300$latvar.mat  # Needed at the top of new.s.call
+latvar.mat <- tmp300$latvar.mat  # Needed at the top of new.s.call
 
       lm2vlm.model.matrix(tmp300$new.latvar.model.matrix,
                           H.list,
@@ -666,10 +692,12 @@ rrr.derivative.expression <- expression({
 
 
 
-    which.optimizer <- if (control$Quadratic && control$FastAlgorithm) {
+    which.optimizer <- if (control$Quadratic &&
+                           control$FastAlgorithm) {
       "BFGS"
     } else {
-      if (iter <= rrcontrol$Switch.optimizer) "Nelder-Mead" else "BFGS"
+      if (iter <= rrcontrol$Switch.optimizer)
+          "Nelder-Mead" else "BFGS"
     }
     if (trace && control$OptimizeWrtC) {
       cat("\n\n")
@@ -716,23 +744,26 @@ rrr.derivative.expression <- expression({
                                Rank,
                                Rank+0.5*Rank*(Rank+1)) else
                         (NOS*Rank +
-                         Rank*(Rank+1)/2 * ifelse(control$eq.tol, 1,NOS))
+                         Rank*(Rank+1)/2 *
+                         ifelse(control$eq.tol, 1,NOS))
               p1star <- if (nice31) p1 *
-                        ifelse(modelno == 3 || modelno == 5, 2, 1) else
+                        ifelse(modelno == 3 ||
+                        modelno == 5, 2, 1) else
                         (ncol(X.vlm.save) - p2star)
               X.vlm.1save <- if (p1star > 0)
                              X.vlm.save[,-(1:p2star)] else NULL
               quasi.newton <-
                 optim(par = Cmat, fn = callcqof,
-                gr <- if (control$GradientFunction) calldcqo else NULL,
+                      gr <- if (control$GradientFunction)
+                                calldcqo else NULL,
                       method = which.optimizer,
                       control = list(fnscale = 1,
-                                     trace = as.integer(control$trace),
-                                     parscale = rep_len(control$Parscale,
-                                                        length(Cmat)),
+                                trace = as.integer(control$trace),
+                                parscale = rep_len(control$Parscale,
+                                                   length(Cmat)),
                                      maxit = 250),
                       etamat = eta, xmat = x, ymat = y, wvec = w,
-                      X.vlm.1save = if (nice31) NULL else X.vlm.1save,
+                X.vlm.1save = if (nice31) NULL else X.vlm.1save,
                       modelno = modelno, Control = control,
                       n = n, M = M, p1star = p1star,
                       p2star = p2star, nice31 = nice31)
@@ -762,7 +793,7 @@ rrr.derivative.expression <- expression({
                                  maxit = rrcontrol$Maxit,
                                  abstol = rrcontrol$Abstol,
                                  reltol = use.reltol),
-                  U = U, z = if (control$I.tolerances) z + offset else z,
+       U = U, z = if (control$I.tolerances) z + offset else z,
                   M = M, xmat = x,  # varbix2 = varbix2,
                   Hlist = Hlist, rrcontrol = rrcontrol)
         }
@@ -777,7 +808,8 @@ rrr.derivative.expression <- expression({
         evnu <- eigen(var(numat), symmetric = TRUE)
         Cmat <- Cmat %*% evnu$vector
         numat <- x[, rrcontrol$colx2.index, drop = FALSE] %*% Cmat
-        offset <- if (Rank > 1) -0.5*rowSums(numat^2) else -0.5*numat^2
+        offset <- if (Rank > 1)
+                  -0.5*rowSums(numat^2) else -0.5*numat^2
       }
     }
 
@@ -820,7 +852,7 @@ rrr.derivative.expression <- expression({
     Cmat <- alt$Cmat  # Needed in rrr.end.expression if Quadratic
     Dmat <- alt$Dmat  # Put later into extra
 
-    eval(rrr.end.expression)    # Put Amat into Hlist, and create new z
+    eval(rrr.end.expression)  # Put Amat into Hlist, and create new z
 })  # rrr.derivative.expression
 
 
@@ -1906,7 +1938,8 @@ get.rrvglm.se1 <-
 
 
 
-get.rrvglm.se2 <- function(cov.unscaled, dispersion = 1, coefficients) {
+get.rrvglm.se2 <-
+    function(cov.unscaled, dispersion = 1, coefficients) {
 
   d8 <-  dimnames(cov.unscaled)[[1]]
   ans <- matrix(coefficients, length(coefficients), 4)
@@ -2337,7 +2370,8 @@ vellipse <- function(R, ratio = 1, orientation = 0,
 
 
 biplot.qrrvglm <- function(x, ...) {
-  stop("biplot.qrrvglm has been replaced by the function lvplot.qrrvglm")
+    stop("biplot.qrrvglm has been replaced by the ",
+         "function lvplot.qrrvglm")
 }
 
 
@@ -2470,14 +2504,17 @@ biplot.qrrvglm <- function(x, ...) {
     if (chull.arg) {
       hull <- chull(nustar[, 1], nustar[, 2])
       hull <- c(hull, hull[1])
-      lines(nustar[hull, 1], nustar[hull, 2], type = "b", pch = cpch,
+      lines(nustar[hull, 1], nustar[hull, 2],
+            type = "b", pch = cpch,
             lty = clty, col = ccol, lwd = clwd)
     }
     if (length(ellipse)) {
       ellipse.temp <- if (ellipse > 0) ellipse else 0.95
-      if (ellipse < 0 && (!object@control$eq.tolerances || varI.latvar))
-        stop("an equal-tolerances assumption and 'varI.latvar = FALSE' ",
-             "is needed for 'ellipse' < 0")
+      if (ellipse < 0 &&
+          (!object@control$eq.tolerances || varI.latvar))
+          stop("an equal-tolerances assumption and ",
+               "'varI.latvar = FALSE' ",
+               "is needed for 'ellipse' < 0")
       if ( check.ok ) {
         colx1.index <- object@control$colx1.index
         if (!(length(colx1.index) == 1 &&
@@ -2498,14 +2535,17 @@ biplot.qrrvglm <- function(x, ...) {
                                         1, -1),
                                  Rank))
             etoli <-
-     eigen(t(Mmat) %*% Coef.list@Tolerance[,,i] %*% Mmat, symmetric = TRUE)
-            A <- ifelse(etoli$val[1]>0, sqrt(2*cutpoint*etoli$val[1]), Inf)
-            B <- ifelse(etoli$val[2]>0, sqrt(2*cutpoint*etoli$val[2]), Inf)
+                eigen(t(Mmat) %*% Coef.list@Tolerance[,,i] %*%
+                      Mmat, symmetric = TRUE)
+            A <- ifelse(etoli$val[1]>0,
+                        sqrt(2 * cutpoint * etoli$val[1]), Inf)
+            B <- ifelse(etoli$val[2]>0,
+                        sqrt(2 * cutpoint * etoli$val[2]), Inf)
             if (ellipse < 0)
               A <- B <- -ellipse / 2
 
             theta.angle <- asin(etoli$vector[2, 1]) *
-                           ifelse(object@control$Crow1positive[2], 1, -1)
+              ifelse(object@control$Crow1positive[2], 1, -1)
             if (object@control$Crow1positive[1])
               theta.angle <- pi - theta.angle
             if (all(is.finite(c(A,B))))
@@ -2704,7 +2744,8 @@ lvplot.rrvglm <-
     Amat <- object@constraints[[colx2.index[1]]]
 
     B1mat <- if (p1)
-      coefvlm(object, matrix.out = TRUE)[colx1.index,, drop = FALSE] else
+             coefvlm(object, matrix.out = TRUE)[colx1.index,,
+                                                drop = FALSE] else
       NULL
 
 
@@ -2900,7 +2941,7 @@ setMethod("show", "Coef.rrvglm", function(object)
     yn1 <- if (length(dimnames(y)[[1]])) dimnames(y)[[1]] else
               param.names("X2.", nrow(y))
     warn.save <- options()$warn
-    options(warn = -3)  # Suppress the warnings (hopefully, temporarily)
+    options(warn = -3)  # Suppress warnings (hopefully, temporarily)
     if (any(!is.na(as.numeric(substring(yn1, 1, 1)))))
         yn1 <- param.names("X2.", nrow(y))
     options(warn = warn.save)
@@ -3161,11 +3202,15 @@ I.tolerances = object@control$eq.tolerances
                M + ifelse(object@control$eq.tolerances, 1, spp))
     vcov <- Cov.unscaled[,,spp] <-
         sobj@cov.unscaled[index, index]  # Order is A, D, B1
-    se2Max <- dvecMax[spp,, drop = FALSE] %*% vcov %*% cbind(dvecMax[spp,])
-    se2Tol <- dvecTol[spp,, drop = FALSE] %*% vcov %*% cbind(dvecTol[spp,])
-    se2Opt <- dvecOpt[spp,, drop = FALSE] %*% vcov %*% cbind(dvecOpt[spp,])
+    se2Max <- dvecMax[spp,, drop = FALSE] %*% vcov %*%
+        cbind(dvecMax[spp,])
+    se2Tol <- dvecTol[spp,, drop = FALSE] %*% vcov %*%
+        cbind(dvecTol[spp,])
+    se2Opt <- dvecOpt[spp,, drop = FALSE] %*% vcov %*%
+        cbind(dvecOpt[spp,])
     answer <- rbind(answer, dispersion[spp]^0.5 *
-                   c(se2Opt = se2Opt, se2Tol = se2Tol, se2Max = se2Max))
+                            c(se2Opt = se2Opt, se2Tol = se2Tol,
+                              se2Max = se2Max))
   }
 
   link.function <- if (MaxScale == "predictors")
@@ -3173,7 +3218,7 @@ I.tolerances = object@control$eq.tolerances
   dimnames(answer) <- list(dimnames(cobj@D)[[3]],
                            c("Optimum", "Tolerance",
                              if (nchar(link.function))
-                       paste(link.function, "(Maximum)", sep = "") else
+         paste(link.function, "(Maximum)", sep = "") else
                            "Maximum"))
   NAthere <- is.na(answer %*% rep_len(1, 3))
   answer[NAthere,] <- NA  # NA in tolerance means NA everywhere else
@@ -3258,7 +3303,8 @@ perspqrrvglm <-
   NOS <- ncol(fv)  # Number of species
   M <- object@misc$M
 
-  xlim <- rep_len(if (length(xlim)) xlim else range(coef.obj@latvar[, 1]),
+  xlim <- rep_len(if (length(xlim)) xlim else
+                  range(coef.obj@latvar[, 1]),
                   2)
   if (!length(oylim)) {
     ylim <- if (Rank == 1) c(0, max(fv) * stretch) else

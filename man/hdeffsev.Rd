@@ -10,16 +10,19 @@
 
 }
 \usage{
-hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
-         severity.table = c("None", "Faint", "Weak", "Moderate",
-                            "Strong", "Extreme", "Undetermined"))
+hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
+         severity.table = c("None", "Faint", "Weak",
+             "Moderate", "Strong", "Extreme", "Undetermined"))
 }
+%hdeffsev(tol0 = 0.1,
+%    severity.table = c("None", "Faint", "Weak", "Moderate",
+%                       "Strong", "Extreme", "Undetermined"))
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, y}{
   Numeric vectors;
-  \code{x} are the estimates, and
-  \code{y} are the Wald statistics.
+  \code{x} are the estimates (sorted), and
+  \code{y} are the signed Wald statistics.
 
 
   }
@@ -32,40 +35,59 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
   }
 
   \item{allofit}{
-    Logical. If \code{TRUE} then other quantities are returned
-    in a list.
+    Logical. If \code{TRUE} then other quantities are
+    returned in a list.
     The default is a vector with elements selected from
     the argument \code{severity.table}.
 
 
   }
   \item{severity.table}{
-    Character vector with 7 values.
+    Character vector with 6 values.
     The last value is used for initialization.
   Usually users should not assign anything to
-  arguments \code{severity.table} or \code{tol0}.
+  this argument.
+
+
+% arguments \code{severity.table}.
+% or \code{tol0}.
+
+
+% 7 values.
 
 
   }
-  \item{tol0}{
-    Numeric. Any estimate whose absolute value is less than
-    \code{tol0} is assigned the first value of
-    the argument \code{severity.table}, i.e., none.
-    This is to handle a singularity at the origin:
-    the estimates might be extremely close to 0.
-
+  \item{eta0}{
+    Numeric. The hypothesized value.
+    The default is appropriate for most symmetric
+    binomial links,and also for Poisson regression
+    with the natural parameter.
 
 
 
   }
+  \item{COPS0}{
+    Numeric. See Yee (2021).
+
+
+
+  }
+% \item{tol0}{
+%   Numeric. Any estimate whose absolute value is less than
+%   \code{tol0} is assigned the first value of
+%   the argument \code{severity.table}, i.e., none.
+%   This is to handle a singularity at the origin:
+%   the estimates might be extremely close to 0.
+% }
 }
 \details{
   This function is rough-and-ready.
   It is possible to use the first two derivatives obtained
   from \code{\link{hdeff}} to categorize the severity of the
   the Hauck-Donner effect (HDE).
-  It is effectively assumed that, starting at the origin and
-  going right,
+  It is effectively assumed that, starting at
+  the origin
+  and going right,
   the curve is made up of a convex segment followed by
   a concave segment and then the convex segment.
   Midway in the concave segment the derivative is 0, and
@@ -73,24 +95,41 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
   derivative is negative.
 
 
-  
+
   For \code{"none"} the estimate lies on the convex
-  part of the curve near the origin, hence there is no HDE at all.
-  
+  part of the curve near the origin, hence there is
+  very little HDE at all.
 
 
-  For \code{"faint"} and \code{"weak"} the estimate lies on the
+
+  For \code{"weak"} the estimate lies on the
   concave part of the curve but the Wald statistic is still
   increasing as estimate gets away from 0, hence it is only
-  a mild HDE.
-  
-  
+  a mild form of the HDE.
 
-  For \code{"moderate"}, \code{"strong"} and \code{"extreme"}
+
+
+  Previously \code{"faint"} was used but now it has
+  been omitted.
+
+
+
+% For \code{"faint"} and \code{"weak"} the estimate lies on the
+% concave part of the curve but the Wald statistic is still
+% increasing as estimate gets away from 0, hence it is only
+% a mild HDE.
+
+
+
+For \code{"moderate"},
+\code{"strong"}
+and \code{"extreme"}
   the Wald statistic is
-  decreasing as the estimate gets away from 0, hence it
+  decreasing as the estimate gets away from \code{eta0},
+  hence it
   really does exhibit the HDE.
-  It is recommended that \code{\link{lrt.stat}} be used to compute
+  It is recommended that \code{\link{lrt.stat}} be used
+  to compute
   LRT p-values, as they do not suffer from the HDE.
 
 
@@ -102,8 +141,9 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, tol0 = 0.1,
   By default this function returns a labelled vector with
   elements selected from
   \code{severity.table}.
-  If \code{allofit = TRUE} then Yee (2018) gives details
-  about the other list components: a quantity called
+  If \code{allofit = TRUE} then Yee (2022) gives details
+  about some of the other list components,
+  e.g., a quantity called
   \code{zeta} is the normal line projected onto the x-axis,
   and its first derivative gives additional
   information about the position
@@ -143,11 +183,24 @@ Some new results concerning the Hauck-Donner effect.
   Improvements are intended.
 
 
-  
-  See \code{\link{hdeff}}; Yee (2018) gives details on VGLM
-  HDE detection, severity measures, two tipping points (1/4 and 3/5),
-  parameter space partitioning into several regions, and
-  a bound for the HDE for 1-parameter binary regression, etc.
+
+  Currently,
+  in order for \code{"Strong"} to be assigned correctly,
+  at least one such value is needed on the
+  LHS and/or RHS each. From those, two other boundary
+  points are obtained so that it creates two intervals.
+
+
+
+
+
+
+% See \code{\link{hdeff}}; Yee (2022) gives details on VGLM
+% HDE detection, severity measures,
+% two tipping points (1/4 and 3/5),
+% parameter space partitioning into several regions, and
+% a bound for the HDE for 1-parameter binary regression,
+% etc.
 
 
 

@@ -186,8 +186,22 @@ added to the package.
 
 }
 \author{
-Thomas W. Yee, \email{t.yee@auckland.ac.nz}.\cr
+Thomas W. Yee, \email{t.yee@auckland.ac.nz},
+with contributions from
+Victor Miranda
+and several graduate students over the years,
+especially
+Xiangjie (Albert) Xue and
+Chanatda Somchit.
+
+
+
 Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
+
+
+% \cr
+
+
 }
 
 
@@ -331,6 +345,8 @@ added to \pkg{VGAM}.
   \code{\link{CommonVGAMffArguments}},
   \code{\link{Links}},
   \code{\link{hdeff}},
+  \code{\link[stats]{glm}},
+  \code{\link[stats]{lm}},
   \url{https://CRAN.R-project.org/package=VGAM}.
 
 

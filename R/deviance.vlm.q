@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2022 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -17,8 +17,8 @@ deviance.vlm <- function(object,
 
     Args <- formals(args(object@family@deviance))
     if (length(Args$summation) == 0)
-      stop("there is no 'summation' argument for the function in the ",
-           "'deviance' slot of the object.")
+      stop("there is no 'summation' argument for the function in ",
+           "the 'deviance' slot of the object.")
 
 
     object@family@deviance(mu = fitted(object),
@@ -106,7 +106,8 @@ df.residual_vlm <- function(object, type = c("vlm", "lm"), ...) {
 
   switch(type,
          vlm = object@df.residual,
-          lm = nobs(object, type = "lm") - nvar_vlm(object, type = "lm"),
+          lm = nobs(object, type = "lm") -
+               nvar_vlm(object, type = "lm"),
          stop("argument 'type' unmatched"))
 }
 
@@ -181,10 +182,11 @@ if (FALSE) {
 
 set.seed(123)
 zapdat <- data.frame(x2 = runif(nn <- 2000))
-zapdat <- transform(zapdat, p0     = logitlink(-0.5 + 1*x2, inverse = TRUE),
-                           lambda =  loglink( 0.5 + 2*x2, inverse = TRUE),
-                           f1     =  gl(4, 50, labels = LETTERS[1:4]),
-                           x3     =  runif(nn))
+zapdat <-
+  transform(zapdat, p0     = logitlink(-0.5 + 1*x2, inverse = TRUE),
+                    lambda =  loglink( 0.5 + 2*x2, inverse = TRUE),
+                    f1     =  gl(4, 50, labels = LETTERS[1:4]),
+                    x3     =  runif(nn))
 zapdat <- transform(zapdat, y = rzapois(nn, lambda, p0))
 with(zapdat, table(y))
 
@@ -194,7 +196,8 @@ fit1 <- vglm(y ~ bs(x2), zapoisson, zapdat, trace = TRUE)
 coef(fit1, matrix = TRUE)  # These should agree with the above values
 
 
-fit2 <- vglm(y ~ bs(x2) + x3, zapoisson(zero = 2), zapdat, trace = TRUE)
+fit2 <- vglm(y ~ bs(x2) + x3, zapoisson(zero = 2),
+             zapdat, trace = TRUE)
 coef(fit2, matrix = TRUE)
 
 

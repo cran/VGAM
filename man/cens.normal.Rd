@@ -12,7 +12,8 @@
 
 }
 \usage{
-cens.normal(lmu = "identitylink", lsd = "loglink", imethod = 1, zero = "sd")
+cens.normal(lmu = "identitylink", lsd = "loglink", imethod = 1,
+            zero = "sd")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,8 +21,8 @@ cens.normal(lmu = "identitylink", lsd = "loglink", imethod = 1, zero = "sd")
   Parameter link functions
   applied to the mean and standard deviation parameters.
   See \code{\link{Links}} for more choices.
-  The standard deviation is a positive quantity, therefore a log link
-  is the default.
+  The standard deviation is a positive quantity, therefore a
+  log link is the default.
 
 
   }
@@ -43,24 +44,24 @@ cens.normal(lmu = "identitylink", lsd = "loglink", imethod = 1, zero = "sd")
   }
 }
 \details{
-  This function is like \code{\link{uninormal}} but handles observations
-  that are left-censored (so that the true value would be less than
-  the observed value) else right-censored (so that the true value would be
-  greater than the observed value). To indicate which type of censoring,
-  input \code{extra = list(leftcensored = vec1, rightcensored = vec2)}
-  where \code{vec1} and \code{vec2} are logical vectors the same length
+  This function is like \code{\link{uninormal}} but handles
+  observations that are left-censored (so that the true value
+  would be less than the observed value) else right-censored
+  (so that the true value would be greater than the observed
+  value). To indicate which type of censoring, input \code{extra
+  = list(leftcensored = vec1, rightcensored = vec2)} where
+  \code{vec1} and \code{vec2} are logical vectors the same length
   as the response.
-  If the two components of this list are missing then
-  the logical values are taken to be \code{FALSE}.
-  The fitted object has these two components stored in the \code{extra}
-  slot.
+  If the two components of this list are missing then the logical
+  values are taken to be \code{FALSE}.  The fitted object has
+  these two components stored in the \code{extra} slot.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 }
@@ -73,8 +74,8 @@ cens.normal(lmu = "identitylink", lsd = "loglink", imethod = 1, zero = "sd")
   This function, which is an alternative to \code{\link{tobit}},
   cannot handle a matrix response
   and uses different working weights.
-  If there are no censored observations then \code{\link{uninormal}}
-  is recommended instead.
+  If there are no censored observations then
+  \code{\link{uninormal}} is recommended instead.
 
 
 

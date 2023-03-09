@@ -125,8 +125,9 @@ gpd(threshold = 0, lscale = "loglink", lshape = logofflink(offset = 0.5),
   \item{zero}{
   Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
-  For one response, the value should be from the set \{1,2\} corresponding
-  respectively to \eqn{\sigma}{sigma} and \eqn{\xi}{xi}.
+  For one response, the value should be from the set \{1,2\}
+  corresponding respectively to \eqn{\sigma}{sigma} and
+  \eqn{\xi}{xi}.
   It is often a good idea for the \eqn{\sigma}{sigma} parameter only
   to be modelled through
   a linear combination of the explanatory variables because the
