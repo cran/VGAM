@@ -50,7 +50,7 @@ N.hat.posbernoulli <-
            "0"  = rep_len(1, tau),
            "b"  = rep_len(1, tau),  # Subset: 2 out of 1:2
            "t"  = 1:tau,  # All of them
-           "tb" = 1:tau)  # Subset: first tau of them out of M = 2*tau-2
+           "tb" = 1:tau)  # Subset: 1st tau of them out of M=2*tau-2
 
   prc <- eta2theta(eta[, jay.index], link, earg = earg)  # cap.probs
   prc <- as.matrix(prc)  # Might be needed for Mtb(tau=2).
@@ -139,7 +139,8 @@ N.hat.posbernoulli <-
 
   y <- as.matrix(y)
   if ((tau <- ncol(y)) == 1)
-    stop("argument 'y' needs to be a matrix with at least two columns")
+    stop("argument 'y' needs to be a matrix with ",
+         "at least two columns")
   if (check.y) {
     if (!all(y == 0 | y == 1 | y == 1/tau | is.na(y)))
       stop("response 'y' must contain 0s and 1s only")
@@ -236,7 +237,7 @@ rposbern <-
                        matrix(runif(n = use.n * (pvars-1)),
                               use.n, pvars - 1,
                               dimnames = list(as.character(1:use.n),
-                                         param.names("x", pvars)[-1])))
+                                  param.names("x", pvars)[-1])))
   }
 
 
@@ -326,7 +327,8 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
 
   logAA0 <- rowSums(log1p(-prob0))
   AA0 <- exp(logAA0)
-  ell1 <- x * log(prob) + (1 - x) * log1p(-prob) - log1p(-AA0) / ncol(x)
+  ell1 <- x * log(prob) + (1 - x) * log1p(-prob) -
+          log1p(-AA0) / ncol(x)
   if (log.arg) ell1 else exp(ell1)
 }  # dposbern
 
@@ -389,7 +391,8 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
       as.integer(intercept.only),
       as.double(neff.row), as.double(neff.col),
       as.double(size),
-      as.double(1 - pgaitdnbinom(Y.mat, size, munb.p = munb, truncate = 0
+      as.double(1 - pgaitdnbinom(Y.mat, size,
+                                 munb.p = munb, truncate = 0
                             )),
       rowsums = double(neff.row))
       answerC$rowsums
@@ -844,7 +847,8 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
       df02.dkmat2[big.size] <- prob0[big.size] *
         ((tempm[big.size])^2 / kmat[big.size] + AA16[big.size]^2)
       df02.dkmat.dmunb[big.size] <- -prob0[big.size] *
-        (tempm[big.size]/kmat[big.size] + AA16[big.size]) / (1 + smallval)
+          (tempm[big.size]/kmat[big.size] + AA16[big.size]) / (
+              1 + smallval)
     }
 
 
@@ -971,7 +975,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
         ned2l.dk2 <- if (intercept.only)
                        mean(run.varcov) else run.varcov
 
-        wz[ii.TF, M1*jay] <- ned2l.dk2  # * (dsize.deta[ii.TF, jay])^2
+  wz[ii.TF, M1*jay] <- ned2l.dk2  # * (dsize.deta[ii.TF, jay])^2
       }
     }  # jay
 
@@ -1041,8 +1045,8 @@ qposgeom <- function(p, prob) {
 
 
 
-  ans <- qgeom(pgeom(0, prob, lower.tail = FALSE) * p + dgeom(0, prob),
-               prob)
+  ans <- qgeom(pgeom(0, prob, lower.tail = FALSE) * p +
+               dgeom(0, prob), prob)
 
   ans[p == 1] <- Inf
 
@@ -1187,7 +1191,8 @@ rposgeom <- function(n, prob) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dgaitdpois(y, lambda, truncate = 0, log = TRUE)
+      ll.elts <- c(w) * dgaitdpois(y, lambda,
+                                   truncate = 0, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1268,7 +1273,8 @@ rposgeom <- function(n, prob) {
 
 
 
-  if (!is.logical(multiple.responses) || length(multiple.responses) != 1)
+    if (!is.logical(multiple.responses) ||
+        length(multiple.responses) != 1)
     stop("bad input for argument 'multiple.responses'")
 
   if (!is.logical(omit.constant) || length(omit.constant) != 1)
@@ -1295,8 +1301,8 @@ rposgeom <- function(n, prob) {
                            constraints = constraints)
 
     constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 1)
+                          predictors.names = predictors.names,
+                          M1 = 1)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
     list(M1 = 1,
@@ -1339,7 +1345,7 @@ rposgeom <- function(n, prob) {
     extra$no.warning <- .no.warning
 
       extra$orig.w <- w
-      mustart <- matrix(colSums(y) / colSums(w),  # Not colSums(y * w)...
+      mustart <- matrix(colSums(y) / colSums(w),  # Not
                         n, ncoly, byrow = TRUE)
 
     } else {
@@ -1370,8 +1376,10 @@ rposgeom <- function(n, prob) {
     if (length(extra)) extra$w <- w else extra <- list(w = w)
 
     if (!length(etastart)) {
-      mustart.use <- if (length(mustart.orig)) mustart.orig else mustart
-      etastart <- cbind(theta2eta(mustart.use, .link , earg = .earg ))
+      mustart.use <-
+        if (length(mustart.orig)) mustart.orig else mustart
+      etastart <- cbind(theta2eta(mustart.use, .link ,
+                                  earg = .earg ))
     }
     mustart <- NULL
 
@@ -1380,15 +1388,18 @@ rposgeom <- function(n, prob) {
     nvec <- if (NCOL(y) > 1) {
               NULL
             } else {
-              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+              if (is.numeric(extra$orig.w))
+                round(w / extra$orig.w) else
+                round(w)
             }
     extra$tau <- if (length(nvec) && length(unique(nvec) == 1))
                    nvec[1] else NULL
-  }), list( .link = link,
-            .p.small    = p.small,
-            .no.warning = no.warning,
-            .earg = earg, .multiple.responses = multiple.responses ))),
+  }),
+  list( .link = link,
+        .p.small    = p.small,
+        .no.warning = no.warning,
+        .earg = earg,
+        .multiple.responses = multiple.responses ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     w <- extra$w
@@ -1396,8 +1407,8 @@ rposgeom <- function(n, prob) {
     nvec <- if ( .multiple.responses ) {
              w
            } else {
-             if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-               round(w)
+             if (is.numeric(extra$orig.w))
+               round(w / extra$orig.w) else round(w)
            }
     binprob / (1.0 - (1.0 - binprob)^nvec)
   },
@@ -1460,14 +1471,16 @@ rposgeom <- function(n, prob) {
                 if (is.numeric(extra$orig.w))
                   round(w / extra$orig.w) else round(w)
               }
-      use.orig.w <- if (is.numeric(extra$orig.w)) extra$orig.w else 1
+      use.orig.w <- if (is.numeric(extra$orig.w))
+                      extra$orig.w else 1
     binprob <- eta2theta(eta, .link , earg = .earg )
 
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       answer <- c(use.orig.w) *
-        dgaitdbinom(ycounts, nvec, binprob, truncate = 0, log = TRUE)
+        dgaitdbinom(ycounts, nvec, binprob, truncate = 0,
+                    log = TRUE)
       if ( .omit.constant ) {
         answer <- answer - c(use.orig.w) * lchoose(nvec, ycounts)
       }
@@ -1513,8 +1526,8 @@ rposgeom <- function(n, prob) {
     nvec <- if ( .multiple.responses ) {
               w
             } else {
-              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-                round(w)
+              if (is.numeric(extra$orig.w))
+                round(w / extra$orig.w) else round(w)
             }
     rgaitdbinom(nsim * length(eta), nvec, binprob, truncate = 0)
   }, list( .link = link, .earg = earg,
@@ -1532,8 +1545,8 @@ rposgeom <- function(n, prob) {
     nvec <- if ( .multiple.responses ) {
               w
             } else {
-              if (is.numeric(extra$orig.w)) round(w / extra$orig.w) else
-              round(w)
+              if (is.numeric(extra$orig.w))
+                round(w / extra$orig.w) else round(w)
             }
     binprob <- eta2theta(eta, .link , earg = .earg )
     dmu.deta <- dtheta.deta(binprob, .link , earg = .earg )
@@ -1615,8 +1628,10 @@ rposgeom <- function(n, prob) {
   blurb = c("Positive-Bernoulli (capture-recapture) model ",
             "with temporal effects (M_{t}/M_{th})\n\n",
             "Links:    ",
-            namesof("prob1", link, earg = earg, tag = FALSE), ", ",
-            namesof("prob2", link, earg = earg, tag = FALSE), ", ..., ",
+            namesof("prob1", link, earg = earg, tag = FALSE),
+            ", ",
+            namesof("prob2", link, earg = earg, tag = FALSE),
+            ", ..., ",
             namesof("probM", link, earg = earg, tag = FALSE),
             "\n"),
   constraints = eval(substitute(expression({
@@ -1668,7 +1683,8 @@ rposgeom <- function(n, prob) {
     mustart[mustart == 1] <- 0.95
 
     if (ncoly == 1)
-      stop("the response is univariate, therefore use posbinomial()")
+      stop("the response is univariate, therefore ",
+           "use posbinomial()")
 
 
 
@@ -1690,7 +1706,8 @@ rposgeom <- function(n, prob) {
     }
 
 
-    predictors.names <- namesof(dn2, .link , earg = .earg, short = TRUE)
+    predictors.names <- namesof(dn2, .link , earg = .earg,
+                                short = TRUE)
 
 
     if (length(extra)) extra$w <- w else extra <- list(w = w)
@@ -1701,18 +1718,21 @@ rposgeom <- function(n, prob) {
       } else {
         mustart
       }
-      etastart <- cbind(theta2eta(mustart.use, .link , earg = .earg ))
+      etastart <- cbind(theta2eta(mustart.use, .link ,
+                                  earg = .earg ))
     }
     mustart <- NULL
-  }), list( .link = link, .earg = earg,
-            .p.small      = p.small,
-            .type.fitted  = type.fitted,
-            .no.warning   = no.warning
-           ))),
+  }),
+  list( .link = link, .earg = earg,
+        .p.small      = p.small,
+        .type.fitted  = type.fitted,
+        .no.warning   = no.warning
+       ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     type.fitted <-
       if (length(extra$type.fitted)) extra$type.fitted else {
-        warning("cannot find 'type.fitted'. Returning the 'probs'.")
+        warning("cannot find 'type.fitted'. ",
+                "Returning the 'probs'.")
         "probs"
       }
 
@@ -1746,15 +1766,16 @@ rposgeom <- function(n, prob) {
 
 
     misc$multiple.responses  <- TRUE
-    misc$iprob               <- .iprob
+    misc$iprob               <- ( .iprob )
 
 
     R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
     R[lower.tri(R)] <- 0
-    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
+    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link ,
+                               earg = .earg ,
                                R = R, w = w,
                                X.vlm = X.vlm.save,
-                               Hlist = Hlist,  # 20150428 bug fixed here
+                    Hlist = Hlist,  # 20150428 bug fixed here
                                extra = extra, model.type = "t")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -1815,7 +1836,8 @@ rposgeom <- function(n, prob) {
     for (slocal in 1:(M-1))
       for (tlocal in (slocal+1):M)
         B.st[, slocal, tlocal] <-
-        B.st[, tlocal, slocal] <- B.s[, slocal] / (1 - probs[, tlocal])
+        B.st[, tlocal, slocal] <-
+         B.s[, slocal] / (1 - probs[, tlocal])
 
     temp2 <-     (1 - probs)^2
     dl.dprobs <- y / probs - (1 - y) / (1 - probs) - B.s / AAA
@@ -1897,7 +1919,8 @@ rposgeom <- function(n, prob) {
   blurb = c("Positive-Bernoulli (capture-recapture) model ",
             "with behavioural effects (M_{b}/M_{bh})\n\n",
             "Links:    ",
-            namesof("pcapture",   link, earg = earg, tag = FALSE), ", ",
+            namesof("pcapture",   link, earg = earg, tag = FALSE),
+            ", ",
             namesof("precapture", link, earg = earg, tag = FALSE),
             "\n"),
 
@@ -1905,12 +1928,13 @@ rposgeom <- function(n, prob) {
 
     cm.intercept.default <- if ( .I2 ) diag(2) else cbind(0:1, 1)
 
-    constraints <- cm.VGAM(matrix(1, 2, 1), x = x,
-                           bool = .drop.b ,
-                           constraints = constraints,
-                           apply.int = .apply.parint.b ,  # TRUE,
-                           cm.default = cm.intercept.default,  # diag(2),
-                           cm.intercept.default = cm.intercept.default)
+    constraints <-
+        cm.VGAM(matrix(1, 2, 1), x = x,
+                bool = .drop.b ,
+                constraints = constraints,
+                apply.int = .apply.parint.b ,  # TRUE,
+                cm.default = cm.intercept.default,  # diag(2),
+                cm.intercept.default = cm.intercept.default)
   }), list( .drop.b = drop.b,
             .I2 = I2,
             .apply.parint.b = apply.parint.b ))),
@@ -1996,13 +2020,15 @@ rposgeom <- function(n, prob) {
       }
 
       etastart <-
-        cbind(theta2eta(rowMeans(mustart.use), .link , earg = .earg ),
-              theta2eta(rowMeans(mustart.use), .link , earg = .earg ))
+      cbind(theta2eta(rowMeans(mustart.use), .link , earg = .earg ),
+            theta2eta(rowMeans(mustart.use), .link , earg = .earg ))
 
       if (length(   .ipcapture ))
-        etastart[, 1] <- theta2eta(   .ipcapture , .link , earg = .earg )
+          etastart[, 1] <- theta2eta(   .ipcapture , .link ,
+                                     earg = .earg )
       if (length( .iprecapture ))
-        etastart[, 2] <- theta2eta( .iprecapture , .link , earg = .earg )
+          etastart[, 2] <- theta2eta( .iprecapture , .link ,
+                                     earg = .earg )
     }
     mustart <- NULL
   }), list( .link = link, .earg = earg,
@@ -2023,7 +2049,8 @@ rposgeom <- function(n, prob) {
     AAA <- exp(log1p(-QQQ))  # 1 - QQQ
 
 
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+    type.fitted <- if (length(extra$type.fitted))
+                       extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning 'likelihood.cond'.")
                      "likelihood.cond"
@@ -2038,7 +2065,8 @@ rposgeom <- function(n, prob) {
       probs.numer <- prr
       mat.index <- cbind(1:nrow(prc), extra$cap1)
       probs.numer[mat.index] <- prc[mat.index]
-      probs.numer[extra$cap.hist1 == 0] <- prc[extra$cap.hist1 == 0]
+      probs.numer[extra$cap.hist1 == 0] <-
+          prc[extra$cap.hist1 == 0]
       fv <- probs.numer / AAA
     } else {
 
@@ -2072,10 +2100,11 @@ rposgeom <- function(n, prob) {
 
     R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
     R[lower.tri(R)] <- 0
-    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
+    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link ,
+                               earg = .earg ,
                                R = R, w = w,
                                X.vlm = X.vlm.save,
-                               Hlist = Hlist,  # 20150428; bug fixed here
+                      Hlist = Hlist,  # 20150428; bug fixed here
                                extra = extra, model.type = "b")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -2175,8 +2204,10 @@ rposgeom <- function(n, prob) {
 
 
 
-    dA.dcapprobs <- -tau * ((1 - QQQ) * (tau-1) * (1 - cap.probs)^(tau-2) +
-                     tau * (1 - cap.probs)^(2*tau -2)) / (1 - QQQ)^2
+    dA.dcapprobs <- -tau * ((1 - QQQ) * (tau-1) *
+                            (1 - cap.probs)^(tau-2) +
+                     tau * (1 - cap.probs)^(2*tau -2)) / (
+                             1 - QQQ)^2
 
 
 
@@ -2193,7 +2224,7 @@ rposgeom <- function(n, prob) {
     GGG <- (1 - QQQ - cap.probs * (1 + (tau-1) * QQQ)) / (
             cap.probs * (1-cap.probs)^2)
     wz.pc <- GGG / (1 - QQQ) + 1 / cap.probs^2 + dA.dcapprobs
-    wz[, iam(1, 1, M = M)] <- wz.pc * dcapprobs.deta^2  # Efficient
+    wz[, iam(1, 1, M = M)] <- wz.pc * dcapprobs.deta^2
 
 
 
@@ -2269,7 +2300,8 @@ rposgeom <- function(n, prob) {
 
   new("vglmff",
   blurb = c("Positive-Bernoulli (capture-recapture) model\n",
-            "with temporal and behavioural effects (M_{tb}/M_{tbh})\n\n",
+            "with temporal and behavioural ",
+            "effects (M_{tb}/M_{tbh})\n\n",
             "Links:    ",
             namesof("pcapture.1",     link, earg = earg, tag = FALSE),
             ", ..., ",
@@ -2296,11 +2328,11 @@ rposgeom <- function(n, prob) {
     cm1.t <-
     cmk.t <- rbind(diag(tau), diag(tau)[-1, ])  # More readable
     con.t <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel.t ,  # Same as .parallel.b
-                           constraints = constraints.orig,
-                           apply.int = .apply.parint.t ,  # FALSE,
-                           cm.default           = cmk.t,
-                           cm.intercept.default = cm1.t)
+                     bool = .parallel.t ,  # Same as .parallel.b
+                     constraints = constraints.orig,
+                     apply.int = .apply.parint.t ,  # FALSE,
+                     cm.default           = cmk.t,
+                     cm.intercept.default = cm1.t)
 
 
 
@@ -2308,16 +2340,17 @@ rposgeom <- function(n, prob) {
     cmk.b <- rbind(matrix(0, tau, tau-1), diag(tau-1))
     con.b <- cm.VGAM(matrix(c(rep_len(0, tau  ),
                               rep_len(1, tau-1)), M, 1), x = x,
-                           bool = .parallel.b ,  # Same as .parallel.b
-                           constraints = constraints.orig,
-                           apply.int = .apply.parint.b ,  # FALSE,
-                           cm.default           = cmk.b,
-                           cm.intercept.default = cm1.b)
+                     bool = .parallel.b ,  # Same as .parallel.b
+                     constraints = constraints.orig,
+                     apply.int = .apply.parint.b ,  # FALSE,
+                     cm.default           = cmk.b,
+                     cm.intercept.default = cm1.b)
 
     con.use <- con.b
     for (klocal in seq_along(con.b)) {
       con.use[[klocal]] <-
-        cbind(if (any(con.d[[klocal]] == 1)) NULL else con.b[[klocal]],
+        cbind(if (any(con.d[[klocal]] == 1))
+              NULL else con.b[[klocal]],
               con.t[[klocal]])
 
     }
@@ -2364,7 +2397,8 @@ rposgeom <- function(n, prob) {
 
 
     if (NCOL(w) > 1)
-      stop("variable 'w' should be a vector or one-column matrix")
+      stop("variable 'w' should be a vector or ",
+           "one-column matrix")
     w <- c(w)  # Make it a vector
 
     mustart.orig <- mustart
@@ -2446,7 +2480,8 @@ rposgeom <- function(n, prob) {
     QQQ <- exp(logQQQ)
     AAA <- exp(log1p(-QQQ))  # 1 - QQQ
 
-    type.fitted <- if (length(extra$type.fitted)) extra$type.fitted else {
+    type.fitted <- if (length(extra$type.fitted))
+                     extra$type.fitted else {
                      warning("cannot find 'type.fitted'. ",
                              "Returning 'likelihood.cond'.")
                      "likelihood.cond"
@@ -2461,12 +2496,14 @@ rposgeom <- function(n, prob) {
       probs.numer <- prr
       mat.index <- cbind(1:nrow(prc), extra$cap1)
       probs.numer[mat.index] <- prc[mat.index]
-      probs.numer[extra$cap.hist1 == 0] <- prc[extra$cap.hist1 == 0]
+      probs.numer[extra$cap.hist1 == 0] <-
+        prc[extra$cap.hist1 == 0]
       fv <- probs.numer / AAA
     } else {
       fv <- matrix(prc[, 1] / AAA, nrow(prc), ncol(prc))
 
-      fv[, 2] <- (prc[, 2] + prc[, 1] * (prr[, 2] - prc[, 2])) / AAA
+      fv[, 2] <- (prc[, 2] + prc[, 1] *
+                 (prr[, 2] - prc[, 2])) / AAA
 
       if (tau >= 3) {
         QQQcummat <- exp(t( apply(log1p(-prc), 1, cumsum)))
@@ -2502,10 +2539,11 @@ rposgeom <- function(n, prob) {
 
     R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
     R[lower.tri(R)] <- 0
-    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link , earg = .earg ,
+    tmp6 <- N.hat.posbernoulli(eta = eta, link = .link ,
+                               earg = .earg ,
                                R = R, w = w,
                                X.vlm = X.vlm.save,
-                               Hlist = Hlist,  # 20150428; bug fixed here
+                     Hlist = Hlist,  # 20150428; bug fixed here
                                extra = extra, model.type = "tb")
     extra$N.hat    <- tmp6$N.hat
     extra$SE.N.hat <- tmp6$SE.N.hat
@@ -2551,7 +2589,8 @@ rposgeom <- function(n, prob) {
       probs.numer <- prr
       mat.index <- cbind(1:nrow(prc), extra$cap1)
       probs.numer[mat.index] <- prc[mat.index]
-      probs.numer[extra$cap.hist1 == 0] <- prc[extra$cap.hist1 == 0]
+      probs.numer[extra$cap.hist1 == 0] <-
+        prc[extra$cap.hist1 == 0]
 
       ll.elts <-
         c(use.orig.w) *
@@ -2593,7 +2632,7 @@ rposgeom <- function(n, prob) {
         d2Q.dprc[, kay, jay] <-  QQQ / ((1 - prc[, jay]) *
                                         (1 - prc[, kay]))
 
-    dl.dpc <- dl.dpr <- matrix(0, n, tau)  # 1st coln of dl.dpr is ignored
+    dl.dpc <- dl.dpr <- matrix(0, n, tau)  # 1st coln of
     for (jay in 1:tau) {
       dl.dpc[, jay] <- (1 - extra$cap.hist1[, jay]) *
         (    y[, jay]  /      prc[, jay]   -
@@ -2648,7 +2687,8 @@ rposgeom <- function(n, prob) {
       wz[, 1:tau] <- wz[, 1:tau] * (1 + wz.adjustment)
    } else {  # ------------------------------------
       wz.mean <- mean(wz[, 1:tau])
-      wz.adjustment <- wz.mean * .ridge.constant * iter^( .ridge.power )
+      wz.adjustment <- wz.mean * .ridge.constant *
+                       iter^( .ridge.power )
       wz[, 1:tau] <- wz[, 1:tau] + wz.adjustment
    }  # ------------------------------------
 
@@ -2677,37 +2717,45 @@ setClass("posbernoulli.b",      contains = "posbernoulli.tb")
 
 
 
-setMethod("summaryvglmS4VGAM",  signature(VGAMff = "posbernoulli.tb"),
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "posbernoulli.tb"),
   function(object, VGAMff, ...) {
   object@post
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "posbernoulli.tb"),
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "posbernoulli.tb"),
   function(object, VGAMff, ...) {
  if (length(object@extra$N.hat) == 1 &&
       is.numeric(object@extra$N.hat)) {
-   cat("\nEstimate of N: ", round(object@extra$N.hat, digits = 3), "\n")
-   cat("\nStd. Error of N: ", round(object@extra$SE.N.hat, digits = 3),
+     cat("\nEstimate of N: ",
+         round(object@extra$N.hat, digits = 3), "\n")
+     cat("\nStd. Error of N: ",
+         round(object@extra$SE.N.hat, digits = 3),
        "\n")
 
    confint.N <- object@extra$N.hat +
-       c(Lower = -1, Upper = 1) * qnorm(0.975) * object@extra$SE.N.hat
+       c(Lower = -1, Upper = 1) * qnorm(0.975) *
+       object@extra$SE.N.hat
    cat("\nApproximate 95 percent confidence interval for N:\n")
+   cat(round(confint.N, digits = 2), "\n")
   }
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "posbernoulli.b"),
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "posbernoulli.b"),
   function(object, VGAMff, ...) {
   callNextMethod(VGAMff = VGAMff, object = object, ...)
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "posbernoulli.t"),
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "posbernoulli.t"),
   function(object, VGAMff, ...) {
   callNextMethod(VGAMff = VGAMff, object = object, ...)
 })

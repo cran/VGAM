@@ -10,10 +10,9 @@
 }
 \usage{
 cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
-    multiple.responses = FALSE,
-    thresholds = c("unconstrained", "equidistant"),
-    Treverse = reverse, Tref = if (Treverse) "M" else 1,
-    whitespace = FALSE)
+    multiple.responses = FALSE, thresholds = c("unconstrained",
+    "equidistant", "symmetric1", "symmetric0"), Treverse = reverse,
+    Tref = if (Treverse) "M" else 1, whitespace = FALSE)
 }
 %apply.parint = FALSE,
 %scumulative(link = "logitlink",
@@ -132,13 +131,17 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
   \item{thresholds}{
     Character.
-    Enables the fitted intercepts to be equally-spaced, etc.
-    (more options might be implemented later).
+    The choices concern the fitted intercepts.
+    They can be constrained to be equally-spaced, etc.
+    See \code{\link{constraints}} for general information.
     The first choice is the default and causes the intercepts
-    to be estimated in an unconstrained manner.
+    to be estimated in an unconstrained (flexible) manner.
     Actually, for this model, they will be sorted either in
     ascending (default) or descending order, depending
     on \code{reverse}.
+
+
+
     If equally-spaced then the direction and the reference
     level are controlled
     by \code{Treverse} and \code{Tref}.
@@ -146,9 +149,28 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
     will be \eqn{M} by 2, with the second
     column corresponding to the distance between
     the thresholds.
-    Argument \code{thresholds} may not be available with
-    certain combinations of other arguments, e.g.,
-    if \code{multiple.responses = TRUE}.
+
+
+
+    If \code{"symmetric1"} then the fitted intercepts are
+    symmetric about the median (\eqn{M} odd) intercept.
+    If \eqn{M} is even then the median is the mean of
+    the two most inner and adjacent intercepts.
+    Function \code{CM.symmetric1()} is used to
+    construct the appropriate constraint matrix.
+
+
+
+    If \code{"symmetric0"} then the median intercept is 0
+    by definition and the symmetry occurs about that value.
+    Thus the intercepts comprise pairs that differ by sign only.
+    The appropriate constraint matrix is as with
+    \code{"symmetric1"} but with the first column deleted.
+    The choices \code{"symmetric1"} and \code{"symmetric0"}
+    are effectively equivalent to
+    \code{"symmetric"} and \code{"symmetric2"}
+    respectively in \pkg{ordinal}.
+
 
 
   }
@@ -281,6 +303,16 @@ Cambridge: Cambridge University Press.
 
 
 
+Tutz, G. and Berger, M. (2022).
+Sparser ordinal regression models based
+on parametric and additive location-shift
+approaches.
+\emph{International Statistical Review},
+\bold{90}, 306--327.
+\doi{10.1111/insr.12484}.
+
+
+
 Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
 \emph{Journal of Statistical Software},
@@ -396,6 +428,18 @@ the \code{xij}-facility; see
 
 
 
+
+With non-default \code{thresholds} choices,
+the first few fitted regression coefficients need care when
+interpreting them.
+For example, some values could be the distance away from
+the median intercept.
+Typing something like \code{constraints(fit)[[1]]} gives
+the constraint matrix of the intercept term.
+
+
+
+
 }
 \section{Warning }{
   No check is made to verify that the response is ordinal
@@ -415,6 +459,7 @@ the \code{xij}-facility; see
 
 \seealso{
   \code{\link{propodds}},
+  \code{\link{constraints}},
   \code{\link{R2latvar}},
   \code{\link{ordsup}},
   \code{\link{prplot}},

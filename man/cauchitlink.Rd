@@ -4,8 +4,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Cauchit Link Function }
 \description{
-  Computes the cauchit (tangent) link transformation, including its
-  inverse and the first two derivatives.
+  Computes the cauchit (tangent) link transformation, including
+  its inverse and the first two derivatives.
 
 }
 \usage{
@@ -31,16 +31,17 @@ cauchitlink(theta, bvalue = .Machine$double.eps,
 
 }
 \details{
-  This link function is an alternative link function for parameters that
-  lie in the unit interval.
-  This type of link bears the same relation to the Cauchy distribution
-  as the probit link bears to the Gaussian. One characteristic of this
-  link function is that the tail is heavier relative to the other links
-  (see examples below).
+  This link function is an alternative link function for
+  parameters that lie in the unit interval.  This type of
+  link bears the same relation to the Cauchy distribution as
+  the probit link bears to the Gaussian. One characteristic
+  of this link function is that the tail is heavier relative
+  to the other links (see examples below).
 
 
-  Numerical values of \code{theta} close to 0 or 1 or out of range result
-  in \code{Inf}, \code{-Inf}, \code{NA} or \code{NaN}.
+  Numerical values of \code{theta} close to 0 or 1 or out
+  of range result in \code{Inf}, \code{-Inf}, \code{NA}
+  or \code{NaN}.
 
 
 }
@@ -53,8 +54,8 @@ cauchitlink(theta, bvalue = .Machine$double.eps,
 
   For \code{deriv = 1}, then the function returns
   \emph{d} \code{eta} / \emph{d} \code{theta} as a function of
-  \code{theta} if \code{inverse = FALSE}, else if \code{inverse = TRUE}
-  then it returns the reciprocal.
+  \code{theta} if \code{inverse = FALSE}, else if \code{inverse
+  = TRUE} then it returns the reciprocal.
 
 
 }
@@ -67,14 +68,15 @@ cauchitlink(theta, bvalue = .Machine$double.eps,
 \author{ Thomas W. Yee }
 
 \note{
-  Numerical instability may occur when \code{theta} is close to 1 or 0.
-  One way of overcoming this is to use \code{bvalue}.
+  Numerical instability may occur when \code{theta} is close to
+  1 or 0.  One way of overcoming this is to use \code{bvalue}.
 
 
   As mentioned above,
-  in terms of the threshold approach with cumulative probabilities for
-  an ordinal response this link function corresponds to the
-  Cauchy distribution (see \code{\link{cauchy1}}).
+  in terms of the threshold approach with cumulative
+  probabilities for an ordinal response this link
+  function corresponds to the Cauchy distribution (see
+  \code{\link{cauchy1}}).
 
 
 }

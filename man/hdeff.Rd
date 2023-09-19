@@ -319,10 +319,16 @@ Corrigenda: JASA, \bold{75}, 482.
 
 
 
-Yee, T. W. (2022)
+Yee, T. W. (2022).
 On the Hauck-Donner effect in Wald tests:
 Detection, tipping points and parameter space characterization,
-\emph{Journal of the American Statistical Association}, in press.
+\emph{Journal of the American Statistical Association},
+\bold{117}, 1763--1774.
+\doi{10.1080/01621459.2021.1886936}.
+
+% number = {540},
+% Issue = {540},
+
 
 
 
@@ -330,6 +336,16 @@ Detection, tipping points and parameter space characterization,
 Yee, T. W. (2021).
 Some new results concerning the Hauck-Donner effect.
 \emph{Manuscript in preparation}.
+
+
+
+
+
+
+%Yee, T. W. (2022).
+%Some new results concerning the Wald tests and
+%the parameter space.
+%\emph{In preparation}.
 
 
 

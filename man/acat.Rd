@@ -9,9 +9,9 @@
 }
 \usage{
 acat(link = "loglink", parallel = FALSE, reverse = FALSE,
-     zero = NULL, thresholds = c("unconstrained", "equidistant"),
-     Treverse = reverse, Tref = if (Treverse) "M" else 1,
-     whitespace = FALSE)
+     zero = NULL, thresholds = c("unconstrained", "equidistant",
+     "symmetric1", "symmetric0"), Treverse = reverse,
+     Tref = if (Treverse) "M" else 1, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

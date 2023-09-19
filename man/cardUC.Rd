@@ -33,12 +33,12 @@ rcard(n, mu, rho, ...)
 
   }
   \item{tolerance, maxits, ...}{
-  The first two are control parameters for the algorithm
-  used to solve for the roots of a nonlinear system of equations;
-  \code{tolerance} controls for the accuracy and
-  \code{maxits} is the maximum number of iterations.
-  \code{rcard} calls \code{qcard} so the \code{...} can be used
-  to vary the two arguments.
+  The first two are control parameters for the algorithm used
+  to solve for the roots of a nonlinear system of equations;
+  \code{tolerance} controls for the accuracy and \code{maxits}
+  is the maximum number of iterations.  \code{rcard} calls
+  \code{qcard} so the \code{...} can be used to vary the
+  two arguments.
 
 
   }
@@ -60,8 +60,8 @@ rcard(n, mu, rho, ...)
 \details{
   See \code{\link{cardioid}}, the \pkg{VGAM} family function
   for estimating the two parameters by maximum likelihood
-  estimation, for the formula of the probability density function
-  and other details.
+  estimation, for the formula of the probability density
+  function and other details.
 
 
 }

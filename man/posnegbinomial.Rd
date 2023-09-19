@@ -221,6 +221,7 @@ convergence.
 }
 
 \examples{
+\dontrun{
 pdata <- data.frame(x2 = runif(nn <- 1000))
 pdata <- transform(pdata,
   y1 = rgaitdnbinom(nn, exp(1), munb.p = exp(0+2*x2), truncate = 0),
@@ -253,13 +254,12 @@ pdf2 <- dgaitdnbinom(with(corbet, ofreq), khat,
                      munb.p = fitted(fit), truncate = 0)
 print(with(corbet,
            cbind(ofreq, species, fitted = pdf2*sum(species))), dig = 1)
-\dontrun{ with(corbet,
+with(corbet,
 matplot(ofreq, cbind(species, fitted = pdf2*sum(species)), las = 1,
    xlab = "Observed frequency (of individual butterflies)",
    type = "b", ylab = "Number of species", col = c("blue", "orange"),
-   main = "blue 1s = observe; orange 2s = fitted")) }
+   main = "blue 1s = observe; orange 2s = fitted"))
 
-\dontrun{
 # Data courtesy of Maxim Gerashchenko causes posbinomial() to fail
 pnbd.fail <- data.frame(
  y1 = c(1:16, 18:21, 23:28, 33:38, 42, 44, 49:51, 55, 56, 58,
@@ -269,8 +269,7 @@ pnbd.fail <- data.frame(
            1, 1, 2, 2, 2, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1))
 fit.fail <- vglm(y1 ~ 1, weights = ofreq, posnegbinomial,
                trace = TRUE, data = pnbd.fail)
-}
-}
+}}
 \keyword{models}
 \keyword{regression}
 

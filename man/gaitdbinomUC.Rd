@@ -5,7 +5,8 @@
 \alias{qgaitdbinom}
 \alias{rgaitdbinom}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and --Deflated
+\title{ Generally Altered, Inflated, Truncated
+  and Deflated
   Binomial Distribution
 
 
@@ -16,12 +17,13 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated and --truncated
+  for the generally altered, inflated, truncated
+  and deflated
   binomial distribution.
-  Both parametric and nonparametric variants are supported;
-  these are based on
-  finite mixtures of the parent with itself
-  and the multinomial logit model (MLM) respectively.
+  Both parametric and nonparametric variants are
+  supported; these are based on finite mixtures
+  of the parent with itself and the multinomial
+  logit model (MLM) respectively.
 
 
 
@@ -163,10 +165,14 @@ rgaitdbinom(n, size.p, prob.p,
 
 
 }
-%\section{Warning }{
+\section{Warning }{
+  See \code{\link[VGAM]{Gaitdpois}} about the dangers
+  of too much inflation and/or deflation on
+  GAITD PMFs, and the difficulties detecting such.
 
 
-%}
+
+}
 \value{
   \code{dgaitdbinom} gives the density,
   \code{pgaitdbinom} gives the distribution function,
@@ -184,11 +190,9 @@ rgaitdbinom(n, size.p, prob.p,
 }
 %\references{
 
-%Yee, T. W. and Ma, C. (2022).
-%Generally--altered, --inflated, --truncated and --deflated
-%regression, with application to heaped and seeped data.
+%Yee, T. W. and Ma, C. (2023)
+%Generally altered, inflated, truncated and deflated regression.
 %\emph{In preparation}.
-
 
 %}
 

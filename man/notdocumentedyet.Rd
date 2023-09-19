@@ -12,8 +12,12 @@
 %
 %
 %
+% 202307
+\alias{CM.symmetric0}
+\alias{CM.symmetric1}
+\alias{dgamma.mm}
 % 202208
-\alias{CMs.equidistant}
+\alias{CM.equidistant}
 % 202206
 \alias{rqresidualsvlm}
 \alias{rqresid}

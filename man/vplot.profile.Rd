@@ -17,6 +17,19 @@
 % class \code{"profile"}.
 
 
+
+
+
+% 20230718; plot.profile will be in \pkg{stats} only
+%   for >=R 4.4.0.
+%   Previously it was in \pkg{stats} and \pkg{MASS}.
+%
+
+
+
+
+
+
 }
 \usage{
 vplot.profile(x, ...)

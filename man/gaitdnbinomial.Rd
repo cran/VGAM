@@ -2,13 +2,13 @@
 \alias{gaitdnbinomial}
 % 20211124; gaitdpoisson.Rd was the template
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and Deflated
+\title{ Generally Altered, Inflated, Truncated and Deflated
         Negative Binomial Regression
 
 
 }
 \description{
-  Fits a generally--altered, --inflated --truncated and deflated
+  Fits a generally altered, inflated truncated and deflated
   negative binomial regression by MLE.
   The GAITD combo model having 7 types of special values
   is implemented.
@@ -346,10 +346,10 @@ and \code{gaitdnbinomial(i.mlm = 0)}.
   
 }
 \references{
-Yee, T. W. and Ma, C. (2022).
-Generally--altered, --inflated, --truncated and --deflated
-regression, with application to heaped and seeped data.
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
 \emph{In preparation}.
+
 
 
 
@@ -475,6 +475,7 @@ regression, with application to heaped and seeped data.
 }
 
 \examples{
+\dontrun{
 i.mix <- c(5, 10, 12, 16)  # Inflate these values parametrically
 i.mlm <- c(14, 15)  # Inflate these values
 a.mix <- c(1, 6, 13, 20)  # Alter these values
@@ -501,7 +502,7 @@ head(fitted(fit1, type.fitted = "Pstr.mix"))
 head(predict(fit1))
 t(coef(fit1, matrix = TRUE))  # Easier to see with t()
 summary(fit1)
-\dontrun{ spikeplot(with(gdata, y1), lwd = 2)
+spikeplot(with(gdata, y1), lwd = 2)
 plotdgaitd(fit1, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)  }
 }
 \keyword{models}

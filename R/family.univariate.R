@@ -8793,7 +8793,8 @@ rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
 
  nakagami <-
   function(lscale = "loglink", lshape = "loglink",
-           iscale = 1, ishape = NULL, nowarning = FALSE) {
+           iscale = 1, ishape = NULL, nowarning = FALSE,
+           zero = "shape") {
 
   if (!is.null(iscale) && !is.Numeric(iscale, positive = TRUE))
     stop("argument 'iscale' must be a positive number or NULL")
@@ -8824,6 +8825,12 @@ rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
         "Mean:    sqrt(scale/shape) * ",
         "gamma(shape+0.5) / gamma(shape)"),
 
+  constraints = eval(substitute(expression({
+    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+                     M = M, M1 = 2,
+                     predictors.names = predictors.names)
+  }), list( .zero = zero ))),
+
   infos = eval(substitute(function(...) {
     list(M1 = 2,
          Q1 = 1,
@@ -8832,8 +8839,9 @@ rnaka <- function(n, scale = 1, shape, Smallno = 1.0e-6) {
          lscale = .lscale ,
          lshape = .lshape ,
          multipleResponses = FALSE,
-         parameters.names = c("scale", "shape"))
-  }, list( .lscale = lscale,
+         parameters.names = c("scale", "shape"),
+         zero = .zero )
+  }, list( .lscale = lscale, .zero = zero,
            .lshape = lshape ))),
 
   rqresslot = eval(substitute(

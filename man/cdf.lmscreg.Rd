@@ -3,18 +3,20 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Cumulative Distribution Function for LMS Quantile Regression }
 \description{
-  Computes the cumulative distribution function (CDF) for observations,
-  based on a LMS quantile regression.
+  Computes the cumulative distribution function (CDF) for
+  observations, based on a LMS quantile regression.
+
 }
 \usage{
 cdf.lmscreg(object, newdata = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{ A \pkg{VGAM} quantile regression model, i.e.,
-  an object produced by modelling functions such as \code{\link{vglm}}
-  and \code{\link{vgam}} with a family function beginning with
-  \code{"lms."}.
+  \item{object}{
+  A \pkg{VGAM} quantile regression model, i.e.,
+  an object produced by modelling functions such as
+  \code{\link{vglm}} and \code{\link{vgam}} with a family
+  function beginning with \code{"lms."}.
 
 
   }
@@ -23,17 +25,18 @@ cdf.lmscreg(object, newdata = NULL, ...)
 
 
   }
-  \item{\dots}{ Parameters which are passed into functions such as
+  \item{\dots}{
+  Parameters which are passed into functions such as
   \code{cdf.lms.yjn}.
 
 
   }
 }
 \details{
-  The CDFs returned here are values lying in [0,1] giving the relative
-  probabilities associated with the quantiles \code{newdata}.
-  For example, a value near 0.75 means it is close to the upper quartile
-  of the distribution.
+  The CDFs returned here are values lying in [0,1] giving
+  the relative probabilities associated with the quantiles
+  \code{newdata}.  For example, a value near 0.75 means it is
+  close to the upper quartile of the distribution.
 
 
 }
@@ -60,8 +63,8 @@ Quantile regression via vector generalized additive models.
 }
 \author{ Thomas W. Yee }
 \note{
- The data are treated like quantiles, and the percentiles
-are returned. The opposite is performed by
+The data are treated like quantiles, and the
+percentiles are returned. The opposite is performed by
 \code{\link{qtplot.lmscreg}}.
 
 

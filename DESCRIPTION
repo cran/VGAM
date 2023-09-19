@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 1.1-8
-Date: 2023-03-09
+Version: 1.1-9
+Date: 2023-09-19
 Title: Vector Generalized Linear and Additive Models
 Authors@R: c(person("Thomas", "Yee", role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-9970-3907"),
@@ -39,6 +39,6 @@ NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2023-03-09 06:37:58 UTC; tyee001
+Packaged: 2023-09-19 00:29:58 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2023-03-09 14:40:02 UTC
+Date/Publication: 2023-09-19 05:00:02 UTC

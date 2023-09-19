@@ -62,7 +62,7 @@ which leads to a probability density function
 Here, \eqn{\beta} is called the scale parameter \code{scale},
 and \eqn{\alpha} is called the shape parameter
 (one could refer to \eqn{\alpha}{a} as a location parameter and \eqn{\beta}{b} as
-a shape parameter---see Lenart (2012)).
+a shape parameter---see Lenart (2014)).
 The mean is involves an exponential integral function.
 Simulated Fisher scoring is used and multiple responses are handled.
 
@@ -85,10 +85,13 @@ then \eqn{X = -Z} has a Gompertz distribution.
 }
 \references{
 
-Lenart, A. (2012).
+Lenart, A. (2014).
 The moments of the Gompertz distribution
 and maximum likelihood estimation of its parameters.
-\emph{Scandinavian Actuarial Journal}, in press.
+\emph{Scandinavian Actuarial Journal}, \bold{2014}, 255--277.
+
+
+% issue 3.
 
 
 }

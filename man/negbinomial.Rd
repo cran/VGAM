@@ -418,6 +418,11 @@ However, the model is identifiable if the response values include
 
 
 
+For the NB canonical link (NB-C), its estimation
+has a somewhat interesting history.
+Some details are at \code{\link{nbcanlink}}.
+
+
 
 }
 \section{Warning}{
@@ -425,9 +430,11 @@ However, the model is identifiable if the response values include
   infinity.  If the data is Poisson or close to Poisson,
   numerical problems may occur.
   Some corrective measures are taken, e.g.,
-  \eqn{k} is effectively capped (relative to the mean) during
+  \eqn{k} is effectively capped
+  (relative to the mean) during
   estimation to some large value and a warning is issued.
-  And setting \code{stepsize = 0.5} for half stepping is probably
+  And setting \code{stepsize = 0.5} for
+  half stepping is probably
   a good idea too when the data is extreme.
 
 
@@ -462,13 +469,13 @@ to monitor convergence.
 
 
 
-  These functions are fragile; the maximum likelihood estimate
-  of the index parameter is fraught (see Lawless, 1987).
-  Other alternatives to \code{negbinomial} are to fit a NB-1 or
-  RR-NB (aka NB-P) model; see Yee (2014).  Also available are
-  the NB-C, NB-H and NB-G.  Assigning values to the \code{isize}
-  argument may lead to a local solution, and smaller values are
-  preferred over large values when using this argument.
+These functions are fragile; the maximum likelihood estimate
+of the index parameter is fraught (see Lawless, 1987).
+Other alternatives to \code{negbinomial} are to fit a NB-1 or
+RR-NB (aka NB-P) model; see Yee (2014).  Also available are
+the NB-C, NB-H and NB-G.  Assigning values to the \code{isize}
+argument may lead to a local solution, and smaller values are
+preferred over large values when using this argument.
 
 
 
@@ -522,16 +529,6 @@ to monitor convergence.
 
 }
 \references{
-Lawless, J. F. (1987).
-Negative binomial and mixed Poisson regression.
-\emph{The Canadian Journal of Statistics}
-\bold{15}, 209--225.
-
-
-Hilbe, J. M. (2011).
-\emph{Negative Binomial Regression},
-2nd Edition.
-Cambridge: Cambridge University Press.
 
 
 Bliss, C. and Fisher, R. A. (1953).
@@ -552,6 +549,25 @@ A comment on He and Gaston.
 %   number = {4},
 
 
+Hilbe, J. M. (2011).
+\emph{Negative Binomial Regression},
+2nd Edition.
+Cambridge: Cambridge University Press.
+
+
+Lawless, J. F. (1987).
+Negative binomial and mixed Poisson regression.
+\emph{The Canadian Journal of Statistics}
+\bold{15}, 209--225.
+
+
+Miranda-Soberanis, V. F. and Yee, T. W. (2023).
+Two-parameter link functions, with
+applications to negative binomial, Weibull and
+quantile regression.
+  \emph{Computational Statistics},
+  \bold{38}, 1463--1485.
+
 
 
 Yee, T. W. (2014).
@@ -559,8 +575,6 @@ Reduced-rank vector generalized linear models with two linear
 predictors.
 \emph{Computational Statistics and Data Analysis},
 \bold{71}, 889--902.
-
-
 
 
 
@@ -576,7 +590,7 @@ The \pkg{VGAM} package for negative binomial regression.
 }
 \author{ Thomas W. Yee,
   and with a lot of help by Victor Miranda
-  to get it going with \code{\link{nbcanlink}} (NB-C).
+  to get it going with \code{\link{nbcanlink}}.
 
 
 }

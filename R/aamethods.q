@@ -10,6 +10,8 @@
 
 
 
+
+
 is.Numeric <- function(x, length.arg = Inf,
                        integer.valued = FALSE, positive = FALSE)
     if (all(is.numeric(x)) && all(is.finite(x)) &&
@@ -58,21 +60,22 @@ VGAMenv <- new.env()
 
 .VGAM.prototype.list = list(
       "constraints"  = expression({}),
-      "fini"         = expression({}),
+      "fini1"        = expression({}),  # 20230619; was "fini"
       "first"        = expression({}),
       "initialize"   = expression({}),
       "last"         = expression({}),
-      "middle"       = expression({}),
+      "start1"       = expression({}),
+      "middle1"      = expression({}),  # 20230619; was "middle"
       "middle2"      = expression({}),
       "deriv"        = expression({}),
       "weight"       = expression({}))
 
 
-setClass("vglmff", representation(
+setClass("vglmff", slots = c(
       "blurb"         = "character",
       "constraints"   = "expression",
       "deviance"      = "function",
-      "fini"          = "expression",
+      "fini1"         = "expression",  # 20230619; was "fini"
       "first"         = "expression",
       "infos"         = "function",  # Added 20101203
       "initialize"    = "expression",
@@ -80,7 +83,8 @@ setClass("vglmff", representation(
       "linkfun"       = "function",
       "linkinv"       = "function",
       "loglikelihood" = "function",
-      "middle"        = "expression",
+      "start1"        = "expression",
+      "middle1"       = "expression",  # 20230619; was "middle"
       "middle2"       = "expression",
       "summary.dispersion"  = "logical",
       "vfamily"       = "character",
@@ -165,7 +169,7 @@ setMethod("show", "vglmff",
 
 
 
-setClass("vlmsmall", representation(
+setClass("vlmsmall", slots = c(
       "call"          = "call",
       "coefficients"  = "numeric",
       "constraints"   = "list",
@@ -185,7 +189,7 @@ setClass("vlmsmall", representation(
 )
 
 
-setClass("vlm", representation(
+setClass("vlm", slots = c(
       "assign"       = "list",
       "callXm2"      = "call",
       "contrasts"    = "list",
@@ -208,7 +212,7 @@ setClass("vlm", representation(
 )
 
 
-setClass("vglm", representation(
+setClass("vglm", slots = c(
       "extra"            = "list",
       "family"           = "vglmff",
       "iter"             = "numeric",
@@ -216,7 +220,7 @@ setClass("vglm", representation(
     contains = "vlm")
 
 
-setClass("vgam", representation(
+setClass("vgam", slots = c(
       "Bspline"             = "list",
       "nl.chisq"            = "numeric",
       "nl.df"               = "numeric",
@@ -226,7 +230,7 @@ setClass("vgam", representation(
     contains = "vglm")
 
 
-setClass("pvgam", representation(
+setClass("pvgam", slots = c(
          "ospsslot"         = "list"),
          contains = "vglm")
 
@@ -234,18 +238,22 @@ setClass("pvgam", representation(
 
 
 
-setClass("summary.vgam", representation(
-        anova = "data.frame",
-        cov.unscaled = "matrix",
-        correlation = "matrix",
-        df = "numeric",
-        pearson.resid = "matrix",
-        sigma = "numeric"),
-        prototype(anova = data.frame()),
-        contains = "vgam")
+.VGAM.summaryvgam.prototype.list = list(
+      "anova"  = data.frame())
+
+setClass("summary.vgam",
+         slots = c(
+         "anova"         = "data.frame",
+         "cov.unscaled"  = "matrix",
+         "correlation"   = "matrix",
+         "df"            = "numeric",
+         "pearson.resid" = "matrix",
+         "sigma"         = "numeric"),
+         prototype = .VGAM.summaryvgam.prototype.list ,
+         contains = "vgam")
 
 
-setClass("summary.vglm", representation(
+setClass("summary.vglm", slots = c(
          coef4lrt0 = "matrix",
          coef4score0 = "matrix",
          coef4wald0 = "matrix",
@@ -258,7 +266,7 @@ setClass("summary.vglm", representation(
          contains = "vglm")
 
 
-setClass("summary.vlm", representation(
+setClass("summary.vlm", slots = c(
          coef4lrt0 = "matrix",
          coef4score0 = "matrix",
          coef4wald0 = "matrix",
@@ -275,10 +283,10 @@ setClass("summary.vlm", representation(
 
 
 
-setClass("summary.pvgam", representation(
-         anova      = "data.frame",
+setClass("summary.pvgam", slots = c(
+         "anova"    = "data.frame",
          "ospsslot" = "list"),
-         prototype(anova = data.frame()),
+         prototype = .VGAM.summaryvgam.prototype.list ,
          contains = c("summary.vglm", "pvgam")
          )
 
@@ -297,7 +305,7 @@ setClass("summary.pvgam", representation(
 
 
 if (FALSE)
- setClass("qrrvglm", representation(
+ setClass("qrrvglm", slots = c(
       "assign"       = "list",
       "call"         = "call",
       "coefficients" = "numeric",
@@ -381,11 +389,11 @@ new("vglm", "extra"=from@extra,
 
 
 
- setClass("rcim0", representation(not.needed = "numeric"),
+ setClass("rcim0", slots = c(not.needed = "numeric"),
           contains = "vglm")  # Added 20110506
- setClass("rcim", representation(not.needed = "numeric"),
+ setClass("rcim", slots = c(not.needed = "numeric"),
           contains = "rrvglm")
- setClass("grc",  representation(not.needed = "numeric"),
+ setClass("grc",  slots = c(not.needed = "numeric"),
           contains = "rrvglm")
 
 
@@ -400,7 +408,7 @@ setMethod("summary", "grc",
 
 if (FALSE) {
     setClass("vfamily",
-        representation("list"))
+        slots = c("list"))
 }
 
 
@@ -443,7 +451,7 @@ if (!isGeneric("vcov"))
 
 
 
-setClass("uqo", representation(
+setClass("uqo", slots = c(
       "latvar"           = "matrix",
       "extra"            = "list",
       "family"           = "vglmff",

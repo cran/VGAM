@@ -16,9 +16,12 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
-
-
-export(CMs.equidistant)
+export(cops, copsvglm)
+importFrom("stats", "optimize")
+export(hurea, dhurea)
+export(CM.symmetric1, CM.symmetric0)
+export(dgamma.mm)
+export(CM.equidistant)
 importFrom("stats", "pexp")
 exportMethods(rqresid)
 exportMethods(rqresiduals)
@@ -547,7 +550,7 @@ export(pnorm2, dnorm2)
 export(iam,
 fill1, fill2, fill3, fill4,
 biamhcop, dbiamhcop, pbiamhcop, rbiamhcop,
-bigamma.mckay,
+gammaff.mm,  # 20230612
 freund61,
 frechet, dfrechet, pfrechet, qfrechet, rfrechet,
 bifrankcop, dbifrankcop, pbifrankcop, rbifrankcop,

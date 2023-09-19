@@ -139,7 +139,9 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{gamma1}} for the 1-parameter gamma distribution,
   \code{\link{gamma2}} for another parameterization of
   the 2-parameter gamma distribution,
-  \code{\link{bigamma.mckay}} for \emph{a} bivariate gamma distribution,
+  \code{\link[VGAMdata]{bigamma.mckay}}
+  for \emph{a} bivariate gamma distribution,
+  \code{\link{gammaff.mm}} for another,
   \code{\link{expexpff}},
   \code{\link{simulate.vlm}},
   \code{\link[stats]{rgamma}},

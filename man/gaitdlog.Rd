@@ -2,18 +2,21 @@
 \alias{gaitdlog}
 %\alias{galogff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and Deflated
+\title{ Generally Altered, Inflated, Truncated
+  and Deflated
   Logarithmic Regression
 
 
 }
 \description{
-  Fits a generally--altered, --inflated, --truncated and deflated
+  Fits a generally altered, inflated, truncated
+  and deflated
   logarithmic regression by MLE.
-  The GAITD combo model having 7 types of special values is implemented.
-  This allows logarithmic mixtures on nested and/or partitioned
-  support as well as a multinomial logit model for altered,
-  inflated and deflated values.
+  The GAITD combo model having 7 types of special
+  values is implemented.  This allows logarithmic
+  mixtures on nested and/or partitioned support
+  as well as a multinomial logit model for
+  altered, inflated and deflated values.
   Truncation may include the upper tail.
 
 
@@ -64,11 +67,12 @@ gaitdlog(a.mix = NULL, i.mix = NULL, d.mix = NULL,
   \item{lshape.p, lshape.a, lshape.i, lshape.d}{
     Link functions.
     See \code{\link{gaitdpoisson}}
-    and \code{\link{Links}} for more choices and information.
-   Actually, it is usually a good idea to set these arguments
-    equal to \code{\link[VGAMextra]{logffMlink}}
-    because the log-mean is the first linear/additive predictor so
-    it is like a Poisson regression.
+    and \code{\link{Links}} for more choices
+    and information.  Actually, it is usually
+    a good idea to set these arguments equal to
+    \code{\link[VGAMextra]{logffMlink}} because
+    the log-mean is the first linear/additive
+    predictor so it is like a Poisson regression.
 
 
   }
@@ -124,10 +128,11 @@ gaitdlog(a.mix = NULL, i.mix = NULL, d.mix = NULL,
   \item{gshape.p, ishape.p}{
   See \code{\link{CommonVGAMffArguments}}
   and \code{\link{gaitdpoisson}} for information.
-  The former argument is used only if the latter is not given.
-  Practical experience has shown that good initial values
-  are needed,
-  so if convergence is not obtained then try a finer grid.
+  The former argument is used only if the
+  latter is not given.  Practical experience
+  has shown that good initial values are needed,
+  so if convergence is not obtained then try a
+  finer grid.
 
 
 % ipobs0,
@@ -154,30 +159,33 @@ gaitdlog(a.mix = NULL, i.mix = NULL, d.mix = NULL,
   }
   \item{zero}{
     See \code{\link{gaitdpoisson}}
-    and \code{\link{CommonVGAMffArguments}} for information.
+    and \code{\link{CommonVGAMffArguments}}
+    for information.
 
 
 
   }
 }
 \details{
-  Many details to this family function can be found
-  in \code{\link{gaitdpoisson}} because it is also a 1-parameter
-  discrete distribution.
-  This function currently does not handle multiple responses.
-  Further details are at \code{\link{Gaitdlog}}.
+  Many details to this family function can be
+  found in \code{\link{gaitdpoisson}} because it
+  is also a 1-parameter discrete distribution.
+  This function currently does not handle
+  multiple responses.  Further details are at
+  \code{\link{Gaitdlog}}.
 % An alternative variant of this distribution,
 % more unstructured in nature, is based
 % on the multinomial logit model---see \code{\link{gaitdlog.mlm}}.
 
 
 
-  As alluded to above, when there are covariates  it is
-  much more interpretable to model the mean rather than
-  the shape parameter.
-  Hence \code{\link[VGAMextra]{logffMlink}} is recommended.
-  (This might become the default in the future.)
-  So installing \pkg{VGAMextra} is a good idea.
+  As alluded to above, when there are covariates
+  it is much more interpretable to model
+  the mean rather than the shape parameter.
+  Hence \code{\link[VGAMextra]{logffMlink}} is
+  recommended.  (This might become the default
+  in the future.)  So installing \pkg{VGAMextra}
+  is a good idea.
 
 
 
@@ -186,8 +194,8 @@ gaitdlog(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
 
 
-  Apart from the order of the linear/additive predictors,
-  the following are (or should be) equivalent:
+Apart from the order of the linear/additive predictors,
+the following are (or should be) equivalent:
 \code{gaitdlog()} and \code{logff()},
 \code{gaitdlog(a.mix = 1)} and \code{oalog(zero = "pobs1")},
 \code{gaitdlog(i.mix = 1)} and \code{oilog(zero = "pstr1")},
@@ -222,11 +230,9 @@ have been placed in \pkg{VGAMdata}.
 
 }
 % \references{
-% Yee, T. W. and Ma, C. (2022).
-%Generally--altered, --inflated, --truncated and --deflated
-%regression, with application to heaped and seeped data.
-%count regression.
-% \emph{In preparation}.
+%Yee, T. W. and Ma, C. (2023)
+%Generally altered, inflated, truncated and deflated regression.
+%\emph{In preparation}.
 
 
 %% , \bold{3}, 15--41.

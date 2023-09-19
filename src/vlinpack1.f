@@ -1,4 +1,4 @@
-C Output from Public domain Ratfor, version 1.01
+C Output from Public domain Ratfor, version 1.04
       subroutine vqrdca(x,ldx,n,p,fasrkub3,jpvt,work,xwdf5ltg,eps)
       implicit double precision (a-h,o-z)
       implicit integer (i-n)
@@ -14,6 +14,7 @@ C Output from Public domain Ratfor, version 1.01
       fasrkub3(j) = vdnrm2(n,x(1,j),ldx,1)
       work(j) = fasrkub3(j)
 23000 continue
+23001 continue
       l=1
       lup = min0(n,p)
       curpvt = p
@@ -31,7 +32,7 @@ C Output from Public domain Ratfor, version 1.01
       jpvt(jj)=jpvt(j)
       fasrkub3(jj)=fasrkub3(j)
       work(jj)=work(j)
-      j=j+1
+23007 j=j+1
       goto 23006
 23008 continue
       jpvt(curpvt)=jp
@@ -66,7 +67,7 @@ C Output from Public domain Ratfor, version 1.01
       work(j) = fasrkub3(j)
       endif
       endif
-      j=j+1
+23016 j=j+1
       goto 23015
 23017 continue
       fasrkub3(l) = x(l,l)

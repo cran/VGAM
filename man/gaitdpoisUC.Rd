@@ -5,8 +5,9 @@
 \alias{qgaitdpois}
 \alias{rgaitdpois}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated
-  and --Deflated Poisson Distribution
+\title{ Generally Altered, Inflated, Truncated
+  and Deflated
+  Poisson Distribution
 
 
 
@@ -16,13 +17,13 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated, --truncated
-  and --deflated
+  for the generally altered, inflated, truncated
+  and deflated
   Poisson distribution.
-  Both parametric and nonparametric variants are supported;
-  these are based on
-  finite mixtures of the parent with itself
-  and the multinomial logit model (MLM) respectively.
+  Both parametric and nonparametric variants
+  are supported; these are based on
+  finite mixtures of the parent with itself and
+  the multinomial logit model (MLM) respectively.
 
 
 
@@ -49,7 +50,7 @@ pgaitdpois(q, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
        max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
        pstr.mlm = 0, pdip.mix = 0, pdip.mlm = 0, byrow.aid = FALSE,
        lambda.a = lambda.p, lambda.i = lambda.p,
-       lambda.d = lambda.p, lower.tail = TRUE)
+       lambda.d = lambda.p, lower.tail = TRUE, checkd = FALSE)
 qgaitdpois(p, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
        i.mlm = NULL, d.mix = NULL, d.mlm = NULL, truncate = NULL,
        max.support = Inf, pobs.mix = 0, pobs.mlm = 0, pstr.mix = 0,
@@ -190,6 +191,15 @@ rgaitdpois(n, lambda.p, a.mix = NULL, a.mlm = NULL, i.mix = NULL,
   
   
   }
+  \item{checkd}{
+    Logical.
+    If \code{TRUE} then the density is computed
+    at \code{floor(q)} with the same parameters.
+    This can help detect whether the PMF is invalid.
+    If so, then \code{NaN}s are returned.  
+    See Example 2 below.
+
+  }
 % \item{deflation}{
 % Logical. If \code{TRUE} then \code{pstr.mlm} is allowed to have
 % negative values,
@@ -275,7 +285,7 @@ represented by
 
   
 
-In the notation of Yee and Ma (2022)
+In the notation of Yee and Ma (2023)
 these functions allow for the special cases:
 (i) GAIT--Pois(\code{lambda.p})--Pois(\code{lambda.a},
 \code{a.mix}, \code{pobs.mix})--Pois(\code{lambda.i},
@@ -358,11 +368,52 @@ nonparametric possible.
 % have been included in one function.
 
 }
-%\section{Warning }{
+\section{Warning }{
+  It is possible that the GAITD PMF is invalid because
+  of too much inflation and/or deflation.
+  This would result in some probabilities exceeding
+  unity or being negative.
+  Hence \code{x} should ideally contain these types
+  of special values so that this can be detected.
+  If so then a \code{NaN} is returned and
+  a warning is issued, e.g.,
+  same as \code{dnorm(0, 0, sd = -1)}.
+  To help checking,
+  \code{pgaitdpois(q, ...)} calls
+  \code{dgaitdpois(floor(q), ...)} if \code{checkd}
+  is \code{TRUE}.
+
+
+
+  That is, given the parameters,
+  it is impractical to determine whether the PMF is
+  valid. To do this, one would have to compute
+  the PMF at all values of its support and check
+  that they are nonnegative and sum to unity.
+  Hence one must be careful to input values from
+  the parameter space, especially for
+  inflation and deflation.
+  See Example 2 below.
+
+
+
+
+
+% For checking,
+% \code{pgaitdpois(x, ...)} calls
+% \code{dgaitdpois(xx, ...)} where \code{xx} is
+% \code{intersect(c(i.mlm, i.mix, d.mlm, d.mix), x)}
+% to make sure the PMF is valid.
+% 20230317; I added the above paragraph in Warning.
+
+
+
+
+  
 % See \code{\link{rgaitdpois.mlm}}.
 % The function can run slowly for certain combinations
 % of \code{pstr.i} and \code{inflate}, e.g.,
-% \code{rgaitdpois.mlm(1e5, 1, inflate = 0:9, pstr.i = (1:10)/100)}.
+% \code{rgaitdpois.mlm(1e5, 1, inflate=0:9, pstr.i=(1:10)/100)}.
 % Failure to obtain random variates will result in some
 % \code{NA} values instead.
 
@@ -376,7 +427,7 @@ nonparametric possible.
 
 
 
-%}
+}
 \value{
   \code{dgaitdpois} gives the density,
   \code{pgaitdpois} gives the distribution function,
@@ -394,14 +445,14 @@ nonparametric possible.
 }
 \references{
 
-Yee, T. W. and Ma, C. (2022).
-Generally--altered, --inflated, --truncated and --deflated
-regression, with application to heaped and seeped data.
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
 \emph{In preparation}.
 
 
+% with application to heaped and seeped data.
 % count data.
-%with application to heaped and seeped counts.
+% with application to heaped and seeped counts.
 
 
 
@@ -478,7 +529,7 @@ regression, with application to heaped and seeped data.
 
 
 }
-\examples{
+\examples{ # Example 1
 ivec <- c(6, 14); avec <- c(8, 11); lambda <- 10; xgrid <- 0:25
 tvec <- 15; max.support <- 20; pobs.mix <- 0.05; pstr.i <- 0.25
 dvec <- 13; pdip.mlm <- 0.05; pobs.mlm <- 0.05
@@ -493,8 +544,18 @@ dvec <- 13; pdip.mlm <- 0.05; pobs.mlm <- 0.05
    pdip.mlm = pdip.mlm, d.mlm = dvec,
    pstr.mix = pstr.i, i.mix = ivec, deflation = TRUE,
    main = "GAITD Combo PMF---Poisson Parent")   }
+
+# Example 2: detection of an invalid PMF
+xgrid <- 1:3  # Does not cover the special values purposely
+(ddd <- dgaitdpois(xgrid, 1, pdip.mlm = 0.1, d.mlm = 5,
+                  pstr.mix = 0.95, i.mix = 0))  # Undetected
+xgrid <- 0:13  # Wider range so this detects the problem
+(ddd <- dgaitdpois(xgrid, 1, pdip.mlm = 0.1, d.mlm = 5,
+                   pstr.mix = 0.95, i.mix = 0))  # Detected
+sum(ddd, na.rm = TRUE)  # Something gone awry
 }
 \keyword{distribution}
+
 
 
 % 20200317; checked identical results to

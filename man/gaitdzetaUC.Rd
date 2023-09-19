@@ -5,7 +5,8 @@
 \alias{qgaitdzeta}
 \alias{rgaitdzeta}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated and --Truncated
+\title{ Generally Altered, Inflated and Truncated
+  and Deflated
   Zeta Distribution
 
 
@@ -16,7 +17,8 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated and --truncated
+  for the generally altered, inflated, truncated
+  and deflated
   zeta distribution.
   Both parametric and nonparametric variants are supported;
   these are based on
@@ -136,7 +138,7 @@ rgaitdzeta(n, shape.p, a.mix = NULL, a.mlm = NULL,
 
   
 
-%In the notation of Yee and Ma (2022)
+%In the notation of Yee and Ma (2023)
 %these functions allow for the special cases:
 %(i) GAIT--Zeta(\code{shape.p})--Zeta(\code{shape.a},
 %\code{a.mix}, \code{pobs.mix})--Zeta(\code{shape.i},
@@ -146,6 +148,14 @@ rgaitdzeta(n, shape.p, a.mix = NULL, a.mlm = NULL,
 %Model (i) is totally parametric while model (ii) is the most
 %nonparametric possible.
 
+
+
+
+}
+\section{Warning }{
+  See \code{\link[VGAM]{Gaitdpois}} about the dangers
+  of too much inflation and/or deflation on
+  GAITD PMFs, and the difficulties detecting such.
 
 
 
@@ -186,10 +196,10 @@ rgaitdzeta(n, shape.p, a.mix = NULL, a.mlm = NULL,
 }
 %\references{
 
-%Yee, T. W. and Ma, C. (2022).
-%Generally--altered, --inflated, --truncated and --deflated
-%regression, with application to heaped and seeped data.
+%Yee, T. W. and Ma, C. (2023)
+%Generally altered, inflated, truncated and deflated regression.
 %\emph{In preparation}.
+
 
 
 %}

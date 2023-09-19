@@ -12,6 +12,13 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   predictors.
 
 \describe{
+  \item{\code{start1}:}{
+  Object of class \code{"expression"} to insert
+  code at a special position (the very start)
+  in \code{vglm.fit} or \code{vgam.fit}.
+
+
+  }
   \item{\code{blurb}:}{
   Object of class \code{"character"} giving
   a small description of the model. Important arguments such as
@@ -71,7 +78,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
   }
 
 
-  \item{\code{fini}:}{
+  \item{\code{fini1}:}{
   Object of class \code{"expression"} to insert
   code at a special position in \code{vglm.fit} or
   \code{vgam.fit}.
@@ -140,7 +147,7 @@ Objects can be created by calls of the form \code{new("vglmff", ...)}.
 
 
   }
-  \item{\code{middle}:}{
+  \item{\code{middle1}:}{
   Object of class \code{"expression"} to insert
   code at a special position in \code{vglm.fit} or
   \code{vgam.fit}.

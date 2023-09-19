@@ -54,15 +54,15 @@ is.truncated(object, \dots)
 
 }
 \details{
-  Yee and Ma (2021) propose GAITD regression where values
-  from four
-  (or seven since there are parametric and nonparametric forms)
-  disjoint sets are referred to as \emph{special}.
-  These extractor functions return one set each;
-  they are the \code{alter}, \code{inflate}, \code{truncate},
-  \code{deflate}
-  (and sometimes \code{max.support})
-  arguments from the family function.
+  Yee and Ma (2023) propose GAITD regression
+  where values from four (or seven since
+  there are parametric and nonparametric
+  forms) disjoint sets are referred to as
+  \emph{special}.  These extractor functions
+  return one set each; they are the \code{alter},
+  \code{inflate}, \code{truncate}, \code{deflate}
+  (and sometimes \code{max.support}) arguments
+  from the family function.
 
 
 
@@ -101,9 +101,8 @@ is.truncated(object, \dots)
 
 }
 \references{
-Yee, T. W. and Ma, C. (2022).
-Generally--altered, --inflated, --truncated and --deflated
-regression, with application to heaped and seeped data.
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
 \emph{In preparation}.
 
 

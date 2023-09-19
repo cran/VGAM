@@ -54,7 +54,7 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
   Generally-truncated regression can handle underdispersion
   with respect to some parent or base distribution such as the
   Poisson.
-  Yee and Ma (2022) call this the
+  Yee and Ma (2023) call this the
   \emph{GT-Expansion} (GTE) method,
   which is a special case of the GT-location-scale (GT-LS) method.
   This is a utility function to help make life easier.
@@ -77,10 +77,10 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 
 }
 % \references{
-% Yee, T. W. and Ma, C. (2022).
-%Generally--altered, --inflated, --truncated and --altered
-%count regression.
-% \emph{In preparation}.
+
+%Yee, T. W. and Ma, C. (2023)
+%Generally altered, inflated, truncated and deflated regression.
+%\emph{In preparation}.
 
 
 %% , \bold{3}, 15--41.
@@ -130,6 +130,7 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 \examples{
 Trunc(c(1, 8), 2)
 
+\dontrun{
 set.seed(1)  # The following example is based on the normal
 mymean <- 20; m.truth <- 3  # approximation to the Poisson.
 gdata <- data.frame(y1 = round(rnorm((nn <- 1000), mymean,
@@ -143,7 +144,7 @@ for (i in 1:m.max) {
     gaitdpoisson(truncate = Trunc(org1, i)), data = gdata))
 }
 sort(logliks, decreasing = TRUE)  # Best to worst
-\dontrun{ par(mfrow = c(1, 2))
+ par(mfrow = c(1, 2))
 plot(with(gdata, table(y1)))  # Underdispersed wrt Poisson
 plot(logliks, col = "blue", type = "b", xlab = "Multiplier") }
 }

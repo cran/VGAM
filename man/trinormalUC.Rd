@@ -128,9 +128,9 @@ tdata <- data.frame(x2 = sort(runif(nn)))
 tdata <- transform(tdata, mean1 = 1 + 2 * x2,
                    mean2 = 3 + 1 * x2, mean3 = 4,
                    var1 = exp( 1), var2 = exp( 1), var3 = exp( 1),
-                   rho12 = rhobit( 1, inverse = TRUE),
-                   rho23 = rhobit( 1, inverse = TRUE),
-                   rho13 = rhobit(-1, inverse = TRUE))
+                   rho12 = rhobitlink( 1, inverse = TRUE),
+                   rho23 = rhobitlink( 1, inverse = TRUE),
+                   rho13 = rhobitlink(-1, inverse = TRUE))
 ymat <- with(tdata, rtrinorm(nn, mean1, mean2, mean3,
                              var1, var2, var3,
                              sqrt(var1)*sqrt(var1)*rho12,

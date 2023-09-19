@@ -26,8 +26,9 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 \arguments{
 
   \item{Rank}{
-    The numerical rank \eqn{R} of the model, i.e., the number of latent
-    variables.  Currently only \code{Rank = 1} is implemented.
+    The numerical rank \eqn{R} of the model, i.e., the number
+    of latent variables.  Currently only \code{Rank = 1}
+    is implemented.
 
   }
   \item{all.knots}{
@@ -50,11 +51,11 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
   }
   \item{Crow1positive}{
     Logical vector of length \code{Rank} (recycled if
-    necessary): are the elements of the first row of \bold{C}
-    positive?  For example, if \code{Rank} is 4, then specifying
-    \code{Crow1positive = c(FALSE, TRUE)} will force \bold{C[1,1]}
-    and \bold{C[1,3]} to be negative, and \bold{C[1,2]} and
-    \bold{C[1,4]} to be positive.
+    necessary): are the elements of the first row of
+    \bold{C} positive?  For example, if \code{Rank} is 4,
+    then specifying \code{Crow1positive = c(FALSE, TRUE)}
+    will force \bold{C[1,1]} and \bold{C[1,3]} to be negative,
+    and \bold{C[1,2]} and \bold{C[1,4]} to be positive.
 
   }
     \item{epsilon}{
@@ -66,11 +67,12 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
     }
   \item{Etamat.colmax}{
-    Positive integer, no smaller than \code{Rank}.  Controls the
-    amount of memory used by \code{.Init.Poisson.QO()}.  It is the
-    maximum number of columns allowed for the pseudo-response and
-    its weights.  In general, the larger the value, the better the
-    initial value.  Used only if \code{Use.Init.Poisson.QO = TRUE}.
+    Positive integer, no smaller than \code{Rank}.  Controls
+    the amount of memory used by \code{.Init.Poisson.QO()}.
+    It is the maximum number of columns allowed for the
+    pseudo-response and its weights.  In general, the larger
+    the value, the better the initial value.  Used only if
+    \code{Use.Init.Poisson.QO = TRUE}.
 
   }
 
@@ -82,10 +84,10 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 % }
 
 \item{GradientFunction}{
-  Logical. Whether \code{\link[stats]{optim}}'s argument \code{gr}
-  is used or not, i.e., to compute gradient values.  Used only if
-  \code{FastAlgorithm} is \code{TRUE}.  Currently, this argument
-  must be set to \code{FALSE}.
+  Logical. Whether \code{\link[stats]{optim}}'s argument
+  \code{gr} is used or not, i.e., to compute gradient values.
+  Used only if \code{FastAlgorithm} is \code{TRUE}.  Currently,
+  this argument must be set to \code{FALSE}.
 
 
 
@@ -111,10 +113,11 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 %}
 
   \item{noRRR}{
-  Formula giving terms that are \emph{not} to be included in the
-  reduced-rank regression (or formation of the latent variables).
-  The default is to omit the intercept term from the latent
-  variables.  Currently, only \code{noRRR = ~ 1} is implemented.
+  Formula giving terms that are \emph{not} to be included
+  in the reduced-rank regression (or formation of the latent
+  variables).  The default is to omit the intercept term from
+  the latent variables.  Currently, only \code{noRRR = ~ 1}
+  is implemented.
 
 
   }
@@ -157,19 +160,21 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
   }
 
   \item{Bestof}{
-    Integer. The best of \code{Bestof} models fitted is returned. This
-    argument helps guard against local solutions by (hopefully) finding
-    the global solution from many fits. The argument works only when
-    the function generates its own initial value for \bold{C}, i.e.,
-    when \bold{C} are \emph{not} passed in as initial values.
-    The default is only a convenient minimal number and users are urged
+    Integer. The best of \code{Bestof} models fitted is
+    returned. This argument helps guard against local solutions
+    by (hopefully) finding the global solution from many
+    fits. The argument works only when the function generates
+    its own initial value for \bold{C}, i.e., when \bold{C}
+    are \emph{not} passed in as initial values.  The default
+    is only a convenient minimal number and users are urged
     to increase this value.
 
 
   }
   \item{maxitl}{
     Positive integer. Maximum number of
-    Newton-Raphson/Fisher-scoring/local-scoring iterations allowed.
+    Newton-Raphson/Fisher-scoring/local-scoring iterations
+    allowed.
 
 
   }
@@ -178,18 +183,21 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
 
   }
   \item{bf.epsilon}{
-    Positive numeric. Tolerance used by the modified vector backfitting
-    algorithm for testing convergence.
+    Positive numeric. Tolerance used by the modified vector
+    backfitting algorithm for testing convergence.
 
   }
   \item{bf.maxit}{
     Positive integer.
-    Number of backfitting iterations allowed in the compiled code.
+    Number of backfitting iterations allowed in the compiled
+    code.
+
   }
   \item{Maxit.optim}{
     Positive integer.
-    Number of iterations given to the function \code{\link[stats]{optim}}
-    at each of the \code{optim.maxit} iterations.
+    Number of iterations given to the function
+    \code{\link[stats]{optim}} at each of the \code{optim.maxit}
+    iterations.
 
   }
   \item{optim.maxit}{
@@ -228,8 +236,8 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
   }
   \item{trace}{
     Logical indicating if output should be produced for each
-    iteration. Having the value \code{TRUE} is a good idea for large
-    data sets.
+    iteration. Having the value \code{TRUE} is a good idea
+    for large data sets.
 
   }
   \item{df1.nl, df2.nl}{
@@ -247,38 +255,40 @@ cao.control(Rank = 1, all.knots = FALSE, criterion = "deviance", Cinit = NULL,
   \item{spar1, spar2}{
     Numeric and non-negative, recycled to length \emph{S}.
     Smoothing parameters of the
-    smooths of the first and second latent variables. The larger the value, the
-    more smooth (less wiggly) the fitted curves. These arguments are an
-    alternative to specifying \code{df1.nl} and \code{df2.nl}.  A value
-    0 (the default) for \code{spar1} means that \code{df1.nl} is used.
-    Ditto for \code{spar2}.
-    The values are on a scaled version of the latent variables.
-    See Green and Silverman (1994) for more information.
+    smooths of the first and second latent variables. The larger
+    the value, the more smooth (less wiggly) the fitted curves.
+    These arguments are an
+    alternative to specifying \code{df1.nl} and \code{df2.nl}.
+    A value 0 (the default) for \code{spar1} means that
+    \code{df1.nl} is used.  Ditto for \code{spar2}.  The values
+    are on a scaled version of the latent variables.  See Green
+    and Silverman (1994) for more information.
 
   }
   \item{\dots}{ Ignored at present. }
 }
 \details{
-  Many of these arguments are identical to \code{\link{qrrvglm.control}}.
-  Here, \eqn{R} is the \code{Rank}, \eqn{M} is the number
-  of additive predictors, and \eqn{S} is the number of responses
-  (species).
-  Thus \eqn{M=S} for binomial and Poisson responses, and
-  \eqn{M=2S} for the negative binomial and 2-parameter gamma distributions.
+  Many of these arguments are identical to
+  \code{\link{qrrvglm.control}}.  Here, \eqn{R} is the
+  \code{Rank}, \eqn{M} is the number of additive predictors, and
+  \eqn{S} is the number of responses (species).  Thus \eqn{M=S}
+  for binomial and Poisson responses, and \eqn{M=2S} for the
+  negative binomial and 2-parameter gamma distributions.
 
 
-  Allowing the smooths too much flexibility means the CAO optimization
-  problem becomes more difficult to solve. This is because the number
-  of local solutions increases as the nonlinearity of the smooths
-  increases. In situations of high nonlinearity, many initial values
-  should be used, so that \code{Bestof} should be assigned a larger
-  value. In general, there should be a reasonable value of \code{df1.nl}
+  Allowing the smooths too much flexibility means the CAO
+  optimization problem becomes more difficult to solve. This
+  is because the number of local solutions increases as
+  the nonlinearity of the smooths increases. In situations
+  of high nonlinearity, many initial values should be used,
+  so that \code{Bestof} should be assigned a larger value. In
+  general, there should be a reasonable value of \code{df1.nl}
   somewhere between 0 and about 3 for most data sets.
 
 }
 \value{
-  A list with the components corresponding to its arguments, after some
-  basic error checking.
+  A list with the components corresponding to its arguments,
+  after some basic error checking.
 
 }
 \references{
@@ -298,16 +308,17 @@ London: Chapman & Hall.
 }
 \author{T. W. Yee}
 \note{
-  The argument \code{df1.nl} can be inputted in the format \code{c(spp1 = 2,
-  spp2 = 3, 2.5)}, say, meaning the default value is 2.5, but two species
-  have alternative values.
+  The argument \code{df1.nl} can be inputted in the format
+  \code{c(spp1 = 2, spp2 = 3, 2.5)}, say, meaning the default
+  value is 2.5, but two species have alternative values.
 
 
-  If \code{spar1 = 0} and \code{df1.nl = 0} then this represents fitting
-  linear functions (CLO). Currently, this is handled in the awkward
-  manner of setting \code{df1.nl} to be a small positive value, so that
-  the smooth is almost linear but not quite.
-  A proper fix to this special case should done in the short future.
+  If \code{spar1 = 0} and \code{df1.nl = 0} then this represents
+  fitting linear functions (CLO). Currently, this is handled in
+  the awkward manner of setting \code{df1.nl} to be a small
+  positive value, so that the smooth is almost linear but
+  not quite.  A proper fix to this special case should done
+  in the short future.
 
 
 }

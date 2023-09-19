@@ -10,7 +10,8 @@ C Output from Public domain Ratfor, version 1.04
       tgiyxdw1(ayfnwr1v) = bpvaqm5z
       ayfnwr1v = ayfnwr1v+1
 23003 continue
-      urohxe6t=urohxe6t-1
+23004 continue
+23001 urohxe6t=urohxe6t-1
       goto 23000
 23002 continue
       ayfnwr1v = 1
@@ -19,7 +20,9 @@ C Output from Public domain Ratfor, version 1.04
       dufozmt7(ayfnwr1v) = bpvaqm5z
       ayfnwr1v = ayfnwr1v+1
 23007 continue
+23008 continue
 23005 continue
+23006 continue
       return
       end
       integer function viamf(cz8qdfyj, rvy1fpli, wy1vqfzu, tgiyxdw1, duf
@@ -35,6 +38,7 @@ C Output from Public domain Ratfor, version 1.04
       return
       endif
 23009 continue
+23010 continue
       viamf = 0
       return
       end
@@ -54,13 +58,13 @@ C Output from Public domain Ratfor, version 1.04
       gp1jxzuh = 1
 23021 if(.not.(gp1jxzuh .le. wy1vqfzu))goto 23023
       a(gp1jxzuh,yq6lorbx,ayfnwr1v) = 0.0d0
-      gp1jxzuh=gp1jxzuh+1
+23022 gp1jxzuh=gp1jxzuh+1
       goto 23021
 23023 continue
-      yq6lorbx=yq6lorbx+1
+23019 yq6lorbx=yq6lorbx+1
       goto 23018
 23020 continue
-      ayfnwr1v=ayfnwr1v+1
+23016 ayfnwr1v=ayfnwr1v+1
       goto 23015
 23017 continue
       endif
@@ -73,7 +77,9 @@ C Output from Public domain Ratfor, version 1.04
      *yfnwr1v)
       endif
 23026 continue
+23027 continue
 23024 continue
+23025 continue
       return
       end
       subroutine mux22f(wpuarq2m, tlgduey8, lfu2qhid, dimu, tgiyxdw1, du
@@ -97,14 +103,14 @@ C Output from Public domain Ratfor, version 1.04
 23036 if(.not.(bpvaqm5z .le. wy1vqfzu))goto 23038
       q6zdcwxk = q6zdcwxk + wk1200(yq6lorbx,bpvaqm5z) * tlgduey8(ayfnwr1
      *v,bpvaqm5z)
-      bpvaqm5z=bpvaqm5z+1
+23037 bpvaqm5z=bpvaqm5z+1
       goto 23036
 23038 continue
       lfu2qhid(yq6lorbx,ayfnwr1v) = q6zdcwxk
-      yq6lorbx=yq6lorbx+1
+23034 yq6lorbx=yq6lorbx+1
       goto 23033
 23035 continue
-      ayfnwr1v=ayfnwr1v+1
+23031 ayfnwr1v=ayfnwr1v+1
       goto 23030
 23032 continue
       return
@@ -130,14 +136,14 @@ C Output from Public domain Ratfor, version 1.04
 23045 if(.not.(gp1jxzuh .le. wy1vqfzu))goto 23047
       q6zdcwxk = q6zdcwxk - wk1200(yq6lorbx,gp1jxzuh) * bvecto(gp1jxzuh,
      *ayfnwr1v)
-      gp1jxzuh=gp1jxzuh+1
+23046 gp1jxzuh=gp1jxzuh+1
       goto 23045
 23047 continue
       bvecto(yq6lorbx,ayfnwr1v) = q6zdcwxk / wk1200(yq6lorbx,yq6lorbx)
-      yq6lorbx=yq6lorbx-1
+23043 yq6lorbx=yq6lorbx-1
       goto 23042
 23044 continue
-      ayfnwr1v=ayfnwr1v+1
+23040 ayfnwr1v=ayfnwr1v+1
       goto 23039
 23041 continue
       return
@@ -156,6 +162,7 @@ C Output from Public domain Ratfor, version 1.04
       q6zdcwxk = q6zdcwxk + wmat(gp1jxzuh,ayfnwr1v) * wmat(gp1jxzuh,ayfn
      *wr1v)
 23050 continue
+23051 continue
       wmat(ayfnwr1v,ayfnwr1v) = wmat(ayfnwr1v,ayfnwr1v) - q6zdcwxk
       if(wmat(ayfnwr1v,ayfnwr1v) .le. 0d0)then
       dvhw1ulq = 0
@@ -168,36 +175,43 @@ C Output from Public domain Ratfor, version 1.04
       q6zdcwxk = q6zdcwxk + wmat(gp1jxzuh,ayfnwr1v) * wmat(gp1jxzuh,yq6l
      *orbx)
 23056 continue
+23057 continue
       wmat(ayfnwr1v,yq6lorbx) = (wmat(ayfnwr1v,yq6lorbx) - q6zdcwxk) / w
      *mat(ayfnwr1v,ayfnwr1v)
 23054 continue
+23055 continue
 23048 continue
+23049 continue
       if(isolve .eq. 0)then
       do23060 ayfnwr1v=2,wy1vqfzu 
       do23062 yq6lorbx=1,ayfnwr1v-1 
       wmat(ayfnwr1v,yq6lorbx) = 0.0d0
 23062 continue
+23063 continue
       return
 23060 continue
+23061 continue
       endif
       do23064 yq6lorbx=1,wy1vqfzu 
       q6zdcwxk = bvecto(yq6lorbx)
       do23066 gp1jxzuh=1,yq6lorbx-1 
       q6zdcwxk = q6zdcwxk - wmat(gp1jxzuh,yq6lorbx) * bvecto(gp1jxzuh)
 23066 continue
+23067 continue
       bvecto(yq6lorbx) = q6zdcwxk / wmat(yq6lorbx,yq6lorbx)
 23064 continue
+23065 continue
       yq6lorbx = wy1vqfzu
 23068 if(.not.(yq6lorbx .ge. 1))goto 23070
       q6zdcwxk = bvecto(yq6lorbx)
       gp1jxzuh = yq6lorbx+1
 23071 if(.not.(gp1jxzuh .le. wy1vqfzu))goto 23073
       q6zdcwxk = q6zdcwxk - wmat(yq6lorbx,gp1jxzuh) * bvecto(gp1jxzuh)
-      gp1jxzuh=gp1jxzuh+1
+23072 gp1jxzuh=gp1jxzuh+1
       goto 23071
 23073 continue
       bvecto(yq6lorbx) = q6zdcwxk / wmat(yq6lorbx,yq6lorbx)
-      yq6lorbx=yq6lorbx-1
+23069 yq6lorbx=yq6lorbx-1
       goto 23068
 23070 continue
       return
@@ -215,18 +229,23 @@ C Output from Public domain Ratfor, version 1.04
       do23076 ayfnwr1v=1,wy1vqfzu 
       wk1200(ayfnwr1v,yq6lorbx) = 0.0d0
 23076 continue
+23077 continue
 23074 continue
+23075 continue
       do23078 ayfnwr1v=1,kuzxj1lo 
       do23080 bpvaqm5z=1,dimu 
       wk1200(tgiyxdw1(bpvaqm5z), dufozmt7(bpvaqm5z)) = wpuarq2m(bpvaqm5z
      *,ayfnwr1v)
 23080 continue
+23081 continue
       do23082 gp1jxzuh=1,xjc4ywlh 
       do23084 yq6lorbx=1,wy1vqfzu 
       wk3400(yq6lorbx,gp1jxzuh) = he7mqnvy((ayfnwr1v-1)*wy1vqfzu+yq6lorb
      *x,gp1jxzuh)
 23084 continue
+23085 continue
 23082 continue
+23083 continue
       do23086 gp1jxzuh=1,xjc4ywlh 
       do23088 yq6lorbx=1,wy1vqfzu 
       q6zdcwxk = 0d0
@@ -234,10 +253,14 @@ C Output from Public domain Ratfor, version 1.04
       q6zdcwxk = q6zdcwxk + wk1200(yq6lorbx,bpvaqm5z) * wk3400(bpvaqm5z,
      *gp1jxzuh)
 23090 continue
+23091 continue
       he7mqnvy((ayfnwr1v-1)*wy1vqfzu+yq6lorbx,gp1jxzuh) = q6zdcwxk
 23088 continue
+23089 continue
 23086 continue
+23087 continue
 23078 continue
+23079 continue
       return
       end
       subroutine vrinvf9(wpuarq2m, ldr, wy1vqfzu, dvhw1ulq, ks3wejcv, wo
@@ -254,10 +277,10 @@ C Output from Public domain Ratfor, version 1.04
       col = 1
 23095 if(.not.(col .le. wy1vqfzu))goto 23097
       work(yq6lorbx,col) = 0.0d0
-      col=col+1
+23096 col=col+1
       goto 23095
 23097 continue
-      yq6lorbx=yq6lorbx+1
+23093 yq6lorbx=yq6lorbx+1
       goto 23092
 23094 continue
       col = 1
@@ -273,7 +296,7 @@ C Output from Public domain Ratfor, version 1.04
 23106 if(.not.(gp1jxzuh .le. col))goto 23108
       q6zdcwxk = q6zdcwxk - wpuarq2m(yq6lorbx,gp1jxzuh) * work(gp1jxzuh,
      *col)
-      gp1jxzuh=gp1jxzuh+1
+23107 gp1jxzuh=gp1jxzuh+1
       goto 23106
 23108 continue
       if(wpuarq2m(yq6lorbx,yq6lorbx) .eq. 0.0d0)then
@@ -281,10 +304,10 @@ C Output from Public domain Ratfor, version 1.04
       else
       work(yq6lorbx,col) = q6zdcwxk / wpuarq2m(yq6lorbx,yq6lorbx)
       endif
-      yq6lorbx=yq6lorbx-1
+23102 yq6lorbx=yq6lorbx-1
       goto 23101
 23103 continue
-      col=col+1
+23099 col=col+1
       goto 23098
 23100 continue
       yq6lorbx = 1
@@ -300,15 +323,15 @@ C Output from Public domain Ratfor, version 1.04
       gp1jxzuh = uaoynef0
 23119 if(.not.(gp1jxzuh .le. wy1vqfzu))goto 23121
       q6zdcwxk = q6zdcwxk + work(yq6lorbx,gp1jxzuh) * work(col,gp1jxzuh)
-      gp1jxzuh=gp1jxzuh+1
+23120 gp1jxzuh=gp1jxzuh+1
       goto 23119
 23121 continue
       ks3wejcv(yq6lorbx,col) = q6zdcwxk
       ks3wejcv(col,yq6lorbx) = q6zdcwxk
-      col=col+1
+23115 col=col+1
       goto 23114
 23116 continue
-      yq6lorbx=yq6lorbx+1
+23112 yq6lorbx=yq6lorbx+1
       goto 23111
 23113 continue
       return
@@ -333,7 +356,7 @@ C Output from Public domain Ratfor, version 1.04
 23122 if(.not.(yq6lorbx .le. 6))goto 23124
       y = y + 1.0d0
       q6zdcwxk = q6zdcwxk + xd4mybgj(yq6lorbx)/y
-      yq6lorbx=yq6lorbx+1
+23123 yq6lorbx=yq6lorbx+1
       goto 23122
 23124 continue
       lfu2qhid = -hofjnx2e + dlog(2.5066282746310005d0 * q6zdcwxk / x)
@@ -409,12 +432,13 @@ C Output from Public domain Ratfor, version 1.04
       ydb = ydb + 1.0d0
       goto 23143
       endif
+23144 continue
       bzmd6ftv(ayfnwr1v,kij0gwer) = -q6zdcwxk
 20    hmayv1xt = 0.0d0
-      ayfnwr1v=ayfnwr1v+1
+23131 ayfnwr1v=ayfnwr1v+1
       goto 23130
 23132 continue
-      kij0gwer=kij0gwer+1
+23128 kij0gwer=kij0gwer+1
       goto 23127
 23129 continue
       return
@@ -512,12 +536,13 @@ C Output from Public domain Ratfor, version 1.04
       endif
       goto 23165
       endif
+23166 continue
 21    bzmd6ftv(ayfnwr1v,kij0gwer) = -q6zdcwxk
 20    tad5vhsu = 0.0d0
-      ayfnwr1v=ayfnwr1v+1
+23151 ayfnwr1v=ayfnwr1v+1
       goto 23150
 23152 continue
-      kij0gwer=kij0gwer+1
+23148 kij0gwer=kij0gwer+1
       goto 23147
 23149 continue
       return
@@ -588,5 +613,6 @@ C Output from Public domain Ratfor, version 1.04
       d2(gp1jxzuh) = f2
       endif
 23173 continue
+23174 continue
       return
       end

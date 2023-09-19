@@ -138,6 +138,7 @@ vcovqrrvglm(object, \dots)
 }
 
 \examples{
+\dontrun{
 ndata <- data.frame(x2 = runif(nn <- 300))
 ndata <- transform(ndata, y1 = rnbinom(nn, mu = exp(3+x2), exp(1)),
                           y2 = rnbinom(nn, mu = exp(2-x2), exp(0)))
@@ -146,7 +147,7 @@ fit2 <- rrvglm(y1 ~ x2, negbinomial(zero = NULL), data = ndata)
 coef(fit1, matrix = TRUE)
 vcov(fit1)
 vcov(fit2)
-}
+}}
 \keyword{models}
 \keyword{regression}
 

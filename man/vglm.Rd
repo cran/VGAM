@@ -570,6 +570,7 @@ library is incorporated
   \code{\link{fittedvlm}},
   \code{\link{hatvaluesvlm}},
   \code{\link{hdeff.vglm}},
+  \code{\link{Influence.vglm}},
   \code{\link{linkfunvlm}},
   \code{\link{lrt.stat.vlm}},
   \code{\link{score.stat.vlm}},

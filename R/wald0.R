@@ -44,7 +44,7 @@
 
   if (RS.really && LR.really)
     stop("cannot have both 'RS.really' and 'LR.really'")
-  Wd.really <- !RS.really && !LR.really  # Only one .really is TRUE
+  Wd.really <- !RS.really && !LR.really  # Only one
 
   iterate.score <- if (RS.really) foo1(...)$iterate.score else FALSE
 
@@ -132,9 +132,10 @@
 
   if (orig.SE && Wd.really) { # Wald stat already done
     csobj <- coef(summary(object))[kvec.use, , drop = FALSE]
-    wald.stat <- csobj[, "z value"]
+    wald.stat <- csobj[, "z value"]  # Assumes values0 == 0
     se0.a <- csobj[, "Std. Error"]  # .a added for uniqueness
     cobj <- Cobj[kvec.use]
+    wald.stat <- wald.stat - values0 / se0.a
     values0.use <- Values0.use[kvec.use]
     names(se0.a) <- names(cobj)
     names(values0.use) <- names(cobj)

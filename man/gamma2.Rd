@@ -161,7 +161,9 @@ McCullagh, P. and Nelder, J. A. (1989).
   \code{\link{gammaR}} for another parameterization of
   the 2-parameter gamma distribution that is directly matched
   with \code{\link[stats]{rgamma}},
-  \code{\link{bigamma.mckay}} for \emph{a} bivariate gamma distribution,
+  \code{\link[VGAMdata]{bigamma.mckay}}
+  for \emph{a} bivariate gamma distribution,
+  \code{\link{gammaff.mm}} for another,
   \code{\link{expexpff}},
   \code{\link[stats]{GammaDist}},
   \code{\link{gordlink}},

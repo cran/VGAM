@@ -136,6 +136,19 @@ confintvglm(object, parm, level = 0.95, method = c("wald", "profile"),
   appear to work with output from this function.
 
 
+
+
+% 20230718; plot.profile will be in \pkg{stats} only
+%   for >=R 4.4.0.
+%   Previously it was in \pkg{stats} and \pkg{MASS}.
+%
+
+
+
+
+
+
+
 }
 %\section{Warning }{
 %}

@@ -3447,11 +3447,12 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
 
 
 
-      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored columnwise
-      for (want in seq(M.mlm)) {  # Want the equivalent of rowSums(Qf2a)
+      Qf2rowsums <- matrix(0, n.use, M.mlm)  # rowsums stored colnwise
+      for (want in seq(M.mlm)) {  # Want the \equiv of rowSums(Qf2a)
         iamvec <- iam(want, 1:M.mlm, M = M.mlm)  # Diagonals included
-        Qf2rowsums[, want] <- rowSums(filling[, iamvec, drop = FALSE] *
-                                      allprobs[1:n.use, 1:M.mlm])
+        Qf2rowsums[, want] <-
+          rowSums(filling[, iamvec, drop = FALSE] *
+                  allprobs[1:n.use, 1:M.mlm])
       }  # want
       Qf2a <- Qf2rowsums[, iamlist$row]
       Qf2b <- Qf2rowsums[, iamlist$col]
@@ -3465,7 +3466,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
 
 
       wz.6[, extra$ind.wz.match] <- if (speed.up)
-        matrix(Qform[1, ], n, ncol(Qform), byrow = TRUE) else c(Qform)
+         matrix(Qform[1, ], n, ncol(Qform), byrow = TRUE) else
+         c(Qform)
 
 
 
@@ -3486,14 +3488,15 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
                           if (tmp3.TF[ 7]) dlambda.d.deta else NULL)
       iptr <- 0
       if (length(ind.lambda.z))
-      for (uuu in ind.lambda.z) {  # Could delete 3 for lambda.a (orthog)
+      for (uuu in ind.lambda.z) {  # Could delete 3 4 lambda.a (orthog)
         iptr <- iptr + 1
         for (ttt in seq(lind.rc)) {
           wz.6[, iam(uuu, ind.rc[ttt], M)] <- 0  # Initialize
           for (sss in seq(lind.rc)) {
             wz.6[, iam(uuu, ind.rc[ttt], M)] <-
             wz.6[, iam(uuu, ind.rc[ttt], M)] +
-              allprobs[, sss] * (max(0, sss == ttt) - allprobs[, ttt]) *
+              allprobs[, sss] *
+              (max(0, sss == ttt) - allprobs[, ttt]) *
               wz[, iam(uuu, ind.rc[sss], M)] * dstar.deta[, iptr]
           }  # sss
         }  # ttt
@@ -3697,7 +3700,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
   }  # li.mlm
 
   skip <- vecTF.t | vecTF.a  # Leave these values alone
-  tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix + sum.d + pdip.mix
+  tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix +
+              sum.d + pdip.mix
   if (li.mlm + ld.mlm) {
     if (any(tmp6[!skip] < 0, na.rm = TRUE)) {
       warning("the vector of normalizing constants contains ",
@@ -3707,8 +3711,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
   }  # li.mlm + ld.mlm
 
 
-  pmf0[!skip] <- (tmp6 *  # added
-    dpois(x, lambda.p) / (cdf.max.s - suma - sumt))[!skip]
+  Delt3 <- tmp6 / (cdf.max.s - suma - sumt)
+  pmf0[!skip] <- (Delt3 * dpois(x, lambda.p))[!skip]
 
 
   if (li.mlm) {
@@ -3716,6 +3720,11 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       ival <- i.mlm[jay]
       if (any(vecTF <- is.finite(x) & ival == x)) {
           pmf0[vecTF] <- pmf0[vecTF] + pstr.mlm[vecTF, jay]
+
+          if (max(pmf0[vecTF], na.rm = TRUE) > 1) {
+             warning("PMF > 1; too much inflation? NaNs produced")
+             pmf0[vecTF] <- NaN  # Too much (excessive)
+          }
       }
     }  # jay
   }  # li.mlm
@@ -3727,6 +3736,11 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       dval <- d.mlm[jay]
       if (any(vecTF <- is.finite(x) & dval == x)) {
           pmf0[vecTF] <- pmf0[vecTF] - pdip.mlm[vecTF, jay]
+
+          if (max(pmf0[vecTF], na.rm = TRUE) < 0) {
+             warning("PMF < 0; too much deflation? NaNs produced")
+             pmf0[vecTF] <- NaN  # Too much (excessive)
+          }
       }
     }  # jay
   }  # ld.mlm
@@ -3736,8 +3750,23 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
                  pdip.mix * pmf2.d
 
 
+
+  vecTF <- pmf0 < 0
+  if (any(vecTF, na.rm = TRUE)) {
+    warning("Negative PMF: too much deflation? NaNs produced")
+    pmf0[vecTF] <- NaN
+  }
+  vecTF <- pmf0 > 1
+  if (any(vecTF, na.rm = TRUE)) {
+    warning("PMF > 1: too much inflation? NaNs produced")
+    pmf0[vecTF] <- NaN
+  }
+
+ 
+
   if (log.arg) log(pmf0) else pmf0
 }  # dgaitdpois
+
 
 
 
@@ -3764,7 +3793,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
            pdip.mlm = 0,
            byrow.aid = FALSE,
            lambda.a = lambda.p, lambda.i = lambda.p,
-           lambda.d = lambda.p, lower.tail = TRUE) {
+           lambda.d = lambda.p, lower.tail = TRUE,
+           checkd = FALSE) {
   lowsup <- 0
   gaitd.errorcheck(a.mix, a.mlm, i.mix, i.mlm,
                    d.mix, d.mlm, truncate, max.support)
@@ -3900,7 +3930,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       ival <- i.mix[jay]
       pmf.p <- dpois(ival, lambda.p)
       if (any(vecTF <- (is.finite(q) & ival <= q))) {
-        Offset.i[vecTF] <- Offset.i[vecTF] + use.pstr.mix[vecTF, jay]
+        Offset.i[vecTF] <- Offset.i[vecTF] +
+                           use.pstr.mix[vecTF, jay]
       }
     }  # jay
   }  # li.mix
@@ -3938,7 +3969,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
       dval <- d.mix[jay]
       pmf.p <- dpois(dval, lambda.p)
       if (any(vecTF <- (is.finite(q) & dval <= q))) {
-        Offset.d[vecTF] <- Offset.d[vecTF] + use.pdip.mix[vecTF, jay]
+        Offset.d[vecTF] <- Offset.d[vecTF] +
+                           use.pdip.mix[vecTF, jay]
       }
     }  # jay
   }  # ld.mix
@@ -3947,13 +3979,62 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
 
 
 
-  numer1 <- 1 - sum.i - sum.a - pstr.mix - pobs.mix + sum.d + pdip.mix
+  numer1 <- 1 - sum.i - sum.a - pstr.mix - pobs.mix +
+                sum.d + pdip.mix
   denom1 <- cdf.max.s - sumt - suma
-  ans <- numer1 * (ppois(q, lambda.p) - fudge.t - fudge.a) / denom1 +
+  ans <- numer1 * (ppois(q, lambda.p) - fudge.t -
+                   fudge.a) / denom1 +
          offset.a + offset.i - offset.d +
          Offset.a + Offset.i - Offset.d
   ans[max.support <= q] <- 1
   ans[ans < 0] <- 0  # Occasional roundoff error
+
+
+
+
+
+
+if (checkd) {
+  checkvec <- numeric(LLL)
+  for (jay in 1:LLL) {
+    use.pobs.mlm <- if (la.mlm) pobs.mlm[jay, ] else NULL
+    use.pstr.mlm <- if (li.mlm) pstr.mlm[jay, ] else NULL
+    use.pdip.mlm <- if (ld.mlm) pdip.mlm[jay, ] else NULL
+    checkvec[jay] <- sum(
+      dgaitdpois(0:floor(q[jay]), lambda.p[jay],
+                 a.mix = a.mix, a.mlm = a.mlm, 
+                 i.mix = i.mix, i.mlm = i.mlm, 
+                 d.mix = d.mix, d.mlm = d.mlm, 
+                 truncate = truncate,
+                 max.support = max.support,
+                 pobs.mix = pobs.mix[jay],
+                 pobs.mlm = use.pobs.mlm,
+                 pstr.mix = pstr.mix[jay],
+                 pstr.mlm = use.pstr.mlm,
+                 pdip.mix = pdip.mix[jay],
+                 pdip.mlm = use.pdip.mlm,
+        byrow.aid = TRUE,
+        lambda.a = lambda.a[jay], lambda.i = lambda.i[jay],
+        lambda.d = lambda.d[jay]))
+  }  # jay
+  if (any(vecTF <- is.nan(checkvec)))
+    ans[vecTF] <- NaN  # Transfer the NaN from d- to p-.
+}  # checkd
+
+
+
+  vecTF <- ans < 0
+  if (any(vecTF, na.rm = TRUE)) {
+    warning("negative PMF; too much deflation? NaNs produced")
+    ans[vecTF] <- NaN
+  }
+  vecTF <- ans > 1
+  if (any(vecTF, na.rm = TRUE)) {
+    warning("PMF > 1; too much inflation? NaNs produced")
+    ans[vecTF] <- NaN
+  }
+
+
   if (lower.tail) ans else 1 - ans
 }  # pgaitdpois
 

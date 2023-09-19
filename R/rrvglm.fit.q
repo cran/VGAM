@@ -21,6 +21,10 @@ rrvglm.fit <-
            extra = NULL,
            Terms = Terms, function.name = "rrvglm", ...) {
 
+    if (length(slot(family, "start1")))
+      eval(slot(family, "start1"))
+
+
     eff.n <- nrow(x)  # + sum(abs(w[1:nrow(x)]))
 
     specialCM <- NULL
@@ -338,8 +342,8 @@ rrvglm.fit <-
       fv <- c.list$fit
       new.coeffs <- c.list$coeff
 
-      if (length(family@middle))
-        eval(family@middle)
+      if (length(family@middle1))
+        eval(family@middle1)
 
       eta <- fv + offset
 
@@ -408,8 +412,8 @@ rrvglm.fit <-
           new.coeffs <- (1 - stepsize) * old.coeffs +
                              stepsize  * new.coeffs.save
 
-          if (length(family@middle))
-            eval(family@middle)
+          if (length(family@middle1))
+            eval(family@middle1)
 
           fv <- X.vlm.save %*% new.coeffs
           if (M > 1)
@@ -514,8 +518,8 @@ rrvglm.fit <-
     xnrow.X.vlm <- dnrow.X.vlm[[2]]
     ynrow.X.vlm <- dnrow.X.vlm[[1]]
 
-    if (length(family@fini))
-      eval(family@fini)
+    if (length(family@fini1))
+      eval(family@fini1)
 
     if (M > 1 && !nice31)
       tfit$predictors <- matrix(tfit$predictors, n, M)

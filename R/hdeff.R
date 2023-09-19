@@ -69,7 +69,7 @@ hdeff.vglm <-
 
   link1parameter <- Fam.infos$link1parameter
   if (is.null(link1parameter))
-    link1parameter <- TRUE  # The default, for ordinary 1-par links
+    link1parameter <- TRUE  # (default) for ordinary 1-par links
 
 
 
@@ -127,7 +127,7 @@ hdeff.vglm <-
   Param.mat       <- matrix(NA_real_, n.LM, M)
   if (link1parameter) {
     if (!fd.use) {
-    for (jay in 1:M) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    for (jay in 1:M) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
       Param.mat[, jay] <-
       Param.vec <- eta2theta(eta.mat[, jay], mylinks[jay],
                              earg = object@misc$earg[[jay]])
@@ -182,7 +182,8 @@ if (FALSE) {  ###################################################
       myearg1 <- object@misc$earg[[1]]
       build.list1 <- list(theta = Param.mat[, 1:(1 + M.1)],
                           inverse = TRUE, deriv = 1)
-      build.list1 <- c(build.list1, myearg1)  # No dups arg names..
+      build.list1 <- c(build.list1,
+                       myearg1)  # No dups arg names..
       build.list1$all.derivs <- TRUE  # For "multilogitlink".
       Der11 <- do.call(mylinks[1], build.list1)
       M.2 <- 1  # Corresponding to, e.g., loglink("lambda")
@@ -249,7 +250,8 @@ if (FALSE) {  ###################################################
       Ans2 <- Ans2[, -use.earg$refLevel]
 
     M.2 <- last.index - first.index + 1
-    Ans <- if (length(Ans)) wz.merge(Ans, Ans2, M.1, M.2) else Ans2
+    Ans <- if (length(Ans))
+             wz.merge(Ans, Ans2, M.1, M.2) else Ans2
     M.1 <- M.1 + M.2
   }  # while (iii <= llink)
 
@@ -298,15 +300,15 @@ if (FALSE) {  ###################################################
 
 
 
-  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
   dwz.dbetas   <-
   d2wz.dbetas2 <- 0  # Good for the first instance of use.
 
 
   wetas.kay <- which.etas(object, kay = kay)
-  for (jay in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (jay in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     vecTF.jay <- as.logical(eijfun(jay, M))
-    bix.jk <- X.vlm[vecTF.jay, kay]  # An n-vector; allows for xij.
+    bix.jk <- X.vlm[vecTF.jay, kay]  # An n-vector for xij.
 
 
 
@@ -416,7 +418,7 @@ if (FALSE) {  ###################################################
 
   if (length(wetas.kay) > 1) {
   for (sss in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-  for (ttt in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (ttt in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
  if (sss < ttt) {
     for (dirr in 1:4) {
       temp1 <- object
@@ -491,7 +493,7 @@ if (FALSE) {  ###################################################
     d2wz.dbetas2 <- d2wz.dbetas2 + d2wz.dbetakk2  # Summed over 1:M
     } # !fd.use
     }  # (type == "derivatives" && derivative == 2)
-  }  # for (jay in wetas.kay) # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  }  # for (jay in wetas.kay) # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
 
@@ -604,7 +606,8 @@ if (FALSE) {  ###################################################
 hdeff.matrix <-
   function(object,
            ...) {
-  if (!is.matrix(object) || nrow(object) != 2 || ncol(object) != 2) 
+  if (!is.matrix(object) || nrow(object) != 2 ||
+      ncol(object) != 2) 
     stop("argument 'object' is not a 2 x 2 matrix")
   if (any(c(object) <= 0))
     stop("some cells are not positive valued")
@@ -1007,6 +1010,144 @@ seglines <-
     return(severity)
   }
 }  # seglines
+
+
+
+
+
+
+
+
+
+
+
+
+copsvglm <-
+  function(object,
+           beta.range = c(-5, 6),  # Unsymmetric is better?
+           tol = .Machine$double.eps^0.25,  # == optimize()
+           dointercepts = TRUE,  # FALSE for propodds()
+           trace. = FALSE,  # TRUE,
+           slowtrain = FALSE,  # FALSE,  # TRUE,
+           ...) {
+  M <- npred(object)
+  cobj <- coef(object)  # Original coeffs
+  objC <- coef(object, matrix = TRUE) 
+  Hlist <- constraints(object)
+  Mvec <- sapply(Hlist, ncol)  # rep(M, ppp) if trivial
+  Hobj <- constraints(object, matrix = TRUE)
+  copsvec <- cobj  # Overwrite for the answer
+  nn <- nobs(object)
+  Xvlm  <- model.matrix(object, type = "vlm")
+  offset <- if (length(object@offset))
+              object@offset else matrix(0, 1, 1)
+  etamat <- matrix(Xvlm %*% cobj, nn, M, byrow = TRUE)
+  if (any(offset != 0))
+    etamat <- etamat + offset
+  ppp <- nrow(objC)    # ncol(Xvlm)  # length(copsvec)
+  startp <- ifelse(dointercepts, 1, 2)
+  if (startp > ppp)
+    stop("no coefficients to find the COPS for!")
+  has.intercept <- names(Hlist[1]) == "(Intercept)"
+  if (!has.intercept)
+    stop("the models has no intercept term")
+
+  whichjay <- function(vec)
+      as.vector(which(vec != 0))
+  if (trace.) {
+    copsenv <- new.env()
+    cops.trace <- NULL  # Growing!
+    cops.iter <- 1  # For plotting
+    assign("cops.trace", cops.trace, envir = copsenv)
+    assign("cops.iter",  cops.iter,  envir = copsenv)
+  }
+  
+  newinfo <-  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    function(beta.try1, jkay)  {   #, jay = 1, M = 1
+    copy.object <- object 
+    copy.object@coefficients[jkay] <- beta.try1
+    newetamat <- matrix(Xvlm %*%
+                        copy.object@coefficients,
+                        nn, M, byrow = TRUE)
+    newmu <- object@family@linkinv(newetamat,
+                             extra = object@extra)
+    copy.object@fitted.values <- newmu
+    newwz <- weights(copy.object, type = "working")
+    UU <- vchol(newwz, M = M, n = nn)  # Updated.  silent = T
+    UtXvlm <- mux111(cc = UU, xmat = Xvlm, M = M,
+                     slowtrain = slowtrain, whichj = jkay)
+    total.info <- sum((UtXvlm[, jkay])^2)
+
+    if (M ==  1 && FALSE)
+      Total.info <- sum(
+      rowSums(newwz *
+      matrix((Xvlm[, jkay])^2, nn, M, byrow = TRUE)))
+    if (trace.) {
+ print("c(beta.try1, format(total.info))")
+ print( c(beta.try1, format(total.info)) )
+    }  # trace.
+    if (trace.) {
+      cops.trace <- get("cops.trace", envir = copsenv)
+      cops.iter  <- get("cops.iter",  envir = copsenv)
+      cops.trace <- rbind(cops.trace, matrix(0, 1, 3))
+      colnames(cops.trace)  <- c('betatry', 'totinfo', 'jk')
+      cops.trace[cops.iter, 1] <- beta.try1
+      cops.trace[cops.iter, 2] <- total.info
+      cops.trace[cops.iter, 3] <- jkay
+      cops.iter <- cops.iter + 1
+      assign("cops.trace", cops.trace, envir = copsenv)
+      assign("cops.iter",  cops.iter,  envir = copsenv)
+    }  # trace.
+    total.info
+  }  # newinfo
+
+
+  iptr <- 1 +  # Initial value
+    ifelse(dointercepts, 0,
+           ncol(constraints(object)[["(Intercept)"]]))
+  for (kay in startp:ppp) {
+    if (trace.) {
+ print(paste0("Solving for covariate ", kay, " ,,,,,,,,,,,"))
+    }
+    for (jay in 1:Mvec[kay]) {
+      try.interval <- sort((1 + abs(cobj[iptr])) *
+                           beta.range)
+      ofit <- optimize(newinfo,
+                       interval = try.interval,
+                       maximum = TRUE,
+                       tol = tol,
+                       jkay = iptr)  # , jay = jay, M = M
+      if (trace.) {
+ print("ofit")
+ print( ofit )
+      }
+      copsvec[iptr] <- ofit$maximum
+      iptr <- iptr + 1  # Point to next coefficient
+    }  # jay
+  }  # kay
+
+  if (trace.)
+    list(cops = copsvec,
+         trace = get("cops.trace", envir = copsenv)) else
+    copsvec
+}  # copsvglm 
+
+
+
+
+if (!isGeneric("cops"))
+  setGeneric("cops",
+             function(object, ...) standardGeneric("cops"),
+             package = "VGAM")
+
+setMethod("cops", "vglm",
+          function(object, ...) {
+  copsvglm(object, ...)
+})
+
+
+
+
 
 
 

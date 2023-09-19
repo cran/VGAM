@@ -502,8 +502,8 @@ ny <- names(y)
     if (maxitl > 1 && iter >= maxitl && quasi.newton$convergence)
       warning("convergence not obtained in", maxitl, "iterations.")
 
-    if (length(family@fini))
-      eval(family@fini)
+    if (length(family@fini1))
+      eval(family@fini1)
 
     asgn <- attr(x, "assign")
     coefs <- getfromVGAMenv("beta", prefix = ".VGAM.CQO.")

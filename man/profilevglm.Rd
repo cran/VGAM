@@ -84,7 +84,32 @@ profilevglm(object, which = 1:p.vlm, alpha = 0.01,
   \code{\link{lrt.stat}},
   \code{\link[stats]{profile}},
   \code{\link[MASS]{profile.glm}},
-  \code{\link[MASS]{plot.profile}}.
+  \code{\link[stats]{plot.profile}}.
+
+
+
+
+% 20230919; changed
+% \code{\link[stats]{plot.profile}}.
+% to
+% \code{\link[MASS]{plot.profile}}.
+
+
+
+
+
+% 20230914; changed
+% \code{\link[MASS]{plot.profile}}.
+% to
+% \code{\link[stats]{plot.profile}}.
+
+
+
+
+% 20230718; plot.profile will be in \pkg{stats} only
+%   for >=R 4.4.0.
+%   Previously it was in \pkg{stats} and \pkg{MASS}.
+%
 
 
 }

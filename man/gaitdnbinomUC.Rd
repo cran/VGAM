@@ -5,7 +5,8 @@
 \alias{qgaitdnbinom}
 \alias{rgaitdnbinom}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and --Deflated
+\title{ Generally Altered, Inflated, Truncated
+  and Deflated
   Negative Binomial Distribution
 
 
@@ -16,11 +17,12 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated, --truncated and
-  --deflated negative binomial (GAITD-NB) distribution.
-  Both parametric and nonparametric variants are supported;
-  these are based on finite mixtures of the parent with itself
-  and the multinomial logit model (MLM) respectively.
+  for the generally altered, inflated, truncated and
+  deflated negative binomial (GAITD-NB) distribution.
+  Both parametric and nonparametric variants are
+  supported; these are based on finite mixtures
+  of the parent with itself and the multinomial
+  logit model (MLM) respectively.
 
 
 
@@ -171,10 +173,14 @@ rgaitdnbinom(n, size.p, munb.p,
 
 
 }
-%\section{Warning }{
+\section{Warning }{
+  See \code{\link[VGAM]{Gaitdpois}} about the dangers
+  of too much inflation and/or deflation on
+  GAITD PMFs, and the difficulties detecting such.
 
 
-%}
+
+}
 \value{
   \code{dgaitdnbinom} gives the density,
   \code{pgaitdnbinom} gives the distribution function,
@@ -192,9 +198,8 @@ rgaitdnbinom(n, size.p, munb.p,
 }
 %\references{
 
-%Yee, T. W. and Ma, C. (2022).
-%Generally--altered, --inflated, --truncated and --deflated
-%regression, with application to heaped and seeped data.
+%Yee, T. W. and Ma, C. (2023)
+%Generally altered, inflated, truncated and deflated regression.
 %\emph{In preparation}.
 
 

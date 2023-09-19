@@ -9,7 +9,7 @@
 }
 \usage{
 nakagami(lscale = "loglink", lshape = "loglink", iscale = 1,
-         ishape = NULL, nowarning = FALSE)
+         ishape = NULL, nowarning = FALSE, zero = "shape")
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,6 +35,10 @@ nakagami(lscale = "loglink", lshape = "loglink", iscale = 1,
   another numerical value is recommended if convergence fails or
   is too slow.
 
+
+  }
+  \item{zero}{
+  See \code{\link{CommonVGAMffArguments}}.
 
   }
 }

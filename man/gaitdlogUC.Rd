@@ -5,7 +5,8 @@
 \alias{qgaitdlog}
 \alias{rgaitdlog}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and --Deflated
+\title{ Generally Altered, Inflated, Truncated
+  and Deflated
   Logarithmic Distribution
 
 
@@ -16,12 +17,13 @@
   distribution function,
   quantile function
   and random generation
-  for the generally--altered, --inflated, --truncated and --deflated
+  for the generally altered, inflated, truncated
+  and deflated
   logarithmic distribution.
-  Both parametric and nonparametric variants are supported;
-  these are based on
-  finite mixtures of the parent with itself
-  and the multinomial logit model (MLM) respectively.
+  Both parametric and nonparametric variants are
+  supported; these are based on finite mixtures
+  of the parent with itself and the multinomial
+  logit model (MLM) respectively.
 
 
 
@@ -76,20 +78,24 @@ rgaitdlog(n, shape.p, a.mix = NULL, a.mlm = NULL,
   }
 
   \item{shape.p, shape.a, shape.i, shape.d}{
-  Same meaning as \code{shape} for \code{\link{dlog}},
-  i.e., for an ordinary logarithmic distribution.
-  See \code{\link{Gaitdpois}} for generic information.
+  Same meaning as \code{shape} for
+  \code{\link{dlog}}, i.e., for an
+  ordinary logarithmic distribution.
+  See \code{\link{Gaitdpois}} for generic
+  information.
 
   
  
   }
   \item{truncate, max.support}{
-  See \code{\link{Gaitdpois}} for generic information.
-  
+  See \code{\link{Gaitdpois}} for generic
+  information.
+
 
   }
   \item{a.mix, i.mix, d.mix}{
-  See \code{\link{Gaitdpois}} for generic information.
+  See \code{\link{Gaitdpois}} for generic
+  information.
 
 
   
@@ -97,7 +103,8 @@ rgaitdlog(n, shape.p, a.mix = NULL, a.mlm = NULL,
   }
 
   \item{a.mlm, i.mlm, d.mlm}{
-  See \code{\link{Gaitdpois}} for generic information.
+  See \code{\link{Gaitdpois}} for generic
+  information.
 
 
 
@@ -107,7 +114,8 @@ rgaitdlog(n, shape.p, a.mix = NULL, a.mlm = NULL,
 
   
   \item{pobs.mlm, pstr.mlm, pdip.mlm, byrow.aid}{
-  See \code{\link{Gaitdpois}} for generic information.
+  See \code{\link{Gaitdpois}} for generic
+  information.
 
 
   }
@@ -134,7 +142,7 @@ rgaitdlog(n, shape.p, a.mix = NULL, a.mlm = NULL,
 
   
 
-%In the notation of Yee and Ma (2022)
+%In the notation of Yee and Ma (2023)
 %these functions allow for the special cases:
 %(i) GAIT--Log(\code{shape.p})--Log(\code{shape.a},
 %\code{a.mix}, \code{pobs.mix})--Log(\code{shape.i},
@@ -144,6 +152,14 @@ rgaitdlog(n, shape.p, a.mix = NULL, a.mlm = NULL,
 %Model (i) is totally parametric while model (ii) is the most
 %nonparametric possible.
 
+
+
+
+}
+\section{Warning }{
+  See \code{\link[VGAM]{Gaitdpois}} about the dangers
+  of too much inflation and/or deflation on
+  GAITD PMFs, and the difficulties detecting such.
 
 
 
@@ -184,9 +200,8 @@ rgaitdlog(n, shape.p, a.mix = NULL, a.mlm = NULL,
 }
 %\references{
 
-%Yee, T. W. and Ma, C. (2022).
-%Generally--altered, --inflated, --truncated and --deflated
-%regression, with application to heaped and seeped data.
+%Yee, T. W. and Ma, C. (2023)
+%Generally altered, inflated, truncated and deflated regression.
 %\emph{In preparation}.
 
 
@@ -240,8 +255,8 @@ dvec <- 1; pdip.mlm <- 0.05
    pdip.mlm = pdip.mlm, d.mlm = dvec,
    a.mix = avec, pstr.mix = pstr.i, i.mix = ivec))
 \dontrun{ dgaitdplot(shape, ylab = "Probability", xlab = "x",
-   max.support = max.support, pobs.mix = pobs.mix,
-   pobs.mlm = pobs.mlm, a.mlm = avec, all.lwd = 3,
+   max.support = max.support, pobs.mix = 0,
+   pobs.mlm = 0, a.mlm = avec, all.lwd = 3,
    pdip.mlm = pdip.mlm, d.mlm = dvec, fam = "log",
    pstr.mix = pstr.i, i.mix = ivec, deflation = TRUE,
    main = "GAITD Combo PMF---Logarithmic Parent")   }

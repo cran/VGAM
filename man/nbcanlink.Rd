@@ -3,8 +3,10 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Negative Binomial Canonical Link Function }
 \description{
-  Computes the negative binomial canonical link transformation,
-  including its inverse and the first two derivatives.
+  Computes the negative binomial canonical
+  link transformation,
+  including its inverse and the first two
+  derivatives.
 
 }
 \usage{
@@ -15,18 +17,20 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 \arguments{
   \item{theta}{
   Numeric or character.
-  Typically the mean of a negative binomial distribution (NBD).
+  Typically the mean of a negative binomial
+  distribution (NBD).
   See below for further details.
 
 
   }
   \item{size, wrt.param}{
   \code{size} contains the \eqn{k} matrix which
-  must be of a conformable dimension as \code{theta}.
+  must be of a conformable dimension
+  as \code{theta}.
   Also, if \code{deriv > 0} then \code{wrt.param}
-  is either 1 or 2 (1 for with respect to the first
-  parameter, and 2 for with respect to the second
-  parameter (\code{size})).
+  is either 1 or 2 (1 for with respect to the
+  first parameter, and 2 for with respect
+  to the second parameter (\code{size})).
 
 
   }
@@ -46,7 +50,7 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
 }
 \details{
   The NBD canonical link is
-  \eqn{\log(\theta/ (\theta + k))}{log(theta/(theta + k))}
+\eqn{\log(\theta/(\theta + k))}{log(theta/(theta+k))}
   where \eqn{\theta}{theta} is the NBD mean.
   The canonical link is used for theoretically
   relating the NBD to GLM class.
@@ -56,35 +60,55 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
   \code{\link{negbinomial}} and
   \code{\link{negbinomial.size}},
   and should not be used elsewhere
-  (these \pkg{VGAM} family functions have code that
+  (these \pkg{VGAM} family functions have
+  code that
   specifically handles \code{nbcanlink()}.)
+
+
+
+
+Estimation with the NB canonical link
+has a somewhat interesting history.
+If we take the problem as beginning with the admission of
+McCullagh and Nelder (1983; first edition, p.195)
+[see also McCullagh and Nelder (1989, p.374)]
+that the NB is little used in
+applications and has a ``problematical'' canonical link
+then it appears
+only one other publicized attempt was made to
+solve the problem seriously.
+This was Hilbe, who produced a defective solution.
+However, Miranda and Yee (2023) solve
+this four-decade old problem using
+total derivatives and
+it is implemented by using
+\code{\link{nbcanlink}} with
+\code{\link{negbinomial}}.
+Note that early versions of \pkg{VGAM} had
+a defective solution.
+
+
+
 
 
 }
 \value{
   For \code{deriv = 0}, the above equation
-  when \code{inverse = FALSE}, and if \code{inverse = TRUE} then
-  \code{kmatrix / expm1(-theta)} where \code{theta} ie really \code{eta}.
-  For \code{deriv = 1}, then the function returns
-  \emph{d} \code{eta} / \emph{d} \code{theta} as a function of \code{theta}
+  when \code{inverse = FALSE}, and
+  if \code{inverse = TRUE} then
+  \code{kmatrix / expm1(-theta)} where \code{theta}
+  is really \code{eta}.
+  For \code{deriv = 1}, then the function
+  returns
+  \emph{d} \code{eta} / \emph{d} \code{theta}
+  as a function of \code{theta}
   if \code{inverse = FALSE},
-  else if \code{inverse = TRUE} then it returns the reciprocal.
+  else if \code{inverse = TRUE} then it
+  returns the reciprocal.
 
 
 }
 \references{
-
-  Miranda, V. S. and Yee, T. W. (2018).
-  On mean function modelling for several one-parameter
-  discrete distributions.
-  \emph{Manuscript in preparation}.
-
-
-
-  Yee, T. W. (2014).
-  Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis},
-  \bold{71}, 889--902.
 
 
   Hilbe, J. M. (2011).
@@ -93,44 +117,72 @@ nbcanlink(theta, size = NULL, wrt.param = NULL, bvalue = NULL,
   Cambridge: Cambridge University Press.
 
 
+McCullagh, P. and Nelder, J. A. (1989).
+\emph{Generalized Linear Models}, 2nd ed.
+London: Chapman & Hall.
+
+
+  Miranda-Soberanis, V. F. and Yee, T. W. (2023).
+Two-parameter link functions, with
+applications to negative binomial, Weibull and
+quantile regression.
+  \emph{Computational Statistics},
+  \bold{38}, 1463--1485.
+
+
+
+  Yee, T. W. (2014).
+  Reduced-rank vector generalized linear
+  models with
+  two linear predictors.
+\emph{Computational Statistics and Data Analysis},
+  \bold{71}, 889--902.
+
+
 }
 \author{ Victor Miranda and Thomas W. Yee.
 
 
 }
 
-\section{Warning}{
-  This function works with \code{\link{negbinomial}} but care
-  is needed because it is numerically fraught.
-  In particular, the first linear/additive predictor must have
-  negative values, and finding good initial values may be
-  difficult, leading to it crashing at the start.
-  Hence the NB-C model is sensitive to the initial values and may
-  converge to a local solution.
-  Pages 210 and 309 of Hilbe (2011) notes convergence difficulties (of
-  Newton-Raphson type algorithms), and some of that
-  this applies here.
-  Setting \code{trace = TRUE} is a good idea, as is
-  trying various values of \code{imethod}
-  in \code{\link{negbinomial}}.
+
+% 20230913; commenting out this warning as it
+% no longer holds:
+%\section{Warning}{
+%  This function works with \code{\link{negbinomial}} but care
+%  is needed because it is numerically fraught.
+%  In particular, the first linear/additive predictor must have
+%  negative values, and finding good initial values may be
+%  difficult, leading to it crashing at the start.
+%  Hence the NB-C model is sensitive to the initial values and may
+%  converge to a local solution.
+%  Pages 210 and 309 of Hilbe (2011) notes convergence difficulties (of
+%  Newton-Raphson type algorithms), and some of that
+%  this applies here.
+%  Setting \code{trace = TRUE} is a good idea, as is
+%  trying various values of \code{imethod}
+%  in \code{\link{negbinomial}}.
 
 
 % This function should work okay with \code{\link{negbinomial.size}}.
 % Standard errors may be unreliable.
 
 
-}
+%}
 \note{
 
 
   While theoretically nice, this function is not recommended
-  in general since its value is always negative (linear predictors
+  in general since its value is always negative
+  (linear predictors
   ought to be unbounded in general). A \code{\link{loglink}}
   link for argument \code{lmu} is recommended instead.
 
 
-  Numerical instability may occur when \code{theta} is close to 0 or 1.
-  Values of \code{theta} which are less than or equal to 0 can be
+  Numerical instability may occur when \code{theta}
+  is close to 0 or 1.
+  Values of \code{theta} which are less than or
+  equal to 0 can be
   replaced by \code{bvalue}
   before computing the link function value.
   See \code{\link{Links}}.
@@ -161,21 +213,21 @@ plot(nbcanlink(mymu, size = kmatrix) ~ mymu, las = 1,
 }
 
 # Estimate the parameters from some simulated data
-ndata <- data.frame(x2 = runif(nn <- 100))
+ndata <- data.frame(x2 = runif(nn <- 500))
 ndata <- transform(ndata, eta1 = -1 - 1 * x2,  # eta1 < 0
                           size1 = exp(1),
                           size2 = exp(2))
 ndata <- transform(ndata,
             mu1 = nbcanlink(eta1, size = size1, inverse = TRUE),
             mu2 = nbcanlink(eta1, size = size2, inverse = TRUE))
-ndata <- transform(ndata, y1 = rnbinom(nn, mu = mu1, size = size1),
-                          y2 = rnbinom(nn, mu = mu2, size = size2))
+ndata <- transform(ndata, y1 = rnbinom(nn, mu = mu1, size1),
+                          y2 = rnbinom(nn, mu = mu2, size2))
 summary(ndata)
 
-nbcfit <- vglm(cbind(y1, y2) ~ x2,
-            negbinomial(lmu = "nbcanlink", imethod = 1),  # Try this
-#            negbinomial(lmu = "nbcanlink", imethod = 2),  # Try this
-            data = ndata, trace = TRUE)
+nbcfit <-
+  vglm(cbind(y1, y2) ~ x2,  #  crit = "c",
+       negbinomial(lmu = "nbcanlink"),
+       data = ndata, trace = TRUE)
 coef(nbcfit, matrix = TRUE)
 summary(nbcfit)
 }
@@ -190,7 +242,8 @@ summary(nbcfit)
 
 
 % 20150714; yettodo: fix up this and getting it going.
-% Hint: the working weights are treated as diagonal, whereas it isn't!
+% Hint: the working weights are treated as diagonal,
+% whereas it isn't!
 
 
 

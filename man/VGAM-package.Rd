@@ -253,7 +253,8 @@ Vector generalized linear and additive extreme value models.
 
 Yee, T. W. and Wild, C. J. (1996)
 Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B, Methodological},
+\emph{Journal of the Royal Statistical Society,
+      Series B, Methodological},
 \bold{58}, 481--493.
 
 
@@ -287,18 +288,17 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-
-  Yee, T. W. (2014)
-  Reduced-rank vector generalized linear models with two linear predictors.
-  \emph{Computational Statistics and Data Analysis},
-  \bold{71}, 889--902.
-
+Yee, T. W. (2014)
+Reduced-rank vector generalized linear models with two linear predictors.
+\emph{Computational Statistics and Data Analysis},
+\bold{71}, 889--902.
 
 
-Yee, T. W. and Ma, C. (2022)
-  Generally--altered, --inflated, --truncated and --deflated regression,
-  with application to heaped and seeped data.
+
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
 \emph{In preparation}.
+
 
 
 % \emph{Under review}.
@@ -307,12 +307,17 @@ Yee, T. W. and Ma, C. (2022)
 Yee, T. W. (2022)
 On the Hauck-Donner effect in Wald tests:
 Detection, tipping points and parameter space characterization,
-\emph{Journal of the American Statistical Association}, in press.
+\emph{Journal of the American Statistical Association},
+\bold{117}, 1763--1774.
+\doi{10.1080/01621459.2021.1886936}.
+
+
+% number = {540},
+% Issue = {540},
 
 
 
-
-Yee, T. W. and Somchit, C. and Wild, C. J. (2022)
+Yee, T. W. and Somchit, C. and Wild, C. J. (2023)
 Penalized vector generalized additive models.
 Manuscript in preparation.
 

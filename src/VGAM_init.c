@@ -15,6 +15,7 @@ extern void eimpnbinomspecialp(void *, void *, void *, void *, void *, void *);
 extern void lerchphi123(void *, void *, void *, void *, void *, void *, void *, void *);
 extern void m2accc(void *, void *, void *, void *, void *, void *, void *, void *);
 extern void mux111ccc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+extern void mux111ddd(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 extern void mux15ccc(void *, void *, void *, void *, void *);
 extern void mux2ccc(void *, void *, void *, void *, void *, void *);
 extern void mux22ccc(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
@@ -56,6 +57,7 @@ static const R_CMethodDef CEntries[] = {
     {"lerchphi123",        (DL_FUNC) &lerchphi123,         8},
     {"m2accc",                (DL_FUNC) &m2accc,                 8},
     {"mux111ccc",             (DL_FUNC) &mux111ccc,             11},
+    {"mux111ddd",             (DL_FUNC) &mux111ddd,             12},
     {"mux15ccc",              (DL_FUNC) &mux15ccc,               5},
     {"mux2ccc",               (DL_FUNC) &mux2ccc,                6},
     {"mux22ccc",              (DL_FUNC) &mux22ccc,              10},

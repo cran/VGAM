@@ -127,7 +127,7 @@ and \code{link} must match.
 
 
 }
-\examples{
+\examples{\dontrun{
 # Example 1
 tdata <- data.frame(y = rtriangle(n <- 3000, theta = 3/4))
 fit <- vglm(y ~ 1, triangle(link = "identitylink"), tdata,
@@ -146,7 +146,7 @@ Coef(fit)  # The MLE is the 3rd order statistic, which is 0.3.
 fit <- vglm(y ~ 1, triangle(link = "identitylink"), rdata,
             trace = TRUE, crit = "coef", maxit = 1001)
 Coef(fit)  # The MLE is the 3rd order statistic, which is 0.3.
-}
+}}
 \keyword{models}
 \keyword{regression}
 

@@ -9,6 +9,7 @@
   \code{lsigma},
   \code{isigma},
   \code{gsigma},
+  \code{eq.mean},
   \code{nsimEI} and
   \code{parallel}.
 
@@ -27,6 +28,7 @@ TypicalVGAMfamilyFunction(lsigma = "loglink",
                                            x4          = list(),
                                            x5          = list()),
                           gsigma = exp(-5:5),
+                          eq.mean = FALSE,
                           parallel = TRUE,
                           ishrinkage = 0.95,
                           nointercept = NULL, imethod = 1,
@@ -38,7 +40,7 @@ TypicalVGAMfamilyFunction(lsigma = "loglink",
                           multiple.responses = FALSE, earg.link = FALSE,
                           whitespace = FALSE, bred = FALSE, lss = TRUE,
                           oim = FALSE, nsimEIM = 100, byrow.arg = FALSE,
-                          zero = NULL)
+                          nrfs = 1, zero = NULL)
 }
 \arguments{
 %                         apply.parint = FALSE,
@@ -128,6 +130,17 @@ TypicalVGAMfamilyFunction(lsigma = "loglink",
 
 % Then the actual search values will be
 % \code{unique(sort(c(gshape, 1/gshape)))}, etc.
+
+
+  }
+  \item{eq.mean}{
+  Logical.
+  Constrain all the means to be equal?
+  This type of argument is simpler than \code{parallel}
+  because only a single \code{TRUE} or \code{FALSE}
+  can be assigned; not a formula.
+  Thus if \code{TRUE} then it will be enforced over all
+  variables.
 
 
   }
@@ -332,7 +345,24 @@ except for \eqn{X_2}.
 
 
   }
-  \item{zero}{
+  \item{nrfs}{
+    Numeric, a value in \eqn{[0, 1]}.
+    Experimental argument for allowing a mixture of
+    Newton-Raphson and Fisher scoring.
+    The working weights are taken as a linear combination
+    of the two.
+    If \code{nrfs = 0} then Newton-Raphson is used,
+    i.e., the OIM is wholly used.
+    If \code{nrfs = 1} then Fisher scoring is used,
+    i.e., the EIM is wholly used.
+    If convergence is successful then one might expect
+    Newton-Raphson to be faster than Fisher scoring
+    because the former has an order-2 convergence rate while
+    the latter has a linear rate.
+
+
+  },
+\item{zero}{
   Either an integer vector, or a vector of character strings.
 
 
@@ -595,7 +625,10 @@ New York, USA: \emph{Springer}.
 Kosmidis, I. and Firth, D. (2009).
 Bias reduction in exponential family nonlinear models.
 \emph{Biometrika},
-\bold{96}(4), 793--804.
+\bold{96}, 793--804.
+
+
+%\bold{96}(4), 793--804.
 
 
 %Kosmidis, I. and Firth, D. (2010).
@@ -605,12 +638,12 @@ Bias reduction in exponential family nonlinear models.
 
 
 
-Miranda-Soberanis, V. F. and Yee, T. W. (2018).
+Miranda-Soberanis, V. F. and Yee, T. W. (2019).
 New link functions for distribution--specific
 quantile regression based on vector generalized linear and
 additive models.
-Manuscript in preparation.
-
+\emph{Journal of Probability and Statistics},
+\bold{5}, 1--11.
 
 
 

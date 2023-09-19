@@ -24,6 +24,9 @@ vgam.fit <-
            sm.osps.list = NULL,  # mf,
            ...) {
 
+    if (length(slot(family, "start1")))
+      eval(slot(family, "start1"))
+
 
   mgcvvgam <- length(sm.osps.list) > 0
 
@@ -265,8 +268,8 @@ vgam.fit <-
 
       new.coeffs <- tfit$coefficients  # c.list$coeff
 
-      if (length(slot(family, "middle")))
-        eval(slot(family, "middle"))
+      if (length(slot(family, "middle1")))
+        eval(slot(family, "middle1"))
 
       eta <- fv + offset
       mu <- slot(family, "linkinv")(eta, extra = extra)
@@ -343,8 +346,8 @@ vgam.fit <-
     xnrow.X.vlm <- dnrow.X.vlm[[2]]
     ynrow.X.vlm <- dnrow.X.vlm[[1]]
 
-  if (length(slot(family, "fini")))
-    eval(slot(family, "fini"))
+  if (length(slot(family, "fini1")))
+    eval(slot(family, "fini1"))
 
 
   if (M > 1)

@@ -19,6 +19,9 @@ vglm.fit <-
            extra = NULL,
            Terms = Terms, function.name = "vglm", ...) {
 
+    if (length(slot(family, "start1")))
+      eval(slot(family, "start1"))
+
   if (is.null(criterion <- control$criterion))
     criterion <- "coefficients"
 
@@ -187,8 +190,8 @@ vglm.fit <-
     fv <- tfit$fitted.values
     new.coeffs <- tfit$coefficients  # c.list$coeff
 
-    if (length(slot(family, "middle")))
-      eval(slot(family, "middle"))
+    if (length(slot(family, "middle1")))
+      eval(slot(family, "middle1"))
 
     eta <- fv + offset
     mu <- slot(family, "linkinv")(eta, extra = extra)
@@ -269,8 +272,8 @@ vglm.fit <-
         new.coeffs <- (1-stepsize) * old.coeffs +
                          stepsize  * new.coeffs.save
 
-        if (length(slot(family, "middle")))
-          eval(slot(family, "middle"))
+        if (length(slot(family, "middle1")))
+          eval(slot(family, "middle1"))
 
         fv <- X.vlm.save %*% new.coeffs
         if (M > 1)
@@ -377,8 +380,8 @@ vglm.fit <-
   xnrow.X.vlm <- dnrow.X.vlm[[2]]
   ynrow.X.vlm <- dnrow.X.vlm[[1]]
 
-  if (length(slot(family, "fini")))
-    eval(slot(family, "fini"))
+  if (length(slot(family, "fini1")))
+    eval(slot(family, "fini1"))
 
   if (M > 1)
     fv <- matrix(fv, n, M)

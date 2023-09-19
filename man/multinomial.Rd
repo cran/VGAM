@@ -207,6 +207,51 @@ of GAITD regression).
 \references{
 
 
+Agresti, A. (2013).
+\emph{Categorical Data Analysis},
+3rd ed. Hoboken, NJ, USA: Wiley.
+
+
+
+Anderson, J. A. (1984).
+Regression and ordered categorical variables.
+\emph{Journal of the Royal Statistical Society, Series B,
+  Methodological},
+\bold{46}, 1--30.
+
+
+
+Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009).
+\emph{The Elements of Statistical Learning: Data Mining,
+      Inference and Prediction},
+2nd ed.
+New York, USA: Springer-Verlag.
+
+
+
+McCullagh, P. and Nelder, J. A. (1989).
+\emph{Generalized Linear Models}, 2nd ed.
+London: Chapman & Hall.
+
+
+
+%Simonoff, J. S. (2003).
+%\emph{Analyzing Categorical Data},
+%%New York, USA: Springer-Verlag.
+
+
+Tutz, G. (2012).
+\emph{Regression for Categorical Data},
+Cambridge: Cambridge University Press.
+
+
+
+Yee, T. W. and Hastie, T. J. (2003).
+Reduced-rank vector generalized linear models.
+\emph{Statistical Modelling},
+\bold{3}, 15--41.
+
+
 
 Yee, T. W. (2010).
 The \pkg{VGAM} package for categorical data analysis.
@@ -221,54 +266,9 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-Yee, T. W. and Hastie, T. J. (2003).
-Reduced-rank vector generalized linear models.
-\emph{Statistical Modelling},
-\bold{3}, 15--41.
-
-
-
-Yee, T. W. and Ma, C. (2022).
-Generally--altered, --inflated, --truncated
-and --deflated regression,
-with application to heaped and seeped data.
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
 \emph{In preparation}.
-
-
-
-McCullagh, P. and Nelder, J. A. (1989).
-\emph{Generalized Linear Models}, 2nd ed.
-London: Chapman & Hall.
-
-
-Agresti, A. (2013).
-\emph{Categorical Data Analysis},
-3rd ed. Hoboken, NJ, USA: Wiley.
-
-
-Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009).
-\emph{The Elements of Statistical Learning: Data Mining,
-      Inference and Prediction},
-2nd ed.
-New York, USA: Springer-Verlag.
-
-
-%Simonoff, J. S. (2003).
-%\emph{Analyzing Categorical Data},
-%%New York, USA: Springer-Verlag.
-
-
-Anderson, J. A. (1984).
-Regression and ordered categorical variables.
-\emph{Journal of the Royal Statistical Society, Series B,
-  Methodological},
-\bold{46}, 1--30.
-
-
-Tutz, G. (2012).
-\emph{Regression for Categorical Data},
-Cambridge: Cambridge University Press.
-
 
 
 %Further information and examples on categorical data analysis

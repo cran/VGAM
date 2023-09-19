@@ -42,7 +42,7 @@ specialsvglm(object, \dots)
 }
 \details{
   This extractor function was motivated by GAITD regression
-  (Yee and Ma, 2021)
+  (Yee and Ma, 2023)
   where the values from three disjoint sets are referred
   to as \emph{special}.
   More generally, S4 methods functions can be written so that
@@ -76,10 +76,10 @@ specialsvglm(object, \dots)
 
 }
 \references{
-  Yee, T. W. and Ma, C. (2022).
-  Generally--altered, --inflated, --truncated and --deflated regression,
-  with application to heaped and seeped data.
-  \emph{In preparation}.
+
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
+\emph{In preparation}.
 
 
 

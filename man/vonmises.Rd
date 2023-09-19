@@ -87,6 +87,15 @@ vonmises(llocation = extlogitlink(min = 0, max = 2*pi),
  \eqn{\eta_2=\log(k)}{eta2=log(k)} for this family function.
 
 
+
+% The distribution is also known as the
+% circular normal distribution, and it
+% approaches a normal distribution with
+% large concentration parameter $\kappa$:
+% its variance is $1 / \kappa$.
+
+
+
 }
 \value{
   An object of class \code{"vglmff"}

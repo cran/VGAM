@@ -33,8 +33,8 @@ cauchy1(scale.arg = 1, llocation = "identitylink", ilocation = NULL,
   \item{imethod}{
   Integer, either 1 or 2 or 3.
   Initial method, three algorithms are implemented.
-  The user should try all possible values to help avoid converging
-  to a local solution.
+  The user should try all possible values to help avoid
+  converging to a local solution.
   Also, choose the another value if convergence fails, or use
   \code{ilocation} and/or \code{iscale}.
 
@@ -69,26 +69,25 @@ cauchy1(scale.arg = 1, llocation = "identitylink", ilocation = NULL,
 
 
   If the scale parameter is known (\code{cauchy1}) then there
-  may be multiple local maximum likelihood solutions for the location
-  parameter. However, if both location and scale parameters are to
-  be estimated (\code{cauchy}) then there is a unique maximum
-  likelihood solution provided \eqn{n > 2} and less than half the data
-  are located at any one point.
+  may be multiple local maximum likelihood solutions for the
+  location parameter. However, if both location and scale
+  parameters are to be estimated (\code{cauchy}) then there
+  is a unique maximum likelihood solution provided \eqn{n >
+  2} and less than half the data are located at any one point.
 
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object is used by modelling
+  functions such as \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 }
 \section{Warning }{
-  It is well-known that the Cauchy distribution may have local
-  maximums in its likelihood function;
-  make full use of \code{imethod}, \code{ilocation}, \code{iscale}
-  etc.
+  It is well-known that the Cauchy distribution may have
+  local maximums in its likelihood function; make full use of
+  \code{imethod}, \code{ilocation}, \code{iscale} etc.
 
 
 }
@@ -108,7 +107,8 @@ likelihood equation has multiple roots.
 
 
 Copas, J. B. (1975).
-On the unimodality of the likelihood for the Cauchy distribution.
+On the unimodality of the likelihood for the Cauchy
+distribution.
 \emph{Biometrika},
 \bold{62}, 701--704.
 
@@ -130,8 +130,8 @@ Observed versus expected Fisher information.
   value for \eqn{a}{a} on a 1-D grid.
   If convergence to the global maximum is not acheieved then
   it also pays to select a wide range
-  of initial values via the \code{ilocation} and/or \code{iscale}
-  and/or \code{imethod} arguments.
+  of initial values via the \code{ilocation} and/or
+  \code{iscale} and/or \code{imethod} arguments.
 
 
 }
@@ -150,7 +150,7 @@ set.seed(123)
 cdata <- data.frame(x2 = runif(nn <- 1000))
 cdata <- transform(cdata, loc = exp(1 + 0.5 * x2), scale = exp(1))
 cdata <- transform(cdata, y2 = rcauchy(nn, loc, scale))
-fit2 <- vglm(y2 ~ x2, cauchy(lloc = "loglink"), data = cdata, trace = TRUE)
+fit2 <- vglm(y2 ~ x2, cauchy(lloc = "loglink"), data = cdata)
 coef(fit2, matrix = TRUE)
 head(fitted(fit2))  # Location estimates
 summary(fit2)

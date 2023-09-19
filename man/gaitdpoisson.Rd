@@ -3,19 +3,21 @@
 % 20200928; gaitdpoisson.mix.Rd was the template
 %\alias{gapoissonff}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Generally--Altered, --Inflated, --Truncated and Deflated
+\title{ Generally Altered, Inflated, Truncated
+        and Deflated
         Poisson Regression
 
 
 }
 \description{
-  Fits a generally--altered, --inflated --truncated and deflated
-  Poisson regression by MLE.
-  The GAITD combo model having 7 types of special values
-  is implemented.
-  This allows mixtures of Poissons on nested and/or partitioned
-  support as well as a multinomial logit model for
-  (nonparametric) altered, inflated and deflated values.
+  Fits a generally altered, inflated, truncated
+  and deflated Poisson regression by MLE.
+  The GAITD combo model having 7 types of special
+  values is implemented.
+  This allows mixtures of Poissons on nested
+  and/or partitioned support as well as a
+  multinomial logit model for (nonparametric)
+  altered, inflated and deflated values.
   Truncation may include the upper tail.
 
 
@@ -244,7 +246,7 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
 
     
 
-    For the GIT--Pois--Pois submodel,
+    For the GIT--Pois submodel,
     after plotting the responses,
     if the distribution of the spikes
     above the nominal probabilities
@@ -258,7 +260,7 @@ gaitdpoisson(a.mix = NULL, i.mix = NULL, d.mix = NULL,
     \code{eq.ap = TRUE}
     (so that \code{lambda.p == lambda.p})
     would be a good idea for the
-    GAT--Pois--Pois if the shape of the altered probabilities
+    GAT--Pois if the shape of the altered probabilities
     is roughly the same as the parent distribution.
 
 
@@ -584,8 +586,8 @@ explained by an example.
 
 
   Two mixture submodels that may be fitted can be abbreviated
-  GAT--Pois--Pois or
-  GIT--Pois--Pois.
+  GAT--Pois or
+  GIT--Pois.
   For the GAT model
   the distribution being fitted is a (spliced) mixture
   of two Poissons with differing (partitioned) support.
@@ -707,9 +709,8 @@ and \code{gaitdpoisson(i.mlm = 0)}.
   
 }
 \references{
-Yee, T. W. and Ma, C. (2022).
-Generally--altered, --inflated, --truncated and --deflated
-regression, with application to heaped and seeped data.
+Yee, T. W. and Ma, C. (2023)
+Generally altered, inflated, truncated and deflated regression.
 \emph{In preparation}.
 
 
@@ -737,50 +738,51 @@ regression, with application to heaped and seeped data.
 
 \section{Warning }{
   Amateurs tend to be overzealous fitting
-  zero-inflated models when the fitted mean is low---the
-  warning of \code{\link[mgcv:ziP]{ziP}} should be heeded.
-  For GAITD regression the warning applies
-  more strongly and generally;
-  here to \emph{all}
-  \code{i.mix}, \code{i.mlm},
-  \code{d.mix} and \code{d.mlm} values,
-  not just 0.
-  Even one misspecified special value usually will cause
+  zero-inflated models when the
+  fitted mean is low---the warning of
+  \code{\link[mgcv:ziP]{ziP}} should be heeded.
+  For GAITD regression the warning applies more
+  strongly and generally; here to \emph{all}
+  \code{i.mix}, \code{i.mlm}, \code{d.mix} and
+  \code{d.mlm} values, not just 0.  Even one
+  misspecified special value usually will cause
   convergence problems.
-  
 
 
+
   
-  Default values for this and similar family functions
-  may change in the future, e.g., \code{eq.ap} and \code{eq.ip}.
-  Important internal changes might occur too, such as the
+  Default values for this and similar family
+  functions may change in the future, e.g.,
+  \code{eq.ap} and \code{eq.ip}.  Important
+  internal changes might occur too, such as the
   ordering of the linear/additive predictors and
-  the quantities returned as the fitted values.  
+  the quantities returned as the fitted values.
 
 
   
   Using \code{i.mlm} requires more caution
-  than \code{a.mlm} because
-  gross inflation is ideally needed for it to work safely.
+  than \code{a.mlm} because gross inflation
+  is ideally needed for it to work safely.
   Ditto for \code{i.mix} versus \code{a.mix}.
   Data exhibiting deflation or little to no
-  inflation will produce
-  numerical problems,
-  hence set \code{trace = TRUE} to monitor convergence.
-  More than c.10 IRLS iterations should raise suspicion.
+  inflation will produce numerical problems,
+  hence set \code{trace = TRUE} to monitor
+  convergence.  More than c.10 IRLS iterations
+  should raise suspicion.
 
 
 
-  Ranking the four operators by difficulty, the easiest is
-  truncation followed by alteration, then inflation and
-  the most difficult is deflation.
-  The latter needs good initial values and the current
-  default will probably not work on some data sets.
+  Ranking the four operators by difficulty,
+  the easiest is truncation followed by
+  alteration, then inflation and the most
+  difficult is deflation.  The latter needs
+  good initial values and the current default
+  will probably not work on some data sets.
   Studying the spikeplot is time very well spent.
-  In general it is very easy to specify an \emph{overfitting}
-  model so it is a good idea to split the data into
-  training and test sets.
-  
+  In general it is very easy to specify an
+  \emph{overfitting} model so it is a good idea
+  to split the data into training and test sets.
+
 
 
 
@@ -790,14 +792,14 @@ regression, with application to heaped and seeped data.
 
 
 
-  This function is quite memory-hungry with respect to
-  \code{length(c(a.mix, i.mix, d.mix, a.mlm, i.mlm, d.mlm))}.
-  On consuming something different,
-  because all values of the NBP vector need to be positive
-  it pays to be economical with respect to \code{d.mlm}
-  especially so that
-  one does not consume up probabilities unnecessarily
-  so to speak.
+  This function is quite memory-hungry with
+  respect to \code{length(c(a.mix, i.mix, d.mix,
+  a.mlm, i.mlm, d.mlm))}.  On consuming something
+  different, because all values of the NBP vector
+  need to be positive it pays to be economical
+  with respect to \code{d.mlm} especially so
+  that one does not consume up probabilities
+  unnecessarily so to speak.
 
   
   
@@ -810,15 +812,15 @@ regression, with application to heaped and seeped data.
 
 
 
-  It is often a good idea to set \code{eq.ip = TRUE},
-  especially when \code{length(i.mix)} is not much more than
-  2 or the values
-  of \code{i.mix} are not spread over the range of the response.
-  This way the estimation can borrow strength from both the
-  inflated and non-inflated values.
-  If the \code{i.mix} values form a single small
-  cluster then this can easily create estimation
-  difficulties---the
+  It is often a good idea to set \code{eq.ip =
+  TRUE}, especially when \code{length(i.mix)}
+  is not much more than 2 or the values of
+  \code{i.mix} are not spread over the range
+  of the response.  This way the estimation
+  can borrow strength from both the inflated
+  and non-inflated values.  If the \code{i.mix}
+  values form a single small cluster then this
+  can easily create estimation difficulties---the
   idea is somewhat similar to multicollinearity.
   The same holds for \code{d.mix}.
 
@@ -830,42 +832,43 @@ regression, with application to heaped and seeped data.
 
 \author{ T. W. Yee}
 \note{
-  Numerical problems can easily arise because of the exceeding
-  flexibility of this distribution and/or the lack of
-  sizeable inflation/deflation; it is a good idea to
-  gain experience with simulated data first before applying
-  it to real data.
-  Numerical problems may arise if any of the special values
-  are in remote places of the support, e.g.,
-  a value \code{y} such that \code{dpois(y, lambda.p)} is
-  very close to 0. This is because the ratio of two
-  tiny values can be unstable.
+  Numerical problems can easily arise because
+  of the exceeding flexibility of this
+  distribution and/or the lack of sizeable
+  inflation/deflation; it is a good idea to gain
+  experience with simulated data first before
+  applying it to real data.
+  Numerical problems may arise if any of the
+  special values are in remote places of the
+  support, e.g., a value \code{y} such that
+  \code{dpois(y, lambda.p)} is very close to
+  0. This is because the ratio of two tiny values
+  can be unstable.
 
   
 
-  Good initial values may be difficult to obtain using
-  self-starting
-  procedures, especially when there are covariates.
-  If so, then it is
+  Good initial values may be difficult to obtain
+  using self-starting procedures, especially
+  when there are covariates.  If so, then it is
   advisable to use a trick: fit an intercept-only
-  model first and then
-  use \code{etastart = predict(int.only.model)}
-  to fit the model
-  with covariates.
-  This uses the simpler model as a stepping-stone.
+  model first and then use \code{etastart =
+  predict(int.only.model)} to fit the model
+  with covariates.  This uses the simpler model
+  as a stepping-stone.
 
 
   
 
 
-  The labelling of the linear/additive predictors has been
-  abbreviated to reduce space.
-  For example, \code{multilogitlink(pobs.mix)} and
-  \code{multilogitlink(pstr.mix)} would be more accurately
-  \code{multilogitlink(cbind(pobs.mix, pstr.mix))}
-  because one grand MLM is fitted.
-  This shortening may result in modifications needed in other
-  parts of \pkg{VGAM} to compensate.
+  The labelling of the linear/additive predictors
+  has been abbreviated to reduce space.  For
+  example, \code{multilogitlink(pobs.mix)} and
+  \code{multilogitlink(pstr.mix)} would be more
+  accurately \code{multilogitlink(cbind(pobs.mix,
+  pstr.mix))} because one grand MLM is fitted.
+  This shortening may result in modifications
+  needed in other parts of \pkg{VGAM} to
+  compensate.
 
   
 
@@ -883,13 +886,13 @@ regression, with application to heaped and seeped data.
   
 
   Due to its complexity,
-  the HDE test \code{\link{hdeff}} is currently unavailable
-  for GAITD regressions. 
+  the HDE test \code{\link{hdeff}} is currently
+  unavailable for GAITD regressions.
 
 
   
-  Randomized quantile residuals (RQRs) are available;
-  see \code{\link{residualsvglm}}.
+  Randomized quantile residuals (RQRs) are
+  available; see \code{\link{residualsvglm}}.
 
 
 

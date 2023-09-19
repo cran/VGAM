@@ -95,7 +95,8 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
   \code{\link{gammaR}} for the 2-parameter gamma distribution,
   \code{\link{lgamma1}},
   \code{\link{lindley}},
-  \code{\link{simulate.vlm}}.
+  \code{\link{simulate.vlm}},
+  \code{\link{gammaff.mm}}.
 
 
 }

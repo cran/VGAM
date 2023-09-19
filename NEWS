@@ -1,3 +1,46 @@
+                CHANGES IN VGAM VERSION 1.1-9
+
+NEW FEATURES
+
+    o   Soon: VGAM will require R >= 4.4.0 because plot.profile
+        will move from \pkg{MASS} to \pkg{stats}. Sorry!
+    o   Yettodo: modify dgaitdlog() to be like
+        dgaitdpois() in terms of safeguarding against too
+        much deflation and inflation (to return NaN).
+        Ditto to dgaitdzeta() and dgaitdnbinom().
+        Ditto for the p-type functions.
+    o   New family functions: gammaff.mm(), hurea(d).
+    o   New generic and/or methods functions: cops().
+    o   acat(), cumulative(), cratio(), propodds(), sratio() handles
+        argument 'thresholds' equalling 'symmetric1' and 'symmetric0'.
+        Note from version 1.1-8 that 'equidistant' was added.
+    o   Tested okay on R 4.3.0.
+
+
+BUG FIXES and CHANGES
+
+    o   wald.stat(..., orig.SE = TRUE, values0 = values0)
+        assumed that values0 == 0.
+    o   [rq]zinegbin() did not handle the case 'munb = NULL'
+        when 'prob' was specified. Thanks to Giuseppe D for
+        finding this bug.
+    o   acat(), cumulative(), cratio(), propodds(), sratio()
+        must have an intercept term.
+    o   For vglm.fit(), slot "middle" is now "middle1",
+        "fini" is now "fini1", and a new "start1" slot added.
+    o   bigamma.mckay() moved into VGAMdata 1.1-9.
+    o   nakagami() has a zero = "shape" argument.
+    o   [dp]gaitdpois() have more range checking, e.g., for too
+        much deflation and inflation.
+    o   For more speed, several slow-checking .Rd files
+        have been changed by using \dontrun{}.
+    o   summary(posbernoulli.tb()) failed to print the confidence
+        interval. Thanks to Carl Schwarz for picking this up.
+    o   DFLOAT() changed to DBLE() in some .f files.
+
+
+
+
                 CHANGES IN VGAM VERSION 1.1-8
 
 NEW FEATURES

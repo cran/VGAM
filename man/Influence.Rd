@@ -29,8 +29,8 @@ Influence.vglm(object, weighted = TRUE, \dots)
   \item{weighted}{
     Logical. Include the prior weights?
     Currently only \code{TRUE} is accepted.
-    This might change in the future and/or the default value might
-    change.
+    This might change in the future and/or
+    the default value might change.
 
 
   }
@@ -50,11 +50,15 @@ Influence.vglm(object, weighted = TRUE, \dots)
 
 }
 \details{
-  Influence functions are useful in fields such as sample survey
-  theory, e.g., \pkg{survey}.
+  Influence functions are useful in fields such
+  as sample survey theory,
+  e.g.,
+  \pkg{survey},
+  \pkg{svyVGAM}.
   For each \eqn{i=1,\ldots,n}{i=1,...,n},
-  the formula is approximately \eqn{-I U} where \eqn{I} is the
-  weighted Fisher information matrix and U is
+  the formula is approximately \eqn{-I U}
+  where \eqn{I} is the weighted Fisher
+  information matrix and U is
   the \eqn{i}th score vector.
   
 
@@ -68,7 +72,8 @@ Influence.vglm(object, weighted = TRUE, \dots)
 
 %}
 \section{Warning}{
-  This function is currently experimental and defaults may change.
+  This function is currently experimental and
+  defaults may change.
   Use with caution!
   The functions here should not be confused with
   \code{\link[stats]{lm.influence}}.
