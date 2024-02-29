@@ -40,6 +40,9 @@ copsvglm(object, beta.range = c(-5, 6),
     Convergence failure may occur if this
     argument is too wide so it is a good
     idea to vary this argument.
+    In fact, it is strongly recommended that
+    several values be fed into this argument
+    to help ensure the proper solution is obtained.
 
 
   }
@@ -99,8 +102,15 @@ copsvglm(object, beta.range = c(-5, 6),
   The answers returned by this function only
   make sense if the COPSs are in the
   interior of the parameter space.
+  This function was written specifically for
+  logistic regression but has much wider
+  applicability.
+  Currently the result returned depends critically
+  on \code{beta.range} so that the answer should
+  be checked after several values are fed into
+  that argument.
 
-  
+
 
 }
 \value{
@@ -116,9 +126,9 @@ copsvglm(object, beta.range = c(-5, 6),
 
 
 
-Yee, T. W. (2021).
-Some new results concerning the Hauck-Donner effect.
-\emph{Manuscript in preparation}.
+%Yee, T. W. (2021).
+%Some new results concerning the Hauck-Donner effect.
+%\emph{Manuscript in preparation}.
 
 
 
@@ -126,6 +136,12 @@ Some new results concerning the Hauck-Donner effect.
 %Some new results concerning the Wald tests and
 %the parameter space.
 %\emph{In preparation}.
+
+
+
+Yee, T. W. (2024).
+Musings and new results on the parameter space.
+\emph{Under review}.
 
 
 
@@ -159,11 +175,9 @@ Some new results concerning the Hauck-Donner effect.
 
 \examples{
 \dontrun{data("xs.nz", package = "VGAMdata")
-data1 <-
-    na.omit(xs.nz[, c("age", "cancer", "sex")])
-fit1 <- vglm(cancer ~ age + sex, binomialff,
-             data = data1)
-cops(fit1)
+data1 <- na.omit(xs.nz[, c("age", "cancer", "sex")])
+fit1 <- vglm(cancer ~ age + sex, binomialff, data1)
+cops(fit1)  # 'beta.range' is okay here
 }}
 
 % Add >=1 standard keywords, see file 'KEYWORDS'
@@ -171,6 +185,7 @@ cops(fit1)
 \keyword{models}
 \keyword{regression}
 \keyword{htest}
+%\concept{Hauck--Donner effect}
 
 
 

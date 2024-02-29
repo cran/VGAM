@@ -7,20 +7,24 @@
 
 }
 \usage{
-propodds(reverse = TRUE, whitespace = FALSE,
-         thresholds = c("unconstrained", "equidistant",
-         "symmetric1", "symmetric0"), Treverse = reverse,
-         Tref = if (Treverse) "M" else 1)
+propodds(reverse = TRUE, whitespace = FALSE, ynames = FALSE,
+   Thresh = NULL, Trev = reverse, Tref = if (Trev) "M" else 1)
 }
 \arguments{
 
   \item{reverse, whitespace}{
   Logical.
-  Fed into arguments of the same name in \code{\link{cumulative}}.
+  Fed into arguments of the same name in
+  \code{\link{cumulative}}.
 
 }
-  \item{thresholds, Treverse, Tref}{
-  Fed into arguments of the same name in \code{\link{cumulative}}.
+  \item{ynames}{
+  See \code{\link{multinomial}} for information.
+
+  }
+  \item{Thresh, Trev, Tref}{
+  Fed into arguments of the same name in
+  \code{\link{cumulative}}.
 
 }
 }

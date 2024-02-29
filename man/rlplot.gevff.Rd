@@ -152,8 +152,9 @@ range(i2@post$rlplot$upper - i1@post$rlplot$upper)  # Should be near 0
 range(i2@post$rlplot$lower - i1@post$rlplot$lower)  # Should be near 0
 }
 }
-\keyword{graphs}
-\keyword{models}
+%\keyword{graphs}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 
 

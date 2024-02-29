@@ -256,6 +256,7 @@ distribution is.
   \code{\link{vglm}},
   \code{\link{confintvglm}},
   \code{\link{vcovvlm}},
+  \code{\link{summary.rrvglm}},
   \code{\link[stats]{summary.glm}},
   \code{\link[stats]{summary.lm}},
   \code{\link[base]{summary}},

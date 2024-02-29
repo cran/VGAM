@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -239,10 +239,11 @@ trinormal.control <-
                                 .zero , M = M,
                          predictors.names = predictors.names,
                                 M1 = M1)
-  }), list( .zero = zero,
-            .eq.sd   = eq.sd,
-            .eq.mean = eq.mean,
-            .eq.cor  = eq.cor  ))),
+  }),
+  list( .zero = zero,
+        .eq.sd   = eq.sd,
+        .eq.mean = eq.mean,
+        .eq.cor  = eq.cor  ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 9,
@@ -4504,15 +4505,16 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
               theta2eta(irho,   .lrho ,   earg = .erho ) else
               NULL)
     }
-  }), list( .lmean1 = lmean1, .lmean2 = lmean2,
-            .emean1 = emean1, .emean2 = emean2,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
-            .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
-            .imethod = imethod,
-            .est.rho = est.rho, .rho.arg = rho.arg,
-            .imean1 = imean1, .imean2 = imean2,
-            .isd1   = isd1,   .isd2   = isd2,
-            .irho   = irho ))),
+  }),
+  list( .lmean1 = lmean1, .lmean2 = lmean2,
+        .emean1 = emean1, .emean2 = emean2,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+        .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
+        .imethod = imethod,
+        .est.rho = est.rho, .rho.arg = rho.arg,
+        .imean1 = imean1, .imean2 = imean2,
+        .isd1   = isd1,   .isd2   = isd2,
+        .irho   = irho ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     NOS <- ncol(eta) / c(M1 = 5)
     mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
@@ -4583,12 +4585,13 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
         ll.elts
       }
     }
-  } , list( .lmean1 = lmean1, .lmean2 = lmean2,
-            .emean1 = emean1, .emean2 = emean2,
-            .est.rho = est.rho, .rho.arg = rho.arg,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
-            .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
-            .imethod = imethod ))),
+  } ,
+  list( .lmean1 = lmean1, .lmean2 = lmean2,
+        .emean1 = emean1, .emean2 = emean2,
+        .est.rho = est.rho, .rho.arg = rho.arg,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+        .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
+        .imethod = imethod ))),
   vfamily = c("binormal"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     mean1 <- eta2theta(eta[, 1], .lmean1, earg = .emean1)
@@ -4604,12 +4607,13 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
              all(is.finite(sd2  )) && all(0 < sd2) &&
              all(is.finite(Rho  )) && all(abs(Rho) < 1)
     okay1
-  } , list( .lmean1 = lmean1, .lmean2 = lmean2,
-            .emean1 = emean1, .emean2 = emean2,
-            .est.rho = est.rho, .rho.arg = rho.arg,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
-            .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
-            .imethod = imethod ))),
+  } ,
+  list( .lmean1 = lmean1, .lmean2 = lmean2,
+        .emean1 = emean1, .emean2 = emean2,
+        .est.rho = est.rho, .rho.arg = rho.arg,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+        .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
+        .imethod = imethod ))),
 
 
 
@@ -4687,13 +4691,13 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
                  dl.dsd2,
                  if ( .est.rho ) dl.drho else NULL) *
     dthetas.detas
-  }), list( .lmean1 = lmean1, .lmean2 = lmean2,
-            .emean1 = emean1, .emean2 = emean2,
-            .est.rho = est.rho, .rho.arg = rho.arg,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
-            .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
-            .imethod = imethod ))),
-
+  }),
+  list( .lmean1 = lmean1, .lmean2 = lmean2,
+        .emean1 = emean1, .emean2 = emean2,
+        .est.rho = est.rho, .rho.arg = rho.arg,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+        .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
+        .imethod = imethod ))),
   weight = eval(substitute(expression({
     wz <- matrix(0.0, n, dimm(M))
     wz[, iam(1, 1, M)] <- SigmaInv[, iam(1, 1, M = 2)]
@@ -4713,12 +4717,13 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
         wz[, iam(ilocal, jlocal, M)] * dthetas.detas[, ilocal] *
                                        dthetas.detas[, jlocal]
       c(w) * wz
-  }), list( .lmean1 = lmean1, .lmean2 = lmean2,
-            .emean1 = emean1, .emean2 = emean2,
-            .est.rho = est.rho, .rho.arg = rho.arg,
-            .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
-            .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
-            .imethod = imethod ))))
+  }),
+  list( .lmean1 = lmean1, .lmean2 = lmean2,
+        .emean1 = emean1, .emean2 = emean2,
+        .est.rho = est.rho, .rho.arg = rho.arg,
+        .lsd1   = lsd1  , .lsd2   = lsd2  , .lrho = lrho,
+        .esd1   = esd1  , .esd2   = esd2  , .erho = erho,
+        .imethod = imethod ))))
 }  # binormal
 
 

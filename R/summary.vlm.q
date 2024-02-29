@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -15,7 +15,8 @@
 
 
 summaryvlm <-
-  function(object, correlation = FALSE, dispersion = NULL,
+  function(object, correlation = FALSE,
+           dispersion = NULL,
            Colnames = c("Estimate", "Std. Error",
                         "z value", "Pr(>|z|)"),
            presid = TRUE,  # FALSE
@@ -29,9 +30,9 @@ summaryvlm <-
 
 
   if (is.logical(object@misc$BFGS) && object@misc$BFGS)
-    warning("the estimated variance-covariance matrix is ",
-            "usually inaccurate because the working weight matrices ",
-            "are obtained by a crude BFGS quasi-Newton approximation")
+    warning("the estimated var-cov matrix is ",
+    "usually inaccurate because the working weight matrices ",
+    "are obtained by a crude BFGS quasi-Newton approximation")
 
   M <- object@misc$M
   n <- object@misc$n
@@ -49,8 +50,8 @@ summaryvlm <-
   }
 
   if (anyNA(Coefs)) {
-    warning("Some NAs in the coefficients---no summary is ",
-            " provided; returning 'object'")
+    warning("Some NAs in the coefficients---no",
+    " summary is provided; returning 'object'")
     return(object)
   }
   rdf <- object@df.residual
@@ -75,7 +76,7 @@ summaryvlm <-
   } else {
     if (is.numeric(object@misc$dispersion) &&
         object@misc$dispersion != dispersion)
-      warning("overriding the value of object@misc$dispersion")
+      warning("overriding object@misc$dispersion")
     object@misc$estimated.dispersion <- FALSE
   }
   sigma <- sqrt(dispersion)  # Can be a vector
@@ -107,8 +108,9 @@ summaryvlm <-
         object@misc$estimated.dispersion)
       coef3 <- coef3[, -4]  # Delete the pvalues column
   } else {
-    coef3[, 1] <- coef3[, 2] <- coef3[, 3] <- coef3[, 4] <- NA
-    coef3 <- coef3[, -4]  # Delete the pvalues column
+    coef3[, 1] <- coef3[, 2] <-
+    coef3[, 3] <- coef3[, 4] <- NA
+    coef3 <- coef3[, -4]  # Delete the pvals coln
   }
 
 
@@ -287,7 +289,7 @@ show.summary.vlm <- function(x, digits = NULL, quote = TRUE,
   rdf <- x@df[2]
   if (length(Presid) && all(!is.na(Presid))) {
     if (rdf/M > 5) {
-      rq <-  apply(as.matrix(Presid), 2, quantile)  # 5 x M
+      rq <- apply(as.matrix(Presid), 2, quantile)  # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
       cat("\nPearson residuals:\n")

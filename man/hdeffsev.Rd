@@ -245,6 +245,7 @@ cbind(severity = ansm$sev,
 \keyword{models}
 \keyword{regression}
 \keyword{htest}
+\concept{Hauck--Donner effect}
 
 
 

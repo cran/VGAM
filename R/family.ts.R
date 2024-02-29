@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -210,7 +210,6 @@ rrar.control <-
 
       keep.assign <- attr(x, "assign")
       x <- x[-indices, , drop = FALSE]
-      if (is.R())
           attr(x, "assign") <- keep.assign
       y <- y[-indices, , drop = FALSE]
       w <- w[-indices]

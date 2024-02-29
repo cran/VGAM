@@ -2,22 +2,26 @@
 \alias{rrvglm}
 %- Also NEED an `\alias' for EACH other topic documented here.
 \title{Fitting Reduced-Rank Vector Generalized Linear Models
-       (RR-VGLMs)}
+  (RR-VGLMs)
+  and Doubly Constrained RR-VGLMs (DRR-VGLMs)
+}
 \description{
   A \emph{reduced-rank vector generalized linear model} (RR-VGLM)
   is fitted.  RR-VGLMs are VGLMs but some of the constraint
-  matrices are estimated.  In this documentation, \eqn{M} is the
-  number of linear predictors.
+  matrices are estimated.
+  \emph{Doubly constrained} RR-VGLMs (DRR-VGLMs)
+  can also be fitted.
 
 }
 \usage{
-rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
+rrvglm(formula, family = stop("'family' is unassigned"),
        data = list(), weights = NULL, subset = NULL,
        na.action = na.fail, etastart = NULL, mustart = NULL,
-       coefstart = NULL, control = rrvglm.control(...), offset = NULL,
-       method = "rrvglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,
-       contrasts = NULL, constraints = NULL, extra = NULL,
-       qr.arg = FALSE, smart = TRUE, ...)
+       coefstart = NULL, control = rrvglm.control(...),
+       offset = NULL, method = "rrvglm.fit", model = FALSE,
+       x.arg = TRUE, y.arg = TRUE, contrasts = NULL,
+       constraints = NULL, extra = NULL, qr.arg = FALSE,
+       smart = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -28,9 +32,11 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
 
   \item{data}{
-  an optional data frame containing the variables in the model.
+  an optional data frame containing the
+    variables in the model.
   By default the variables are taken from
-  \code{environment(formula)}, typically the environment from
+  \code{environment(formula)}, typically
+  the environment from
   which \code{rrvglm} is called.
 
   }
@@ -43,7 +49,8 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
 
   }
   \item{control}{
-  a list of parameters for controlling the fitting process.
+    a list of parameters for controlling
+    the fitting process.
   See \code{\link{rrvglm.control}} for details.
 
   }
@@ -53,7 +60,8 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
   \item{method}{
   the method to be used in fitting the model.
-  The default (and presently only) method \code{rrvglm.fit}
+  The default (and presently only)
+  method \code{rrvglm.fit}
   uses iteratively reweighted least squares (IRLS).
 
   }
@@ -80,7 +88,10 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
   }
 }
 \details{
-  The central formula is given by
+  In this documentation, \eqn{M} is the
+  number of linear predictors.
+  For RR-VGLMs,
+  the central formula is given by
   \deqn{\eta = B_1^T x_1 + A \nu}{%
          eta = B_1^T x_1 + A nu}
   where \eqn{x_1}{x1} is a vector
@@ -91,7 +102,10 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
   Here, \eqn{\eta}{eta} is a vector of linear predictors,
   e.g., the \eqn{m}th element is
   \eqn{\eta_m = \log(E[Y_m])}{eta_m = log(E[Y_m])} for the
-  \eqn{m}th Poisson response.  The matrices \eqn{B_1}, \eqn{A} and
+  \eqn{m}th Poisson response.
+  The dimension of \eqn{\eta} is \eqn{M} by
+  definition.
+  The matrices \eqn{B_1}, \eqn{A} and
   \eqn{C} are estimated from the data, i.e., contain the
   regression coefficients.  For ecologists, the central
   formula represents a \emph{constrained linear ordination}
@@ -99,11 +113,14 @@ rrvglm(formula, family = stop("argument 'family' needs to be assigned"),
   means that the response is a monotonically increasing or
   decreasing function of the latent variables.
 
+
+
   For identifiability
   it is common to enforce \emph{corner constraints} on \eqn{A}:
   by default, the top \eqn{R} by \eqn{R} submatrix is fixed to
   be the order-\eqn{R} identity matrix and the remainder of \eqn{A}
   is estimated.
+
 
 
   The underlying algorithm of RR-VGLMs is iteratively
@@ -160,6 +177,16 @@ two linear predictors.
 
 
 
+Yee, T. W., Frigau, L. and Ma, C. (2024).
+Heaping and seeping,
+GAITD regression and
+doubly constrained reduced rank vector
+generalized linear models,
+in smoking studies.
+\emph{In preparation}.
+
+
+
 %  Documentation accompanying the \pkg{VGAM} package at
 %  \url{http://www.stat.auckland.ac.nz/~yee}
 %  contains further information and examples.
@@ -178,6 +205,7 @@ two linear predictors.
 
 
   In an example below, a rank-1 \emph{stereotype}
+  (reduced-rank multinomial logit)
   model of Anderson (1984) is fitted to some car data.
   The reduced-rank regression is performed, adjusting for
   two covariates. Setting a trivial constraint matrix
@@ -208,6 +236,38 @@ two linear predictors.
   variable.
 
 
+  To fit DRR-VGLMs see the arguments \code{H.A} and
+  \code{H.C} in \code{\link{rrvglm.control}}.
+  DRR-VGLMs provide structure to the \bold{A} and
+  \bold{C} matrices via constraint matrices.
+  So instead of them being general unstructured
+  matrices, one can make many of their elements to
+  have the same value, else be identically equal
+  to 0, for example. This gives greater control
+  over what is modelled as a latent variable,
+  e.g., if one subset of the covariates are physical
+  variables and the remainder are psychological
+  variables then a rank-2 model might have each
+  latent variable a linear combination of each
+  of the types of variables separately.
+
+
+% Called "variant1" internally: 20231228:
+
+
+  Incidentally,
+  before I forget, if \code{Corner = TRUE} then
+  the \code{@H.A} slot indicates that
+  the \code{Index.corner} rows of \bold{A}
+  are estimated. This is a remnant of some
+  internal computations because it is
+  more efficient to estimate the entire
+  \bold{A}, bar rows \code{str0}, and
+  then normalize it.
+  In contrast, optimizing over a subset of
+  \bold{A} is slow.
+
+
 }
 
 % zzz; arguments of \code{\link{vglm}} are definitive. They're 
@@ -215,6 +275,7 @@ two linear predictors.
 
 \seealso{
     \code{\link{rrvglm.control}},
+    \code{\link{summary.drrvglm}},
     \code{\link{lvplot.rrvglm}}
     (same as \code{\link{biplot.rrvglm}}),
     \code{\link{rrvglm-class}},
@@ -229,11 +290,11 @@ two linear predictors.
     \code{\link{negbinomial}}
     \code{\link{zipoisson}}
     and \code{\link{zinegbinomial}}.
-    (see Yee (2014) and \pkg{COZIGAM}).
+    (see Yee (2014)
+    and what was formerly in \pkg{COZIGAM}).
     Methods functions include
     \code{\link{Coef.rrvglm}},
     \code{\link{calibrate.rrvglm}},
-    \code{summary.rrvglm},
     etc.
     Data include
     \code{\link{crashi}}.
@@ -252,14 +313,14 @@ two linear predictors.
 # Example 1: RR NB with Var(Y) = mu + delta1 * mu^delta2
 nn <- 1000       # Number of observations
 delta1 <- 3.0    # Specify this
-delta2 <- 1.5    # Specify this; should be greater than unity
+delta2 <- 1.5    # Specify this; should be greater than 1
 a21 <- 2 - delta2
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
 mydata <- transform(mydata,
-                    y2 = rnbinom(nn, mu = mu, size = (1/delta1)*mu^a21))
-plot(y2 ~ x2, data = mydata, pch = "+", col = 'blue', las = 1,
-     main = paste("Var(Y) = mu + ", delta1, " * mu^", delta2, sep = ""))
+    y2 = rnbinom(nn, mu = mu, size = (1/delta1)*mu^a21))
+plot(y2 ~ x2, mydata, pch = "+", col = 'blue', las = 1,
+  main = paste0("Var(Y) = mu + ", delta1, " * mu^", delta2))
 rrnb2 <- rrvglm(y2 ~ x2 + x3, negbinomial(zero = NULL),
                 data = mydata, trace = TRUE)
 
@@ -268,28 +329,29 @@ beta11.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(mu)"]
 beta21.hat <- Coef(rrnb2)@B1["(Intercept)", "loglink(size)"]
 (delta1.hat <- exp(a21.hat * beta11.hat - beta21.hat))
 (delta2.hat <- 2 - a21.hat)
-# exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2])  # delta1.hat
+# delta1.hat:
+# exp(a21.hat * predict(rrnb2)[1,1] - predict(rrnb2)[1,2])
 summary(rrnb2)
 
-# Obtain a 95 percent confidence interval for delta2:
+# Obtain a 95 percent CI for delta2:
 se.a21.hat <- sqrt(vcov(rrnb2)["I(latvar.mat)", "I(latvar.mat)"])
 ci.a21 <- a21.hat +  c(-1, 1) * 1.96 * se.a21.hat
-(ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent confidence interval
+(ci.delta2 <- 2 - rev(ci.a21))  # The 95 percent CI
 
 Confint.rrnb(rrnb2)  # Quick way to get it
 
-# Plot the abundances and fitted values against the latent variable
+# Plot the abundances and fitted values vs the latent variable
 plot(y2 ~ latvar(rrnb2), data = mydata, col = "blue",
      xlab = "Latent variable", las = 1)
 ooo <- order(latvar(rrnb2))
-lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "orange")
+lines(fitted(rrnb2)[ooo] ~ latvar(rrnb2)[ooo], col = "red")
 
-# Example 2: stereotype model (reduced-rank multinomial logit model)
+# Example 2: stereotype model (RR multinomial logit model)
 data(car.all)
 scar <- subset(car.all,
-          is.element(Country, c("Germany", "USA", "Japan", "Korea")))
+    is.element(Country, c("Germany", "USA", "Japan", "Korea")))
 fcols <- c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
-scar[, -fcols] <- scale(scar[, -fcols])  # Standardize all numerical vars
+scar[, -fcols] <- scale(scar[, -fcols])  # Stdze all numerical vars
 ones <- matrix(1, 3, 1)
 clist <- list("(Intercept)" = diag(3), Width = ones, Weight = ones,
               Disp. = diag(3), Tank = diag(3), Price = diag(3),
@@ -299,16 +361,21 @@ fit <- rrvglm(Country ~ Width + Weight + Disp. + Tank +
               Price + Frt.Leg.Room,
               multinomial, data = scar, Rank = 2, trace = TRUE,
               constraints = clist, noRRR = ~ 1 + Width + Weight,
-              Uncor = TRUE, Corner = FALSE, Bestof = 2)
+#             Uncor = TRUE, Corner = FALSE,  # orig.
+              Index.corner = c(1, 3),  # Less correlation
+              Bestof = 3)
 fit@misc$deviance  # A history of the fits
 Coef(fit)
 biplot(fit, chull = TRUE, scores = TRUE, clty = 2, Ccex = 2,
-       ccol = "blue", scol = "orange", Ccol = "darkgreen", Clwd = 2,
-       main = "1=Germany, 2=Japan, 3=Korea, 4=USA")
+       ccol = "blue", scol = "orange", Ccol = "darkgreen",
+       Clwd = 2, main = "1=Germany, 2=Japan, 3=Korea, 4=USA")
 }
 }
 \keyword{models}
 \keyword{regression}
+\concept{Reduced-Rank Vector Generalized Linear Model}
+\concept{Reduced-rank regression}
+
 
 %index <- with(car.all, Country == "Germany" | Country == "USA" |
 %                       Country == "Japan"   | Country == "Korea")

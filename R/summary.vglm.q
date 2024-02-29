@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -148,7 +148,7 @@ summaryvglm <-
 
 
   answer
-}  # summary.vglm
+}  # summaryvglm
 
 
 
@@ -157,32 +157,26 @@ summaryvglm <-
 
 
 
-setMethod("summaryvglmS4VGAM",  signature(VGAMff = "cumulative"),
-  function(object,
-           VGAMff,
-           ...) {
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "cumulative"),
+  function(object, VGAMff, ...) {
    object@post <-
      callNextMethod(VGAMff = VGAMff,
-                    object = object,
-                    ...)
+                    object = object, ...)
   object@post$reverse <- object@misc$reverse
-
-
   cfit <- coef(object, matrix = TRUE)
   M <- ncol(cfit)
-  if (rownames(cfit)[1] ==  "(Intercept)")
-    object@post$expcoeffs <- exp(coef(object)[-(1:M)])
-
-
+  if (rownames(cfit)[1] ==  "(Intercept)" &&
+  identical(constraints(object)[[1]], diag(M)))
+object@post$expcoeffs <- exp(coef(object)[-(1:M)])
   object@post
 })
 
 
 
-setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "cumulative"),
-  function(object,
-           VGAMff,
-           ...) {
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "cumulative"),
+  function(object, VGAMff, ...) {
 
   if (length(object@post$expcoeffs)) {
     cat("\nExponentiated coefficients:\n")
@@ -199,8 +193,92 @@ setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "cumulative"),
 
 
 
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "cratio"),
+  function(object, VGAMff, ...) {
+   object@post <-
+     callNextMethod(VGAMff = VGAMff,
+                    object = object, ...)
+  object@post$reverse <- object@misc$reverse
+  cfit <- coef(object, matrix = TRUE)
+  M <- ncol(cfit)
+  if (rownames(cfit)[1] ==  "(Intercept)" &&
+  identical(constraints(object)[[1]], diag(M)))
+object@post$expcoeffs <- exp(coef(object)[-(1:M)])
+  object@post
+})
 
-setMethod("summaryvglmS4VGAM",  signature(VGAMff = "multinomial"),
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "cratio"),
+  function(object, VGAMff, ...) {
+  if (length(object@post$expcoeffs)) {
+    cat("\nExponentiated coefficients:\n")
+    print(object@post$expcoeffs)
+  }
+})
+
+
+
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "sratio"),
+  function(object, VGAMff, ...) {
+   object@post <-
+     callNextMethod(VGAMff = VGAMff,
+                    object = object, ...)
+  object@post$reverse <- object@misc$reverse
+  cfit <- coef(object, matrix = TRUE)
+  M <- ncol(cfit)
+  if (rownames(cfit)[1] ==  "(Intercept)" &&
+  identical(constraints(object)[[1]], diag(M)))
+object@post$expcoeffs <- exp(coef(object)[-(1:M)])
+  object@post
+})
+
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "sratio"),
+  function(object, VGAMff, ...) {
+  if (length(object@post$expcoeffs)) {
+    cat("\nExponentiated coefficients:\n")
+    print(object@post$expcoeffs)
+  }
+})
+
+
+
+
+
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "acat"),
+  function(object, VGAMff, ...) {
+   object@post <-
+     callNextMethod(VGAMff = VGAMff,
+                    object = object, ...)
+  object@post$reverse <- object@misc$reverse
+  cfit <- coef(object, matrix = TRUE)
+  M <- ncol(cfit)
+  if (rownames(cfit)[1] ==  "(Intercept)" &&
+  identical(constraints(object)[[1]], diag(M)))
+object@post$expcoeffs <- exp(coef(object)[-(1:M)])
+  object@post
+})
+
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "acat"),
+  function(object, VGAMff, ...) {
+  if (length(object@post$expcoeffs)) {
+    cat("\nExponentiated coefficients:\n")
+    print(object@post$expcoeffs)
+  }
+})
+
+
+
+
+
+
+
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "multinomial"),
   function(object,
            VGAMff,
            ...) {
@@ -214,12 +292,13 @@ setMethod("summaryvglmS4VGAM",  signature(VGAMff = "multinomial"),
 
 
 
-setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "multinomial"),
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "multinomial"),
   function(object,
            VGAMff,
            ...) {
-  cat("\nReference group is level ", object@post$refLevel,
-      " of the response\n")
+  cat("\nReference group is level ",
+      object@post$refLevel, " of the response\n")
   callNextMethod(VGAMff = VGAMff,
                  object = object,
                  ...)
@@ -227,7 +306,8 @@ setMethod("showsummaryvglmS4VGAM",  signature(VGAMff = "multinomial"),
 
 
 
-setMethod("summaryvglmS4VGAM",  signature(VGAMff = "VGAMcategorical"),
+setMethod("summaryvglmS4VGAM",
+          signature(VGAMff = "VGAMcategorical"),
   function(object,
            VGAMff,
            ...) {
@@ -235,7 +315,8 @@ setMethod("summaryvglmS4VGAM",  signature(VGAMff = "VGAMcategorical"),
 })
 
 
-setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "VGAMcategorical"),
+setMethod("showsummaryvglmS4VGAM",
+          signature(VGAMff = "VGAMcategorical"),
   function(object,
            VGAMff,
            ...) {
@@ -249,7 +330,8 @@ setMethod("showsummaryvglmS4VGAM", signature(VGAMff = "VGAMcategorical"),
 
 
 
-setMethod("logLik",  "summary.vglm", function(object, ...)
+setMethod("logLik",  "summary.vglm",
+          function(object, ...)
   logLik.vlm(object, ...))
 
 
@@ -339,25 +421,27 @@ show.summary.vglm <-
                 length(x@coef4wald0))
 
   if (length(x@coef4lrt0)) {  # && wald0.arg
-    cat(if (top.half.only) "\nParametric coefficients:" else
-        "\nLikelihood ratio test coefficients:", "\n")
+    cat(if (top.half.only)
+    "\nParametric coefficients:" else
+    "\nLikelihood ratio test coefficients:", "\n")
     printCoefmat(x@coef4lrt0, digits = digits,
-                 signif.stars = use.signif.stars,
-                 na.print = "NA",
-                 P.values = TRUE, has.Pvalue = TRUE,
-                 signif.legend = sum(how.many[-1]) == 0)  # Last one
+      signif.stars = use.signif.stars,
+      na.print = "NA",
+      P.values = TRUE, has.Pvalue = TRUE,
+ signif.legend = sum(how.many[-1]) == 0)  # Last 1
     Situation <- 3
   }
 
 
 
   if (length(x@coef4score0)) {  # && wald0.arg
-    cat(if (top.half.only) "\nParametric coefficients:" else
+    cat(if (top.half.only)
+        "\nParametric coefficients:" else
         "\nRao score test coefficients:", "\n")
     printCoefmat(x@coef4score0, digits = digits,
-                 signif.stars = use.signif.stars,
-                 na.print = "NA",
-                 signif.legend = sum(how.many[3]) == 0)  # Last one
+      signif.stars = use.signif.stars,
+      na.print = "NA",
+ signif.legend = sum(how.many[3]) == 0)  # Last 1
     Situation <- 4
   }
 

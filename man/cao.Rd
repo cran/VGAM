@@ -384,5 +384,6 @@ abline(h = Max(ap1), lty = 2, col = index)
 }
 \keyword{models}
 \keyword{regression}
+\concept{Constrained additive ordination}
 
 

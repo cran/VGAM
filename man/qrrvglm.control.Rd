@@ -405,8 +405,7 @@ qrrvglm.control(Rank = 1, Bestof = if (length(Cinit)) 1 else 10,
        where \eqn{x_1}{x_1} is a vector
        (usually just a 1 for an intercept),
        \eqn{x_2}{x_2} is a vector of environmental variables,
-       \eqn{\nu=C^T
-	 x_2}{nu=C^T x_2} is
+       \eqn{\nu=C^T x_2}{nu=C^T x_2} is
        a \eqn{R}-vector of latent variables, \eqn{e_m} is
   a vector of 0s but with a 1 in the \eqn{m}th position.
   QRR-VGLMs are an extension of RR-VGLMs and
@@ -658,8 +657,10 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr,
 sort(deviance(p1, history = TRUE))  # Iteration history
 }
 }
+\keyword{optimize}
 \keyword{models}
 \keyword{regression}
+\keyword{nonlinear}
 
 
 

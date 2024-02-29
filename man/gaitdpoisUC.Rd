@@ -445,9 +445,9 @@ nonparametric possible.
 }
 \references{
 
-Yee, T. W. and Ma, C. (2023)
+Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and deflated regression.
-\emph{In preparation}.
+\emph{Statistical Science}, \bold{39} (in press).
 
 
 % with application to heaped and seeped data.

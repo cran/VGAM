@@ -272,3 +272,4 @@ vgam(cbind(normal, mild, severe) ~ s(let),
 \keyword{models}
 \keyword{regression}
 \keyword{smooth}
+\concept{Vector Generalized Additive Model}

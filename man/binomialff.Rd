@@ -9,9 +9,10 @@
 
 
 
-% , where the dispersion parameter may be known or unknown.
+% , where the dispersion parameter may be
+% known or unknown.
 %dispersion = 1,
-%          onedpar = !multiple.responses, parallel = FALSE,
+% onedpar = !multiple.responses, parallel = FALSE,
 
 
 
@@ -218,6 +219,8 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
 \seealso{
     \code{\link{hdeff.vglm}},
     \code{\link{Links}},
+    \code{\link{alogitlink}},
+    \code{\link{asinlink}},
     \code{\link{rrvglm}},
     \code{\link{cqo}},
     \code{\link{cao}},
@@ -232,6 +235,7 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
     \code{\link{simulate.vlm}},
     \pkg{safeBinaryRegression},
     \code{\link{residualsvglm}}.
+
 
 
 

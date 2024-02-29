@@ -8,14 +8,12 @@
 }
 \usage{
 plotvgam.control(which.cf = NULL,
-                 xlim = NULL, ylim = NULL, llty = par()$lty,
-                 slty = "dashed", pcex = par()$cex,
-                 pch = par()$pch, pcol = par()$col,
-                 lcol = par()$col, rcol = par()$col,
-                 scol = par()$col, llwd = par()$lwd, slwd = par()$lwd,
-                 add.arg = FALSE, one.at.a.time = FALSE,
-                 .include.dots = TRUE, noxmean = FALSE,
-                 shade = FALSE, shcol = "gray80", ...)
+    xlim = NULL, ylim = NULL, llty = par()$lty, slty = "dashed",
+    pcex = par()$cex, pch = par()$pch, pcol = par()$col,
+    lcol = par()$col, rcol = par()$col, scol = par()$col,
+    llwd = par()$lwd, slwd = par()$lwd, add.arg = FALSE,
+    one.at.a.time = FALSE, .include.dots = TRUE, noxmean = FALSE,
+    shade = FALSE, shcol = "gray80", main = "", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -77,8 +75,14 @@ plotvgam.control(which.cf = NULL,
 
 
   }
+  \item{main}{
+  Character vector, recycled to the number needed.
+
+
+  }
   \item{\dots}{ Other arguments that may be fed into \code{par()}. }
   In the above, \eqn{M} is the number of linear/additive predictors.
+
 }
 \details{
   The most obvious features of \code{\link{plotvgam}} can be
@@ -118,7 +122,7 @@ Vector generalized additive models.
 \examples{
 plotvgam.control(lcol = c("red", "blue"), scol = "darkgreen", se = TRUE)
 }
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
-\keyword{smooth}
+%\keyword{smooth}
 \keyword{dplot}

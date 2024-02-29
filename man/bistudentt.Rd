@@ -32,8 +32,8 @@ bistudentt(ldf = "logloglink", lrho = "rhobitlink",
   The density function is
   \deqn{f(y_1, y_2; \nu, \rho) =
         \frac{1}{2\pi\sqrt{1-\rho^2}}
-	(1 + (y_1^2 + y_2^2 -
-	2\rho y_1 y_2) / (\nu (1-\rho^2)))^{-(\nu+2)/2} }{%
+        (1 + (y_1^2 + y_2^2 -
+        2\rho y_1 y_2) / (\nu (1-\rho^2)))^{-(\nu+2)/2} }{%
         f(y1, y2; nu, rho) =
         (1/(2*pi*sqrt(1-\rho^2))) *
 (1 + (y1^2 + y_2^2 - 2*rho*y1*y2) / (nu*(1-rho^2)))^(-(\nu+2)/2) }

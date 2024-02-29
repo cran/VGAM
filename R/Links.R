@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -163,7 +163,7 @@
          "length of argument 'earg'")
   if (llink == 0)
     stop("length(earg) == 0 not allowed")
-  if (llink == 1) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  if (llink == 1) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,
 
 
     if (is.list(earg[[1]]))
@@ -241,11 +241,12 @@
 
 
 
- namesof <- function(theta,
-                     link = "identitylink",
-                     earg = list(tag = tag, short = short),
-                     tag = FALSE,
-                     short = TRUE) {
+ namesof <-
+  function(theta,
+           link = "identitylink",
+           earg = list(tag = tag, short = short),
+           tag = FALSE,
+           short = TRUE) {
 
   funname.only <- strsplit(as.character(link), "(", fixed = TRUE)
   funname.only <- (funname.only[[1]])[1]
@@ -264,12 +265,28 @@
 
 
 
-link2list <- function(link
-                      ) {
+ link2list <- function(link
+                       ) {
 
   ans <- link
 
+
   fun.name <- as.character(ans[[1]])
+
+  ssp <- unlist(strsplit(fun.name, NULL))
+  which.b <- which(ssp == "(")
+  if (length(which.b))
+    fun.name <- paste(ssp[1:(which.b[1] - 1)],
+                      collapse = "")
+  fn.name.only <- !length(which.b)
+
+
+  if (!fn.name.only &&
+      length(ans) == 1 && is.list(ans) &&
+      is.character(ans[[1]])) {
+    ans <- str2lang(ans[[1]])
+  }
+
 
 
   big.list <- as.list(as.function(get(fun.name)))
@@ -281,12 +298,14 @@ link2list <- function(link
 
 
 
+
+
+
   t.index <- pmatch(names(ans[-1]), names(big.list))
-  t.index
   if (anyNA(t.index))
     stop("in '", fun.name, "' could not match argument(s) ",
-         paste('"', names(ans[-1])[is.na(t.index)], '"', sep = "",
-               collapse = ", "))
+         paste('"', names(ans[-1])[is.na(t.index)], '"',
+               sep = "", collapse = ", "))
 
 
   Big.list <- big.list

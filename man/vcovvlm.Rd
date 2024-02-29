@@ -1,12 +1,14 @@
 \name{vcovvlm}
 %\name{vcov}
-\alias{vcov}
+%\alias{vcov}    % 20240112; commented this out
 \alias{vcovvlm}
 \alias{vcovrrvglm}
+\alias{vcovdrrvglm}   % 20240112
 \alias{vcovqrrvglm}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Calculate Variance-Covariance Matrix for a Fitted
-        VLM or RR-VGLM
+\title{ Calculate Variance-Covariance Matrix for
+  a Fitted
+        VLM or RR-VGLM or DRR-VGLM
         or QRR-VGLM
         Object
 
@@ -14,22 +16,26 @@
 \description{
   Returns the variance-covariance matrix of the
   parameters of
-  a fitted \code{\link[VGAM]{vlm-class}} object or
-  a fitted \code{\link[VGAM]{rrvglm-class}} object.
+  a fitted \code{\link[VGAM]{vlm-class}} or
+  \code{\link[VGAM]{rrvglm-class}} or
+  \code{\link[VGAM]{drrvglm-class}} object.
 
 
 }
 \usage{
-vcov(object, \dots)
 vcovvlm(object, dispersion = NULL, untransform = FALSE,
         complete = TRUE, \dots)
+vcovrrvglm(object, \dots)
+vcovdrrvglm(object, \dots)
 vcovqrrvglm(object, \dots)
 }
+%vcov(object, \dots)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ A fitted model object,
   having class \code{\link[VGAM]{vlm-class}} or
   \code{\link[VGAM]{rrvglm-class}} or
+  \code{\link[VGAM]{drrvglm-class}} or
   \code{\link[VGAM]{qrrvglm-class}} or
   a superclass of such.
   The former includes a \code{\link{vglm}} object.
@@ -37,22 +43,33 @@ vcovqrrvglm(object, \dots)
 
   }
   \item{dispersion}{
-  Numerical. A value may be specified, else it
-  is estimated for quasi-GLMs (e.g., method of moments).
-  For almost all other types of VGLMs it is usually unity.
-  The value is multiplied by the raw variance-covariance matrix.
+    Numerical.
+    This argument should not be used as
+    \pkg{VGAM} will be phasing out
+    dispersion parameters.
+    Formerly, a value may be specified, else it
+  is estimated for quasi-GLMs
+  (e.g., method of moments).
+  For almost all other types of VGLMs it is
+  usually unity.
+  The value is multiplied by the raw
+  variance-covariance matrix.
 
 
   }
   \item{untransform}{
-  logical. For intercept-only models with trivial constraints;
-  if set \code{TRUE} then the parameter link function is inverted
-  to give the answer for the untransformed/raw parameter.
+    logical.
+    For intercept-only models with trivial
+    constraints;
+    if set \code{TRUE} then the parameter
+    link function is inverted
+    to give the answer for the untransformed/raw
+    parameter.
 
 
 
   }
- \item{complete}{An argument that is currently ignored.
+  \item{complete}{An argument currently ignored.
    Added only so that
    \code{linearHypothesis()} in \pkg{car}
    can be called.
@@ -88,10 +105,12 @@ vcovqrrvglm(object, \dots)
 
   For \code{"qrrvglm"} objects,
   \code{\link{vcovqrrvglm}}
-  is currently working with \code{Rank = 1} objects or
+  is currently working with \code{Rank = 1}
+  objects or
   when \code{I.tolerances = TRUE}.
   Then the answer is conditional given \bold{C}.
-  The code is based on \code{\link{model.matrixqrrvglm}}
+  The code is based on
+  \code{\link{model.matrixqrrvglm}}
   so that the \code{dimnames} are the same.
 
 

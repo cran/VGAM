@@ -202,21 +202,24 @@ Reduced-rank vector generalized linear models.
 
 
 }
-\examples{
-nn <- nrow(pneumo)  # x1, x2 and x3 are some unrelated covariates
+\examples{ set.seed(1)
+nn <- nrow(pneumo)  # x1--x3 are some unrelated covariates
 pneumo <-
   transform(pneumo, slet = scale(log(exposure.time)),
+                    imag = severe + 3,  # Fictitional!
                     x1 = rnorm(nn), x2 = rnorm(nn), x3 = rnorm(nn))
-fit <- rrvglm(cbind(normal, mild, severe) ~ slet + x1 + x2 + x3,
-              multinomial, data = pneumo, Rank = 2,
-              Corner = FALSE, Uncorrel = TRUE)
+fit <-
+  rrvglm(cbind(normal, mild, severe, imag) ~ slet + x1 + x2 + x3,
+#             Corner = FALSE, Uncorrel = TRUE,   # orig.
+              multinomial, data = pneumo, Rank = 2)
 \dontrun{
-lvplot(fit, chull = TRUE, scores = TRUE, clty = 2, ccol = "blue",
-       scol = "red", Ccol = "darkgreen", Clwd = 2, Ccex = 2,
+lvplot(fit, chull = TRUE, scores = TRUE, clty = 2, ccol = 4,
+       scol = "red", Ccol = "green3", Clwd = 2, Ccex = 2,
        main = "Biplot of some fictitional data") }
 }
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
-\keyword{graphs}
+%\keyword{graphs}
+\keyword{hplot}
 
 % pneumo$slet = scale(log(pneumo$exposure.time))

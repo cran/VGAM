@@ -251,6 +251,7 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
 \seealso{
   \code{\link{vglm}},
+  \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{fill1}}.
   The author's homepage has further documentation about
   the \code{xij} argument;
@@ -332,8 +333,10 @@ coef(fit3, matrix = TRUE)
 plotvgam(fit3, se = TRUE, lcol = 2, scol = 4, xlab = "dum1")
 }
 }
+\keyword{optimize}
 \keyword{models}
-\keyword{regression}
+\concept{Vector Generalized Linear Model}
+%\keyword{regression}
 
 
 

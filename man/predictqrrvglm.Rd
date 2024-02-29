@@ -93,6 +93,7 @@ max(abs(predict(p1, newdata = head(hspider), type = "res")-head(fitted(p1))))
 }
 }
 \keyword{models}
+\keyword{nonlinear}
 \keyword{regression}
 
 

@@ -213,13 +213,12 @@ C Output from Public domain Ratfor, version 1.04
       ilo = 1
       do23047 ayfnwr1v = 1,nb 
       call vinterv(tb(1), nbp1 ,tb(ayfnwr1v),dqlr5bse,pqzfxw4i)
-      call vbsplvd(tb,ifour4,tb(ayfnwr1v),dqlr5bse,work,g9fvdrbw,three3)
+      call vbsplvd(tb,4,tb(ayfnwr1v),dqlr5bse,work,g9fvdrbw,3)
       do23049 iii = 1,4 
       yw1(iii) = g9fvdrbw(iii,3) 
 23049 continue
 23050 continue
-      call vbsplvd(tb,ifour4,tb(ayfnwr1v+1),dqlr5bse,work,g9fvdrbw,three
-     *3)
+      call vbsplvd(tb,4,tb(ayfnwr1v+1),dqlr5bse,work,g9fvdrbw,3)
       do23051 iii = 1,4 
       yw2(iii) = g9fvdrbw(iii,3) - yw1(iii) 
 23051 continue
@@ -543,7 +542,7 @@ C Output from Public domain Ratfor, version 1.04
       double precision he7mqnvy(rvy1fpli),ghz9vuba(rvy1fpli),w(rvy1fpli)
      *,gkdx5jal(kuzxj1lo+4), bhcji9glto(kuzxj1lo), zvau2lct(kuzxj1lo),f6
      *lsuzax(kuzxj1lo),fvh2rwtc(kuzxj1lo),dcfir2no(kuzxj1lo)
-      double precision qaltf0nz,g9fvdrbw(4,1),work(16)
+      double precision qaltf0nz,g9fvdrbw(4,1), work(16)
       double precision w2svdbx3tk, wv2svdbx3tk
       integer yq6lorbx,ayfnwr1v,ilo,dqlr5bse,pqzfxw4i, nhnpt1zym1
       integer ifour4, hbsl0gto
@@ -570,8 +569,8 @@ C Output from Public domain Ratfor, version 1.04
       return
       endif
       endif
-      call vbsplvd(gkdx5jal,ifour4,he7mqnvy(ayfnwr1v),dqlr5bse,work,g9fv
-     *drbw,hbsl0gto)
+      call vbsplvd(gkdx5jal,4,he7mqnvy(ayfnwr1v),dqlr5bse,work,g9fvdrbw,
+     *1)
       yq6lorbx = dqlr5bse-4+1
       w2svdbx3tk = w(ayfnwr1v)**2
       wv2svdbx3tk = w2svdbx3tk * g9fvdrbw(1,1)

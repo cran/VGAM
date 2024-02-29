@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -23,7 +23,9 @@ summaryvgam <-
 
   newobject <- object
   class(newobject) <- "vglm"
-  stuff <- summaryvglm(newobject, dispersion = dispersion)
+  stuff <- summaryvglm(newobject,
+                       HDEtest = FALSE,  # 20231027
+                       dispersion = dispersion)
   rdf <- stuff@df[2] <- object@df.residual  # NA
 
   M <- object@misc$M

@@ -3,16 +3,16 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Beta-binomial Distribution Family Function }
 \description{
-  Fits a beta-binomial distribution by maximum likelihood
-  estimation.  The two parameters here are the mean and correlation
-  coefficient.
+  Fits a beta-binomial distribution by maximum
+  likelihood estimation.  The two parameters
+  here are the mean and correlation coefficient.
 
 
 }
 \usage{
 betabinomial(lmu = "logitlink", lrho = "logitlink",
-             irho = NULL, imethod = 1,
-             ishrinkage = 0.95, nsimEIM = NULL, zero = "rho")
+   irho = NULL, imethod = 1,
+   ishrinkage = 0.95, nsimEIM = NULL, zero = "rho")
 }
 %- maybe also 'usage' for other objects documented here.
 %            ishrinkage = 0.95, nsimEIM = NULL, zero = 2
@@ -20,10 +20,18 @@ betabinomial(lmu = "logitlink", lrho = "logitlink",
   \item{lmu, lrho}{
   Link functions applied to the two parameters.
   See \code{\link{Links}} for more choices.
-  The defaults ensure the parameters remain in \eqn{(0,1)},
+  The defaults ensure the parameters remain
+  in \eqn{(0,1)},
   however, see the warning below.
+  For \code{lrho},
+  \code{\link{log1plink}}
+  (with an offset \code{log(size - 1)}
+  for \eqn{\eta_2})
+  and \code{\link{cloglink}} may be very
+  good choices.
 
 
+  
   }
   \item{irho}{
   Optional initial value for the correlation parameter.  If given,
@@ -31,6 +39,7 @@ betabinomial(lmu = "logitlink", lrho = "logitlink",
   length. Assign this argument a value if a convergence failure
   occurs.  Having \code{irho = NULL} means an initial value is
   obtained internally, though this can give unsatisfactory results.
+
 
 
   }
@@ -125,29 +134,25 @@ betabinomial(lmu = "logitlink", lrho = "logitlink",
   such as \code{\link{vglm}}.
 
 
-  Suppose \code{fit} is a fitted beta-binomial model. Then
-  \code{fit@y} contains the sample proportions \eqn{y},
-  \code{fitted(fit)} returns estimates of \eqn{E(Y)}, and
-  \code{weights(fit, type="prior")} returns the number
-  of trials \eqn{N}.
+  Suppose \code{fit} is a fitted beta-binomial
+  model. Then \code{depvar(fit)}
+  are the sample proportions \eqn{y},
+  \code{fitted(fit)} returns estimates of
+  \eqn{E(Y)},
+  and \code{weights(fit, type = "prior")} returns
+  the number of trials \eqn{N}.
 
 
 }
 \references{
 
   Moore, D. F. and Tsiatis, A. (1991).
-  Robust estimation of the variance in moment methods for
+  Robust estimation of the variance in moment
+  methods for
   extra-binomial and extra-Poisson variation.
   \emph{Biometrics},
   \bold{47}, 383--401.
 
-
-Prentice, R. L. (1986).
-Binary regression using an extended beta-binomial distribution,
-with discussion of correlation induced by
-covariate measurement errors.
-\emph{Journal of the American Statistical Association},
-\bold{81}, 321--327.
 
 
 }
@@ -162,37 +167,54 @@ covariate measurement errors.
   \code{subset} argument of \code{\link{vglm}}.
 
 
-  The \emph{extended} beta-binomial distribution of Prentice
-  (1986) is currently not implemented in the \pkg{VGAM} package
-  as it has range-restrictions for the correlation parameter
-  that are currently too difficult to handle in this package.
-  However, try \code{lrho = "rhobitlink"}.
+
+  The \emph{extended} beta-binomial distribution
+  of Prentice (1986) 
+  implemented by \code{\link{extbetabinomial}}
+  is the preferred \pkg{VGAM}
+  family function for BBD regression.
+
+
 
 
 }
 \section{Warning }{
 
 
-  If the estimated rho parameter is close to 0 then it pays to
-  try \code{lrho = "rhobitlink"}. One day this may become the
-  default link function.
+  If the estimated rho parameter is close
+  to 0 then
+  a good solution is to use
+  \code{\link{extbetabinomial}}.
+  Or you could try
+  \code{lrho = "rhobitlink"}.
+
+  
+% One day this may become the
+% default link function.
 
 
-  This family function is prone to numerical difficulties due to
-  the expected information matrices not being positive-definite
-  or ill-conditioned over some regions of the parameter space.
-  If problems occur try setting \code{irho} to some numerical
-  value, \code{nsimEIM = 100}, say, or else use \code{etastart}
-  argument of \code{\link{vglm}}, etc.
+
+  This family function is prone to numerical
+  difficulties due to the expected information
+  matrices not being positive-definite or
+  ill-conditioned over some regions of the
+  parameter space.  If problems occur try
+  setting \code{irho} to some numerical
+  value, \code{nsimEIM = 100}, say, or
+  else use \code{etastart} argument of
+  \code{\link{vglm}}, etc.
 
 
 }
 \seealso{
+  \code{\link{extbetabinomial}},
   \code{\link{betabinomialff}},
   \code{\link{Betabinom}},
   \code{\link{binomialff}},
   \code{\link{betaff}},
   \code{\link{dirmultinomial}},
+  \code{\link{log1plink}},
+  \code{\link{cloglink}},
   \code{\link{lirat}},
   \code{\link{simulate.vlm}}.
 
@@ -237,7 +259,7 @@ for (gp in 1:4) {
   xx <- with(smalldf, hb[grp == gp])
   yy <- with(smalldf, fitted(fit2)[grp == gp])
   ooo <- order(xx)
-  lines(xx[ooo], yy[ooo], col = gp)
+  lines(xx[ooo], yy[ooo], col = gp, lwd = 2)
 } }
 }
 \keyword{models}

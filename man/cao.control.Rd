@@ -354,8 +354,10 @@ abline(a = 0, b = 1, lty = 2)
 persp(ap1, label = TRUE, col = 1:4)
 }
 }
+\keyword{optimize}
 \keyword{models}
 \keyword{regression}
+\concept{Constrained additive ordination}
 
 
 

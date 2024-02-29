@@ -233,5 +233,6 @@ persp(r2, xlim = c(-6, 5), ylim = c(-4, 5), theta = 10, phi = 20, zlim = c(0, 22
 }
 \keyword{models}
 \keyword{regression}
-\keyword{graphs}
+\keyword{nonlinear}
+%\keyword{graphs}
 

@@ -234,3 +234,4 @@ pneumo <- transform(pneumo, let = log(exposure.time))
 vglm(cbind(normal, mild, severe) ~ let, multinomial, data = pneumo)
 }
 \keyword{classes}
+\concept{Vector Generalized Linear Model}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -231,6 +231,16 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
 
+
+
+
+
+
+
+
+
+
+
  negbinomial <-
   function(
            zero = "size",  # Reinstated
@@ -238,39 +248,37 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
            deviance.arg = FALSE,
            type.fitted = c("mean", "quantiles"),
            percentiles = c(25, 50, 75),
+           vfl = FALSE,  # 20240203
            mds.min = 1e-3,
-           nsimEIM = 500, cutoff.prob = 0.999,  # Maxiter = 5000,
+           nsimEIM = 500,
+           cutoff.prob = 0.999,  # Maxiter = 5000,
            eps.trig = 1e-7,
            max.support = 4000,
-           max.chunk.MB = 30,  # max.memory = Inf is allowed
+ max.chunk.MB = 30,  # max.memory = Inf is allowed
            lmu = "loglink", lsize = "loglink",
            imethod = 1,
            imu = NULL,
            iprobs.y = NULL,  # 0.35,
            gprobs.y = ppoints(6),
            isize = NULL,
-           gsize.mux = exp(c(-30, -20, -15, -10, -6:3))) {
-
-
-
-
-
-
+ gsize.mux = exp(c(-30, -20, -15, -10, -6:3))) {
 
   if (!is.Numeric(imethod, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE) ||
+      integer.valued = TRUE, positive = TRUE) ||
      imethod > 2)
       stop("argument 'imethod' must be 1 or 2")
 
 
   if (!is.logical( deviance.arg ) ||
       length( deviance.arg ) != 1)
-    stop("argument 'deviance.arg' must be TRUE or FALSE")
+    stop("argument 'deviance.arg' must be T or F")
 
+  if (!is.logical(vfl) || length(vfl) != 1)
+    stop("argument 'vfl' must be TRUE or FALSE")
 
 
   type.fitted <- match.arg(type.fitted,
-                           c("mean", "quantiles"))[1]
+                 c("mean", "quantiles"))[1]
 
 
   lmunb <- as.list(substitute(lmu))
@@ -285,9 +293,9 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
   if (!is.Numeric(eps.trig, length.arg = 1,
-                  positive = TRUE) || eps.trig > 1e-5)
-    stop("argument 'eps.trig' must be positive and ",
-         "smaller in value")
+      positive = TRUE) || eps.trig > 1e-5)
+    stop("argument 'eps.trig' must be positive",
+         " and smaller in value")
 
   if (length(imunb) && !is.Numeric(imunb, positive = TRUE))
     stop("bad input for argument 'imu'")
@@ -296,19 +304,20 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
   if (!is.Numeric(cutoff.prob, length.arg = 1) ||
     cutoff.prob < 0.95 || cutoff.prob >= 1)
-    stop("range error in the argument 'cutoff.prob'; ",
+    stop("range error in the arg 'cutoff.prob'; ",
          "a value in [0.95, 1) is needed")
 
-    if (!is.Numeric(nsimEIM, length.arg = 1, integer.valued = TRUE))
+    if (!is.Numeric(nsimEIM, length.arg = 1,
+                    integer.valued = TRUE))
       stop("bad input for argument 'nsimEIM'")
     if (nsimEIM <= 10)
-      warning("argument 'nsimEIM' should be an integer ",
-               "greater than 10, say")
+      warning("argument 'nsimEIM' should be an ",
+               "integer greater than 10, say")
 
 
-    if (is.logical( parallel ) && parallel &&
-        !(is.null(zero) || all(is.na(zero)) || zero == ""))
-      stop("need to set 'zero = NULL' when parallel = TRUE")
+    if (is.logical(parallel) && parallel &&
+        !is.zero(zero))
+      stop("set 'zero = NULL' if parallel = TRUE")
 
 
 
@@ -317,11 +326,11 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
 
 
   blurb = c("Negative binomial distribution\n\n",
-            "Links:    ",
-            namesof("mu",   lmunb, earg = emunb), ", ",
-            namesof("size", lsize, earg = esize), "\n",
-            "Mean:     mu\n",
-            "Variance: mu * (1 + mu / size) for NB-2"),
+        "Links:    ",
+        namesof("mu",   lmunb, emunb), ", ",
+        namesof("size", lsize, esize), "\n",
+        "Mean:     mu\n",
+        "Variance: mu * (1 + mu / size) for NB-2"),
 
   charfun = eval(substitute(function(x, eta, extra = NULL,
                                      varfun = FALSE) {
@@ -332,32 +341,62 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       munb <- kmat / expm1(-eta[, vecTF, drop = FALSE])
       if (min(munb) <= 0) {
         munb[munb <= 0] <- median(munb[munb > 0])  # 0.1
-        warning("'munb' has some negative values. ",
+        warning("'munb' has some < 0 values. ",
                 "Using a temporary fix.")
       }
       munb
     } else {
-      eta2theta(eta[, vecTF, drop = FALSE], .lmunb , .emunb )
+      eta2theta(eta[, vecTF, drop = FALSE],
+                .lmunb , .emunb )
     }
 
     if (varfun) {
       munb * (1 + munb / kmat)
     } else {
-      (kmat / (kmat + munb - munb * exp(x * 1i)))^kmat
+   (kmat / (kmat + munb - munb * exp(x * 1i)))^kmat
     }
   }, list( .lmunb = lmunb, .lsize = lsize,
            .emunb = emunb, .esize = esize ))),
 
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel ,
-                           constraints = constraints)
+                       bool = .parallel ,
+                       constraints = constraints)
 
 
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
-  }), list( .parallel = parallel, .zero = zero ))),
+
+    if ( .vfl && M != 2)
+      stop("vfl = TRUE only allowed when M == 2")
+    LC <- length(constraints)
+    if ( .vfl && LC <= 2)
+      stop("vfl = T only allowed if ncol(x) > 2")
+    if ( .vfl &&
+       !(is.null( .zero ) || is.na( .zero ) ||
+        (is.character( .zero ) && .zero == "")))
+      stop("Need zero = NULL when vfl = TRUE")
+    if ( .vfl ) {
+      pterms <- 0
+      for (jay in 1:LC) {  # Include the intercept
+        if (!all(c(constraints[[jay]]) == 1)) {
+          pterms <- pterms + 1
+          constraints[[jay]] <- rbind(0, -1)
+        }
+      }  # jay
+      if (pterms == 0)
+        warning("no parallel terms... something",
+                " looks awry")
+    }  # vfl
+
+
+
+
+    constraints <- cm.zero.VGAM(constraints,
+             x = x, .zero , M = M,
+             predictors.names = predictors.names,
+             M1 = 2)
+  }),
+  list( .parallel = parallel, .vfl = vfl,
+        .zero = zero ))),
 
 
 
@@ -377,18 +416,22 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
          nsimEIM = .nsimEIM ,
          eps.trig = .eps.trig ,
          zero  = .zero ,
+         vfl  = .vfl , parallel = .parallel ,
          max.chunk.MB = .max.chunk.MB ,
          cutoff.prob = .cutoff.prob
          )
-  }, list( .zero = zero, .lsize = lsize, .lmunb = lmunb,
-           .type.fitted = type.fitted,
-           .percentiles = percentiles ,
-           .eps.trig = eps.trig,
-           .imethod = imethod,
-           .mds.min = mds.min,
-           .cutoff.prob = cutoff.prob,
-           .max.chunk.MB = max.chunk.MB,
-           .nsimEIM = nsimEIM ))),
+  },
+  list( .zero = zero, .lsize = lsize,
+        .lmunb = lmunb,
+        .type.fitted = type.fitted,
+        .percentiles = percentiles ,
+        .eps.trig = eps.trig,
+        .imethod = imethod,
+        .parallel = parallel, .vfl = vfl,
+        .mds.min = mds.min, .vfl = vfl,
+        .cutoff.prob = cutoff.prob,
+        .max.chunk.MB = max.chunk.MB,
+        .nsimEIM = nsimEIM ))),
 
   rqresslot = eval(substitute(
     function(mu, y, w, eta, extra = NULL) {
@@ -542,12 +585,13 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
                 .lmunb , earg = .emunb )
     }
 
-   type.fitted <- if (length(extra$type.fitted))
-                     extra$type.fitted else {
-                     warning("cannot find 'type.fitted'. ",
-                             "Returning the 'mean'.")
-                     "mean"
-                   }
+    type.fitted <-
+      if (length(extra$type.fitted))
+        extra$type.fitted else {
+        warning("cannot find 'type.fitted'. ",
+                "Returning the 'mean'.")
+                "mean"
+     }
     type.fitted <- match.arg(type.fitted,
                      c("mean", "quantiles"))[1]
     if (type.fitted == "mean") {

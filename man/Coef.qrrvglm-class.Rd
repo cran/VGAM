@@ -129,3 +129,4 @@ lvplot(p1, y = TRUE, lcol = 1:3, pch = 1:3, pcol = 1:3)
 # vvv print(Coef(p1), digits = 3)
 }
 \keyword{classes}
+\keyword{nonlinear}

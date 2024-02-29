@@ -1,33 +1,51 @@
 \name{chisq}
 \alias{chisq}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Chi-squared Distribution }
+\title{ Chi-squared and Chi Distributions }
 \description{
-    Maximum likelihood estimation of the degrees of freedom for
-    a chi-squared distribution.
+Maximum likelihood estimation of the degrees of freedom for
+a chi-squared distribution. Also fits the chi distribution.
 
 }
 \usage{
-chisq(link = "loglink", zero = NULL)
+chisq(link = "loglink", zero = NULL, squared = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{link, zero}{
-  See \code{\link{CommonVGAMffArguments}} for information.
+See \code{\link{CommonVGAMffArguments}} for
+information.
+
+  }
+  \item{squared}{
+Logical.
+Set \code{FALSE} for the chi distribution.
 
   }
 }
 \details{
-  The degrees of freedom is treated as a parameter to be estimated,
-  and as real (not integer).
+  The degrees of freedom is treated as a
+  real parameter to be estimated
+  and not as an integer.
   Being positive, a log link is used by default.
   Fisher scoring is used.
 
 
+  If a random variable has a chi-squared
+  distribution then the 
+  square root of the random variable
+  has a chi distribution.
+  For both distributions,
+  the fitted value is the mean.
+
+
+
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
+  An object of class \code{"vglmff"}
+(see \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+such as \code{\link{vglm}},
   and \code{\link{vgam}}.
 
 

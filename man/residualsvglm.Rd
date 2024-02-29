@@ -143,7 +143,7 @@ distribution.
     \code{\link[stats]{chisq.test}}.
 
 
-	  
+  
 %standardized residuals,
 %    \code{(observed - expected) / sqrt(V)}, where \code{V} is
 %    the residual cell variance (Agresti, 2007, section 2.4.5

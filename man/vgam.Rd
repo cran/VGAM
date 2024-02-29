@@ -470,6 +470,8 @@ plot(fit4c, se = TRUE, shade = TRUE, shcol = "pink")
 \keyword{models}
 \keyword{regression}
 \keyword{smooth}
+\concept{Vector Generalized Additive Model}
+\concept{Penalized regression}
 
 
 

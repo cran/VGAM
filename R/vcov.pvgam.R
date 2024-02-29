@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -224,6 +224,7 @@ summarypvgam <-
            presid = TRUE) {
 
   stuff <- summaryvglm(object, dispersion = dispersion,
+           HDEtest = FALSE,  # 20231027                           
            digits = digits,
            presid = presid)
 

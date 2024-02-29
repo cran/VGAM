@@ -5,7 +5,8 @@
 Plotting the GAITD Combo Density
 }
 \description{
-  Plots a 1- or 2-parameter GAITD combo probability mass function.
+  Plots a 1- or 2-parameter GAITD combo
+  probability mass function.
 
 }
 \usage{
@@ -52,9 +53,10 @@ in which case \code{fam = "genpois1"}.
 
 }
   \item{fam}{
-    Character, \code{paste0("dgait", fam)} should be a
-    \code{d}-type function returning the PMF.
-    The default is for the GAITD Poisson combo.
+    Character, \code{paste0("dgait", fam)}
+    should be a \code{d}-type function returning
+    the PMF.  The default is for the GAITD
+    Poisson combo.
 
 
 
@@ -90,8 +92,8 @@ in which case \code{fam = "genpois1"}.
 
 }
 \item{theta.a, theta.i, theta.d}{
-  Similar to \code{theta.p}, and they should have the same
-  length too.
+  Similar to \code{theta.p}, and they should
+  have the same length too.
 
   
 }
@@ -105,9 +107,10 @@ in which case \code{fam = "genpois1"}.
   Logical. Plot the PMF?
 }
   \item{new.plot, offset.x}{
-  If \code{new.plot} then \code{\link[graphics]{plot}} is called.
-  If multiple plots are desired then use \code{offset.x} to
-  shift the lines.
+  If \code{new.plot} then
+  \code{\link[graphics]{plot}} is called.
+  If multiple plots are desired then use
+  \code{offset.x} to shift the lines.
 
 }
 \item{xlim, ylim, xlab, ylab}{
@@ -127,20 +130,21 @@ in which case \code{fam = "genpois1"}.
 
 
 }
-  \item{all.col, all.lty, all.lwd}{
-    These arguments allow all the colours, line types and
-    line widths arguments to be assigned to these values,
-    i.e., so that they are the same for all values of the support.
-    For example, if \code{all.lwd = 2} then this sets
-    \code{lwd.p}, \code{lwd.a}, \code{lwd.i} and \code{lwd.d}
-    all equal to 2.
+\item{all.col, all.lty, all.lwd}{
+  These arguments allow all the colours,
+  line types and line widths arguments to be
+  assigned to these values, i.e., so that they
+  are the same for all values of the support.
+  For example, if \code{all.lwd = 2} then this
+  sets \code{lwd.p}, \code{lwd.a}, \code{lwd.i}
+  and \code{lwd.d} all equal to 2.
 
 
   }
   \item{lty.p, lty.a.mix, lty.a.mlm, lty.i.mix, lty.i.mlm}{
-    Line type for parent, altered and inflated.
-    See \code{\link[graphics]{par}} and
-    \code{\link[graphics]{plot.default}}.
+  Line type for parent, altered and inflated.
+  See \code{\link[graphics]{par}} and
+  \code{\link[graphics]{plot.default}}.
 
 
     
@@ -157,10 +161,12 @@ in which case \code{fam = "genpois1"}.
     the truncated are light blue,
     and the deflated are brownish with the dip
     probabilities being reddish.
-    The proper colour names are similar to being acrostic.
-    For each operator, the colours of \code{"mix"} vs \code{"mlm"}
-    are similar but different---this is intentional.  Warning:
-    the default colours might change, depending on style!
+    The proper colour names are similar to
+    being acrostic.  For each operator, the
+    colours of \code{"mix"} vs \code{"mlm"} are
+    similar but different---this is intentional.
+    Warning: the default colours might change,
+    depending on style!
 
     
 }
@@ -176,7 +182,8 @@ in which case \code{fam = "genpois1"}.
     The website \url{https://www.spycolor.com} was used to
     choose some of the default colours;
     the first two are also called \code{"dirt"}
-    and \code{"deer"} respectively, which are both brownish.
+    and \code{"deer"} respectively, which are
+    both brownish.
 
 
 
@@ -190,20 +197,18 @@ in which case \code{fam = "genpois1"}.
   \item{type.plot, cex.p}{
     The former matches 'type' argument in
     \code{\link[graphics]{plot.default}}.
-    The latter is the size of the point if \code{type.plot =
-    "p"} or \code{type.plot = "b"}, etc.
+    The latter is the size of the point if
+    \code{type.plot = "p"} or \code{type.plot = "b"},
+    etc.
 
 
     
 }
   \item{lwd.p, lwd.a, lwd.i, lwd.d}{
-    Line width for parent, altered and inflated.
-    See \code{\link[graphics]{par}} and
-    \code{\link[graphics]{plot.default}}.
-    By default \code{par()\$lwd} is used for all of them.
-
-
-
+   Line width for parent, altered and inflated.
+   See \code{\link[graphics]{par}} and
+   \code{\link[graphics]{plot.default}}.
+   By default \code{par()\$lwd} is used for all of them.
 
 
 }
@@ -217,10 +222,11 @@ in which case \code{fam = "genpois1"}.
     Logicals.
     Draw the inflated and deflated bars on top?
     The default is to draw the spikes on top, but if
-    \code{FALSE} then the spikes are drawn from the bottom---this
-    makes it easier to see their distribution.
-    Likewise, if \code{deflation = TRUE} then
-    \code{dontop} is used to position the deflation (dip)
+    \code{FALSE} then the spikes are drawn
+    from the bottom---this makes it easier
+    to see their distribution.  Likewise, if
+    \code{deflation = TRUE} then \code{dontop}
+    is used to position the deflation (dip)
     probabilities.
 
     
@@ -258,13 +264,13 @@ in which case \code{fam = "genpois1"}.
 
   }
   \item{nparams, flip.args}{
-    Not for use by the user. It is used internally to handle
-    the NBD.
+    Not for use by the user. It is used
+    internally to handle the NBD.
 
   }
   \item{\dots}{
-   Currently unused but there is provision for passing graphical
-   arguments in in the future;
+   Currently unused but there is provision for
+   passing graphical arguments in in the future;
    see \code{\link[graphics]{par}}.
 
 
@@ -272,10 +278,11 @@ in which case \code{fam = "genpois1"}.
   }
 }
 \details{
-  This is meant to be a crude function to plot the PMF of
-  the GAITD combo model.
-  Some flexibility is offered via many graphical arguments,
-  but there are still many improvements that could be done.
+  This is meant to be a crude function to
+  plot the PMF of the GAITD combo model.
+  Some flexibility is offered via many
+  graphical arguments, but there are still many
+  improvements that could be done.
 
 
 
@@ -283,25 +290,29 @@ in which case \code{fam = "genpois1"}.
 
 }
 \value{
-  A list is returned invisibly. The components are:
+  A list is returned invisibly. The components
+  are:
 
-  \item{x}{The integer values between the values of \code{xlim}.
+  \item{x}{The integer values between the values
+  of \code{xlim}.
 
   }
 
-  \item{pmf.z}{The value of the PMF, by calling the
-    \code{d}-type function with all the arguments fed in.
+  \item{pmf.z}{The value of the PMF, by
+  calling the \code{d}-type function with all
+  the arguments fed in.
 
   }
 
 
   \item{sc.parent}{
-  The same level as the scaled parent distribution.
-  Thus for inflated values, the value where the spikes begin.
-  And for deflated values, the value at the top of the dips.
-  This is a convenient way to obtain them as it is quite
-  cumbersome to compute them manually.
-  For any nonspecial value,
+  The same level as the scaled parent
+  distribution.  Thus for inflated values,
+  the value where the spikes begin.  And for
+  deflated values, the value at the top of
+  the dips.  This is a convenient way to obtain
+  them as it is quite cumbersome to compute
+  them manually.  For any nonspecial value,
   such as non-inflated and non-deflated values,
   they are equal to \code{pmf.z}.
 
@@ -312,10 +323,10 @@ in which case \code{fam = "genpois1"}.
 }
   \item{unsc.parent}{
   Unscaled parent distribution.
-  If there is no alteration, inflation, deflation and truncation
-  then this is the basic PMF stipulated by the parent distribution
-  only.
-  Usually this is FYI only.
+  If there is no alteration, inflation,
+  deflation and truncation then this is
+  the basic PMF stipulated by the parent
+  distribution only.  Usually this is FYI only.
 
 
 
@@ -333,9 +344,19 @@ T. W. Yee.
 }
 
 \note{
-This utility function may change a lot in the future.
+  This utility function may change a lot in the future.
+  Because this function is called by a \pkg{shiny} app,
+  if any parameter values lie outside the 
+  parameter space then \code{\link[base:stop]{stop}}
+  will be called.
+  For example, too much deflation results in
+  \code{NaN} values returned by
+  \code{\link{dgaitdnbinom}}.
 
 
+% 20240216; parameter space info added.
+
+  
   
 }
 
@@ -358,17 +379,18 @@ This utility function may change a lot in the future.
 
 }
 \examples{
-\dontrun{   # This might not work because genpois1 is elsewhere...
-i.mix <- seq(0, 25, by = 5)
-mean.p <- 10 
-dispind.p <- 8^2 / mean.p  # Var(Y) = dispind.p * mean.p
-dgaitdplot(c(mean.p, dispind.p), fam = "genpois1",
-  a.mix = i.mix + 1, i.mix = i.mix, max.support = 33, lwd.i = 2,
-  pobs.mix = 0.1, pstr.mix = 0.1, lwd.p = 2, lwd.a = 2)
+\dontrun{  i.mix <- seq(0, 25, by = 5)
+mean.p <- 10; size.p <- 8
+dgaitdplot(c(size.p, mean.p), fam = "nbinom", xlim = c(0, 25),
+     a.mix = i.mix + 1, i.mix = i.mix, pobs.mix = 0.1,
+     pstr.mix = 0.1, lwd.i = 2,lwd.p = 2, lwd.a = 2)
 }}
-\keyword{graphs}
-\keyword{models}
-\keyword{regression}
+%\keyword{graphs}
+%\keyword{models}
+%\keyword{regression}
+\keyword{dplot}
+\keyword{hplot}
+\keyword{distribution}
 
 
 

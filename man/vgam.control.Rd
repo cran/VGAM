@@ -102,6 +102,18 @@ vgam.control(all.knots = FALSE, bf.epsilon = 1e-07, bf.maxit = 30,
   allows this).
 
 
+
+  Note that \code{\link[mgcv:gam]{gam}} uses
+  outer iteration by default. However, 
+  \code{\link[mgcv:magic]{magic}} is only
+  invoked for the Gaussian family, so
+  the results of \code{\link[mgcv:gam]{gam}}
+  may differ substantially from
+  \code{\link{sm.os}} and \code{\link{sm.ps}}
+  in general.
+
+
+
 % Was Maxit.outer = 20
 
 
@@ -278,9 +290,11 @@ pneumo <- transform(pneumo, let = log(exposure.time))
 vgam(cbind(normal, mild, severe) ~ s(let, df = 2), multinomial,
      data = pneumo, trace = TRUE, eps = 1e-4, maxit = 10)
 }
+\keyword{optimize}
 \keyword{models}
-\keyword{regression}
-\keyword{smooth}
+\concept{Vector Generalized Additive Model}
+%\keyword{regression}
+%\keyword{smooth}
 
 
 

@@ -12,8 +12,10 @@
 }
 \usage{
 multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
-            refLevel = "(Last)", imethod = 1, imu = NULL,
-            byrow.arg = FALSE, whitespace = FALSE)
+     refLevel = "(Last)", ynames = FALSE,
+     imethod = 1, imu = NULL, byrow.arg = FALSE,
+     Thresh = NULL, Trev = FALSE,
+     Tref = if (Trev) "M" else 1, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 %           refLevel = "(Last)", d.mlm = NULL, imethod = 1,
@@ -35,6 +37,25 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   equal/unequal coefficients.
 
 
+  }
+  \item{ynames}{
+    Logical.
+    If \code{TRUE} then 
+    \code{"mu[,1]"} is replaced by the
+    probability of the
+    first named response category, etc.
+    (e.g., \code{"P[normal]"}),
+    so that the output is more readable,
+    albeit less compact.
+    This is seen in output such as
+    \code{predict(fit)} and
+    \code{coef(fit, matrix = TRUE)}.
+    Of course, \code{"mu"} stands for the
+    fitted probabilities, and it remains
+    the default for upward compatibility
+    and predictability.
+
+  
   }
   \item{nointercept, whitespace}{
   See \code{\link{CommonVGAMffArguments}} for details.
@@ -112,16 +133,26 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 %   then \code{eta.d.max = 0} should suffice,
 %   however, it might be necessary to increase its value
 %   slightly, e.g., by 1 or 2 maybe.
-
-
-
 % }
+
+
+\item{Thresh, Trev, Tref}{
+  Same as \code{\link{cumulative}}.
+  Because these arguments concern the intercepts,
+  they should not be confused with the
+  \emph{stereotype} model where they would
+  be applied to the \bold{A} matrix instead.
+
+}
+
+
 }
 \details{
-  In this help file the response \eqn{Y} is assumed to be
-  a factor with unordered values \eqn{1,2,\dots,M+1}, so
-  that \eqn{M} is the number of linear/additive predictors
-  \eqn{\eta_j}{eta_j}.
+  In this help file the response \eqn{Y} is
+  assumed to be a factor with unordered values
+  \eqn{1,2,\dots,M+1}, so
+  that \eqn{M} is the number of linear/additive
+  predictors \eqn{\eta_j}{eta_j}.
 
 
   
@@ -130,30 +161,30 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
          eta_j =  log(P[Y=j]/ P[Y=M+1])}
   where \eqn{\eta_j}{eta_j} is the \eqn{j}th
   linear/additive predictor.
-  Here, \eqn{j=1,\ldots,M}, and \eqn{\eta_{M+1}}{eta_{M+1}}
-  is 0 by definition. That is, the last level of the factor,
-  or last column of the response matrix, is taken as the
-  reference level or baseline---this is for identifiability
-  of the parameters. The reference or baseline level can
+  Here, \eqn{j=1,\ldots,M}, and
+  \eqn{\eta_{M+1}}{eta_{M+1}}
+  is 0 by definition. That is, the last level
+  of the factor,
+  or last column of the response matrix, is
+  taken as the
+  reference level or baseline---this is for
+  identifiability
+  of the parameters. The reference or
+  baseline level can
   be changed with the \code{refLevel} argument.
 
 
   
-  In almost all the literature, the constraint matrices
-  associated with this family of models are known.
-  For example, setting \code{parallel = TRUE} will make all
-  constraint matrices
-  (including the intercept)
-  equal to a vector of \eqn{M} 1's;
-  to suppress the intercepts from being parallel then
-  set \code{parallel = FALSE ~ 1}.
-  If the constraint matrices are
-  unknown and to be estimated, then this can be achieved by
-  fitting the model as a reduced-rank vector generalized
-  linear model (RR-VGLM; see \code{\link{rrvglm}}).
-  In particular, a multinomial logit model with unknown
-  constraint matrices is known as a \emph{stereotype}
-  model (Anderson, 1984), and can be fitted with
+  In almost all the literature, the constraint matrices associated with
+  this family of models are known.  For example, setting \code{parallel
+  = TRUE} will make all constraint matrices (including the intercept)
+  equal to a vector of \eqn{M} 1's; to suppress the intercepts from
+  being parallel then set \code{parallel = FALSE ~ 1}.  If the
+  constraint matrices are unknown and to be estimated, then this can be
+  achieved by fitting the model as a reduced-rank vector generalized
+  linear model (RR-VGLM; see \code{\link{rrvglm}}).  In particular, a
+  multinomial logit model with unknown constraint matrices is known as a
+  \emph{stereotype} model (Anderson, 1984), and can be fitted with
   \code{\link{rrvglm}}.
 
 
@@ -166,30 +197,27 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
 
 
-The above details correspond to the ordinary MLM where
-all the levels are \emph{altered} (in the terminology
-of GAITD regression).
-
-
-%The \eqn{j}th linear/additive predictor is different
-%from above if level \eqn{j} is deflated: it is negated
-%so that increasing the linear/additive predictor results
-%in a decreasing probability.
-%Thus the DAMLM simply has a sign change for those levels
-%that are deflated.
+The above details correspond to the ordinary
+MLM where all the levels are \emph{altered}
+(in the terminology of GAITD regression).
 
 
 
+%The \eqn{j}th linear/additive predictor is different from above if
+%level \eqn{j} is deflated: it is negated so that increasing the
+%linear/additive predictor results in a decreasing probability.  Thus
+%the DAMLM simply has a sign change for those levels that are deflated.
 
 
-%DAMLMs require skill to fit because handling
-%data that is extreme (high or low fitted values)
-%means that \code{eta.d.max} may need to be increased.
-%It pays to fit an intercept-only model first and to
-%monitor convergence carefully.
-%One disadvantage of DAMLMs is that the regression
-%coefficients depend on \code{eta.d.max} so there is
-%no unique solution.
+
+
+
+%DAMLMs require skill to fit because handling data that is extreme (high
+%or low fitted values) means that \code{eta.d.max} may need to be
+%increased.  It pays to fit an intercept-only model first and to monitor
+%convergence carefully.  One disadvantage of DAMLMs is that the
+%regression coefficients depend on \code{eta.d.max} so there is no
+%unique solution.
 
 
 
@@ -240,6 +268,7 @@ London: Chapman & Hall.
 %%New York, USA: Springer-Verlag.
 
 
+
 Tutz, G. (2012).
 \emph{Regression for Categorical Data},
 Cambridge: Cambridge University Press.
@@ -266,9 +295,9 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-Yee, T. W. and Ma, C. (2023)
+Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and deflated regression.
-\emph{In preparation}.
+\emph{Statistical Science}, \bold{39} (in press).
 
 
 %Further information and examples on categorical data analysis
@@ -356,6 +385,8 @@ Generally altered, inflated, truncated and deflated regression.
     \code{\link{acat}},
     \code{\link{cratio}},
     \code{\link{sratio}},
+  \code{\link{CM.equid}},
+  \code{\link{CommonVGAMffArguments}},
     \code{\link{dirichlet}},
     \code{\link{dirmultinomial}},
     \code{\link{rrvglm}},
@@ -380,8 +411,11 @@ Generally altered, inflated, truncated and deflated regression.
 \examples{
 # Example 1: fit a MLM to Edgar Anderson's iris data
 data(iris)
-\dontrun{ fit <- vglm(Species ~ ., multinomial, iris)
-coef(fit, matrix = TRUE) }
+\dontrun{ fit1 <- vglm(Species ~ ., multinomial, iris)
+coef(fit1, matrix = TRUE)
+fit2 <- vglm(Species ~ ., multinomial(ynames = TRUE), iris)
+coef(fit2, matrix = TRUE)  # More understandable
+}
 
 # Example 2a: a simple example
 ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))

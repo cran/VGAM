@@ -75,5 +75,6 @@ vplot.profile(pfit1)
 vpairs.profile(pfit1)
 }
 }
-\keyword{models}
+%\keyword{models}
+\keyword{regression}
 \keyword{hplot}

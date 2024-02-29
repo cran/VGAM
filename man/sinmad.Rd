@@ -16,7 +16,8 @@ sinmad(lscale = "loglink", lshape1.a = "loglink", lshape3.q = "loglink",
 %- maybe also 'usage' for other objects documented here.
 %      zero = ifelse(lss, -(2:3), -c(1, 3))
 \arguments{
-  \item{lss}{ See \code{\link{CommonVGAMffArguments}} for important information.
+  \item{lss}{ See \code{\link{CommonVGAMffArguments}}
+  for important information.
 
 
   }
@@ -56,8 +57,8 @@ beta-P, and generalized log-logistic distribution.
 
 
 
-Some distributions which are special cases of the 3-parameter Singh-Maddala
-are the Lomax (\eqn{a=1}), Fisk (\eqn{q=1}), and
+Some distributions which are special cases of the 3-parameter
+Singh-Maddala are the Lomax (\eqn{a=1}), Fisk (\eqn{q=1}), and
 paralogistic (\eqn{a=q}).
 
 
@@ -80,9 +81,10 @@ This family function handles multiple responses.
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as \code{\link{vglm}},
-  and \code{\link{vgam}}.
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).  The object
+  is used by modelling functions such as
+  \code{\link{vglm}}, and \code{\link{vgam}}.
 
 
 }
@@ -90,7 +92,7 @@ This family function handles multiple responses.
 
 Kleiber, C. and Kotz, S. (2003).
 \emph{Statistical Size Distributions in Economics and
-             Actuarial Sciences},
+      Actuarial Sciences},
 Hoboken, NJ, USA: Wiley-Interscience.
 
 
@@ -121,9 +123,9 @@ Hoboken, NJ, USA: Wiley-Interscience.
 \examples{
 sdata <- data.frame(y = rsinmad(n = 1000, shape1 = exp(1),
                     scale = exp(2), shape3 = exp(0)))
-fit <- vglm(y ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE)
+fit <- vglm(y ~ 1, sinmad(lss = FALSE), sdata, trace = TRUE)
 fit <- vglm(y ~ 1, sinmad(lss = FALSE, ishape1.a = exp(1)),
-            data = sdata, trace = TRUE)
+            sdata, trace = TRUE)
 coef(fit, matrix = TRUE)
 Coef(fit)
 summary(fit)
@@ -135,8 +137,8 @@ sdata <- data.frame(y1 = rbeta(1000, 6, 6))
 # hist(with(sdata, y1))
 if (FALSE) {
 # These struggle
-  fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE)
-  fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), data = sdata, trace = TRUE,
+  fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), sdata, trace = TRUE)
+  fit1 <- vglm(y1 ~ 1, sinmad(lss = FALSE), sdata, trace = TRUE,
                crit = "coef")
   Coef(fit1)
 }

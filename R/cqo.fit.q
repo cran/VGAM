@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,9 +9,10 @@
 
 
 
-callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
-                     X.vlm.1save, modelno, Control,
-                     n, M, p1star, p2star, nice31, allofit = FALSE) {
+ callcqoc <-
+  function(cmatrix, etamat, xmat, ymat, wvec,
+           X.vlm.1save, modelno, Control,
+           n, M, p1star, p2star, nice31, allofit = FALSE) {
   ocmatrix <- cmatrix
   control <- Control
   Rank <- control$Rank
@@ -145,12 +146,14 @@ callcqoc <- function(cmatrix, etamat, xmat, ymat, wvec,
 
 
 
-calldcqo <- function(cmatrix, etamat, xmat, ymat, wvec,
-                     X.vlm.1save, modelno, Control,
-                     n, M, p1star, p2star, nice31, allofit = FALSE) {
+ calldcqo <-
+  function(cmatrix, etamat, xmat, ymat, wvec,
+           X.vlm.1save, modelno, Control,
+           n, M, p1star, p2star, nice31, allofit = FALSE) {
   control <- Control
   Rank <- control$Rank
-  p1 <- length(control$colx1.index); p2 <- length(control$colx2.index)
+  p1 <- length(control$colx1.index)
+  p2 <- length(control$colx2.index)
   dim(cmatrix) <- c(p2, Rank)  # for crow1C
 
   xmat2 <- xmat[, control$colx2.index, drop = FALSE]   #ccc
@@ -462,8 +465,8 @@ ny <- names(y)
     if (length(control$str0))
       Amat[control$str0, ] <- 0
 
-    rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt()
-    rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt()
+    rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt0()
+    rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt0()
 
     Hlist <- process.constraints(constraints, x, M, specialCM = specialCM)
     nice31 <- checkCMCO(Hlist, control = control, modelno = modelno)
@@ -610,8 +613,9 @@ ny <- names(y)
   print.CQO.expression <- expression({
     if (trace && length(X2)) {
       cat("\nUsing initial values\n")
-      dimnames(ans) <- list(dimnames(X2)[[2]],
-                            param.names("latvar", Rank, skip1 = TRUE))
+      dimnames(ans) <-
+        list(dimnames(X2)[[2]],
+             param.names("latvar", Rank, skip1 = TRUE))
       print(if (p2 > 5) ans else t(ans), dig = 3)
     }
     flush.console()
@@ -625,9 +629,10 @@ ny <- names(y)
     }
   })
 
-  Crow1positive <- if (length(Crow1positive))
-                   rep_len(Crow1positive, Rank) else
-                   rep_len(TRUE, Rank)
+  Crow1positive <-
+    if (length(Crow1positive))
+      rep_len(Crow1positive, Rank) else
+      rep_len(TRUE, Rank)
   if (epsilon <= 0)
     stop("epsilon > 0 is required")
   ymat <- cbind(ymat) + epsilon  # ymat == 0 cause problems
@@ -667,21 +672,25 @@ ny <- names(y)
     cat("\nObtaining initial values\n")
 
   if (length(X2)) {
-    alt <- valt(x = cbind(X1, X2), z = etamat,
-                U = sqrt(t(wts)), Rank = effrank,
-                Hlist = NULL, Cinit = NULL, trace = FALSE,
-                colx1.index = 1:ncol(X1), Criterion = "ResSS")
-    temp.control <- list(Rank = effrank, colx1.index = 1:ncol(X1),
-                         Alpha = 0.5,
-                         colx2.index = (ncol(X1)+1):(ncol(X1) + ncol(X2)),
-                         Corner = FALSE, Svd.arg = TRUE,
-                         Uncorrelated.latvar = TRUE, Quadratic = FALSE)
+    alt <-
+      valt0(x = cbind(X1, X2), z = etamat,
+            U = sqrt(t(wts)), Rank = effrank,
+            Hlist = NULL, Cinit = NULL, trace = FALSE,
+            colx1.index = 1:ncol(X1), Criterion = "ResSS")
+    temp.control <- list(Rank = effrank,
+          colx1.index = 1:ncol(X1),
+          Alpha = 0.5,
+          colx2.index = (ncol(X1)+1):(ncol(X1) + ncol(X2)),
+          Corner = FALSE, Svd.arg = TRUE,
+          Uncorrelated.latvar = TRUE, Quadratic = FALSE)
 
-    ans2 <- if (Rank > 1)
-              rrr.normalize(rrcontrol = temp.control, A = alt$A,
-                            C = alt$C, x = cbind(X1, X2)) else
-              alt
-    ans <- crow1C(ans2$C, rep_len(Crow1positive, effrank))
+    Asr2 <- if (Rank > 1)
+      rrr.normalize(rrcontrol = temp.control,
+                    A = alt$A.est, C = alt$C.est,
+                    x = cbind(X1, X2)) else
+      alt
+    ans <- crow1C(Asr2$C.est,  # == Asr2$Cmat,
+                  rep_len(Crow1positive, effrank))
 
     Rank.save <- Rank
     Rank <- effrank
@@ -697,7 +706,8 @@ ny <- names(y)
     U <- t(sqrt(wts))
     tmp <- vlm.wfit(xmat = X1, zmat = etamat, Hlist = NULL, U = U,
                     matrix.out = TRUE,
-                    is.vlmX = FALSE, ResSS = TRUE, qr = FALSE, xij = xij)
+                    is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
+                    xij = xij)
     ans <- crow1C(as.matrix(tmp$resid),
                   rep_len(Crow1positive, effrank))
     if (effrank < Rank) {
@@ -728,7 +738,8 @@ ny <- names(y)
 
 
 cqo.init.derivative.expression <- expression({
-  which.optimizer <- if (control$Quadratic && control$FastAlgorithm) {
+  which.optimizer <-
+    if (control$Quadratic && control$FastAlgorithm) {
     "BFGS"
   } else {
     ifelse(iter <= rrcontrol$Switch.optimizer, "Nelder-Mead", "BFGS")
@@ -742,7 +753,7 @@ cqo.init.derivative.expression <- expression({
 
 
  if (FALSE) {
-    constraints <- replace.constraints(constraints, diag(M),
+    constraints <- replaceCMs(constraints, diag(M),
                                        rrcontrol$colx2.index)
 
     nice31 <- (!control$eq.tol || control$I.tolerances) &&
@@ -846,7 +857,7 @@ cqo.end.expression <- expression({
     extra$Dmat <- Dmat     # Not the latest iteration
     extra$B1   <- B1.save  # Not the latest iteration (not good)
   } else {
-    Hlist <- replace.constraints(Hlist.save, Amat, colx2.index)
+    Hlist <- replaceCMs(Hlist.save, Amat, colx2.index)
   }
 
 
@@ -873,10 +884,12 @@ cqo.end.expression <- expression({
 
 
 
-crow1C <- function(cmat,
-                   crow1positive = rep_len(TRUE, ncol(cmat)),
-                   amat = NULL) {
-  if (!is.logical(crow1positive) || length(crow1positive) != ncol(cmat))
+ crow1C <-
+    function(cmat,
+             crow1positive = rep_len(TRUE, ncol(cmat)),
+             amat = NULL) {
+  if (!is.logical(crow1positive) ||
+      length(crow1positive) != ncol(cmat))
     stop("bad input in crow1C")
 
   for (LV in 1:ncol(cmat))

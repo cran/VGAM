@@ -265,7 +265,7 @@ for (ii in 1:length(mytau))
   lines(smallxgrid, col = truecol[ii], lwd = 2,
         qbinom(mytau[ii], pr = mymu(smallxgrid), si = ssize) / ssize)
 
-# Plot on the eta (== logitlink()/probit()/...) scale
+# Plot on the eta (== logitlink()/probitlink()/...) scale
   with(adata, matplot(x2, predict(fit1), lwd = 3, type = "l"))
 # Add the 'truth'
 for (ii in 1:length(mytau)) {

@@ -107,6 +107,7 @@ Natural exponential families with quadratic variance functions.
 
 %}
 \seealso{
+  \code{\link{gensh}},
   \code{\link{extlogitlink}}.
 
 

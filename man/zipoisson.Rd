@@ -144,16 +144,16 @@ zipoissonff(llambda = "loglink", lonempstr0 = "logitlink",
   These are:
   (i)   the order of the linear/additive predictors
   is switched so the
-        Poisson mean comes first;
-	(ii)  \code{onempstr0} is now 1 minus the probability
-	of a structural 0,
-        i.e., the probability of the parent (Poisson) component,
-        i.e., \code{onempstr0} is \code{1-pstr0};
-	(iii) argument \code{zero} has a new default so that
-	the \code{onempstr0}
-        is intercept-only  by default.
-	Now \code{zipoissonff()} is generally recommended
-	over \code{zipoisson()}
+  Poisson mean comes first;
+  (ii)  \code{onempstr0} is now 1 minus the probability
+  of a structural 0,
+  i.e., the probability of the parent (Poisson) component,
+  i.e., \code{onempstr0} is \code{1-pstr0};
+  (iii) argument \code{zero} has a new default so that
+  the \code{onempstr0}
+  is intercept-only  by default.
+  Now \code{zipoissonff()} is generally recommended
+  over \code{zipoisson()}
   (and definitely recommended over \code{\link[VGAMdata]{yip88}}).
   Both functions implement Fisher scoring and can handle
   multiple responses.
@@ -261,12 +261,13 @@ the 0-\emph{deflated} model,
 % by \code{zipoisson(lpstr0 = identitylink, zero = -1)}.
 
 
+
 The use of this \pkg{VGAM} family function
 with \code{\link{rrvglm}}
   can result in a so-called COZIGAM or COZIGLM.
   That is, a reduced-rank zero-inflated Poisson model (RR-ZIP)
   is a constrained zero-inflated generalized linear model.
-  See \pkg{COZIGAM}.
+  See what used to be \pkg{COZIGAM} on CRAN.
   A RR-ZINB model can also be fitted easily;
   see \code{\link{zinegbinomial}}.
   Jargon-wise, a COZIGLM might be better described as a
@@ -378,7 +379,7 @@ coef(fit4)[1]         # Estimate
 Coef(fit4)
 vcov(fit4)  # Is positive-definite
 
-# Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
+# Example 5: RR-ZIP
 set.seed(123)
 rrzip <- rrvglm(Alopacce ~ sm.bs(WaterCon, df = 3),
                 zipoisson(zero = NULL),
@@ -413,6 +414,7 @@ summary(rrzip)
 
 
 
+% # Example 5: This RR-ZIP is known as a COZIGAM or COZIVGLM-ZIP
 
 
 

@@ -77,8 +77,10 @@ par(mfrow = c(3, 4))
 plot(p1, rtype = "response", col = "blue", pch = 4, las = 1, main = "")
 }
 }
-\keyword{dplot}
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+\keyword{nonlinear}
+%\keyword{dplot}
+\keyword{hplot}
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -10,7 +10,7 @@
 
 rrvglm <-
   function(formula,
-           family = stop("argument 'family' needs to be assigned"),
+           family = stop("'family' is unassigned"),
            data = list(),
            weights = NULL, subset = NULL, na.action = na.fail,
            etastart = NULL, mustart = NULL, coefstart = NULL,
@@ -75,7 +75,8 @@ rrvglm <-
     if (is.function(family))
         family <- family()
     if (!inherits(family, "vglmff")) {
-        stop("'family=", family, "' is not a VGAM family function")
+        stop("'family=", family,
+             "' is not a VGAM family function")
     }
 
     eval(vcontrol.expression)
@@ -91,25 +92,31 @@ rrvglm <-
 
     rrvglm.fitter <- get(method)
 
-    fit <- rrvglm.fitter(x = x, y = y, w = w, offset = offset,
-                        etastart = etastart, mustart = mustart,
+    fit <- rrvglm.fitter(x = x, y = y, w = w,
+                         offset = offset,
+                         etastart = etastart,
+                         mustart = mustart,
                         coefstart = coefstart,
                         family = family,
                         control = control,
                         constraints = constraints,
-                        criterion = control$criterion,
+               criterion = control$criterion,
                         extra = extra,
                         qr.arg  =  qr.arg,
-                        Terms = mt, function.name = function.name, ...)
+                        Terms = mt,
+              function.name = function.name, ...)
 
     if (control$Bestof > 1) {
-      deviance.Bestof <- rep_len(fit$crit.list$deviance, control$Bestof)
+      deviance.Bestof <- rep_len(fit$crit.list$deviance,
+                                 control$Bestof)
       for (tries in 2:control$Bestof) {
          if (control$trace && (control$Bestof>1))
            cat(paste("\n========================= Fitting model", tries,
                        "=========================\n\n"))
-         it <- rrvglm.fitter(x = x, y = y, w = w, offset = offset,
-                   etastart = etastart, mustart = mustart,
+         it <- rrvglm.fitter(x = x, y = y, w = w,
+                             offset = offset,
+                             etastart = etastart,
+                             mustart = mustart,
                    coefstart = coefstart,
                    family = family,
                    control = control,
@@ -117,7 +124,8 @@ rrvglm <-
                    criterion = control$criterion,
                    extra = extra,
                    qr.arg = qr.arg,
-                   Terms = mt, function.name = function.name, ...)
+                   Terms = mt,
+             function.name = function.name, ...)
         deviance.Bestof[tries] <- it$crit.list$deviance
         if (min(deviance.Bestof[1:(tries-1)]) > deviance.Bestof[tries])
           fit <- it
@@ -149,7 +157,7 @@ rrvglm <-
       "R"            = fit$R,
       "rank"         = fit$rank,
       "residuals"    = as.matrix(fit$residuals),
-      "ResSS"       = fit$ResSS,
+      "ResSS"        = fit$ResSS,
       "smart.prediction" = as.list(fit$smart.prediction),
       "terms"        = list(terms = mt))
 
@@ -199,9 +207,30 @@ rrvglm <-
 
 
 
+
+
+    if (is.matrix(fit$A.est)) {
+      answer@A.est <- fit$A.est
+      answer@C.est <- fit$C.est
+    }
+    if (fit$drrvglm) {
+      answer <- as(answer, "drrvglm")  # Upgrade
+      answer@H.A.alt <- fit$H.A.alt
+      answer@H.A.thy <- fit$H.A.thy
+      answer@H.C <- fit$H.C
+      answer@misc$Avec    <- fit$Avec
+      answer@misc$B1Cvec  <- fit$B1Cvec
+      answer@misc$RAvcov  <- fit$RAvcov
+      answer@misc$RCvcov  <- fit$RCvcov
+      answer@misc$clist1  <- fit$clist1
+      answer@misc$valt0.ResSS <- fit$valt0.ResSS
+    }
+    
     answer
 }
 attr(rrvglm, "smart") <- TRUE
+
+
 
 
 

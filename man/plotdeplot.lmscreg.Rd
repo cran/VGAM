@@ -116,6 +116,7 @@ aa@post$deplot$newdata
 head(aa@post$deplot$y)
 head(aa@post$deplot$density) }
 }
-\keyword{dplot}
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+%\keyword{dplot}
+\keyword{hplot}

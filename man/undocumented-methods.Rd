@@ -4,6 +4,19 @@
 %\alias{ccoef-method}
 %
 %
+% 202402
+\alias{is.zero,NULL-method}
+\alias{is.zero,character-method}
+\alias{is.zero,logical-method}
+% 202401
+\alias{vcov,drrvglm-method}
+\alias{show,summary.drrvglm-method}
+\alias{summary,drrvglm-method}
+\alias{coef,summary.drrvglm-method}
+\alias{coefficients,summary.drrvglm-method}
+% 202311
+\alias{show,Coef.drrvglm-method}
+\alias{Coef,drrvglm-method}
 % 202206
 \alias{rqresid,vlm-method}
 \alias{rqresid,ANY-method}
@@ -118,10 +131,16 @@
 \alias{summaryvglmS4VGAM,ANY,VGAMcategorical-method}
 \alias{summaryvglmS4VGAM,ANY,cumulative-method}
 \alias{summaryvglmS4VGAM,ANY,multinomial-method}
+\alias{summaryvglmS4VGAM,ANY,cratio-method}   % 202312
+\alias{summaryvglmS4VGAM,ANY,sratio-method}   % 202312
+\alias{summaryvglmS4VGAM,ANY,acat-method}   % 202312
 %
 \alias{showsummaryvglmS4VGAM,ANY,VGAMcategorical-method}
 \alias{showsummaryvglmS4VGAM,ANY,cumulative-method}
 \alias{showsummaryvglmS4VGAM,ANY,multinomial-method}
+\alias{showsummaryvglmS4VGAM,ANY,cratio-method}   % 202312
+\alias{showsummaryvglmS4VGAM,ANY,sratio-method}   % 202312
+\alias{showsummaryvglmS4VGAM,ANY,acat-method}   % 202312
 %
 \alias{margeffS4VGAM,ANY,ANY,VGAMcategorical-method}
 \alias{margeffS4VGAM,ANY,ANY,VGAMordinal-method}

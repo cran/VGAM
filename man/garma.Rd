@@ -85,8 +85,8 @@ garma(link = "identitylink", p.ar.lag = 1, q.ma.lag = 0,
         \left\{ \frac{y_t \theta_t - b(\theta_t)}{\phi / A_t} +
         c(y_t, \phi / A_t)
         \right\}}{%
-	f(y_t|D_t) = \exp
-	[ (y_t theta_t - b(theta_t)) / (phi / A_t) +
+  f(y_t|D_t) = \exp
+  [ (y_t theta_t - b(theta_t)) / (phi / A_t) +
         c(y_t, \phi / A_t)
         ]
   }

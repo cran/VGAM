@@ -106,6 +106,10 @@ qtplot(fit, perc = c(25,50,75,95), lcol = "blue", tcol = "blue", llwd = 2)
 }
 }
 
-\keyword{graphs}
-\keyword{models}
+%\keyword{graphs}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
+
+
+

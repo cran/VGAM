@@ -150,6 +150,7 @@ for (ii in 1:4)
   meplot(rgpd(1000), col = c("orange", "blue", "orange"))
 }
 }
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 

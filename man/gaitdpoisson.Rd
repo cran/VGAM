@@ -398,7 +398,6 @@ The other three \code{"sum.m*"} arguments are similar.
 
 
 
-		  
 %  Equivalently, this is 1 minus the
 %  probability of value greater than \code{"max.support"},
 %  using the parent distribution.
@@ -709,9 +708,9 @@ and \code{gaitdpoisson(i.mlm = 0)}.
   
 }
 \references{
-Yee, T. W. and Ma, C. (2023)
+Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and deflated regression.
-\emph{In preparation}.
+\emph{Statistical Science}, \bold{39} (in press).
 
 
 

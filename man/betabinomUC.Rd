@@ -263,6 +263,7 @@ pstrsize * I[y = size]}
 
 
 \seealso{
+  \code{\link{Extbetabinom}},
   \code{\link{betabinomial}},
   \code{\link{betabinomialff}},
   \code{\link{Zoabeta}},

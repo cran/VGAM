@@ -4,14 +4,20 @@
 \docType{package}
 \title{
 Vector Generalized Linear and Additive Models
-and Associated Models
+and Other Associated Models
 }
 \description{
   \pkg{VGAM} provides functions for fitting vector generalized
-  linear and additive models (VGLMs and VGAMs), and associated
-  models (Reduced-rank VGLMs, Quadratic RR-VGLMs, Reduced-rank
-  VGAMs). This package fits many models and distributions by
-  maximum likelihood estimation (MLE) or penalized MLE.  Also fits
+  linear and additive models (VGLMs and VGAMs),
+  and associated
+  models (Reduced-rank VGLMs or RR-VGLMs,
+  Doubly constrained RR-VGLMs (DRR-VGLMs),
+  Quadratic RR-VGLMs,
+  Reduced-rank VGAMs).
+  This package fits many models and distributions by
+  maximum likelihood estimation (MLE) or penalized MLE,
+  under this statistical framework.
+  Also fits
   constrained ordination models in ecology such as constrained
   quadratic ordination (CQO).
 
@@ -48,12 +54,12 @@ The package uses S4 (see \code{\link[methods]{methods-package}}).
 
 
 
-Some companion packages:
-(1) \pkg{VGAMdata} contains data sets useful for
-illustrating \pkg{VGAM}.
+Some notable companion packages:
+(1) \pkg{VGAMdata} mainly contains data sets
+useful for illustrating \pkg{VGAM}.
 Some of the big ones were initially from \pkg{VGAM}.
 Recently, some older \pkg{VGAM} family functions have been shifted
-into \pkg{VGAMdata} too.
+into this package.
 (2) \pkg{VGAMextra} written by Victor Miranda has some additional
 \pkg{VGAM} family and link functions,
 with a bent towards time series models.
@@ -69,19 +75,22 @@ survey weights.
 Compared to other similar packages, such as
 \pkg{gamlss} and
 \pkg{mgcv},
-\pkg{VGAM} has more models implemented (150+ of them) and they
-are not restricted to
+\pkg{VGAM} has more models implemented (150+ of them)
+and they are not restricted to
 a location-scale-shape framework or
 (largely) the 1-parameter exponential family.
-There is a general statistical framework behind it all,
-that once grasped, makes regression modelling quite unified.
+The general statistical framework behind it all,
+once grasped, makes regression modelling unified.
 Some features of the package are:
-(i) most family functions handle multiple responses;
+(i) many family functions handle multiple responses;
 (ii) reduced-rank regression is available by operating
 on latent variables (optimal linear combinations of the
 explanatory variables);
 (iii) basic
-automatic smoothing parameter selection is implemented for VGAMs,
+automatic smoothing parameter selection is
+implemented for VGAMs
+(\code{\link{sm.os}} and \code{\link{sm.ps}}
+with a call to \code{\link[mgcv:magic]{magic}}),
 although it has to be refined;
 (iv) \emph{smart} prediction allows correct prediction of nested
 terms in the formula provided smart functions are used.
@@ -117,14 +126,74 @@ Two types of VGAMs are implemented:
 1st-generation VGAMs with \code{\link{s}} use vector backfitting,
 while
 2nd-generation VGAMs with \code{\link{sm.os}} and
-\code{\link{sm.ps}} use O-splines and P-splines,
-do not use the backfitting algorithm,
+\code{\link{sm.ps}} use O-splines and P-splines
+so have a direct solution
+(hence avoids backfitting)
 and have automatic smoothing parameter selection.
 The former is older and is based on Yee and Wild (1996).
 The latter is more modern
-(Yee, Somchit and Wild, 2022)
+(Yee, Somchit and Wild, 2024)
 but it requires a reasonably large number of observations
-to work well.
+to work well because it is based on optimizing
+over a predictive criterion rather than
+using a Bayesian approach.
+
+
+
+% e.g., AIC, Mallows Cp, GCV versus ML and REML.
+
+
+
+
+An important feature of the framework
+is that of \emph{constraint matrices}.
+They apportion the regression coefficients according
+to each explanatory variable.
+For example,
+since each parameter has a link function applied to it
+to turn it into a linear or additive predictor,
+does a covariate have an equal effect on each parameter?
+Or no effect?
+Arguments such as \code{zero}, \code{parallel} and
+\code{exchangeable},
+are merely easy ways to have them constructed
+internally.
+Users may input them explicitly using
+the \code{constraint} argument, and
+\code{\link{CM.symm0}} etc. can make this easier.
+
+
+
+
+
+Another important feature is implemented by
+\code{xij}.
+It allows different linear/additive predictors
+to have a different values of the same
+explanatory variable, e.g.,
+\code{\link{multinomial}} for the
+conditional logit model and the like.
+
+
+
+
+VGLMs with dimension reduction form
+the class of RR-VGLMs. This is achieved by
+reduced rank regression. Here, a subset of
+the constraint matrices are estimated
+rather than being known and prespecified.
+Optimal linear combinations of the
+explanatory variables are taken (creating
+latent variables) which are used for
+fitting a VGLM. Thus the regression can
+be thought of as being in two stages.
+The class of DRR-VGLMs provides further
+structure to RR-VGLMs by allowing
+constraint matrices to be specified for
+each column of \bold{A} and
+row of \bold{C}.
+Thus the reduced rank regression can be fitted
+with greater control.
 
 
 
@@ -164,6 +233,8 @@ Hence the computation load is overall significant.
 For a complete list of this package, use \code{library(help = "VGAM")}.
 New \pkg{VGAM} family functions are continually being written and
 added to the package.
+
+
 % A monograph about VGLM and VGAMs etc. appeared in October 2015.
 
 
@@ -196,7 +267,8 @@ Chanatda Somchit.
 
 
 
-Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
+Maintainer:
+Thomas Yee \email{t.yee@auckland.ac.nz}.
 
 
 % \cr
@@ -206,25 +278,34 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 
 
 \section{Warning}{
-  This package is undergoing continual development and improvement,
-  therefore users should treat everything as subject to change.
+  This package is undergoing continual
+  development and improvement,
+  therefore users should treat
+  many things as subject to change.
   This includes the
   family function names,
   argument names,
   many of the internals,
+  moving some functions to \pkg{VGAMdata},
   the use of link functions,
   and slot names.
-  For example, all link functions may be renamed so that they
-  end in \code{"link"},
-  e.g., \code{loglink()} instead of \code{loglink()}.
-  Some future pain can be avoided by using good programming
-  techniques, e.g., using extractor/accessor functions such as
+  For example,
+  many link functions were renamed in 2019
+  so that they all end in \code{"link"},
+  e.g., \code{loglink()} instead of \code{loge()}.
+  Some future pain can be avoided by using good
+  programming techniques, e.g.,
+  using extractor functions such as
   \code{coef()}, \code{weights()}, \code{vcov()},
   \code{predict()}.
-  Nevertheless, please expect changes in all aspects of the package.
-  See the \code{NEWS} file for a list of changes from version to
-  version.
+  Although changes are now less frequent,
+  please expect changes in all aspects of the
+  package.
+  See the \code{NEWS} file for a list of changes
+  from version to version.
 
+
+% extractor/accessor
 
 
 }
@@ -234,49 +315,52 @@ Maintainer: Thomas Yee \email{t.yee@auckland.ac.nz}.
 
 
 Yee, T. W. (2015).
-Vector Generalized Linear and Additive Models:
-With an Implementation in R.
+\emph{Vector Generalized Linear and Additive
+  Models:
+With an Implementation in R}.
 New York, USA: \emph{Springer}.
 
 
 
-Yee, T. W. and Hastie, T. J. (2003)
+Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
 \emph{Statistical Modelling},
 \bold{3}, 15--41.
 
 
-Yee, T. W. and Stephenson, A. G. (2007)
-Vector generalized linear and additive extreme value models.
+Yee, T. W. and Stephenson, A. G. (2007).
+Vector generalized linear and additive extreme
+value models.
 \emph{Extremes}, \bold{10}, 1--19.
 
 
-Yee, T. W. and Wild, C. J. (1996)
+Yee, T. W. and Wild, C. J. (1996).
 Vector generalized additive models.
 \emph{Journal of the Royal Statistical Society,
       Series B, Methodological},
 \bold{58}, 481--493.
 
 
-Yee, T. W. (2004)
+Yee, T. W. (2004).
 A new technique for maximum-likelihood
 canonical Gaussian ordination.
 \emph{Ecological Monographs},
 \bold{74}, 685--701.
 
 
-Yee, T. W. (2006)
+Yee, T. W. (2006).
 Constrained additive ordination.
 \emph{Ecology}, \bold{87}, 203--213.
 
 
-Yee, T. W. (2008)
+Yee, T. W. (2008).
 The \code{VGAM} Package.
 \emph{R News}, \bold{8}, 28--39.
 
 
-Yee, T. W. (2010)
-The \pkg{VGAM} package for categorical data analysis.
+Yee, T. W. (2010).
+The \pkg{VGAM} package for categorical data
+analysis.
 \emph{Journal of Statistical Software},
 \bold{32}, 1--34.
 \doi{10.18637/jss.v032.i10}.
@@ -288,25 +372,25 @@ The \pkg{VGAM} package for categorical data analysis.
 
 
 
-Yee, T. W. (2014)
-Reduced-rank vector generalized linear models with two linear predictors.
+Yee, T. W. (2014).
+Reduced-rank vector generalized linear models
+with two linear predictors.
 \emph{Computational Statistics and Data Analysis},
 \bold{71}, 889--902.
 
 
 
-Yee, T. W. and Ma, C. (2023)
-Generally altered, inflated, truncated and deflated regression.
-\emph{In preparation}.
+Yee, T. W. and Ma, C. (2024).
+Generally altered, inflated, truncated and
+deflated regression.
+\emph{Statistical Science}, \bold{39} (in press).
 
 
 
-% \emph{Under review}.
-
-
-Yee, T. W. (2022)
+Yee, T. W. (2022).
 On the Hauck-Donner effect in Wald tests:
-Detection, tipping points and parameter space characterization,
+Detection, tipping points and parameter space
+characterization,
 \emph{Journal of the American Statistical Association},
 \bold{117}, 1763--1774.
 \doi{10.1080/01621459.2021.1886936}.
@@ -317,13 +401,13 @@ Detection, tipping points and parameter space characterization,
 
 
 
-Yee, T. W. and Somchit, C. and Wild, C. J. (2023)
+Yee, T. W. and Somchit, C. and Wild, C. J. (2024).
 Penalized vector generalized additive models.
 Manuscript in preparation.
 
 
 
-My website for the \pkg{VGAM} package and book is at
+The website for the \pkg{VGAM} package and book is
 \url{https://www.stat.auckland.ac.nz/~yee/}.
 There are some resources there,
 especially as relating to my book and new features
@@ -331,15 +415,29 @@ added to \pkg{VGAM}.
 
 
 
+Some useful background reference for the package
+include:
 
+
+Chambers, J. and Hastie, T. (1991).
+\emph{Statistical Models in S}.
+Wadsworth & Brooks/Cole.
+
+
+Green, P. J. and Silverman, B. W. (1994).
+\emph{Nonparametric Regression and Generalized
+Linear Models: A Roughness Penalty Approach}.
+Chapman and Hall.
+
+
+Hastie, T. J. and Tibshirani, R. J. (1990).
+\emph{Generalized Additive Models}.
+Chapman and Hall.
 
 
 }
 
 
-\keyword{package}
-\keyword{models}
-\keyword{regression}
 \seealso{
   \code{\link{vglm}},
   \code{\link{vgam}},
@@ -429,6 +527,11 @@ vcov(fit5, untransform = TRUE)
 sqrt(diag(vcov(fit5)))  # Approximate standard errors
 \dontrun{ rlplot(fit5) }
 }
+
+\keyword{package}
+\keyword{models}
+\keyword{regression}
+
 
 
 % Until my monograph comes out and this package is released as version 1.0-0

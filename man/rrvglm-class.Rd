@@ -188,15 +188,19 @@ Objects can be created by calls to \code{\link{rrvglm}}.
   }
     \item{\code{Xm2}:}{Object of class \code{"matrix"},
  from class \code{ "vlm"}.
- See \code{\link{vglm-class}}).
+ See \code{\link{vglm-class}}.
  }
     \item{\code{Ym2}:}{Object of class \code{"matrix"},
  from class \code{ "vlm"}.
- See \code{\link{vglm-class}}).
+ See \code{\link{vglm-class}}.
  }
   \item{\code{callXm2}:}{
   Object of class \code{"call"}, from class \code{ "vlm"}.
   The matched call for argument \code{form2}.
+  }
+  \item{\code{A.est}, \code{C.est}:}{
+  Object of class \code{"matrix"}.
+  The estimates of \bold{A} and \bold{C}.
   }
   }
 }
@@ -227,11 +231,11 @@ Reduced-rank vector generalized linear models.
 \bold{3}, 15--41.
 
 
-Yee, T. W. and Wild, C. J. (1996).
-Vector generalized additive models.
-\emph{Journal of the Royal Statistical Society, Series B,
-      Methodological},
-\bold{58}, 481--493.
+%Yee, T. W. and Wild, C. J. (1996).
+%Vector generalized additive models.
+%\emph{Journal of the Royal Statistical Society, Series B,
+%      Methodological},
+%\bold{58}, 481--493.
 
 
 %\url{http://www.stat.auckland.ac.nz/~yee}
@@ -241,8 +245,11 @@ Vector generalized additive models.
 \author{ Thomas W. Yee }
 
 \note{
-  The slots of \code{"rrvglm"} objects are currently identical
-  to \code{"vglm"} objects.
+  Two new slots for \code{"rrvglm"}
+  were added compared
+  to \code{"vglm"} objects,
+  for \pkg{VGAM} 1.1-10.
+  They are \code{A.est} and \code{C.est}.
 
 
 }
@@ -263,11 +270,12 @@ Vector generalized additive models.
 \examples{
 \dontrun{ # Rank-1 stereotype model of Anderson (1984)
 pneumo <- transform(pneumo, let = log(exposure.time),
-                            x3  = runif(nrow(pneumo)))  # Unrelated
+                            x3  = runif(nrow(pneumo)))  # Noise
 fit <- rrvglm(cbind(normal, mild, severe) ~ let + x3,
               multinomial, data = pneumo, Rank = 1)
 Coef(fit)
 }
 }
 \keyword{classes}
+\concept{Reduced-Rank Vector Generalized Linear Model}
 % set.seed(111)

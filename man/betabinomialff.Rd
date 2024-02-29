@@ -160,10 +160,15 @@ covariate measurement errors.
   in one of the examples below.
 
 
-  The \emph{extended} beta-binomial distribution of Prentice
-  (1986) is currently not implemented in the \pkg{VGAM} package
-  as it has range-restrictions for the correlation parameter that
-  are currently too difficult to handle in this package.
+  
+
+  The \emph{extended} beta-binomial distribution
+  of Prentice (1986) 
+  implemented by \code{\link{extbetabinomial}}
+  is the preferred \pkg{VGAM}
+  family function for BBD regression.
+
+
 
 
 }
@@ -182,6 +187,7 @@ covariate measurement errors.
 
 }
 \seealso{
+  \code{\link{extbetabinomial}},
   \code{\link{betabinomial}},
   \code{\link{Betabinom}},
   \code{\link{binomialff}},
@@ -239,7 +245,7 @@ for (gp in 1:4) {
   xx <- with(smalldf, hb[grp == gp])
   yy <- with(smalldf, fitted(fit2)[grp == gp])
   ooo <- order(xx)
-  lines(xx[ooo], yy[ooo], col = gp)
+  lines(xx[ooo], yy[ooo], col = gp, lwd = 2)
 } }
 }
 \keyword{models}

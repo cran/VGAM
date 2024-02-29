@@ -255,3 +255,9 @@ fit4 <- rcim(Rcim(crashp, rbaseline = "5", cbaseline = "Sun"),
              zipoissonff, trace = TRUE)
 plot(fit4, ylim = c(-3, 3)) }
 }
+
+\keyword{regression}
+\keyword{hplot}
+
+
+

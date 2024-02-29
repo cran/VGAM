@@ -215,6 +215,8 @@ legend(0.00005, 0.3, lwd = 2, lty = 1,
 abline(a = 0, b = 1, lty = "dashed", col = "grey")  # Ref. line
 }
 }
-\keyword{models}
+%\keyword{models}
+%\keyword{graphs}
 \keyword{regression}
-\keyword{graphs}
+\keyword{hplot}
+\keyword{nonlinear}

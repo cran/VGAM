@@ -120,7 +120,8 @@ New York, USA: \emph{Springer}.
 
 }
 \author{T. W. Yee.
-  Victor Miranda added the \code{inverse} argument to \code{interleave.VGAM()}.
+  Victor Miranda added the \code{inverse} argument
+  to \code{interleave.VGAM()}.
 
 
 }
@@ -150,4 +151,5 @@ parameters.names[interleave.VGAM(M, M1 = M1, inverse = TRUE)]
 \keyword{regression}
 \keyword{programming}
 \keyword{models}
+\keyword{utilities}
 

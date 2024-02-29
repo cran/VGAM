@@ -1,7 +1,7 @@
 \name{zeta}
 \alias{zeta}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Riemann's Zeta Function }
+\title{ Riemann's (and the Hurwitz) Zeta Function, With Derivatives }
 \description{
   Computes Riemann's zeta function and its first two derivatives.
   Also can compute the Hurwitz zeta function.

@@ -96,6 +96,7 @@ names(ii)
 
 guplot(with(venice, r1), col = "blue")  # Venice sea levels data
 }}
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 

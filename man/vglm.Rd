@@ -584,6 +584,7 @@ library is incorporated
   \code{\link{summaryvglm}},
   \code{\link{lrtest_vglm}},
   \code{\link[stats]{update}},
+  \code{\link{TypicalVGAMfamilyFunction}},
   etc.
 
 
@@ -653,6 +654,7 @@ coef(fit1, matrix = TRUE)  # Check
 }
 \keyword{models}
 \keyword{regression}
+\concept{Vector Generalized Linear Model}
 
 %eyesdat$leye=ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$lop)), 1, 0)
 %eyesdat$reye=ifelse(runif(n) < 1/(1+exp(-1+2*eyesdat$rop)), 1, 0)

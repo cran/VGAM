@@ -189,9 +189,11 @@ T. W. Yee.
 \dontrun{
 spikeplot(with(marital.nz, age), col = "pink2", lwd = 2)
 }}
-\keyword{graphs}
-\keyword{models}
-\keyword{regression}
+%\keyword{graphs}
+%\keyword{models}
+%\keyword{regression}
+\keyword{distribution}
+\keyword{hplot}
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

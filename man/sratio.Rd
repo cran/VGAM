@@ -8,9 +8,8 @@
 }
 \usage{
 sratio(link = "logitlink", parallel = FALSE, reverse = FALSE,
-       zero = NULL, thresholds = c("unconstrained", "equidistant",
-       "symmetric1", "symmetric0"), Treverse = reverse,
-       Tref = if (Treverse) "M" else 1, whitespace = FALSE)
+       zero = NULL, ynames = FALSE, Thresh = NULL, Trev = reverse,
+       Tref = if (Trev) "M" else 1, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,6 +35,11 @@ sratio(link = "logitlink", parallel = FALSE, reverse = FALSE,
   will be used.
 
   }
+  \item{ynames}{
+  See \code{\link{multinomial}} for information.
+
+  }
+
   \item{zero}{
   Can be an integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
@@ -46,7 +50,7 @@ sratio(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
 
   }
-  \item{thresholds, Treverse, Tref}{
+  \item{Thresh, Trev, Tref}{
     See \code{\link{cumulative}} for information.
     These arguments apply to ordinal
     categorical regression models.
@@ -191,6 +195,8 @@ The \pkg{VGAM} package for categorical data analysis.
   \code{\link{acat}},
   \code{\link{cumulative}},
   \code{\link{multinomial}},
+  \code{\link{CM.equid}},
+  \code{\link{CommonVGAMffArguments}},
   \code{\link{margeff}},
   \code{\link{pneumo}},
   \code{\link{budworm}},

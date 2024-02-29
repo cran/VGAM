@@ -3,9 +3,11 @@
 \alias{TypicalVGAMlink}
 \title{Link functions for VGLM/VGAM/etc. families}
 \description{
-  The \pkg{VGAM} package provides a number of (parameter) link functions
-  which are described in general here. Collectively, they offer the user
-  considerable choice and flexibility for modelling data.
+  The \pkg{VGAM} package provides a number of
+  (parameter) link functions which are described
+  in general here. Collectively, they offer the
+  user considerable choice and flexibility for
+  modelling data.
 
 }
 \usage{
@@ -15,12 +17,13 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 \arguments{
   \item{theta}{
   Numeric or character.
-  This is usually \eqn{\theta}{theta} (default) but can sometimes
-  be \eqn{\eta}{eta},
+  This is usually \eqn{\theta}{theta} (default)
+  but can sometimes be \eqn{\eta}{eta},
   depending on the other arguments.
   If \code{theta} is character then \code{inverse} and
   \code{deriv} are ignored.
-  The name \code{theta} should always be the name of the first argument.
+  The name \code{theta} should always be the
+  name of the first argument.
 
   }
 
@@ -32,14 +35,16 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   \item{bvalue}{
   Boundary value, positive if given.
   If \code{0 < theta} then
-  values of \code{theta} which are less than or equal to 0 can be
-  replaced by \code{bvalue}
+  values of \code{theta} which are less than
+  or equal to 0 can be replaced by \code{bvalue}
   before computing the link function value.
-  Values of \code{theta} which are greater than or equal to 1 can be
+  Values of \code{theta} which are greater than
+  or equal to 1 can be
   replaced by 1 minus \code{bvalue}
   before computing the link function value.
-  The value \code{bvalue = .Machine$double.eps} is sometimes a reasonable
-  value, or something slightly higher.
+  The value \code{bvalue = .Machine$double.eps}
+  is sometimes a reasonable value, or something
+  slightly higher.
 
 
   }
@@ -70,8 +75,8 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
   \item{inverse}{
-    Logical. If \code{TRUE} and \code{deriv = 0}  then
-    the inverse link value
+  Logical. If \code{TRUE} and \code{deriv = 0}  then
+  the inverse link value
   \eqn{\theta}{theta} is returned, hence the argument
   \code{theta} is really \eqn{\eta}{eta}.
   In all other cases, the argument \code{theta} is
@@ -81,18 +86,20 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   }
   \item{deriv}{
   Integer.
-  Either 0, 1, or 2, specifying the order of the derivative.
-  Some link functions handle values up to 3 or 4.
+  Either 0, 1, or 2, specifying the order of
+  the derivative.  Some link functions handle
+  values up to 3 or 4.
 
 
   }
   \item{short, tag}{
   Logical.
-  These are used for labelling the \code{blurb} slot of a
-  \code{\link{vglmff-class}} object.
-  These arguments are used only if \code{theta} is character,
-  and gives the formula for the link in character form.
-  If \code{tag = TRUE} then the result is preceeded by a little
+  These are used for labelling the \code{blurb}
+  slot of a \code{\link{vglmff-class}} object.
+  These arguments are used only if \code{theta}
+  is character, and gives the formula for the
+  link in character form.  If \code{tag = TRUE}
+  then the result is preceeded by a little
   more information.
 
 
@@ -101,36 +108,42 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 \value{
 
   Returns one of:
-  the link function value or its first or second derivative,
-  the inverse link or its first or second derivative,
-  or a character description of the link.
+  the link function value or its first or second
+  derivative, the inverse link or its first or
+  second derivative, or a character description
+  of the link.
 
 
   Here are the general details.
-  If \code{inverse = FALSE} and \code{deriv = 0} (default) then the
-  ordinary link
-  function \eqn{\eta = g(\theta)}{eta = g(theta)} is returned.
+  If \code{inverse = FALSE} and \code{deriv = 0}
+  (default) then the ordinary link function
+  \eqn{\eta = g(\theta)}{eta = g(theta)}
+  is returned.
 
 
-  If \code{inverse = TRUE} and \code{deriv = 0} then the inverse
-  link function value is returned, hence \code{theta} is really
-  \eqn{\eta}{eta} (the only occasion this happens).
+  If \code{inverse = TRUE} and \code{deriv =
+  0} then the inverse link function value
+  is returned, hence \code{theta} is really
+  \eqn{\eta}{eta} (the only occasion this
+  happens).
 
 
-  If \code{inverse = FALSE} and \code{deriv = 1} then it is
-  \eqn{d\eta / d\theta}{d eta / d theta}
-  \emph{as a function of} \eqn{\theta}{theta}.
-  If \code{inverse = FALSE} and \code{deriv = 2} then it is
+  If \code{inverse = FALSE} and \code{deriv
+  = 1} then it is \eqn{d\eta / d\theta}{d
+  eta / d theta} \emph{as a function of}
+  \eqn{\theta}{theta}.  If \code{inverse =
+  FALSE} and \code{deriv = 2} then it is
   \eqn{d^2\eta / d\theta^2}{d^2 eta / d theta^2}
   \emph{as a function of} \eqn{\theta}{theta}.
 
 
-  If \code{inverse = TRUE} and \code{deriv = 1} then it is
-  \eqn{d\theta / d\eta}{d theta / d eta}
-  \emph{as a function of} \eqn{\theta}{theta}.
-  If \code{inverse = TRUE} and \code{deriv = 2} then it is
-  \eqn{d^2\theta / d\eta^2}{d^2 theta / d eta^2}
-  \emph{as a function of} \eqn{\theta}{theta}.
+  If \code{inverse = TRUE} and \code{deriv
+  = 1} then it is \eqn{d\theta / d\eta}{d
+  theta / d eta} \emph{as a function of}
+  \eqn{\theta}{theta}.  If \code{inverse = TRUE}
+  and \code{deriv = 2} then it is \eqn{d^2\theta
+  / d\eta^2}{d^2 theta / d eta^2} \emph{as a
+  function of} \eqn{\theta}{theta}.
 
 
 
@@ -143,7 +156,8 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   \code{linkfun(theta, deriv = 2, inverse = TRUE)}
   and
   \code{linkfun(theta, deriv = 2, inverse = FALSE)}
-  are \emph{not} reciprocals of each other in general.
+  are \emph{not} reciprocals of each other
+  in general.
 
 
 
@@ -168,13 +182,16 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 }
 \details{
-  Almost all \pkg{VGAM} link functions have something similar to
-  the argument list as given above.
-  In this help file we have \eqn{\eta = g(\theta)}{eta = g(theta)}
-  where \eqn{g} is the link function, \eqn{\theta}{theta} is the
-  parameter and \eqn{\eta}{eta} is the linear/additive predictor.
-  The link \eqn{g} must be strictly monotonic and
-  twice-differentiable in its range.
+  Almost all \pkg{VGAM} link functions have
+  something similar to the argument list as
+  given above.  In this help file we have
+  \eqn{\eta = g(\theta)}{eta = g(theta)}
+  where \eqn{g} is the link function,
+  \eqn{\theta}{theta} is the parameter and
+  \eqn{\eta}{eta} is the linear/additive
+  predictor.  The link \eqn{g} must be strictly
+  monotonic and twice-differentiable in its
+  range.
 
 
 
@@ -188,26 +205,32 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
 
-  The following is a brief enumeration of all \pkg{VGAM} link functions.
+  The following is a brief enumeration of all
+  \pkg{VGAM} link functions.
 
 
 
-  For parameters lying between 0 and 1 (e.g., probabilities):
+  For parameters lying between 0 and 1 (e.g.,
+  probabilities):
   \code{\link{logitlink}},
   \code{\link{probitlink}},
   \code{\link{clogloglink}},
   \code{\link{cauchitlink}},
   \code{\link{foldsqrtlink}},
-  \code{\link{logclink}},
-  \code{\link{gordlink}},
-  \code{\link{pordlink}},
-  \code{\link{nbordlink}}.
+  \code{\link{logclink}}.
+% \code{\link{pordlink}},
+% \code{\link{gordlink}},
+% \code{\link{nbordlink}}.
+
+
 
 
   
-  For positive parameters (i.e., greater than 0):
+  For positive parameters
+  (i.e., greater than 0):
   \code{\link{loglink}},
   \code{\link{negloglink}},
+  \code{\link{sqrtlink}},
   \code{\link{powerlink}}.
 
 
@@ -224,7 +247,7 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
   
 
-  For parameters between \eqn{A} and \eqn{B}:
+  For parameters between finite \eqn{A} and \eqn{B}:
   \code{\link{extlogitlink}},
   \code{\link{logofflink}} (\eqn{B = \infty}{B = Inf}).
 
@@ -241,23 +264,26 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 }
 \references{
-    McCullagh, P. and Nelder, J. A. (1989).
-    \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+  McCullagh, P. and Nelder, J. A. (1989).
+  \emph{Generalized Linear Models},
+  2nd ed. London: Chapman & Hall.
 
 
 }
 
 
 \section{Warning }{
-  The output of link functions changed at \pkg{VGAM} \code{0.9-9}
-  (date was around 2015-07).
-  Formerly, \code{linkfun(theta, deriv = 1)} is now
-  \code{linkfun(theta, deriv = 1, inverse = TRUE)}, or equivalently,
-  \code{1 / linkfun(theta, deriv = 1, inverse = TRUE)}.
-  Also, formerly, \code{linkfun(theta, deriv = 2)} was
-  \code{1 / linkfun(theta, deriv = 2, inverse = TRUE)}.
-  This was a bug.
-  Altogether, these are big changes and the user should beware!
+  The output of link functions changed at
+  \pkg{VGAM} \code{0.9-9} (date was around
+  2015-07).  Formerly, \code{linkfun(theta,
+  deriv = 1)} is now \code{linkfun(theta,
+  deriv = 1, inverse = TRUE)}, or equivalently,
+  \code{1 / linkfun(theta, deriv = 1, inverse =
+  TRUE)}.  Also, formerly, \code{linkfun(theta,
+  deriv = 2)} was \code{1 / linkfun(theta,
+  deriv = 2, inverse = TRUE)}.  This was a bug.
+  Altogether, these are big changes and the
+  user should beware!
 
 
 
@@ -268,8 +294,9 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   \code{\link{loglink}} replaces \code{\link{loge}},
   \code{\link{logitlink}} replaces \code{\link{logit}}.
   For this most of them were renamed.
-  Upward compatability holds for older link function names,
-  however, users should adopt the new names immediately.
+  Upward compatability holds for older link
+  function names, however, users should adopt
+  the new names immediately.
 
 
 
@@ -296,45 +323,54 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 }
 \author{T. W. Yee}
 \note{
-  \pkg{VGAM} link functions are generally not compatible with
-  other functions outside the package.
-  In particular, they won't work with
-  \code{\link[stats]{glm}} or any other package for fitting GAMs.
+  \pkg{VGAM} link functions are generally
+  not compatible with other functions outside
+  the package.  In particular, they won't work
+  with \code{\link[stats]{glm}} or any other
+  package for fitting GAMs.
 
 
   
   From October 2006 onwards,
   all \pkg{VGAM} family functions will only
-  contain one default value for each link argument rather than giving a
-  vector of choices.
-  For example, rather than
-  \code{binomialff(link = c("logitlink", "probitlink", "clogloglink",
-  "cauchitlink", "identitylink"), ...)}
-  it is now
+  contain one default value for each link
+  argument rather than giving a vector
+  of choices.  For example, rather than
+  \code{binomialff(link = c("logitlink",
+  "probitlink", "clogloglink", "cauchitlink",
+  "identitylink"), ...)} it is now
   \code{binomialff(link = "logitlink", ...)}.
-  No checking will be done to see if the user's choice is reasonable.
-  This means that the user can write his/her own \pkg{VGAM} link function
-  and use it within any \pkg{VGAM} family function.
-  Altogether this provides greater flexibility.
-  The downside is that the user must specify the \emph{full} name of the
-  link function, by either assigning the link argument the full name as
-  a character string, or just the name itself.  See the examples below.
+  No checking will be done to see if the user's
+  choice is reasonable.  This means that the
+  user can write his/her own \pkg{VGAM} link
+  function and use it within any \pkg{VGAM}
+  family function.  Altogether this provides
+  greater flexibility.  The downside is that
+  the user must specify the \emph{full} name of
+  the link function, by either assigning the
+  link argument the full name as a character
+  string, or just the name itself.  See the
+  examples below.
 
   
 
-  From August 2012 onwards, a major change in link functions occurred.
-  Argument \code{esigma} (and the like such as \code{earg})
-  used to be in \pkg{VGAM} prior to version 0.9-0 (released
-  during the 2nd half of 2012).
-  The major change is that arguments such as \code{offset} that used to
-  be passed in via those arguments can done directly through
+  From August 2012 onwards, a major
+  change in link functions occurred.
+  Argument \code{esigma} (and the like such
+  as \code{earg}) used to be in \pkg{VGAM}
+  prior to version 0.9-0 (released during the
+  2nd half of 2012).
+  The major change is that arguments such as
+  \code{offset} that used to be passed in via
+  those arguments can done directly through
   the link function. For example,
   \code{gev(lshape = "logofflink", eshape = list(offset = 0.5))}
   is replaced by
   \code{gev(lshape = logofflink(offset = 0.5))}.
   The \code{@misc} slot no longer
-  has \code{link} and \code{earg} components, but two other
-  components replace these. Functions such as
+  has \code{link} and \code{earg} components,
+  but two other components replace
+  these. Functions such as
   \code{dtheta.deta()},
   \code{d2theta.deta2()},
   \code{d3theta.deta3()},
@@ -345,8 +381,9 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
 
 
 
-  From January 2019 onwards, all link function names ended
-  in \code{"link"}. See above for details.
+  From January 2019 onwards, all link function
+  names ended in \code{"link"}. See above
+  for details.
 
 
   

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,12 +16,26 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
+export(eimij.ebbinom, ned2l.ebbinom)
+export(log1plink)
+export(extbetabinomial, dextbetabinom,
+       pextbetabinom, qextbetabinom, rextbetabinom)
+export(dgensh, pgensh, qgensh, rgensh, gensh)
+export(cloglink)
+export(vcovdrrvglm)
+export(CM.free)
+export(CM.ones)
+export(CM.qnorm)
+export(CM.qlogis)
+exportClasses(drrvglm)
+export(lcalogitlink, lcsloglink, Coef.drrvglm)
+export(asinlink, alogitlink, sqrtlink, sloglink)
 export(cops, copsvglm)
 importFrom("stats", "optimize")
 export(hurea, dhurea)
-export(CM.symmetric1, CM.symmetric0)
+export(CM.symm1, CM.symm0)
 export(dgamma.mm)
-export(CM.equidistant)
+export(CM.equid)
 importFrom("stats", "pexp")
 exportMethods(rqresid)
 exportMethods(rqresiduals)
@@ -141,7 +155,6 @@ export(loglink, logneglink, logofflink, negidentitylink, logitlink)
 export(logloglink, clogloglink, reciprocallink, negloglink, probitlink)
 export(negreciprocallink, rhobitlink, fisherzlink, multilogitlink)
 export(foldsqrtlink, extlogitlink, logclink, cauchitlink)
-export(gordlink, pordlink, nbordlink, nbord2link)
 export(zeta.specials)
 export(stieltjes)
 export(loglogloglink)
@@ -338,7 +351,8 @@ importFrom("stats", coefficients, coef)
 
 
 
-export(expected.betabin.ab, grid.search, grid.search2, grid.search3, grid.search4)
+export(Ebbin.ab, grid.search, grid.search2,
+       grid.search3, grid.search4)
 
 exportMethods(QR.Q, QR.R)
 export(QR.Q, QR.R)
@@ -473,7 +487,7 @@ interleave.VGAM, interleave.cmat,
 procVec,
 eijfun,
 ResSS.vgam,
-valt.control,
+valt0.control,
 trivial.constraints,
 vcontrol.expression,
 vplot, vplot.default, vplot.factor, vplot.list,

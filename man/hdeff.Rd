@@ -303,7 +303,9 @@ Hauck, J. W. W. and A. Donner (1977).
 Wald's test as applied to hypotheses in logit analysis. 
 \emph{Journal of the American Statistical Association},
 \bold{72}, 851--853.
-Corrigenda: JASA, \bold{75}, 482.
+
+
+% Corrigenda: JASA, \bold{75}, 482.
 
 
 
@@ -418,12 +420,17 @@ Some new results concerning the Hauck-Donner effect.
 \seealso{
   \code{\link{summaryvglm}},
   \code{\link{hdeffsev}},
+  \code{\link{alogitlink}},
+  \code{\link{asinlink}},
   \code{\link{vglm}},
   \code{\link{lrt.stat}},
   \code{\link{score.stat}},
   \code{\link{wald.stat}},
   \code{\link{confintvglm}},
   \code{\link{profilevglm}}.
+
+
+
 
 
 % \code{\link{step4vglm}}. Not needed since LRT is used, not WT.
@@ -465,6 +472,7 @@ hdeff(c(t(mymat)), byrow = TRUE)  # Reordering of the data
 \keyword{models}
 \keyword{regression}
 \keyword{htest}
+\concept{Hauck--Donner effect}
 
 
 

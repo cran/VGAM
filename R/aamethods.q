@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -12,8 +12,9 @@
 
 
 
-is.Numeric <- function(x, length.arg = Inf,
-                       integer.valued = FALSE, positive = FALSE)
+ is.Numeric <-
+  function(x, length.arg = Inf,
+           integer.valued = FALSE, positive = FALSE)
     if (all(is.numeric(x)) && all(is.finite(x)) &&
     (if (is.finite(length.arg))
        length(x) == length.arg else TRUE) &&
@@ -25,8 +26,9 @@ is.Numeric <- function(x, length.arg = Inf,
 
 
 
-is.Numeric2 <- function(x, length.arg = Inf,
-                       integer.valued = FALSE, positive = FALSE)
+ is.Numeric2 <-
+  function(x, length.arg = Inf,
+           integer.valued = FALSE, positive = FALSE)
     if (all(is.numeric(x)) && all(!is.na(x)) &&
     (if (is.finite(length.arg))
        length(x) == length.arg else TRUE) &&
@@ -300,6 +302,8 @@ setClass("summary.pvgam", slots = c(
 
 
  setClass(Class = "rrvglm",
+          slots = c("A.est" = "matrix",
+                    "C.est" = "matrix"),
           contains = "vglm")
 
 
@@ -430,17 +434,18 @@ if (!isGeneric("Coefficients"))
 
 
 if (!isGeneric("logLik"))
-    setGeneric("logLik", function(object, ...) standardGeneric("logLik"),
-           package = "VGAM")
+    setGeneric("logLik", function(object, ...)
+    standardGeneric("logLik"), package = "VGAM")
 
 if (!isGeneric("plot"))
-    setGeneric("plot", function(x, y, ...) standardGeneric("plot"),
+    setGeneric("plot", function(x, y, ...)
+    standardGeneric("plot"),
            package = "VGAM")
 
 
 if (!isGeneric("vcov"))
-    setGeneric("vcov", function(object, ...) standardGeneric("vcov"),
-           package = "VGAM")
+    setGeneric("vcov", function(object, ...)
+    standardGeneric("vcov"), package = "VGAM")
 
 
 
@@ -465,8 +470,8 @@ setClass(Class = "rrvgam",
 
 
 if (!isGeneric("lvplot"))
-setGeneric("lvplot", function(object, ...) standardGeneric("lvplot"),
-           package = "VGAM")
+  setGeneric("lvplot", function(object, ...)
+    standardGeneric("lvplot"), package = "VGAM")
 
 
 
@@ -707,6 +712,24 @@ setMethod("get.offset", "vglm",
           function(object, as.is = FALSE, ...) {
   get.offset.vglm(object, as.is = as.is, ...)
 })
+
+
+
+
+
+
+setClass("drrvglm",
+         slots = c(H.A.alt = "list",
+                   H.A.thy = "list",
+                   H.C     = "list",
+                   A.est   = "matrix",
+                   C.est   = "matrix"),
+         contains = "rrvglm")
+
+
+
+
+
 
 
 

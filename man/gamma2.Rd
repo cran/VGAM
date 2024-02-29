@@ -166,10 +166,12 @@ McCullagh, P. and Nelder, J. A. (1989).
   \code{\link{gammaff.mm}} for another,
   \code{\link{expexpff}},
   \code{\link[stats]{GammaDist}},
-  \code{\link{gordlink}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{simulate.vlm}},
   \code{\link{negloglink}}.
+
+
+% \code{\link{gordlink}},
 
 
 }

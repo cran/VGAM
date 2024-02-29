@@ -151,6 +151,7 @@ set.seed(111)
 # vvv print(Coef(p1), digits=3)
 }
 \keyword{models}
+\keyword{nonlinear}
 \keyword{regression}
 
 

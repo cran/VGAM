@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -121,7 +121,7 @@ if (FALSE)
     return(ppois(q, theta, lower.tail = lower.tail))
 
   ans <- q + lambda + theta
-  okay3 <- !bad & 0 <= q
+  ok3 <- !bad & 0 <= q
   zzzzz  # Call C or FORTRAN here.
   zzzzz
   zzzzz
@@ -154,16 +154,17 @@ if (FALSE)
     return(ppois(q, theta, lower.tail = lower.tail))
 
   ans <- q + lambda + theta
-  okay3 <- !bad & 0 <= q
-  if (any(okay3)) {
-    ans[okay3] <- mapply(function(q, theta, lambda) {
+  ok3 <- !bad & 0 <= q
+  if (any(ok3)) {
+    ans[ok3] <- mapply(function(q, theta, lambda) {
       xx <- 0:q
       sum(exp(-xx * lambda - theta + log(theta) +
-          (xx - 1) * log(theta + xx * lambda) - lfactorial(xx)))
+              (xx - 1) * log(theta + xx * lambda) -
+              lfactorial(xx)))
       },
-      q      =      q[okay3],
-      theta  =  theta[okay3],
-      lambda = lambda[okay3])
+      q      =      q[ok3],
+      theta  =  theta[ok3],
+      lambda = lambda[ok3])
     ans <- unlist(ans)
   }
   ans[!bad0 & is.infinite(q)] <- 1
@@ -179,16 +180,6 @@ if (FALSE)
 
 
 
-
-
-
-
-
-
-
-
-
-
 qgenpois0 <- function(p, theta, lambda = 0) {
   LLL <- max(length(p), length(theta), length(lambda))
   if (length(p)      != LLL) p      <- rep_len(p,      LLL)
@@ -198,7 +189,9 @@ qgenpois0 <- function(p, theta, lambda = 0) {
   ans <- p + lambda + theta
 
   bad0 <- !is.finite(theta) | !is.finite(lambda) |
-          theta < 0 | lambda < 0 | 1 <= lambda
+          theta < 0 | lambda < 0 | 1 <= lambda |
+          is.na(p) | is.na(lambda) |
+          is.na(theta)
   bad <- bad0 | !is.finite(p) | p <= 0 | 1 <= p
 
   lo <- rep_len(0, LLL) - 0.5
@@ -212,8 +205,8 @@ qgenpois0 <- function(p, theta, lambda = 0) {
   while (!all(done) && iter < max.iter) {
     lo[!done] <- hi[!done]
     hi[!done] <- 2 * hi[!done] + 10.5  # Bug fixed
-    done[!done] <- (p[!done] <= pgenpois0(hi[!done],
-                    theta[!done], lambda = lambda[!done]))
+  done[!done] <- (p[!done] <= pgenpois0(hi[!done],
+       theta[!done], lambda = lambda[!done]))
     iter <- iter + 1
   }
 
@@ -223,17 +216,24 @@ qgenpois0 <- function(p, theta, lambda = 0) {
   lhs <- dont.iterate |
          p <= dgenpois0(0, theta, lambda = lambda)
   
+
+  if (any(!lhs)) {
   approx.ans[!lhs] <-
-    bisection.basic(foo, lo[!lhs], hi[!lhs], tol = 1/16,
+    bisection.basic(foo, lo[!lhs], hi[!lhs],
+                    tol = 1/16, p = p[!lhs],
                     theta = theta[!lhs],
-                    lambda = lambda[!lhs], p = p[!lhs])
+                    lambda = lambda[!lhs])
   faa <- floor(approx.ans[!lhs])
   tmp <-
-    ifelse(pgenpois0(faa, theta[!lhs], lambda = lambda[!lhs]) < p[!lhs] &
+    ifelse(pgenpois0(faa, theta[!lhs],
+           lambda = lambda[!lhs]) < p[!lhs] &
            p[!lhs] <= pgenpois0(faa+1, theta[!lhs],
-                                lambda = lambda[!lhs]),
+                       lambda = lambda[!lhs]),
            faa+1, faa)
   ans[!lhs] <- tmp
+  }  # any(!lhs)
+
+
 
   vecTF <- !bad0 & !is.na(p) &
            p <= dgenpois0(0, theta, lambda = lambda)
@@ -390,27 +390,31 @@ rgenpois0 <-
 
 
 
-dgenpois1 <- function(x, meanpar, dispind = 1,
-                      log = FALSE) {
+dgenpois1 <-
+    function(x, meanpar, dispind = 1,
+             log = FALSE) {
   dgenpois0(x, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind),
             log = log)
 }  # dgenpois1
 
 
-pgenpois1 <- function(q, meanpar, dispind = 1, lower.tail = TRUE) {
+pgenpois1 <-
+  function(q, meanpar, dispind = 1, lower.tail = TRUE) {
   pgenpois0(q, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind), lower.tail = lower.tail)
 }  # pgenpois1
 
 
-qgenpois1 <- function(p, meanpar, dispind = 1) {
+qgenpois1 <-
+    function(p, meanpar, dispind = 1) {
   qgenpois0(p, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind))
 }  # qgenpois1
 
 
-rgenpois1 <- function(n, meanpar, dispind = 1) {
+rgenpois1 <-
+    function(n, meanpar, dispind = 1) {
   rgenpois0(n, theta = meanpar / sqrt(dispind),
             lambda = 1 - 1 / sqrt(dispind))
 }  # rgenpois1
@@ -690,18 +694,19 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
 }  # genpoisson0
 
 
-      
+
 
 
  genpoisson2 <-
   function(lmeanpar = "loglink",
            ldisppar = "loglink",
+           parallel = FALSE,
+           zero = "disppar",
+           vfl = FALSE, oparallel = FALSE,
            imeanpar = NULL, idisppar = NULL,
            imethod = c(1, 1),
            ishrinkage = 0.95,
-           gdisppar = exp(1:5),
-           parallel = FALSE,
-           zero = "disppar") {
+           gdisppar = exp(1:5)) {
   lmeanpar <- as.list(substitute(lmeanpar))
   emeanpar <- link2list(lmeanpar)
   lmeanpar <- attr(emeanpar, "function.name")
@@ -717,11 +722,14 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   if (!is.Numeric(gdisppar, positive = TRUE))
     stop("bad input for argument 'gdisppar'")
 
-  imethod <- rep_len(imethod, 2)  # For the two parameters
+  if (!is.logical(vfl) || length(vfl) != 1)
+    stop("argument 'vfl' must be TRUE or FALSE")
+
+  imethod <- rep_len(imethod, 2)  # 4 the 2 params
   if (!is.Numeric(imethod, length.arg = 2,
-                  integer.valued = TRUE, positive = TRUE) ||
+     integer.valued = TRUE, positive = TRUE) ||
      any(imethod > 3))
-    stop("argument 'imethod' must have values from 1:3")
+    stop("'imethod' must have values from 1:3")
 
   if (is.logical(parallel) && parallel && length(zero))
     stop("set 'zero = NULL' if 'parallel = TRUE'")
@@ -729,21 +737,59 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   new("vglmff",
   blurb = c("Generalized Poisson distribution (GP-2)\n\n",
             "Links:    ",
-            namesof("meanpar", lmeanpar, earg = emeanpar), ", ",
-            namesof("disppar", ldisppar, earg = edisppar), "\n",
-            "Mean:     meanpar\n",
-            "Variance: meanpar * (1 + disppar * meanpar)^2"),
+  namesof("meanpar", lmeanpar, emeanpar), ", ",
+  namesof("disppar", ldisppar, edisppar), "\n",
+  "Mean:     meanpar\n",
+  "Variance: meanpar * (1 + disppar * meanpar)^2"),
  constraints = eval(substitute(expression({
     constraints <-
       cm.VGAM(matrix(1, M, 1), x = x,
               bool = .parallel ,
               constraints = constraints,
               apply.int = FALSE )
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
-                     M = M, M1 = 2,
-                     predictors.names = predictors.names)
-  }), list( .zero = zero,
-            .parallel = parallel ))),
+
+
+    if ( .vfl && M != 2)
+      stop("vfl = TRUE only allowed when M == 2")
+    LC <- length(constraints)
+    if ( .vfl && LC <= 2)
+      stop("vfl = T only allowed if ncol(x) > 2")
+    if ( .vfl && !is.zero( .zero ))
+      stop("Need zero = NULL when vfl = TRUE")
+    if ( .vfl && !(is.logical( .parallel ) &&
+         !( .parallel )))
+      stop("Need parallel = FALSE if vfl = TRUE")
+    if ( .vfl ) {
+      CM.mat4 <- rbind(1, -1.5)
+      CM.mat4 <- rbind(1, -1)
+      constraints <- cm.VGAM(CM.mat4, x = x,
+                       bool = .oparallel ,
+                       constraints = constraints)
+      mterms <- 0
+      copp <- c(CM.mat4)  # oparallel CMs
+      choice1 <- rbind(0, 1)
+      choice2 <- rbind(0, 2)  # \eta_2 / 2
+      for (jay in 1:LC) {  # Include the intercept
+      if (!all(c(constraints[[jay]]) == copp)) {
+          mterms <- mterms + 1
+          constraints[[jay]] <- choice1
+        }
+      }  # jay
+      if (mterms == 0)
+        warning("no terms for 'mean'... ",
+                "something looks awry")
+      if (mterms == LC)
+        warning("no terms for 'sd' or 'var'...",
+                "something  looks awry")
+    }  # vfl
+
+    constraints <- cm.zero.VGAM(constraints,
+        x = x, .zero , M = M, M1 = 2,
+        predictors.names = predictors.names)
+ }),
+ list( .zero = zero,
+       .vfl = vfl, .oparallel = oparallel,
+       .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -751,11 +797,14 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
          dpqrfun = "genpois2",
          expected = TRUE,
          multipleResponses = TRUE,
-         parameters.names = c("meanpar", "disppar"),
+         parameters.names = c("meanpar","disppar"),
          imethod = .imethod ,
+         vfl = .vfl , oparallel = .oparallel ,
          zero = .zero )
-  }, list( .zero = zero,
-           .imethod = imethod ))),
+  },
+  list( .zero = zero,
+        .vfl = vfl, .oparallel = oparallel,
+        .imethod = imethod ))),
 
   initialize = eval(substitute(expression({
     temp5 <-
@@ -773,12 +822,12 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     extra$ncoly <- ncoly <- NOS <- ncol(y)
     extra$M1 <- M1 <- 2
     M <- M1 * ncoly
-    mynames1 <- param.names("meanpar",  NOS, skip1 = TRUE)
+    mynames1 <- param.names("meanpar", NOS, skip1 = TRUE)
     mynames2 <- param.names("disppar", NOS, skip1 = TRUE)
 
     predictors.names <-
-       c(namesof(mynames1, .lmeanpar , earg = .emeanpar , tag = FALSE),
-         namesof(mynames2, .ldisppar , earg = .edisppar , tag = FALSE))
+       c(namesof(mynames1, .lmeanpar , .emeanpar , tag = FALSE),
+         namesof(mynames2, .ldisppar , .edisppar , tag = FALSE))
     predictors.names <- predictors.names[interleave.VGAM(M, M1 = M1)]
 
     imethod <- as.vector( .imethod )
@@ -830,17 +879,19 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       etastart <- etastart[, interleave.VGAM(M, M1 = M1),
                            drop = FALSE]
     }
-  }), list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-            .emeanpar = emeanpar, .edisppar = edisppar,
-            .imeanpar = imeanpar, .idisppar = idisppar,
-            .imethod = imethod, .ishrinkage = ishrinkage,
-            .gdisppar = gdisppar)) ),
+  }),
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar,
+        .imeanpar = imeanpar, .idisppar = idisppar,
+        .imethod = imethod, .ishrinkage = ishrinkage,
+        .gdisppar = gdisppar)) ),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
                          earg = .emeanpar )
     meanpar
-  }, list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-           .emeanpar = emeanpar, .edisppar = edisppar ))),
+  },
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar ))),
   last = eval(substitute(expression({
     M1 <- 2
     temp.names <- c(mynames1, mynames2)
@@ -856,9 +907,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       misc$earg[[M1*ii-1]] <- as.vector( .emeanpar )
       misc$earg[[M1*ii  ]] <- as.vector( .edisppar )
     }
-  }), list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-            .emeanpar = emeanpar, .edisppar = edisppar,
-            .imethod = imethod ))),
+  }),
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar,
+        .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL, summation = TRUE) {
@@ -877,8 +929,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
         ll.elts
       }
     }
-  }, list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-           .emeanpar = emeanpar, .edisppar = edisppar ))),
+  },
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar ))),
    vfamily = c("genpoisson2"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
@@ -889,8 +942,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     okay1 <- all(is.finite(disppar)) && all(Lbnd < disppar) &&
              all(is.finite(meanpar)) && all(0 < meanpar)
     okay1
-  }, list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-           .emeanpar = emeanpar, .edisppar = edisppar ))),
+  },
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar ))),
   deriv = eval(substitute(expression({
     M1  <- 2
     NOS <- ncol(eta) / M1
@@ -909,8 +963,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     myderiv <- c(w) * cbind(dl.dmeanpar * dmeanpar.deta ,
                             dl.ddisppar * ddisppar.deta)
     myderiv[, interleave.VGAM(M, M1 = M1)]
-  }), list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-            .emeanpar = emeanpar, .edisppar = edisppar ))),
+  }),
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar ))),
   weight = eval(substitute(expression({
     wz <- matrix(0, n, M + M-1)  # Tridiagonal here but...
 
@@ -995,8 +1050,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     wz <- w.wz.merge(w = w, wz = wz, n = n, M = M + (M - 1),
                      ndepy = NOS)
     wz
-  }), list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
-            .emeanpar = emeanpar, .edisppar = edisppar ))))
+  }),
+  list( .lmeanpar = lmeanpar, .ldisppar = ldisppar,
+        .emeanpar = emeanpar, .edisppar = edisppar ))))
 }  # genpoisson2
 
 
@@ -1006,13 +1062,14 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
 
  genpoisson1 <-
   function(lmeanpar = "loglink",
-           ldispind = "logloglink",  # dispind is greater than 1
+           ldispind = "logloglink",  # dispind > 1
+           parallel = FALSE,
+           zero = "dispind",
+           vfl = FALSE, Form2 = NULL,
            imeanpar = NULL, idispind = NULL,
            imethod = c(1, 1),
            ishrinkage = 0.95,
-           gdispind = exp(1:5),
-           parallel = FALSE,
-           zero = "dispind") {
+           gdispind = exp(1:5)) {
   lmeanpar <- as.list(substitute(lmeanpar))
   emeanpar <- link2list(lmeanpar)
   lmeanpar <- attr(emeanpar, "function.name")
@@ -1025,24 +1082,27 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
      ishrinkage < 0 || 1 < ishrinkage)
     stop("bad input for argument 'ishrinkage'")
 
+  if (!is.logical(vfl) || length(vfl) != 1)
+    stop("argument 'vfl' must be TRUE or FALSE")
+
   if (!is.Numeric(gdispind, positive = TRUE) ||
       any(gdispind <= 1))
     stop("bad input for argument 'gdispind'")
 
-  imethod <- rep_len(imethod, 2)  # For the two parameters
+  imethod <- rep_len(imethod, 2)  # 4 the 2 params
   if (!is.Numeric(imethod, length.arg = 2,
-                  integer.valued = TRUE, positive = TRUE) ||
+      integer.valued = TRUE, positive = TRUE) ||
      any(imethod > 3))
-    stop("argument 'imethod' must have values from 1:3")
+    stop("arg 'imethod' must have values from 1:3")
 
   if (is.logical(parallel) && parallel && length(zero))
     stop("set 'zero = NULL' if 'parallel = TRUE'")
 
   new("vglmff",
   blurb = c("Generalized Poisson distribution (GP-1)\n\n",
-            "Links:    ",
-            namesof("meanpar", lmeanpar, earg = emeanpar), ", ",
-            namesof("dispind", ldispind, earg = edispind), "\n",
+    "Links:    ",
+    namesof("meanpar", lmeanpar, emeanpar), ", ",
+    namesof("dispind", ldispind, edispind), "\n",
             "Mean:     meanpar\n",
             "Variance: meanpar * dispind"),
  constraints = eval(substitute(expression({
@@ -1051,11 +1111,45 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
               bool = .parallel ,
               constraints = constraints,
               apply.int = FALSE )
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
-                     M = M, M1 = 2,
-                     predictors.names = predictors.names)
-  }), list( .zero = zero,
-            .parallel = parallel ))),
+
+
+
+    if ( .vfl && M != 2)
+      stop("vfl = TRUE only allowed when M == 2")
+    LC <- length(constraints)
+    if ( .vfl && LC <= 2)
+      stop("vfl = T only allowed if ncol(x) > 2")
+    if ( .vfl && !is.zero( .zero ))
+      stop("Need zero = NULL when vfl = TRUE")
+    if ( .vfl && !(is.logical( .parallel ) &&
+         !( .parallel )))
+      stop("Need parallel = FALSE if vfl = TRUE")
+    if ( .vfl ) {
+      constraints <- cm.VGAM(rbind(0, 1), x = x,
+                       bool = .Form2 ,
+                       constraints = constraints)
+      mterms <- 0
+      for (jay in 1:LC) {  # Include the intercept
+      if (!all(c(constraints[[jay]]) == 0:1)) {
+          mterms <- mterms + 1
+          constraints[[jay]] <- rbind(1, 0)
+        }
+      }  # jay
+      if (mterms == 0)
+        warning("no terms for 'mean'... ",
+                "something looks awry")
+      if (mterms == LC)
+        warning("no terms for 'sd' or 'var'...",
+                "something  looks awry")
+    }  # vfl
+
+    constraints <- cm.zero.VGAM(constraints,
+           x = x, .zero , M = M, M1 = 2,
+           predictors.names = predictors.names)
+ }),
+ list( .zero = zero,
+       .vfl = vfl, .Form2 = Form2,      
+       .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 2,
@@ -1063,11 +1157,14 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
          dpqrfun = "genpois1",
          expected = TRUE,
          multipleResponses = TRUE,
-         parameters.names = c("meanpar", "dispind"),
+         vfl = .vfl , Form2 = .Form2 ,
+         parameters.names = c("meanpar","dispind"),
          imethod = .imethod ,
          zero = .zero )
-  }, list( .zero = zero,
-           .imethod = imethod ))),
+  },
+  list( .zero = zero,
+        .vfl = vfl, .Form2 = Form2,
+        .imethod = imethod ))),
 
   initialize = eval(substitute(expression({
     temp5 <-
@@ -1142,17 +1239,19 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       etastart <- etastart[, interleave.VGAM(M, M1 = M1),
                            drop = FALSE]
     }
-  }), list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-            .emeanpar = emeanpar, .edispind = edispind,
-            .imeanpar = imeanpar, .idispind = idispind,
-            .imethod = imethod, .ishrinkage = ishrinkage,
-            .gdispind = gdispind)) ),
+  }),
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind,
+        .imeanpar = imeanpar, .idispind = idispind,
+        .imethod  = imethod,  .gdispind = gdispind,
+        .ishrinkage = ishrinkage )) ),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
                          earg = .emeanpar )
     meanpar
-  }, list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-           .emeanpar = emeanpar, .edispind = edispind ))),
+  },
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind ))),
   last = eval(substitute(expression({
     M1 <- 2
     temp.names <- c(mynames1, mynames2)
@@ -1168,9 +1267,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       misc$earg[[M1*ii-1]] <- as.vector( .emeanpar )
       misc$earg[[M1*ii  ]] <- as.vector( .edispind )
     }
-  }), list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-            .emeanpar = emeanpar, .edispind = edispind,
-            .imethod = imethod ))),
+  }),
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind,
+        .imethod = imethod ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL, summation = TRUE) {
@@ -1189,8 +1289,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
         ll.elts
       }
     }
-  }, list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-           .emeanpar = emeanpar, .edispind = edispind ))),
+  },
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind
+      ))),
    vfamily = c("genpoisson1"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
@@ -1201,8 +1303,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     okay1 <- all(is.finite(dispind)) && all(Lbnd < dispind) &&
              all(is.finite(meanpar)) && all(0 < meanpar)
     okay1
-  }, list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-           .emeanpar = emeanpar, .edispind = edispind ))),
+  },
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind ))),
   deriv = eval(substitute(expression({
     M1  <- 2
     NOS <- ncol(eta) / M1
@@ -1220,8 +1323,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     myderiv <- c(w) * cbind(dl.dmeanpar * dmeanpar.deta ,
                             dl.ddispind * ddispind.deta)
     myderiv[, interleave.VGAM(M, M1 = M1)]
-  }), list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-            .emeanpar = emeanpar, .edispind = edispind ))),
+  }),
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind
+       ))),
   weight = eval(substitute(expression({
     wz <- matrix(0, n, M + M-1)  # Tridiagonal here but...
 
@@ -1309,8 +1414,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     wz <- w.wz.merge(w = w, wz = wz, n = n, M = M + (M - 1),
                      ndepy = NOS)
     wz
-  }), list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-            .emeanpar = emeanpar, .edispind = edispind ))))
+  }),
+  list( .lmeanpar = lmeanpar, .ldispind = ldispind,
+        .emeanpar = emeanpar, .edispind = edispind
+      ))))
 }  # genpoisson1
 
 
@@ -1402,9 +1509,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
         cbind(theta2eta(theta.init, .ltheta , earg = .etheta ),
               theta2eta(nuvec.init, .lnuvec , earg = .enuvec ))
     }
-  }), list( .ltheta = ltheta, .lnuvec = lnuvec,
-            .etheta = etheta, .enuvec = enuvec,
-            .inuvec = inuvec, .itheta = itheta ))),
+  }),
+  list( .ltheta = ltheta, .lnuvec = lnuvec,
+        .etheta = etheta, .enuvec = enuvec,
+        .inuvec = inuvec, .itheta = itheta ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     Theta <- eta2theta(eta[, 1], .ltheta , earg = .etheta )
     nuvec <- eta2theta(eta[, 2], .lnuvec , earg = .enuvec )
@@ -1414,8 +1522,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   last = eval(substitute(expression({
     misc$link <-    c("theta" = .ltheta , "nu" = .lnuvec )
     misc$earg <- list("theta" = .etheta , "nu" = .enuvec )
-  }), list( .ltheta = ltheta, .lnuvec = lnuvec,
-            .etheta = etheta, .enuvec = enuvec ))),
+  }),
+  list( .ltheta = ltheta, .lnuvec = lnuvec,
+        .etheta = etheta, .enuvec = enuvec ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -1435,8 +1544,9 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
         ll.elts
       }
     }
-  }, list( .ltheta = ltheta, .lnuvec = lnuvec,
-           .etheta = etheta, .enuvec = enuvec ))),
+  },
+  list( .ltheta = ltheta, .lnuvec = lnuvec,
+        .etheta = etheta, .enuvec = enuvec ))),
   vfamily = c("mccullagh89"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     Theta <- eta2theta(eta[, 1], .ltheta , earg = .etheta )
@@ -1649,13 +1759,13 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
         for (iii in 1:n) {
           rrr <- 1:omega[iii]
           ans[iii]<- ans[iii] - sum(log1p(-phi[iii] +
-                                          (rrr-1) * phi[iii]))
+                                (rrr-1) * phi[iii]))
         }
       } else {
         for (rrr in 1:maxomega) {
           ind8 <- rrr <= omega
           ans[ind8] <- ans[ind8] - log1p(-phi[ind8] +
-                                         (rrr-1) * phi[ind8])
+                                   (rrr-1) * phi[ind8])
         }
       }
       ll.elts <- ans
@@ -1892,7 +2002,8 @@ dirmul.old <- function(link = "loglink", ialpha = 0.01,
             matrix(runif(n*M), n, M)
         etastart <- theta2eta(yy, .link , earg = .earg )
     }
-  }), list( .link = link, .earg = earg, .ialpha = ialpha ))),
+  }),
+  list( .link = link, .earg = earg, .ialpha = ialpha ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
     shape <- eta2theta(eta, .link , earg = .earg )
     M <- if (is.matrix(eta)) ncol(eta) else 1
@@ -1909,7 +2020,8 @@ dirmul.old <- function(link = "loglink", ialpha = 0.01,
       misc$earg[[ii]] <- .earg
 
     misc$pooled.weight <- pooled.weight
-  }), list( .link = link, .earg = earg ))),
+  }),
+  list( .link = link, .earg = earg ))),
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
@@ -1929,7 +2041,8 @@ dirmul.old <- function(link = "loglink", ialpha = 0.01,
         ll.elts
       }
     }
-  }, list( .link = link, .earg = earg ))),
+    },
+    list( .link = link, .earg = earg ))),
   vfamily = c("dirmul.old"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     shape <- eta2theta(eta, .link , earg = .earg )
@@ -2661,7 +2774,7 @@ rdiric <- function(n, shape, dimension = NULL,
   }), list( .elocat = elocat, .scale.arg = scale.arg,
             .llocat = llocat ))),
   weight = eval(substitute(expression({
-    wz <- c(w) * dlocation.deta^2 / ( .scale.arg^2 * 2)
+    wz <- c(w) * dlocation.deta^2 / ( 2 * ( .scale.arg )^2)
     wz
   }), list( .elocat = elocat, .scale.arg = scale.arg,
             .llocat = llocat ))))
@@ -3090,8 +3203,9 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
 
 
 
- borel.tanner <- function(Qsize = 1, link = "logitlink",
-                          imethod = 1) {
+ borel.tanner <-
+    function(Qsize = 1, link = "logitlink",
+             imethod = 1) {
 
 
   if (!is.Numeric(Qsize, length.arg = 1,
@@ -3241,6 +3355,7 @@ rbort <- function(n, Qsize = 1, a = 0.5) {
     wz
   }), list( .Qsize = Qsize ))))
 }  # borel.tanner
+
 
 
 
@@ -5763,29 +5878,36 @@ rbetageom <- function(n, shape1, shape2) {
 
 
 
- chisq <- function(link = "loglink", zero = NULL) {
+ chisq <-
+     function(link = "loglink", zero = NULL,
+              squared = TRUE) {
 
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
-
-
-
-
+  stopifnot(is.logical(squared),
+            length(squared) == 1)
 
   new("vglmff",
-  blurb = c("Chi-squared distribution\n\n",
+  blurb = c("Chi",
+            ifelse(squared, "-squared ", " "),
+            "distribution\n\n",
             "Link:     ",
-            namesof("df", link, earg = earg, tag = FALSE)),
-  charfun = eval(substitute(function(x, eta, extra = NULL,
-                                     varfun = FALSE) {
+          namesof("df", link, earg, tag = FALSE)),
+  charfun = eval(substitute(
+      function(x, eta, extra = NULL,
+               varfun = FALSE) {
+    if (!( .squared ))
+      stop("only chi-squared handled")
     mydf <- eta2theta(eta, .link , earg = .earg )
     if (varfun) {
       2 * mydf
     } else {
       (1 - 2 * 1i * x)^(-0.5 * mydf)
     }
-  }, list( .link = link, .earg = earg  ))),
+    },
+  list( .link = link, .earg = earg ,
+        .squared = squared  ))),
 
   constraints = eval(substitute(expression({
     dotzero <- .zero
@@ -5800,16 +5922,20 @@ rbetageom <- function(n, shape1, shape2) {
          charfun = TRUE,
          expected = TRUE,
          multipleResponses = TRUE,
+         squared = .squared ,
          zero = .zero )
-  }, list( .zero = zero ))),
+  }, list( .zero = zero, .squared = squared ))),
 
 
   rqresslot = eval(substitute(
     function(mu, y, w, eta, extra = NULL) {
-      Dof <- eta2theta(eta, .link , earg = .earg )
-    scrambleseed <- runif(1)  # To scramble the seed
-      qnorm(pchisq(y, df = Dof))
-  }, list( .link = link, .earg = earg ))),
+    if (!( .squared ))
+      stop("only chi-squared handled")
+    Dof <- eta2theta(eta, .link , earg = .earg )
+    scrambleseed <- runif(1)  # To scramble seed
+    qnorm(pchisq(y, df = Dof))
+  }, list( .link = link, .earg = earg,
+           .squared = squared ))),
 
 
   initialize = eval(substitute(expression({
@@ -5832,17 +5958,21 @@ rbetageom <- function(n, shape1, shape2) {
     extra$M1 <- M1
     M <- M1 * ncoly
 
-    extra$ncoly <- NOS <- ncoly # Number of species
+    extra$ncoly <- NOS <- ncoly # Number of spp.
     mynames1 <- param.names("df", NOS, skip1 = TRUE)
-    predictors.names <- namesof(mynames1, .link , .earg ,
-                                tag = FALSE)
+    predictors.names <- namesof(mynames1, .link ,
+                          .earg , tag = FALSE)
 
     if (!length(mustart) && !length(etastart))
       mustart <- y + (1 / 8) * (y == 0)
   }), list( .link = link, .earg = earg ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    eta2theta(eta, .link , earg = .earg )
-  }, list( .link = link, .earg = earg ))),
+    nu <- eta2theta(eta, .link , earg = .earg )
+    if ( .squared ) nu else
+    sqrt(2) * gamma((nu + 1) / 2) / gamma(nu / 2)
+  },
+  list( .link = link, .earg = earg,
+        .squared = squared ))),
 
   last = eval(substitute(expression({
     misc$link <- c(rep_len( .link , ncoly))
@@ -5864,23 +5994,28 @@ rbetageom <- function(n, shape1, shape2) {
              summation = TRUE) {
     mydf <- eta2theta(eta, .link , earg = .earg )
     if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+      stop("loglikelihood residuals not available")
     } else {
-      ll.elts <- c(w) * dchisq(y, df = mydf, ncp = 0,
-                               log = TRUE)
+      ll.elts <- if ( .squared )
+        c(w) * dchisq(y, mydf, log = TRUE) else
+        c(w) * ((mydf / 2  - 1) * log(0.5) +
+               (mydf - 1) * log(y) - 0.5 * y^2 -
+               lgamma(mydf / 2))
       if (summation) {
         sum(ll.elts)
       } else {
         ll.elts
       }
     }
-  }, list( .link = link, .earg = earg ))),
+  }, list( .link = link, .earg = earg,
+           .squared = squared ))),
   vfamily = "chisq",
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     mydf <- eta2theta(eta, .link , earg = .earg )
     okay1 <- all(is.finite(mydf)) && all(0 < mydf)
     okay1
-  }, list(  .link = link, .earg = earg ))),
+  }, list( .link = link, .earg = earg,
+           .squared = squared ))),
 
 
 
@@ -5888,28 +6023,33 @@ rbetageom <- function(n, shape1, shape2) {
   function(object, nsim) {
 
     pwts <- if (length(pwts <- object@prior.weights) > 0)
-              pwts else weights(object, type = "prior")
+      pwts else weights(object, type = "prior")
     if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
     Dof <- eta2theta(eta, .link , earg = .earg )
-    rchisq(nsim * length(Dof), df = Dof, ncp = 0)
-  }, list( .link = link, .earg = earg ))),
-
-
+    if ( .squared )
+      rchisq(nsim * length(Dof), df = Dof) else
+      sqrt(rchisq(nsim * length(Dof), df = Dof))
+  }, list( .link = link, .earg = earg,
+           .squared = squared ))),
 
 
   deriv = eval(substitute(expression({
     mydf <- eta2theta(eta, .link , earg = .earg )
-    dl.dv <- (log(y / 2) - digamma(mydf / 2)) / 2
-    dv.deta <- dtheta.deta(mydf, .link , earg = .earg )
+    dl.dv <- if ( .squared )
+      (log(y / 2) - digamma(mydf / 2)) / 2 else
+       log(y) - (log(2) + digamma(mydf / 2)) / 2
+    dv.deta <- dtheta.deta(mydf, .link , .earg )
     c(w) * dl.dv * dv.deta
-  }), list( .link = link, .earg = earg ))),
+  }), list( .link = link, .earg = earg,
+            .squared = squared ))),
   weight = eval(substitute(expression({
-    ned2l.dv2 <- trigamma(mydf / 2) / 4
+    ned2l.dv2 <- trigamma(mydf / 2) / 4  # Same
     wz <- ned2l.dv2 * dv.deta^2
     c(w) * wz
-  }), list( .link = link, .earg = earg ))))
+  }), list( .link = link, .earg = earg,
+            .squared = squared ))))
 }  # chisq
 
 
@@ -6413,7 +6553,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   deriv = eval(substitute(expression({
     theta <- eta2theta(eta, .link.theta , earg = .earg )
     dl.dthetas <-  y - tan(theta)
-    dparam.deta <- dtheta.deta(theta, .link.theta , earg = .earg )
+    dparam.deta <- dtheta.deta(theta, .link.theta , .earg )
     c(w) * dl.dthetas * dparam.deta
   }), list( .link.theta = link.theta , .earg = earg ))),
   weight = expression({
@@ -6651,7 +6791,7 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
                                                  dtheta.detas[, 2]
     if (!.expected) {
       d2mudeta2 <- d2theta.deta2(mu, .lmu , earg = .emu )
-      d2lambda <- d2theta.deta2(lambda, .llambda , earg = .elambda )
+      d2lambda <- d2theta.deta2(lambda, .llambda , .elambda )
       wz[, iam(1, 1, M)] <- wz[, iam(1, 1, M)] -
                             dl.dthetas[, 1] * d2mudeta2
       wz[, iam(2, 2, M)] <- wz[, iam(2, 2, M)] -
@@ -6669,8 +6809,9 @@ rsimplex <- function(n, mu = 0.5, dispersion = 1) {
   }
 
     wz
-  }), list( .lmu = lmu, .llambda = llambda, .expected = FALSE,
-            .emu = emu, .elambda = elambda ))))
+  }),
+  list( .lmu = lmu, .llambda = llambda, .expected = FALSE,
+        .emu = emu, .elambda = elambda ))))
 }  # leipnik
 
 
@@ -8374,14 +8515,14 @@ list( .lshape1 = lshape1, .lshape2 = lshape2, .llambda = llambda,
         .eshape1 = eshape1, .eshape2 = eshape2, .elambda = elambda
        ))),
   weight = eval(substitute(expression({
-    temp3 <- trigamma(sh1+sh2)
+    temp3 <- trigamma(sh1 + sh2)
 
     ned2l.dsh1 <- trigamma(sh1) - temp3
     ned2l.dsh2 <- trigamma(sh2) - temp3
     ned2l.dlambda2 <- sh1 * sh2 / (lambda^2 * (sh1+sh2+1))
     ned2l.dsh1sh2 <- -temp3
-    ned2l.dsh1lambda <- -sh2 / ((sh1+sh2)*lambda)
-    ned2l.dsh2lambda <-  sh1 / ((sh1+sh2)*lambda)
+    ned2l.dsh1lambda <- -sh2 / ((sh1+sh2) * lambda)
+    ned2l.dsh2lambda <-  sh1 / ((sh1+sh2) * lambda)
 
     wz <- matrix(NA_real_, n, dimm(M))  #M==3 means 6=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.dsh1 * dsh1.deta^2
@@ -10251,7 +10392,8 @@ rpareto <- function(n, scale = 1, shape) {
 
 
 
-dtruncpareto <- function(x, lower, upper, shape, log = FALSE) {
+dtruncpareto <-
+  function(x, lower, upper, shape, log = FALSE) {
 
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -10272,12 +10414,13 @@ dtruncpareto <- function(x, lower, upper, shape, log = FALSE) {
 
 
   logdensity <- rep_len(log(0), L)
-  xok <- (0 < lower) & (lower < x) & (x < upper) & (shape > 0)
+  xok <- (0 <  lower) & (lower <= x) &
+         (x <= upper) & (shape >  0)
 
   logdensity[xok] <- log(shape[xok]) +
-                     shape[xok] * log(lower[xok]) -
-                     (shape[xok] + 1) * log(x[xok]) -
-                     log1p(-(lower[xok] / upper[xok])^(shape[xok]))
+    shape[xok] * log(lower[xok]) -
+    (shape[xok] + 1) * log(x[xok]) -
+    log1p(-(lower[xok] / upper[xok])^(shape[xok]))
 
   logdensity[shape <= 0] <- NaN
   logdensity[upper < lower] <- NaN
@@ -10288,8 +10431,9 @@ dtruncpareto <- function(x, lower, upper, shape, log = FALSE) {
 
 
 
-ptruncpareto <- function(q, lower, upper, shape,
-                         lower.tail = TRUE, log.p = FALSE) {
+ptruncpareto <-
+    function(q, lower, upper, shape,
+             lower.tail = TRUE, log.p = FALSE) {
   if (!is.Numeric(q))
     stop("bad input for argument 'q'")
 
@@ -10300,7 +10444,8 @@ ptruncpareto <- function(q, lower, upper, shape,
     stop("bad input for argument 'log.p'")
   rm(log.p)   # 20141231 KaiH
 
-  L <- max(length(q), length(lower), length(upper), length(shape))
+  L <- max(length(q), length(lower),
+           length(upper), length(shape))
   if (length(q)     != L) q     <- rep_len(q,     L)
   if (length(shape) != L) shape <- rep_len(shape, L)
   if (length(lower) != L) lower <- rep_len(lower, L)
@@ -10590,8 +10735,8 @@ rtruncpareto <- function(n, lower, upper, shape) {
     c(w) * cbind(dl.dlambda * dlambda.deta)
   }), list( .llambda = llambda, .elambda = elambda ))),
   weight = eval(substitute(expression({
-    d2l.dlambda2 <- 0.5 / lambda^2
-    c(w) * cbind(dlambda.deta^2 * d2l.dlambda2)
+    ned2l.dlambda2 <- 0.5 / lambda^2
+    c(w) * cbind(dlambda.deta^2 * ned2l.dlambda2)
   }), list( .llambda = llambda, .elambda = elambda ))))
 }  # waldff
 

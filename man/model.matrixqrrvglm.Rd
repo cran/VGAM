@@ -93,3 +93,5 @@ model.matrix(mycqo, type = "vlm")
 }
 }
 \keyword{models}
+\keyword{nonlinear}
+\keyword{utilities}

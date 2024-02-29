@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -159,12 +159,13 @@ nvar_vlm <- function(object, ...) {
   if (length(object@misc$predictors.names) == M)
     names(NumPars) <- object@misc$predictors.names
   if (!all(NumPars == numPars)) {
-    print(NumPars - numPars)  # Should be all 0s
-    stop("something wrong in nvar_vlm()")
+    stop("something wrong in nvar_vlm(): ",
+         paste(NumPars - numPars, collapse = ","),
+         " should be all 0s")
   }
 
   numPars
-}
+}  # nvar_vlm
 
 
 

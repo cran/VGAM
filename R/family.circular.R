@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -267,9 +267,9 @@ dvMF3 <-
     concen=eta2theta(eta[, c(FALSE, FALSE, TRUE)], .lconcen , .econcen )
     rvMF3(nsim * length(colati), colati = colati,
           longit = longit, concen = concen)
-  }, list(
-     .lcolati = lcolati, .llongit = llongit, .lconcen = lconcen,
-     .ecolati = ecolati, .elongit = elongit, .econcen = econcen ))),
+  },
+  list( .lcolati = lcolati, .llongit = llongit, .lconcen = lconcen,
+        .ecolati = ecolati, .elongit = elongit, .econcen = econcen ))),
   deriv = eval(substitute(expression({
     colati=eta2theta(eta[, c(TRUE, FALSE, FALSE)], .lcolati , .ecolati )
     longit=eta2theta(eta[, c(FALSE, TRUE, FALSE)], .llongit , .elongit )
@@ -298,9 +298,9 @@ dvMF3 <-
                             dl.dlongit * dlongit.deta,
                             dl.dconcen * dconcen.deta)
     dl.deta[, interleave.VGAM(M, M1 = M1)]
-  }), list(
-      .lcolati = lcolati, .llongit = llongit, .lconcen = lconcen,
-      .ecolati = ecolati, .elongit = elongit, .econcen = econcen ))),
+  }),
+  list( .lcolati = lcolati, .llongit = llongit, .lconcen = lconcen,
+        .ecolati = ecolati, .elongit = elongit, .econcen = econcen ))),
   weight = eval(substitute(expression({
     ned2l.dcolati2 <- (-concen) * Akappa  # 1 - coth(concen) / concen
     ned2l.dlongit2 <- concen * Akappa * (sin(colati))^2
@@ -315,10 +315,10 @@ dvMF3 <-
                 dim = c(n, M / M1, 6))
     wz <- arwz2wz(wz, M = M, M1 = M1)
     wz
-  }), list(
-      .lcolati = lcolati, .llongit = llongit, .lconcen = lconcen,
-      .ecolati = ecolati, .elongit = elongit, .econcen = econcen,
-      .tol12 = tol12 ))))
+  }),
+  list( .lcolati = lcolati, .llongit = llongit, .lconcen = lconcen,
+        .ecolati = ecolati, .elongit = elongit, .econcen = econcen,
+        .tol12 = tol12 ))))
 }  # vMF3
 
 
@@ -691,16 +691,18 @@ cardioid.control <- function(save.weights = TRUE, ...) {
     wz <- wz * dtheta.detas[, index0$row] *
                dtheta.detas[, index0$col]
     c(w) * wz
-  }), list( .lmu = lmu, .lrho = lrho,
-            .emu = emu, .erho = erho, .nsimEIM = nsimEIM ))))
+  }),
+  list( .lmu = lmu, .lrho = lrho,
+        .emu = emu, .erho = erho, .nsimEIM = nsimEIM ))))
 }
 
 
 
- vonmises <- function(llocation = extlogitlink(min = 0, max = 2*pi),
-                      lscale  = "loglink",
-                      ilocation = NULL, iscale  = NULL,
-                      imethod = 1, zero = NULL) {
+ vonmises <-
+  function(llocation = extlogitlink(min = 0, max = 2*pi),
+           lscale  = "loglink",
+           ilocation = NULL, iscale  = NULL,
+           imethod = 1, zero = NULL) {
 
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
@@ -832,15 +834,17 @@ cardioid.control <- function(save.weights = TRUE, ...) {
             .llocat = llocat, .elocat = elocat ))),
   weight = eval(substitute(expression({
     ned2l.dlocat2 <- Scale * tmp6[, 2] / tmp6[, 1]
-    ned2l.dscale2 <- tmp6[, 3] / tmp6[, 1] - (tmp6[, 2] / tmp6[, 1])^2
+    ned2l.dscale2 <- tmp6[, 3] / tmp6[, 1] -
+                    (tmp6[, 2] / tmp6[, 1])^2
 
     wz <- matrix(0, nrow = n, ncol = 2)  # diagonal
     wz[, iam(1, 1, M)] <- ned2l.dlocat2 * dlocat.deta^2
     wz[, iam(2, 2, M)] <- ned2l.dscale2 * dscale.deta^2
     c(w) * wz
-  }), list( .escale = escale, .elocat = elocat,
-            .lscale = lscale, .llocat = llocat ))))
-}
+  }),
+  list( .escale = escale, .elocat = elocat,
+        .lscale = lscale, .llocat = llocat ))))
+}  # vonmises
 
 
 

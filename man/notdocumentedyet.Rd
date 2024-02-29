@@ -12,12 +12,25 @@
 %
 %
 %
+% 202402
+\alias{ned2l.ebbinom}
+\alias{eimij.ebbinom}
+% 202312
+%\alias{CM.qnorm}
+%\alias{asinlink}
+\alias{summary.drrvglm-class}
+% 202311
+\alias{drrvglm-class}
+\alias{Coef.drrvglm}
+\alias{Coef.drrvglm-class}
+% 202310
+%\alias{asinlink}
 % 202307
-\alias{CM.symmetric0}
-\alias{CM.symmetric1}
+%\alias{CM.symm0}
+%\alias{CM.symm1}
 \alias{dgamma.mm}
 % 202208
-\alias{CM.equidistant}
+%\alias{CM.equid}
 % 202206
 \alias{rqresidualsvlm}
 \alias{rqresid}
@@ -170,7 +183,7 @@
 %\alias{gordlink}
 %\alias{pordlink}
 %\alias{nbordlink}
-\alias{nbord2link}
+%\alias{nbord2link}      % deprecated 202310
 \alias{stieltjes}
 \alias{zeta.specials}
 %\alias{loglogloglink}
@@ -316,7 +329,8 @@
 \alias{grid.search2}
 \alias{grid.search3}
 \alias{grid.search4}
-\alias{expected.betabin.ab}
+%i \alias{expected.betabin.ab}   renamed 20240207
+\alias{Ebbin.ab}
 % 201406;
 % \alias{interleave.VGAM}   DONE 20151204
 \alias{interleave.cmat}  % 201506;
@@ -445,7 +459,7 @@
 % \alias{show.summary.lms}
 \alias{show.summary.qrrvglm}
 % \alias{show.summary.rc.exponential}
-\alias{show.summary.rrvglm}
+% \alias{show.summary.rrvglm}    % 20240119
 %\alias{show.summary.uqo}
 % \alias{show.summary.vgam}
 % \alias{show.summary.vglm} % 20150831
@@ -871,7 +885,7 @@
 \alias{summary.qrrvglm}
 \alias{summary.rc.exponential}
 \alias{summaryrcim}
-\alias{summary.rrvglm}
+% \alias{summary.rrvglm}    % 20240119
 %\alias{summary.uqo}
 % \alias{summaryvgam}
 %\alias{summaryvglm}  % 20150831
@@ -886,8 +900,8 @@
 % \alias{uqo.fit}
 % \alias{valid.vglmff}
 % \alias{valid.vknotl2}
-\alias{valt.control}
-% \alias{valt}
+\alias{valt0.control}
+% \alias{valt0}
 % \alias{valt.1iter}
 % \alias{valt.2iter}
 % \alias{valt.control}

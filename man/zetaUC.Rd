@@ -20,7 +20,7 @@ rzeta(n, shape)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x, q, p, n}{Same as \code{\link[stats]{Poisson}}. }
-  \item{shape}{ The positive shape parameter \eqn{p}. }
+  \item{shape}{ The positive shape parameter \eqn{s}. }
   \item{lower.tail, log}{
   Same meaning as in \code{\link[stats]{Normal}}.
 
@@ -68,7 +68,7 @@ New York: Wiley.
 \author{ T. W. Yee }
 \note{
   \code{qzeta()} runs slower and slower as \code{shape} approaches
-  0 and \code{p} approaches 1.  The \pkg{VGAM} family function
+  0 and \code{shape} approaches 1.  The \pkg{VGAM} family function
   \code{\link{zetaff}} estimates the shape parameter \eqn{s}.
 
 

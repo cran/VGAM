@@ -29,11 +29,12 @@
 
 }
 
-\keyword{methods}
-\keyword{classes}
+%\keyword{methods}
+%\keyword{classes}
 %\keyword{ ~~ other possible keyword(s)}
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 
 
 

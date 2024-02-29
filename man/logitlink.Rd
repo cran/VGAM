@@ -6,7 +6,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Logit Link Function }
 \description{
-  Computes the logit transformation, including its inverse and the
+  Computes the logit transformation,
+  including its inverse and the
   first two derivatives.
 
 }
@@ -103,7 +104,8 @@ extlogitlink(theta, min = 0, max = 1, bminvalue = NULL,
 }
 \references{
   McCullagh, P. and Nelder, J. A. (1989).
-  \emph{Generalized Linear Models}, 2nd ed. London: Chapman & Hall.
+  \emph{Generalized Linear Models},
+  2nd ed. London: Chapman & Hall.
 
 
 }
@@ -125,6 +127,8 @@ extlogitlink(theta, min = 0, max = 1, bminvalue = NULL,
 
 \seealso{
     \code{\link{Links}},
+    \code{\link{alogitlink}},
+    \code{\link{asinlink}},
     \code{\link{logitoffsetlink}},
     \code{\link{probitlink}},
     \code{\link{clogloglink}},
@@ -135,6 +139,7 @@ extlogitlink(theta, min = 0, max = 1, bminvalue = NULL,
     \code{\link{multilogitlink}}.
 
 
+    
 }
 \examples{
 p <- seq(0.01, 0.99, by = 0.01)

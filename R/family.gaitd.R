@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -3702,16 +3702,15 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
   skip <- vecTF.t | vecTF.a  # Leave these values alone
   tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix +
               sum.d + pdip.mix
-  if (li.mlm + ld.mlm) {
     if (any(tmp6[!skip] < 0, na.rm = TRUE)) {
       warning("the vector of normalizing constants contains ",
               "some negative values. Replacing them with NAs")
       tmp6[!skip & tmp6 < 0] <- NA
     }
-  }  # li.mlm + ld.mlm
 
 
-  Delt3 <- tmp6 / (cdf.max.s - suma - sumt)
+  denom1 <- cdf.max.s - sumt - suma
+  Delt3 <- tmp6 / denom1
   pmf0[!skip] <- (Delt3 * dpois(x, lambda.p))[!skip]
 
 
@@ -3746,18 +3745,30 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
   }  # ld.mlm
 
 
+  if (any(vecTF <- !is.na(tmp6) & tmp6 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+  if (any(vecTF <- !is.na(denom1) & denom1 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+
+
   pmf0 <- pmf0 + pobs.mix * pmf2.a + pstr.mix * pmf2.i -
                  pdip.mix * pmf2.d
 
 
 
-  vecTF <- pmf0 < 0
-  if (any(vecTF, na.rm = TRUE)) {
+  if (any(vecTF <- !is.na(pmf0) & pmf0 < 0)) {
     warning("Negative PMF: too much deflation? NaNs produced")
     pmf0[vecTF] <- NaN
   }
-  vecTF <- pmf0 > 1
-  if (any(vecTF, na.rm = TRUE)) {
+  if (any(vecTF <- !is.na(pmf0) & pmf0 > 1)) {
     warning("PMF > 1: too much inflation? NaNs produced")
     pmf0[vecTF] <- NaN
   }
@@ -4386,7 +4397,7 @@ if (checkd) {
            offset.x = ifelse(new.plot, 0, 0.25),
            type.plot = "h",  # Matches 'type' argument
            xlim = c(0, min(100, max.support + 2)),
-           ylim = NULL,
+           ylim = NULL,  # Same as NA too
            xlab = "",  # Was "y" prior to using oma
            ylab = "Probability",
            main = "",
@@ -4459,7 +4470,7 @@ if (checkd) {
   if (MM != 1 && MM !=  2)
     stop("can only handle 1 or 2 parameters")
 
-  xx <- seq(xlim[1], xlim[2])
+  xx <- seq(floor(xlim[1]), ceiling(xlim[2]))
   ind.A.mlm <- ind.A.mix <- ind.trunc <-
   ind.I.mlm <- ind.I.mix <-
   ind.D.mlm <- ind.D.mix <- FALSE
@@ -4533,6 +4544,10 @@ if (checkd) {
         do.call(dfun, list(x =  xx, theta.p[1], theta.p[2]))
     }
 
+  if (any(!is.finite(pmf.p)))
+    stop("NAs found in pmf.p")          
+
+
 
 
   alist <- list(  # x = xx,  # theta.p,
@@ -4578,6 +4593,17 @@ if (checkd) {
   dlist$x <- xx
   dlist$log <- FALSE
   pmf.z <- do.call(dfun, dlist)
+
+
+  if (any(!is.finite(pmf.z)))
+  stop("Too much alteration/inflation/deflation;",
+       " NAs found in pmf.z")          
+
+
+
+
+
+
   if (!all(is.finite(pmf.z)))
     warning("some PMF values are not finite")
   if ((rp.z <- range(pmf.z, na.rm = TRUE))[1] < 0 || rp.z[2] > 1)
@@ -4590,7 +4616,8 @@ if (checkd) {
   mom.fun <- paste0("moments.gaitdcombo.", fam)
   Bits <- do.call(mom.fun, mlist)
 
-  myylim <- if (is.null(ylim))
+  myylim <- if (is.null(ylim) ||   # orig.
+                any(is.na(ylim)))  # 20240215
     c(0, max(0, pmf.z, na.rm = TRUE) * 1.04) else ylim
 
 
@@ -4662,7 +4689,8 @@ if (checkd) {
                (if (length(i.mlm)) rowSums(rbind(pstr.mlm)) else 0) +
                (if (length(d.mlm)) rowSums(rbind(pdip.mlm)) else 0))
     if (any(Numer < 0))
-      warning("variable 'Numer' has negative values")
+      stop("variable 'Numer' has a negative value: ",
+           "too much alteration/inflation/deflation")
     Numer <- Numer[1]
 
 
@@ -4737,16 +4765,22 @@ if (checkd) {
     start.pt.d.mix <- Numer * pmf.p[ind.D.mix] / Denom.p  # Skin
     dips.mix <- pmf.z[ind.D.mix]  # Bottom of the dip
 
-  if (plot.it && deflation)
+  if (plot.it && deflation) {
+    bottom.y <- if (dontop) dips.mix else
+                start.pt.d.mix - dips.mix
+    if (any(is.na(bottom.y)) ||
+        min(bottom.y) < 0)
+      stop("too much deflation")
     segments(xx[ind.D.mix] + offset.x,
              start.pt.d.mix,  # This value is unchanged; top
              xx[ind.D.mix] + offset.x,
-             if (dontop) dips.mix else
-             start.pt.d.mix - dips.mix,
+             bottom.y,
              lwd = if (dontop) lwd.d else lwd.d,
              lty = if (dontop) lty.d.dip else lty.d.mix,
              col = if (dontop) col.d.dip else col.d.mix,
              lend = lend)
+}
+
 
 
   if (plot.it)
@@ -5002,7 +5036,8 @@ plotdgaitd.vglm <-
   log.arg <- log;  rm(log)
   lowsup <- 0
   gaitd.errorcheck(a.mix, a.mlm, i.mix, i.mlm,
-                   d.mix, d.mlm, truncate, max.support, nparams = 2)
+                   d.mix, d.mlm, truncate,
+                   max.support, nparams = 2)
 
   if ((is.prob <- as.logical(length(prob.p))) &&
       length(munb.p))
@@ -5098,10 +5133,12 @@ plotdgaitd.vglm <-
   denom.t <- cdf.max.s - sumt  # No sumt on RHS
 
     pmf0 <- if (is.prob)  # dgtnbinom
-              ifelse(vecTF.t, 0, dnbinom(max.support, size.p,
-                                         prob = prob.p) / denom.t) else
-              ifelse(vecTF.t, 0, dnbinom(max.support, size.p,
-                                         mu   = munb.p) / denom.t)
+                ifelse(vecTF.t, 0,
+                       dnbinom(max.support, size.p,
+                               prob = prob.p) / denom.t) else
+                ifelse(vecTF.t, 0,
+                       dnbinom(max.support, size.p,
+                               mu   = munb.p) / denom.t)
 
 
   sum.a <- suma <- 0  # numeric(LLL)
@@ -5196,21 +5233,25 @@ plotdgaitd.vglm <-
   }  # li.mlm
 
   skip <- vecTF.t | vecTF.a  # Leave these values alone
-  tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix + sum.d + pdip.mix
-  if (li.mlm + ld.mlm) {
+  tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix +
+          sum.d + pdip.mix
+
+
+
+
     if (any(tmp6[!skip] < 0, na.rm = TRUE)) {
       warning("the vector of normalizing constants contains ",
               "some negative values. Replacing them with NAs")
       tmp6[!skip & tmp6 < 0] <- NA
     }
-  }  # li.mlm + ld.mlm
 
 
 
+  denom1 <- cdf.max.s - sumt - suma
   pmf0[!skip] <- (tmp6 * (if (is.prob) 
     dnbinom(x, size.p, prob = prob.p) else
     dnbinom(x, size.p, mu   = munb.p)) / (
-    cdf.max.s - suma - sumt))[!skip]  # added
+    denom1))[!skip]  # added
 
 
   if (li.mlm) {
@@ -5234,9 +5275,27 @@ plotdgaitd.vglm <-
   }  # ld.mlm
 
 
+  if (any(vecTF <- !is.na(tmp6) & tmp6 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+  if (any(vecTF <- !is.na(denom1) & denom1 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+
 
   pmf0 <- pmf0 + pobs.mix * pmf2.a + pstr.mix * pmf2.i -
                  pdip.mix * pmf2.d
+
+  if (any(vecTF <- !is.na(pmf0) & pmf0 < 0))
+    pmf0[vecTF] <- NaN
+  if (any(vecTF <- !is.na(pmf0) & pmf0 > 1))
+    pmf0[vecTF] <- NaN
 
   if (log.arg) log(pmf0) else pmf0
 }  # dgaitdnbinom

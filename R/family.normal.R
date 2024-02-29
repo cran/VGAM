@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -157,10 +157,8 @@ if (FALSE)
   }, list( .zero = zero ))),
 
   initialize = eval(substitute(expression({
-    if (is.R())
       assign("CQO.FastAlgorithm", TRUE,
-             envir = VGAM::VGAMenv) else
-      CQO.FastAlgorithm <<- TRUE
+             envir = VGAM::VGAMenv)   # else
     if (any(function.name == c("cqo", "cao")) &&
        (length( .zero ) ||
        (is.logical( .parallel ) && .parallel )))
@@ -213,13 +211,8 @@ if (FALSE)
     names(misc$link) <- predictors.names
 
 
-    if (is.R()) {
       if (exists("CQO.FastAlgorithm", envir = VGAM::VGAMenv))
         rm("CQO.FastAlgorithm", envir = VGAM::VGAMenv)
-    } else {
-      while (exists("CQO.FastAlgorithm"))
-        remove("CQO.FastAlgorithm")
-    }
 
     misc$expected <- TRUE
     misc$multipleResponses <- TRUE
@@ -2006,7 +1999,7 @@ moment.millsratio2 <- function(zedd) {
         }
       }  # End of for (spp.) loop
 
-    } else {  # Not a standard Tobit model ,,,,,,,,,,,,,,,,,,,,,
+    } else {  # Not a standard Tobit model ,,,,,,
 
 
 
@@ -2064,9 +2057,10 @@ moment.millsratio2 <- function(zedd) {
 
     w.wz.merge(w = w / sdm^2, wz = wz, n = n,
                M = M, ndepy = ncoly)
-  }), list( .lmu = lmu, .Lower = Lower, .Upper = Upper,
-            .lsd = lsd,
-            .stdTobit = stdTobit ))))
+  }),
+  list( .lmu = lmu, .lsd = lsd,
+        .Lower = Lower, .Upper = Upper,
+        .stdTobit = stdTobit ))))
 }  # End of tobit()
 
 
@@ -2076,15 +2070,16 @@ moment.millsratio2 <- function(zedd) {
 
 
  uninormal <-
-   function(lmean = "identitylink",
-           lsd = "loglink", lvar = "loglink",
+  function(lmean = "identitylink",
+           lsd = "loglink",
+           lvar = "loglink",
            var.arg = FALSE,
            imethod = 1,
            isd = NULL,
            parallel = FALSE,
+           vfl = FALSE, Form2 = NULL,
            smallno = 1.0e-5,
            zero = if (var.arg) "var" else "sd") {
-
 
 
 
@@ -2105,45 +2100,43 @@ moment.millsratio2 <- function(zedd) {
   lvare <- attr(evare, "function.name")
 
 
-
-
-
-
-
   if (!is.Numeric(smallno, length.arg = 1,
                   positive = TRUE))
-      stop("argument 'smallno' must be positive and close to 0")
+      stop("'smallno' not positive and approx 0")
   if (smallno > 0.1) {
-    warning("replacing argument 'smallno' with 0.1")
+    warning("replacing arg 'smallno' with 0.1")
     smallno <- 0.1
   }
 
   if (!is.Numeric(imethod, length.arg = 1,
-                  integer.valued = TRUE, positive = TRUE) ||
-     imethod > 4)
-      stop("argument 'imethod' must be 1 or 2 or 3 or 4")
+      integer.valued = TRUE, positive = TRUE) ||
+      imethod > 4)
+      stop("arg 'imethod' is not 1, 2, 3 or 4")
 
   if (!is.logical(var.arg) ||
       length(var.arg) != 1)
-    stop("argument 'var.arg' must be a single logical")
+    stop("arg 'var.arg' must be a single logical")
   if (!is.logical(apply.parint) ||
       length(apply.parint) != 1)
-    stop("argument 'apply.parint' must be a single logical")
+    stop("'apply.parint' isnt a single logical")
 
+  if (!is.logical(vfl) || length(vfl) != 1)
+    stop("argument 'vfl' must be TRUE or FALSE")
 
-  if (is.logical(parallel) && parallel && length(zero))
+  if (is.logical(parallel) &&
+      parallel && length(zero))
     stop("set 'zero = NULL' if 'parallel = TRUE'")
-
 
   new("vglmff",
   blurb = c("Univariate normal distribution\n\n",
             "Links:    ",
-            namesof("mean", lmean, earg = emean, tag = TRUE), "; ",
-            if (var.arg)
-            namesof("var",  lvare, earg = evare, tag = TRUE) else
-            namesof("sd" ,  lsdev, earg = esdev, tag = TRUE),
-            "\n",
-            if (var.arg) "Variance: var" else "Variance: sd^2"),
+   namesof("mean", lmean, emean, tag = TRUE), "; ",
+   if (var.arg)
+   namesof("var",  lvare, evare, tag = TRUE) else
+   namesof("sd" ,  lsdev, esdev, tag = TRUE),
+   "\n",
+   if (var.arg) "Variance: var" else
+                "Variance: sd^2"),
 
   charfun = eval(substitute(function(x, eta, extra = NULL,
                                      varfun = FALSE) {
@@ -2159,9 +2152,10 @@ moment.millsratio2 <- function(zedd) {
     } else {
       exp(x * (mymu * 1i - 0.5 * x * Varm))
     }
-  }, list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
-           .emean = emean, .esdev = esdev, .evare = evare,
-           .var.arg = var.arg ))),
+  },
+  list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+        .emean = emean, .esdev = esdev, .evare = evare,
+        .var.arg = var.arg ))),
 
 
 
@@ -2173,11 +2167,47 @@ moment.millsratio2 <- function(zedd) {
               constraints = constraints,
               apply.int = .apply.parint )
 
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 2)
-  }), list( .zero = zero,
-            .parallel = parallel, .apply.parint = apply.parint ))),
+
+
+    if ( .vfl && M != 2)
+      stop("vfl = TRUE only allowed when M == 2")
+    LC <- length(constraints)
+    if ( .vfl && LC <= 2)
+      stop("vfl = T only allowed if ncol(x) > 2")
+    if ( .vfl && !is.zero( .zero ))
+      stop("Need zero = NULL when vfl = TRUE")
+    if ( .vfl && !(is.logical( .parallel ) &&
+         !( .parallel )))
+      stop("Need parallel = FALSE if vfl = TRUE")
+    if ( .vfl ) {
+      constraints <- cm.VGAM(rbind(0, 1), x = x,
+                       bool = .Form2 ,
+                       constraints = constraints)
+      mterms <- 0
+      for (jay in 1:LC) {  # Include the intercept
+      if (!all(c(constraints[[jay]]) == 0:1)) {
+          mterms <- mterms + 1
+          constraints[[jay]] <- rbind(1, 0)
+        }
+      }  # jay
+      if (mterms == 0)
+        warning("no terms for 'mean'... ",
+                "something looks awry")
+      if (mterms == LC)
+        warning("no terms for 'sd' or 'var'...",
+                "something  looks awry")
+    }  # vfl
+
+
+
+    constraints <- cm.zero.VGAM(constraints,
+       x = x, .zero , M = M, M1 = 2,
+       predictors.names = predictors.names)
+  }),
+  list( .zero = zero,
+        .vfl = vfl, .Form2 = Form2,      
+        .parallel = parallel,
+        .apply.parint = apply.parint ))),
 
 
   infos = eval(substitute(function(...) {
@@ -2187,15 +2217,18 @@ moment.millsratio2 <- function(zedd) {
          charfun = TRUE,
          expected = TRUE,
          hadof = TRUE,
+         vfl = .vfl , Form2 = .Form2 ,
          multipleResponses = TRUE,
          parameters.names = c("mean",
-                              if ( .var.arg ) "var" else "sd"),
+              if ( .var.arg ) "var" else "sd"),
          var.arg = .var.arg ,
          parallel = .parallel ,
          zero = .zero )
-  }, list( .zero = zero ,
-           .parallel = parallel ,
-           .var.arg = var.arg ))),
+  },
+  list( .zero = zero ,
+        .vfl = vfl, .Form2 = Form2,
+        .parallel = parallel ,
+        .var.arg = var.arg ))),
 
   initialize = eval(substitute(expression({
     orig.y <- y
@@ -2209,9 +2242,9 @@ moment.millsratio2 <- function(zedd) {
 
     if (length(attr(orig.y, "Prior.Weights"))) {
       if (any(c(w) != 1))
-        warning("replacing the 'weights' argument by ",
-                "the 'Prior.Weights' attribute of the ",
-                "response (probably due to Qvar()")
+        warning("replacing the 'weights' arg by ",
+        "the 'Prior.Weights' attribute of the ",
+        "response (probably due to Qvar()")
 
 
       w <- attr(orig.y, "Prior.Weights")
@@ -2314,10 +2347,11 @@ moment.millsratio2 <- function(zedd) {
 
       colnames(etastart) <- predictors.names
     }
-  }), list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
-            .emean = emean, .esdev = esdev, .evare = evare,
-                            .isdev = isd,
-            .var.arg = var.arg, .imethod = imethod ))),
+  }),
+  list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+        .emean = emean, .esdev = esdev, .evare = evare,
+        .isdev = isd,
+        .var.arg = var.arg, .imethod = imethod ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     M1 <- extra$M1
@@ -2362,11 +2396,13 @@ moment.millsratio2 <- function(zedd) {
     misc$parallel <- .parallel
     misc$apply.parint <- .apply.parint
     misc$smallno <- .smallno
-  }), list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
-            .emean = emean, .esdev = esdev, .evare = evare,
-            .parallel = parallel, .apply.parint = apply.parint,
-            .smallno = smallno,
-            .var.arg = var.arg, .imethod = imethod ))),
+  }),
+  list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+        .emean = emean, .esdev = esdev, .evare = evare,
+        .parallel = parallel, .imethod = imethod,
+        .apply.parint = apply.parint,
+        .smallno = smallno,
+        .var.arg = var.arg))),
 
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
@@ -2399,17 +2435,19 @@ moment.millsratio2 <- function(zedd) {
         ll.elts
       }
     }
-  }, list( .lsdev = lsdev, .lvare = lvare,
-           .esdev = esdev, .evare = evare,
-           .lmean = lmean,
-           .smallno = smallno,
-           .var.arg = var.arg ))),
+  },
+  list( .lsdev = lsdev, .lvare = lvare,
+        .esdev = esdev, .evare = evare,
+        .lmean = lmean,
+        .smallno = smallno,
+        .var.arg = var.arg ))),
   vfamily = c("uninormal"),
 
   hadof = eval(substitute(
   function(eta, extra = list(),
-           linpred.index = 1,
-           w = 1, dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           linpred.index = 1, w = 1,
+           dim.wz = c(NROW(eta),
+                    NCOL(eta) * (NCOL(eta)+1)/2), 
            deriv = 1, ...) {
     M1 <- 2
     n <- NROW(eta)
@@ -2477,9 +2515,10 @@ moment.millsratio2 <- function(zedd) {
             dim = c(n, M / M1, 3)),
                  stop("argument 'deriv' must be 0 or 1 or 2"))
     return(arwz2wz(WZ, M = M, M1 = M1, full.arg = TRUE))
-  }, list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
-           .emean = emean, .esdev = esdev, .evare = evare,
-           .var.arg = var.arg ))),
+  },
+  list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+        .emean = emean, .esdev = esdev, .evare = evare,
+        .var.arg = var.arg ))),
 
 
   validparams = eval(substitute(function(eta, y, extra = NULL) {
@@ -2501,10 +2540,11 @@ moment.millsratio2 <- function(zedd) {
             all(0 < eta[, M1*(1:ncoly) - 1]) else
             TRUE
     okay1 && okay2
-  }, list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
-           .emean = emean, .esdev = esdev, .evare = evare,
-           .smallno = smallno,
-           .var.arg = var.arg ))),
+  },
+  list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+        .emean = emean, .esdev = esdev, .evare = evare,
+        .smallno = smallno,
+        .var.arg = var.arg ))),
 
 
 
@@ -2524,12 +2564,13 @@ moment.millsratio2 <- function(zedd) {
     } else {
       sdev <- eta2theta(eta[, c(FALSE, TRUE)], .lsdev , .esdev )
     }
-    rnorm(nsim * length(mymu), mean = mymu, sd = sdev)
-  }, list( .lsdev = lsdev, .lvare = lvare,
-           .esdev = esdev, .evare = evare,
-           .lmean = lmean,
-           .smallno = smallno,
-           .var.arg = var.arg ))),
+    rnorm(nsim * length(mymu), mymu, sd = sdev)
+  },
+  list( .lsdev = lsdev, .lvare = lvare,
+        .esdev = esdev, .evare = evare,
+        .lmean = lmean,
+        .smallno = smallno,
+        .var.arg = var.arg ))),
 
 
 
@@ -2541,7 +2582,8 @@ moment.millsratio2 <- function(zedd) {
 
     if ( .lmean == "explink") {
       if (any(eta[, M1*(1:ncoly) - 1] <= 0)) {
-        warning("turning some columns of 'eta' positive in @deriv")
+        warning("turning some cols of ",
+                "'eta' positive in @deriv")
         for (ii in 1:ncoly)
           eta[, M1*ii - 1] <- pmax( .smallno , eta[, M1*ii - 1])
       }
@@ -2582,10 +2624,11 @@ moment.millsratio2 <- function(zedd) {
 
 
     ans
-  }), list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
-            .emean = emean, .esdev = esdev, .evare = evare,
-            .smallno = smallno,
-            .var.arg = var.arg ))),
+  }),
+  list( .lmean = lmean, .lsdev = lsdev, .lvare = lvare,
+        .emean = emean, .esdev = esdev, .evare = evare,
+        .smallno = smallno,
+        .var.arg = var.arg ))),
   weight = eval(substitute(expression({
     wz <- matrix(NA_real_, n, M)  # Diagonal matrix
 

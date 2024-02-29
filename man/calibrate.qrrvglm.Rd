@@ -380,6 +380,7 @@ legend("topright", lwd = 2,
 }
 }
 \keyword{models}
+\keyword{nonlinear}
 \keyword{regression}
 
 

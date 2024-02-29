@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -172,18 +172,18 @@
 
 
   skip <- vecTF.t | vecTF.a  # Leave these values alone
-  tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix + sum.d + pdip.mix
-  if (li.mlm) {
+  tmp6 <- 1 - sum.a - sum.i - pobs.mix -
+          pstr.mix + sum.d + pdip.mix
     if (any(tmp6[!skip] < 0, na.rm = TRUE)) {
       warning("the vector of normalizing constants contains ",
               "some negative values. Replacing them with NAs")
       tmp6[!skip & tmp6 < 0] <- NA
     }
-  }  # li.mlm
 
 
+  denom1 <- cdf.max.s - sumt - suma
   pmf0[!skip] <-
-    (tmp6 * dzeta(x, shape.p) / (cdf.max.s - suma - sumt))[!skip]
+    (tmp6 * dzeta(x, shape.p) / denom1)[!skip]
 
 
 
@@ -210,10 +210,29 @@
 
 
 
+  if (any(vecTF <- !is.na(tmp6) & tmp6 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+  if (any(vecTF <- !is.na(denom1) & denom1 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+
+
 
   pmf0 <- pmf0 + pobs.mix * pmf2.a + pstr.mix * pmf2.i -
                  pdip.mix * pmf2.d
 
+
+  if (any(vecTF <- !is.na(pmf0) & pmf0 < 0))
+    pmf0[vecTF] <- NaN
+  if (any(vecTF <- !is.na(pmf0) & pmf0 > 1))
+    pmf0[vecTF] <- NaN
 
   if (log.arg) log(pmf0) else pmf0
 }  # dgaitdzeta
@@ -915,19 +934,19 @@
   }
 
   skip <- vecTF.t | vecTF.a  # Leave these values alone
-  tmp6 <- 1 - sum.a - sum.i - pobs.mix - pstr.mix + sum.d + pdip.mix
-  if (li.mlm) {
+  tmp6 <- 1 - sum.a - sum.i - pobs.mix -
+          pstr.mix + sum.d + pdip.mix
     if (any(tmp6[!skip] < 0, na.rm = TRUE)) {
       warning("the vector of normalizing constants contains ",
               "some negative values. Replacing them with NAs")
       tmp6[!skip & tmp6 < 0] <- NA
     }
-  }  # li.mlm
 
 
 
+  denom1 <- cdf.max.s - sumt - suma
   pmf0[!skip] <- (tmp6 *
-    dlog(x, shape.p) / (cdf.max.s - suma - sumt))[!skip]
+    dlog(x, shape.p) / denom1)[!skip]
 
 
 
@@ -952,8 +971,27 @@
   }  # ld.mlm
 
 
+  if (any(vecTF <- !is.na(tmp6) & tmp6 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+  if (any(vecTF <- !is.na(denom1) & denom1 <= 0)) {
+    pmf0[vecTF] <- NaN
+    pobs.mix[vecTF] <- NaN
+    pstr.mix[vecTF] <- NaN
+    pdip.mix[vecTF] <- NaN
+  }
+
+
   pmf0 <- pmf0 + pobs.mix * pmf2.a + pstr.mix * pmf2.i -
                  pdip.mix * pmf2.d
+
+  if (any(vecTF <- !is.na(pmf0) & pmf0 < 0))
+    pmf0[vecTF] <- NaN
+  if (any(vecTF <- !is.na(pmf0) & pmf0 > 1))
+    pmf0[vecTF] <- NaN
 
   if (log.arg) log(pmf0) else pmf0
 }  # dgaitdlog

@@ -9,9 +9,8 @@
 }
 \usage{
 acat(link = "loglink", parallel = FALSE, reverse = FALSE,
-     zero = NULL, thresholds = c("unconstrained", "equidistant",
-     "symmetric1", "symmetric0"), Treverse = reverse,
-     Tref = if (Treverse) "M" else 1, whitespace = FALSE)
+     zero = NULL, ynames = FALSE, Thresh = NULL, Trev = reverse,
+     Tref = if (Trev) "M" else 1, whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +37,10 @@ acat(link = "loglink", parallel = FALSE, reverse = FALSE,
 
 
   }
+  \item{ynames}{
+  See \code{\link{multinomial}} for information.
+
+  }
   \item{zero}{
   An integer-valued vector specifying which
   linear/additive predictors are modelled as intercepts only.
@@ -46,7 +49,7 @@ acat(link = "loglink", parallel = FALSE, reverse = FALSE,
 
 
   }
-  \item{thresholds, Treverse, Tref}{
+  \item{Thresh, Trev, Tref}{
     See \code{\link{cumulative}} for information.
     These arguments apply to ordinal
     categorical regression models.
@@ -166,6 +169,8 @@ The \pkg{VGAM} package for categorical data analysis.
     \code{\link{cratio}},
     \code{\link{sratio}},
     \code{\link{multinomial}},
+  \code{\link{CM.equid}},
+  \code{\link{CommonVGAMffArguments}},
     \code{\link{margeff}},
     \code{\link{pneumo}},
     \code{\link{budworm}},
@@ -185,7 +190,7 @@ model.matrix(fit)
 %pneumo$let <- log(pneumo$exposure.time)
 
 %(fit2 <- vglm(cbind(normal, mild, severe) ~ let,
-%              acat(thresholds = "equidistant"), pneumo))
+%              acat(Thresh = "equid"), pneumo))
 %coef(fit2, matrix = TRUE)
 %constraints(fit2)
 %model.matrix(fit2)

@@ -69,8 +69,10 @@ rrvglm.optim.control(Fnscale = 1, Maxit = 100,
 }
 %\examples{
 %}
+\keyword{optimize}
 \keyword{models}
 \keyword{regression}
+\concept{Reduced-Rank Vector Generalized Linear Model}
 
 
 

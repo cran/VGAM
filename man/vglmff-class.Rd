@@ -337,6 +337,7 @@ cratio(link = "clogloglink")
 cratio(link = "clogloglink", reverse = TRUE)
 }
 \keyword{classes}
+\concept{Vector Generalized Linear Model}
 
 
 

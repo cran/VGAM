@@ -84,15 +84,17 @@ This function is subject to change.
 \examples{
 \dontrun{
 example(gaitdpoisson)
-gaitpfit2 <- vglm(y1 ~ 1, crit = "coef", trace = TRUE, data = gdata,
-                  gaitdpoisson(a.mix = a.mix, i.mix = i.mix,
-                              i.mlm = i.mlm, eq.ap = TRUE, eq.ip = TRUE,
-                              truncate = tvec, max.support = max.support))
+gaitpfit2 <-
+  vglm(y1 ~ 1, crit = "coef", trace = TRUE, data = gdata,
+       gaitdpoisson(a.mix = a.mix, i.mix = i.mix,
+                    i.mlm = i.mlm, eq.ap = TRUE, eq.ip = TRUE,
+                    truncate = tvec, max.support = max.support))
 plotdgaitd(gaitpfit2)
 }}
-\keyword{graphs}
-\keyword{models}
+%\keyword{graphs}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

@@ -14,7 +14,8 @@
 \usage{
 uninormal(lmean = "identitylink", lsd = "loglink", lvar =
           "loglink", var.arg = FALSE, imethod = 1, isd = NULL,
-          parallel = FALSE, smallno = 1e-05, zero = if (var.arg)
+          parallel = FALSE, vfl = FALSE, Form2 = NULL,
+ smallno = 1e-05, zero = if (var.arg)
           "var" else "sd")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -56,14 +57,20 @@ uninormal(lmean = "identitylink", lsd = "loglink", lvar =
 
   }
   \item{imethod, parallel, isd, zero}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for information.
   If \code{lmean = loglink} then try \code{imethod = 2}.
   If \code{parallel = TRUE} then the parallelism constraint
   is not applied to the intercept.
 
 
   }
+  \item{vfl, Form2}{
+  See \code{\link{CommonVGAMffArguments}} for information.
 
+
+
+  }
+  
 }
 \details{
   This fits a linear model (LM) as the first linear/additive

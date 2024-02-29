@@ -116,27 +116,48 @@ predictvglm(object, newdata = NULL,
 }
 \details{
   Obtains predictions and optionally estimates
-  standard errors of those predictions from a fitted
-  \code{\link{vglm}} object.
+  standard errors of those predictions from a
+  fitted \code{\link{vglm}} object.
+  By default,
+  each row of the matrix returned can be written
+  as \eqn{\eta_i^T}, comprising of \eqn{M}
+  components or linear predictors.
+  If there are any offsets, these
+  \emph{are} included.
 
 
-  This code implements \emph{smart prediction} (see
-  \code{\link{smartpred}}).
+
+
+  This code implements \emph{smart prediction}
+  (see \code{\link{smartpred}}).
 
 
 
 }
 \value{
-  If \code{se.fit = FALSE}, a vector or matrix of predictions.
+  If \code{se.fit = FALSE}, a vector or matrix
+  of predictions.
   If \code{se.fit = TRUE}, a list with components
   \item{fitted.values}{Predictions}
   \item{se.fit}{Estimated standard errors}
   \item{df}{Degrees of freedom}
-  \item{sigma}{The square root of the dispersion parameter}
+  \item{sigma}{The square root of the
+    dispersion parameter
+    (but these are being phased out in
+  the package)}
 
 
 }
 \references{
+
+
+Yee, T. W. (2015).
+\emph{Vector Generalized Linear and Additive
+  Models:
+With an Implementation in R}.
+New York, USA: \emph{Springer}.
+
+
 
 Yee, T. W. and Hastie, T. J. (2003).
 Reduced-rank vector generalized linear models.
@@ -148,13 +169,16 @@ Reduced-rank vector generalized linear models.
 \author{ Thomas W. Yee }
 
 \note{
-  Setting \code{se.fit = TRUE} and \code{type = "response"}
+  Setting \code{se.fit = TRUE} and
+  \code{type = "response"}
   will generate an error.
 
 
 
-  The arguments \code{type.fitted}  and \code{percentiles}
-  are provided in this function to give more convenience than
+  The arguments \code{type.fitted}
+  and \code{percentiles}
+  are provided in this function to give more
+  convenience than
   modifying the \code{extra} slot directly.
 
 
@@ -181,7 +205,7 @@ Reduced-rank vector generalized linear models.
 # Illustrates smart prediction
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ poly(c(scale(let)), 2),
-            propodds, data = pneumo, trace = TRUE, x.arg = FALSE)
+            propodds, pneumo, trace = TRUE, x.arg = FALSE)
 class(fit)
 
 (q0 <- head(predict(fit)))

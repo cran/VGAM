@@ -47,7 +47,7 @@ nakagami(lscale = "loglink", lshape = "loglink", iscale = 1,
   wireless systems such as radio links, can be written
   \deqn{f(y) = 2 (shape/scale)^{shape} y^{2 \times shape-1}
         \exp(-shape \times y^2/scale) / \Gamma(shape)}{%
-	2 * (shape/scale)^shape *
+        2 * (shape/scale)^shape *
         y^(2*shape-1) * exp(-shape*y^2/scale) /
         gamma(shape)}
   for \eqn{y > 0}, \eqn{shape > 0}, \eqn{scale > 0}.

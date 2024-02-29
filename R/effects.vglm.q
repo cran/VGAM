@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -21,13 +21,8 @@ if (!isGeneric("effects"))
              standardGeneric("effects"))
 
 
-if (is.R()) {
   setMethod("effects",  "vlm", function(object, ...)
             effects.vlm(object, ...))
-} else {
-  setMethod("effects",  "vlm", function(object, ...)
-            effects.vlm(object, ...))
-}
 
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -41,24 +41,6 @@ ToString <- function(x)
            inverse = FALSE, deriv = 0,
            all.derivs = FALSE,
            short = TRUE, tag = FALSE) {
-
-
-
-
-
-  d.mlm = NULL  # 20211105
-  if ((LLL <- length(d.mlm)) > 0) {
-    sd.mlm <- unique(sort(d.mlm))  # Values must be unique
-    if (!is.Numeric(d.mlm, integer.valued = TRUE,  # any length
-                    length.arg = length(sd.mlm), positive = TRUE))
-      stop("bad input for argument 'd.mlm'")
-    if (is.numeric(refLevel) && any(refLevel == sd.mlm))
-      stop("cannot have the reference level being deflated")
-    if (deriv != 0)
-      stop("cannot have 'deriv' > 0 when 'd.mlm' is specified")
-    d.mlm <- sd.mlm  # Replace this
-  }  # LLL
-
 
 
 
@@ -149,57 +131,27 @@ ToString <- function(x)
 
 
 
-  if (length(d.mlm) > 0) {
-    if (any(d.mlm > M + 1))
-      stop("argument 'd.mlm' is excessive")
-  }
-
-
   if (!inverse && length(bvalue))
     theta[theta <= 0.0] <- bvalue
   if (!inverse && length(bvalue))
     theta[theta >= 1.0] <- 1 - bvalue
 
 
-  foo <- function(eta, refLevel = -1, M,
-                  d.mlm = NULL, signvec = rep_len(1, M)) {
-    is.D <- length(d.mlm) > 0
+  foo <- function(eta, refLevel = -1, M) {
     use.refLevel <- if ( refLevel < 0)
                     M+1 else refLevel  # unneeded
-    if (is.D) {  # Further error checking
-      if (any(d.mlm == use.refLevel) || any(d.mlm > M+1))
-       stop("bad input for argument 'd.mlm'")
-    }
     phat <- if ((refLevel < 0) || (refLevel == M+1)) {
-      if (is.D) cbind(care.exp(eta), 1.0) else
-                care.exp2(cbind(eta, 0.0))
+      care.exp2(cbind(eta, 0.0))
     } else if ( refLevel == 1) {
-      if (M > 1) {
-        if (is.D) cbind(1.0, care.exp(eta)) else
-                  care.exp2(cbind(0.0, eta))
-      } else {  # M == 1
-        if (is.D) cbind(1.0, care.exp(eta)) else
-                  care.exp2(cbind(0.0, eta))
-      }
+      care.exp2(cbind(0.0, eta))
     } else {
       etamat <- cbind(eta[, 1:( refLevel - 1), drop = FALSE],
                       0.0,
                       eta[, ( refLevel ):M, drop = FALSE])
-      if (is.D) care.exp(etamat) else care.exp2(etamat)
-    }
-    if (is.D) {
-       phat[, d.mlm] <- 1 / phat[, d.mlm]
+      care.exp2(etamat)
     }
 
-    if (any(signvec < 0)) {
-      ind.d <- which(signvec < 0)
-      tmpmat <- phat
-      tmpmat[, ind.d] <- (-tmpmat[, ind.d])
-      if (any((rSp <- rowSums(tmpmat)) < 0))
-        warning("negative probabilities! Too much deflation?")
-    } else {
-      rSp <- rowSums(phat)
-    }
+    rSp <- rowSums(phat)
     ans <- phat / rSp
     colnames(ans) <- NULL  # Safest for now
     ans
@@ -207,22 +159,14 @@ ToString <- function(x)
 
 
 
-    use.refLevel <- if ( refLevel < 0) M+1 else refLevel
-    pmone <- rep_len(1, M + 1)
-    if (length(d.mlm)) {
-      if (any(d.mlm == use.refLevel))
-        stop("cannot deflate the baseline reference level")
-      pmone[d.mlm] <- -1
-    }
-    signvec <- pmone
-
+  use.refLevel <- if ( refLevel < 0) M+1 else refLevel
 
   if (inverse) {
     use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
     switch(as.character(deriv),
       "0" = {
               foo(theta, refLevel,  # refLevel, not use.refLevel
-                  M = M, d.mlm = d.mlm, signvec = signvec)
+                  M = M)
             },
       "1" = if (all.derivs) {
               index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
@@ -245,7 +189,7 @@ ToString <- function(x)
                                        drop = FALSE]
             },
       stop("argument 'deriv' unmatched"))
-  } else {  # Not inverse below here ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  } else {  # Not inverse below here ,,,,,,,,,,,,,,,,,,,
 
     switch(as.character(deriv),
            "0" = {
@@ -259,11 +203,6 @@ ToString <- function(x)
             theta[, use.refLevel ]))
       }
 
-      if (length(d.mlm) > 0 &&
-          any(signvec[-use.refLevel] < 0)) {
-        ind.d <- which(signvec[-use.refLevel] < 0)
-        ans[, ind.d] <- (-ans[, ind.d])
-      }
       colnames(ans) <- NULL  # Safest for now
       ans
       },
@@ -311,9 +250,25 @@ if (FALSE) {
 
 
 
+
  TypicalVGAMfamilyFunction <-
   function(lsigma = "loglink",
            isigma = NULL,
+           zero = NULL,
+           gsigma = exp(-5:5),
+           eq.mean = FALSE,
+           parallel = TRUE,
+           imethod = 1,
+           vfl = FALSE, Form2 = NULL,
+           type.fitted = c("mean", "quantiles", "Qlink",
+                           "pobs0", "pstr0", "onempstr0"),
+           percentiles = c(25, 50, 75),
+           probs.x = c(0.15, 0.85),
+           probs.y = c(0.25, 0.50, 0.75),
+           multiple.responses = FALSE, earg.link = FALSE,
+           ishrinkage = 0.95, nointercept = NULL,
+           whitespace = FALSE, bred = FALSE, lss = TRUE,
+           oim = FALSE, nsimEIM = 100, byrow.arg = FALSE,
            link.list = list("(Default)" = "identitylink",
                             x2          = "loglink",
                             x3          = "logofflink",
@@ -324,21 +279,7 @@ if (FALSE) {
                             x3          = list(offset = -1),
                             x4          = list(),
                             x5          = list()),
-           gsigma = exp(-5:5),
-           eq.mean = FALSE,
-           parallel = TRUE,
-           ishrinkage = 0.95,
-           nointercept = NULL, imethod = 1,
-           type.fitted = c("mean", "quantiles", "Qlink",
-                           "pobs0", "pstr0", "onempstr0"),
-           percentiles = c(25, 50, 75),
-           probs.x = c(0.15, 0.85),
-           probs.y = c(0.25, 0.50, 0.75),
-           multiple.responses = FALSE, earg.link = FALSE,
-           whitespace = FALSE, bred = FALSE, lss = TRUE,
-           oim = FALSE, nsimEIM = 100, byrow.arg = FALSE,
-           nrfs = 1,
-           zero = NULL) {
+           Thresh = NULL, nrfs = 1) {
   NULL
 }
 
@@ -346,7 +287,7 @@ if (FALSE) {
 TypicalVGAMlink <-
   function(theta,
            someParameter = 0,
-      bvalue = NULL,  # .Machine$double.xmin is an alternative
+      bvalue = NULL,  # .Machine$double.xmin
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   NULL
@@ -386,7 +327,7 @@ care.exp2 <- function(x) {
 
  loglink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.xmin is an alternative
+           bvalue = NULL,  # .Machine$double.xmin
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
 
@@ -437,7 +378,7 @@ care.exp2 <- function(x) {
 
  logneglink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.xmin = an alternative
+           bvalue = NULL,  # .Machine$double.xmin
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
 
@@ -509,6 +450,7 @@ care.exp2 <- function(x) {
            "2" = theta + offset,
            "3" = theta + offset,
            "4" = theta + offset,
+           "5" = theta + offset,
            stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
@@ -517,9 +459,60 @@ care.exp2 <- function(x) {
            "2" = -1 / (theta + offset)^2,
            "3" =  2 / (theta + offset)^3,
            "4" = -6 / (theta + offset)^4,
+           "5" = 24 / (theta + offset)^4,
            stop("argument 'deriv' unmatched"))
   }
 }  # logofflink
+
+
+
+
+
+
+
+
+ log1plink <-
+  function(theta,
+           offset = 0,  # To be left alone.
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE) {
+
+  if (!is.Numeric(offset))
+    stop("bad input for argument 'offset'")
+  if (!all(offset == 0))
+    stop("'offset' should be left alone because ",
+         "it is implicitly unity. ",
+         "Use logofflink() instead?")
+
+  if (is.character(theta)) {
+    string <- if (short)
+      paste0("log1plink(", theta, ")") else
+      paste0("log(1+", as.char.expression(theta), ")")
+    if (tag)
+      string <- paste("Log with unit offset:", string)
+    return(string)
+  }
+
+  if (inverse) {
+    switch(as.character(deriv),
+           "0" = expm1(theta),
+           "1" = theta + 1,
+           "2" = theta + 1,
+           "3" = theta + 1,
+           "4" = theta + 1,
+           "5" = theta + 1,
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+           "0" = log1p(theta),
+           "1" =  1 / (theta + 1),
+           "2" = -1 / (theta + 1)^2,
+           "3" =  2 / (theta + 1)^3,
+           "4" = -6 / (theta + 1)^4,
+           "5" = 24 / (theta + 1)^5,
+           stop("argument 'deriv' unmatched"))
+  }
+}  # log1plink
 
 
 
@@ -607,13 +600,14 @@ care.exp2 <- function(x) {
   }
   if (inverse) {
     switch(as.character(deriv),
-        "0" = plogis(theta),
-        "1" =    1 / Recall(theta = theta,
-                      bvalue = bvalue,
-                      inverse = FALSE, deriv = deriv),
-        "2" = theta * (1 - theta) * (1 - 2 * theta),
-        "3" = (1 - 6 * theta * (1 - theta)) *
-              theta * (1 - theta),
+   "0" = plogis(theta),
+   "1" =    1 / Recall(theta = theta,
+                bvalue = bvalue,
+                inverse = FALSE,
+                deriv = deriv),
+   "2" = theta * (1 - theta) * (1 - 2 * theta),
+   "3" = (1 - 6 * theta * (1 - theta)) *
+          theta * (1 - theta),
         "4" = {
   iD1 <- Recall(theta, deriv = 1, inverse = TRUE)
   iD2 <- Recall(theta, deriv = 2, inverse = TRUE)
@@ -631,10 +625,12 @@ care.exp2 <- function(x) {
     switch(as.character(deriv),
      "0" = qlogis(theta),
      "1" = 1 / (theta * (1 - theta)),
-     "2" = (2 * theta - 1) / (theta * (1 - theta))^2,
-   "3" = 2 * (1 - 3 * theta * (1 - theta)) / (theta * (1 - theta))^3,
+  "2" = (2 * theta - 1) / (theta * (1 - theta))^2,
+  "3" = 2 * (1 - 3 * theta *
+             (1 - theta)) / (theta * (1 - theta))^3,
      "4" = -6 * (1 - 2 * theta) *
-           (1 - 2 * theta * (1 - theta)) / (theta * (1 - theta))^4,
+          (1 - 2 * theta *
+          (1 - theta)) / (theta * (1 - theta))^4,
      stop("argument 'deriv' unmatched"))
   }
 }  # logitlink
@@ -646,7 +642,7 @@ care.exp2 <- function(x) {
 
  logloglink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -692,7 +688,7 @@ care.exp2 <- function(x) {
 
  loglogloglink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -754,12 +750,12 @@ care.exp2 <- function(x) {
 
  clogloglink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
     string <- if (short)
-        paste0("clogloglink(",    theta, ")") else
+        paste0("clogloglink(", theta, ")") else
         paste0("log(-log(1-",
               as.char.expression(theta), "))")
     if (tag)
@@ -774,44 +770,50 @@ care.exp2 <- function(x) {
 
   if (inverse) {
     switch(as.character(deriv),
-           "0" = { -expm1(-exp(theta)) },
-           "1" = { ans5 <- (-(1 - theta) * log1p(-theta))
-                 ans5[1 - theta == 0] <- 0  # 20210522; limit
-                 ans5
-                 },
-           "2" = { junk <- log1p(-theta)
-                 ans6 <- -(1 - theta) * (1 + junk) * junk
-                 ans6[1 - theta == 0] <- 0  # 20210522; limit
-                 ans6
-           },
-           "3" = {
-             junk <- log1p(-theta)
-             Junk2 <- (1 - theta) * junk
-             ans7 <- -Junk2 * (Junk2 / (1 - theta) + (1 + junk)^2)
-             ans7[1 - theta == 0] <- 0  # 20210524; limit
-             ans7
-           },
-           stop("argument 'deriv' unmatched"))
+    "0" = { -expm1(-exp(theta)) },
+    "1" = {
+        ans5 <- (-(1 - theta) * log1p(-theta))
+        ans5[1 - theta == 0] <- 0  # 20210522; limit
+        ans5
+    },
+    "2" = {
+        junk <- log1p(-theta)
+        ans6 <- -(1 - theta) * (1 + junk) * junk
+        ans6[1 - theta == 0] <- 0  # 20210522; limit
+        ans6
+     },
+     "3" = {
+         junk <- log1p(-theta)
+         Junk2 <- (1 - theta) * junk
+         ans7 <- -Junk2 * (Junk2 / (1 - theta) +
+                           (1 + junk)^2)
+         ans7[1 - theta == 0] <- 0  # 20210524; limit
+         ans7
+      },
+      stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
-           "0" = log(-log1p(-theta)),
-           "1" = { ans5 <- -1 / ((1 - theta) * log1p(-theta))
-                 ans5[1 - theta == 0] <- Inf  # 20210522; limit
-                 ans5
-                 },
-           "2" = {  junk <- log1p(-theta)
-                 ans6 <- -(1 + junk) / ((1 - theta) * junk)^2
-                 ans6[1 - theta == 0] <- Inf  # 20210522; limit
-                 ans6
-                 },
-           "3" = {
-             junk <- log1p(-theta)
-             Junk3 <- (1 - theta) * junk
-     ans7 <- (1 / (1 - theta) - 2 * (1 + junk)^2 / Junk3) / Junk3^2
-             ans7[1 - theta == 0] <- Inf  # 20210524; limit
-             ans7
-           },
-           stop("argument 'deriv' unmatched"))
+    "0" = log(-log1p(-theta)),
+    "1" = {
+        ans5 <- -1 / ((1 - theta) * log1p(-theta))
+        ans5[1 - theta == 0] <- Inf  # 20210522; limit
+        ans5
+    },
+    "2" = {
+        junk <- log1p(-theta)
+        ans6 <- -(1 + junk) / ((1-theta) * junk)^2
+        ans6[1 - theta == 0] <- Inf  # 20210522; limit
+        ans6
+     },
+    "3" = {
+        junk <- log1p(-theta)
+        Junk3 <- (1 - theta) * junk
+        ans7 <- (1 / (1 - theta) -
+                2 * (1 + junk)^2 / Junk3) / Junk3^2
+        ans7[1 - theta == 0] <- Inf  # 20210524; limit
+        ans7
+     },
+     stop("argument 'deriv' unmatched"))
   }
 }  # clogloglink
 
@@ -820,9 +822,67 @@ care.exp2 <- function(x) {
 
 
 
+
+
+ cloglink <-
+  function(theta,
+           bvalue = NULL,  # .Machine$double.eps
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE) {
+  if (is.character(theta)) {
+    string <- if (short)
+        paste0("cloglink(", theta, ")") else
+        paste0("-log(1-",
+              as.char.expression(theta), ")")
+    if (tag)
+      string <- paste("Complementary log:", string)
+    return(string)
+  }
+
+  if (!inverse && length(bvalue)) {
+    theta[theta <= 0.0] <- bvalue
+    theta[theta >= 1.0] <- 1.0 - bvalue
+  }
+
+  if (inverse) {
+    switch(as.character(deriv),
+    "0" = -expm1(-theta),
+    "1" = 1 - theta,
+    "2" = theta - 1,
+    "3" = 1 - theta,
+    "4" = theta - 1,
+    "5" = 1 - theta,
+    stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+    "0" = -log1p(-theta),
+    "1" = { ans5 <- 1 / (1 - theta)
+            ans5[1 - theta == 0] <- Inf  # limit
+            ans5 },
+    "2" = { ans6 <- 1 / (1 - theta)^2
+            ans6[1 - theta == 0] <- Inf  # limit
+            ans6 },
+    "3" = { ans7 <- 2 / (1 - theta)^3
+            ans7[1 - theta == 0] <- Inf  # limit
+            ans7 },
+    "4" = { ans9 <- 6 / (1 - theta)^4
+            ans9[1 - theta == 0] <- Inf  # limit
+            ans9 },
+    "5" = { ans5 <- 24 / (1 - theta)^5
+            ans5[1 - theta == 0] <- Inf  # limit
+            ans5 },
+     stop("argument 'deriv' unmatched"))
+  }
+}  # cloglink
+
+
+
+
+
+
  probitlink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -855,14 +915,14 @@ care.exp2 <- function(x) {
            "2" = {  # 2nd deriv
         Junk2 <- qnorm(theta)
         ans6 <- -Junk2 * dnorm(Junk2)
-        ans6[1 - theta == 0] <- 0  # 20210525; limit
+        ans6[1-theta == 0] <- 0  # 20210525; limit
         if (is.vector(theta)) ans6 else
         if (is.matrix(theta)) {
           dim(ans6) <- dim(theta)
           ans6
         } else {
-          warning("can only handle vectors and matrices;",
-                  " converting to vector")
+          warning("can only handle vectors and ",
+             "matrices; converting to vector")
           ans6
         }
       },
@@ -870,7 +930,7 @@ care.exp2 <- function(x) {
              Junk3 <- qnorm(theta)
              junk <- dnorm(Junk3)
              ans7 <- junk * (Junk3^2 - 1)
-             ans7[1 - theta == 0] <- 0  # 20210525; limit
+        ans7[1-theta == 0] <- 0  # 20210525 limit
              ans7
            },
            stop("argument 'deriv' unmatched"))
@@ -923,7 +983,7 @@ care.exp2 <- function(x) {
 
  explink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -963,7 +1023,7 @@ care.exp2 <- function(x) {
 
  reciprocallink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -1003,7 +1063,7 @@ care.exp2 <- function(x) {
 
  negloglink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -1044,7 +1104,7 @@ care.exp2 <- function(x) {
 
  negreciprocallink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE,
            deriv = 0, short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -1085,7 +1145,7 @@ care.exp2 <- function(x) {
 
   igcanlink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.eps is an alternative
+           bvalue = NULL,  # .Machine$double.eps
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
 
@@ -1139,17 +1199,19 @@ care.exp2 <- function(x) {
   }
 
   if (!inverse) {
-   if (length(bminvalue)) theta[theta <= -1.0] <- bminvalue
-   if (length(bmaxvalue)) theta[theta >=  1.0] <- bmaxvalue
+    if (length(bminvalue))
+      theta[theta <= -1.0] <- bminvalue
+    if (length(bmaxvalue))
+      theta[theta >=  1.0] <- bmaxvalue
   }
 
   if (inverse) {
     switch(as.character(deriv),
-           "0" = { junk <- exp(theta)
-                   expm1(theta) / (junk + 1.0) },
+           "0" = {  # junk <- exp(theta)
+             expm1(theta) / (exp(theta) + 1.0) },
            "1" = (1 - theta^2) / 2,
-           "2" = (-theta / 2) * (1 - theta^2),
-           "3" = (3 * theta^2 - 1) * (1 - theta^2) / 4,
+       "2" = (-theta / 2) * (1 - theta^2),
+       "3" = (3 * theta^2 - 1) * (1 - theta^2) / 4,
              stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
@@ -1222,7 +1284,8 @@ care.exp2 <- function(x) {
     stop("bad input for 'min' component")
   if (!is.Numeric(max, length.arg = 1))
     stop("bad input for 'max' component")
-  if (!is.Numeric(mux, length.arg = 1, positive = TRUE))
+  if (!is.Numeric(mux, length.arg = 1,
+                  positive = TRUE))
     stop("bad input for 'mux' component")
   if (min >= max)
     stop("'min' >= 'max' is not allowed")
@@ -1235,11 +1298,13 @@ care.exp2 <- function(x) {
         paste0("sqrt(2*", theta,
                ") - sqrt(2*(1-", theta, "))") else
         paste0(as.character(mux),
-            " * (sqrt(", theta, "-", min, ") - sqrt(",
+               " * (sqrt(", theta, "-", min,
+               ") - sqrt(",
             max, "-", theta, "))")
     }
     if (tag)
-      string <- paste("Folded square root:", string)
+        string <- paste("Folded square root:",
+                        string)
     return(string)
   }
 
@@ -1248,7 +1313,8 @@ care.exp2 <- function(x) {
            "0" = {
       mid <- (min + max) / 2
       boundary <- mux * sqrt(max - min)
-      temp <- pmax(0, (theta/mux)^2 * (2*(max-min) - (theta/mux)^2))
+      temp <- pmax(0, (theta/mux)^2 *
+                  (2*(max-min) - (theta/mux)^2))
       ans <- theta
       if (any(ind5 <- theta <  0))
         ans[ind5] <- mid - 0.5 * sqrt(temp[ind5])
@@ -1258,18 +1324,23 @@ care.exp2 <- function(x) {
       ans[theta >  boundary] <- NA
       ans
         },
-       "1" = (2 / mux ) / (1/sqrt(theta-min) + 1/sqrt(max-theta)),
-       "2" = stop("use the chain rule formula to obtain this"),
-       "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
+      "1" = (2 / mux ) / (1/sqrt(theta-min) +
+                          1/sqrt(max-theta)),
+      "2" = stop("use the chain rule formula",
+                 " to obtain this"),
+      "3" = {  # 3rd deriv
+        stop("3rd deriv not yet implemented")
       },
-           stop("argument 'deriv' unmatched"))
+      stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
-           "0" = mux * (sqrt(theta-min) - sqrt(max-theta)),
-           "1" = (1/sqrt(theta-min) + 1/sqrt(max-theta)) * mux / 2,
-   "2" = -(mux / 4) * ((theta-min)^(-3/2) - (max-theta)^(-3/2)),
-           "3" = { #3rd deriv
+           "0" = mux * (sqrt(theta-min) -
+                        sqrt(max-theta)),
+           "1" = (1/sqrt(theta-min) +
+                  1/sqrt(max-theta)) * mux / 2,
+        "2" = -(mux / 4) * ((theta-min)^(-3/2) -
+                            (max-theta)^(-3/2)),
+        "3" = { #3rd deriv
       stop("3rd deriv not yet implemented")
            },
            stop("argument 'deriv' unmatched"))
@@ -1397,7 +1468,7 @@ if (!inverse && length(bmaxvalue)) theta[theta >= B] <- bmaxvalue
 
  logclink <-
   function(theta,
-           bvalue = NULL,  # .Machine$double.xmin is an alternative
+           bvalue = NULL,  # .Machine$double.xmin
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
@@ -1500,595 +1571,6 @@ if (!inverse && length(bmaxvalue)) theta[theta >= B] <- bmaxvalue
 
 
 
- gordlink <-
-  function(theta,
-           lambda = 1,
-           cutpoint = NULL,
-           inverse = FALSE, deriv = 0,
-           short = TRUE, tag = FALSE) {
-
-
-
-
-
-  if (!is.Numeric(lambda, positive = TRUE))
-    stop('could not determine lambda or lambda has negative values')
-  if (is.Numeric(cutpoint))
-    if (any(cutpoint < 0) ||
-        !is.Numeric(cutpoint, integer.valued = TRUE))
-    warning("argument 'cutpoint' should contain ",
-            "non-negative integer values")
-
-  if (is.character(theta)) {
-    string <- if (short) {
-      lenl <- length(lambda) > 1
-      lenc <- length(cutpoint) > 1
-      paste0("gordlink(", theta,
-            ", lambda = ",
-            if (lenl) "c(" else "",
-            ToString(lambda),
-            if (lenl) ")" else "",
-            if (is.Numeric(cutpoint))
-      paste0(", cutpoint = ",
-             if (lenc) "c(" else "",
-      ToString(cutpoint),
-            if (lenc) ")" else "") else "",
-                  ")")
-    } else {
-      theta <- as.char.expression(theta)
-      if (is.Numeric(cutpoint)) {
-        paste0("-3*log(1-qnorm(", theta,
-              ")/(3*sqrt(lambda)))",
-              " + log(cutpoint)")
-      } else {
-        paste0("-3*log(1-qnorm(", theta,
-              ")/(3*sqrt(lambda)))")
-      }
-    }
-    if (tag)
-      string <- paste("Gamma-ordinal link function:", string)
-    return(string)
-  }
-
-
-  thmat <- cbind(theta)
-  lambda <- rep_len(lambda, ncol(thmat))  # Allow recycling for lambda
-  if (is.Numeric(cutpoint))
-    cutpoint <- rep_len(cutpoint, ncol(thmat))
-  if (ncol(thmat) > 1) {
-    answer <- thmat
-    for (ii in 1:ncol(thmat))
-      answer[, ii] <- Recall(theta = thmat[, ii],
-                             lambda = lambda[ii],
-                             cutpoint = if (is.Numeric(cutpoint))
-                                        cutpoint[ii] else NULL,
-                            inverse = inverse, deriv = deriv)
-    return(answer)
-  }
-
-
-  answer <- if (inverse) {
-    switch(as.character(deriv),
-           "0" = {
-      if (is.Numeric(cutpoint)) {
-pnorm((1-care.exp(-(theta-log(cutpoint))/3)) * 3 * sqrt(lambda))
-      } else {
-        pnorm((1-care.exp(-theta/3)) * 3 * sqrt(lambda))
-      }
-    },
-
-      "1" = 1 / Recall(theta = theta,
-                 lambda = lambda,
-                 cutpoint = cutpoint,
-                 inverse = FALSE, deriv = deriv),
-      "2" = stop('cannot currently handle deriv = 2',
-           "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-           stop("argument 'deriv' unmatched"))
-    )
-  } else {
-    smallno <- 1 * .Machine$double.eps
-    Theta <- theta
-Theta <- pmin(Theta, 1 - smallno)  # Since theta==1 is a possibility
-Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
-    Ql <- qnorm(Theta)
-    switch(as.character(deriv),
-           "0" = {
-        temp <- Ql / (3*sqrt(lambda))
-  temp <- pmin(temp, 1.0 - smallno)  # 100 / .Machine$double.eps
-        origans <- -3*log1p(-temp) +
-        if (is.Numeric(cutpoint)) log(cutpoint) else 0
-        1 / origans
-      },
-        "1" = {
-  origans <- (1 - Ql / (3*sqrt(lambda))) * sqrt(lambda) * dnorm(Ql)
-        1 / origans
-      },
-        "2" = {  stop('cannot currently handle deriv = 2') },
-        "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-           stop("argument 'deriv' unmatched"))
-  }
-  if (!is.Numeric(answer))
-    warning("the answer contains some NAs")
-  answer
-}  # gordlink, aka golf
-
-
-
-
-
-
-
- pordlink <-
-  function(theta,  # = 1,
-           cutpoint = NULL,
-           inverse = FALSE, deriv = 0,
-           short = TRUE, tag = FALSE) {
-
-
-  if (!is.Numeric(cutpoint))
-    stop("could not determine the cutpoint")
-  if (any(cutpoint < 0) ||
-      !is.Numeric(cutpoint, integer.valued = TRUE))
-    warning("argument 'cutpoint' should",
-            " contain non-negative integer values")
-
-
-  if (is.character(theta)) {
-    string <- if (short) {
-      lenc <- length(cutpoint) > 1
-      paste0("pordlink(", theta,
-             ", cutpoint = ",
-            if (lenc) "c(" else "",
-            ToString(cutpoint),
-            if (lenc) ")" else "",
-            ")")
-    } else {
-      theta <- as.char.expression(theta)
-      paste0("2*log(0.5*qnorm(", theta,
-            ") + sqrt(cutpoint+7/8))")
-    }
-    if (tag)
-      string <- paste("Poisson-ordinal link function:", string)
-    return(string)
-  }
-
-
-
-    thmat <- cbind(theta)
-    if (ncol(thmat) > 1) {
-        answer <- thmat
-        cutpoint <- rep_len(cutpoint, ncol(thmat))
-        for (ii in 1:ncol(thmat))
-            answer[, ii] <- Recall(theta = thmat[, ii],
-                                 cutpoint = cutpoint,
-                                 inverse = inverse, deriv = deriv)
-        return(answer)
-    }
-
-  answer <-
-  if (inverse) {
-    switch(as.character(deriv),
-           "0" = {
- # deriv == 0
-          origans <-
-          if (any(cp.index <- cutpoint == 0)) {
-              tmp <- theta
-              tmp[cp.index] <-
-              clogloglink(theta = theta[cp.index],
-                      inverse = inverse, deriv = deriv)
-              tmp[!cp.index] <-
-                pnorm(2 * exp(theta[!cp.index]/2) -
-                      2 * sqrt(cutpoint[!cp.index] + 7/8))
-              tmp
-          } else {
-            pnorm(2 * exp(theta/2) - 2 * sqrt(cutpoint + 7/8))
-          }
-        1 / origans
-      },
-      "1" =           1 / Recall(theta = theta,
-                     cutpoint = cutpoint,
-                     inverse = FALSE, deriv = deriv),
-      "2" =        stop('cannot currently handle deriv = 2'),
-      "3" =        { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-             stop("argument 'deriv' unmatched"))
-
-  } else {
-    if (any(cp.index <- cutpoint == 0)) {
-        clogloglink(theta = theta,
-                inverse = inverse, deriv = deriv)
-
-
-    } else {
-      smallno <- 1 * .Machine$double.eps
-      SMALLNO <- 1 * .Machine$double.xmin
-      Theta <- theta
-      Theta <- pmin(Theta, 1 - smallno)  # Coz theta == 1 is possible
- Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
-      Ql <- qnorm(Theta)
-
-
-    switch(as.character(deriv),
-           "0" = {
-      temp <- 0.5 * Ql + sqrt(cutpoint + 7/8)
-      temp <- pmax(temp, SMALLNO)
-      origans <- 2 * log(temp)
-      1 / origans
-    },
-      "1" =  {
-      origans <- (Ql/2 + sqrt(cutpoint + 7/8)) * dnorm(Ql)
-      1 / origans
-      },
-
-      "2" = {  stop('cannot currently handle deriv = 2') },
-           "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-      stop("argument 'deriv' unmatched"))
-    }
-  }
-  if (!is.Numeric(answer))
-    warning("the answer contains some NAs")
-  answer
-}  # pordlink, aka polf
-
-
-
-
-
-
-
- nbordlink <-
-  function(theta,
-           cutpoint = NULL,
-           k = NULL,
-           inverse = FALSE, deriv = 0,
-           short = TRUE, tag = FALSE) {
-
-
-
-
-
-  kay <- k
-  if (!is.Numeric(kay, positive = TRUE))
-    stop("could not determine 'k' or it is not positive-valued")
-  if (!is.Numeric(cutpoint))
-    stop("could not determine the cutpoint")
-  if (any(cutpoint < 0) ||
-      !is.Numeric(cutpoint, integer.valued = TRUE))
-    warning("argument 'cutpoint' should",
-            " contain non-negative integer values")
-
-  if (is.character(theta)) {
-    string <- if (short) {
-        lenc <- length(cutpoint) > 1
-        lenk <- length(kay) > 1
-        paste0("nbordlink(", theta,
-              ", cutpoint = ",
-              if (lenc) "c(" else "",
-              ToString(cutpoint),
-              if (lenc) ")" else "",
-              ", k = ",
-              if (lenk) "c(" else "",
-              ToString(kay),
-              if (lenk) ")" else "",
-              ")")
-      } else {
-        theta <- as.char.expression(theta)
-        paste0("2*log(sqrt(k) * sinh(qnorm(", theta,
-              ")/(2*sqrt(k)) + ",
-              "asinh(sqrt(cutpoint/k))))")
-      }
-      if (tag)
-        string <- paste("Negative binomial-ordinal link function:",
-                        string)
-      return(string)
-  }
-
-
-  thmat <- cbind(theta)
-  kay <- rep_len(kay, ncol(thmat))  # Allow recycling for kay
-  cutpoint=rep_len(cutpoint, ncol(thmat)) # Allow recycling 4 cutpt
-  if (ncol(thmat) > 1) {
-    answer <- thmat
-    for (ii in 1:ncol(thmat))
-        answer[, ii] <- Recall(theta = thmat[, ii],
-                             cutpoint = cutpoint[ii],
-                             k = kay[ii],
-                             inverse = inverse, deriv = deriv)
-    return(answer)
-  }
-
-  answer <-
-  if (inverse) {
-    switch(as.character(deriv),
-           "0" = {
-      if (cutpoint == 0) {
-        1.0 - (kay / (kay + care.exp(theta)))^kay
-      } else {
-          pnorm((asinh(exp(theta/2)/sqrt(kay)) -
-                 asinh(sqrt(cutpoint/kay))) * 2 * sqrt(kay))
-      }
-       }, "0" =  {
-      1 / Recall(theta = theta,
-                 cutpoint = cutpoint,
-                 k = kay,
-                 inverse = FALSE, deriv = deriv)
-    }, "0" = {
-     stop('cannot currently handle deriv = 2')
-   },
-           "0" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-             stop("argument 'deriv' unmatched"))
-
-
-
-
-  } else {
-    smallno <- 1 * .Machine$double.eps
-    SMALLNO <- 1 * .Machine$double.xmin
-    Theta <- theta
-Theta <- pmin(Theta, 1 - smallno)  # Since theta == 1 is possible
-Theta <- pmax(Theta, smallno)  # Since theta == 0 is a possibility
-    if (cutpoint == 0) {
-    switch(as.character(deriv),
-           "0" = {
-      temp <- (1 - Theta)^(-1/kay) - 1
-      temp <- pmax(temp, SMALLNO)
-      origans <- log(kay) + log(temp)
-      1 / origans
-    },
-           "1" = {
-      origans <- (kay / (1 - Theta)^(1/kay) - kay) *
-          (1 - Theta)^(kay+1/kay)
-      1 / origans
-      },
-      "2" = {  stop('cannot handle deriv = 2') },
-      "3" = {  stop('cannot handle deriv = 2') },
-      stop("argument 'deriv' unmatched"))
-    } else {
-      Ql <- qnorm(Theta)
-    switch(as.character(deriv),
-           "0" = {
-            temp <- sqrt(kay) * sinh(Ql/(2*sqrt(kay)) +
-                   asinh(sqrt(cutpoint/kay)))
-            temp <- pmax(temp, SMALLNO)
-            origans <- 2 * log(temp)
-            1 / origans
-          },
-           "1" = {
-            arg1 <- (Ql/(2*sqrt(kay)) + asinh(sqrt(cutpoint/kay)))
-            origans <- sqrt(kay) * tanh(arg1) * dnorm(Ql)
-            1 / origans
-          },
-           "2" = {  stop('cannot currently handle deriv = 2') },
-           "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-            stop("argument 'deriv' unmatched"))
-    }
-  }
-  if (!is.Numeric(answer))
-    warning("the answer contains some NAs")
-  answer
-}  # nbordlink, aka nbolf
-
-
-
-
-
-
- nbord2link <-
-  function(theta,
-           cutpoint = NULL,
-           k = NULL,
-           inverse = FALSE, deriv = 0,
-           short = TRUE, tag = FALSE) {
-
-warning("20150711; this function has not been updated")
-
-
-
-
-  kay <- k
-  if (!is.Numeric(kay, positive = TRUE))
-    stop("could not determine argument 'k' or ",
-         "it is not positive-valued")
-  if (!is.Numeric(cutpoint))
-    stop("could not determine the cutpoint")
-  if (any(cutpoint < 0) ||
-      !is.Numeric(cutpoint, integer.valued = TRUE))
-    warning("argument 'cutpoint' should ",
-            "contain non-negative integer values")
-
-  if (is.character(theta)) {
-    string <- if (short) {
-      lenc <- length(cutpoint) > 1
-      lenk <- length(kay) > 1
-      paste0("nbord2link(", theta,
-            ", earg = list(cutpoint = ",
-            if (lenc) "c(" else "",
-            ToString(cutpoint),
-            if (lenc) ")" else "",
-            ", k = ",
-            if (lenk) "c(" else "",
-            ToString(kay),
-            if (lenk) ")" else "",
-            "))")
-  } else {
-    theta <- as.char.expression(theta)
-    paste0("3*log(<a complicated expression>)")
-  }
-  if (tag)
-    string <- paste("Negative binomial-ordinal link function 2:",
-                   string)
-  return(string)
-  }
-
-
-    thmat <- cbind(theta)
-    kay <- rep_len(kay, ncol(thmat))  # Allow recycling for kay
-    if (ncol(thmat) > 1) {
-        answer <- thmat
-        for (ii in 1:ncol(thmat))
-            answer[, ii] <- Recall(theta = thmat[, ii],
-                                 cutpoint = cutpoint[ii],
-                                 k = kay[ii],
-                                 inverse = inverse, deriv = deriv)
-        return(answer)
-    }
-
-    answer <-
-    if (inverse) {
-        if (deriv > 0) {
-            1 / Recall(theta = theta,
-                       cutpoint = cutpoint,
-                       k = kay,
-                       inverse = FALSE, deriv = deriv)
-        } else {
-            if (cutpoint == 0) {
-                1.0 - (kay / (kay + care.exp(theta)))^kay
-            } else {
-
-            a1 <- -(9*cutpoint+8) / (cutpoint+1)
-            a2 <- (9*kay-1) / (kay * (cutpoint+1)^(1/3))
-            a3 <- 9 / (kay * (cutpoint+1)^(2/3))
-            a4 <- 9 / (cutpoint+1)
-            B <- exp(theta/3)
-            mymat <- rbind(a1^2*a2^2 + 2*a1*a2^3*B + B^2*a2^4, 0,
-              -2*a1*a2*a3*B - 2*a2^2*a3*B^2 - a1^2*a3 - a2^2*a4,
-                           0,
-               B^2 * a3^2 + a3 * a4)
-            ans <- Re(t(apply(mymat, 2, polyroot)))
-    theta2 <- invfun <- pnorm(-ans)  # pnorm(-x) = 1-pnorm(x)
-            for (ii in 1:4) {
-              theta2[, ii] <-
-                Recall(theta = theta2[, ii],
-                       cutpoint = cutpoint,
-                       k = kay,
-                       inverse = FALSE, deriv = deriv)
-            }
-            rankmat <- t(apply(abs(theta2 - theta), 1, rank))
-            for (ii in 2:4) {
-              if (any(index4 <- (rankmat[, ii] == 1))) {
-                invfun[index4, 1] <- invfun[index4, ii]
-              }
-            }
-            invfun[, 1]
-            }
-        }
-    } else {
-        smallno <- 1 * .Machine$double.eps
-        SMALLNO <- 1 * .Machine$double.xmin
-        Theta <- theta
-  Theta <- pmin(Theta, 1 - smallno)  # Since theta==1 is possible
-  Theta <- pmax(Theta, smallno)  # Since theta==0 is possible
-        if (cutpoint == 0) {
-    switch(as.character(deriv),
-           "0" = {
-            temp <- (1 - Theta)^(-1/kay) - 1
-            temp <- pmax(temp, SMALLNO)
-            log(kay) + log(temp)},
-            "0" = (kay / (1 - Theta)^(1/kay) - kay) *
-                  (1 - Theta)^(kay+1/kay),
-            "0" = {  stop("cannot handle 'deriv = 2'") },
-           "0" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-            stop("argument 'deriv' unmatched"))
-        } else {
-            Ql <- qnorm(Theta)
-            a1 <- -(9*cutpoint+8) / (cutpoint+1)
-            a2 <- (9*kay-1) / (kay * (cutpoint+1)^(1/3))
-            a3 <- 9 / (kay * (cutpoint+1)^(2/3))
-            a4 <- 9 / (cutpoint+1)
-            discrim <- a1^2 * a3 + a2^2 * a4 - Ql^2 * a3 * a4
-            denomin <- Ql^2 * a3 - a2^2
-            numerat <- (a1*a2 - Ql * sqrt(discrim))
-            argmax1 <- numerat / denomin
-    switch(as.character(deriv),
-           "0" = {
-            argmax2 <- (a1*a2 + Ql * sqrt(discrim)) / denomin
-                temp <- ifelse(argmax1 > 0, argmax1, argmax2)
-              temp <- pmax(temp, SMALLNO)
-              3 * log(temp)},
-           "1" = {
-                 BB <- (sqrt(discrim) - Ql^2 * a3 *
-                       a4 / sqrt(discrim)) / dnorm(Ql)
-                 CC <- 2 * Ql * a3 / dnorm(Ql)
-          dA.dtheta <- (-denomin * BB - numerat * CC) / denomin^2
-                 argmax1 / (3 * dA.dtheta)
-                },
-           "2" = {stop('cannot currently handle deriv = 2')},
-           "3" = { #3rd deriv
-      stop("3rd deriv not yet implemented")
-      },
-                stop("argument 'deriv' unmatched"))
-      }
-  }
-  if (!is.Numeric(answer))
-    warning("the answer contains some NAs")
-  answer
-}  #  nbord2link, aka nbolf2
-
-
-
-
-
-
- Cut <-
-   function(y, breaks = c(-Inf, quantile(c(y),
-                          prob = (1:4)/4))) {
-  y <- as.matrix(y)
-
-
-  temp <- cut(y, breaks = breaks, labels = FALSE)
-  temp <- c(temp)  # integer vector of integers
-  if (anyNA(temp))
-    warning("there are NAs")
-  answer <- if (ncol(y) > 1)
-            matrix(temp, nrow(y), ncol(y)) else temp
-  if (ncol(y) > 1) {
-    ynames <- dimnames(y)[[2]]
-    if (!length(ynames))
-      ynames <- paste0("Y", 1:ncol(y))
-    xnames <- dimnames(y)[[1]]
-    if (!length(xnames)) xnames = as.character(1:nrow(y))
-    dimnames(answer) <- list(xnames, ynames)
-  }
-  attr(answer, "breaks") <- breaks
-  answer
-}  # Cut
-
-
-
- checkCut <- function(y) {
-  if (!is.Numeric(y, positive = TRUE, integer.valued = TRUE))
-    stop("argument 'y' must contain positive integers only")
-  uy <- unique(y)
-  L <- max(uy)
-  oklevels <- 1:L
-  if (L == 1)
-    stop("only one unique value")
-  for (ii in oklevels) {
-    if (all(ii != uy))
-      stop("there is no ", ii, " value")
-  }
-  TRUE
-}  # checkCut
-
-
-
-
-
-
-
  nbcanlink <-
   function(theta,
            size = NULL,
@@ -2097,25 +1579,33 @@ warning("20150711; this function has not been updated")
            inverse = FALSE, deriv = 0,
            short = TRUE, tag = FALSE) {
   if (is.character(theta)) {
-    lastchars1 <- substr(theta, nchar(theta), nchar(theta))
-    lastchars2 <- ifelse(nchar(theta) > 1,
-                substr(theta, nchar(theta) - 1, nchar(theta) - 1),
+      lastchars1 <-
+          substr(theta, nchar(theta),
+                 nchar(theta))
+      lastchars2 <-
+          ifelse(nchar(theta) > 1,
+                 substr(theta, nchar(theta) - 1,
+                        nchar(theta) - 1),
                 rep("", length(theta)))
 
     size.names <- rep("size", length(theta))
     dig1 <- lastchars1 %in% as.character(0:9)
     dig2 <- lastchars2 %in% as.character(0:9)
     size.names <- ifelse(dig1,
-                     paste0("size",            lastchars1),
-                     size.names)
+                         paste0("size",
+                                lastchars1),
+                         size.names)
     size.names <- ifelse(dig2,
-                     paste0("size", lastchars2, lastchars1),
+                         paste0("size",
+                                lastchars2,
+                                lastchars1),
                      size.names)
 
     string <- if (short)
       paste0("nbcanlink(", theta,
-        ", ", theta, "(", size.names, ")",  # Added 20180803
-             ")") else {
+        ", ", theta,
+        "(", size.names, ")",  # Added 20180803
+        ")") else {
       theta <- as.char.expression(theta)
       paste0("log(", theta, " / (", theta, " + ",
              size.names, "))")
@@ -2131,11 +1621,11 @@ warning("20150711; this function has not been updated")
   theta <- cbind(theta)
   kmatrix <- cbind(kmatrix)
   if (ncol(kmatrix) != ncol(theta))
-    stop("arguments 'theta' and 'size' do not have ",
-         "an equal number of cols")
+    stop("arguments 'theta' & 'size' do not have",
+         " an equal number of cols")
   if (nrow(kmatrix) != nrow(theta))
-    stop("arguments 'theta' and 'size' do not have ",
-         "an equal number of rows")
+    stop("arguments 'theta' & 'size' do not have",
+         " an equal number of rows")
 
 
   if (deriv > 0) {
@@ -2158,7 +1648,7 @@ warning("20150711; this function has not been updated")
        },
 
         "1" = if (wrt.param == 1)
-           (theta * (theta + kmatrix)) / kmatrix else
+     (theta * (theta + kmatrix)) / kmatrix else
           -(theta + kmatrix),
 
        "2" = if (wrt.param == 1)
@@ -2173,13 +1663,15 @@ warning("20150711; this function has not been updated")
     switch(as.character(deriv),
            "0" = log(theta / (theta + kmatrix)),
 
-           "1" = if (wrt.param == 1) kmatrix / (theta * (theta +
-                                     kmatrix)) else
-                 -1 / (theta + kmatrix),
+           "1" = if (wrt.param == 1)
+                     kmatrix / (theta * (theta +
+                     kmatrix)) else
+                     -1 / (theta + kmatrix),
 
        "2" = if (wrt.param == 1)
              (2 * theta + kmatrix) *
-             (-kmatrix) / (theta * (theta + kmatrix))^2 else
+             (-kmatrix) / (theta *
+             (theta + kmatrix))^2 else
              1 / (theta + kmatrix)^2,
        "3" = { #3rd deriv
       stop("3rd deriv not yet implemented")
@@ -2199,11 +1691,12 @@ warning("20150711; this function has not been updated")
 
 
 
- linkfunvlm <- function(object, earg = FALSE, ...) {
+ linkfunvlm <-
+    function(object, earg = FALSE, ...) {
   if (!any(slotNames(object) == "extra"))
-    stop("cannot access the 'extra' slot of the object")
+    stop("no 'extra' slot on the object")
   if (!any(slotNames(object) == "misc"))
-    stop("cannot access the 'misc' slot of the object")
+    stop("no 'misc' slot on the object")
 
   M <- npred(object)
 
@@ -2215,15 +1708,20 @@ warning("20150711; this function has not been updated")
   LINKS2 <- extra$link
   EARGS2 <- extra$earg
 
-  if (length(LINKS1) != M && length(LINKS2) != M) {
-    if (LINKS1 != "multilogitlink" && LINKS2 != "multilogitlink")
-      warning("the length of the 'links' component is not ", M)
+  if (length(LINKS1) != M &&
+      length(LINKS2) != M) {
+    if (LINKS1 != "multilogitlink" &&
+        LINKS2 != "multilogitlink")
+      warning("the length of the 'links' ",
+              "component is not ", M)
   }
 
   if (length(LINKS1)) {
-    if (earg) list(link = LINKS1, earg = EARGS1) else LINKS1
+      if (earg) list(link = LINKS1,
+                     earg = EARGS1) else LINKS1
   } else {
-    if (earg) list(link = LINKS2, earg = EARGS2) else LINKS2
+      if (earg) list(link = LINKS2,
+                     earg = EARGS2) else LINKS2
   }
 }  # linkfunvlm
 
@@ -2273,14 +1771,15 @@ setMethod("linkfun", "vlm", function(object, ...)
   if (inverse) {
     switch(as.character(deriv),
            "0" = {
-           exp.eta <- exp(theta)
-           (exp.eta + offset) / (1 + exp.eta + offset)
+      exp.eta <- exp(theta)
+      (exp.eta + offset) / (1 + exp.eta + offset)
            },
            "1" = 1 / Recall(theta = theta,
                       offset = offset,
-                      inverse = FALSE, deriv = deriv),
-           "2" = theta * (1 - theta) * (1 - 2 * theta),
-           "3" = { #3rd deriv
+                      inverse = FALSE,
+                      deriv = deriv),
+   "2" = theta * (1 - theta) * (1 - 2 * theta),
+   "3" = { #3rd deriv
       stop("3rd deriv not yet implemented")
       },
            stop("argument 'deriv' unmatched"))
@@ -2290,8 +1789,10 @@ setMethod("linkfun", "vlm", function(object, ...)
        temp2 <- log(theta / (1 - theta) - offset)
        temp2
        },
-       "1" = 1 / ((1 - theta) * (theta - (1-theta) * offset)),
-       "2" = (2 * (theta - offset * (1-theta)) - 1) / (
+       "1" = 1 / ((1 - theta) *
+                  (theta - (1-theta) * offset)),
+       "2" = (2 * (theta - offset *
+                   (1-theta)) - 1) / (
        (theta - (1-theta)*offset) * (1-theta))^2,
            "3" = { #3rd deriv
       stop("3rd deriv not yet implemented")
@@ -2305,19 +1806,146 @@ setMethod("linkfun", "vlm", function(object, ...)
 
 
 
-
  asinlink <-
   function(theta,
-           bvalue = NULL,
+           bvalue = NULL,  # orig.
            inverse = FALSE, deriv = 0,
-           short = TRUE, tag = FALSE) {
+           short = TRUE, tag = FALSE,
+           c10 = c(4, -pi)) {  # === alogitlink()
+  T <- TRUE; F <- FALSE
+  if (!is.Numeric(c10, length.arg = 2))
+    stop("bad input for 'c10'")
+  if ((c1 <- c10[1]) <= 0)
+    stop("c10[1] must be positive")
+  c0 <- c10[2]
+  plain <- c1 == 1 && c0 == 0
+  fc1 <- format(c1, digits = 4)
+  fc0 <- format(c0, digits = 4)
+  if (is.character(theta)) {
+    string <- if (short) {
+      if (plain)
+        paste0("asinlink(", theta, ")") else
+        paste0(fc1, "*asin(sqrt(", theta, "))",
+           ifelse(c0 < 0, fc0,
+           ifelse(c0 > 0, paste0("+", fc0), "")))
+      } else {
+        Theta <- as.char.expression(theta)
+        if (plain)
+        paste0("sqrt(", Theta, ")") else
+        paste0(fc1, "*asin(sqrt(", Theta, "))",
+           ifelse(c0 < 0, fc0,
+           ifelse(c0 > 0, paste0("+", fc0), "")))
+    }
+    if (tag)
+      string <- paste("Arcsinelink:", string)
+    return(string)
+  }
+
+  if (TRUE && length(bvalue)) {
+    if (inverse && deriv == 0) {
+      eps <- 1e-7  # 0
+      theta[theta <= c0] <- c0 + eps
+      theta[theta >= c0+c1*pi/2] <- c0+c1*pi/2 - eps
+    } else {
+      eps <- 1e-7  # 0
+      theta[theta <= 0] <- 0 + eps
+      theta[theta >= 1] <- 1 - eps
+    }
+  }
+
+
+
+  
+  if (inverse) {
+    switch(as.character(deriv),
+      "0" = ifelse(c0 <= theta &
+                   theta <= c0+c1*pi/2,
+            (sin((theta - c0) / c1))^2,
+            NaN),
+      "1" = 1 / Recall(theta = theta,
+                   bvalue = bvalue,
+                   inverse = FALSE,
+                   deriv = deriv,
+                   c10 = c10),
+    "2" = {
+  iD1 <- Recall(theta, de = 1, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, inv = F, c10 = c10)
+  -(iD1^3) * DD2
+          },
+    "3" = {
+  iD1 <- Recall(theta, de = 1, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, inv = F, c10 = c10)
+  (iD1^4) * (3 * iD1 * DD2^2 - DD3)
+        },
+      "4" = {
+  iD1 <- Recall(theta, de = 1, inv = T, c10 = c10)
+  iD2 <- Recall(theta, de = 2, inv = T, c10 = c10)
+  iD3 <- Recall(theta, de = 3, inv = T, c10 = c10)
+  DD1 <- Recall(theta, de = 1, inv = F, c10 = c10)
+  DD2 <- Recall(theta, de = 2, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, inv = F, c10 = c10)
+  DD4 <- Recall(theta, de = 4, inv = F, c10 = c10)
+  (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
+              6 * (iD1^3) * DD2 * DD3 -
+              4 * iD2 * DD3 - (iD1^2) * DD4)
+      },
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+     "0" = c1 * asin(sqrt(theta)) + c0,
+     "1" = c1 * 0.5 / sqrt(theta * (1 - theta)),
+     "2" = (c1 / 4) * (2 * theta - 1) / (theta *
+           (1 - theta))^(3/2),
+     "3" = (c1 / 4) * 1.5 * ((2 * theta - 1)^2) / (
+           theta * (1 - theta))^(5/2) +
+           (c1 / 4) * 2 / (theta * (1 - theta))^(3/2),
+     "4" = c1 * (15 / 16) * ((2 * theta - 1)^3) / (
+           theta * (1 - theta))^(7/2) +
+           (c1 / 4) * 9 * (2 * theta - 1) / (theta *
+           (1 - theta))^(5/2),
+     stop("argument 'deriv' unmatched"))
+  }
+}  # asinlink
+
+
+
+
+
+
+
+ lcalogitlink <-
+  function(theta,
+           bvalue = NULL,   # .Machine$double.eps,
+           pmix.logit = 0.01,
+           tol = 1e-13, nmax = 99,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE,
+           c10 = c(4, -pi)) {  # === asinlink()
+  T <- TRUE; F <- FALSE
+  if (!is.Numeric(c10, length.arg = 2))
+    stop("bad input for 'c10'")
+  if ((c1 <- c10[1]) <= 0)
+    stop("c10[1] must be positive")
+  c0 <- c10[2]
+  plain <- c1 == 1 && c0 == 0
+  fc1 <- format(c1, digits = 4)
+  fc0 <- format(c0, digits = 4)
+  if (!is.Numeric(pmix.logit, length.arg = 1) ||
+     pmix.logit < 0 || pmix.logit > 1)
+   stop("bad input for argument 'pmix.logit'")
+ 
   if (is.character(theta)) {
     string <- if (short)
-        paste0("asinlink(", theta, ")") else
-        paste0("2 * asin(sqrt(", as.char.expression(theta),
-               ")) - pi / 2")
+      paste0("lcalogitlink(", theta, ")") else {
+      Theta <- as.char.expression(theta)
+      paste0(1 - pmix.logit, "*asinlink(",
+             Theta, ")+",
+             pmix.logit, "*logitlink(",
+             Theta, ")")
+    }
     if (tag)
-      string <- paste("Arcsinlink:", string)
+      string <- paste("LC-asin-logit:", string)
     return(string)
   }
 
@@ -2325,22 +1953,45 @@ setMethod("linkfun", "vlm", function(object, ...)
     theta[theta <= 0.0] <- bvalue
     theta[theta >= 1.0] <- 1.0 - bvalue
   }
+
+lcalogitmix <-  # pmix.logit local/global
+  function(p, deriv = 0, Value = 0, c10 = c(4, -pi))
+(1 - pmix.logit) *
+asinlink(p, deriv = deriv, c10 = c10) +
+pmix.logit *
+logitlink(p, deriv = deriv) - Value
+ 
   if (inverse) {
+    P <- pmix.logit
     switch(as.character(deriv),
-        "0" = (sin(theta / 2 + pi / 4))^2,
-        "1" = 1 / Recall(theta = theta,
-                     bvalue = bvalue,
-                     inverse = FALSE, deriv = deriv),
-        "2" = 0.5 * (1 - 2 * theta),
-        "3" = -sqrt(theta * (1 - theta)),
+    "0" = {  eps <- 0  #  1e-13
+       Lo <- numeric(length(theta)) + eps
+       Up <- numeric(length(theta)) + 1 - eps
+       bisection.basic(lcalogitmix,
+                       tol = tol, nmax = nmax,
+                       Lo, Up, Value = theta,
+                       c10 = c10)
+    },
+    "1" =  1 / Recall(theta, pm = P, deriv = 1, c10 = c10),
+    "2" = {
+  iD1 <- Recall(theta, de = 1, pm=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, pm=P, inv = F, c10 = c10)
+  -(iD1^3) * DD2
+          },
+    "3" = {
+  iD1 <- Recall(theta, de = 1, pm=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, pm=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, pm=P, inv = F, c10 = c10)
+  (iD1^4) * (3 * iD1 * DD2^2 - DD3)
+        },
         "4" = {
-  iD1 <- Recall(theta, deriv = 1, inverse = TRUE)
-  iD2 <- Recall(theta, deriv = 2, inverse = TRUE)
-  iD3 <- Recall(theta, deriv = 3, inverse = TRUE)
-  DD1 <- Recall(theta, deriv = 1, inverse = FALSE)
-  DD2 <- Recall(theta, deriv = 2, inverse = FALSE)
-  DD3 <- Recall(theta, deriv = 3, inverse = FALSE)
-  DD4 <- Recall(theta, deriv = 4, inverse = FALSE)
+  iD1 <- Recall(theta, de = 1, pm=P, inv = T, c10 = c10)
+  iD2 <- Recall(theta, de = 2, pm=P, inv = T, c10 = c10)
+  iD3 <- Recall(theta, de = 3, pm=P, inv = T, c10 = c10)
+  DD1 <- Recall(theta, de = 1, pm=P, inv = F, c10 = c10)
+  DD2 <- Recall(theta, de = 2, pm=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, pm=P, inv = F, c10 = c10)
+  DD4 <- Recall(theta, de = 4, pm=P, inv = F, c10 = c10)
   (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
               6 * (iD1^3) * DD2 * DD3 -
               4 * iD2 * DD3 - (iD1^2) * DD4)
@@ -2348,18 +1999,489 @@ setMethod("linkfun", "vlm", function(object, ...)
            stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
-     "0" = 2 * asin(sqrt(theta)) - pi / 2,
-     "1" = 1 / sqrt(theta * (1 - theta)),
-     "2" = 0.5 * (2 * theta - 1) / (theta * (1 - theta))^(3/2),
-     "3" = 0.75 * ((2 * theta - 1)^2) / (
-           theta * (1 - theta))^(5/2) +
-           1 / (theta * (1 - theta))^(3/2),
-     "4" = (15 / 8) * ((2 * theta - 1)^3) / (
-           theta * (1 - theta))^(7/2) +
-           4.5 * (2 * theta - 1) / (theta * (1 - theta))^(5/2),
-     stop("argument 'deriv' unmatched"))
+    "0" = lcalogitmix(theta, deriv = 0, c10 = c10),
+    "1" = lcalogitmix(theta, deriv = 1, c10 = c10),
+    "2" = lcalogitmix(theta, deriv = 2, c10 = c10),
+    "3" = lcalogitmix(theta, deriv = 3, c10 = c10),
+    "4" = lcalogitmix(theta, deriv = 4, c10 = c10),
+      stop("argument 'deriv' unmatched"))
   }
-}  # asinlink
+}  # lcalogitlink
+
+
+
+
+
+ sqrtlink <-
+  function(theta,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE,
+           c10 = c(2, -2)) {  # poissonff-sloglink
+  T <- TRUE; F <- FALSE
+  if (!is.Numeric(c10, length.arg = 2))
+    stop("bad input for 'c10'")
+  if ((c1 <- c10[1]) <= 0)
+    stop("c10[1] must be positive")
+  c0 <- c10[2]
+  plain <- c1 == 1 && c0 == 0
+  fc1 <- format(c1, digits = 4)
+  fc0 <- format(c0, digits = 4)
+  if (is.character(theta)) {
+    string <- if (short) {
+      if (plain)
+        paste0("sqrtlink(", theta, ")") else
+        paste0(fc1, "*sqrtlink(", theta, ")",
+           ifelse(c0 < 0, fc0,
+           ifelse(c0 > 0, paste0("+", fc0), "")))
+      } else {
+        theta <- as.char.expression(theta)
+        if (plain)
+        paste0("sqrt(", theta, ")") else
+        paste0(fc1, "*sqrt(", theta, ")",
+           ifelse(c0 < 0, fc0,
+           ifelse(c0 > 0, paste0("+", fc0), "")))
+    }
+    if (tag)
+      string <- paste("Square root:", string)
+    return(string)
+  }
+
+  if (inverse) {
+    switch(as.character(deriv),
+      "0" = ((theta - c0) / c1)^2,
+      "1" = 2 * sqrt(theta) / c1,
+      "2" = 2 / c1^2,
+      "3" = 0, "4" = 0, "5" = 0, "6" = 0,
+      stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+       "0" =  c1 * sqrt(theta) + c0,
+       "1" =  c1 * 0.5 / sqrt(theta),
+       "2" = -c1 * 0.25 / theta^1.5,
+       "3" =  c1 * (3 / 8) / theta^2.5,
+       "4" = -c1 * (15 / 16) / theta^3.5,
+       "5" = stop("5th deriv not implemented"),
+    stop("argument 'deriv' unmatched"))
+  }
+}  # sqrtlink
+
+
+
+
+
+
+ lcsloglink <-
+  function(theta,
+           bvalue = NULL,   # .Machine$double.eps,
+           pmix.log = 0.01,
+           tol = 1e-13, nmax = 99,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE,
+           c10 = c(2, -2)) {  # poissonff-sloglink
+  T <- TRUE; F <- FALSE
+  if (!is.Numeric(c10, length.arg = 2))
+    stop("bad input for 'c10'")
+  if ((c1 <- c10[1]) <= 0)
+    stop("c10[1] must be positive")
+  c0 <- c10[2]
+  plain <- c1 == 1 && c0 == 0
+  fc1 <- format(c1, digits = 4)
+  fc0 <- format(c0, digits = 4)
+  if (!is.Numeric(pmix.log, length.arg = 1) ||
+      pmix.log < 0 || pmix.log > 1)
+    stop("bad input for argument 'pmix.log'")
+ 
+  if (is.character(theta)) {
+    string <- if (short)
+      paste0("lcsloglink(", theta, ")") else {
+      Theta <- as.char.expression(theta)
+      paste0(1- pmix.log, "*sqrtlink(",
+             Theta, ")+",
+             pmix.log, "*loglink(",
+             Theta, ")")
+    }
+    if (tag)
+      string <- paste("LC-sqrt-log:", string)
+    return(string)
+  }
+
+  if (!inverse && length(bvalue)) {
+    theta[theta <= 0.0] <- bvalue
+    theta[theta >= 1.0] <- 1.0 - bvalue
+  }
+
+lcslogmix <-  # pmix.log local/global
+  function(mu, deriv = 0, Value = 0, c10 = c(2, -2))
+(1 - pmix.log) *
+sqrtlink(mu, deriv = deriv, c10 = c10) +
+pmix.log *
+loglink(mu, deriv = deriv) - Value
+
+  if (inverse) {
+    P <- pmix.log
+    switch(as.character(deriv),
+    "0" = {  smallno <- 1e-10  # 1e-12
+       Lo <- pmin(((theta - c0) / c1)^2,
+                  exp(theta)) - 2.5
+       Up <- pmax(((theta - c0) / c1)^2,
+                  exp(theta)) + 2.5
+       Up <- pmax(Up, max(theta, na.rm = TRUE))
+       bisection.basic(lcslogmix,
+           tol = tol, nmax = nmax,
+           Lo, Up, Value = theta, c10 = c10)
+    },
+    "1" =  1 / Recall(theta, pm = P, deriv = 1, c10 = c10),
+    "2" = {
+  iD1 <- Recall(theta, der = 1, inv = T, c10 = c10)
+  DD2 <- Recall(theta, der = 2, inv = F, c10 = c10)
+  -(iD1^3) * DD2
+          },
+    "3" = {
+  iD1 <- Recall(theta, de = 1, pm=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, pm=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, pm=P, inv = F, c10 = c10)
+  (iD1^4) * (3 * iD1 * DD2^2 - DD3)
+        },
+        "4" = {
+  iD1 <- Recall(theta, de = 1, pm=P, inv = T, c10 = c10)
+  iD2 <- Recall(theta, de = 2, pm=P, inv = T, c10 = c10)
+  iD3 <- Recall(theta, de = 3, pm=P, inv = T, c10 = c10)
+  DD1 <- Recall(theta, de = 1, pm=P, inv = F, c10 = c10)
+  DD2 <- Recall(theta, de = 2, pm=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, pm=P, inv = F, c10 = c10)
+  DD4 <- Recall(theta, de = 4, pm=P, inv = F, c10 = c10)
+  (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
+              6 * (iD1^3) * DD2 * DD3 -
+              4 * iD2 * DD3 - (iD1^2) * DD4)
+        },
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+    "0" = lcslogmix(theta, deriv = 0, c10 = c10),
+    "1" = lcslogmix(theta, deriv = 1, c10 = c10),
+    "2" = lcslogmix(theta, deriv = 2, c10 = c10),
+    "3" = lcslogmix(theta, deriv = 3, c10 = c10),
+    "4" = lcslogmix(theta, deriv = 4, c10 = c10),
+      stop("argument 'deriv' unmatched"))
+  }
+}  # lcsloglink
+
+
+
+
+
+
+
+   sloglink <-
+  function(theta,
+           bvalue = NULL,   # .Machine$double.eps,
+           taumix.log = 1,  # [0, Inf)
+           tol = 1e-13, nmax = 99,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE,
+           c10 = c(2, -2)) {  # poissonff-sloglink
+  T <- TRUE; F <- FALSE
+  if (!is.Numeric(c10, length.arg = 2))
+    stop("bad input for 'c10'")
+  if ((c1 <- c10[1]) <= 0)
+    stop("c10[1] must be positive")
+  c0 <- c10[2]
+  plain <- c1 == 1 && c0 == 0
+  fc1 <- format(c1, digits = 4)
+  fc0 <- format(c0, digits = 4)
+  if (!is.Numeric(taumix.log, length.arg = 1) ||
+      taumix.log < 0)
+    stop("bad input for argument 'taumix.log'")
+ 
+  if (is.character(theta)) {
+    string <- if (short)
+      paste0("sloglink(", theta, ")") else {
+      Theta <- as.char.expression(theta)
+      paste0("-expm1(-p*", taumix.log,
+             ")*sqrtlink(",
+             Theta, ")+exp(-p*",
+             taumix.log, ")*loglink(",
+             Theta, ")")
+    }
+    if (tag)
+      string <- paste("EW-sqrt-log:", string)
+    return(string)
+  }
+
+  if (!inverse && length(bvalue)) {
+    theta[theta <= 0.0] <- bvalue
+    theta[theta >= 1.0] <- 1.0 - bvalue
+  }
+
+ewslogmix <-
+  function(mu, deriv = 0, Value = 0,
+           c10 = c(2, -2)) {
+  eta <- (-taumix.log * mu)
+  if (deriv == 0) return(
+    -expm1(eta) *
+    sqrtlink(mu, deriv = deriv, c10 = c10) +
+    exp(eta) *
+    loglink(mu, deriv = deriv) - Value)
+  if (deriv == 1) {
+    dd1 <- (-taumix.log)
+    return(
+    sqrtlink(mu, deriv = deriv, c10 = c10) -
+    exp(eta) * (
+    sqrtlink(mu, deriv = deriv, c10 = c10) -
+     loglink(mu, deriv = deriv) + dd1 * (
+    sqrtlink(mu, c10 = c10) - loglink(mu))))
+    }
+  if (deriv == 2) {
+    dd1 <- (-taumix.log)
+    dd2 <- 0
+    return(
+    sqrtlink(mu, deriv = deriv, c10 = c10) -
+    exp(eta) * (
+    sqrtlink(mu, deriv = deriv, c10 = c10) -
+     loglink(mu, deriv = deriv) +
+    (dd2 + dd1^2) * ( 
+    sqrtlink(mu, c10 = c10) - loglink(mu)) +
+    2 * dd1 * ( 
+    sqrtlink(mu, deriv = 1, c10 = c10) -
+    loglink(mu, deriv = 1))))
+  }
+  if (deriv == 3) {
+    dd1 <- (-taumix.log)
+    dd2 <- dd3 <- 0
+    return(
+    sqrtlink(mu, deriv = deriv, c10 = c10) -
+    exp(eta) * (
+    sqrtlink(mu, deriv = deriv, c10 = c10) -
+     loglink(mu, deriv = deriv) +
+    (dd3 + dd1 * (3 * dd2 + dd1^2)) * ( 
+        sqrtlink(mu, c10 = c10) -
+        loglink(mu)) + 3 * dd1 * ( 
+    sqrtlink(mu, deriv = 2, c10 = c10) -
+     loglink(mu, deriv = 2)) +
+    3 * (dd2 + dd1^2) * ( 
+    sqrtlink(mu, deriv = 1, c10 = c10) -
+     loglink(mu, deriv = 1))))
+  }
+  if (deriv == 4) {
+    stop("yettodo")
+  }
+  }  # ewslogmix
+
+     
+  if (inverse) {
+    P <- taumix.log      
+    switch(as.character(deriv),
+    "0" = { eps <- 0   # 1e-14
+       Lo <- pmin(((theta - c0) / c1)^2,
+                  exp(theta)) - 2.5
+       Lo <- pmax(Lo, eps)  # 20240110
+       Up <- pmax(((theta - c0) / c1)^2,
+                  exp(theta)) + 2.5
+       Up <- pmax(Up, max(theta, na.rm = TRUE))
+       bisection.basic(ewslogmix, c10 = c10,
+                       tol = tol, nmax = nmax,
+                       Lo, Up, Value = theta)
+    },
+    "1" =  1 / Recall(theta, tau=P, der = 1, c10 = c10),
+    "2" = {
+  iD1 <- Recall(theta, de = 1, tau=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, tau=P, inv = F, c10 = c10)
+  -(iD1^3) * DD2
+          },
+    "3" = {
+  iD1 <- Recall(theta, de = 1, tau=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, tau=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, tau=P, inv = F, c10 = c10)
+  (iD1^4) * (3 * iD1 * DD2^2 - DD3)
+        },
+        "4" = {
+  iD1 <- Recall(theta, de = 1, tau=P, inv = T, c10 = c10)
+  iD2 <- Recall(theta, de = 2, tau=P, inv = T, c10 = c10)
+  iD3 <- Recall(theta, de = 3, tau=P, inv = T, c10 = c10)
+  DD1 <- Recall(theta, de = 1, tau=P, inv = F, c10 = c10)
+  DD2 <- Recall(theta, de = 2, tau=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, tau=P, inv = F, c10 = c10)
+  DD4 <- Recall(theta, de = 4, tau=P, inv = F, c10 = c10)
+  (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
+              6 * (iD1^3) * DD2 * DD3 -
+              4 * iD2 * DD3 - (iD1^2) * DD4)
+        },
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+    "0" = ewslogmix(theta, deriv = 0, c10 = c10),
+    "1" = ewslogmix(theta, deriv = 1, c10 = c10),
+    "2" = ewslogmix(theta, deriv = 2, c10 = c10),
+    "3" = ewslogmix(theta, deriv = 3, c10 = c10),
+    "4" = ewslogmix(theta, deriv = 4, c10 = c10),
+      stop("argument 'deriv' unmatched"))
+  }
+}  # sloglink
+
+
+
+
+
+   alogitlink <-
+  function(theta,
+           bvalue = NULL,   # .Machine$double.eps,
+           taumix.logit = 1,  # [0, Inf)
+           tol = 1e-13, nmax = 99,
+           inverse = FALSE, deriv = 0,
+           short = TRUE, tag = FALSE,
+           c10 = c(4, -pi)) {  # === asinlink()
+  T <- TRUE; F <- FALSE
+  if (!is.Numeric(c10, length.arg = 2))
+    stop("bad input for 'c10'")
+  if ((c1 <- c10[1]) <= 0)
+    stop("c10[1] must be positive")
+  c0 <- c10[2]
+  plain <- c1 == 1 && c0 == 0
+  fc1 <- format(c1, digits = 4)
+  fc0 <- format(c0, digits = 4)
+  ftm <- format(taumix.logit, digits = 4)
+  if (!is.Numeric(taumix.logit, length.arg = 1) ||
+      taumix.logit < 0)
+    stop("bad input for argument 'taumix.logit'")
+ 
+  if (is.character(theta)) {
+    string <- if (short)
+      paste0("alogitlink(", theta, ")") else {
+      Theta <- as.char.expression(theta)
+      paste0("-expm1(-p*(1-p)*", ftm,
+             ")*asinlink(",
+             Theta, ")+exp(-p*(1-p)*",
+             ftm, ")*logitlink(",
+             Theta, ")")
+    }
+    if (tag)
+      string <- paste("EW-asin-logit:", string)
+    return(string)
+  }
+
+  if (!inverse && length(bvalue)) {
+    theta[theta <= 0.0] <- bvalue
+    theta[theta >= 1.0] <- 1.0 - bvalue
+  }
+
+ewalogitmix <-
+  function(mu, deriv = 0, Val = 0,
+           c10 = c(4, -pi)) {
+  eta <- (-taumix.logit * mu * (1 - mu))
+  if (deriv == 0) return(
+    -expm1(eta) *
+    asinlink(mu, deriv = deriv, c10 = c10) +
+    exp(eta) *
+    logitlink(mu, deriv = deriv) - Val)
+  if (deriv == 1) {
+    dd1 <- (-taumix.logit) * (1 - 2 * mu)
+    return(
+     asinlink(mu, deriv = deriv, c10 = c10) -
+     exp(eta) * (
+     asinlink(mu, deriv = deriv, c10 = c10) -
+     logitlink(mu, deriv = deriv) +
+     dd1 * (
+         asinlink(mu, c10 = c10) -
+         logitlink(mu))))
+    }
+  if (deriv == 2) {
+    dd1 <- (-taumix.logit) * (1 - 2 * mu)
+    dd2 <-   taumix.logit * 2
+    return(
+     asinlink(mu, deriv = deriv, c10 = c10) -
+     exp(eta) * (
+     asinlink(mu, deriv = deriv, c10 = c10) -
+    logitlink(mu, deriv = deriv) +
+    (dd2 + dd1^2) * ( 
+     asinlink(mu, c10 = c10) -
+    logitlink(mu)) + 2 * dd1 * ( 
+     asinlink(mu, deriv = 1, c10 = c10) -
+    logitlink(mu, deriv = 1))))
+  }
+  if (deriv == 3) {
+    dd1 <- (-taumix.logit) * (1 - 2 * mu)
+    dd2 <-   taumix.logit * 2
+    dd3 <- 0
+    return(
+     asinlink(mu, deriv = deriv, c10 = c10) -
+     exp(eta) * (
+     asinlink(mu, deriv = deriv, c10 = c10) -
+    logitlink(mu, deriv = deriv) +
+    (dd3 + dd1 * (3 * dd2 + dd1^2)) * ( 
+     asinlink(mu, c10 = c10) -
+     logitlink(mu)) + 3 * dd1 * ( 
+     asinlink(mu, deriv = 2, c10 = c10) -
+    logitlink(mu, deriv = 2)) +
+    3 * (dd2 + dd1^2) * ( 
+     asinlink(mu, deriv = 1, c10 = c10) -
+    logitlink(mu, deriv = 1))))
+  }
+  if (deriv == 4) {
+    stop("yettodo")
+  }
+  }  # ewalogitmix
+      
+  if (inverse) {
+    P <- taumix.logit
+    switch(as.character(deriv),
+    "0" = {  eps <- 0  # 1e-13
+       Lo <- numeric(length(theta)) + eps
+       Up <- numeric(length(theta)) + 1 - eps
+       bisection.basic(ewalogitmix,
+                       tol = tol, nmax = nmax,
+                       Lo, Up, Val = theta,
+                       c10 = c10)
+    },
+    "1" =  1 / Recall(theta, tau=P, der = 1, c10 = c10),
+    "2" = {
+  iD1 <- Recall(theta, de = 1, tau=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, tau=P, inv = F, c10 = c10)
+  -(iD1^3) * DD2
+          },
+    "3" = {
+  iD1 <- Recall(theta, de = 1, tau=P, inv = T, c10 = c10)
+  DD2 <- Recall(theta, de = 2, tau=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, tau=P, inv = F, c10 = c10)
+  (iD1^4) * (3 * iD1 * DD2^2 - DD3)
+        },
+        "4" = {
+  iD1 <- Recall(theta, de = 1, tau=P, inv = T, c10 = c10)
+  iD2 <- Recall(theta, de = 2, tau=P, inv = T, c10 = c10)
+  iD3 <- Recall(theta, de = 3, tau=P, inv = T, c10 = c10)
+  DD1 <- Recall(theta, de = 1, tau=P, inv = F, c10 = c10)
+  DD2 <- Recall(theta, de = 2, tau=P, inv = F, c10 = c10)
+  DD3 <- Recall(theta, de = 3, tau=P, inv = F, c10 = c10)
+  DD4 <- Recall(theta, de = 4, tau=P, inv = F, c10 = c10)
+  (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
+              6 * (iD1^3) * DD2 * DD3 -
+              4 * iD2 * DD3 - (iD1^2) * DD4)
+        },
+           stop("argument 'deriv' unmatched"))
+  } else {
+    switch(as.character(deriv),
+    "0" = ewalogitmix(theta, deriv = 0, c10 = c10),
+    "1" = ewalogitmix(theta, deriv = 1, c10 = c10),
+    "2" = ewalogitmix(theta, deriv = 2, c10 = c10),
+    "3" = ewalogitmix(theta, deriv = 3, c10 = c10),
+    "4" = ewalogitmix(theta, deriv = 4, c10 = c10),
+      stop("argument 'deriv' unmatched"))
+  }
+}  # alogitlink
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

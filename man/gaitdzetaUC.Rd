@@ -196,9 +196,9 @@ rgaitdzeta(n, shape.p, a.mix = NULL, a.mlm = NULL,
 }
 %\references{
 
-%Yee, T. W. and Ma, C. (2023)
+%Yee, T. W. and Ma, C. (2024).
 %Generally altered, inflated, truncated and deflated regression.
-%\emph{In preparation}.
+%\emph{Statistical Science}, \bold{39} (in press).
 
 
 
@@ -231,6 +231,7 @@ rgaitdzeta(n, shape.p, a.mix = NULL, a.mlm = NULL,
 \seealso{
   \code{\link{gaitdzeta}},
   \code{\link{Gaitdpois}},
+  \code{\link{dgaitdplot}},
   \code{\link{multinomial}},
   \code{\link[VGAMdata]{Oazeta}},
   \code{\link[VGAMdata]{Oizeta}},

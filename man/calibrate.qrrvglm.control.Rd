@@ -124,6 +124,8 @@ abline(v = latvar(p1)[siteNos], col = seq(siteNos))  # Actual site scores
 abline(v = cp1, lty = 2, col = seq(siteNos))  # Calibrated values
 }
 }
+\keyword{optimize}
 \keyword{models}
+\keyword{nonlinear}
 \keyword{regression}
 

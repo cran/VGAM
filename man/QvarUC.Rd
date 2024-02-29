@@ -269,8 +269,6 @@ qvplot(Fit2, scol = "blue", pch = 16, main = expression(eta[2]),
        slwd = 1.5, las = 1, length.arrows = 0.07)
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{models}
 \keyword{regression}
 % \code{\link[qvcalc:qvcalc]{qvcalc}} in \pkg{qvcalc}

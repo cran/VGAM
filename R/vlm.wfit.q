@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -61,7 +61,7 @@ vlm.wfit <-
     xmat
   } else {
     if (missing.Hlist || !length(Hlist)) {
-      Hlist <- replace.constraints(vector("list", ncol(xmat)),
+      Hlist <- replaceCMs(vector("list", ncol(xmat)),
                                    diag(M), 1:ncol(xmat))  # NULL
     }
     lm2vlm.model.matrix(x = xmat, Hlist = Hlist, M = M,
@@ -243,10 +243,10 @@ vlm.wfit <-
 
 
   dx2 <- if (is.vlmX) NULL else dimnames(xmat)[[2]]
-  B <- matrix(NA_real_,
-              nrow = M, ncol = ncolx, dimnames = list(lp.names, dx2))
+  B <- matrix(NA_real_, nrow = M, ncol = ncolx,
+              dimnames = list(lp.names, dx2))
   if (is.null(Hlist)) {
-    Hlist <- replace.constraints(vector("list", ncolx), diag(M), 1:ncolx)
+    Hlist <- replaceCMs(vector("list", ncolx), diag(M), 1:ncolx)
   }
   ncolHlist <- unlist(lapply(Hlist, ncol))
   temp <- c(0, cumsum(ncolHlist))

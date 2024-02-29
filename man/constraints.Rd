@@ -188,4 +188,6 @@ constraints(fit)  # All except the first are the estimated A matrix
 }
 \keyword{models}
 \keyword{regression}
+\concept{Constraint matrices}
+
 

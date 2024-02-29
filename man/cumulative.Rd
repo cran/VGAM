@@ -9,10 +9,10 @@
 
 }
 \usage{
-cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
-    multiple.responses = FALSE, thresholds = c("unconstrained",
-    "equidistant", "symmetric1", "symmetric0"), Treverse = reverse,
-    Tref = if (Treverse) "M" else 1, whitespace = FALSE)
+cumulative(link = "logitlink", parallel = FALSE,
+    reverse = FALSE, multiple.responses = FALSE,
+    ynames = FALSE, Thresh = NULL, Trev = reverse,
+    Tref = if (Trev) "M" else 1, whitespace = FALSE)
 }
 %apply.parint = FALSE,
 %scumulative(link = "logitlink",
@@ -87,25 +87,32 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 
   
 
-  This should be set to \code{TRUE} for \code{link=}
-  \code{\link{gordlink}},
-  \code{\link{pordlink}},
-  \code{\link{nbordlink}}.
-  For these links the cutpoints must be an increasing sequence;
-  if \code{reverse = FALSE} for then the cutpoints must be an
-  decreasing sequence.
+% This should be set to \code{TRUE} for \code{link=}
+% \code{\link{gordlink}},
+% \code{\link{pordlink}},
+% \code{\link{nbordlink}}.
+% For these links the cutpoints must be an increasing sequence;
+% if \code{reverse = FALSE} for then the cutpoints must be an
+% decreasing sequence.
 
 
   
   }
+  \item{ynames}{
+  See \code{\link{multinomial}} for information.
+
+  }
   \item{multiple.responses}{
   Logical.
-  Multiple responses? If \code{TRUE} then the input should be
-  a matrix with values \eqn{1,2,\dots,L}, where \eqn{L=J+1} is the
+  Multiple responses?
+  If \code{TRUE} then the input should be
+  a matrix with values \eqn{1,2,\dots,L},
+  where \eqn{L=J+1} is the
   number of levels.
   Each column of the matrix is a response,
   i.e., multiple responses.
-  A suitable matrix can be obtained from \code{Cut}.
+  A suitable matrix can be obtained from
+  \code{Cut}.
 
 
 
@@ -129,68 +136,98 @@ cumulative(link = "logitlink", parallel = FALSE, reverse = FALSE,
 % }
 
 
-  \item{thresholds}{
-    Character.
-    The choices concern the fitted intercepts.
-    They can be constrained to be equally-spaced, etc.
-    See \code{\link{constraints}} for general information.
-    The first choice is the default and causes the intercepts
-    to be estimated in an unconstrained (flexible) manner.
-    Actually, for this model, they will be sorted either in
-    ascending (default) or descending order, depending
-    on \code{reverse}.
+  \item{Thresh}{
+  Character.
+  The choices concern constraint matrices applied
+  to the intercepts.
+  They can be constrained to be
+  equally-spaced (\emph{equid}istant)
+  etc.
+  See \code{\link{CommonVGAMffArguments}} and
+  \code{\link{constraints}} for general
+  information.
+  Basically, the choice is pasted to the end of
+  \code{"CM."} and that function is called.
+  This means users can easily write their own
+  \code{CM.}-type function.
 
 
 
-    If equally-spaced then the direction and the reference
-    level are controlled
-    by \code{Treverse} and \code{Tref}.
-    If equally-spaced then the first constraint matrix
-    will be \eqn{M} by 2, with the second
-    column corresponding to the distance between
-    the thresholds.
+%   The first choice is the default and causes the intercepts
+%   to be estimated in an unconstrained (flexible) manner.
+%   Actually, for this model, they will be sorted either in
+%   ascending (default) or descending order, depending
+%   on \code{reverse}.
 
 
 
-    If \code{"symmetric1"} then the fitted intercepts are
-    symmetric about the median (\eqn{M} odd) intercept.
-    If \eqn{M} is even then the median is the mean of
-    the two most inner and adjacent intercepts.
-    Function \code{CM.symmetric1()} is used to
-    construct the appropriate constraint matrix.
+% Orig.: "equidistant", "symmetric1",
+%   "symmetric0", "qnorm"
 
 
 
-    If \code{"symmetric0"} then the median intercept is 0
-    by definition and the symmetry occurs about that value.
-    Thus the intercepts comprise pairs that differ by sign only.
-    The appropriate constraint matrix is as with
-    \code{"symmetric1"} but with the first column deleted.
-    The choices \code{"symmetric1"} and \code{"symmetric0"}
-    are effectively equivalent to
-    \code{"symmetric"} and \code{"symmetric2"}
-    respectively in \pkg{ordinal}.
+
+If equally-spaced then the direction and the
+reference level are controlled
+by \code{Trev} and \code{Tref}, and
+the constraint matrix
+will be \eqn{M} by 2, with the second
+column corresponding to the distance between
+the thresholds.
+
+
+
+If \code{"symm1"} then the fitted intercepts are
+\emph{symmetric} about the median (\eqn{M} odd)
+intercept.
+If \eqn{M} is even then the median is the mean of
+the two most inner and adjacent intercepts.
+For this, \code{\link{CM.symm1}} is used to
+construct the appropriate constraint matrix.
+
+
+
+If \code{"symm0"} then the median intercept is 0
+by definition and the symmetry occurs about the
+origin. Thus the intercepts comprise pairs
+that differ by sign only.
+The appropriate constraint matrix is as with
+\code{"symm1"} but with the first column deleted.
+The choices \code{"symm1"} and \code{"symm0"}
+are effectively equivalent to
+\code{"symmetric"} and \code{"symmetric2"}
+respectively in \pkg{ordinal}.
+
+
+
+
+For \code{"qnorm"} then
+\code{\link{CM.qnorm}} uses the
+\code{qnorm((1:M)/(M+1))} quantiles
+of the standard normal.
 
 
 
   }
-  \item{Treverse, Tref}{
-    Support arguments for \code{thresholds}
-    for equally-spaced intercepts.
-    The logical argument \code{Treverse} is applied first
-    to give the direction (i.e., ascending or descending)
-    before
-    row \code{Tref} (ultimately numeric)
-    of the first (intercept) constraint matrix
-    is set to the reference level.
-    See \code{\link{constraints}} for information.
+  \item{Trev, Tref}{
+  Support arguments for \code{Thresh}
+  for equally-spaced intercepts.
+  The logical argument \code{Trev} is
+  applied first to give the direction
+  (i.e., ascending or descending)
+  before
+  row \code{Tref} (ultimately numeric)
+  of the first (intercept) constraint matrix
+  is set to the reference level.
+  See \code{\link{constraints}} for information.
     
 
 
   }
 
   \item{whitespace}{
-    See \code{\link{CommonVGAMffArguments}} for information.
+  See \code{\link{CommonVGAMffArguments}} for
+  information.
 
 
   }
@@ -359,19 +396,20 @@ Vector generalized additive models.
 
   
 
-  With the logit link, setting \code{parallel = TRUE} will fit a
-  proportional odds model. Note that the \code{TRUE} here
-  does not apply to the intercept term.
-  In practice, the validity of
-  the \emph{proportional odds assumption} needs to be checked,
-  e.g., by a likelihood ratio test (LRT).
-  If acceptable on the data, then numerical
-  problems are less
-  likely to occur during the fitting, and there are less
-  parameters. Numerical problems occur when the linear/additive
-  predictors cross, which results in probabilities outside of
-  \eqn{(0,1)}; setting \code{parallel = TRUE} will help
-  avoid this problem.
+  With the logit link, setting \code{parallel =
+  TRUE} will fit a proportional odds model. Note
+  that the \code{TRUE} here does not apply to
+  the intercept term.  In practice, the validity
+  of the \emph{proportional odds assumption}
+  needs to be checked, e.g., by a likelihood
+  ratio test (LRT).  If acceptable on the data,
+  then numerical problems are less likely
+  to occur during the fitting, and there are
+  less parameters. Numerical problems occur
+  when the linear/additive predictors cross,
+  which results in probabilities outside of
+  \eqn{(0,1)}; setting \code{parallel = TRUE}
+  will help avoid this problem.
 
   
 
@@ -429,13 +467,13 @@ the \code{xij}-facility; see
 
 
 
-With non-default \code{thresholds} choices,
-the first few fitted regression coefficients need care when
-interpreting them.
-For example, some values could be the distance away from
-the median intercept.
-Typing something like \code{constraints(fit)[[1]]} gives
-the constraint matrix of the intercept term.
+With most \code{Thresh}old choices,
+the first few fitted regression coefficients
+need care in their interpretation.  For example,
+some values could be the distance away from
+the median intercept.  Typing something
+like \code{constraints(fit)[[1]]} gives the
+constraint matrix of the intercept term.
 
 
 
@@ -460,6 +498,8 @@ the constraint matrix of the intercept term.
 \seealso{
   \code{\link{propodds}},
   \code{\link{constraints}},
+  \code{\link{CM.ones}},
+  \code{\link{CM.equid}},
   \code{\link{R2latvar}},
   \code{\link{ordsup}},
   \code{\link{prplot}},
@@ -477,10 +517,15 @@ the constraint matrix of the intercept term.
   \code{\link{probitlink}},
   \code{\link{clogloglink}},
   \code{\link{cauchitlink}},
-  \code{\link{gordlink}},
-  \code{\link{pordlink}},
-  \code{\link{nbordlink}},
   \code{\link{logistic1}}.
+
+
+% \code{\link{pordlink}},
+% \code{\link{gordlink}},
+% \code{\link{nbordlink}},
+
+
+
 
 
 }

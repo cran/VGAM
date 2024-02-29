@@ -125,6 +125,7 @@ Logistic Distribution,
   \code{\link[stats:Logistic]{rlogis}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{logitlink}},
+  \code{\link{gensh}},
   \code{\link{cumulative}},
   \code{\link{bilogistic}},
   \code{\link{simulate.vlm}}.

@@ -128,8 +128,9 @@ qtplot(fit1, perc = 97, mpv = FALSE, lcol = 3, tcol = 3,
 head(saved@post$qtplot$fitted)
 }
 }
-\keyword{graphs}
-\keyword{models}
+%\keyword{graphs}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 
 

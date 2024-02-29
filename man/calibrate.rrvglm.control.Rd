@@ -70,5 +70,6 @@ calibrate.rrvglm.control(object, trace = FALSE, method.optim = "BFGS",
 %\examples{
 %}
 \keyword{models}
+\keyword{optimize}
 \keyword{regression}
 

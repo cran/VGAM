@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1335,7 +1335,8 @@ qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
 
 
 
-mbesselI0 <- function(x, deriv.arg = 0) {
+mbesselI0 <-
+  function(x, deriv.arg = 0) {
   if (!is.Numeric(deriv.arg, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) &&
       deriv.arg != 0)
@@ -1351,8 +1352,8 @@ mbesselI0 <- function(x, deriv.arg = 0) {
 
     ans <- matrix(NA_real_, nrow = nn, ncol = deriv.arg+1)
     ans[, 1] <- besselI(x, nu = 0)
-    if (deriv.arg>=1) ans[,2] <- besselI(x, nu = 1)
-    if (deriv.arg>=2) ans[,3] <- ans[,1] - ans[,2] / x
+    if (deriv.arg>=1) ans[, 2] <- besselI(x, nu = 1)
+    if (deriv.arg>=2) ans[, 3] <- ans[,1] - ans[,2] / x
     ans
 }  # mbesselI0
 
@@ -1757,8 +1758,9 @@ w.y.check <- function(w, y,
 
 
 
-arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
-                    full.arg = FALSE) {
+arwz2wz <-
+    function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
+             full.arg = FALSE) {
 
 
 
@@ -1773,7 +1775,8 @@ arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
     return(arwz)
   }
 
-  wz <- matrix(0.0, n, if (full.arg) M*(M+1)/2 else sum(M:(M-M1+1)))
+  wz <- matrix(0.0, n,
+               if (full.arg) M*(M+1)/2 else sum(M:(M-M1+1)))
   ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
   len.ind1 <- dim.val # length(ind1$col.index)
 
@@ -1801,7 +1804,8 @@ arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
 
 
 
- wz.merge <- function(wz1, wz2, M1, M2, rm.trailing.cols = TRUE) {
+ wz.merge <-
+    function(wz1, wz2, M1, M2, rm.trailing.cols = TRUE) {
 
 
   if (!is.matrix(wz1))
@@ -1842,7 +1846,8 @@ arwz2wz <- function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
 
 
 
-param.names <- function(string, S = 1, skip1 = FALSE, sep = "") {
+param.names <-
+    function(string, S = 1, skip1 = FALSE, sep = "") {
   if (skip1) {
     if (S == 1) string else paste(string, 1:S, sep = sep)
   } else {
@@ -1856,8 +1861,10 @@ param.names <- function(string, S = 1, skip1 = FALSE, sep = "") {
 
 
 
-vweighted.mean.default <- function (x, w, ..., na.rm = FALSE) {
-  tmp5 <- w.y.check(w = w, y = x, ncol.w.max = Inf, ncol.y.max = Inf,
+vweighted.mean.default <-
+    function (x, w, ..., na.rm = FALSE) {
+  tmp5 <- w.y.check(w = w, y = x, ncol.w.max = Inf,
+                    ncol.y.max = Inf,
                     out.wy = TRUE,
                     colsyperw = 1,
                     maximize = TRUE,
@@ -1872,7 +1879,8 @@ vweighted.mean.default <- function (x, w, ..., na.rm = FALSE) {
 
   ans <- numeric(ncol(w))
   for (ii in 1:ncol(w))
-    ans[ii] <- weighted.mean(x[, ii], w = w[, ii], ..., na.rm = na.rm)
+      ans[ii] <- weighted.mean(x[, ii], w = w[, ii], ...,
+                               na.rm = na.rm)
   ans
 }  # vweighted.mean.default
 
@@ -1941,9 +1949,13 @@ bisection.basic <-
   }
   signtest <- (sign(f(a, ...)) * sign(f(b, ...)) <= 0)
 
-  if (!all(signtest))
+  allsign <- all(signtest, na.rm = TRUE)
+  if (!allsign || any(is.na(signtest))){
     warning("roots do not exist between 'a' and 'b'. ",
             "Some answers may be misleading.")
+  }
+      
+
 
   N <- 1
   while (N <= nmax) {

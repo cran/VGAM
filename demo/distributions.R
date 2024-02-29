@@ -2,6 +2,8 @@
 # some selected distributions
 # At the moment this is copied from some .Rd file
 
+library("VGAM")
+
 ## Negative binomial distribution
 ## Data from Bliss and Fisher (1953).
 
@@ -24,15 +26,15 @@ Coef(fit1)  # Useful for intercept-only models
 
 # General A and B, and with a covariate
 bdata <- transform(bdata, x2 = runif(nn))
-bdata <- transform(bdata, mu   = logit(0.5 - x2, inverse = TRUE),
-                          prec =   exp(3.0 + x2))  # prec == phi
+bdata <- transform(bdata, mu   = logitlink(0.5 - x2, inverse = TRUE),
+                          prec =   exp(3 + x2))  # prec == phi
 bdata <- transform(bdata, shape2 = prec * (1 - mu),
                           shape1 = mu * prec)
 bdata <- transform(bdata,
                    y = rbeta(nn, shape1 = shape1, shape2 = shape2))
 bdata <- transform(bdata, Y = 5 + 8 * y)  # From 5 to 13, not 0 to 1
 fit2 <- vglm(Y ~ x2, data = bdata, trace = TRUE,
-             betaff(A = 5, B = 13, lmu = elogit(min = 5, max = 13)))
+             betaff(A = 5, B = 13, lmu = extlogitlink(min = 5, max = 13)))
 coef(fit2, matrix = TRUE)
 
 

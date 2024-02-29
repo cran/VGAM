@@ -85,6 +85,7 @@ legend(0.00005, 0.3, paste(ii$species[, 1], ii$species[, 2],
        lwd = 2, lty = 1, col = c("blue", "orange", "green"))
 abline(a = 0, b = 1, lty = "dashed", col = "grey") }
 }
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 

@@ -92,7 +92,9 @@ prplot(fit, lty = 1:M, col = (1:M)+2, rug = TRUE, las = 1,
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{graphs}
-\keyword{models}
+%\keyword{graphs}
+%\keyword{models}
 \keyword{regression}
+\keyword{dplot}
+\keyword{hplot}
 

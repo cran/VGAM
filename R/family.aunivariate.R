@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2023 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -2967,7 +2967,7 @@ qbenf <- function(p, ndigits = 1,
   function(A = 0, B = 1,
            lmu = "logitlink",
            lphi = "loglink",
-           imu = NULL, iphi = NULL,  # imethod = 1,
+           imu = NULL, iphi = NULL,
            gprobs.y = ppoints(8),  # (1:9)/10,
            gphi  = exp(-3:5)/4,
            zero = NULL) {
@@ -2976,7 +2976,7 @@ qbenf <- function(p, ndigits = 1,
 
   if (!is.Numeric(A, length.arg = 1) ||
       !is.Numeric(B, length.arg = 1) || A >= B)
-    stop("A must be < B, and both must be of length one")
+    stop("Need A < B and both of length one")
 
   stdbeta <- (A == 0 && B == 1)
 
@@ -2990,8 +2990,6 @@ qbenf <- function(p, ndigits = 1,
   lphi <- as.list(substitute(lphi))
   ephi <- link2list(lphi)
   lphi <- attr(ephi, "function.name")
-
-
 
   if (length(imu) && (!is.Numeric(imu, positive = TRUE) ||
      any(imu <= A) || any(imu >= B)))
@@ -3431,7 +3429,8 @@ if (FALSE) {
 
 
  betaprime <-
-   function(lshape = "loglink", ishape1 = 2, ishape2 = NULL,
+   function(lshape = "loglink",
+            ishape1 = 2, ishape2 = NULL,
             zero = NULL) {
 
   lshape <- as.list(substitute(lshape))
@@ -3442,11 +3441,11 @@ if (FALSE) {
   new("vglmff",
   blurb = c("Beta-prime distribution\n",
   "y^(shape1-1) * (1+y)^(-shape1-shape2) / Beta(shape1,shape2),",
-            " y>0, shape1>0, shape2>0\n\n",
-            "Links:    ",
-            namesof("shape1", lshape, earg = eshape),  ", ",
-            namesof("shape2", lshape, earg = eshape), "\n",
-            "Mean:     shape1/(shape2-1) provided shape2>1"),
+          " y>0, shape1>0, shape2>0\n\n",
+          "Links:    ",
+          namesof("shape1", lshape, eshape), ", ",
+          namesof("shape2", lshape, eshape), "\n",
+          "Mean:     shape1/(shape2-1) if shape2>1"),
   constraints = eval(substitute(expression({
     constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
                      M = M, M1 = 2,
@@ -3464,7 +3463,6 @@ if (FALSE) {
   }, list( .zero = zero, .lshape = lshape ))),
 
   initialize = eval(substitute(expression({
-
     w.y.check(w = w, y = y,
               Is.positive.y = TRUE,
               ncol.w.max = 1,
@@ -3473,8 +3471,8 @@ if (FALSE) {
 
 
     predictors.names <-
-      c(namesof("shape1", .lshape , earg = .eshape , short = TRUE),
-        namesof("shape2", .lshape , earg = .eshape , short = TRUE))
+      c(namesof("shape1", .lshape , .eshape , short = TRUE),
+        namesof("shape2", .lshape , .eshape , short = TRUE))
     if (is.numeric( .ishape1) && is.numeric( .ishape2 )) {
       vec <- c( .ishape1, .ishape2 )
       vec <- c(theta2eta(vec[1], .lshape , earg = .eshape ),
@@ -3507,12 +3505,12 @@ if (FALSE) {
              summation = TRUE) {
     shapes <- eta2theta(eta, .lshape , earg = .eshape )
     if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+      stop("loglikelihood residuals unavailable")
     } else {
       ll.elts <-
         c(w) * ((shapes[, 1]-1) * log(y) -
                  lbeta(shapes[, 1], shapes[, 2]) -
-                (shapes[, 2] + shapes[, 1]) * log1p(y))
+           (shapes[, 2] + shapes[, 1]) * log1p(y))
       if (summation) {
         sum(ll.elts)
       } else {
@@ -3522,30 +3520,32 @@ if (FALSE) {
   }, list( .lshape = lshape, .eshape = eshape ))),
   vfamily = "betaprime",
   validparams = eval(substitute(function(eta, y, extra = NULL) {
-    shapes <- eta2theta(eta, .lshape , earg = .eshape )
-    okay1 <- all(is.finite(shapes)) && all(0 < shapes)
+    shapes <- eta2theta(eta, .lshape , .eshape )
+    okay1 <- all(is.finite(shapes)) &&
+             all(0 < shapes)
     okay1
   }, list( .lshape = lshape, .eshape = eshape ))),
   deriv = eval(substitute(expression({
-    shapes <- eta2theta(eta, .lshape , earg = .eshape )
-    dshapes.deta <- dtheta.deta(shapes, .lshape , earg = .eshape )
-    dl.dshapes <- cbind(log(y) - log1p(y) - digamma(shapes[, 1]) +
-                        digamma(shapes[, 1] + shapes[, 2]),
-                        - log1p(y) - digamma(shapes[, 2]) +
-                        digamma(shapes[, 1] + shapes[, 2]))
+    shapes <- eta2theta(eta, .lshape , .eshape )
+    dshapes.deta <- dtheta.deta(shapes, .lshape , .eshape )
+    dl.dshapes <-
+ cbind(log(y) - log1p(y) - digamma(shapes[, 1]) +
+            digamma(shapes[, 1] + shapes[, 2]),
+          - log1p(y) - digamma(shapes[, 2]) +
+            digamma(shapes[, 1] + shapes[, 2]))
     c(w) * dl.dshapes * dshapes.deta
   }), list( .lshape = lshape, .eshape = eshape ))),
   weight = expression({
-    temp2 <- trigamma(shapes[, 1] + shapes[, 2])
-    ned2l.dshape12 <- trigamma(shapes[, 1]) - temp2
-    ned2l.dshape22 <- trigamma(shapes[, 2]) - temp2
-    ned2l.dshape1shape2 <- -temp2
+    tmp2 <- trigamma(shapes[, 1] + shapes[, 2])
+    ned2l.dshape12 <- trigamma(shapes[, 1]) - tmp2
+    ned2l.dshape22 <- trigamma(shapes[, 2]) - tmp2
+    ned2l.dshape1shape2 <- -tmp2
 
     wz <- matrix(NA_real_, n, dimm(M))  #3=dimm(M)
     wz[, iam(1, 1, M)] <- ned2l.dshape12 * dshapes.deta[, 1]^2
     wz[, iam(2, 2, M)] <- ned2l.dshape22 * dshapes.deta[, 2]^2
     wz[, iam(1, 2, M)] <- ned2l.dshape1shape2 *
-                          dshapes.deta[, 1] * dshapes.deta[, 2]
+            dshapes.deta[, 1] * dshapes.deta[, 2]
 
     c(w) * wz
   }))
@@ -4155,13 +4155,13 @@ rtopple <- function(n, shape) {
  topple <-
   function(lshape = "logitlink", zero = NULL,
            gshape = ppoints(8),
-           parallel = FALSE,
-           type.fitted = c("mean", "percentiles", "Qlink"),
-           percentiles = 50) {
+           parallel = FALSE, percentiles = 50,
+           type.fitted = c("mean", "percentiles", "Qlink")) {
+
 
 
   type.fitted <- match.arg(type.fitted,
-                           c("mean", "percentiles", "Qlink"))[1]
+         c("mean", "percentiles", "Qlink"))[1]
 
   lshape <- as.list(substitute(lshape))  # orig
   eshape <- link2list(lshape)
@@ -4174,14 +4174,14 @@ rtopple <- function(n, shape) {
             "F(y; shape) = (y * (2 - y))^shape, ",
             "0 < y < 1, 0 < shape < 1\n",
             "Link:    ",
-            namesof("shape", lshape, earg = eshape)),
+            namesof("shape", lshape, eshape)),
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel ,
-                           constraints, apply.int = FALSE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
-                     M = M, M1 = 1,
-                     predictors.names = predictors.names)
+                   bool = .parallel ,
+                   constraints, apply.int = FALSE)
+    constraints <- cm.zero.VGAM(constraints,
+              x = x, .zero , M = M, M1 = 1,
+              predictors.names = predictors.names)
   }), list( .parallel = parallel,
             .zero = zero ))),
 
@@ -4264,11 +4264,11 @@ rtopple <- function(n, shape) {
       }
       etastart <- theta2eta(shape.init, .lshape , earg = .eshape )
     }
-  }), list( .lshape = lshape, .gshape = gshape,
-            .eshape = eshape,
-            .percentiles = percentiles,
-            .type.fitted = type.fitted
-           ))),
+  }),
+  list( .lshape = lshape, .gshape = gshape,
+        .eshape = eshape,
+        .percentiles = percentiles,
+        .type.fitted = type.fitted ))),
 
   linkinv = eval(substitute(function(eta, extra = NULL) {
     type.fitted <-
@@ -4319,11 +4319,11 @@ rtopple <- function(n, shape) {
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    shape <- eta2theta(eta, .lshape , earg = .eshape )
+    shape <- eta2theta(eta, .lshape , .eshape )
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- c(w) * dtopple(x = y, shape = shape, log = TRUE)
+      ll.elts <- c(w) * dtopple(y, shape, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -4375,16 +4375,18 @@ rtopple <- function(n, shape) {
 
 
   deriv = eval(substitute(expression({
-    shape <- eta2theta(eta, .lshape , earg = .eshape )
-    dl.dshape <- 1 / shape + log(y) + log(2) + log1p(-y/2)
-    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    shape <- eta2theta(eta, .lshape , .eshape )
+    dl.dshape <- 1 / shape + log(y*2) + log1p(-y/2)
+    dshape.deta <- dtheta.deta(shape, .lshape , .eshape )
     c(w) * dl.dshape * dshape.deta
-  }), list( .lshape = lshape, .eshape = eshape ))),
+  }),
+  list( .lshape = lshape, .eshape = eshape ))),
   weight = eval(substitute(expression({
     ned2l.dshape2 <- 1 / shape^2
     wz <- c(w) * ned2l.dshape2 * dshape.deta^2
     wz
-  }), list( .lshape = lshape, .eshape = eshape ))))
+  }),
+  list( .lshape = lshape, .eshape = eshape ))))
 }  # topple
 
 

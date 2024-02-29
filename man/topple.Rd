@@ -9,14 +9,15 @@
 }
 \usage{
 topple(lshape = "logitlink", zero = NULL, gshape = ppoints(8),
-       parallel = FALSE,
-       type.fitted = c("mean", "percentiles", "Qlink"),
-       percentiles = 50)
+       parallel = FALSE, percentiles = 50,
+       type.fitted = c("mean", "percentiles", "Qlink"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lshape, gshape}{
   Details at \code{\link{CommonVGAMffArguments}}.
+  The CIA link is \code{\link{loglink}},
+  for \code{shape} approaching unity.
 
 
   }

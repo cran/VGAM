@@ -570,15 +570,15 @@ C Output from Public domain Ratfor, version 1.04
 23179 continue
       return
       end
-      subroutine o0xlszqr(wy1vqfzu, g9fvdrbw, work, bmb)
+      subroutine o0xlszqr(wy1vqfzu, g9fvdrbw1, work, bmb)
       implicit logical (a-z)
       integer wy1vqfzu
-      double precision g9fvdrbw, work(wy1vqfzu,wy1vqfzu), bmb(wy1vqfzu,w
-     *y1vqfzu)
+      double precision g9fvdrbw1, work(wy1vqfzu,wy1vqfzu), bmb(wy1vqfzu,
+     *wy1vqfzu)
       integer yq6lorbx, gp1jxzuh
       do23198 yq6lorbx=1,wy1vqfzu 
       do23200 gp1jxzuh=1,wy1vqfzu 
-      work(yq6lorbx,gp1jxzuh) = work(yq6lorbx,gp1jxzuh) * g9fvdrbw
+      work(yq6lorbx,gp1jxzuh) = work(yq6lorbx,gp1jxzuh) * g9fvdrbw1
 23200 continue
 23201 continue
 23198 continue

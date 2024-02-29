@@ -78,9 +78,9 @@ Trunc(Range, mux = 2, location = 0, omits = TRUE)
 }
 % \references{
 
-%Yee, T. W. and Ma, C. (2023)
+%Yee, T. W. and Ma, C. (2024).
 %Generally altered, inflated, truncated and deflated regression.
-%\emph{In preparation}.
+%\emph{Statistical Science}, \bold{39} (in press).
 
 
 %% , \bold{3}, 15--41.
@@ -150,6 +150,7 @@ plot(logliks, col = "blue", type = "b", xlab = "Multiplier") }
 }
 \keyword{models}
 \keyword{regression}
+\keyword{utilities}
 
 
 

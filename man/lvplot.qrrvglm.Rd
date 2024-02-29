@@ -409,7 +409,9 @@ Tol(p2)[, , 1:2]  # Identity matrix
 Tol(p2, varI.latvar = TRUE)[, , 1:2]  # A diagonal matrix
 }
 }
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
-\keyword{graphs}
+\keyword{nonlinear}
+%\keyword{graphs}
+\keyword{hplot}
 

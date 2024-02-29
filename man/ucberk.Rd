@@ -17,7 +17,7 @@
     \item{w.deny}{Counts of women denied admission. }
     \item{w.admit}{Counts of women admitted. }
     \item{dept}{Department (the six largest),
-                called \code{A}, code{B}, \dots, code{F}.
+                called \code{A}, \code{B}, \dots, \code{F}.
     }
   }
 }

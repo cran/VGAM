@@ -78,6 +78,7 @@ index <- 1:ncol(depvar(p1))
 lvplot(p1, lcol = index, pcol = index, y = TRUE, las = 1)
 }
 }
-\keyword{models}
+%\keyword{models}
 \keyword{regression}
+\keyword{hplot}
 

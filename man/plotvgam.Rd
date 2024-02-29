@@ -220,4 +220,5 @@ plot(fit, se = TRUE, which.cf = 1:2, lcol = "blue", scol = "orange",
 \keyword{models}
 \keyword{regression}
 \keyword{smooth}
-\keyword{graphs}
+\keyword{hplot}
+%\keyword{graphs}

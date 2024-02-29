@@ -12,7 +12,7 @@
 \usage{
 negbinomial(zero = "size", parallel = FALSE, deviance.arg = FALSE,
             type.fitted = c("mean", "quantiles"),
-            percentiles = c(25, 50, 75),
+            percentiles = c(25, 50, 75), vfl = FALSE,
             mds.min = 1e-3, nsimEIM = 500, cutoff.prob = 0.999,
             eps.trig = 1e-7, max.support = 4000, max.chunk.MB = 30,
             lmu = "loglink", lsize = "loglink",
@@ -188,6 +188,35 @@ relative to the mean, than it is below this threshold
 
 
   }
+\item{vfl}{
+Logical.
+Fit the 
+Variance--variance
+Factorized
+Loglinear
+(VFL)
+model?
+If \code{TRUE} then the constraint matrix
+\code{rbind(0, -1)} is assigned to all covariates
+which are not parallel.
+Hence \code{parallel} must be used
+in conjunction with this argument
+to specify the set of covariates used for
+modelling the mean.
+Note that the constraint matrix for the
+intercept should be parallel too.
+Some general information is at
+\code{\link{CommonVGAMffArguments}}.
+
+
+
+% Variance--Mean Factorization (VMF) model
+% loglinear variance--variance ratio (LVVR) model?
+% loglinear variance--variance factorization (LVF)
+
+
+
+  }
 
 
 \item{eps.trig}{
@@ -279,7 +308,6 @@ to the \code{size} parameter.
 
   }
   \item{parallel}{
-  See \code{\link{CommonVGAMffArguments}} for more information.
   Setting \code{parallel = TRUE} is useful in order to get
   something similar to \code{\link[stats]{quasipoisson}} or
   what is known as NB-1.
@@ -287,7 +315,12 @@ to the \code{size} parameter.
   does not apply to any intercept term.
   You should set \code{zero = NULL} too if \code{parallel =
   TRUE} to avoid a conflict.
+  See \code{\link{CommonVGAMffArguments}} for more information.
+  Argument \code{vfl} requires the use of
+  \code{parallel} to fit the VFL model.
 
+
+  
 
 
   }
@@ -731,7 +764,6 @@ The \pkg{VGAM} package for negative binomial regression.
   \code{\link{genpoisson0}},
   \code{\link{inv.binomial}},
   \code{\link[stats:NegBinomial]{NegBinomial}},
-  \code{\link{nbordlink}},
   \code{\link{rrvglm}},
   \code{\link{cao}},
   \code{\link{cqo}},
@@ -745,6 +777,7 @@ The \pkg{VGAM} package for negative binomial regression.
 % \code{\link[stats:NegBinomial]{qnbinom}}.
 % \code{\link[MASS]{rnegbin}}.
 % \code{\link{quasipoissonff}},
+% \code{\link{nbordlink}},
 
 
 }

@@ -101,5 +101,6 @@ plot(fit1, which = 4, col = "blue", las = 1, main = "main4")
 }
 \keyword{models}
 \keyword{regression}
-\keyword{smooth}
-\keyword{graphs}
+\keyword{hplot}
+%\keyword{smooth}
+%\keyword{graphs}
