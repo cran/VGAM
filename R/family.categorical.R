@@ -20,6 +20,49 @@
 
 
 
+
+ simslotVGAMcat <- function(object, nsim) {
+    pwts <- if (length(pwts <- object@prior.weights) > 0)
+              pwts else weights(object, type = "prior")
+    if (max(abs(pwts - round(pwts))) > 0.001 ||
+        any(pwts < 0.5))
+      stop("prior weights seem not to be ",
+           "positive or integer-valued")
+    pwts <- c(round(pwts))  # Make sure, a vector
+    nn <- nobs(object)
+    M <- npred(object)
+    fv <- fitted(object)
+    label.it <- length(colnames(fv)) &&
+                length(rownames(fv))
+    ansarr <- array(NA_real_, c(M + 1, nsim, nn))
+    if (label.it)
+      dimnames(ansarr) <-
+        list(colnames(fv),
+             paste("sim", seq_len(nsim), sep = "_"),
+             rownames(fv))
+    if (object@misc$intercept.only &&
+        all(pwts == pwts[1]) &&
+        all(object@offset == 0)) {
+      tmp2 <- c(rmultinom(nsim * nn, pwts[1], fv[1, ]))
+      ansarr[] <- tmp2
+    } else {
+      for (i in seq(nn))
+        ansarr[,, i] <- rmultinom(nsim, pwts[i], fv[i, ])
+    }
+    ansarr <- aperm(ansarr, c(3, 1, 2))
+    attr(ansarr, "Verbatim") <- TRUE  # Removed later
+    ansarr
+}  # simslotVGAMcat
+
+
+
+
+
+
+
+
+
+
 rdiag <- function(...) {
   a <- as.vector(unlist(list(...)))
   if (length(a) == 1) {
@@ -415,6 +458,13 @@ rdiag <- function(...) {
   },
   vfamily = c("multinomial", "VGAMcategorical"),
 
+
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+    simslotVGAMcat(object, nsim)
+  }, list( .refLevel = refLevel ))),
 
 
 
@@ -989,6 +1039,13 @@ Deviance.categorical.data.vgam <-
       }
     },
   vfamily = c("sratio", "VGAMordinal", "VGAMcategorical"),
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+    simslotVGAMcat(object, nsim)
+  }, list(.link = link, .earg = earg ))),
+
+
   validparams =
       eval(substitute(function(eta, y, extra = NULL) {
     djr <- eta2theta(eta, .link , earg = .earg )  # dj or djr
@@ -1329,6 +1386,13 @@ Deviance.categorical.data.vgam <-
     }
   },
   vfamily = c("cratio", "VGAMordinal", "VGAMcategorical"),
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+    simslotVGAMcat(object, nsim)
+  }, list(.link = link, .earg = earg ))),
+
+
   validparams = eval(substitute(
       function(eta, y, extra = NULL) {
     djrs <- eta2theta(eta, .link , .earg )  # djs or djrs
@@ -1861,6 +1925,12 @@ Deviance.categorical.data.vgam <-
   vfamily = c("cumulative", "VGAMordinal", "VGAMcategorical"),
 
 
+  simslot = eval(substitute(
+  function(object, nsim) {
+    simslotVGAMcat(object, nsim)
+  }, list(.link = link, .earg = earg ))),
+
+
   hadof = eval(substitute(
   function(eta, extra = list(),
            linpred.index = 1, w = 1,
@@ -2319,6 +2389,18 @@ Deviance.categorical.data.vgam <-
     }
   },
   vfamily = c("acat", "VGAMordinal", "VGAMcategorical"),
+
+
+  simslot = eval(substitute(
+  function(object, nsim) {
+    simslotVGAMcat(object, nsim)
+  }, list(.link = link, .earg = earg ))),
+
+
+
+
+
+
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     if (!is.matrix(eta))
       eta <- as.matrix(eta)

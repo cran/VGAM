@@ -409,13 +409,16 @@ Generally altered, inflated, truncated and deflated regression.
 
 
 \examples{
-# Example 1: fit a MLM to Edgar Anderson's iris data
-data(iris)
-\dontrun{ fit1 <- vglm(Species ~ ., multinomial, iris)
-coef(fit1, matrix = TRUE)
-fit2 <- vglm(Species ~ ., multinomial(ynames = TRUE), iris)
-coef(fit2, matrix = TRUE)  # More understandable
-}
+# Example 1: Regn spline VGAM: marital status versus age
+data(marital.nz)
+ooo <- with(marital.nz, order(age))
+om.nz <- marital.nz[ooo, ]
+fit1 <- vglm(mstatus ~ sm.bs(age), multinomial, om.nz)
+coef(fit1, matrix = TRUE)  # Mostly meaningless
+\dontrun{ with(om.nz,
+matplot(age, fitted(fit1), type = "l", las = 1, lwd = 2))
+legend("topright", leg = colnames(fitted(fit1)),
+       lty = 1:4, col = 1:4, lwd = 2) }
 
 # Example 2a: a simple example
 ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))

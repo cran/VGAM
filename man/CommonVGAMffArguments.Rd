@@ -283,7 +283,8 @@ family functions might be converted
   involved and things will not be as convenient.
 
 
-  Here are some examples.
+
+Here are some examples.
 1. \code{parallel = TRUE ~ x2 + x5} means
 the parallelism assumption
 is only applied to \eqn{X_2}, \eqn{X_5} and
@@ -302,6 +303,25 @@ including the intercept.
 and \code{parallel = FALSE ~ x2 + 0}
 applies the parallelism constraint to all terms
 (including the intercept) except for \eqn{X_2}.
+4.  \code{parallel = FALSE ~ x2 * x3}
+probably will not work. Instead, expand it
+out manually to get 
+    \code{parallel = FALSE ~ x2 + x3 + x2:x3},
+and that should work.
+That's because the main formula processes or
+expands the \code{"*"}
+operator but \code{parallel} does not.
+5. To check whether \code{parallel} has done
+what was expected, type
+\code{coef(fit, matrix = TRUE)} or
+\code{constraints(fit)} for confirmation.
+
+
+
+
+
+
+
 
 
   This argument is common in \pkg{VGAM} family

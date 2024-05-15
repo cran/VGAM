@@ -23,8 +23,8 @@ rcim(y, family = poissonff, Rank = 0, M1 = NULL,
      offset = 0, str0 = if (Rank) 1 else NULL,
      summary.arg = FALSE, h.step = 0.0001,
      rbaseline = 1, cbaseline = 1,
-     has.intercept = TRUE, M = NULL,
-     rindex = 2:nrow(y), cindex = 2:ncol(y), iindex = 2:nrow(y), ...)
+     has.intercept = TRUE, M = NULL, rindex = 2:nrow(y),
+     cindex = 2:ncol(y), iindex = 2:nrow(y), ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{

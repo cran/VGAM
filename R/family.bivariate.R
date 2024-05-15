@@ -61,7 +61,7 @@
         is.infinite(x3)] <- log(0)
 
   if (log.arg) logpdf else exp(logpdf)
-}
+}  # dtrinorm
 
 
 
@@ -78,9 +78,9 @@ rtrinorm <- function(n, mean1 = 0, mean2 = 0, mean3 = 0,
                   cov12 = cov23 - cov12 * cov13 / var1)
 
   ans <- cbind(Y1, ans2)
-  colnames(ans) <- paste("X", 1:3, sep = "")
+  colnames(ans) <- paste0("X", 1:3)
   ans
-}
+}  # rtrinorm
 
 
 
@@ -891,7 +891,8 @@ if (FALSE) {
 
 
 
-dbiclaytoncop <- function(x1, x2, apar = 0, log = FALSE) {
+dbiclaytoncop <-
+  function(x1, x2, apar = 0, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -920,7 +921,7 @@ dbiclaytoncop <- function(x1, x2, apar = 0, log = FALSE) {
 
 
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dbiclaytoncop
 
 
 
@@ -940,7 +941,7 @@ rbiclaytoncop <- function(n, apar = 0) {
     u2[index0] <- runif(sum(index0))
 
   cbind(u1, u2)
-}  # dbiclaytoncop
+}  # rbiclaytoncop
 
 
 
@@ -1200,19 +1201,6 @@ rbiclaytoncop <- function(n, apar = 0) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 dbistudentt <-
   function(x1, x2, df, rho = 0, log = FALSE) {
 
@@ -1234,7 +1222,7 @@ dbistudentt <-
   logdensity[is.infinite(x1) | is.infinite(x2)] <- log(0)
 
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dbistudentt
 
 
 
@@ -1415,21 +1403,21 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
     NOS <- ncol(eta) / c(M1 = 2)
     Q1 <- 2
     fv.mat <- matrix(0, nrow(eta), Q1 * NOS)
-    label.cols.y(fv.mat, colnames.y = extra$colnames.y,
-                 NOS = NOS)
+    label.cols.y(fv.mat, NOS = NOS,
+                 colnames.y = extra$colnames.y)
   }  ,
   list( .lrho = lrho, .ldof = ldof,
         .erho = erho, .edof = edof ))),
 
   last = eval(substitute(expression({
-
     M1 <- extra$M1
     Q1 <- extra$Q1
     misc$link <-
       c(rep_len( .ldof , M / M1),
-        rep_len( .lrho , M / M1))[interleave.VGAM(M, M1 = M1)]
-    temp.names <- c(mynames1, mynames2)[interleave.VGAM(M,
-                                                        M1 = M1)]
+        rep_len( .lrho , M / M1))[
+        interleave.VGAM(M, M1 = M1)]
+    temp.names <- c(mynames1, mynames2)[
+        interleave.VGAM(M, M1 = M1)]
     names(misc$link) <- temp.names
 
     misc$earg <- vector("list", M)
@@ -1533,8 +1521,7 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
 
 
-  }
-
+  } 
 
 
 
@@ -1586,7 +1573,11 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
 
 
-dbinormcop <- function(x1, x2, rho = 0, log = FALSE) {
+
+dbinormcop <-
+    function(x1, x2,
+             rho = 0,
+             log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -1594,17 +1585,21 @@ dbinormcop <- function(x1, x2, rho = 0, log = FALSE) {
   x1 <- qnorm(x1)
   x2 <- qnorm(x2)
 
-  logdensity <- (2 * rho * x1 * x2 -
-                 rho^2 * (x1^2 + x2^2)) / (2 * (1 - rho^2)) -
-                0.5 * log1p(-rho^2)
+  logdensity <-
+    (2 * rho * x1 * x2 -
+     rho^2 * (x1^2 + x2^2)) / (2 * (1 - rho^2)) -
+     0.5 * log1p(-rho^2)
 
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dbinormcop
 
 
 
 
-pbinormcop <- function(q1, q2, rho = 0) {
+
+
+pbinormcop <-
+    function(q1, q2, rho = 0) {
 
   if (!is.Numeric(q1, positive = TRUE) ||
       any(q1 >= 1))
@@ -1616,32 +1611,35 @@ pbinormcop <- function(q1, q2, rho = 0) {
       any(abs(rho) >= 1))
     stop("bad input for argument 'rho'")
 
-  pbinorm(q1 = qnorm(q1), q2 = qnorm(q2), cov12 = rho)
-}
+   pbinorm(qnorm(q1), qnorm(q2), cov12 = rho)
+}  # pbinormcop
 
 
-rbinormcop <- function(n, rho = 0  #, inverse = FALSE
-                      ) {
+
+rbinormcop <-
+    function(n, rho = 0) {  #, inverse = FALSE
 
   inverse <- FALSE
-  ymat <- rbinorm(n = n, cov12 = rho)
+  ymat <- rbinorm(n, cov12 = rho)
   if (inverse) {
     ymat
   } else {
     cbind(y1 = pnorm(ymat[, 1]),
           y2 = pnorm(ymat[, 2]))
   }
-}
+}  # rbinormcop
 
 
 
 
 
- binormalcop <- function(lrho    = "rhobitlink",
-                         irho    = NULL,
-                         imethod = 1,
-                         parallel = FALSE,
-                         zero = NULL) {
+
+ binormalcop <-
+  function(lrho = "rhobitlink",
+           irho = NULL,
+           imethod = 1,
+           parallel = FALSE,
+           zero = NULL) {
 
 
 
@@ -1665,8 +1663,8 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
     stop("argument 'imethod' must be 1 or 2 or 3")
 
   new("vglmff",
-  blurb = c("Gaussian copula ",
-            "(based on the bivariate normal distribution)\n",
+  blurb = c("Gaussian copula (based on the ",
+            "bivariate normal distribution)\n",
             "Links:    ",
             namesof("rho", lrho, earg = erho)),
 
@@ -1852,9 +1850,9 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
     temp7 <- 1 - Rho^2
     q.y <- qnorm(y)
 
-    dl.drho <- ((1 + Rho^2) * q.y[, Yindex1] * q.y[, Yindex2] -
-      Rho * (q.y[, Yindex1]^2 + q.y[, Yindex2]^2)) / temp7^2 +
-      Rho / temp7
+    dl.drho <- ((1 + Rho^2) * q.y[, Yindex1] *
+      q.y[, Yindex2] - Rho * (q.y[, Yindex1]^2 +
+      q.y[, Yindex2]^2)) / temp7^2 + Rho / temp7
 
     drho.deta <- dtheta.deta(Rho, .lrho , earg = .erho )
 
@@ -1870,7 +1868,11 @@ rbinormcop <- function(n, rho = 0  #, inverse = FALSE
   }), list( .lrho = lrho,
             .erho = erho,
             .imethod = imethod ))))
-}
+}  # binormalcop
+
+
+
+
 
 
 
@@ -2166,15 +2168,16 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
             .escale = escale,
             .llocat = llocat,
             .nsimEIM = nsimEIM ))))
-}
+}  # bilogistic
 
 
 
 
 
 
-dbilogis <- function(x1, x2, loc1 = 0, scale1 = 1,
-                     loc2 = 0, scale2 = 1, log = FALSE) {
+dbilogis <-
+  function(x1, x2, loc1 = 0, scale1 = 1,
+           loc2 = 0, scale2 = 1, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -2206,7 +2209,7 @@ dbilogis <- function(x1, x2, loc1 = 0, scale1 = 1,
 
 
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dbilogis
 
 
 
@@ -2218,7 +2221,7 @@ pbilogis <-
   ans[scale1 <= 0] <- NA
   ans[scale2 <= 0] <- NA
   ans
-}
+}  # pbilogis
 
 
 
@@ -2233,7 +2236,7 @@ rbilogis <-
   ans <- cbind(y1, y2)
   ans[scale2 <= 0, ] <- NA
   ans
-}
+}  # rbilogis
 
 
 
@@ -2788,7 +2791,8 @@ rbifrankcop <- function(n, apar) {
     ans[index, 2] <- runif(sum(index))
   }
   ans
-}
+}  # rbifrankcop
+
 
 
 pbifrankcop <- function(q1, q2, apar) {
@@ -2818,7 +2822,7 @@ pbifrankcop <- function(q1, q2, apar) {
   ans[x <= 0 | y <= 0] <- 0
   ans[x >= 1 & y >= 1] <- 1
   ans
-}
+}  # pbifrankcop
 
 
 
@@ -2834,12 +2838,13 @@ dbifrank <- function(x1, x2, apar, log = FALSE) {
         2 * log(apar - 1 + (apar^x1 - 1) * (apar^x2 - 1))
 
   if (log.arg) logdens else exp(logdens)
-}
+}  # dbifrank
 
 
 
 
-dbifrankcop <- function(x1, x2, apar, log = FALSE) {
+dbifrankcop <-
+  function(x1, x2, apar, log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -2872,7 +2877,7 @@ dbifrankcop <- function(x1, x2, apar, log = FALSE) {
     ans[index] <- 1
     ans
   }
-}
+}  # dbifrankcop
 
 
 
@@ -3360,7 +3365,7 @@ rbifgmcop <- function(n, apar) {
             4 * apar * V2 * temp)
   y2 <- 2 * V2 / (B - A)
   matrix(c(y1, y2), nrow = use.n, ncol = 2)
-}
+}  # rbifgmcop
 
 
 
@@ -3397,7 +3402,8 @@ dbifgmcop <- function(x1, x2, apar, log = FALSE) {
            "(apar out of range)")
   }
   ans
-}
+}  # dbifgmcop
+
 
 
 pbifgmcop <- function(q1, q2, apar) {
@@ -3428,7 +3434,7 @@ pbifgmcop <- function(q1, q2, apar) {
   ans[x <= 0 | y <= 0] <- 0
   ans[x >= 1 & y >= 1] <- 1
   ans
-}
+}  # pbifgmcop
 
 
 
@@ -4021,7 +4027,8 @@ dbiamhcop <- function(x1, x2, apar, log = FALSE) {
   }
   ans[abs(apar) > 1] <- NA
   ans
-}
+}  # dbiamhcop
+
 
 
 pbiamhcop <- function(q1, q2, apar) {
@@ -4049,7 +4056,7 @@ pbiamhcop <- function(q1, q2, apar) {
   ans[x >= 1 & y >= 1] <- 1
   ans[abs(apar) > 1] <- NA
   ans
-}
+}  # pbiamhcop
 
 
 rbiamhcop <- function(n, apar) {
@@ -4073,7 +4080,7 @@ rbiamhcop <- function(n, apar) {
   B <- apar^2*(4*b^2*V2-4*b*V2+1)+apar*(4*V2-4*b*V2-2)+1
   U2 <- (2*V2*(apar*b - 1)^2)/(A+sqrt(B))
   matrix(c(U1, U2), nrow = use.n, ncol = 2)
-}
+}  # rbiamhcop
 
 
 biamhcop.control <- function(save.weights = TRUE, ...) {
@@ -4258,9 +4265,11 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
 
 
 
-dbinorm <- function(x1, x2, mean1 = 0, mean2 = 0,
-                    var1 = 1, var2 = 1, cov12 = 0,
-                    log = FALSE) {
+
+dbinorm <-
+  function(x1, x2, mean1 = 0, mean2 = 0,
+           var1 = 1, var2 = 1, cov12 = 0,
+           log = FALSE) {
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
   rm(log)
@@ -4281,7 +4290,7 @@ dbinorm <- function(x1, x2, mean1 = 0, mean2 = 0,
 
   logpdf[is.infinite(x1) | is.infinite(x2)] <- log(0)
   if (log.arg) logpdf else exp(logpdf)
-}
+}  # dbinorm
 
 
 
@@ -4298,7 +4307,7 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
   ans[is.na(delta), ] <- NA
 
   ans
-}
+}  # rbinorm
 
 
 
@@ -4562,12 +4571,12 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
     function(mu, y, w, residuals = FALSE, eta,
              extra = NULL,
              summation = TRUE) {
-    mean1 <- eta2theta(eta[, 1], .lmean1 , earg = .emean1 )
-    mean2 <- eta2theta(eta[, 2], .lmean2 , earg = .emean2 )
-    sd1   <- eta2theta(eta[, 3], .lsd1   , earg = .esd1   )
-    sd2   <- eta2theta(eta[, 4], .lsd2   , earg = .esd2   )
+    mean1 <- eta2theta(eta[, 1], .lmean1 , .emean1 )
+    mean2 <- eta2theta(eta[, 2], .lmean2 , .emean2 )
+    sd1   <- eta2theta(eta[, 3], .lsd1   , .esd1   )
+    sd2   <- eta2theta(eta[, 4], .lsd2   , .esd2   )
     Rho   <- if ( .est.rho )
-             eta2theta(eta[, 5], .lrho   , earg = .erho ) else
+             eta2theta(eta[, 5], .lrho   , .erho ) else
              rep( .rho.arg , length = nrow(eta)) 
 
     if (residuals) {
@@ -4887,7 +4896,7 @@ kendall.tau <-
   con <- ans3[1] + ans3[2] / 2  # Ties put half and half
   dis <- ans3[3] + ans3[2] / 2
   (con - dis) / (con + dis)
-}
+}  # kendall.tau
 
 
 
@@ -4915,12 +4924,14 @@ kendall.tau <- function(x, y, exact = TRUE, max.n = 1000) {
              (y[index$row.index] - y[index$col.index]) > 0)
   dis <- NN - con
   (con - dis) / (con + dis)
-}
+}  # kendall.tau
 
 
 
 
-dbistudenttcop <- function(x1, x2, df, rho = 0, log = FALSE) {
+
+dbistudenttcop <-
+  function(x1, x2, df, rho = 0, log = FALSE) {
 
   if (!is.logical(log.arg <- log) || length(log) != 1)
     stop("bad input for argument 'log'")
@@ -4937,7 +4948,7 @@ dbistudenttcop <- function(x1, x2, df, rho = 0, log = FALSE) {
   dt(u2, df = df, log = TRUE)
 
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dbistudenttcop
 
 
 

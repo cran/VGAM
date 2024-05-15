@@ -188,11 +188,11 @@ rrvglm <-
 
     slot(answer, "control") = fit$control
     slot(answer, "extra") = if (length(fit$extra)) {
-        if (is.list(fit$extra)) fit$extra else {
-          warning("\"extra\" is not a list, therefore ",
-                  "placing \"extra\" into a list")
-          list(fit$extra)
-        }
+      if (is.list(fit$extra)) fit$extra else {
+        warning("\"extra\" is not a list, therefore ",
+                "placing \"extra\" into a list")
+        list(fit$extra)
+      }
     } else list()  # R-1.5.0
 
     slot(answer, "iter") = fit$iter
@@ -213,19 +213,26 @@ rrvglm <-
       answer@A.est <- fit$A.est
       answer@C.est <- fit$C.est
     }
-    if (fit$drrvglm) {
+    if (fit$is.drrvglm) {
       answer <- as(answer, "drrvglm")  # Upgrade
       answer@H.A.alt <- fit$H.A.alt
       answer@H.A.thy <- fit$H.A.thy
       answer@H.C <- fit$H.C
-      answer@misc$Avec    <- fit$Avec
-      answer@misc$B1Cvec  <- fit$B1Cvec
-      answer@misc$RAvcov  <- fit$RAvcov
-      answer@misc$RCvcov  <- fit$RCvcov
-      answer@misc$clist1  <- fit$clist1
-      answer@misc$valt0.ResSS <- fit$valt0.ResSS
+    } else {
+      answer@misc$H.A.alt <- fit$H.A.alt
+      answer@misc$H.A.thy <- fit$H.A.thy
+      answer@misc$H.C     <- fit$H.C
     }
-    
+    answer@misc$Amask   <- fit$Amask
+    answer@misc$Avec    <- fit$Avec
+    answer@misc$B1Cvec  <- fit$B1Cvec
+    answer@misc$is.rrvglm <- fit$is.rrvglm
+    answer@misc$is.drrvglm <- fit$is.drrvglm
+    answer@misc$RAvcov  <- fit$RAvcov
+    answer@misc$RCvcov  <- fit$RCvcov
+    answer@misc$clist1  <- fit$clist1
+    answer@misc$valt0.ResSS <- fit$valt0.ResSS
+
     answer
 }
 attr(rrvglm, "smart") <- TRUE

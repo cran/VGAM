@@ -12,6 +12,20 @@
 %
 %
 %
+% 202404
+ \alias{eimjk.N1b}
+ \alias{eimjk.N1p}
+ \alias{pfun.N1b}
+ \alias{Qfun.N1b}
+ \alias{pfun.N1p}
+ \alias{Qfun.N1p}
+\alias{GHfun}
+% 202403
+\alias{ridargs.rrvglm.control}
+\alias{unmaskA}
+\alias{rm0cols}
+\alias{is.Identity}
+\alias{simslotVGAMcat}
 % 202402
 \alias{ned2l.ebbinom}
 \alias{eimij.ebbinom}

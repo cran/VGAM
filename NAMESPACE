@@ -16,6 +16,17 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
+ export(N1binomial, dN1binom, rN1binom)
+ export(N1poisson, dN1pois, rN1pois)
+ export(eimjk.N1b)
+ export(eimjk.N1p)
+ export(pfun.N1b, Qfun.N1b)
+ export(pfun.N1p, Qfun.N1p)
+ export(GHfun)
+export(ridargs.rrvglm.control)
+export(unmaskA, is.Identity, rm0cols)
+export(simslotVGAMcat)
+importFrom("stats", "rmultinom")
 export(eimij.ebbinom, ned2l.ebbinom)
 export(log1plink)
 export(extbetabinomial, dextbetabinom,
@@ -339,7 +350,8 @@ exportMethods(is.buggy)
 importFrom("splines", splineDesign, bs, ns)
 
 
-export(nparam, nparam.vlm, nparam.vgam, nparam.rrvglm, nparam.qrrvglm, nparam.rrvgam)
+export(nparam, nparam.vlm, nparam.vgam, nparam.rrvglm,
+       nparam.drrvglm, nparam.qrrvglm, nparam.rrvgam)
 export(linkfunvlm)
 exportMethods(linkfun)
 export(sm.bs, sm.ns, sm.scale.default, sm.poly, sm.scale)
@@ -455,7 +467,8 @@ export(lrtest, lrtest_vglm)
 export(update_default, update_formula)
 
 
-export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm, nvar.rrvgam, nvar.rcim)
+export(nvar, nvar.vlm, nvar.vgam, nvar.rrvglm, nvar.qrrvglm,
+       nvar.rrvgam, nvar.rcim)
 export(      nobs.vlm)
 
 
@@ -598,7 +611,8 @@ expexpff1, expexpff)
 
 
 export(
-AICvlm, AICvgam, AICrrvglm, AICqrrvglm, # AICvglm,
+AICdrrvglm,
+AICvlm, AICvgam, AICrrvglm, AICqrrvglm,  # AICvglm,
 anova.vgam,
 anova.vglm,
 bisa, dbisa, pbisa, qbisa, rbisa,

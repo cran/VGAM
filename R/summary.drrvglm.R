@@ -15,19 +15,23 @@
   function(object, correlation = FALSE,
            dispersion = NULL, digits = NULL,
            numerical = TRUE,
-           h.step = 0.0001,
+           h.step = 0.005,
            omit123 = FALSE,
            omit13 = FALSE,   # TRUE
            fixA = FALSE,
-           presid = TRUE,
+           presid = FALSE,  # TRUE
  signif.stars = getOption("show.signif.stars"),
-           eval0 = TRUE,
-           nopredictors = FALSE, ...) {
+           nopredictors = FALSE,
+           eval0 = TRUE, ...) {
 
 
 
 
 
+
+
+
+  object@control$trace <- FALSE  # Suppress
 
 
   if (!is.Numeric(h.step, length.arg = 1) ||
@@ -95,7 +99,7 @@
               coefficients = tmp5$allcoefs)
 
   answer@dispersion <- dispersion
-  answer@sigma <- dispersion^0.5
+  answer@sigma <- sqrt(dispersion)
 
 
 answer@misc$signif.stars <- signif.stars  # 201606
@@ -164,10 +168,10 @@ show.summary.drrvglm <-
     RA.ei <- eigen(covun.RAvcov, symmetric = TRUE)
     RC.ei <- eigen(covun.RCvcov, symmetric = TRUE)
     cat("covun.RAvcov is ",
-        ifelse(all(RA.ei$val > 0), "", "not "),
+        ifelse(all(RA.ei$val > 0), "", "NOT "),
         "positive-definite.\n", sep = "")
     cat("covun.RCvcov is ",
-        ifelse(all(RC.ei$val > 0), "", "not "),
+        ifelse(all(RC.ei$val > 0), "", "NOT "),
         "positive-definite.\n", sep = "")
   }  # check.2
 
@@ -176,15 +180,17 @@ show.summary.drrvglm <-
   p1 <- length(colx1.index)  # May be 0
   p2 <- length(colx2.index)
   Rank <- object@control$Rank
-  H.C <- object@H.C
-  H.A.thy <- object@H.A.thy
-  ncol.H.A.thy <- unlist(lapply(H.A.thy, ncol))
-  ncol.H.C <- unlist(lapply(H.C, ncol))
+  H.C <- if (length(object@misc$H.C))
+    object@misc$H.C else object@H.C
+  H.A.alt <- if (length(object@misc$H.A.alt))
+    object@misc$H.A.alt else object@H.A.alt
+  ncol.H.C <- sapply(H.C, ncol)
+  ncol.H.A.alt <- sapply(H.A.alt, ncol)
   Hlist <- constraints(object)  # type = "term"?
   ncolHlist <- unlist(lapply(Hlist, ncol))
   ncolH.C <- unlist(lapply(H.C, ncol))
 
-  ind3 <- seq(sum(ncol.H.A.thy))  # 1st subset: A
+  ind3 <- seq(sum(ncol.H.A.alt))  # 1st subset: A
   pell.11   <- pell2.AB1[ ind3,  ind3, drop = F]
   B1a.pell2 <- pell2.AB1[-ind3, -ind3, drop = F]
   pell.12   <- pell2.AB1[ ind3, -ind3, drop = F]
@@ -243,8 +249,8 @@ show.summary.drrvglm <-
           Index.corner = Index.corner,
           Aimat = Amat,
           B1mat = B1mat, Cimat = Cmat,
-          H.A.thy = H.A.thy, H.C = H.C,
-          ncol.H.A.thy = ncol.H.A.thy,
+          H.A.alt = H.A.alt, H.C = H.C,
+          ncol.H.A.alt = ncol.H.A.alt,
           ncol.H.C = ncol.H.C,
           xij = rrcontrol$xij,
           str0 = str0)
@@ -268,7 +274,7 @@ show.summary.drrvglm <-
 
 
   pell.13 <- if (omit13)
-    matrix(0, sum(ncol.H.A.thy),
+    matrix(0, sum(ncol.H.A.alt),
               sum(ncolH.C)) else
     delct.da %*% (-pell.33)  # Need 2 mux by -1
 
@@ -299,19 +305,18 @@ show.summary.drrvglm <-
   cov.unscaled <- solve(NEell2.partials)
 
 
-
   prefx <- param.names("I(latvar.mat)", Rank, T)
-  suffx <- c(sapply(ncol.H.A.thy, seq))
+  suffx <- c(sapply(ncol.H.A.alt, seq))
   Aelts.names <- if (Rank == 1) {
     paste(prefx, suffx, sep = ":")
   } else {
     iptr <- 1
     tmp5 <- rep(" ", length(suffx))
-    cs.ncol.H.A.thy <- cumsum(ncol.H.A.thy)
+    cs.ncol.H.A.alt <- cumsum(ncol.H.A.alt)
     for (i in seq(length(suffx))) {
       tmp5[i] <- paste(prefx[iptr], suffx[i],
                        sep = ":")
-      if (i >= cs.ncol.H.A.thy[iptr])
+      if (i >= cs.ncol.H.A.alt[iptr])
         iptr <- iptr + 1
     }
     tmp5
@@ -321,7 +326,7 @@ show.summary.drrvglm <-
   dimnames(cov.unscaled) <- list(cnames, cnames)
 
   n.elts.tildeA <- if (is(object, "drrvglm"))
-     sum(ncol.H.A.thy) else
+     sum(ncol.H.A.alt) else
      (M - Rank - length(str0)) * Rank
   allcoefs <- c(object@misc$Avec,
                 object@coefficients)
@@ -363,8 +368,8 @@ get.drrvglm.se2 <-
   function(object, M, Rank = 1, x1mat, x2mat,
     p2, Index.corner, Aimat, B1mat, Cimat,
     h.step = 0.0001,  # colx2.index,
-    H.A.thy = list(), H.C = list(),  # new
-    ncol.H.A.thy = rep(M-Rank, Rank),  # "rrvglm"
+    H.A.alt = list(), H.C = list(),  # new
+    ncol.H.A.alt = rep(M-Rank, Rank),  # "rrvglm"
     ncol.H.C = rep(Rank, p2),  # "rrvglm"
     xij = NULL, str0 = NULL) {
 
@@ -376,17 +381,17 @@ get.drrvglm.se2 <-
     stop("'Cimat' wrong shape")
 
   dct.da <- matrix(NA_real_,
-              sum(ncol.H.A.thy), sum(ncol.H.C))
+              sum(ncol.H.A.alt), sum(ncol.H.C))
 
   cptr <- 1
   if (!length(B1Cvec <- object@misc$B1Cvec))
     stop("could not retrieve B1Cvec")
   for (vvv in 1:Rank) {
-    for (ttt in 1:ncol.H.A.thy[vvv]) {
+    for (ttt in 1:ncol.H.A.alt[vvv]) {
       small.Hlist <- vector("list", p2)
       pAmat <- Aimat
       pAmat[, vvv] <- pAmat[, vvv] + h.step *
-        (H.A.thy[[vvv]])[, ttt]  # One coln
+        (H.A.alt[[vvv]])[, ttt]  # One coln
       for (ii in 1:p2)  # Only for x2mat
         small.Hlist[[ii]] <- pAmat
 

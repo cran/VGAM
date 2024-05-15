@@ -161,6 +161,7 @@ cbind(ymat, pbinorm(ymat[, 1], ymat[, 2]))
 
 \dontrun{ rhovec <- seq(-0.95, 0.95, by = 0.01)
 plot(rhovec, pbinorm(0, 0, cov12 = rhovec),
+     xlab = expression(rho), lwd = 2,
      type = "l", col = "blue", las = 1)
 abline(v = 0, h = 0.25, col = "gray", lty = "dashed") }
 }

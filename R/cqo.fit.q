@@ -673,7 +673,7 @@ ny <- names(y)
 
   if (length(X2)) {
     alt <-
-      valt0(x = cbind(X1, X2), z = etamat,
+      valt0(x = cbind(X1, X2), zmat = etamat,
             U = sqrt(t(wts)), Rank = effrank,
             Hlist = NULL, Cinit = NULL, trace = FALSE,
             colx1.index = 1:ncol(X1), Criterion = "ResSS")
@@ -884,10 +884,18 @@ cqo.end.expression <- expression({
 
 
 
+
  crow1C <-
-    function(cmat,
-             crow1positive = rep_len(TRUE, ncol(cmat)),
-             amat = NULL) {
+  function(cmat,
+           crow1positive = rep(TRUE, ncol(cmat)),
+           amat = NULL) {
+
+  if (is.null(crow1positive)) {  # No change
+    ans <- if (length(amat))
+      list(cmat = cmat, amat = amat) else cmat
+    return(ans)
+  }
+
   if (!is.logical(crow1positive) ||
       length(crow1positive) != ncol(cmat))
     stop("bad input in crow1C")
@@ -900,8 +908,7 @@ cqo.end.expression <- expression({
         amat[, LV] <- -amat[, LV]
     }
   if (length(amat))
-    list(cmat = cmat, amat = amat) else
-    cmat
+    list(cmat = cmat, amat = amat) else cmat
 }  # crow1C
 
 

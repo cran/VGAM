@@ -23,16 +23,17 @@
 }
 \usage{
 \method{summary}{drrvglm}(object, correlation = FALSE, dispersion = NULL,
-    digits = NULL, numerical = TRUE, h.step = 0.0001, omit123 = FALSE,
-     omit13 = FALSE, fixA = FALSE, presid = TRUE,
+    digits = NULL, numerical = TRUE, h.step = 0.005, omit123 = FALSE,
+     omit13 = FALSE, fixA = FALSE, presid = FALSE,
     signif.stars = getOption("show.signif.stars"),
-    eval0 = TRUE, nopredictors = FALSE, ...)
+    nopredictors = FALSE, eval0 = TRUE, ...)
 \method{show}{summary.drrvglm}(x, digits = NULL,
     quote = TRUE, prefix = "", signif.stars = NULL)
 \method{summary}{rrvglm}(object, correlation = FALSE, dispersion = NULL,
-    digits = NULL, numerical = TRUE, h.step = 0.0001, omit123 = FALSE,
-     omit13 = FALSE, fixA = FALSE, presid = TRUE,
-    signif.stars = getOption("show.signif.stars"), nopredictors = FALSE, ...)
+    digits = NULL, numerical = TRUE, h.step = 0.005, omit123 = FALSE,
+     omit13 = FALSE, fixA = TRUE, presid = FALSE,
+    signif.stars = getOption("show.signif.stars"),
+    nopredictors = FALSE, upgrade = FALSE, ...)
 \method{show}{summary.rrvglm}(x, digits = NULL,
     quote = TRUE, prefix = "", signif.stars = NULL)
 }
@@ -71,6 +72,16 @@
   \item{nopredictors}{
     See \code{\link{summaryvglm}}.
   }
+  \item{upgrade}{
+    Logical.
+    Upgrade \code{object} to
+    \code{\link{drrvglm-class}}?
+    Treating the object as a DRR-VGLM has
+    advantages since the framework is larger.
+    The code for ordinary RR-VGLMs was written
+    a long time ago so it is a good idea
+    to check that both give the same answer.
+  }
 
 
 
@@ -97,7 +108,9 @@
   some function \eqn{f}.
   If the overall variance-covariance matrix
   is not positive-definite, varying
-  this argument might make a difference.
+  this argument can make a difference,
+  e.g., increasing it to
+  \code{0.01} is recommended.
 
 
   }
@@ -236,22 +249,15 @@
   matrices---one for each column of \bold{A}.
   Then since \code{Corner = TRUE}
   by default, then
-  \code{object@H.A.thy} has certain columns
+  \code{object@H.A.alt} has certain columns
   deleted due to corner constraints.
-  The suffix \code{thy} stands for \emph{theory}.
   In contrast, 
-  \code{object@H.A.alt} is the
-  \code{H.A} that was inputted, and the
+  \code{object@H.A.thy} is the
+  \code{H.A} that was inputted.
+  FYI, the
   \code{alt} suffix indicates the alternating
-  algorithm.
-
-
-
-  Note that \code{\link[stats:vcov]{vcov}}
-  methods exist for \code{\link{rrvglm-class}}
-  and \code{\link{drrvglm-class}} objects.
-  
-
+  algorithm, while
+  the suffix \code{thy} stands for \emph{theory}.
 
 
 
@@ -280,6 +286,19 @@ Sections 5.2.2 and 5.3 are particularly relevant.
 
 
 \author{ T. W. Yee.  }
+\note{
+  Note that \code{\link[stats:vcov]{vcov}}
+  methods exist for \code{\link{rrvglm-class}}
+  and \code{\link{drrvglm-class}} objects.
+
+
+  Sometimes this function can take a long time
+  and this is because numerical derivatives
+  are computed.
+
+
+
+}
 
 \section{Warning }{
   DRR-VGLMs are a recent development so

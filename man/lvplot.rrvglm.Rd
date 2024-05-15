@@ -14,8 +14,7 @@
 \usage{
 lvplot.rrvglm(object,
     A = TRUE, C = TRUE, scores = FALSE, show.plot = TRUE,
-    groups = rep(1, n), gapC = sqrt(sum(par()$cxy^2)),
-    scaleA = 1,
+    groups = rep(1, n), gapC = sqrt(sum(par()$cxy^2)), scaleA = 1,
     xlab = "Latent Variable 1", ylab = "Latent Variable 2",
     Alabels = if (length(object@misc$predictors.names))
     object@misc$predictors.names else param.names("LP", M),
@@ -30,6 +29,7 @@ lvplot.rrvglm(object,
     slabels = rownames(x2mat), ...)
 }
 %- maybe also 'usage' for other objects documented here.
+%   
 \arguments{
   \item{object}{ Object of class \code{"rrvglm"}. }
   \item{A}{ Logical. Allow the plotting of \bold{A}? }

@@ -10,7 +10,8 @@ vglm <-
   function(formula,
            family = stop("argument 'family' needs to be assigned"),
            data = list(),
-           weights = NULL, subset = NULL, na.action = na.fail,
+           weights = NULL, subset = NULL,
+           na.action,
            etastart = NULL, mustart = NULL, coefstart = NULL,
            control = vglm.control(...),
            offset = NULL,
@@ -34,8 +35,10 @@ vglm <-
     data <- environment(formula)
 
   mf <- match.call(expand.dots = FALSE)
-  m <- match(c("formula", "data", "subset", "weights", "na.action",
-      "etastart", "mustart", "offset"), names(mf), 0)
+  m <- match(c("formula", "data", "subset",
+               "weights", "na.action",
+               "etastart", "mustart", "offset"),
+             names(mf), 0)
   mf <- mf[c(1, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
@@ -219,11 +222,13 @@ attr(vglm, "smart") <- TRUE
 
 
 
-shadowvglm <-
-        function(formula,
-                 family, data = list(),
-                 weights = NULL, subset = NULL, na.action = na.fail,
-                 etastart = NULL, mustart = NULL, coefstart = NULL,
+
+ shadowvglm <-
+  function(formula,
+           family, data = list(),
+           weights = NULL, subset = NULL,
+           na.action,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
                  control = vglm.control(...),
                  offset = NULL,
                  method = "vglm.fit",
@@ -241,8 +246,10 @@ shadowvglm <-
         data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
-    m <- match(c("formula", "data", "subset", "weights", "na.action",
-        "etastart", "mustart", "offset"), names(mf), 0)
+    m <- match(c("formula", "data", "subset",
+                 "weights", "na.action",
+                 "etastart", "mustart", "offset"),
+               names(mf), 0)
     mf <- mf[c(1, m)]
     mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")

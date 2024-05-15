@@ -38,7 +38,7 @@ zeta(x, deriv = 0, shift = 1)
   While the usual definition involves an infinite series that
   converges when the real part of the argument is \eqn{> 1},
   more efficient methods have been devised to compute the
-  value. In particular, this function uses Euler-Maclaurin
+  value. In particular, this function uses Euler--Maclaurin
   summation. Theoretically, the zeta function can be computed
   over the whole complex plane because of analytic continuation.
 

@@ -13,6 +13,8 @@
 
 
 
+
+
 check.omit.constant <- function(object) {
 
 
@@ -20,8 +22,8 @@ check.omit.constant <- function(object) {
   if (is.logical(object@misc$needto.omit.constant) &&
        object@misc$needto.omit.constant &&
       !object@misc$omit.constant)
-    warning("Probably 'omit.constant = TRUE' should have been set. ",
-            "See the family function '",
+    warning("Probably 'omit.constant = T' should have ",
+            "been set. See the family function '",
             object@family@vfamily[1],
             "' help file.")
 
@@ -56,8 +58,9 @@ nparam.vlm <- function(object, dpar = TRUE, ...) {
 
 
 
-nparam.vgam <- function(object, dpar = TRUE,
-                        linear.only = FALSE, ...) {
+nparam.vgam <-
+    function(object, dpar = TRUE,
+             linear.only = FALSE, ...) {
 
   estdisp <- object@misc$estimated.dispersion
 
@@ -70,32 +73,66 @@ nparam.vgam <- function(object, dpar = TRUE,
   if (linear.only) {
     length(coefvlm(object)) + as.numeric(dpar) * no.dpar
   } else {
-    length(coefvlm(object)) + as.numeric(dpar) * no.dpar + nldf
+      length(coefvlm(object)) +
+          as.numeric(dpar) * no.dpar + nldf
   }
 }
 
 
 
-nparam.rrvglm <- function(object, dpar = TRUE, ...) {
+nparam.rrvglm <-
+    function(object, dpar = TRUE, ...) {
 
   check.omit.constant(object)
 
   estdisp <- object@misc$estimated.dispersion
-  no.dpar <- if (length(estdisp) && is.logical(estdisp) && estdisp)
+  no.dpar <- if (length(estdisp) &&
+             is.logical(estdisp) && estdisp)
     length(object@misc$dispersion) else 0
   str0 <- object@control$str0
   MMM <- object@misc$M
   Rank <- object@control$Rank
-  elts.tildeA <- (MMM - Rank - length(str0)) * Rank
+  elts.tildeA <- (MMM - Rank -
+                  length(str0)) * Rank
 
 
 
-  length(coefvlm(object)) + as.numeric(dpar) * no.dpar + elts.tildeA
-}
+  length(coefvlm(object)) +
+  as.numeric(dpar) * no.dpar + elts.tildeA
+}  # nparam.rrvglm
 
 
 
-nparam.qrrvglm <- function(object, dpar = TRUE, ...) {
+
+
+nparam.drrvglm <-
+    function(object, dpar = TRUE, ...) {
+
+  check.omit.constant(object)
+
+  estdisp <- object@misc$estimated.dispersion
+  no.dpar <- if (length(estdisp) &&
+             is.logical(estdisp) && estdisp)
+    length(object@misc$dispersion) else 0
+  Cobject <- Coef(object)
+  Rank <- Cobject@Rank
+  H.A.alt <- Cobject@H.A.alt
+  ncol.H.A.alt <- unlist(lapply(H.A.alt, ncol))
+  elts.tildeA <- sum(ncol.H.A.alt)
+  length(coefvlm(object)) + elts.tildeA +
+  as.numeric(dpar) * no.dpar
+}  # nparam.drrvglm
+
+
+
+
+
+
+
+
+
+nparam.qrrvglm <-
+    function(object, dpar = TRUE, ...) {
 
   check.omit.constant(object)
 
@@ -139,11 +176,12 @@ nparam.qrrvglm <- function(object, dpar = TRUE, ...) {
   num.params <- elts.B1 + elts.tildeA  + elts.D + elts.C
 
   num.params
-}
+}  # nparam.qrrvglm
 
 
 
-nparam.rrvgam <- function(object, dpar = TRUE, ...) {
+nparam.rrvgam <-
+    function(object, dpar = TRUE, ...) {
 
 
 
@@ -179,7 +217,7 @@ nparam.rrvgam <- function(object, dpar = TRUE, ...) {
 
 
   num.params
-}
+}  # nparam.rrvgam
 
 
 
@@ -198,6 +236,10 @@ setMethod("nparam", "vgam",
 setMethod("nparam", "rrvglm",
            function(object, ...)
            nparam.rrvglm(object, ...))
+
+setMethod("nparam", "drrvglm",
+           function(object, ...)
+           nparam.drrvglm(object, ...))
 
 setMethod("nparam", "qrrvglm",
            function(object, ...)
@@ -249,10 +291,12 @@ AICvgam <- function(object, ...,
                     k = 2) {
 
 
-  sum.lco.no.dpar.nldf <- nparam.vgam(object, dpar = TRUE,
-                                      linear.only = FALSE)
+    sum.lco.no.dpar.nldf <-
+        nparam.vgam(object, dpar = TRUE,
+                    linear.only = FALSE)
 
-  -2 * logLik.vlm(object, ...) + k * sum.lco.no.dpar.nldf
+    -2 * logLik.vlm(object, ...) +
+        k * sum.lco.no.dpar.nldf
 }
 
 
@@ -263,9 +307,25 @@ AICrrvglm <- function(object, ...,
 
 
 
-  sum.lco.no.dpar.A <- nparam.rrvglm(object, dpar = TRUE)
-  (-2) * logLik.vlm(object, ...) + k * sum.lco.no.dpar.A
-}
+ sum.lco.no.dpar.A <- nparam.rrvglm(object,
+                                    dpar = TRUE)
+ (-2) * logLik.vlm(object, ...) +
+     k * sum.lco.no.dpar.A
+}  # AICrrvglm 
+
+
+
+
+
+AICdrrvglm <- function(object, ...,
+                       k = 2) {
+
+
+ sum.lco.no.dpar.A <- nparam.drrvglm(object,
+                                     dpar = TRUE)
+ (-2) * logLik(object, ...) +
+ k * sum.lco.no.dpar.A
+}  # AICdrrvglm 
 
 
 
@@ -281,8 +341,8 @@ AICqrrvglm <- function(object, ...,
 
   loglik.try <- logLik.qrrvglm(object, ...)
   if (!is.numeric(loglik.try))
-    warning("cannot compute the log-likelihood of 'object'. ",
-            "Returning NULL")
+    warning("cannot compute the log-likelihood ",
+            "of 'object'. Returning NULL")
 
   num.params <- nparam.qrrvglm(object, dpar = TRUE)
 
@@ -293,7 +353,7 @@ AICqrrvglm <- function(object, ...,
 
     NULL
   }
-}
+}  # AICqrrvglm
 
 
 
@@ -323,7 +383,7 @@ AICqrrvglm <- function(object, ...,
 
     NULL
   }
-}
+}  # AICrrvgam 
 
 
 
@@ -344,6 +404,10 @@ setMethod("AIC", "vgam",
 setMethod("AIC", "rrvglm",
            function(object, ..., k = 2)
           AICrrvglm(object, ..., k = k))
+
+setMethod("AIC", "drrvglm",
+           function(object, ..., k = 2)
+          AICdrrvglm(object, ..., k = k))
 
 setMethod("AIC", "qrrvglm",
             function(object, ..., k = 2)
@@ -366,11 +430,13 @@ if (!isGeneric("AICc"))
 
 setMethod("AICc", "vlm",
          function(object, ..., k = 2)
-         AICvlm(object, ..., corrected = TRUE, k = k))
+             AICvlm(object, ..., corrected = TRUE,
+                    k = k))
 
 setMethod("AICc", "vglm",
          function(object, ..., k = 2)
-         AICvlm(object, ..., corrected = TRUE, k = k))
+             AICvlm(object, ..., corrected = TRUE,
+                    k = k))
 
 
 
@@ -389,40 +455,54 @@ setMethod("AICc", "vglm",
 
 
 if (!isGeneric("BIC"))
-  setGeneric("BIC", function(object, ..., k = log(nobs(object)))
+    setGeneric("BIC",
+               function(object, ...,
+                        k = log(nobs(object)))
              standardGeneric("BIC"),
              package = "VGAM")
 
 
-BICvlm <- function(object, ..., k = log(nobs(object))) {
+BICvlm <- function(object, ...,
+                   k = log(nobs(object))) {
   AICvlm(object, ..., k = k)
 }
 
 
 
 setMethod("BIC", "vlm",
-          function(object, ..., k = log(nobs(object)))
+          function(object, ...,
+                   k = log(nobs(object)))
             BICvlm(object, ..., k = k))
 
 setMethod("BIC", "vglm",
-          function(object, ..., k = log(nobs(object)))
+          function(object, ...,
+                   k = log(nobs(object)))
             BICvlm(object, ..., k = k))
 
 setMethod("BIC", "vgam",
-          function(object, ..., k = log(nobs(object)))
+          function(object, ...,
+                   k = log(nobs(object)))
            AICvgam(object, ..., k = k))
 
 setMethod("BIC", "rrvglm",
-           function(object, ..., k = log(nobs(object)))
+          function(object, ...,
+                   k = log(nobs(object)))
           AICrrvglm(object, ..., k = k))
 
+setMethod("BIC", "drrvglm",
+          function(object, ...,
+                   k = log(nobs(object)))
+          AICdrrvglm(object, ..., k = k))
+
 setMethod("BIC", "qrrvglm",
-            function(object, ..., k = log(nobs(object)))
+          function(object, ...,
+                   k = log(nobs(object)))
           AICqrrvglm(object, ..., k = k))
 
 
 setMethod("BIC", "rrvgam",
-          function(object, ..., k = log(nobs(object)))
+          function(object, ...,
+                   k = log(nobs(object)))
             AICrrvgam(object, ..., k = k))
 
 

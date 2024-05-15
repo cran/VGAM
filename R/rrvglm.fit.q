@@ -33,7 +33,8 @@ rrvglm.fit <-
     post <- list()
     check.rank <- TRUE  # !control$Quadratic
     check.rank <- control$Check.rank
-    drrvglm <- control$drrvglm  # F by default
+    is.rrvglm <- control$is.rrvglm  # Default: T
+    is.drrvglm <- control$is.drrvglm  # Default: F
     H.A.alt <- control$H.A.alt  # NULL by default
     H.A.thy <- control$H.A.thy  # NULL by default
     H.C <- control$H.C  # list() by default
@@ -45,7 +46,8 @@ rrvglm.fit <-
     orig.stepsize <- control$stepsize
     minimize.criterion <- control$min.criterion
     history <- NULL
-    Alt <- list(drrvglm = drrvglm,
+    Alt <- list(is.rrvglm = is.rrvglm,
+                is.drrvglm = is.drrvglm,
                 H.A.thy = list(),
                 H.A.alt = list(), H.C = list())
 
@@ -59,14 +61,14 @@ rrvglm.fit <-
 
 
 
-    copy.X.vlm <- FALSE    # May be overwritten in @initialize
+    copy.X.vlm <- FALSE  # May b overwritten in @initz
     stepsize <- orig.stepsize
     old.coeffs <- coefstart
 
     intercept.only <- ncol(x) == 1 &&
               dimnames(x)[[2]] == "(Intercept)"
     y.names <-
-    predictors.names <- NULL  # May be overwritten in @initialize
+    predictors.names <- NULL  # Mayb ovrwrttn in @initz
 
 
     n.save <- n
@@ -88,8 +90,8 @@ rrvglm.fit <-
       mu <- if (length(mustart)) mustart else
             if (length(body(slot(family, "linkinv"))))
               slot(family, "linkinv")(eta, extra) else
-              warning("argument 'etastart' assigned a value ",
-                      "but there is no 'linkinv' slot to use it")
+      warning("arg 'etastart' assigned a value but",
+              " there is no @linkinv to use it")
     }
 
     if (length(mustart)) {
@@ -106,12 +108,13 @@ rrvglm.fit <-
     M <- if (is.matrix(eta)) ncol(eta) else 1
 
     if (is.character(rrcontrol$Dzero)) {
-      index <- match(rrcontrol$Dzero, dimnames(as.matrix(y))[[2]])
+      index <- match(rrcontrol$Dzero,
+                     dimnames(as.matrix(y))[[2]])
       if (anyNA(index))
-        stop("Dzero argument didn't fully match y-names")
+        stop("Dzero arg didn't fully match y-names")
       if (length(index) == M)
-        stop("all linear predictors are linear in the ",
-             "latent variable(s); so set 'Quadratic = FALSE'")
+        stop("all linear predictors are linear in ",
+             "the lat var(s); so set 'Quadratic = F'")
       rrcontrol$Dzero <- control$Dzero <- index
     }
 
@@ -133,6 +136,7 @@ rrvglm.fit <-
     tc1 <- trivial.constraints(constraints)
 
     if (!is.null(findex) && !control$Quadratic && sum(!tc1)
+        && FALSE  # 20240329 Suppress this
        ) {
       for (ii in names(tc1))
         if (!tc1[ii] && !any(ii == names(findex)[findex == 1]))
@@ -169,26 +173,43 @@ rrvglm.fit <-
 
 
 
-    Amat <- if (length(rrcontrol$Ainit))
-   rrcontrol$Ainit else
-   matrix(rnorm(M * Rank, sd = rrcontrol$sd.Cinit),
-          M, Rank)
+    skip1vlm <- length(rrcontrol$Ainit) &&
+               !length(rrcontrol$Cinit)
+      control$skip1vlm <-
+    rrcontrol$skip1vlm <- skip1vlm
+    Amat <- if (length(rrcontrol$Ainit)) {
+      if (length(rrcontrol$str0) &&
+          any(is.non0(rrcontrol$Ainit[
+              rrcontrol$str0, ]))) {
+        warning("Ainit[str0, ] has non-0 values")
+        rrcontrol$Ainit[rrcontrol$str0, ] <- 0
+      }
+      if (rrcontrol$Corner && 
+          any(is.non0(c(rrcontrol$Ainit[
+              rrcontrol$Index.corner, ]) -
+              c(diag(Rank)))))
+        stop("Ainit violates corner constraints")
+      rrcontrol$Ainit
+    } else matrix(
+      rnorm(M * Rank, 0, rrcontrol$sd.Cinit),
+            M, Rank)
     Cmat <- if (length(rrcontrol$Cinit))
             rrcontrol$Cinit else {
     if (!rrcontrol$Use.Init.Poisson.QO) {
-matrix(rnorm(p2 * Rank, sd = rrcontrol$sd.Cinit),
-       p2, Rank)
-                } else {
-              .Init.Poisson.QO(ymat = as.matrix(y),
-              X1 = if (length(colx1.index))
-         x[, colx1.index, drop = FALSE] else NULL,
-         X2 = x[, colx2.index, drop = FALSE],
-  Rank = rrcontrol$Rank, trace = rrcontrol$trace,
+      matrix(rnorm(p2 * Rank, 0,
+                   rrcontrol$sd.Cinit), p2, Rank)
+    } else {
+       .Init.Poisson.QO(ymat = as.matrix(y),
+             X1 = if (length(colx1.index))
+        x[, colx1.index, drop = FALSE] else NULL,
+        X2 = x[, colx2.index, drop = FALSE],
+        Rank = rrcontrol$Rank,
+        trace = rrcontrol$trace,
         max.ncol.etamat = rrcontrol$Etamat.colmax,
         Crow1positive = rrcontrol$Crow1positive,
         isd.latvar = rrcontrol$isd.latvar)
-                }
-            }
+    }
+  }
 
 
 
@@ -243,7 +264,7 @@ matrix(rnorm(p2 * Rank, sd = rrcontrol$sd.Cinit),
     (!control$eq.tol || control$I.tolerances) &&
      all(trivial.constraints(Hlist) == 1)
 
-    if (!drrvglm)
+    if (!is.drrvglm)
       Hlist <- Hlist.save <-
         replaceCMs(Hlist, Amat, colx2.index)
 
@@ -269,11 +290,14 @@ matrix(rnorm(p2 * Rank, sd = rrcontrol$sd.Cinit),
         offset <- tmp500$offset
       }
       lm2vlm.model.matrix(xsmall.qrr, H.list,
-                          xij = control$xij)
-    } else {
+                     label.it = control$label.it,
+                     xij = control$xij)
+    } else {  # RR-VGLMs:
       latvar.mat <-
         x[, colx2.index, drop = FALSE] %*% Cmat
- lm2vlm.model.matrix(x, Hlist, xij = control$xij)
+      lm2vlm.model.matrix(x, Hlist,
+                     label.it = control$label.it,
+                     xij = control$xij)
     }
 
 
@@ -335,12 +359,16 @@ matrix(rnorm(p2 * Rank, sd = rrcontrol$sd.Cinit),
            nrow.X.vlm, " observations")
 
     bf.call <- expression(vlm.wfit(X.vlm.save,
-            zedd,  # restored
-Hlist = if (control$Quadratic) H.list else Hlist,
- ncolx = ncol(x), U = U,
- Eta.range = control$Eta.range,
- matrix.out=if(control$Quadratic) FALSE else TRUE,
- is.vlmX = TRUE, qr = qr.arg, xij = control$xij))
+        zedd,  # restored
+        Hlist = if (control$Quadratic)
+                    H.list else Hlist,
+        ncolx = ncol(x), U = U,
+        Eta.range = control$Eta.range,
+        matrix.out = if(control$Quadratic)
+                         FALSE else TRUE,
+        is.vlmX = TRUE, qr = qr.arg,
+        label.it = control$label.it,
+        xij = control$xij))
 
     while (c.list$one.more) {
       if (control$Quadratic) {
@@ -358,8 +386,8 @@ Hlist = if (control$Quadratic) H.list else Hlist,
       if (!control$Quadratic) {
         Cmat <- tfit$mat.coef[colx2.index, , drop = FALSE] %*%
                 Amat %*% solve(t(Amat) %*% Amat)
-        rrcontrol$Ainit <- control$Ainit <- Amat  # Good for valt0()
-        rrcontrol$Cinit <- control$Cinit <- Cmat  # Good for valt0()
+        rrcontrol$Ainit <- control$Ainit <- Amat
+        rrcontrol$Cinit <- control$Cinit <- Cmat
       }  # Quadratic 
 
       if (!nice31)
@@ -648,7 +676,7 @@ tfit$predictors <- tfit$fitted.values  # No offset
 
 
 
-  elts.tildeA <- if (drrvglm)
+  elts.tildeA <- if (is.drrvglm)
      sum(unlist(lapply(H.A.alt, ncol))) else
      (M - Rank - length(control$str0)) * Rank
     no.dpar <- 0
@@ -740,13 +768,15 @@ constraints = if (control$Quadratic) H.list else
         misc = misc,
         post = post,
         ResSS = if (nice31) 000 else tfit$ResSS,
-        drrvglm = drrvglm,      # papertrail
+        is.rrvglm  = is.rrvglm,   # papertrail
+        is.drrvglm = is.drrvglm,  # papertrail
         use.H.A = Alt$use.H.A,  # 20231229
         H.A.alt = Alt$H.A.alt,  # 20231114
         H.A.thy = Alt$H.A.thy,  # 20231230
         H.C     = Alt$H.C,      # 20231114
         A.est   = Alt$A.est,    # Transfer these
         C.est   = Alt$C.est,    #
+        Amask   = Alt$Amask,    #
         Avec    = Alt$Avec,     #
         B1Cvec  = Alt$B1Cvec,   #
         clist1  = Alt$clist1,   #

@@ -81,6 +81,14 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
 % }
 }
 \details{
+  \emph{Note: This function has a bug or two
+    in it but
+  they should be fixed later this year (2024).}
+
+% 202405
+
+
+  
   This function is rough-and-ready.
   It is possible to use the first two derivatives obtained
   from \code{\link{hdeff}} to categorize the severity of the

@@ -205,6 +205,9 @@ to specify the set of covariates used for
 modelling the mean.
 Note that the constraint matrix for the
 intercept should be parallel too.
+The overall
+resulting parameterization is the same
+as Evans (1953).
 Some general information is at
 \code{\link{CommonVGAMffArguments}}.
 
@@ -315,7 +318,8 @@ to the \code{size} parameter.
   does not apply to any intercept term.
   You should set \code{zero = NULL} too if \code{parallel =
   TRUE} to avoid a conflict.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+See \code{\link{CommonVGAMffArguments}} for more
+information.
   Argument \code{vfl} requires the use of
   \code{parallel} to fit the VFL model.
 
@@ -580,6 +584,13 @@ A comment on He and Gaston.
 651--654.
 
 %   number = {4},
+
+
+Evans, D. A. (1953).
+Experimental evidence concerning contagious
+distributions in ecology.
+Biometrika, \bold{40}(1--2), 186--211.
+
 
 
 Hilbe, J. M. (2011).

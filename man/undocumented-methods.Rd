@@ -186,6 +186,7 @@
 % 201412
 \alias{nparam,ANY-method}
 \alias{nparam,vlm-method}
+\alias{nparam,drrvglm-method}
 \alias{nparam,qrrvglm-method}
 \alias{nparam,rrvgam-method}
 \alias{nparam,vgam-method}
@@ -222,6 +223,7 @@
 \alias{BIC,vglm-method}
 \alias{BIC,vgam-method}
 \alias{BIC,rrvglm-method}
+\alias{BIC,drrvglm-method}
 \alias{BIC,qrrvglm-method}
 \alias{BIC,rrvgam-method}
 %
@@ -272,6 +274,7 @@
 \alias{AIC,vglm-method}
 \alias{AIC,vgam-method}
 \alias{AIC,rrvglm-method}
+\alias{AIC,drrvglm-method}
 \alias{AIC,qrrvglm-method}
 \alias{AIC,rrvgam-method}
 \alias{AICc,vlm-method}

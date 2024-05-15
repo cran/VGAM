@@ -19,7 +19,7 @@ summaryvlm <-
            dispersion = NULL,
            Colnames = c("Estimate", "Std. Error",
                         "z value", "Pr(>|z|)"),
-           presid = TRUE,  # FALSE
+           presid = FALSE,
            lrt0.arg = FALSE,
            score0.arg = FALSE,
            wald0.arg = FALSE,

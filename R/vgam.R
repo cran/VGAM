@@ -15,7 +15,8 @@ vgam <-
   function(formula,
            family = stop("argument 'family' needs to be assigned"),
            data = list(),
-           weights = NULL, subset = NULL, na.action = na.fail,
+           weights = NULL, subset = NULL,
+           na.action,
            etastart = NULL, mustart = NULL, coefstart = NULL,
            control = vgam.control(...),
            offset = NULL,
@@ -43,8 +44,10 @@ vgam <-
 
 
   mf <- match.call(expand.dots = FALSE)
-  m <- match(c("formula", "data", "subset", "weights", "na.action",
-      "etastart", "mustart", "offset"), names(mf), 0)
+  m <- match(c("formula", "data", "subset",
+               "weights", "na.action",
+               "etastart", "mustart", "offset"),
+             names(mf), 0)
   mf <- mf[c(1, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
@@ -338,8 +341,9 @@ vgam <-
     slot(answer, "contrasts") <- attr(x, "contrasts")
   if (length(fit$fitted.values))
     slot(answer, "fitted.values") <- as.matrix(fit$fitted.values)
-  slot(answer, "na.action") <- if (length(aaa <- attr(mf, "na.action")))
-    list(aaa) else list()
+  slot(answer, "na.action") <-
+      if (length(aaa <- attr(mf, "na.action")))
+        list(aaa) else list()
   if (length(offset))
     slot(answer, "offset") <- as.matrix(offset)
   if (length(fit$weights))
@@ -442,11 +446,12 @@ attr(vgam, "smart") <- TRUE
 
 
 
-shadowvgam <-
-        function(formula,
-                 family, data = list(),
-                 weights = NULL, subset = NULL, na.action = na.fail,
-                 etastart = NULL, mustart = NULL, coefstart = NULL,
+ shadowvgam <-
+  function(formula,
+           family, data = list(),
+           weights = NULL, subset = NULL,
+           na.action,
+           etastart = NULL, mustart = NULL, coefstart = NULL,
                  control = vgam.control(...),
                  offset = NULL,
                  method = "vgam.fit",
@@ -464,8 +469,10 @@ shadowvgam <-
       data <- environment(formula)
 
     mf <- match.call(expand.dots = FALSE)
-    m <- match(c("formula", "data", "subset", "weights", "na.action",
-        "etastart", "mustart", "offset"), names(mf), 0)
+    m <- match(c("formula", "data", "subset",
+                 "weights", "na.action",
+                 "etastart", "mustart", "offset"),
+               names(mf), 0)
     mf <- mf[c(1, m)]
     mf$drop.unused.levels <- TRUE
     mf[[1]] <- as.name("model.frame")

@@ -10,7 +10,9 @@
   is fitted.  RR-VGLMs are VGLMs but some of the constraint
   matrices are estimated.
   \emph{Doubly constrained} RR-VGLMs (DRR-VGLMs)
-  can also be fitted.
+  can also be fitted,
+  and these provide structure for the two other 
+  outer product matrices.
 
 }
 \usage{
@@ -26,18 +28,22 @@ rrvglm(formula, family = stop("'family' is unassigned"),
 %- maybe also `usage' for other objects documented here.
 \arguments{
 
-  \item{formula, family, weights}{
+  \item{formula, family}{
   See \code{\link{vglm}}.
 
   }
 
-  \item{data}{
-  an optional data frame containing the
-    variables in the model.
-  By default the variables are taken from
-  \code{environment(formula)}, typically
-  the environment from
-  which \code{rrvglm} is called.
+  \item{weights, data}{
+  See \code{\link{vglm}}.
+
+
+% an optional data frame containing the
+%   variables in the model.
+% By default the variables are taken from
+% \code{environment(formula)}, typically
+% the environment from
+% which \code{rrvglm} is called.
+
 
   }
   \item{subset, na.action}{
@@ -115,35 +121,50 @@ rrvglm(formula, family = stop("'family' is unassigned"),
 
 
 
-  For identifiability
-  it is common to enforce \emph{corner constraints} on \eqn{A}:
-  by default, the top \eqn{R} by \eqn{R} submatrix is fixed to
-  be the order-\eqn{R} identity matrix and the remainder of \eqn{A}
-  is estimated.
+  For identifiability it is common to enforce
+  \emph{corner constraints} on \bold{A}:
+  by default, for RR-VGLMs, the top \eqn{R}
+  by \eqn{R} submatrix is fixed to be
+  the order-\eqn{R} identity matrix and
+  the remainder of \bold{A} is estimated.
+  And by default, for DRR-VGLMs, there is
+  also an order-\eqn{R} identity matrix
+  embedded in \bold{A} because the RRR must
+  be \emph{separable} (this is so that any
+  existing structure in \bold{A} is preserved).
 
 
+  The underlying algorithm of RR-VGLMs is
+  iteratively reweighted least squares (IRLS)
+  with an optimizing algorithm applied within
+  each IRLS iteration (e.g., alternating
+  algorithm).
 
-  The underlying algorithm of RR-VGLMs is iteratively
-  reweighted least squares (IRLS) with an optimizing
-  algorithm applied within each IRLS iteration (e.g.,
-  alternating algorithm).
 
-
-  In theory, any \pkg{VGAM} family function that works for
-  \code{\link{vglm}} and \code{\link{vgam}} should work
-  for \code{rrvglm} too.
-  The function that actually does the work is \code{rrvglm.fit};
-  it is \code{vglm.fit} with some extra code.
+  In theory, any \pkg{VGAM} family function
+  that works for \code{\link{vglm}}
+  and \code{\link{vgam}} should work for
+  \code{rrvglm} too.  The function that
+  actually does the work is \code{rrvglm.fit};
+  it is essentially \code{vglm.fit} with some
+  extra code.
 
 
 }
 \value{
-  An object of class \code{"rrvglm"}, which has the the same
-  slots as a \code{"vglm"} object. The only difference is
-  that the some of the constraint matrices are estimates
-  rather than known. But \pkg{VGAM} stores the models the
-  same internally. The slots of \code{"vglm"} objects are
-  described in \code{\link{vglm-class}}.
+  For RR-VGLMs,
+  an object of class \code{"rrvglm"}, which
+  has the the same slots as a \code{"vglm"}
+  object. The only difference is that the some
+  of the constraint matrices are estimates
+  rather than known. But \pkg{VGAM} stores
+  the models the same internally. The slots
+  of \code{"vglm"} objects are described in
+  \code{\link{vglm-class}}.
+
+
+  For DRR-VGLMs,
+  an object of class \code{"drrvglm"}.
 
 
 }
@@ -219,10 +240,12 @@ in smoking studies.
 
   If \code{fit <- rrvglm(..., data = mydata)} then
   \code{summary(fit)} requires corner constraints and no
-  missing values in \code{mydata}.  Often the estimated
-  variance-covariance matrix of the parameters is not
-  positive-definite; if this occurs, try refitting the
-  model with a different value for \code{Index.corner}.
+  missing values in \code{mydata}. 
+  Sometimes the estimated variance-covariance
+  matrix of the parameters is not
+  positive-definite; if this occurs, try
+  refitting the model with a different value
+  for \code{Index.corner}.
 
 
   For \emph{constrained quadratic ordination} (CQO) see
@@ -236,16 +259,18 @@ in smoking studies.
   variable.
 
 
-  To fit DRR-VGLMs see the arguments \code{H.A} and
+  To fit DRR-VGLMs see the arguments
+  \code{H.A.thy} and
   \code{H.C} in \code{\link{rrvglm.control}}.
   DRR-VGLMs provide structure to the \bold{A} and
   \bold{C} matrices via constraint matrices.
   So instead of them being general unstructured
-  matrices, one can make many of their elements to
-  have the same value, else be identically equal
-  to 0, for example. This gives greater control
+  matrices, one can make specified elements to
+  be identically equal to 0, for example.
+  This gives greater control
   over what is modelled as a latent variable,
-  e.g., if one subset of the covariates are physical
+  e.g., in a health study,
+  if one subset of the covariates are physical
   variables and the remainder are psychological
   variables then a rank-2 model might have each
   latent variable a linear combination of each
@@ -255,23 +280,57 @@ in smoking studies.
 % Called "variant1" internally: 20231228:
 
 
-  Incidentally,
-  before I forget, if \code{Corner = TRUE} then
-  the \code{@H.A} slot indicates that
-  the \code{Index.corner} rows of \bold{A}
-  are estimated. This is a remnant of some
-  internal computations because it is
-  more efficient to estimate the entire
-  \bold{A}, bar rows \code{str0}, and
-  then normalize it.
-  In contrast, optimizing over a subset of
-  \bold{A} is slow.
+  Incidentally
+  before I forget, since \code{Corner = TRUE},
+  then
+  the differences between the \code{@H.A.thy} and
+  \code{@H.A.alt} slots
+  are due to \code{Index.corner},
+  which specifies which rows of \bold{A}
+  are not estimated.
+  However,
+  in the alternating algorithm,
+  it is more efficient to estimate the entire
+  \bold{A}, bar (effectively) rows \code{str0},
+  and then normalize it.
+  In contrast, optimizing over the subset of
+  \bold{A} to be estimated is slow.
+
+
+% 20240325:
+
+In the \code{@misc} slot are logical components
+\code{is.drrvglm} and
+\code{is.rrvglm}.
+Only one is \code{TRUE}.
+If \code{is.rrvglm} then (full) corner constraints
+are used.
+If \code{is.drrvglm} then
+\emph{restricted corner constraints} (RCCs)
+are used and the reduced rank regression
+(RRR) must be \emph{separable}.
+The case \code{is.rrvglm} means that
+\code{H.A.thy} is a \code{vector("list", Rank)}
+with \code{H.A.thy[[r]] <- diag(M)} assigned
+to all \eqn{r=1,\ldots,R}.
+Because DRR-VGLMs are implemented only for
+separable problems, this means that
+all columns of \code{H.A.thy[[s]]}
+are orthogonal to all columns from
+\code{H.A.try[[t]]}, for all \eqn{s} and \eqn{t}.
+DRR-VGLMs are proposed in
+Yee et al. (2024) in the context of GAITD regression
+for heaped and seeped survey data.
+
+
 
 
 }
 
-% zzz; arguments of \code{\link{vglm}} are definitive. They're 
-% copied here.
+% zzz; arguments of \code{\link{vglm}} are definitive.
+% Theyre  copied here.
+
+
 
 \seealso{
     \code{\link{rrvglm.control}},
@@ -352,7 +411,7 @@ scar <- subset(car.all,
     is.element(Country, c("Germany", "USA", "Japan", "Korea")))
 fcols <- c(13,14,18:20,22:26,29:31,33,34,36)  # These are factors
 scar[, -fcols] <- scale(scar[, -fcols])  # Stdze all numerical vars
-ones <- matrix(1, 3, 1)
+ones <- CM.ones(3)  # matrix(1, 3, 1)
 clist <- list("(Intercept)" = diag(3), Width = ones, Weight = ones,
               Disp. = diag(3), Tank = diag(3), Price = diag(3),
               Frt.Leg.Room = diag(3))

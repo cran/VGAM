@@ -756,6 +756,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       stop("vfl = T only allowed if ncol(x) > 2")
     if ( .vfl && !is.zero( .zero ))
       stop("Need zero = NULL when vfl = TRUE")
+    if ( .vfl &&
+         !( .lmeanpar == "loglink" &&
+            .ldisppar == "loglink"))
+      stop("Both links must be 'loglink' if vfl = TRUE")
     if ( .vfl && !(is.logical( .parallel ) &&
          !( .parallel )))
       stop("Need parallel = FALSE if vfl = TRUE")
@@ -789,6 +793,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
  }),
  list( .zero = zero,
        .vfl = vfl, .oparallel = oparallel,
+       .lmeanpar = lmeanpar, .ldisppar = ldisppar,
        .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {
@@ -1121,6 +1126,10 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       stop("vfl = T only allowed if ncol(x) > 2")
     if ( .vfl && !is.zero( .zero ))
       stop("Need zero = NULL when vfl = TRUE")
+    if ( .vfl &&
+         !( .lmeanpar == "loglink" &&
+            .ldispind == "logloglink"))
+      stop("Must use the default links if vfl = TRUE")
     if ( .vfl && !(is.logical( .parallel ) &&
          !( .parallel )))
       stop("Need parallel = FALSE if vfl = TRUE")
@@ -1149,6 +1158,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
  }),
  list( .zero = zero,
        .vfl = vfl, .Form2 = Form2,      
+       .lmeanpar = lmeanpar, .ldispind = ldispind,
        .parallel = parallel ))),
 
   infos = eval(substitute(function(...) {

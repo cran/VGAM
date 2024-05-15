@@ -4,8 +4,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Poisson Regression }
 \description{
-  Family function for a generalized linear model fitted to
-  Poisson responses.
+  Family function for a generalized linear
+  model fitted to Poisson responses.
 
 
 % The dispersion parameters may be known or unknown.
@@ -116,12 +116,12 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
 
 }
 \value{
-  An object of class \code{"vglmff"} (see \code{\link{vglmff-class}}).
-  The object is used by modelling functions such as
-  \code{\link{vglm}},
-  \code{\link{vgam}},
-  \code{\link{rrvglm}},
-  \code{\link{cqo}},
+  An object of class \code{"vglmff"} (see
+  \code{\link{vglmff-class}}).
+  The object is used by modelling functions
+  such as
+  \code{\link{vglm}}, \code{\link{vgam}},
+  \code{\link{rrvglm}}, \code{\link{cqo}},
   and \code{\link{cao}}.
 
 
@@ -147,9 +147,10 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
 % to the end of the family function name.
 
 
-  Regardless of whether the dispersion parameter is to be estimated or
-  not, its value can be seen from the output from the \code{summary()}
-  of the object.
+  Regardless of whether the dispersion
+  parameter is to be estimated or not, its
+  value can be seen from the output from the
+  \code{summary()} of the object.
 
 
 % With the introduction of name spaces for the \pkg{VGAM} package,
@@ -158,9 +159,11 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
 
 }
 \section{Warning }{
-    With multiple responses, assigning a known dispersion parameter
-    for \emph{each} response is not handled well yet.  Currently, only
-    a single known dispersion parameter is handled well.
+  With multiple responses, assigning a
+  known dispersion parameter for \emph{each}
+  response is not handled well yet.  Currently,
+  only a single known dispersion parameter is
+  handled well.
 
 
 }
@@ -174,9 +177,8 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
     \code{\link{genpoisson0}},
     \code{\link{gaitdpoisson}},
     \code{\link{zipoisson}},
+    \code{\link{N1poisson}},
     \code{\link{pospoisson}},
-    \code{\link[VGAMdata]{oipospoisson}},
-    \code{\link[VGAMdata]{otpospoisson}},
     \code{\link{skellam}},
     \code{\link{mix2poisson}},
     \code{\link{cens.poisson}},
@@ -201,6 +203,8 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
 
 
  
+%   \code{\link[VGAMdata]{oipospoisson}},
+%   \code{\link[VGAMdata]{otpospoisson}},
 %   \code{\link{quasipoissonff}},
 %   \code{\link{quasibinomialff}},
 

@@ -136,7 +136,6 @@ bibentry(bibtype = "Article",
 )
 
 
-
 bibentry(bibtype = "Article",
   title        = "The {VGAM} package for negative binomial regression",
   author       = person(c("T.", "W."), "Yee"),
@@ -152,5 +151,26 @@ bibentry(bibtype = "Article",
         "Australian and New Zealand Journal of Statistics."),
   header = "and/or"
 )
+
+
+
+
+bibentry(bibtype = "Article",
+  title        = "Generally altered, inflated, truncated and deflated regression",
+  author       = c(person(c("T.", "W."), "Yee"),
+                   person(c("C."), "Ma")),
+  journal      = "Statistical Science",
+  year         = "2024",
+  volume       = "39",
+  number       = "",
+  pages        = "",
+
+  textVersion  =
+  paste("Thomas W. Yee and Chenchen Ma (2024).",
+        "Generally altered, inflated, truncated and deflated regression.",
+        "Statistical Science (in press)."),
+  header = "and/or"
+)
+
 
 

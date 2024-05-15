@@ -142,7 +142,8 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
     \code{\link{posnormal}},
     \code{\link{mix2normal}},
     \code{\link{ordsup}},
-    \code{\link{normal.vcm}},
+    \code{\link{N1binomial}},
+    \code{\link{N1poisson}},
     \code{\link{Qvar}},
     \code{\link{tobit}},
     \code{\link{cens.normal}},
@@ -161,6 +162,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 
 
+%   \code{\link{normal.vcm}},
 %   \code{\link{gaussianff}},
 
 

@@ -3,20 +3,22 @@
 %\alias{AICvglm}
 \alias{AICvgam}
 \alias{AICrrvglm}
+\alias{AICdrrvglm}
 \alias{AICqrrvglm}
 \alias{AICrrvgam}
 \alias{AICc,vglm-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Akaike's Information Criterion }
 \description{
-  Calculates the Akaike information criterion for a fitted model object
-  for which a log-likelihood value has been obtained.
+  Calculates the Akaike information criterion for a fitted model
+  object for which a log-likelihood value has been obtained.
 
 }
 \usage{
     AICvlm(object, \dots, corrected = FALSE, k = 2)
    AICvgam(object, \dots, k = 2)
  AICrrvglm(object, \dots, k = 2)
+AICdrrvglm(object, \dots, k = 2)
 AICqrrvglm(object, \dots, k = 2)
  AICrrvgam(object, \dots, k = 2)
 }

@@ -13,7 +13,7 @@
 vglm(formula,
      family = stop("argument 'family' needs to be assigned"),
      data = list(), weights = NULL, subset = NULL,
-     na.action = na.fail, etastart = NULL, mustart = NULL,
+     na.action, etastart = NULL, mustart = NULL,
      coefstart = NULL, control = vglm.control(...), offset = NULL,
      method = "vglm.fit", model = FALSE, x.arg = TRUE, y.arg = TRUE,
      contrasts = NULL, constraints = NULL, extra = list(),
@@ -133,9 +133,16 @@ vglm(formula,
   a function which indicates what should happen when
   the data contain \code{NA}s.
   The default is set by the \code{na.action} setting
-  of \code{\link[base]{options}}, and is \code{na.fail} if that
-  is unset.
-  The ``factory-fresh'' default is \code{na.omit}.
+  of \code{\link[base]{options}},
+  and is \code{na.fail} if that is unset.
+  The ``factory-fresh'' default is \code{\link[stats]{na.omit}}
+  which is known as \emph{complete case analysis}
+  and applied to both sides of the formula.
+
+
+
+% 20240308; changed na.action = na.fail to just na.action.
+
 
 
   }

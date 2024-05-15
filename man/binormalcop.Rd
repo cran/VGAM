@@ -7,10 +7,11 @@
   the (bivariate) Gaussian copula
   distribution by maximum likelihood estimation.
 
+
 }
 \usage{
-binormalcop(lrho = "rhobitlink", irho = NULL, imethod = 1,
-            parallel = FALSE, zero = NULL)
+binormalcop(lrho = "rhobitlink", irho = NULL,
+            imethod = 1, parallel = FALSE, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 %  apply.parint = TRUE,
@@ -21,6 +22,14 @@ binormalcop(lrho = "rhobitlink", irho = NULL, imethod = 1,
 
 
   }
+% \item{stdze}{
+% Not possible. EIM == 0 or < 0. Unidentifiable!
+% Orig. ff restored.
+
+% 20240411
+
+
+% }
   \item{parallel, zero}{
   Details at \code{\link{CommonVGAMffArguments}}.
   If \code{parallel = TRUE} then the constraint is applied to
@@ -36,25 +45,30 @@ binormalcop(lrho = "rhobitlink", irho = NULL, imethod = 1,
         P(Y1 <= y1, Y2 <= y2) =
         Phi_2(\Phi^(-1)(y_1), \Phi^(-1)(y_2); \rho)}
   for \eqn{-1 < \rho < 1}{-1 < rho < 1},
-  \eqn{\Phi_2}{Phi_2} is the cumulative distribution function
-  of a standard bivariate normal
-  (see \code{\link{pbinorm}}),
-  and \eqn{\Phi}{Phi} is the cumulative distribution function
-  of a standard univariate normal
-  (see \code{\link[stats]{pnorm}}).
+  \eqn{\Phi_2}{Phi_2} is the
+  cumulative distribution function
+  of a standard bivariate normal (see
+  \code{\link{pbinorm}}), and \eqn{\Phi}{Phi}
+  is the cumulative distribution function
+  of a standard univariate normal (see
+  \code{\link[stats]{pnorm}}).
 
 
-  The support of the function is the interior of the unit square;
-  however, values of 0 and/or 1 are not allowed.
-  The marginal distributions are the standard uniform
-  distributions.  When \eqn{\rho = 0}{rho=0} the random variables
-  are independent.
+
+  The support of the function is the interior
+  of the unit square; however, values of 0
+  and/or 1 are not allowed.  The marginal
+  distributions are the standard uniform
+  distributions.  When \eqn{\rho = 0}{rho=0}
+  the random variables are independent.
 
 
-  This \pkg{VGAM} family function can handle multiple responses,
-  for example, a six-column matrix where the first 2 columns
-  is the first out of three responses,
-  the next 2 columns being the next response, etc.
+
+  This \pkg{VGAM} family function can handle
+  multiple responses, for example, a six-column
+  matrix where the first 2 columns is the
+  first out of three responses, the next 2
+  columns being the next response, etc.
 
 
 
@@ -101,6 +115,7 @@ Derivatives and Fisher information of bivariate copulas.
 
 \seealso{
   \code{\link{rbinormcop}},
+  \code{\link{rhobitlink}},
   \code{\link[stats]{pnorm}},
   \code{\link{kendall.tau}}.
 

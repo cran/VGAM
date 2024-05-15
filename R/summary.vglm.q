@@ -297,8 +297,9 @@ setMethod("showsummaryvglmS4VGAM",
   function(object,
            VGAMff,
            ...) {
-  cat("\nReference group is level ",
-      object@post$refLevel, " of the response\n")
+  if (length(object@post$refLevel))
+    cat("\nReference group is level ",
+        object@post$refLevel, " of the response\n")
   callNextMethod(VGAMff = VGAMff,
                  object = object,
                  ...)
@@ -359,7 +360,9 @@ show.summary.vglm <-
 
   digits <- if (is.null(digits)) options()$digits - 2 else digits
 
-  cat("\nCall:\n", paste(deparse(x@call), sep = "\n", collapse = "\n"),
+  cat("\nCall:\n",
+      paste(deparse(x@call),
+                    sep = "\n", collapse = "\n"),
       "\n", sep = "")
 
 
@@ -382,6 +385,7 @@ show.summary.vglm <-
 
   Presid <- x@pearson.resid
   rdf <- x@df[2]
+  pearres.out <- FALSE
   if (presid &&
       length(Presid) &&
       all(!is.na(Presid)) &&
@@ -391,10 +395,12 @@ show.summary.vglm <-
       rq <- apply(as.matrix(Presid), 2, quantile)  # 5 x M
       dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q", "Max"),
                            x@misc$predictors.names)
+      pearres.out <- TRUE
       cat("\nPearson residuals:\n")
       print(t(rq), digits = digits)
     } else
     if (rdf > 0) {
+      pearres.out <- TRUE
       cat("\nPearson residuals:\n")
       print(Presid, digits = digits)
     }
@@ -475,10 +481,12 @@ show.summary.vglm <-
 
 
 
-  if (M >= 5)
+  if (M >= 5 && !pearres.out)
   cat("\nNumber of linear predictors: ", M, "\n")
 
-  if (!is.null(x@misc$predictors.names) && !use.nopredictors) {
+  if (!is.null(x@misc$predictors.names) &&
+      !use.nopredictors &&
+      !pearres.out) {
     if (M == 1) {
       cat("\nName of linear predictor:",
           paste(x@misc$predictors.names, collapse = ", "), "\n")
@@ -580,7 +588,9 @@ show.summary.vglm <-
 
 
 
-  try.this <- findFirstMethod("showsummaryvglmS4VGAM", x@family@vfamily)
+  try.this <-
+      findFirstMethod("showsummaryvglmS4VGAM",
+                      x@family@vfamily)
   if (length(try.this)) {
     showsummaryvglmS4VGAM(object = x,
             VGAMff = new(try.this),

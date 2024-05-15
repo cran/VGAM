@@ -4,6 +4,7 @@
 %\alias{nparam.vglm}
 \alias{nparam.vgam}
 \alias{nparam.rrvglm}
+\alias{nparam.drrvglm}
 \alias{nparam.qrrvglm}
 \alias{nparam.rrvgam}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -18,6 +19,7 @@
     nparam.vlm(object, dpar = TRUE, \dots)
    nparam.vgam(object, dpar = TRUE, linear.only = FALSE, \dots)
  nparam.rrvglm(object, dpar = TRUE, \dots)
+nparam.drrvglm(object, dpar = TRUE, \dots)
 nparam.qrrvglm(object, dpar = TRUE, \dots)
  nparam.rrvgam(object, dpar = TRUE, \dots)
 }

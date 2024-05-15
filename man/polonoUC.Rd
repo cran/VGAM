@@ -128,19 +128,19 @@ rpolono(n, meanlog = 0, sdlog = 1)
 \examples{
 meanlog <- 0.5; sdlog <- 0.5; yy <- 0:19
 sum(proby <- dpolono(yy, m = meanlog, sd = sdlog))  # Should be 1
-max(abs(cumsum(proby) - ppolono(yy, m = meanlog, sd = sdlog)))  # Should be 0
+max(abs(cumsum(proby) - ppolono(yy, m = meanlog, sd = sdlog)))  # 0?
 
 \dontrun{ opar = par(no.readonly = TRUE)
 par(mfrow = c(2, 2))
 plot(yy, proby, type = "h", col = "blue", ylab = "P[Y=y]", log = "",
-     main = paste("Poisson lognormal(m = ", meanlog,
-                  ", sdl = ", sdlog, ")", sep = ""))
+     main = paste0("Poisson lognormal(m = ", meanlog,
+                  ", sdl = ", sdlog, ")"))
 
-y <- 0:190  # More extreme values; use the approximation and plot on a log scale
-(sum(proby <- dpolono(y, m = meanlog, sd = sdlog, bigx = 100)))  # Should be 1
+y <- 0:190  # More extreme values; use the approxn & plot on a log scale
+(sum(proby <- dpolono(y, m = meanlog, sd = sdlog, bigx = 100)))  # 1?
 plot(y, proby, type = "h", col = "blue", ylab = "P[Y=y] (log)", log = "y",
-     main = paste("Poisson lognormal(m = ", meanlog,
-                  ", sdl = ", sdlog, ")", sep = ""))  # Note the kink at bigx
+     main = paste0("Poisson lognormal(m = ", meanlog,
+                  ", sdl = ", sdlog, ")"))  # Note the kink at bigx
 
 # Random number generation
 table(y <- rpolono(n = 1000, m = meanlog, sd = sdlog))

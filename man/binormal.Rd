@@ -72,8 +72,10 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
   The response should be a two-column matrix.
   The correlation parameter is \code{rho},
   which lies between \eqn{-1} and \eqn{1}
-  (thus the \code{\link{rhobitlink}} link is a reasonable choice).
-  The fitted means are returned as the fitted values, which is in
+  (thus the \code{\link{rhobitlink}} link is
+  a reasonable choice).
+  The fitted means are returned as the fitted
+  values, which is in
   the form of a two-column matrix.
   Fisher scoring is implemented.
 
@@ -89,9 +91,9 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
 }
 \section{Warning}{
-  This function may be renamed to \code{normal2()} or
-  something like that
-  at a later date.
+  This function may be renamed to
+  \code{normal2()} or something like that at
+  a later date.
 
 
 }
@@ -103,8 +105,9 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
 
 \author{ T. W. Yee }
 \note{
-  If both equal means and equal standard deviations are desired
-  then use something like
+  If both equal means and equal standard
+  deviations are desired then use something
+  like
 \code{constraints = list("(Intercept)" = }
 \code{matrix(c(1,1,0,0,0, 0,0,1,1,0 ,0,0,0,0,1), 5, 3))}
   and maybe
@@ -118,7 +121,8 @@ binormal(lmean1 = "identitylink", lmean2 = "identitylink",
   \code{\link{uninormal}},
   \code{\link{trinormal}},
   \code{\link{pbinorm}},
-  \code{\link{bistudentt}}.
+  \code{\link{bistudentt}},
+  \code{\link{rhobitlink}}.
 
 
 % \code{\link{gaussianff}},
@@ -132,7 +136,7 @@ bdata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 bdata <- transform(bdata, y1 = rnorm(nn, 1 + 2 * x2),
                           y2 = rnorm(nn, 3 + 4 * x2))
 fit1 <- vglm(cbind(y1, y2) ~ x2,
-             binormal(eq.sd = TRUE), data = bdata, trace = TRUE)
+             binormal(eq.sd = TRUE), bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 constraints(fit1)
 summary(fit1)

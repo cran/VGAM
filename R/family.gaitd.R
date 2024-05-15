@@ -7740,7 +7740,8 @@ plotdgaitd.vglm <-
 
     misc$earg <- vector("list", M1)
     names(misc$earg) <- names(misc$link)
-    misc$earg[[1]] <- ( .emunb.p )  # First one always there
+    misc$earg[[1]] <- ( .emunb.p )  # 1st 1 always there
+    misc$earg[[2]] <- ( .esize.p )  # 2nd 1 always there
     iptr <- 1
     if (tmp3.TF[ 3])
       misc$earg[[(iptr <- iptr + 1)]] <- list()  # multilogitlink
@@ -8110,7 +8111,8 @@ plotdgaitd.vglm <-
                  size.a = size.a, size.i = size.i, size.d = size.d,
                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
-                 truncate = .truncate , max.support = .max.support )
+                 truncate = .truncate ,
+                 max.support = .max.support )
   }, list(
     .lmunb.p = lmunb.p, .emunb.p = emunb.p,
     .lmunb.a = lmunb.a, .emunb.a = emunb.a,
@@ -10668,23 +10670,26 @@ KLDvglm <-
     theta.i <- cbind(theta.i)
     theta.d <- cbind(theta.d)
   } else {
-    theta.a <- if (any(is.na(indeta[ 4, ]))) theta.p else
-                 cbind(eta2theta(etamat[, (indeta[ 4, 1])],
-                                 linkfun(object)[(indeta[ 4, 1])]),
-                       eta2theta(etamat[, (indeta[ 5, 1])],
-                                 linkfun(object)[(indeta[ 5, 1])]))
+    theta.a <-
+      if (any(is.na(indeta[ 4, ]))) theta.p else
+        cbind(eta2theta(etamat[, (indeta[ 4, 1])],
+                        linkfun(object)[(indeta[ 4, 1])]),
+              eta2theta(etamat[, (indeta[ 5, 1])],
+                        linkfun(object)[(indeta[ 5, 1])]))
     colnames(theta.a) <- paste0(infos.list$baseparams.argnames, ".a")
-    theta.i <- if (any(is.na(indeta[ 7, ]))) theta.p else
-                 cbind(eta2theta(etamat[, (indeta[ 7, 1])],
-                                 linkfun(object)[(indeta[ 7, 1])]),
-                       eta2theta(etamat[, (indeta[ 8, 1])],
-                                 linkfun(object)[(indeta[ 8, 1])]))
+    theta.i <-
+      if (any(is.na(indeta[ 7, ]))) theta.p else
+        cbind(eta2theta(etamat[, (indeta[ 7, 1])],
+                        linkfun(object)[(indeta[ 7, 1])]),
+              eta2theta(etamat[, (indeta[ 8, 1])],
+                        linkfun(object)[(indeta[ 8, 1])]))
     colnames(theta.i) <- paste0(infos.list$baseparams.argnames, ".i")
-    theta.d <- if (any(is.na(indeta[10, ]))) theta.p else
-                 cbind(eta2theta(etamat[, (indeta[10, 1])],
-                                 linkfun(object)[(indeta[10, 1])]),
-                       eta2theta(etamat[, (indeta[11, 1])],
-                                 linkfun(object)[(indeta[11, 1])]))
+    theta.d <-
+      if (any(is.na(indeta[10, ]))) theta.p else
+        cbind(eta2theta(etamat[, (indeta[10, 1])],
+                        linkfun(object)[(indeta[10, 1])]),
+              eta2theta(etamat[, (indeta[11, 1])],
+                        linkfun(object)[(indeta[11, 1])]))
     colnames(theta.d) <- paste0(infos.list$baseparams.argnames, ".d")
   }
 

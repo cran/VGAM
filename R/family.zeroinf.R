@@ -2741,7 +2741,8 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zipoissonff <-
-  function(llambda = "loglink", lonempstr0 = "logitlink",
+  function(llambda = "loglink",
+           lonempstr0 = "logitlink",
            type.fitted = c("mean", "lambda", "pobs0",
                            "pstr0", "onempstr0"),
            ilambda = NULL,   ionempstr0 = NULL,
@@ -3089,8 +3090,9 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     onempstr0 <- eta2theta(eta[, c(FALSE, TRUE)], .lonempstr0 ,
                            earg = .eonempstr0 )
     rzipois(nsim * length(lambda), lambda, pstr0 = 1 - onempstr0)
-  }, list( .lonempstr0 = lonempstr0, .llambda = llambda,
-           .eonempstr0 = eonempstr0, .elambda = elambda ))),
+  },
+  list( .lonempstr0 = lonempstr0, .llambda = llambda,
+        .eonempstr0 = eonempstr0, .elambda = elambda ))),
 
 
   validparams = eval(substitute(function(eta, y, extra = NULL) {

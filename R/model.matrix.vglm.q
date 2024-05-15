@@ -94,7 +94,7 @@ attrassignlm <- function(object, ...)
     vecTF <- Hmatrices[linpred.index, ] != 0
     X.lm.jay <- x.vlm[(0:(n.lm - 1)) * M + linpred.index,
                       vecTF, drop = FALSE]
-  }
+  }  # (FALSE)
   vecTF2 <- colSums(Hmatrices[linpred.index, ,
                               drop = FALSE]) != 0
   vecTF1 <- rep_len(FALSE, M)
@@ -111,7 +111,8 @@ attrassignlm <- function(object, ...)
 
 
  lm2vlm.model.matrix <-
-  function(x, Hlist = NULL, assign.attributes = TRUE,
+  function(x, Hlist = NULL,
+           assign.attributes = TRUE,
            M = NULL, xij = NULL,
            label.it = TRUE,  # Ignored for "lm".
            Xm2 = NULL) {
@@ -144,7 +145,8 @@ attrassignlm <- function(object, ...)
     X1 <- rep(c(t(x)), rep(ncolHlist, nrow.X.lm))
     dim(X1) <- c(Rsum, nrow.X.lm)
     X.vlm <- kronecker(t(X1), matrix(1, M, 1)) *
-             kronecker(matrix(1, nrow.X.lm, 1), allB)
+             kronecker(matrix(1, nrow.X.lm, 1),
+                       allB)
     rm(X1)
   }
 
@@ -182,11 +184,12 @@ attrassignlm <- function(object, ...)
 
 
     fred <- unlist(lapply(nasgn,
-                          length))/unlist(lapply(oasgn, length))
+            length))/unlist(lapply(oasgn, length))
     vasgn <- vector("list", sum(fred))
     kk <- 0
     for (ii in seq_along(oasgn)) {
-      temp <- matrix(nasgn[[ii]], ncol = length(oasgn[[ii]]))
+      temp <- matrix(nasgn[[ii]],
+                     ncol = length(oasgn[[ii]]))
       for (jloc in 1:nrow(temp)) {
         kk <- kk + 1
         vasgn[[kk]] <- temp[jloc, ]
@@ -369,9 +372,11 @@ model.matrix.vlm <- function(object, ...)
 
   M <- object@misc$M  # Number of linear/additive predictors
   Hlist <- object@constraints  # == constraints(object,type="lm")
-  X.vlm <- lm2vlm.model.matrix(x = x, Hlist = Hlist, Xm2 = Xm2,
-                               label.it = label.it,
-                               xij = object@control$xij)
+    X.vlm <-
+      lm2vlm.model.matrix(x = x, Hlist = Hlist,
+                          Xm2 = Xm2,
+                          label.it = label.it,
+                          xij = object@control$xij)
 
   if (type == "vlm" && !length(linpred.index))
     return(X.vlm)

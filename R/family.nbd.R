@@ -371,6 +371,9 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
     if ( .vfl && LC <= 2)
       stop("vfl = T only allowed if ncol(x) > 2")
     if ( .vfl &&
+       !( .lmu == "loglink" && .lsize == "loglink"))
+      stop("Both links must be 'loglink' if vfl = TRUE")
+    if ( .vfl &&
        !(is.null( .zero ) || is.na( .zero ) ||
         (is.character( .zero ) && .zero == "")))
       stop("Need zero = NULL when vfl = TRUE")
@@ -396,6 +399,7 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
              M1 = 2)
   }),
   list( .parallel = parallel, .vfl = vfl,
+        .lmu = lmunb, .lsize = lsize,
         .zero = zero ))),
 
 

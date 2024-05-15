@@ -15,7 +15,8 @@
 
 vlm.wfit <-
   function(xmat, zmat, Hlist, wz = NULL, U = NULL,
-           matrix.out = FALSE, is.vlmX = FALSE, ResSS = TRUE, qr = FALSE,
+           matrix.out = FALSE, is.vlmX = FALSE,
+           ResSS = TRUE, qr = FALSE,
            x.ret = FALSE,
            offset = NULL,
            omit.these = NULL, only.ResSS = FALSE,
@@ -25,13 +26,16 @@ vlm.wfit <-
                      ncol(xmat)
                    },
            xij = NULL,
-           lp.names = NULL, Eta.range = NULL, Xm2 = NULL,
+           lp.names = NULL, Eta.range = NULL,
+           Xm2 = NULL,
 
            Xvlm.aug = NULL,
            sm.osps.list = NULL,
-           constraints = NULL, first.sm.osps = FALSE,
-           control = list(),  # This is vgam.control()
+           constraints = NULL,
+           first.sm.osps = FALSE,
+           control = list(),  # == vgam.control()
            trace = FALSE,
+           label.it = TRUE,  # 20240316
 
            ...) {
   mgcvvgam <- length(sm.osps.list)
@@ -64,9 +68,11 @@ vlm.wfit <-
       Hlist <- replaceCMs(vector("list", ncol(xmat)),
                                    diag(M), 1:ncol(xmat))  # NULL
     }
-    lm2vlm.model.matrix(x = xmat, Hlist = Hlist, M = M,
+    lm2vlm.model.matrix(x = xmat, Hlist = Hlist,
+                        M = M,
                         assign.attributes = FALSE,
                         xij = xij,
+                        label.it = label.it,
                         Xm2 = Xm2)
   }
   X.vlm <- mux111(U, X.vlm.save, M = M)

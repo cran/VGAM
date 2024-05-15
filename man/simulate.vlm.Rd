@@ -166,6 +166,12 @@
   \code{\link{zipf}},
   \code{\link{zipoisson}},
   \code{\link{zipoissonff}}.
+  Also, categorical family functions:
+  \code{\link{acat}},
+  \code{\link{cratio}},
+  \code{\link{sratio}},
+  \code{\link{cumulative}},
+  \code{\link{multinomial}}.
 
 
 

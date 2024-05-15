@@ -8,8 +8,10 @@
 
 
 
-simulate.vlm <- function (object, nsim = 1, seed = NULL, ...) {
-  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+ simulate.vlm <-
+  function (object, nsim = 1, seed = NULL, ...) {
+    if (!exists(".Random.seed", envir = .GlobalEnv,
+                inherits = FALSE))
     runif(1)
   if (is.null(seed)) {
     RNGstate <- get(".Random.seed", envir = .GlobalEnv)
@@ -32,8 +34,14 @@ simulate.vlm <- function (object, nsim = 1, seed = NULL, ...) {
     if (length(Fam@simslot) > 0) {
       Fam@simslot(object, nsim)
     } else {
-      stop(gettextf("family '%s' not implemented", Fam), domain = NA)
+      stop(gettextf("family '%s' not implemented", Fam),
+           domain = NA)
     }
+  if (is.logical(attr(val, "Verbatim")) &&
+      attr(val, "Verbatim")) {
+    attr(val, "Verbatim") <- NULL
+    return(val)
+  }
   if (!is.list(val)) {
     dim(val) <- c(n, nsim)
     val <- as.data.frame(val)
@@ -45,7 +53,7 @@ simulate.vlm <- function (object, nsim = 1, seed = NULL, ...) {
     row.names(val) <- nm
   attr(val, "seed") <- RNGstate
   val
-}
+}  # simulate.vlm 
 
 
 

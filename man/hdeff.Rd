@@ -431,6 +431,9 @@ Some new results concerning the Hauck-Donner effect.
 
 
 
+% \code{\link{cops}},
+
+
 
 
 % \code{\link{step4vglm}}. Not needed since LRT is used, not WT.
@@ -473,6 +476,52 @@ hdeff(c(t(mymat)), byrow = TRUE)  # Reordering of the data
 \keyword{regression}
 \keyword{htest}
 \concept{Hauck--Donner effect}
+
+
+%
+% For E-COPS and O-COPS see
+% ``\textit{Parameter space dynamics
+%    via the Hauck--Donner effect in Wald tests}'',
+% by T.~W.~Yee (2022), under review.
+% Among other results, one wants to find the
+% location where the expected and observed
+% information is a maximum, thus defining
+% the E-COPS and O-COPS.
+% Justification is given for this.
+% Function cops() is an implementation of that
+% idea later (c.2023), with logistic regression 
+% specifically in mind.
+% Other COPS further developments since
+% that submission include where the OIM and EIM
+% have a minimum: e.g.,
+% ``\textit{Musings and new results
+% on the parameter space}'',
+% by T.~W.~Yee (2024), under review.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
