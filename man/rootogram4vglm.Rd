@@ -21,8 +21,8 @@ rootogram4vglm(object, newdata = NULL, breaks = NULL, max = NULL,
 \arguments{
   \item{object}{
     an object of class \code{"vglm"}.
-    zz This includes \code{"vgam"} because
-     \code{"vlm"} handles both VGLM and VGAM objects.
+    This should include  \code{"vgam"} because
+    \code{"vglm"} handles both VGLM and VGAM objects.
 
 
 %    It is strongly recommended that this be the full model

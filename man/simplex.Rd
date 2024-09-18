@@ -97,8 +97,13 @@ simplex(lmu = "logitlink", lsigma = "loglink", imu = NULL, isigma = NULL,
 \seealso{
   \code{\link{dsimplex}},
   \code{\link{dirichlet}},
-  \code{\link{rig}},
+  \code{\link{rigff}},
   \code{\link{binomialff}}.
+
+
+% \code{\link{rig}},   20240821
+
+
 
 
 }

@@ -213,7 +213,7 @@ can be assigned to its \code{family} argument.
 For example,
 \code{\link{uninormal}} fits something in between a 2-way
 ANOVA with and without interactions,
-\code{\link{alaplace2}} with \code{Rank = 0} is something like
+\code{\link[VGAMdata]{alaplace2}} with \code{Rank = 0} is something like
 \code{\link[stats]{medpolish}}.
 Others include
 \code{\link{zipoissonff}} and

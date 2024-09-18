@@ -370,9 +370,9 @@ void Free_fapc0tnbyee_spline(double *wkumc9idosiz4fxy,  double *wkumc9idenaqpzk9
                             double *wkumc9idbtwy,   double *wkumc9idwk0,
                             double *wkumc9idbk3ymcih,
                             int    *wkumc9idtgiyxdw1, int    *wkumc9iddufozmt7) {
-  Free(wkumc9idosiz4fxy);       Free(wkumc9idenaqpzk9);
-  Free(wkumc9idbtwy);        Free(wkumc9idwk0);       Free(wkumc9idbk3ymcih);
-  Free(wkumc9idtgiyxdw1);      Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idosiz4fxy);       R_Free(wkumc9idenaqpzk9);
+  R_Free(wkumc9idbtwy);        R_Free(wkumc9idwk0);       R_Free(wkumc9idbk3ymcih);
+  R_Free(wkumc9idtgiyxdw1);      R_Free(wkumc9iddufozmt7);
 }
 
 
@@ -433,25 +433,25 @@ void Yee_spline(double *sjwyig9t, double *tlgduey8, double *rbne6ouj, double *gk
 
 
 
-  wkumc9idtgiyxdw1  = Calloc(imk5wjxg, int);
-  wkumc9iddufozmt7  = Calloc(imk5wjxg, int);
+  wkumc9idtgiyxdw1  = R_Calloc(imk5wjxg, int);
+  wkumc9iddufozmt7  = R_Calloc(imk5wjxg, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, wy1vqfzu);
 
-  wkumc9idosiz4fxy   = Calloc(*ldk * (*wy1vqfzu * *acpios9q), double);
-  wkumc9idenaqpzk9   = Calloc(*ldk * (*acpios9q * *wy1vqfzu), double);
-  wkumc9idbtwy    = Calloc(*wy1vqfzu *  *acpios9q        , double);
+  wkumc9idosiz4fxy   = R_Calloc(*ldk * (*wy1vqfzu * *acpios9q), double);
+  wkumc9idenaqpzk9   = R_Calloc(*ldk * (*acpios9q * *wy1vqfzu), double);
+  wkumc9idbtwy    = R_Calloc(*wy1vqfzu *  *acpios9q        , double);
 
 
 
 
 
-  wkumc9idbk3ymcih  = Calloc(        *lqsahu0r          , double);
+  wkumc9idbk3ymcih  = R_Calloc(        *lqsahu0r          , double);
 
 
 
 
 
-  wkumc9idwk0     = Calloc(*acpios9q * *wy1vqfzu         , double);
+  wkumc9idwk0     = R_Calloc(*acpios9q * *wy1vqfzu         , double);
 
 
 
@@ -491,11 +491,11 @@ void Yee_spline(double *sjwyig9t, double *tlgduey8, double *rbne6ouj, double *gk
       }
 
 
-      wkumc9idxwy      = Calloc(*acpios9q,            double);
-      wkumc9idzvau2lct      = Calloc(*acpios9q,            double);
-      wkumc9idf6lsuzax      = Calloc(*acpios9q,            double);
-      wkumc9idfvh2rwtc      = Calloc(*acpios9q,            double);
-      wkumc9iddcfir2no      = Calloc(*acpios9q,            double);
+      wkumc9idxwy      = R_Calloc(*acpios9q,            double);
+      wkumc9idzvau2lct      = R_Calloc(*acpios9q,            double);
+      wkumc9idf6lsuzax      = R_Calloc(*acpios9q,            double);
+      wkumc9idfvh2rwtc      = R_Calloc(*acpios9q,            double);
+      wkumc9iddcfir2no      = R_Calloc(*acpios9q,            double);
       n5aioudkgt9iulbf(sjwyig9t, 
                      tlgduey8 + (yq6lorbx-1) * *lqsahu0r, // bhcji9gl
                     rbne6ouj + (yq6lorbx-1) * *lqsahu0r, // po8rwsmy,
@@ -506,11 +506,11 @@ void Yee_spline(double *sjwyig9t, double *tlgduey8, double *rbne6ouj, double *gk
       for (ayfnwr1v = 3; ayfnwr1v <= (*acpios9q - 3); ayfnwr1v++) {
         svdbx3tk_tt1 += wkumc9idzvau2lct[ayfnwr1v-1];
       }
-      Free(wkumc9idxwy);
-      Free(wkumc9idzvau2lct);
-      Free(wkumc9idf6lsuzax);
-      Free(wkumc9idfvh2rwtc);
-      Free(wkumc9iddcfir2no);
+      R_Free(wkumc9idxwy);
+      R_Free(wkumc9idzvau2lct);
+      R_Free(wkumc9idf6lsuzax);
+      R_Free(wkumc9idfvh2rwtc);
+      R_Free(wkumc9iddcfir2no);
 
       svdbx3tk_g2dnwteb = svdbx3tk_tt1 / svdbx3tk_tt2;
       lamvec[yq6lorbx-1] = 
@@ -865,14 +865,14 @@ void Free_fapc0tnbvsuff9(double *wkumc9idwk1a,    double *wkumc9idwk1b,
                         int    *wkumc9idtgiyxdw11, int    *wkumc9iddufozmt71,
                         int    *wkumc9idtgiyxdw12, int    *wkumc9iddufozmt72,
                         int    *iz2nbfjc) {
-  Free(wkumc9idwk1a);     Free(wkumc9idwk1b);
-  Free(wkumc9idwk2a);     Free(wkumc9idwk2b);
+  R_Free(wkumc9idwk1a);     R_Free(wkumc9idwk1b);
+  R_Free(wkumc9idwk2a);     R_Free(wkumc9idwk2b);
   if (! *iz2nbfjc) {
-    Free(wkumc9ideshvo2ic);
-    Free(wkumc9idonxjvw8u);
+    R_Free(wkumc9ideshvo2ic);
+    R_Free(wkumc9idonxjvw8u);
   }
-  Free(wkumc9idtgiyxdw11);  Free(wkumc9iddufozmt71);
-  Free(wkumc9idtgiyxdw12);  Free(wkumc9iddufozmt72);
+  R_Free(wkumc9idtgiyxdw11);  R_Free(wkumc9iddufozmt71);
+  R_Free(wkumc9idtgiyxdw12);  R_Free(wkumc9iddufozmt72);
 }
 
 
@@ -914,14 +914,14 @@ void vsuff9(int *ftnjamu2, int *lqsahu0r, int ezlgm2up[],
   hmayv1xt2 = hmayv1xt1 + 1.0;
   wkumc9ideshvo2ic   = &hmayv1xt2;   wkumc9idonxjvw8u = &hmayv1xt2;
 
-  wkumc9idwk1a    = Calloc(zyojx5hw          , double);
-  wkumc9idwk1b    = Calloc(*wy1vqfzu         , double);
-  wkumc9idwk2a    = Calloc(n2colb       , double);
-  wkumc9idwk2b    = Calloc(*kgwmz4ip       , double);
-  wkumc9idtgiyxdw11 = Calloc(imk5wjxg         , int);
-  wkumc9iddufozmt71 = Calloc(imk5wjxg         , int);
-  wkumc9idtgiyxdw12 = Calloc(n3colb       , int);
-  wkumc9iddufozmt72 = Calloc(n3colb       , int);
+  wkumc9idwk1a    = R_Calloc(zyojx5hw          , double);
+  wkumc9idwk1b    = R_Calloc(*wy1vqfzu         , double);
+  wkumc9idwk2a    = R_Calloc(n2colb       , double);
+  wkumc9idwk2b    = R_Calloc(*kgwmz4ip       , double);
+  wkumc9idtgiyxdw11 = R_Calloc(imk5wjxg         , int);
+  wkumc9iddufozmt71 = R_Calloc(imk5wjxg         , int);
+  wkumc9idtgiyxdw12 = R_Calloc(n3colb       , int);
+  wkumc9iddufozmt72 = R_Calloc(n3colb       , int);
 
   if (*iz2nbfjc) {
     if (*npjlv3mr < *kvowz9ht || *kgwmz4ip != *wy1vqfzu) {
@@ -950,8 +950,8 @@ void vsuff9(int *ftnjamu2, int *lqsahu0r, int ezlgm2up[],
       return;
     }
 
-    wkumc9ideshvo2ic   = Calloc(*lqsahu0r *  zyojx5hw    , double);
-    wkumc9idonxjvw8u  = Calloc(*lqsahu0r * *wy1vqfzu    , double);
+    wkumc9ideshvo2ic   = R_Calloc(*lqsahu0r *  zyojx5hw    , double);
+    wkumc9idonxjvw8u  = R_Calloc(*lqsahu0r * *wy1vqfzu    , double);
   }
 
 
@@ -1147,8 +1147,8 @@ void fapc0tnbicpd0omv(double enaqpzk9[], double sjwyig9t[], double gkdx5jals[],
          imk5wjxg  = *wy1vqfzu * (*wy1vqfzu + 1) / 2,
          zyojx5hw   = *wy1vqfzu * *wy1vqfzu;
 
-  wkumc9idtgiyxdw1_ = Calloc(imk5wjxg, int);
-  wkumc9iddufozmt7_ = Calloc(imk5wjxg, int);
+  wkumc9idtgiyxdw1_ = R_Calloc(imk5wjxg, int);
+  wkumc9iddufozmt7_ = R_Calloc(imk5wjxg, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1_, wkumc9iddufozmt7_, wy1vqfzu);
   ptri1 = wkumc9idtgiyxdw1_;   ptri2 = wkumc9iddufozmt7_;
   for (ayfnwr1v = 0; ayfnwr1v < imk5wjxg; ayfnwr1v++) {
@@ -1156,8 +1156,8 @@ void fapc0tnbicpd0omv(double enaqpzk9[], double sjwyig9t[], double gkdx5jals[],
     (*ptri2++)--;
   }
 
-  wkumc9idwrk = Calloc(zyojx5hw, double);
-  wkumc9idbmb = Calloc(zyojx5hw, double);
+  wkumc9idwrk = R_Calloc(zyojx5hw, double);
+  wkumc9idbmb = R_Calloc(zyojx5hw, double);
 
 
 
@@ -1200,8 +1200,8 @@ void fapc0tnbicpd0omv(double enaqpzk9[], double sjwyig9t[], double gkdx5jals[],
         dqlr5bse--;
       } else {
         Rprintf("pqzfxw4i!=1 after vinterv called in fapc0tnbicpd0omv\n");
-        Free(wkumc9idtgiyxdw1_);   Free(wkumc9iddufozmt7_);
-        Free(wkumc9idwrk);
+        R_Free(wkumc9idtgiyxdw1_);   R_Free(wkumc9iddufozmt7_);
+        R_Free(wkumc9idwrk);
         return;
       }
     }
@@ -1251,9 +1251,9 @@ void fapc0tnbicpd0omv(double enaqpzk9[], double sjwyig9t[], double gkdx5jals[],
 
 
 
-  Free(wkumc9idtgiyxdw1_);    Free(wkumc9iddufozmt7_);
-  Free(wkumc9idwrk);
-  Free(wkumc9idbmb);
+  R_Free(wkumc9idtgiyxdw1_);    R_Free(wkumc9iddufozmt7_);
+  R_Free(wkumc9idwrk);
+  R_Free(wkumc9idbmb);
 }
 
 
@@ -1343,7 +1343,7 @@ void fapc0tnbovjnsmt2(double bmb[], double rbne6ouj[],
   int    zyojx5hw  = *wy1vqfzu *  *wy1vqfzu;
   double *wkumc9idwrk;
 
-  wkumc9idwrk     = Calloc(zyojx5hw,  double);
+  wkumc9idwrk     = R_Calloc(zyojx5hw,  double);
 
 
   for (bpvaqm5z = 1; bpvaqm5z <= *wy1vqfzu; bpvaqm5z++) {
@@ -1363,7 +1363,7 @@ void fapc0tnbovjnsmt2(double bmb[], double rbne6ouj[],
     ifys6woa[*iii-1 + (bpvaqm5z-1) * *lqsahu0r] = q6zdcwxk;
   }
 
-  Free(wkumc9idwrk);
+  R_Free(wkumc9idwrk);
 }
 
 
@@ -1380,7 +1380,7 @@ void fapc0tnbvicb2(double enaqpzk9[], double wpuarq2m[], double Dvector[],
   int       Mplus1    = *wy1vqfzu + 1;
   int       Mp1Mp1    = Mplus1 * Mplus1;
   double    *wkumc9iduu;
-  wkumc9iduu   = Calloc(Mp1Mp1,   double);
+  wkumc9iduu   = R_Calloc(Mp1Mp1,   double);
 
   enaqpzk9[*wy1vqfzu + (*f8yswcat-1) * Mplus1] = 1.0e0 / Dvector[*f8yswcat-1];
 
@@ -1435,7 +1435,7 @@ void fapc0tnbvicb2(double enaqpzk9[], double wpuarq2m[], double Dvector[],
       }
   }
 
-  Free(wkumc9iduu);
+  R_Free(wkumc9iduu);
 }
 
 
@@ -1458,15 +1458,15 @@ void Free_fapc0tnbewg7qruh(double *wkumc9idWrk1,
                         double *wkumc9idpygsw6ko,   double *wkumc9idpasjmo8g,
                         double *wkumc9ideshvo2ic,  double *wkumc9idonxjvw8u,
                         double *wkumc9idwk4) {
-  Free(wkumc9idWrk1);
-  Free(wkumc9idges1xpkr);
-  Free(wkumc9idbeta);    Free(wkumc9idfasrkub3);
-  Free(wkumc9idsout);    Free(wkumc9idr0oydcxb);
-  Free(wkumc9idub4xioar);    Free(wkumc9ideffect);
-  Free(wkumc9idueshvo2ic);  Free(wkumc9ids0);
-  Free(wkumc9idpygsw6ko);    Free(wkumc9idpasjmo8g);
-  Free(wkumc9ideshvo2ic);   Free(wkumc9idonxjvw8u);
-  Free(wkumc9idwk4);
+  R_Free(wkumc9idWrk1);
+  R_Free(wkumc9idges1xpkr);
+  R_Free(wkumc9idbeta);    R_Free(wkumc9idfasrkub3);
+  R_Free(wkumc9idsout);    R_Free(wkumc9idr0oydcxb);
+  R_Free(wkumc9idub4xioar);    R_Free(wkumc9ideffect);
+  R_Free(wkumc9idueshvo2ic);  R_Free(wkumc9ids0);
+  R_Free(wkumc9idpygsw6ko);    R_Free(wkumc9idpasjmo8g);
+  R_Free(wkumc9ideshvo2ic);   R_Free(wkumc9idonxjvw8u);
+  R_Free(wkumc9idwk4);
 }
 
 
@@ -1513,22 +1513,22 @@ void fapc0tnbewg7qruh(double ci1oyxas[], double tlgduey8[], double rbne6ouj[],
          *wkumc9ideshvo2ic,  *wkumc9idonxjvw8u;
 
   maxrutyk8mgxjc4ywlh = (rutyk8mg > xjc4ywlh) ? rutyk8mg : xjc4ywlh;
-  wkumc9idWrk1   = Calloc(maxrutyk8mgxjc4ywlh                     , double);
-  wkumc9idwk4      = Calloc(rutyk8mg * xjc4ywlh                   , double);
+  wkumc9idWrk1   = R_Calloc(maxrutyk8mgxjc4ywlh                     , double);
+  wkumc9idwk4      = R_Calloc(rutyk8mg * xjc4ywlh                   , double);
 
-  wkumc9idges1xpkr = Calloc(kgwmz4ip2              , int);
-  wkumc9idbeta   = Calloc(kgwmz4ip2              , double);
-  wkumc9idfasrkub3  = Calloc(kgwmz4ip2              , double);
-  wkumc9idsout   = Calloc(*lqsahu0r  * *kgwmz4ip     , double);
-  wkumc9idr0oydcxb  = Calloc(*kgwmz4ip * *lqsahu0r      , double);
-  wkumc9idub4xioar   = Calloc(*kgwmz4ip * *lqsahu0r      , double);
-  wkumc9ideffect = Calloc(*lqsahu0r  * *kgwmz4ip     , double);
-  wkumc9idueshvo2ic = Calloc(npjlv3mreshvo2ic * *lqsahu0r  , double);
-  wkumc9ids0     = Calloc(kgwmz4ip2 * kgwmz4ip2 * 2 , double);
-  wkumc9idpygsw6ko   = Calloc(*lqsahu0r               , double);
-  wkumc9idpasjmo8g   = Calloc(*lqsahu0r * *kgwmz4ip      , double);
-  wkumc9idonxjvw8u = Calloc(*lqsahu0r * *kgwmz4ip      , double);
-  wkumc9ideshvo2ic  = Calloc(*lqsahu0r *  dim2eshvo2ic  , double);
+  wkumc9idges1xpkr = R_Calloc(kgwmz4ip2              , int);
+  wkumc9idbeta   = R_Calloc(kgwmz4ip2              , double);
+  wkumc9idfasrkub3  = R_Calloc(kgwmz4ip2              , double);
+  wkumc9idsout   = R_Calloc(*lqsahu0r  * *kgwmz4ip     , double);
+  wkumc9idr0oydcxb  = R_Calloc(*kgwmz4ip * *lqsahu0r      , double);
+  wkumc9idub4xioar   = R_Calloc(*kgwmz4ip * *lqsahu0r      , double);
+  wkumc9ideffect = R_Calloc(*lqsahu0r  * *kgwmz4ip     , double);
+  wkumc9idueshvo2ic = R_Calloc(npjlv3mreshvo2ic * *lqsahu0r  , double);
+  wkumc9ids0     = R_Calloc(kgwmz4ip2 * kgwmz4ip2 * 2 , double);
+  wkumc9idpygsw6ko   = R_Calloc(*lqsahu0r               , double);
+  wkumc9idpasjmo8g   = R_Calloc(*lqsahu0r * *kgwmz4ip      , double);
+  wkumc9idonxjvw8u = R_Calloc(*lqsahu0r * *kgwmz4ip      , double);
+  wkumc9ideshvo2ic  = R_Calloc(*lqsahu0r *  dim2eshvo2ic  , double);
 
 
 
@@ -1822,15 +1822,15 @@ void fapc0tnbvbfa1(int *ftnjamu2, int *wy1vqfzu, int ezlgm2up[], int lqsahu0r[],
   int    cvnjhg2u;
 
   maxrutyk8mgxjc4ywlh   = (*ftnjamu2 * *wy1vqfzu > *xjc4ywlh) ? (*ftnjamu2 * *wy1vqfzu) : *xjc4ywlh;
-  wkumc9idTwk      = Calloc(maxrutyk8mgxjc4ywlh      , double);
+  wkumc9idTwk      = R_Calloc(maxrutyk8mgxjc4ywlh      , double);
 
-  wkumc9idwkbzmd6ftv    = Calloc(*xjc4ywlh * *rutyk8mg, double);
-  wkumc9idwk9      = Calloc(*xjc4ywlh        , double);
+  wkumc9idwkbzmd6ftv    = R_Calloc(*xjc4ywlh * *rutyk8mg, double);
+  wkumc9idwk9      = R_Calloc(*xjc4ywlh        , double);
 
-  wkumc9idghz9vuba     = Calloc(*ftnjamu2 *  *wy1vqfzu, double);
-  wkumc9idoldmat   = Calloc(*ftnjamu2 *  *wy1vqfzu, double);
-  wkumc9idub4xioar     = Calloc(*wy1vqfzu  * *ftnjamu2, double);
-  wkumc9idwk2      = Calloc(*ftnjamu2 *  *wy1vqfzu, double);
+  wkumc9idghz9vuba     = R_Calloc(*ftnjamu2 *  *wy1vqfzu, double);
+  wkumc9idoldmat   = R_Calloc(*ftnjamu2 *  *wy1vqfzu, double);
+  wkumc9idub4xioar     = R_Calloc(*wy1vqfzu  * *ftnjamu2, double);
+  wkumc9idwk2      = R_Calloc(*ftnjamu2 *  *wy1vqfzu, double);
 
 
 
@@ -1888,11 +1888,11 @@ void fapc0tnbvbfa1(int *ftnjamu2, int *wy1vqfzu, int ezlgm2up[], int lqsahu0r[],
 
 
   sumzv2xfhei = jwbkl9fp[(1 + *nhja0izq)  - 1];
-  wkumc9idall_xecbg0pf = Calloc(sumzv2xfhei, double);
-  wkumc9idall_z4grbpiq = Calloc(sumzv2xfhei, double);
-  wkumc9idall_d7glzhbj = Calloc(sumzv2xfhei, double);
-  wkumc9idall_v2eydbxs = Calloc(sumzv2xfhei, double);
-  wkumc9idall_tt2 = Calloc(*nhja0izq   , double);
+  wkumc9idall_xecbg0pf = R_Calloc(sumzv2xfhei, double);
+  wkumc9idall_z4grbpiq = R_Calloc(sumzv2xfhei, double);
+  wkumc9idall_d7glzhbj = R_Calloc(sumzv2xfhei, double);
+  wkumc9idall_v2eydbxs = R_Calloc(sumzv2xfhei, double);
+  wkumc9idall_tt2 = R_Calloc(*nhja0izq   , double);
 
 
   *ueb8hndv = 0;
@@ -2118,13 +2118,13 @@ void fapc0tnbvbfa1(int *ftnjamu2, int *wy1vqfzu, int ezlgm2up[], int lqsahu0r[],
   }
   }
 
-  Free(wkumc9idwkbzmd6ftv);     Free(wkumc9idwk9);
-  Free(wkumc9idTwk);
-  Free(wkumc9idghz9vuba);      Free(wkumc9idoldmat);
-  Free(wkumc9idub4xioar);      Free(wkumc9idwk2);
-  Free(wkumc9idall_xecbg0pf);   Free(wkumc9idall_z4grbpiq);
-  Free(wkumc9idall_d7glzhbj);   Free(wkumc9idall_v2eydbxs);
-  Free(wkumc9idall_tt2);
+  R_Free(wkumc9idwkbzmd6ftv);     R_Free(wkumc9idwk9);
+  R_Free(wkumc9idTwk);
+  R_Free(wkumc9idghz9vuba);      R_Free(wkumc9idoldmat);
+  R_Free(wkumc9idub4xioar);      R_Free(wkumc9idwk2);
+  R_Free(wkumc9idall_xecbg0pf);   R_Free(wkumc9idall_z4grbpiq);
+  R_Free(wkumc9idall_d7glzhbj);   R_Free(wkumc9idall_v2eydbxs);
+  R_Free(wkumc9idall_tt2);
 }
 
 

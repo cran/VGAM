@@ -80,14 +80,14 @@ void n5aioudkdnaoqj0l(double *qgnl3toc,
            *wkumc9idzvau2lct,  *wkumc9idf6lsuzax,  *wkumc9idfvh2rwtc, *wkumc9iddcfir2no,
            *wkumc9idfulcp8wa, *wkumc9idplj0trqx;
 
-  wkumc9idxwy      = Calloc(*acpios9q,            double);
-  wkumc9idzvau2lct      = Calloc(*acpios9q,            double);
-  wkumc9idf6lsuzax      = Calloc(*acpios9q,            double);
-  wkumc9idfvh2rwtc      = Calloc(*acpios9q,            double);
-  wkumc9iddcfir2no      = Calloc(*acpios9q,            double);
-  wkumc9idbuhyalv4      = Calloc(*xtov9rbf  * *acpios9q,  double);
-  wkumc9idfulcp8wa     = Calloc(*xtov9rbf  * *acpios9q,  double);
-  wkumc9idplj0trqx     = Calloc( (int)  1      ,    double);
+  wkumc9idxwy      = R_Calloc(*acpios9q,            double);
+  wkumc9idzvau2lct      = R_Calloc(*acpios9q,            double);
+  wkumc9idf6lsuzax      = R_Calloc(*acpios9q,            double);
+  wkumc9idfvh2rwtc      = R_Calloc(*acpios9q,            double);
+  wkumc9iddcfir2no      = R_Calloc(*acpios9q,            double);
+  wkumc9idbuhyalv4      = R_Calloc(*xtov9rbf  * *acpios9q,  double);
+  wkumc9idfulcp8wa     = R_Calloc(*xtov9rbf  * *acpios9q,  double);
+  wkumc9idplj0trqx     = R_Calloc( (int)  1      ,    double);
 
   n5aioudkhbzuprs6(qgnl3toc, sjwyig9t, bhcji9gl,
                 po8rwsmy, kuzxj1lo, acpios9q, gkdx5jal,
@@ -103,9 +103,9 @@ void n5aioudkdnaoqj0l(double *qgnl3toc,
                 wkumc9idfulcp8wa, wkumc9idplj0trqx,
                 xtov9rbf, wep0oibc, fbd5yktj);
 
-  Free(wkumc9idxwy);  Free(wkumc9idbuhyalv4);
-  Free(wkumc9idzvau2lct);  Free(wkumc9idf6lsuzax);  Free(wkumc9idfvh2rwtc);  Free(wkumc9iddcfir2no);
-  Free(wkumc9idfulcp8wa); Free(wkumc9idplj0trqx);
+  R_Free(wkumc9idxwy);  R_Free(wkumc9idbuhyalv4);
+  R_Free(wkumc9idzvau2lct);  R_Free(wkumc9idf6lsuzax);  R_Free(wkumc9idfvh2rwtc);  R_Free(wkumc9iddcfir2no);
+  R_Free(wkumc9idfulcp8wa); R_Free(wkumc9idplj0trqx);
 }
 
 

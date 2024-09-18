@@ -1,7 +1,7 @@
 \name{lindley}
 \alias{lindley}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ 1-parameter Gamma Distribution }
+\title{ 1-parameter Lindley Distribution }
 \description{
   Estimates the (1-parameter) Lindley distribution
   by maximum likelihood estimation.

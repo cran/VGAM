@@ -137,7 +137,7 @@ amlpoisson(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   \code{\link{amlnormal}},
   \code{\link{amlbinomial}},
   \code{\link{extlogF1}},
-  \code{\link{alaplace1}}.
+  \code{\link[VGAMdata]{alaplace1}}.
 
 }
 

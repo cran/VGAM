@@ -121,6 +121,7 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
+\dontrun{
 sdata <- data.frame(y = rsinmad(n = 1000, shape1 = exp(1),
                     scale = exp(2), shape3 = exp(0)))
 fit <- vglm(y ~ 1, sinmad(lss = FALSE), sdata, trace = TRUE)
@@ -147,7 +148,7 @@ fit2 <- vglm(y1 ~ 1, data = sdata, trace = TRUE, stepsize = 0.05, maxit = 99,
              sinmad(lss = FALSE, ishape3.q = 3, lshape3.q = "logloglink"))
              
 coef(fit2, matrix = TRUE)
-Coef(fit2)
+Coef(fit2)    }
 }
 \keyword{models}
 \keyword{regression}

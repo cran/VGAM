@@ -112,13 +112,14 @@ Hoboken, NJ, USA: Wiley-Interscience.
 }
 
 \examples{
+\dontrun{
 idata <- data.frame(y = rinv.paralogistic(3000, exp(1), sc = exp(2)))
 fit <- vglm(y ~ 1, inv.paralogistic(lss = FALSE), idata, trace = TRUE)
 fit <- vglm(y ~ 1, inv.paralogistic(imethod = 2, ishape1.a = 4),
             data = idata, trace = TRUE, crit = "coef")
 coef(fit, matrix = TRUE)
 Coef(fit)
-summary(fit)
+summary(fit)   }
 }
 \keyword{models}
 \keyword{regression}

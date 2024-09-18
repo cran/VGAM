@@ -89,7 +89,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 \seealso{
     \code{\link{amlexponential}},
     \code{\link{gpd}},
-    \code{\link{laplace}},
+    \code{\link[VGAM]{laplace}},
     \code{\link{expgeometric}},
     \code{\link{explogff}},
     \code{\link{poissonff}},

@@ -62,19 +62,19 @@ int fvlmz9iyC_VIAM(int *cz8qdfyj, int *rvy1fpli, int *wy1vqfzu) {
 
   int    *wkumc9idtgiyxdw1, *wkumc9iddufozmt7;
   int    imk5wjxg = *wy1vqfzu * (*wy1vqfzu + 1) / 2;
-  wkumc9idtgiyxdw1  = Calloc(imk5wjxg, int);
-  wkumc9iddufozmt7  = Calloc(imk5wjxg, int);
+  wkumc9idtgiyxdw1  = R_Calloc(imk5wjxg, int);
+  wkumc9iddufozmt7  = R_Calloc(imk5wjxg, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, wy1vqfzu);
 
   for (urohxe6t = 1; urohxe6t <= imk5wjxg; urohxe6t++) {
       if ((wkumc9idtgiyxdw1[urohxe6t-1]== *cz8qdfyj && wkumc9iddufozmt7[urohxe6t-1] == *rvy1fpli) ||
           (wkumc9idtgiyxdw1[urohxe6t-1]== *rvy1fpli && wkumc9iddufozmt7[urohxe6t-1] == *cz8qdfyj)) {
-          Free(wkumc9idtgiyxdw1);    Free(wkumc9iddufozmt7);
+          R_Free(wkumc9idtgiyxdw1);    R_Free(wkumc9iddufozmt7);
           return urohxe6t;
       }
   }
 
-  Free(wkumc9idtgiyxdw1);    Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idtgiyxdw1);    R_Free(wkumc9iddufozmt7);
   return 0;
 }
 
@@ -138,10 +138,10 @@ void fvlmz9iyC_mux22(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat[],
   double q6zdcwxk;
 
   double *wkumc9idwk12;
-  wkumc9idwk12 = Calloc(zyojx5hw, double);
+  wkumc9idwk12 = R_Calloc(zyojx5hw, double);
 
-  wkumc9idtgiyxdw1  = Calloc(imk5wjxg, int);
-  wkumc9iddufozmt7  = Calloc(imk5wjxg, int);
+  wkumc9idtgiyxdw1  = R_Calloc(imk5wjxg, int);
+  wkumc9iddufozmt7  = R_Calloc(imk5wjxg, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, wy1vqfzu);
 
   for (ayfnwr1v = 1; ayfnwr1v <= *f8yswcat; ayfnwr1v++) {
@@ -158,8 +158,8 @@ void fvlmz9iyC_mux22(double wpuarq2m[], double tlgduey8[], double bzmd6ftvmat[],
       }
   }
 
-  Free(wkumc9idwk12);
-  Free(wkumc9idtgiyxdw1);    Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idwk12);
+  R_Free(wkumc9idtgiyxdw1);    R_Free(wkumc9iddufozmt7);
 }
 
 
@@ -177,10 +177,10 @@ void fvlmz9iyC_vbks(double wpuarq2m[], double unvxka0m[],
   double q6zdcwxk;
 
   double *wkumc9idwk12;
-  wkumc9idwk12 = Calloc(zyojx5hw , double);
+  wkumc9idwk12 = R_Calloc(zyojx5hw , double);
 
-  wkumc9idtgiyxdw1  = Calloc(imk5wjxg, int);
-  wkumc9iddufozmt7  = Calloc(imk5wjxg, int);
+  wkumc9idtgiyxdw1  = R_Calloc(imk5wjxg, int);
+  wkumc9iddufozmt7  = R_Calloc(imk5wjxg, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, wy1vqfzu);
 
   for (ayfnwr1v = 1; ayfnwr1v <= *f8yswcat; ayfnwr1v++) {
@@ -198,8 +198,8 @@ void fvlmz9iyC_vbks(double wpuarq2m[], double unvxka0m[],
       }
   }
 
-  Free(wkumc9idwk12);
-  Free(wkumc9idtgiyxdw1);   Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idwk12);
+  R_Free(wkumc9idtgiyxdw1);   R_Free(wkumc9iddufozmt7);
 }
 
 
@@ -283,12 +283,12 @@ void fvlmz9iyC_mux17(double wpuarq2m[], double he7mqnvy[],
          imk5wjxg = *wy1vqfzu * (*wy1vqfzu + 1) / 2,
          zyojx5hw  = *wy1vqfzu *  *wy1vqfzu,
          dz1lbtph  = *wy1vqfzu *  *xjc4ywlh;
-  wkumc9idtgiyxdw1  = Calloc(imk5wjxg, int);
-  wkumc9iddufozmt7  = Calloc(imk5wjxg, int);
+  wkumc9idtgiyxdw1  = R_Calloc(imk5wjxg, int);
+  wkumc9iddufozmt7  = R_Calloc(imk5wjxg, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, wy1vqfzu);
 
-  wkumc9idwk12  = Calloc(zyojx5hw, double);
-  wkumc9idwk34  = Calloc(dz1lbtph, double);
+  wkumc9idwk12  = R_Calloc(zyojx5hw, double);
+  wkumc9idwk34  = R_Calloc(dz1lbtph, double);
 
   for (ayfnwr1v = 1; ayfnwr1v <= *f8yswcat; ayfnwr1v++) {
       for (bpvaqm5z = 1; bpvaqm5z <= *npjlv3mr; bpvaqm5z++) {
@@ -316,9 +316,9 @@ void fvlmz9iyC_mux17(double wpuarq2m[], double he7mqnvy[],
     }
   }
 
-  Free(wkumc9idwk12);
-  Free(wkumc9idwk34);
-  Free(wkumc9idtgiyxdw1);    Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idwk12);
+  R_Free(wkumc9idwk34);
+  R_Free(wkumc9idtgiyxdw1);    R_Free(wkumc9iddufozmt7);
 }
 
 
@@ -333,7 +333,7 @@ void fvlmz9iyC_lkhnw9yq(double wpuarq2m[], double ks3wejcv[],
           zyojx5hw = *wy1vqfzu * *wy1vqfzu;
   double  q6zdcwxk, vn3iasxugno = 1.0e-14;
   double  *wkumc9idwrk;
-  wkumc9idwrk = Calloc(zyojx5hw, double);
+  wkumc9idwrk = R_Calloc(zyojx5hw, double);
 
   *dvhw1ulq = 1;
 
@@ -366,7 +366,7 @@ void fvlmz9iyC_lkhnw9yq(double wpuarq2m[], double ks3wejcv[],
           ks3wejcv[ayfnwr1v-1 + (yq6lorbx-1) * *wy1vqfzu] = q6zdcwxk;
       }
   }
-  Free(wkumc9idwrk);
+  R_Free(wkumc9idwrk);
 }
 
 

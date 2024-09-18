@@ -231,6 +231,7 @@ AR1(ldrift = "identitylink", lsd  = "loglink", lvar = "loglink", lrho = "rhobitl
 
 }
 \examples{
+\dontrun{
 ### Example 1: using  arima.sim() to generate a 0-mean stationary time series.
 nn <- 500
 tsdata <- data.frame(x2 =  runif(nn))
@@ -254,7 +255,6 @@ fit1a <- vglm(TS1 ~ 1, data = tsdata, trace = TRUE,
 Coef(fit1a)
 summary(fit1a)
 
-\dontrun{
 ### Two responses. Here, the white noise standard deviation of TS2   ###
 ### is modelled in terms of 'x2'. Also, 'type.EIM = exact'.  ###
 fit1b <- vglm(cbind(TS1, TS2) ~ x2,

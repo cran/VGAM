@@ -104,7 +104,8 @@ hdeff.matrix(object, ...)
   If numeric then they should comprise
   elements from \code{1:length(coef(object))}.
   This argument can be useful for computing the derivatives of a
-  Cox regression (\code{\link{coxph}}) fitted using artificially
+  Cox regression (\code{\link[survival]{coxph}})
+  fitted using artificially
   created Poisson data; then there are many coefficients that
   are effectively nuisance parameters.
 
@@ -490,7 +491,10 @@ hdeff(c(t(mymat)), byrow = TRUE)  # Reordering of the data
 % Justification is given for this.
 % Function cops() is an implementation of that
 % idea later (c.2023), with logistic regression 
-% specifically in mind.
+% specifically in mind. For this particular
+% regression model, p=0.5 and eta=0=logit(p=0.5)
+% are the COPS on the original probability and
+% eta scales.
 % Other COPS further developments since
 % that submission include where the OIM and EIM
 % have a minimum: e.g.,

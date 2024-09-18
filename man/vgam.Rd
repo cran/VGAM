@@ -432,11 +432,10 @@ head(phfit$se.fit)
 phfit$df
 phfit$sigma
 
-# Fit two species simultaneously
+\dontrun{   # Fit two species simultaneously
 hfit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude, df = c(2, 3)),
               binomialff(multiple.responses = TRUE), data = hunua)
 coef(hfit2, matrix = TRUE)  # Not really interpretable
-\dontrun{
 plot(hfit2, se = TRUE, overlay = TRUE, lcol = 3:4, scol = 3:4)
 ooo <- with(hunua, order(altitude))
 with(hunua, matplot(altitude[ooo], fitted(hfit2)[ooo,],
@@ -444,7 +443,6 @@ with(hunua, matplot(altitude[ooo], fitted(hfit2)[ooo,],
      xlab = "Altitude (m)", ylab = "Probability of presence",
      main = "Two plant species' response curves"))
 with(hunua, rug(altitude))
-}
 
 # The 'subset' argument does not work here. Use subset() instead.
 set.seed(1)
@@ -462,7 +460,7 @@ fit4b <- vgam(cbind(y, y) ~ s(x2, df = 2),
 fit4c <- vgam(cbind(y, y) ~ sm.os(x2),
               binomialff(multiple.responses = TRUE),
               data = sub.zdata)  # This succeeds!!!
-\dontrun{par(mfrow = c(2, 2))
+par(mfrow = c(2, 2))
 plot(fit4b, se = TRUE, shade = TRUE, shcol = "pink")
 plot(fit4c, se = TRUE, shade = TRUE, shcol = "pink")
 }

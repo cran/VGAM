@@ -66,7 +66,7 @@ rlaplace(n, location = 0, scale = 1)
 
 
 
-  See \code{\link{laplace}}, the \pkg{VGAM} family function
+  See \code{\link[VGAM]{laplace}}, the \pkg{VGAM} family function
   for estimating the two parameters by maximum likelihood estimation,
   for formulae and details.
   Apart from \code{n}, all the above arguments may be vectors and
@@ -97,7 +97,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 %}
 
 \seealso{
-  \code{\link{laplace}}.
+  \code{\link[VGAM]{laplace}}.
 
 
 }

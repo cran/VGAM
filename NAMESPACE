@@ -16,6 +16,9 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
+ export(DDfun)
+ importFrom("stats", "D")
+ export(hdeffsev2)
  export(N1binomial, dN1binom, rN1binom)
  export(N1poisson, dN1pois, rN1pois)
  export(eimjk.N1b)
@@ -765,7 +768,7 @@ s.vam,
 terms.vlm,
 termsvlm,
 Tol.Coef.qrrvglm, Tol.qrrvglm,
-triangle, dtriangle, ptriangle, qtriangle, rtriangle,
+  dtriangle, ptriangle, qtriangle, rtriangle,
 valid.vknotl2,
   vcovvlm,
 vglm.fit, vgam.fit,
@@ -848,16 +851,20 @@ export(lognormal)
 export(dpolono, ppolono, rpolono)
 export(dgpd, pgpd, qgpd, rgpd, gpd)
 export(dgev, pgev, qgev, rgev, gev, gevff)
+
+
+
+
 export(dlaplace, plaplace, qlaplace, rlaplace, laplace)
-export(dalap, palap, qalap, ralap,
-       alaplace1.control, alaplace2.control, alaplace3.control,
-       alaplace1, alaplace2, alaplace3)
-export(dloglap, ploglap, qloglap, rloglap)
-export(loglaplace1.control, loglaplace1)
-export(dlogitlap, plogitlap, qlogitlap, rlogitlap,
-       logitlaplace1.control, logitlaplace1)
-export(dprobitlap, pprobitlap, qprobitlap, rprobitlap)
-export(dclogloglap, pclogloglap, qclogloglap, rclogloglap)
+
+
+
+
+
+
+
+
+
 export(dcard, pcard, qcard, rcard, cardioid)
 export(fff, fff.control,
        mbesselI0,

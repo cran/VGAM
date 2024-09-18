@@ -291,7 +291,7 @@ have been placed in \pkg{VGAMdata}.
 }
 
 \examples{
-avec <- c(5, 10)  # Alter these values parametrically
+\dontrun{ avec <- c(5, 10)  # Alter these values parametrically
 ivec <- c(3, 15)  # Inflate these values
 tvec <- c(6, 7)   # Truncate these values
 max.support <- 20; set.seed(1)
@@ -304,7 +304,7 @@ gdata <- transform(gdata,
                 max.support = max.support))
 gaitdlog(a.mix = avec, i.mix = ivec, max.support = max.support)
 with(gdata, table(y1))
-\dontrun{ spikeplot(with(gdata, y1), las = 1) }
+spikeplot(with(gdata, y1), las = 1)
 fit7 <- vglm(y1 ~ x2, trace = TRUE, data = gdata,
              gaitdlog(i.mix = ivec, truncate = tvec,
                       max.support = max.support, a.mix = avec,
@@ -313,7 +313,7 @@ head(fitted(fit7, type.fitted = "Pstr.mix"))
 head(predict(fit7))
 t(coef(fit7, matrix = TRUE))  # Easier to see with t()
 summary(fit7)
-\dontrun{ spikeplot(with(gdata, y1), lwd = 2, ylim = c(0, 0.4))
+spikeplot(with(gdata, y1), lwd = 2, ylim = c(0, 0.4))
 plotdgaitd(fit7, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)  }
 }
 \keyword{models}

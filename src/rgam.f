@@ -194,14 +194,13 @@ C Output from Public domain Ratfor, version 1.04
       integer nb
       double precision xecbg0pf(nb),z4grbpiq(nb),d7glzhbj(nb),v2eydbxs(n
      *b),tb(nb+4)
-      integer dqlr5bse,ilo,pqzfxw4i, three3, ifour4, nbp1
+      integer dqlr5bse,ilo,pqzfxw4i, three3, nbp1
       integer ayfnwr1v,iii,yq6lorbx
       integer i2svdbx3tk
       double precision g9fvdrbw(4,3),work(16),yw1(4),yw2(4), wpt
       double precision othird
       othird = 1.0d0 / 3.0d0
       three3 = 3
-      ifour4 = 4
       nbp1 = nb + 1
       do23045 ayfnwr1v = 1,nb 
       xecbg0pf(ayfnwr1v) = 0.0d0
@@ -427,13 +426,12 @@ C Output from Public domain Ratfor, version 1.04
       double precision qtce8hzo
       double precision rxeqjn0y
       integer izero0, three3, ilo, pqzfxw4i, yq6lorbx, ayfnwr1v
-      integer icoef, dqlr5bse, ifour4, hbsl0gto, nkp1
+      integer icoef, dqlr5bse, ifour4, nkp1
       ilo = 1
       qaltf0nz = 0.1d-10
       izero0 = 0
       three3 = 3
       ifour4 = 4
-      hbsl0gto = 1
       nkp1 = nk + 1
       do23103 ayfnwr1v = 1,nk 
       coef(ayfnwr1v) = xwy(ayfnwr1v) 
@@ -487,7 +485,7 @@ C Output from Public domain Ratfor, version 1.04
       xv = ankcghz2(nk+1) - qaltf0nz 
       endif
       yq6lorbx = dqlr5bse-3
-      call vbsplvd(ankcghz2,ifour4,xv,dqlr5bse,work,g9fvdrbw,hbsl0gto)
+      call vbsplvd(ankcghz2,4,xv,dqlr5bse,work,g9fvdrbw,1)
       b0 = g9fvdrbw(1,1)
       b1 = g9fvdrbw(2,1)
       b2 = g9fvdrbw(3,1)
@@ -545,9 +543,6 @@ C Output from Public domain Ratfor, version 1.04
       double precision qaltf0nz,g9fvdrbw(4,1), work(16)
       double precision w2svdbx3tk, wv2svdbx3tk
       integer yq6lorbx,ayfnwr1v,ilo,dqlr5bse,pqzfxw4i, nhnpt1zym1
-      integer ifour4, hbsl0gto
-      hbsl0gto = 1
-      ifour4 = 4
       nhnpt1zym1 = kuzxj1lo + 1
       do23135 ayfnwr1v = 1,kuzxj1lo 
       bhcji9glto(ayfnwr1v) = 0.0d0 

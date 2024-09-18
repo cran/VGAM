@@ -115,7 +115,7 @@ amlbinomial(w.aml = 1, parallel = FALSE, digw = 4, link = "logitlink")
   \code{\link{amlexponential}},
   \code{\link{amlnormal}},
   \code{\link{extlogF1}},
-  \code{\link{alaplace1}},
+  \code{\link[VGAMdata]{alaplace1}},
   \code{\link{denorm}}.
 
 }

@@ -84,6 +84,7 @@ called the \emph{species score}.
 }
 
 \examples{
+\dontrun{
 set.seed(111)  # This leads to the global solution
 hspider[,1:6] <- scale(hspider[,1:6])  # Standardized environmental vars
 p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
@@ -93,7 +94,6 @@ p1 <- cqo(cbind(Alopacce, Alopcune, Alopfabr, Arctlute, Arctperi,
           family = poissonff, data = hspider, Crow1positive = FALSE)
 Opt(p1)
 
-\dontrun{
 clr <- (1:(ncol(depvar(p1))+1))[-7]  # Omits yellow
 persp(p1, col = clr, las = 1, main = "Vertical lines at the optimums")
 abline(v = Opt(p1), lty = 2, col = clr)

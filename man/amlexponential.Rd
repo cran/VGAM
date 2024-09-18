@@ -125,7 +125,7 @@ amlexponential(w.aml = 1, parallel = FALSE, imethod = 1, digw = 4,
   \code{\link{amlpoisson}},
   \code{\link{amlnormal}},
   \code{\link{extlogF1}},
-  \code{\link{alaplace1}},
+  \code{\link[VGAMdata]{alaplace1}},
   \code{\link{lms.bcg}},
   \code{\link{deexp}}.
 

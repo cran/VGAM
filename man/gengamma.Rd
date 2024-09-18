@@ -162,10 +162,12 @@ Also the log-normal distribution corresponds to when \code{k = Inf}.
 
 }
 \examples{
+\dontrun{
 k <- exp(-1); Scale <- exp(1); dd <- exp(0.5); set.seed(1)
 gdata <- data.frame(y = rgamma(2000, shape = k, scale = Scale))
 gfit <- vglm(y ~ 1, gengamma.stacy, data = gdata, trace = TRUE)
 coef(gfit, matrix = TRUE)
+}
 }
 \keyword{models}
 \keyword{regression}

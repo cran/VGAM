@@ -141,6 +141,7 @@ expexpff(lrate = "loglink", lshape = "loglink",
 
 }
 \examples{
+\dontrun{
 # A special case: exponential data
 edata <- data.frame(y = rexp(n <- 1000))
 fit <- vglm(y ~ 1, fam = expexpff, data = edata, trace = TRUE, maxit = 99)
@@ -169,6 +170,7 @@ fit <- vglm(acplane ~ 1, fam = expexpff(ishape = 0.8, irate = 0.15),
 coef(fit, matrix = TRUE)
 Coef(fit)    # Authors get c(rate=0.0145, shape=0.8130)
 logLik(fit)  # Authors get log-lik -152.264
+}
 }
 \keyword{models}
 \keyword{regression}

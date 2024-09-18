@@ -360,7 +360,7 @@ show.summary.vglm <-
 
   digits <- if (is.null(digits)) options()$digits - 2 else digits
 
-  cat("\nCall:\n",
+  cat("Call:\n",
       paste(deparse(x@call),
                     sep = "\n", collapse = "\n"),
       "\n", sep = "")

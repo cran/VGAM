@@ -321,24 +321,24 @@ if (FALSE) {  ###################################################
           temp1@family@linkinv(eta = temp1@predictors,
                   extra = temp1@extra))  # Make sure a matrix
         if (dirr == 1)
-          wwt.f <- weights(temp1, type = "working",
-                           ignore.slot = TRUE)
+          wwt.f1 <- weights(temp1, type = "working",
+                            ignore.slot = TRUE)
         if (dirr == 2)
-          wwt.b <- weights(temp1, type = "working",
-                           ignore.slot = TRUE)
+          wwt.b1 <- weights(temp1, type = "working",
+                            ignore.slot = TRUE)
       }  # dirr
-      if (ncol(wwt.f) < MM12)
-        wwt.f <- cbind(wwt.f,
-                       matrix(0, n.LM, MM12 - ncol(wwt.f)))
-      if (ncol(wwt.b) < MM12)
-        wwt.b <- cbind(wwt.b,
-                       matrix(0, n.LM, MM12 - ncol(wwt.b)))
+      if (ncol(wwt.f1) < MM12)
+        wwt.f1 <- cbind(wwt.f1,
+                        matrix(0, n.LM, MM12 - ncol(wwt.f1)))
+      if (ncol(wwt.b1) < MM12)
+        wwt.b1 <- cbind(wwt.b1,
+                        matrix(0, n.LM, MM12 - ncol(wwt.b1)))
 
 
-      cdiff <- (wwt.f - wwt.b) / (2 * hstep[1])
-      cdiff2 <- (wwt.f - 2 * wwt.0 + wwt.b) / (hstep[1]^2)
+      cdiff1 <- (wwt.f1 - wwt.b1) / (2 * hstep[1])
+      cdiff2 <- (wwt.f1 - 2 * wwt.0 + wwt.b1) / (hstep[1])^2
 
-      dwz.dbetas   <- dwz.dbetas   + as.matrix(cdiff)  * bix.jk
+      dwz.dbetas   <- dwz.dbetas   + as.matrix(cdiff1) * bix.jk
       d2wz.dbetas2 <- d2wz.dbetas2 + as.matrix(cdiff2) * bix.jk^2
 
 
@@ -676,19 +676,22 @@ setMethod("hdeff", "numeric", function(object, ...)
 
 
 
+
 hdeffsev <-
   function(x, y,
            dy, ddy,  # 1st and 2nd derivs           
            allofit = FALSE,
            eta0 = 0,  # NA or NULL means dont know, may be Inf
            COPS0 = eta0,  # Assumption. May be Inf.
-           severity.table = c("None",
+           severity.table =    # if (ndepends)
+                            c("None",
                               "Faint",  # Retaining this
                               "Weak",
                               "Moderate",
                               "Strong",
                               "Extreme",  # ==Extreme1--
-                              "Undetermined")) { 
+                              "Undetermined")   #  else
+          ) { 
 
 
 
@@ -710,6 +713,11 @@ hdeffsev <-
   dzeta.dx <- 1 + dy^2 + y * ddy
   tanzeta <- x - y / dy
   dtanzeta.dx <- y * ddy / dy^2
+
+
+
+
+
 
 
   ind.none     <- dy >= 0   # &  # Not SSD: 20220829
@@ -835,54 +843,93 @@ if (is.infinite(COPS0) && COPS0 < 0)
 
 
 
-if (F)
-hdeffsev <-
+hdeffsev2 <-
   function(x, y,
            dy, ddy,  # 1st and 2nd derivs           
            allofit = FALSE,
-           tol0 = 0.1,
+           ndepends = FALSE,  # 20240703
+           eta0 = 0,  # NA or NULL means dont know, may be Inf
            severity.table = c("None", "Faint", "Weak",
-                              "Moderate", "Strong", "Extreme",
-                              "Undetermined")) { 
+             "Moderate", "Strong",
+             "Extreme",
+             "Undetermined")[if (ndepends) TRUE else
+             c(1, 4, 6, 7)],
+           tol0 = 0.1) { 
 
+  if ((Lx <- length(x)) != length(y) ||
+       Lx != length(dy) ||  Lx != length(ddy))
+    stop("Args 'x', 'y', 'dy' and 'ddy' ",
+         "must have equal lengths")
 
- 
-
-
-  warning("20220829; original but sample size dependent!")
-
-
-  severity <- rep_len(severity.table[7], length(x))  # Initialize
+  LSE <- length(severity.table)
+  severity <- rep(severity.table[LSE], Lx)
   names(severity) <- names(x)
-  zeta <- x + y * dy
+  zeta <- x + y * dy  # Normal line
   dzeta.dx <- 1 + dy^2 + y * ddy
   tanzeta <- x - y / dy
   dtanzeta.dx <- y * ddy / dy^2
-  ind.none     <- dy > 0 &
-                  ifelse(0 <= x, ddy > 0, ddy < 0) &  # 20181105
-                  dzeta.dx > 0
+
+  if (is.na(eta0) || is.null(eta0)) {
+    splinethrudata1 <- function(X)
+      spline(x, y, xout = X)$y
+    eta0 <- uniroot(splinethrudata1,
+                    interval = range(x))$root
+  }
+
+  if (ndepends) {
+  warning("20240703; answer is sample size dependent!")
+  fullans <- hdeffsev2(x, y, dy, ddy,
+           allofit = FALSE,  # TRUE,
+           ndepends = FALSE,  # Sparse answer
+           eta0 = eta0,
+           tol0 = tol0)
+  return(fullans)
+  ind.none <-
+      dy > 0 &
+      ifelse(eta0 <= x, ddy > 0, ddy < 0) &  # 20181105
+      dzeta.dx > 0
   severity[ind.none] <- severity.table[1]
   severity[abs(x) < tol0] <- severity.table[1]  # Additional cond.
-  ind.faint    <- dy > 0 &
-                  ifelse(0 <= x, ddy <= 0, ddy >= 0) &
-                  dzeta.dx > 0
+  ind.faint <-
+      dy > 0 &
+      ifelse(eta0 <= x, ddy <= 0, ddy >= 0) &
+      dzeta.dx > 0
   severity[ind.faint] <- severity.table[2]
-  ind.weak     <- dy > 0 &
-                  ifelse(0 <= x, ddy < 0, ddy > 0) &
-                  dzeta.dx < 0
+  ind.weak <-
+      dy > 0 &
+      ifelse(eta0 <= x, ddy < 0, ddy > 0) &
+      dzeta.dx < 0
   severity[ind.weak] <- severity.table[3]
-  ind.moderate <- dy <= 0 &  # Note <= rather than <
-                  ifelse(0 <= x, ddy < 0, ddy > 0) & 
-                  dzeta.dx < 0
+  ind.moderate <-
+      dy <= 0 &  # Note <= rather than <
+      ifelse(0 <= x, ddy < 0, ddy > 0) & 
+      dzeta.dx < 0
   severity[ind.moderate] <- severity.table[4]
-  ind.strong   <- dy < 0 &
-                  ifelse(0 <= x, ddy < 0, ddy > 0) & 
-                  dzeta.dx > 0
+  ind.strong <-
+      dy < 0 &
+      ifelse(0 <= x, ddy < 0, ddy > 0) & 
+      dzeta.dx > 0
   severity[ind.strong] <- severity.table[5]
-  ind.extreme  <- dy < 0 &
-                  ifelse(0 <= x, ddy >= 0, ddy < 0) & 
-                  dzeta.dx > 0
+  ind.extreme <-
+      dy < 0 &
+      ifelse(0 <= x, ddy >= 0, ddy < 0) & 
+      dzeta.dx > 0
   severity[ind.extreme] <- severity.table[6]
+  } else {  # ------------------------------
+  vecTF.xy <- is.finite(x) & is.finite(dy) &
+              is.finite(y) & is.finite(ddy)
+  ind.none <- vecTF.xy & dy > 0 
+  severity[ind.none] <- severity.table[1]
+  ind.moderate <-
+    vecTF.xy & dy <= 0 &  # <=, not <
+    ifelse(eta0 <= x, ddy <= 0, ddy >= 0)
+  severity[ind.moderate] <- severity.table[2]
+  ind.extreme  <-
+    vecTF.xy & dy <= 0 &
+    ifelse(eta0 <= x, ddy >= 0, ddy <= 0)
+  severity[ind.extreme] <- severity.table[3]
+  }
+
   if (allofit)
     list(severity     = severity,
          zeta         = zeta,
@@ -892,8 +939,7 @@ hdeffsev <-
          tanzeta      = tanzeta,
          dtanzeta.dx  = dtanzeta.dx) else
     severity
-}  # hdeffsev (original)
-
+}  # hdeffsev2 (was the original)
 
 
 
@@ -1144,6 +1190,16 @@ setMethod("cops", "vglm",
           function(object, ...) {
   copsvglm(object, ...)
 })
+
+
+
+
+DDfun <- function(expr, name, order = 0) {
+  if (order < 0) stop("'order' must be >= 0")
+  if (order == 0) return(expr)
+  if (order == 1) D(expr, name) else
+  DDfun(D(expr, name), name, order - 1)
+}
 
 
 

@@ -12,6 +12,8 @@
 %
 %
 %
+% 202408
+ \alias{DDfun}
 % 202404
  \alias{eimjk.N1b}
  \alias{eimjk.N1p}

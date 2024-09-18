@@ -89,8 +89,8 @@
 \seealso{
   Currently the \pkg{VGAM} family functions with a
   \code{simslot} slot are:
-  \code{\link{alaplace1}},
-  \code{\link{alaplace2}},
+  \code{\link[VGAMdata]{alaplace1}},
+  \code{\link[VGAMdata]{alaplace2}},
   \code{\link{betabinomial}},
   \code{\link{betabinomialff}},
   \code{\link{betaR}},
@@ -151,7 +151,7 @@
   \code{\link{studentt}},
   \code{\link{studentt2}},
   \code{\link{studentt3}},
-  \code{\link{triangle}},
+  \code{\link[VGAMdata]{triangle}},
   \code{\link{uninormal}},
   \code{\link{yulesimon}},
   \code{\link{zageometric}},

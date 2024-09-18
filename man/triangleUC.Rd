@@ -56,9 +56,12 @@ rtriangle(n, theta, lower = 0, upper = 1)
 %}
 \author{ T. W. Yee and Kai Huang }
 \details{
-  See \code{\link{triangle}}, the \pkg{VGAM} family function
+  See \code{\link[VGAMdata]{triangle}},
+  the \pkg{VGAM} family function
   for estimating the parameter \eqn{\theta}{theta} by
-  maximum likelihood estimation.
+  maximum likelihood estimation, however the regular
+  conditions do not hold so the algorithm crawls
+  to the solution if lucky.
 
 
 }
@@ -66,8 +69,8 @@ rtriangle(n, theta, lower = 0, upper = 1)
 %
 %}
 \seealso{
-  \code{\link{triangle}},
-  \code{\link{topple}}.
+  \code{\link[VGAMdata]{triangle}},
+  \code{\link[VGAM]{topple}}.
 
 
 }

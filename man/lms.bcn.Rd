@@ -256,7 +256,7 @@ Quantile regression via vector generalized additive models.
   \code{\link{cdf.lmscreg}},
   \code{\link{eCDF}},
   \code{\link{extlogF1}},
-  \code{\link{alaplace1}},
+  \code{\link[VGAMdata]{alaplace1}},
   \code{\link{amlnormal}},
   \code{\link{denorm}},
   \code{\link{CommonVGAMffArguments}}.

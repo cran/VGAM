@@ -793,6 +793,7 @@ The \pkg{VGAM} package for negative binomial regression.
 
 }
 \examples{
+\dontrun{
 # Example 1: apple tree data (Bliss and Fisher, 1953)
 appletree <- data.frame(y = 0:7, w = c(70, 38, 17, 10, 9, 3, 2, 1))
 fit <- vglm(y ~ 1, negbinomial(deviance = TRUE), data = appletree,
@@ -805,22 +806,18 @@ Coef(fit)  # For intercept-only models
 deviance(fit)  # NB2 only; needs 'crit="coef"' & 'deviance=T' above
 
 # Example 2: simulated data with multiple responses
-\dontrun{
 ndata <- data.frame(x2 = runif(nn <- 200))
 ndata <- transform(ndata, y1 = rnbinom(nn, exp(1), mu = exp(3+x2)),
                           y2 = rnbinom(nn, exp(0), mu = exp(2-x2)))
 fit1 <- vglm(cbind(y1, y2) ~ x2, negbinomial, ndata, trace = TRUE)
 coef(fit1, matrix = TRUE)
-}
 
 # Example 3: large counts implies SFS is used
-\dontrun{
 ndata <- transform(ndata, y3 = rnbinom(nn, exp(1), mu = exp(10+x2)))
 with(ndata, range(y3))  # Large counts
 fit2 <- vglm(y3 ~ x2, negbinomial, data = ndata, trace = TRUE)
 coef(fit2, matrix = TRUE)
 head(weights(fit2, type = "working"))  # Non-empty; SFS was used
-}
 
 # Example 4: a NB-1 to estimate a NB with Var(Y)=phi0*mu
 nn <- 200  # Number of observations
@@ -829,9 +826,8 @@ delta0 <- 1 / (phi0 - 1)
 mydata <- data.frame(x2 = runif(nn), x3 = runif(nn))
 mydata <- transform(mydata, mu = exp(2 + 3 * x2 + 0 * x3))
 mydata <- transform(mydata, y3 = rnbinom(nn, delta0 * mu, mu = mu))
-\dontrun{
 plot(y3 ~ x2, data = mydata, pch = "+", col = "blue",
-     main = paste("Var(Y) = ", phi0, " * mu", sep = ""), las = 1) }
+     main = paste("Var(Y) = ", phi0, " * mu", sep = ""), las = 1)
 nb1 <- vglm(y3 ~ x2 + x3, negbinomial(parallel = TRUE, zero = NULL),
             data = mydata, trace = TRUE)
 # Extracting out some quantities:
@@ -850,6 +846,7 @@ ci.delta0 <- ci.exp.mydiff <- exp(ci.mydiff)
 Confint.nb1(nb1)  # Quick way to get it
 # cf. moment estimator:
 summary(glm(y3 ~ x2 + x3, quasipoisson, mydata))$disper
+}
 }
 \keyword{models}
 \keyword{regression}

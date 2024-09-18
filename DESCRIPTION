@@ -1,6 +1,6 @@
 Package: VGAM
-Version: 1.1-11
-Date: 2024-05-15
+Version: 1.1-12
+Date: 2024-09-18
 Title: Vector Generalized Linear and Additive Models
 Authors@R: c(person("Thomas", "Yee", role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0002-9970-3907"),
@@ -10,7 +10,7 @@ Authors@R: c(person("Thomas", "Yee", role = c("aut", "cre"),
 Author: Thomas Yee [aut, cre] (<https://orcid.org/0000-0002-9970-3907>),
   Cleve Moler [ctb] (LINPACK routines in src)
 Maintainer: Thomas Yee <t.yee@auckland.ac.nz>
-Depends: R (>= 4.0.0), methods, stats, stats4, splines
+Depends: R (>= 4.1.0), methods, stats, stats4, splines
 Suggests: VGAMextra, MASS, mgcv
 Enhances: VGAMdata
 Description: An implementation of about 6 major classes of
@@ -40,6 +40,6 @@ NeedsCompilation: yes
 BuildVignettes: yes
 LazyLoad: yes
 LazyData: yes
-Packaged: 2024-05-15 09:07:50 UTC; tyee001
+Packaged: 2024-09-18 02:04:29 UTC; tyee001
 Repository: CRAN
-Date/Publication: 2024-05-15 10:40:02 UTC
+Date/Publication: 2024-09-18 07:20:10 UTC

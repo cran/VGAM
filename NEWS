@@ -1,3 +1,28 @@
+	CHANGES IN VGAM VERSION 1.1-12
+
+NEW FEATURES
+
+    o   hdeffsev2() and DDfun() are new.
+    o   Some link functions handle up to deriv = 9: e.g.,
+        loglink(), logitlink().
+    o   Tested okay on R 4.4.1.
+
+
+BUG FIXES and CHANGES
+
+    o   Passes stricter CHECKing, esp. with Rd
+        \link{} targets that were missing package anchors.
+        And R_Calloc() and R_Free() used.
+    o   More \dontrun{} added to .Rd files, to quicken
+        the checking.
+    o   Several functions associated with the Laplace
+        distribution moved to VGAMdata.
+    o   VGAM now depends on R >= 4.1.0 which was released
+        3 years ago.
+
+
+
+
                 CHANGES IN VGAM VERSION 1.1-11
 
 NEW FEATURES

@@ -69,7 +69,7 @@ dextlogF(x, lambda, tau, location = 0, scale = 1, log = FALSE)
 
 \seealso{
   \code{\link{extlogF1}},
-  \code{\link{dalap}}.
+  \code{\link[VGAMdata]{dalap}}.
 
 
 % \code{\link{simulate.vlm}}.

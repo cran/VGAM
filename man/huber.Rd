@@ -91,7 +91,7 @@ huber2(llocation = "identitylink", lscale = "loglink",
 \seealso{
     \code{\link{rhuber}},
     \code{\link{uninormal}},
-    \code{\link{laplace}},
+    \code{\link[VGAM]{laplace}},
     \code{\link{CommonVGAMffArguments}}.
 
 

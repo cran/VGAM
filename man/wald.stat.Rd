@@ -172,7 +172,7 @@ Almost all \pkg{VGAM} family functions use the EIM and not
 the OIM; this affects the resulting standard errors.
 Also, regularity conditions are assumed for the Wald,
 likelihood ratio and score tests; some \pkg{VGAM} family functions
-such as \code{\link{alaplace1}} are experimental and
+such as \code{\link[VGAMdata]{alaplace1}} are experimental and
 do not satisfy such conditions, therefore naive inference is
 hazardous.
 

@@ -78,6 +78,7 @@ dAR1(x, drift = 0, var.error = 1, ARcoef1 = 0.0,
 
 }
 \examples{
+\dontrun{
 nn <- 100; set.seed(1)
 tdata <- data.frame(index = 1:nn,
                     TS1 = arima.sim(nn, model = list(ar = -0.50),
@@ -97,6 +98,7 @@ logLik(fit2)
 head(keep <- dAR1(depvar(fit2), drift = Cfit2[1], var.error = (Cfit2[2])^2,
                   ARcoef1 = Cfit2[3], type.likelihood = "cond", log = TRUE))
 sum(keep[-1])
+}
 }
 \keyword{distribution}
 

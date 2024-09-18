@@ -1,7 +1,8 @@
 \name{hdeffsev}
 \alias{hdeffsev}
+\alias{hdeffsev2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Hauck-Donner Effects: Severity Measures }
+\title{ Hauck-Donner Effect: Severity Measures }
 \description{
   Computes the severity of the
   Hauck-Donner effect for each regression coefficient
@@ -13,6 +14,12 @@
 hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
          severity.table = c("None", "Faint", "Weak",
              "Moderate", "Strong", "Extreme", "Undetermined"))
+hdeffsev2(x, y, dy, ddy, allofit = FALSE, ndepends = FALSE,
+          eta0 = 0,
+          severity.table = c("None", "Faint", "Weak",
+              "Moderate", "Strong", "Extreme",
+              "Undetermined")[if (ndepends) TRUE else
+              c(1, 4, 6, 7)], tol0 = 0.1)
 }
 %hdeffsev(tol0 = 0.1,
 %    severity.table = c("None", "Faint", "Weak", "Moderate",
@@ -43,8 +50,8 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
 
   }
   \item{severity.table}{
-    Character vector with 6 values.
-    The last value is used for initialization.
+    Character vector with 6 values plus
+    the last value for initialization.
   Usually users should not assign anything to
   this argument.
 
@@ -60,36 +67,48 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
   \item{eta0}{
     Numeric. The hypothesized value.
     The default is appropriate for most symmetric
-    binomial links,and also for Poisson regression
+    \code{\link{binomialff}} links, and also
+    for \code{\link{poissonff}} regression
     with the natural parameter.
 
+
+  }
+  \item{ndepends}{
+    Logical. Use boundaries that depend on the
+    sample size \eqn{n}?
+    For \code{hdeffsev2} the default is to use boundaries
+    that do not depend on \eqn{n}, and consequently
+    there are fewer severity measures.
+    These do not use the normal or tangent lines;
+    instead they are based only on the signs of
+    \code{dy} and \code{ddy}.
 
 
   }
   \item{COPS0}{
-    Numeric. See Yee (2021).
+    Numeric. See Yee (2023).
 
 
 
   }
-% \item{tol0}{
-%   Numeric. Any estimate whose absolute value is less than
-%   \code{tol0} is assigned the first value of
-%   the argument \code{severity.table}, i.e., none.
-%   This is to handle a singularity at the origin:
-%   the estimates might be extremely close to 0.
-% }
+  \item{tol0}{
+    Numeric. Any estimate whose absolute value is less than
+    \code{tol0} is assigned the first value of
+    the argument \code{severity.table}, i.e., none.
+    This is to handle a singularity at the origin:
+    the estimates might be extremely close to 0.
+  }
 }
 \details{
-  \emph{Note: This function has a bug or two
-    in it but
+  \emph{Note: The function
+    \code{hdeffsev}
+    has a bug or two in it but
   they should be fixed later this year (2024).}
 
 % 202405
 
-
-  
-  This function is rough-and-ready.
+ 
+  Function \code{hdeffsev} is currently rough-and-ready.
   It is possible to use the first two derivatives obtained
   from \code{\link{hdeff}} to categorize the severity of the
   the Hauck-Donner effect (HDE).
@@ -98,27 +117,28 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
   and going right,
   the curve is made up of a convex segment followed by
   a concave segment and then the convex segment.
-  Midway in the concave segment the derivative is 0, and
+  Midway in the concave segment the first
+  derivative is 0, and
   beyond that the HDE is really manifest because the
-  derivative is negative.
+  derivative remains negative.
 
 
 
-  For \code{"none"} the estimate lies on the convex
+  For \code{"None"} the estimate lies on the convex
   part of the curve near the origin, hence there is
   very little HDE at all.
 
 
 
-  For \code{"weak"} the estimate lies on the
+  For \code{"Weak"} the estimate lies on the
   concave part of the curve but the Wald statistic is still
   increasing as estimate gets away from 0, hence it is only
   a mild form of the HDE.
 
 
 
-  Previously \code{"faint"} was used but now it has
-  been omitted.
+% Previously \code{"Faint"} was used but now it has
+% been omitted.
 
 
 
@@ -129,9 +149,9 @@ hdeffsev(x, y, dy, ddy, allofit = FALSE, eta0 = 0, COPS0 = eta0,
 
 
 
-For \code{"moderate"},
-\code{"strong"}
-and \code{"extreme"}
+For \code{"Moderate"},
+\code{"Strong"}
+and \code{"Extreme"}
   the Wald statistic is
   decreasing as the estimate gets away from \code{eta0},
   hence it
@@ -146,7 +166,9 @@ and \code{"extreme"}
 
 }
 \value{
-  By default this function returns a labelled vector with
+  By default this function
+  (\code{hdeffsev})
+  returns a labelled vector with
   elements selected from
   \code{severity.table}.
   If \code{allofit = TRUE} then Yee (2022) gives details
@@ -176,7 +198,7 @@ Detection, tipping points and parameter space characterization,
 
 
 
-Yee, T. W. (2022).
+Yee, T. W. (2023).
 Some new results concerning the Wald tests and
 the parameter space.
 \emph{In review}.
@@ -193,10 +215,21 @@ the parameter space.
 %}
 
 \note{
-  This function is likely to change in the short future
+  These functions are likely to change in the short future
   because it is experimental and far from complete.
   Improvements are intended.
 
+
+  The severity measures ideally should be based on
+  tangent lines rather than normal lines so that the
+  boundaries are independent of the sample size
+  \eqn{n}. Hence such boundaries differ a little
+  from Yee (2022) which had a mixture of such.
+
+
+  The functions were written specifically for
+  \code{\link{binomialff}}, but they should work
+  for some other family functions.
 
 
   Currently,

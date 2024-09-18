@@ -325,7 +325,8 @@ Sections 5.2.2 and 5.3 are particularly relevant.
 
 
 }
-\examples{  # Fit a rank-1 RR-VGLM as a DRR-VGLM.
+\examples{
+\dontrun{  # Fit a rank-1 RR-VGLM as a DRR-VGLM.
 set.seed(1); n <- 1000; S <- 6  # S must be even
 myrank <- 1
 rdata <- data.frame(x1 = runif(n), x2 = runif(n),
@@ -351,7 +352,6 @@ Coef(rfit1)  # The RR-VGLM is the same as
 Coef(dfit1)  # the DRR-VGLM.
 max(abs(predict(rfit1) - predict(dfit1)))  # 0
 abs(logLik(rfit1) - logLik(dfit1))  # 0
-\dontrun{
 summary(rfit1)
 summary(dfit1)
 }

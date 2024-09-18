@@ -105,6 +105,7 @@ weibull.mean(lmean = "loglink", lshape = "loglink",
 
 }
 \examples{
+\dontrun{
 wdata <- data.frame(x2 = runif(nn <- 1000))  # Complete data
 wdata <- transform(wdata, mu     = exp(-1 + 1 * x2),
                           x3     = rnorm(nn),
@@ -117,7 +118,7 @@ fit <- vglm(cbind(y1, y2) ~ x2 + x3, weibull.mean, wdata,
             trace = TRUE)
 coef(fit, matrix = TRUE)
 sqrt(diag(vcov(fit)))  # SEs
-summary(fit, presid = FALSE)
+summary(fit, presid = FALSE)   }
 }
 \keyword{models}
 \keyword{regression}

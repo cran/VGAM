@@ -355,6 +355,7 @@ care.exp2 <- function(x) {
            "6" = theta,
            "7" = theta,
            "8" = theta,
+           "9" = theta,
            stop("argument 'deriv' unmatched"))
   } else {
     switch(as.character(deriv),
@@ -367,6 +368,7 @@ care.exp2 <- function(x) {
        "6" =  -120 / theta^6,
        "7" =   720 / theta^7,
        "8" = -5040 / theta^8,
+       "9" = 40320 / theta^9,
        stop("argument 'deriv' unmatched"))
   }
 }  # loglink
@@ -573,7 +575,6 @@ care.exp2 <- function(x) {
 
 
 
-
  logitlink <-
   function(theta,
            bvalue = NULL,
@@ -599,6 +600,7 @@ care.exp2 <- function(x) {
     theta[theta >= 1.0] <- 1.0 - bvalue
   }
   if (inverse) {
+
     switch(as.character(deriv),
    "0" = plogis(theta),
    "1" =    1 / Recall(theta = theta,
@@ -616,12 +618,29 @@ care.exp2 <- function(x) {
   DD2 <- Recall(theta, deriv = 2, inverse = FALSE)
   DD3 <- Recall(theta, deriv = 3, inverse = FALSE)
   DD4 <- Recall(theta, deriv = 4, inverse = FALSE)
-  (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
+  ans4 <- (iD1^3) * (15 * iD1 * iD2 * (DD2^2) +
               6 * (iD1^3) * DD2 * DD3 -
               4 * iD2 * DD3 - (iD1^2) * DD4)
+  ans4[theta == 1] <- 0
+  ans4
+        },
+        "5" = ,
+        "6" = ,
+        "7" = ,
+        "8" = ,
+        "9" = {
+  etavec <- qlogis(theta)   # prob == theta
+  expr0 <- expression(1 / (1 + exp(-etavec)))
+  ans9 <- DDfun(expr0, "etavec", deriv)
+  ans <- eval(ans9)
+  ans
         },
            stop("argument 'deriv' unmatched"))
   } else {
+
+    expr4 <- expression(-6 * (1 - 2 * theta) *
+      (1 - 2 * theta *
+      (1 - theta)) / (theta * (1 - theta))^4)
     switch(as.character(deriv),
      "0" = qlogis(theta),
      "1" = 1 / (theta * (1 - theta)),
@@ -631,9 +650,19 @@ care.exp2 <- function(x) {
      "4" = -6 * (1 - 2 * theta) *
           (1 - 2 * theta *
           (1 - theta)) / (theta * (1 - theta))^4,
+     "5" = ,
+     "6" = ,
+     "7" = ,
+     "8" = ,
+     "9" = {ans9 <- DDfun(expr4, "theta", deriv - 4)
+            ans <- eval(ans9)
+            ans[theta == 1] <- Inf
+            ans },
      stop("argument 'deriv' unmatched"))
   }
 }  # logitlink
+
+
 
 
 

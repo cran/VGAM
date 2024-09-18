@@ -76,7 +76,7 @@ topple(lshape = "logitlink", zero = NULL, gshape = ppoints(8),
 
 \seealso{
   \code{\link{Topple}},
-  \code{\link{Triangle}}.
+  \code{\link[VGAM]{Triangle}}.
 
 
 

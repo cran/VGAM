@@ -8,7 +8,7 @@
 \description{
   Computes the logit transformation,
   including its inverse and the
-  first two derivatives.
+  first nine derivatives.
 
 }
 \usage{

@@ -95,9 +95,11 @@ summarypvgam(object, dispersion = NULL, digits = options()$digits - 2,
 
 }
 \examples{
+\dontrun{
 hfit2 <- vgam(agaaus ~ sm.os(altitude), binomialff, data = hunua)
 coef(hfit2, matrix = TRUE)
 summary(hfit2)
+}
 }
 \keyword{models}
 \keyword{regression}

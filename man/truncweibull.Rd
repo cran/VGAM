@@ -134,6 +134,7 @@ truncweibull(lower.limit = 1e-5,
 
 }
 \examples{
+\dontrun{
 nn <- 5000; prop.lost <- 0.40   # Proportion lost to truncation
 wdata <- data.frame(x2 = runif(nn))  # Complete Weibull data
 wdata <- transform(wdata,
@@ -157,6 +158,7 @@ coef(fit1, matrix = TRUE)
 summary(fit1)
 vcov(fit1)
 head(fit1@extra$lower.limit)
+}
 }
 \keyword{models}
 \keyword{regression}

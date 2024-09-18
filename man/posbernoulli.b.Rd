@@ -191,6 +191,7 @@ posbernoulli.b(link = "logitlink", drop.b = FALSE ~ 1,
 }
 
 \examples{
+\dontrun{
 # deermice data ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 # Fit a M_b model
@@ -256,6 +257,7 @@ M.bh.2@extra$N.hat  # Population size estimate; should be about N
 M.bh.2@extra$SE.N.hat  # SE of the estimate of the population size
 # An approximate 95 percent confidence interval:
 round(M.bh.2@extra$N.hat + c(-1, 1)*1.96* M.bh.2@extra$SE.N.hat, 1)
+}
 }
 \keyword{models}
 \keyword{regression}

@@ -119,6 +119,7 @@ Generally altered, inflated, truncated and deflated regression.
 
 
 \examples{
+\dontrun{
 abdata <- data.frame(y = 0:7, w = c(182, 41, 12, 2, 2, 0, 0, 1))
 fit1 <- vglm(y ~ 1, gaitdpoisson(a.mix = 0),
              data = abdata, weight = w, subset = w > 0)
@@ -128,7 +129,7 @@ inflated(fit1)  # Subject to change
 truncated(fit1)  # Subject to change
 is.altered(fit1)
 is.inflated(fit1)
-is.truncated(fit1)
+is.truncated(fit1)  }
 }
 \keyword{models}
 

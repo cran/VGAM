@@ -27,8 +27,8 @@ rootogram0.default <-
   function(object, fitted, breaks = NULL,
            style = c("hanging", "standing", "suspended"),
            scale = c("sqrt", "raw"), plot = TRUE,
-           width = NULL, xlab = NULL, ylab = NULL, main = NULL,
-           lowsup = 0L, ...) {
+           width = NULL, xlab = NULL, ylab = NULL,
+           main = NULL, lowsup = 0L, ...) {
 
 
   ## rectangle style
@@ -99,7 +99,8 @@ rootogram0.default <-
 
 
 plot.rootogram0 <- function(x,
-  xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, main = NULL,
+  xlim = NULL, ylim = NULL, xlab = NULL,
+  ylab = NULL, main = NULL,
   border = "black", fill = "lightgray",
   col = "#B61A51",
   lwd = 2, pch = 19, lty = 1, max = NULL,
@@ -112,7 +113,8 @@ plot.rootogram0 <- function(x,
 
   if(is.null(x$group)) x$group <- 1L
   n <- max(x$group)
-  if(is.null(type)) type <- ifelse(any(table(x$group) > 20L), "l", "b")
+  if(is.null(type))
+    type <- ifelse(any(table(x$group) > 20L), "l", "b")
 
   ## annotation
   if(is.null(xlab)) xlab <- TRUE

@@ -87,8 +87,19 @@ TypicalVGAMlink(theta, someParameter = 0, bvalue = NULL, inverse = FALSE,
   \item{deriv}{
   Integer.
   Either 0, 1, or 2, specifying the order of
-  the derivative.  Some link functions handle
-  values up to 3 or 4.
+  the derivative.
+  Most link functions handle values up to 3 or 4.
+  Some links can even handle values up to 9 but may
+  suffer from catastrophic cancellation near the
+  boundaries,
+  be inefficient and slow because they are
+  based on \code{\link[stats:deriv]{D}}.
+
+
+
+% 20240819; logitlink(deriv = 9) done.
+
+
 
 
   }

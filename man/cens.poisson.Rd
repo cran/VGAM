@@ -35,9 +35,9 @@ cens.poisson(link = "loglink", imu = NULL,
 \details{
   Often a table of Poisson counts has an entry \emph{J+} meaning
   \eqn{\ge J}{>= J}.
-  This family function is similar to \code{\link{poissonff}} but handles
-  such censored data. The input requires \code{\link{SurvS4}}.
-  Only a univariate response is allowed.
+  This family function is similar to \code{\link{poissonff}}
+  but handles such censored data. The input requires
+  \code{\link{SurvS4}}.  Only a univariate response is allowed.
   The Newton-Raphson algorithm is used.
 
 
@@ -66,7 +66,12 @@ cens.poisson(link = "loglink", imu = NULL,
 }
 \section{Warning }{
   As the response is discrete,
-  care is required with \code{\link{Surv}}, especially with
+  care is required with \code{Surv}
+  (the old class because of
+   \code{setOldClass(c("SurvS4", "Surv"))};
+  see
+  \code{\link[methods]{setOldClass}}),
+  especially with
   \code{"interval"} censored data because of the
   \code{(start, end]} format.
   See the examples below.

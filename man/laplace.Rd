@@ -16,7 +16,7 @@ laplace(llocation = "identitylink", lscale = "loglink",
   \item{llocation, lscale}{ Character.
   Parameter link functions for location parameter \eqn{a} and
   scale parameter \eqn{b}.
-  See \code{\link{Links}} for more choices.
+  See \code{\link[VGAM]{Links}} for more choices.
 
 
   }
@@ -35,7 +35,7 @@ laplace(llocation = "identitylink", lscale = "loglink",
 
   }
   \item{zero}{
-  See \code{\link{CommonVGAMffArguments}} for information.
+  See \code{\link[VGAM]{CommonVGAMffArguments}} for information.
 
 
   }
@@ -68,10 +68,10 @@ laplace(llocation = "identitylink", lscale = "loglink",
 }
 \value{
   An object of class \code{"vglmff"}
-  (see \code{\link{vglmff-class}}).
+  (see \code{\link[VGAM]{vglmff-class}}).
   The object is used by modelling functions
-  such as \code{\link{vglm}}
-  and \code{\link{vgam}}.
+  such as \code{\link[VGAM]{vglm}}
+  and \code{\link[VGAM]{vgam}}.
 
 
 
@@ -107,9 +107,9 @@ Boston: Birkhauser.
 
 \seealso{
 \code{\link{rlaplace}},
-\code{\link{alaplace2}}
+\code{\link[VGAMdata]{alaplace2}}
 (which differs slightly from this parameterization),
-\code{\link{exponential}},
+\code{\link[VGAM]{exponential}},
 \code{\link[stats]{median}}.
 
 

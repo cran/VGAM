@@ -32,7 +32,7 @@
 
   }
   \item{parallel}{
-    Similar to \code{\link{alaplace1}}, applying to the
+    Similar to \code{\link[VGAMdata]{alaplace1}}, applying to the
     location parameters.
   One can try fix up the quantile-crossing problem after fitting
   the model by calling \code{\link{fix.crossing}}.
@@ -147,7 +147,7 @@
   \item{lambda.arg}{
   Positive tuning parameter which controls the sharpness of the cusp.
   The limit as it approaches 0 is probably very similar to
-  \code{\link{dalap}}.
+  \code{\link[VGAMdata]{dalap}}.
   The default is to choose the value internally.
   If \code{scale.arg} increases, then probably \code{lambda.arg}
   needs to increase accordingly.
@@ -174,7 +174,7 @@
 
   }
   \item{ishrinkage, idf.mu, digt}{
-  Similar to \code{\link{alaplace1}}.
+  Similar to \code{\link[VGAMdata]{alaplace1}}.
 
 % zero
 
@@ -285,8 +285,8 @@ Yee, T. W. (2020).
   \code{\link{eCDF}},
   \code{\link{vglm.control}},
   \code{\link{logF}},
-  \code{\link{alaplace1}},
-  \code{\link{dalap}},
+  \code{\link[VGAMdata]{alaplace1}},
+  \code{\link[VGAMdata]{dalap}},
   \code{\link{lms.bcn}}.
 
 
@@ -297,6 +297,7 @@ Yee, T. W. (2020).
 }
 
 \examples{
+\dontrun{
 nn <- 1000; mytau <- c(0.25, 0.75)
 edata <- data.frame(x2 = sort(rnorm(nn)))
 edata <- transform(edata, y1 = 1 + x2  + rnorm(nn, sd = exp(-1)),
@@ -308,7 +309,7 @@ fit2@extra$percentile  # Empirical percentiles here
 summary(fit2)
 c(is.crossing(fit1), is.crossing(fit2))
 head(fitted(fit1))
-\dontrun{plot(y2 ~ x2, edata, col = "blue")
+plot(y2 ~ x2, edata, col = "blue")
 matlines(with(edata, x2), fitted(fit2), col="orange", lty = 1, lwd = 2) }
 }
 \keyword{models}

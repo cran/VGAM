@@ -200,7 +200,7 @@ fill1(runif(5), ncol = 3)
 fill1(runif(5), val = 1, ncol = 3)
 
 # Generate (independent) eyes data for the examples below; OR=1.
-nn <- 1000  # Number of people
+\dontrun{ nn <- 1000  # Number of people
 eyesdata <- data.frame(lop = round(runif(nn), 2),
                        rop = round(runif(nn), 2),
                        age = round(rnorm(nn, 40, 10)))
@@ -227,11 +227,9 @@ coef(fit1, matrix = TRUE)  # Unchanged with 'xij'
 constraints(fit1)
 max(abs(predict(fit1)-predict(fit1, new = eyesdata)))  # Okay
 summary(fit1)
-\dontrun{
 plotvgam(fit1,
      se = TRUE)  # Wrong, e.g., coz it plots against op, not lop.
 # So set op = lop in the above for a correct plot.
-}
 
 # Example 2. This uses regression splines on ocular pressure.
 # It uses a trick to ensure common basis functions.
@@ -257,9 +255,7 @@ max(abs(predict(fit2) - predict(fit2, new = eyesdata)))  # Okay
 predict(fit2, new = head(eyesdata))  # OR is 'scalar' as zero=3
 max(abs(head(predict(fit2)) -
              predict(fit2, new = head(eyesdata))))  # Should be 0
-\dontrun{
 plotvgam(fit2, se = TRUE, xlab = "lop")  # Correct
-}
 
 # Example 3. Capture-recapture model with ephemeral and enduring
 # memory effects. Similar to Yang and Chao (2005), Biometrics.
@@ -277,7 +273,7 @@ M.tbh.lag1 <-
                  fill1(y5) + fill1(y6) +
                  y1 + y2 + y3 + y4 + y5 + y6,
        data = deermice, trace = TRUE)
-coef(M.tbh.lag1)
+coef(M.tbh.lag1)  }
 }
 \keyword{models}
 \keyword{regression}

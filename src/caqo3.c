@@ -775,8 +775,8 @@ void yiumjq3nflncwkfq71(double lncwkfq7[], double w8znmyce[], int *ftnjamu2, int
          *fpdlcqk9w8znmyce, *fpdlcqk9vm4xjosb,  *fpdlcqk9kifxa0he;
 
   int    *wkumc9idtgiyxdw1, *wkumc9iddufozmt7;
-  wkumc9idtgiyxdw1  = Calloc(hyqwtp6i, int);
-  wkumc9iddufozmt7  = Calloc(hyqwtp6i, int);
+  wkumc9idtgiyxdw1  = R_Calloc(hyqwtp6i, int);
+  wkumc9iddufozmt7  = R_Calloc(hyqwtp6i, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, xwdf5ltg);
 
   fpdlcqk9w8znmyce = w8znmyce;
@@ -889,7 +889,7 @@ void yiumjq3nflncwkfq71(double lncwkfq7[], double w8znmyce[], int *ftnjamu2, int
       }
     } // iii
   } // if (*yru9olks > 0)
-  Free(wkumc9idtgiyxdw1);    Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idtgiyxdw1);    R_Free(wkumc9iddufozmt7);
 }
 
 
@@ -907,8 +907,8 @@ void yiumjq3nflncwkfq72(double lncwkfq7[], double w8znmyce[], int *ftnjamu2, int
 
 
   int    *wkumc9idtgiyxdw1, *wkumc9iddufozmt7;
-  wkumc9idtgiyxdw1  = Calloc(hyqwtp6i, int);
-  wkumc9iddufozmt7  = Calloc(hyqwtp6i, int);
+  wkumc9idtgiyxdw1  = R_Calloc(hyqwtp6i, int);
+  wkumc9iddufozmt7  = R_Calloc(hyqwtp6i, int);
   fvlmz9iyC_qpsedg8x(wkumc9idtgiyxdw1, wkumc9iddufozmt7, xwdf5ltg);
 
 
@@ -1037,7 +1037,7 @@ void yiumjq3nflncwkfq72(double lncwkfq7[], double w8znmyce[], int *ftnjamu2, int
       }
     }
   }
-  Free(wkumc9idtgiyxdw1);     Free(wkumc9iddufozmt7);
+  R_Free(wkumc9idtgiyxdw1);     R_Free(wkumc9iddufozmt7);
 }
 
 
@@ -1514,8 +1514,8 @@ void cqo_2(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
 
 
   double *wkumc9idrpto5qwb, *wkumc9idtwk;
-  wkumc9idrpto5qwb = Calloc(1 + *afpc0kns        , double);
-  wkumc9idtwk    = Calloc(*wy1vqfzu * *ftnjamu2 * 2, double);
+  wkumc9idrpto5qwb = R_Calloc(1 + *afpc0kns        , double);
+  wkumc9idtwk    = R_Calloc(*wy1vqfzu * *ftnjamu2 * 2, double);
 
 
 
@@ -1542,9 +1542,14 @@ void cqo_2(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
 
 
 
-  hmayv1xt1 -= bh2vgiay;
-  hmayv1xt2 -= rsynp1go;
+  hmayv1xt1++;
+  hmayv1xt2++;
+  hmayv1xt2 += rsynp1go;
   hmayv1xt1 += hmayv1xt2;
+  if (hmayv1xt1  < 0.0) {
+    hmayv1xt1 += hmayv1xt2;
+    hmayv1xt2 += hmayv1xt2;
+  }
 
 
 
@@ -1641,7 +1646,7 @@ void cqo_2(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
     if (qemj9asg != xlpjcg3s) {
       *zjkrtol8 = 2;
       Rprintf("Failure or Error in cqo_2: vc6hatuj is not of full xwdf5ltg.\n");
-      Free(wkumc9idrpto5qwb);    Free(wkumc9idtwk);
+      R_Free(wkumc9idrpto5qwb);    R_Free(wkumc9idtwk);
       return;
     }
 
@@ -1736,7 +1741,7 @@ void cqo_2(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
   ceqzd1hi20097: hmayv1xt1 = 0.0e0;
 
   if (x1jrewny == 1) {
-    Free(wkumc9idrpto5qwb);    Free(wkumc9idtwk);
+    R_Free(wkumc9idrpto5qwb);    R_Free(wkumc9idtwk);
     return;
   }
 
@@ -1748,7 +1753,7 @@ void cqo_2(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
 
   *zjkrtol8 = 3;
 
-  Free(wkumc9idrpto5qwb);    Free(wkumc9idtwk);
+  R_Free(wkumc9idrpto5qwb);    R_Free(wkumc9idtwk);
 }
 
 
@@ -1789,7 +1794,7 @@ void cqo_1(double lncwkfq7[], double tlgduey8[],
   double hmayv1xt = 2.0, Totdev = 0.0e0;
 
   double *wkumc9idtwk;
-  wkumc9idtwk    = Calloc(*br5ovgcj * 3  , double);
+  wkumc9idtwk    = R_Calloc(*br5ovgcj * 3  , double);
 
   xwdf5ltg    = xui7hqwl[0];
   xlpjcg3s   = xui7hqwl[2];
@@ -1807,7 +1812,7 @@ void cqo_1(double lncwkfq7[], double tlgduey8[],
   if (vtsou9pz != 1) {
     Rprintf("Error: vtsou9pz is not unity in cqo_1!\n");
     *zjkrtol8 = 4;
-    Free(wkumc9idtwk);
+    R_Free(wkumc9idtwk);
     return;
   }
   unhycz0e    = xui7hqwl[13];
@@ -1925,7 +1930,7 @@ void cqo_1(double lncwkfq7[], double tlgduey8[],
       if (qemj9asg != xlpjcg3s) {
         Rprintf("Error in cqo_1: vc6hatuj is not of full xwdf5ltg.\n");
         *zjkrtol8 = 2;
-        Free(wkumc9idtwk);
+        R_Free(wkumc9idtwk);
         return;
       }
 
@@ -2068,7 +2073,7 @@ void cqo_1(double lncwkfq7[], double tlgduey8[],
 
   *tlq9wpes = Totdev;
 
-  Free(wkumc9idtwk);
+  R_Free(wkumc9idtwk);
 }
 
 
@@ -2099,9 +2104,9 @@ void dcqo1(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
          *fpdlcqk9kpzavbj3mat, *fpdlcqk9lncwkfq7,  *fpdlcqk9yxiwebc5, *fpdlcqk9atujnxb8;
 
   double *wkumc9idajul8wkv, *wkumc9iddev0,   *wkumc9idyxiwebc5;
-  wkumc9idajul8wkv = Calloc(exrkcn5d         , double);
-  wkumc9iddev0     = Calloc(1 + *afpc0kns        , double);
-  wkumc9idyxiwebc5   = Calloc(*ftnjamu2 * xwdf5ltg    , double);
+  wkumc9idajul8wkv = R_Calloc(exrkcn5d         , double);
+  wkumc9iddev0     = R_Calloc(1 + *afpc0kns        , double);
+  wkumc9idyxiwebc5   = R_Calloc(*ftnjamu2 * xwdf5ltg    , double);
 
   fpdlcqk9kpzavbj3mat = kpzavbj3mat;
 
@@ -2193,7 +2198,7 @@ void dcqo1(double lncwkfq7[], double tlgduey8[], double kifxa0he[],
     }
   }
 
-  Free(wkumc9idajul8wkv);   Free(wkumc9iddev0);   Free(wkumc9idyxiwebc5);
+  R_Free(wkumc9idajul8wkv);   R_Free(wkumc9iddev0);   R_Free(wkumc9idyxiwebc5);
 
   xui7hqwl[4] = idlosrw8;
 }
@@ -2261,11 +2266,11 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
   fjcasv7g[4] =  1.0e-4;
   fjcasv7g[5] =  2.0e-8;
 
-  wkumc9idui8ysltq  = Calloc((*ftnjamu2 * *wy1vqfzu) * (*afpc0kns * *wy1vqfzu), double);
-  wkumc9idlxyst1eb = Calloc( *qfozcl5b * *ftnjamu2                , double);
-  wkumc9idzyodca3j    = Calloc( *qfozcl5b * *ftnjamu2                , double);
-  wkumc9idhdnw2fts  = Calloc(lensmo                        , double);
-  wkumc9idwbkq9zyi  = Calloc(lensmo                        , double);
+  wkumc9idui8ysltq  = R_Calloc((*ftnjamu2 * *wy1vqfzu) * (*afpc0kns * *wy1vqfzu), double);
+  wkumc9idlxyst1eb = R_Calloc( *qfozcl5b * *ftnjamu2                , double);
+  wkumc9idzyodca3j    = R_Calloc( *qfozcl5b * *ftnjamu2                , double);
+  wkumc9idhdnw2fts  = R_Calloc(lensmo                        , double);
+  wkumc9idwbkq9zyi  = R_Calloc(lensmo                        , double);
 
   for (ayfnwr1v = 0; ayfnwr1v < lensmo; ayfnwr1v++) {
     wkumc9idhdnw2fts[ayfnwr1v] = hdnw2fts[ayfnwr1v];
@@ -2286,8 +2291,8 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
   if (vtsou9pz != 1 || lyma1kwc != xwdf5ltg) {
     Rprintf("Error: 'vtsou9pz' != 1, or 'lyma1kwc' != 'xwdf5ltg', in vcao6!\n");
     *zjkrtol8 = 4;
-    Free(wkumc9idui8ysltq);    Free(wkumc9idlxyst1eb);   Free(wkumc9idzyodca3j);
-    Free(wkumc9idhdnw2fts);    Free(wkumc9idwbkq9zyi);
+    R_Free(wkumc9idui8ysltq);    R_Free(wkumc9idlxyst1eb);   R_Free(wkumc9idzyodca3j);
+    R_Free(wkumc9idhdnw2fts);    R_Free(wkumc9idwbkq9zyi);
     return;
   }
   wr0lbopv = xui7hqwl[17];
@@ -2326,8 +2331,8 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
     if (f7svlajr != 1) {
       Rprintf("Failure due to bad input of 'f7svlajr' variable\n");
       *zjkrtol8 = 6;
-      Free(wkumc9idui8ysltq);    Free(wkumc9idlxyst1eb);   Free(wkumc9idzyodca3j);
-      Free(wkumc9idhdnw2fts);    Free(wkumc9idwbkq9zyi);
+      R_Free(wkumc9idui8ysltq);    R_Free(wkumc9idlxyst1eb);   R_Free(wkumc9idzyodca3j);
+      R_Free(wkumc9idhdnw2fts);    R_Free(wkumc9idwbkq9zyi);
       return;
     }
 
@@ -2427,8 +2432,8 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
         if (xumj5dnk != 0) {
           Rprintf("vcao6: Error... exiting; error code = %d\n", xumj5dnk);
           *zjkrtol8 = 8;
-          Free(wkumc9idui8ysltq);    Free(wkumc9idlxyst1eb);   Free(wkumc9idzyodca3j);
-          Free(wkumc9idhdnw2fts);    Free(wkumc9idwbkq9zyi);
+          R_Free(wkumc9idui8ysltq);    R_Free(wkumc9idlxyst1eb);   R_Free(wkumc9idzyodca3j);
+          R_Free(wkumc9idhdnw2fts);    R_Free(wkumc9idwbkq9zyi);
           return;
         }
 
@@ -2482,8 +2487,8 @@ void vcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
   }
 
   *tlq9wpes = Totdev;
-  Free(wkumc9idui8ysltq);    Free(wkumc9idlxyst1eb);   Free(wkumc9idzyodca3j);
-  Free(wkumc9idhdnw2fts);    Free(wkumc9idwbkq9zyi);
+  R_Free(wkumc9idui8ysltq);    R_Free(wkumc9idlxyst1eb);   R_Free(wkumc9idzyodca3j);
+  R_Free(wkumc9idhdnw2fts);    R_Free(wkumc9idwbkq9zyi);
 }
 
 
@@ -2536,12 +2541,12 @@ void vdcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
   double *wkumc9idlxyst1eb, *wkumc9idzyodca3j;
   double *wkumc9iddev0;
 
-  wkumc9idyxiwebc5   = Calloc(*ftnjamu2 * xwdf5ltg    , double);
+  wkumc9idyxiwebc5   = R_Calloc(*ftnjamu2 * xwdf5ltg    , double);
   fpdlcqk9kpzavbj3mat = kpzavbj3mat;
 
-  wkumc9iddev0    = Calloc(1 + *afpc0kns         , double);
-  wkumc9idlxyst1eb = Calloc( *qfozcl5b * *ftnjamu2   , double);
-  wkumc9idzyodca3j    = Calloc( *qfozcl5b * *ftnjamu2   , double);
+  wkumc9iddev0    = R_Calloc(1 + *afpc0kns         , double);
+  wkumc9idlxyst1eb = R_Calloc( *qfozcl5b * *ftnjamu2   , double);
+  wkumc9idzyodca3j    = R_Calloc( *qfozcl5b * *ftnjamu2   , double);
 
   idlosrw8 = xui7hqwl[ 4];
   vtsou9pz  = xui7hqwl[11];
@@ -2639,8 +2644,8 @@ void vdcao6(double lncwkfq7[], double tlgduey8[], double ufgqj9ck[],
     }
   }
 
-  Free(wkumc9idyxiwebc5);    Free(wkumc9iddev0 );
-  Free(wkumc9idlxyst1eb);   Free(wkumc9idzyodca3j);
+  R_Free(wkumc9idyxiwebc5);    R_Free(wkumc9iddev0 );
+  R_Free(wkumc9idlxyst1eb);   R_Free(wkumc9idzyodca3j);
 
   xui7hqwl[4] = idlosrw8;
 }

@@ -961,6 +961,7 @@ Generally altered, inflated, truncated and deflated regression.
 }
 
 \examples{
+\dontrun{
 i.mix <- c(5, 10)  # Inflate these values parametrically
 i.mlm <- c(14, 15)  # Inflate these values
 a.mix <- c(1, 13)  # Alter these values
@@ -986,8 +987,9 @@ head(fitted(fit1, type.fitted = "Pstr.mix"))
 head(predict(fit1))
 t(coef(fit1, matrix = TRUE))  # Easier to see with t()
 summary(fit1)  # No HDE test by default but HDEtest = TRUE is ideal
-\dontrun{ spikeplot(with(gdata, y1), lwd = 2)
-plotdgaitd(fit1, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)  }
+spikeplot(with(gdata, y1), lwd = 2)
+plotdgaitd(fit1, new.plot = FALSE, offset.x = 0.2, all.lwd = 2)
+}
 }
 \keyword{models}
 \keyword{regression}

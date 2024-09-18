@@ -76,7 +76,7 @@ rtopple(n, shape)
 }
 \seealso{
   \code{\link{topple}},
-  \code{\link{Triangle}}.
+  \code{\link[VGAM]{Triangle}}.
 
 
 
