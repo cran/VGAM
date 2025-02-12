@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -212,7 +212,7 @@ vglm.fit <-
     history[iter, ] <- new.crit  # Imperfect (e.g., step-halving).
 
     if (trace && orig.stepsize == 1) {
-      cat("VGLM    linear loop ", iter, ": ", criterion, "= ")
+      cat("Iteration ", iter, ": ", criterion, " = ", sep = "")
       UUUU <- switch(criterion,
                      coefficients =
                        format(new.crit,
@@ -315,8 +315,7 @@ vglm.fit <-
         one.more <- FALSE
       } else {
         if (trace) {
-          cat("VGLM    linear loop ",
-              iter, ": ", criterion, "= ")
+          cat("Iteration ", iter, ": ", criterion, "= ")
 
           UUUU <- switch(criterion,
                          coefficients =

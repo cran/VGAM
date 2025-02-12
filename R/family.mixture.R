@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -29,14 +29,20 @@ mix2normal.control <- function(trace = TRUE, ...) {
              eq.sd = TRUE,
              nsimEIM = 100,
              zero = "phi") {
+  if (is.character(lphi))
+    lphi <- substitute(y9, list(y9 = lphi))
   lphi <- as.list(substitute(lphi))
   ephi <- link2list(lphi)
   lphi <- attr(ephi, "function.name")
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
@@ -67,7 +73,7 @@ mix2normal.control <- function(trace = TRUE, ...) {
     stop("bad input for argument 'isd2'")
 
 
-  if (!is.logical(eq.sd) || length(eq.sd) != 1)
+  if (!isFALSE(eq.sd) && !isTRUE(eq.sd))
     stop("bad input for argument 'eq.sd'")
   if (!is.Numeric(nsimEIM, length.arg = 1,
                   integer.valued = TRUE) ||
@@ -318,15 +324,19 @@ mix2poisson.control <- function(trace = TRUE, ...) {
 }
 
 
- mix2poisson <- function(lphi = "logitlink", llambda = "loglink",
-                         iphi = 0.5, il1 = NULL, il2 = NULL,
-                         qmu = c(0.2, 0.8), nsimEIM = 100,
-                         zero = "phi") {
-
+ mix2poisson <-
+  function(lphi = "logitlink", llambda = "loglink",
+           iphi = 0.5, il1 = NULL, il2 = NULL,
+           qmu = c(0.2, 0.8), nsimEIM = 100,
+           zero = "phi") {
+  if (is.character(lphi))
+    lphi <- substitute(y9, list(y9 = lphi))
   lphi <- as.list(substitute(lphi))
   ephi <- link2list(lphi)
   lphi <- attr(ephi, "function.name")
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
@@ -567,14 +577,19 @@ mix2exp.control <- function(trace = TRUE, ...) {
 
 
 
- mix2exp <- function(lphi = "logitlink", llambda = "loglink",
-                     iphi = 0.5, il1 = NULL, il2 = NULL,
-                     qmu = c(0.8, 0.2), nsimEIM = 100,
-                     zero = "phi") {
+ mix2exp <-
+  function(lphi = "logitlink", llambda = "loglink",
+           iphi = 0.5, il1 = NULL, il2 = NULL,
+           qmu = c(0.8, 0.2), nsimEIM = 100,
+           zero = "phi") {
+  if (is.character(lphi))
+    lphi <- substitute(y9, list(y9 = lphi))
   lphi <- as.list(substitute(lphi))
   ephi <- link2list(lphi)
   lphi <- attr(ephi, "function.name")
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")

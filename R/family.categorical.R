@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -150,7 +150,7 @@ rdiag <- function(...) {
     function(M,
              Trev = FALSE,
              Tref = 1) {
-  if (!is.logical(Trev) && length(Trev) != 1)
+  if (!isFALSE(Trev) && !isTRUE(Trev))
     stop("bad input for argument 'Trev'")
   if (is.character(Tref) && Tref == "M")
     Tref <- M
@@ -223,13 +223,12 @@ rdiag <- function(...) {
            " single positive integer")
   }
 
-  if (!is.logical(ynames) || length(ynames) != 1)
+  if (!isFALSE(ynames) && !isTRUE(ynames))
     stop("bad input for 'ynames'")
 
 
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
 
 
@@ -766,7 +765,7 @@ Deviance.categorical.data.vgam <-
  dmultinomial <-
     function(x, size = NULL, prob, log = FALSE,
              dochecking = TRUE, smallno = 1.0e-7) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -819,6 +818,8 @@ Deviance.categorical.data.vgam <-
     Trev = reverse,
     Tref = if (Trev) "M" else 1,
     whitespace = FALSE) {
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
@@ -828,14 +829,13 @@ Deviance.categorical.data.vgam <-
               mode = "function"))
     stop("No function ", paste0("CM.", Thresh))
 
-  if (!is.logical(reverse) || length(reverse) != 1)
+  if (!isFALSE(reverse) && !isTRUE(reverse))
     stop("arg 'reverse' not a single logical")
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
 
-  if (!is.logical(ynames) || length(ynames) != 1)
+  if (!isFALSE(ynames) && !isTRUE(ynames))
     stop("bad input for 'ynames'")
 
   new("vglmff",
@@ -1139,6 +1139,8 @@ Deviance.categorical.data.vgam <-
     Trev = reverse,
     Tref = if (Trev) "M" else 1,
     whitespace = FALSE) {
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1148,14 +1150,13 @@ Deviance.categorical.data.vgam <-
               mode = "function"))
     stop("No function ", paste0("CM.", Thresh))
 
-  if (!is.logical(reverse) || length(reverse) != 1)
+  if (!isFALSE(reverse) && !isTRUE(reverse))
     stop("argument 'reverse' not a single logical")
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
 
-  if (!is.logical(ynames) || length(ynames) != 1)
+  if (!isFALSE(ynames) && !isTRUE(ynames))
     stop("bad input for 'ynames'")
 
 
@@ -1548,28 +1549,28 @@ Deviance.categorical.data.vgam <-
       is.null(Thresh)))
     stop("'Thresh' must be NULL or 'free'")
 
-  if (!is.logical(ynames) || length(ynames) != 1)
+  if (!isFALSE(ynames) && !isTRUE(ynames))
     stop("bad input for 'ynames'")
 
   apply.parint <- FALSE
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
 
 
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
 
 
-  if (!is.logical(multiple.responses) ||
-      length(multiple.responses) != 1)
+  if (!isFALSE(multiple.responses) && !isTRUE(multiple.responses))
     stop("argument 'multiple.responses' must be ",
          "a single logical")
-  if (!is.logical(reverse) || length(reverse) != 1)
+  if (!isFALSE(reverse) && !isTRUE(reverse))
     stop("'reverse' must be a single logical")
 
 
@@ -2151,8 +2152,7 @@ Deviance.categorical.data.vgam <-
        Thresh = NULL,  # "free",
        Trev = reverse,
        Tref = if (Trev) "M" else 1) {
-  if (!is.logical(reverse) ||
-      length(reverse) != 1)
+  if (!isFALSE(reverse) && !isTRUE(reverse))
     stop("'reverse' not a single logical")
   if (length( Thresh ) &&
       !exists(paste0("CM.", Thresh),
@@ -2180,6 +2180,8 @@ Deviance.categorical.data.vgam <-
        whitespace = FALSE) {
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
@@ -2189,14 +2191,13 @@ Deviance.categorical.data.vgam <-
               mode = "function"))
     stop("No function ", paste0("CM.", Thresh))
 
-  if (!is.logical(reverse) || length(reverse) != 1)
+  if (!isFALSE(reverse) && !isTRUE(reverse))
     stop("'reverse' not a single logical")
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
 
-  if (!is.logical(ynames) || length(ynames) != 1)
+  if (!isFALSE(ynames) && !isTRUE(ynames))
     stop("bad input for 'ynames'")
 
   new("vglmff",
@@ -2539,7 +2540,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
 
   initialize = eval(substitute(expression({
     are.ties <- attr(y, "are.ties")  # If Brat() was used
-    if (is.logical(are.ties) && are.ties)
+    if (isTRUE(are.ties))
         stop("use bratt(), not brat(), when there are ties")
 
     try.index <- 1:400
@@ -2747,7 +2748,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
     NCo <- M  # Number of contestants
 
     are.ties <- attr(y, "are.ties")  # If Brat() was used
-    if (is.logical(are.ties)) {
+    if (isTRUE(are.ties)) {
       if (!are.ties)
         stop("use brat(), not bratt(), when there are no ties")
       ties <- attr(y, "ties")
@@ -2988,8 +2989,7 @@ acat.deriv <- function(zeta, reverse, M, n) {
                   whitespace = FALSE) {
 
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
   string <- paste0(fillerChar, string, fillerChar)
 
@@ -3044,8 +3044,7 @@ InverseBrat <-
 
 
 
-  stopifnot(is.logical(whitespace) &&
-            length(whitespace) == 1)
+  stopifnot(isFALSE(whitespace) || isTRUE(whitespace))
   fillerChar <- ifelse(whitespace, " ", "")
   string <- paste0(fillerChar, string, fillerChar)
 
@@ -3091,6 +3090,8 @@ InverseBrat <-
            zero = NULL,
            link = "loglink") {
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
@@ -3106,7 +3107,7 @@ InverseBrat <-
   if (is.finite(cutpoints[length(cutpoints)]))
     cutpoints <- c(cutpoints, Inf)
 
-  if (!is.logical(countdata) || length(countdata) != 1)
+  if (!isFALSE(countdata) && !isTRUE(countdata))
     stop("argument 'countdata' must be a single logical")
   if (countdata) {
     if (!is.Numeric(NOS, integer.valued = TRUE, positive = TRUE))
@@ -4882,10 +4883,8 @@ R2latvar <- function(object) {
            link.permitted)
 
   infos <- object@family@infos()
-  if (length(infos$parallel) == 1 &&
-      is.logical(infos$parallel))
-    if (!infos$parallel)
-      stop("the linear predictors are not parallel")
+  if (isFALSE(infos$parallel))
+    stop("the linear predictors are not parallel")
   if (!all(unlist(constraints(object)[-1]) == 1))
       stop("the linear predictors are not parallel")
 
@@ -4978,10 +4977,8 @@ ordsup.vglm <-
   },
   cumulative = {
 
-  if (length(infos$parallel) == 1 &&
-      is.logical(infos$parallel))
-    if (!infos$parallel)
-      stop("the linear predictors are not parallel")
+  if (isFALSE(infos$parallel))
+    stop("the linear predictors are not parallel")
   if (!all(unlist(constraints(object)[-1]) == 1))
       stop("the linear predictors are not parallel")
 

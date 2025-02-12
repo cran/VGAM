@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -121,14 +121,14 @@ summaryvlm <-
   if (lrt0.arg) {
     coef4lrt0 <- coef3[, -2, drop = FALSE]  # Omit SEs
     lrt.list <- lrt.stat(object, all.out = TRUE,
-                    values0 = values0, subset = subset,
-                    trace = FALSE,
-                    omit1s = omit1s)  # Intercept-only model: NULL
+     values0 = values0, subset = subset,
+     trace = FALSE,
+     omit1s = omit1s)  # Intrcpt-only model: NULL
     lrt.list.values0 <- lrt.list$values0
     SEs <- NA  # For correlation = TRUE
 
 
-    if (length(lrt.list)) {  # Usually omit intercepts:
+    if (length(lrt.list)) {  # Usually omit intcpts:
       coef4lrt0 <- coef4lrt0[names(lrt.list.values0), , drop = FALSE]
 
 
@@ -160,11 +160,12 @@ summaryvlm <-
     coef4score0 <- coef3  # Overwrite some columns
     score.list <-
       score.stat(object, all.out = TRUE,
-                 values0 = values0, subset = subset,
-                 trace = FALSE,
-                 omit1s = omit1s)  # Intercept-only model: NULL
+      values0 = values0,
+      subset = subset,
+      trace = FALSE,
+      omit1s = omit1s)  # Intrcpt-only model: NULL
     SEs <- score.list$SE0
-    if (length(score.list)) {  # Usually omit intercepts:
+    if (length(score.list)) {  # Usually omit intpts:
       coef4score0 <- coef4score0[names(SEs), , drop = FALSE]
       if (length(sigma) == 1 && is.Numeric(ncol.X.vlm)) {
         coef4score0[, 2] <- SEs %o% sigma  # Fails if sigma is a vector
@@ -258,7 +259,7 @@ summaryvlm <-
 
 
   answer
-}
+}  # summaryvlm
 
 
 

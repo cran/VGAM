@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -22,13 +22,15 @@
 
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
 
-  if (!is.logical(inbreeding) || length(inbreeding) > 1)
-    stop("argument 'inbreeding' must be a single logical")
+  if (!isFALSE(inbreeding) && !isTRUE(inbreeding))
+    stop("'inbreeding' must be a single logical")
 
 
   new("vglmff",
@@ -236,6 +238,8 @@
  MNSs <- function(link = "logitlink",
                   imS = NULL, ims = NULL, inS = NULL) {
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -366,10 +370,14 @@
   function(link.pA = "logitlink", link.pB = "logitlink",
            ipA = NULL, ipB = NULL, ipO = NULL,
            zero = NULL) {
+  if (is.character(link.pA))
+    link.pA <- substitute(y9, list(y9 = link.pA))
   link.pA <- as.list(substitute(link.pA))
   earg.pA <- link2list(link.pA)
   link.pA <- attr(earg.pA, "function.name")
 
+  if (is.character(link.pB))
+    link.pB <- substitute(y9, list(y9 = link.pB))
   link.pB <- as.list(substitute(link.pB))
   earg.pB <- link2list(link.pB)
   link.pB <- attr(earg.pB, "function.name")
@@ -525,7 +533,10 @@
 
 
 
- AB.Ab.aB.ab <- function(link = "logitlink", init.p = NULL) {
+ AB.Ab.aB.ab <-
+  function(link = "logitlink", init.p = NULL) {
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -641,16 +652,20 @@
            ifp = NULL,
            zero = NULL) {
 
+  if (is.character(linkp))
+    linkp <- substitute(y9, list(y9 = linkp))
   linkp <- as.list(substitute(linkp))
   eargp <- link2list(linkp)
   linkp <- attr(eargp, "function.name")
 
+  if (is.character(linkf))
+    linkf <- substitute(y9, list(y9 = linkf))
   linkf <- as.list(substitute(linkf))
   eargf <- link2list(linkf)
   linkf <- attr(eargf, "function.name")
 
-  if (!is.logical(inbreeding) || length(inbreeding) > 1)
-    stop("argument 'inbreeding' must be a single logical")
+  if (!isFALSE(inbreeding) && !isTRUE(inbreeding))
+    stop("'inbreeding' must be a single logical")
 
 
 

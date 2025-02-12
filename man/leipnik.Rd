@@ -9,7 +9,7 @@
 
 }
 \usage{
-leipnik(lmu = "logitlink", llambda = logofflink(offset = 1),
+leipnik(lmu = "logitlink", llambda = "logofflink(offset = 1)",
         imu = NULL, ilambda = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

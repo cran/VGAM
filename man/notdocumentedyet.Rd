@@ -12,6 +12,11 @@
 %
 %
 %
+% 202411
+\alias{dpospois2}
+\alias{printCoefmatt}
+\alias{binom3.or.control}
+\alias{process.binomial3.data.VGAM}
 % 202408
  \alias{DDfun}
 % 202404

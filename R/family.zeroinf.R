@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -21,14 +21,14 @@
                        pobs0 = 0,
                        log = FALSE) {
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(pobs0), length(size))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(pobs0) != LLL) pobs0 <- rep_len(pobs0, LLL)
-  if (length(size)  != LLL) size  <- rep_len(size,  LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(pobs0) < LLL) pobs0 <- rep_len(pobs0, LLL)
+  if (length(size)  < LLL) size  <- rep_len(size,  LLL)
 
   ans <- rep_len(0.0, LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -63,9 +63,9 @@
                        pobs0 = 0) {
 
   LLL <- max(length(q), length(pobs0), length(size))
-  if (length(q)     != LLL) q     <- rep_len(q,     LLL)
-  if (length(pobs0) != LLL) pobs0 <- rep_len(pobs0, LLL)
-  if (length(size)  != LLL) size  <- rep_len(size,  LLL)
+  if (length(q)     < LLL) q     <- rep_len(q,     LLL)
+  if (length(pobs0) < LLL) pobs0 <- rep_len(pobs0, LLL)
+  if (length(size)  < LLL) size  <- rep_len(size,  LLL)
   ans <- rep_len(0.0, LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -91,9 +91,9 @@
                        pobs0 = 0) {
 
   LLL <- max(length(p), length(pobs0), length(size))
-  if (length(p)     != LLL) p      <- rep_len(p,     LLL)
-  if (length(pobs0) != LLL) pobs0  <- rep_len(pobs0, LLL)
-  if (length(size)  != LLL) size   <- rep_len(size,  LLL)
+  if (length(p)     < LLL) p      <- rep_len(p,     LLL)
+  if (length(pobs0) < LLL) pobs0  <- rep_len(pobs0, LLL)
+  if (length(size)  < LLL) size   <- rep_len(size,  LLL)
   ans <- rep_len(0.0, LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -139,14 +139,14 @@
 
 
 dzapois <- function(x, lambda, pobs0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(lambda), length(pobs0))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(x)      < LLL) x      <- rep_len(x,      LLL)
+  if (length(lambda) < LLL) lambda <- rep_len(lambda, LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
   ans <- rep_len(0.0, LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -172,9 +172,9 @@ dzapois <- function(x, lambda, pobs0 = 0, log = FALSE) {
 
 pzapois <- function(q, lambda, pobs0 = 0) {
   LLL <- max(length(q), length(lambda), length(pobs0))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
+  if (length(lambda) < LLL) lambda <- rep_len(lambda, LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
   ans <- rep_len(0.0, LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
@@ -195,9 +195,9 @@ pzapois <- function(q, lambda, pobs0 = 0) {
 
 qzapois <- function(p, lambda, pobs0 = 0) {
   LLL <- max(length(p), length(lambda), length(pobs0))
-  if (length(p)      != LLL) p      <- rep_len(p,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(p)      < LLL) p      <- rep_len(p,      LLL)
+  if (length(lambda) < LLL) lambda <- rep_len(lambda, LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be between 0 and 1 inclusive")
@@ -238,14 +238,14 @@ dzipois <- function(x, lambda, pstr0 = 0, log = FALSE) {
 
 
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(lambda), length(pstr0))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(x)      < LLL) x      <- rep_len(x,      LLL)
+  if (length(lambda) < LLL) lambda <- rep_len(lambda, LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
   ans <- x + lambda + pstr0
 
@@ -278,9 +278,9 @@ dzipois <- function(x, lambda, pstr0 = 0, log = FALSE) {
 pzipois <- function(q, lambda, pstr0 = 0) {
 
   LLL <- max(length(pstr0), length(lambda), length(q))
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(lambda) < LLL) lambda <- rep_len(lambda, LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
 
   ans <- ppois(q, lambda)
   ans <- ifelse(q < 0, 0, pstr0 + (1 - pstr0) * ans)
@@ -299,9 +299,9 @@ pzipois <- function(q, lambda, pstr0 = 0) {
 qzipois <- function(p, lambda, pstr0 = 0) {
 
   LLL <- max(length(p), length(lambda), length(pstr0))
-  if (length(p)      != LLL) p      <- rep_len(p,      LLL)
-  if (length(lambda) != LLL) lambda <- rep_len(lambda, LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(p)      < LLL) p      <- rep_len(p,      LLL)
+  if (length(lambda) < LLL) lambda <- rep_len(lambda, LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
   ans    <- rep_len(NA_real_, LLL)
   deflat.limit <- -1 / expm1(lambda)
 
@@ -346,10 +346,14 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
 
+  if (is.character(lpobs0))
+    lpobs0 <- substitute(y9, list(y9 = lpobs0))
   lpobs.0 <- as.list(substitute(lpobs0))
   epobs.0 <- link2list(lpobs.0)
   lpobs.0 <- attr(epobs.0, "function.name")
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
@@ -652,10 +656,14 @@ rzipois <- function(n, lambda, pstr0 = 0) {
 
 
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
 
+  if (is.character(lonempobs0))
+    lonempobs0 <- substitute(y9, list(y9 = lonempobs0))
   lonempobs0 <- as.list(substitute(lonempobs0))
   eonempobs0 <- link2list(lonempobs0)
   lonempobs0 <- attr(eonempobs0, "function.name")
@@ -1025,14 +1033,20 @@ zanegbinomial.control <-
     stop("If given, argument 'isize' must contain ",
          "positive values only")
 
+  if (is.character(lpobs0))
+    lpobs0 <- substitute(y9, list(y9 = lpobs0))
   lpobs0 <- as.list(substitute(lpobs0))
   epobs0 <- link2list(lpobs0)
   lpobs0 <- attr(epobs0, "function.name")
 
+  if (is.character(lmunb))
+    lmunb <- substitute(y9, list(y9 = lmunb))
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
   lmunb <- attr(emunb, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
@@ -1675,14 +1689,20 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
     stop("If given, argument 'isize' must contain ",
          "positive values only")
 
+  if (is.character(lmunb))
+    lmunb <- substitute(y9, list(y9 = lmunb))
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
   lmunb <- attr(emunb, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
 
+  if (is.character(lonempobs0))
+    lonempobs0 <- substitute(y9, list(y9 = lonempobs0))
   lonempobs0 <- as.list(substitute(lonempobs0))
   eonempobs0 <- link2list(lonempobs0)
   lonempobs0 <- attr(eonempobs0, "function.name")
@@ -2313,10 +2333,14 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
   ipstr0.small <- 1/64  # A number easily represented exactly
 
 
+  if (is.character(lpstr0))
+    lpstr0 <- substitute(y9, list(y9 = lpstr0))
   lpstr0 <- as.list(substitute(lpstr0))
   epstr00 <- link2list(lpstr0)
   lpstr00 <- attr(epstr00, "function.name")
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
@@ -2756,10 +2780,14 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
                            c("mean", "lambda", "pobs0",
                              "pstr0", "onempstr0"))[1]
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
 
+  if (is.character(lonempstr0))
+    lonempstr0 <- substitute(y9, list(y9 = lonempstr0))
   lonempstr0 <- as.list(substitute(lonempstr0))
   eonempstr0 <- link2list(lonempstr0)
   lonempstr0 <- attr(eonempstr0, "function.name")
@@ -3194,10 +3222,14 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
   if (as.logical(multiple.responses))
     stop("argument 'multiple.responses' must be FALSE")
 
+  if (is.character(lpstr0))
+    lpstr0 <- substitute(y9, list(y9 = lpstr0))
   lpstr0 <- as.list(substitute(lpstr0))
   epstr0 <- link2list(lpstr0)
   lpstr0 <- attr(epstr0, "function.name")
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
@@ -3506,10 +3538,14 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
   if (as.logical(multiple.responses))
     stop("argument 'multiple.responses' must be FALSE")
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lonempstr0))
+    lonempstr0 <- substitute(y9, list(y9 = lonempstr0))
   lonempstr0 <- as.list(substitute(lonempstr0))
   eonempstr0 <- link2list(lonempstr0)
   lonempstr0 <- attr(eonempstr0, "function.name")
@@ -3817,16 +3853,16 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 dzibinom <- function(x, size, prob, pstr0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(size),
              length(prob), length(pstr0))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(size)  != LLL) size  <- rep_len(size,  LLL)
-  if (length(prob)  != LLL) prob  <- rep_len(prob,  LLL)
-  if (length(pstr0) != LLL) pstr0 <- rep_len(pstr0, LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(size)  < LLL) size  <- rep_len(size,  LLL)
+  if (length(prob)  < LLL) prob  <- rep_len(prob,  LLL)
+  if (length(pstr0) < LLL) pstr0 <- rep_len(pstr0, LLL)
 
   ans <- dbinom(x = x, size = size, prob = prob, log = TRUE)
 
@@ -3856,10 +3892,10 @@ pzibinom <- function(q, size, prob, pstr0 = 0
 
   LLL <- max(length(pstr0), length(size),
              length(prob), length(q))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
     ans <- pbinom(q, size, prob)  # lower.tail = lower.tail,
   ans <- ifelse(q < 0, 0, pstr0 + (1 - pstr0) * ans)
@@ -3879,10 +3915,10 @@ qzibinom <- function(p, size, prob, pstr0 = 0
                     ) {
   LLL <- max(length(p), length(size),
              length(prob), length(pstr0))
-  p     <- rep_len(p,     LLL)
-  size  <- rep_len(size,  LLL)
-  prob  <- rep_len(prob,  LLL)
-  pstr0 <- rep_len(pstr0, LLL)
+  if (length(p)      < LLL) p      <- rep_len(p,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
 
   ans <- p
@@ -3941,17 +3977,17 @@ rzibinom <- function(n, size, prob, pstr0 = 0) {
     prob <- size / (size + munb)
   }
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   LLL <- max(length(pstr0), length(size),
              length(prob), length(x))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(x)      < LLL) x      <- rep_len(x,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
 
   ans <- dnbinom(x = x, size = size, prob = prob, log = log.arg)
@@ -3985,10 +4021,10 @@ rzibinom <- function(n, size, prob, pstr0 = 0) {
 
   LLL <- max(length(pstr0), length(size),
              length(prob), length(q))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
 
 
@@ -4016,10 +4052,10 @@ rzibinom <- function(n, size, prob, pstr0 = 0) {
   }
   LLL <- max(length(p), length(prob), length(pstr0),
              length(size))
-  if (length(p)     != LLL) p      <- rep_len(p,     LLL)
-  if (length(pstr0) != LLL) pstr0  <- rep_len(pstr0, LLL)
-  if (length(prob)  != LLL) prob   <- rep_len(prob,  LLL)
-  if (length(size)  != LLL) size   <- rep_len(size,  LLL)
+  if (length(p)     < LLL) p      <- rep_len(p,     LLL)
+  if (length(pstr0) < LLL) pstr0  <- rep_len(pstr0, LLL)
+  if (length(prob)  < LLL) prob   <- rep_len(prob,  LLL)
+  if (length(size)  < LLL) size   <- rep_len(size,  LLL)
 
   ans <- rep_len(NA_real_, LLL)
   prob0 <- prob^size
@@ -4096,14 +4132,20 @@ zinegbinomial.control <- function(save.weights = TRUE, ...) {
     stop("argument 'imethod' must be 1 or 2")
 
 
+  if (is.character(lpstr0))
+    lpstr0 <- substitute(y9, list(y9 = lpstr0))
   lpstr0 <- as.list(substitute(lpstr0))
   epstr0 <- link2list(lpstr0)
   lpstr0 <- attr(epstr0, "function.name")
 
+  if (is.character(lmunb))
+    lmunb <- substitute(y9, list(y9 = lmunb))
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
   lmunb <- attr(emunb, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
@@ -4813,14 +4855,20 @@ zinegbinomialff.control <-
     stop("argument 'imethod' must be 1 or 2")
 
 
+  if (is.character(lmunb))
+    lmunb <- substitute(y9, list(y9 = lmunb))
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
   lmunb <- attr(emunb, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
 
+  if (is.character(lonempstr0))
+    lonempstr0 <- substitute(y9, list(y9 = lonempstr0))
   lonempstr0 <- as.list(substitute(lonempstr0))
   eonempstr0 <- link2list(lonempstr0)
   lonempstr0 <- attr(eonempstr0, "function.name")
@@ -5501,14 +5549,14 @@ zinegbinomialff.control <-
 
 
 dzigeom <- function(x, prob, pstr0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(prob), length(pstr0))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(x)      < LLL) x      <- rep_len(x,      LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
 
   ans <- dgeom(x = x, prob = prob, log = TRUE)
@@ -5538,9 +5586,9 @@ pzigeom <- function(q, prob, pstr0 = 0) {
 
 
   LLL <- max(length(q), length(prob), length(pstr0))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pstr0)  != LLL) pstr0  <- rep_len(pstr0,  LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
 
   ans <- pgeom(q, prob)
   ans <- ifelse(q < 0, 0, pstr0 + (1-pstr0) * ans)
@@ -5558,9 +5606,10 @@ pzigeom <- function(q, prob, pstr0 = 0) {
 
 qzigeom <- function(p, prob, pstr0 = 0) {
   LLL <- max(length(p), length(prob), length(pstr0))
-  ans <- p <- rep_len(p,     LLL)
-  prob     <- rep_len(prob,  LLL)
-  pstr0    <- rep_len(pstr0, LLL)
+  if (length(p)      < LLL) p      <- rep_len(p,      LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pstr0)  < LLL) pstr0  <- rep_len(pstr0,  LLL)
+  ans <- p
   ans[p <= pstr0] <- 0
   ind1 <- (p > pstr0)
   ans[ind1] <-
@@ -5613,10 +5662,14 @@ rzigeom <- function(n, prob, pstr0 = 0) {
 
 
 
+  if (is.character(lpstr0))
+    lpstr0 <- substitute(y9, list(y9 = lpstr0))
   lpstr0 <- as.list(substitute(lpstr0))
   epstr0 <- link2list(lpstr0)
   lpstr0 <- attr(epstr0, "function.name")
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
@@ -5957,10 +6010,14 @@ rzigeom <- function(n, prob, pstr0 = 0) {
   expected <- TRUE
 
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lonempstr0))
+    lonempstr0 <- substitute(y9, list(y9 = lonempstr0))
   lonempstr0 <- as.list(substitute(lonempstr0))
   eonempstr0 <- link2list(lonempstr0)
   lonempstr0 <- attr(eonempstr0, "function.name")
@@ -6310,14 +6367,14 @@ rzigeom <- function(n, prob, pstr0 = 0) {
 
 
 dzageom <- function(x, prob, pobs0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(prob), length(pobs0))
-  if (length(x)      != LLL) x      <- rep_len(x,     LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,  LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0, LLL)
+  if (length(x)      < LLL) x      <- rep_len(x,     LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,  LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0, LLL)
   ans <- rep_len(0.0, LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -6342,9 +6399,9 @@ dzageom <- function(x, prob, pobs0 = 0, log = FALSE) {
 pzageom <- function(q, prob, pobs0 = 0) {
 
   LLL <- max(length(q), length(prob), length(pobs0))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
   ans <- rep_len(0.0, LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -6365,9 +6422,9 @@ pzageom <- function(q, prob, pobs0 = 0) {
 qzageom <- function(p, prob, pobs0 = 0) {
 
   LLL <- max(length(p), length(prob), length(pobs0))
-  if (length(p)      != LLL) p      <- rep_len(p,      LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(p)      < LLL) p      <- rep_len(p,      LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -6407,16 +6464,16 @@ rzageom <- function(n, prob, pobs0 = 0) {
 
 
 dzabinom <- function(x, size, prob, pobs0 = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(size), length(prob),
              length(pobs0))
-  if (length(x)      != LLL) x      <- rep_len(x,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(x)      < LLL) x      <- rep_len(x,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
   ans <- rep_len(0.0, LLL)
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -6444,10 +6501,10 @@ pzabinom <- function(q, size, prob, pobs0 = 0) {
 
   LLL <- max(length(q), length(size), length(prob),
              length(pobs0))
-  if (length(q)      != LLL) q      <- rep_len(q,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(q)      < LLL) q      <- rep_len(q,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
   ans <- rep_len(0.0, LLL)
   if (!is.Numeric(pobs0) ||
       any(pobs0 < 0) || any(pobs0 > 1))
@@ -6472,10 +6529,10 @@ qzabinom <- function(p, size, prob, pobs0 = 0) {
 
   LLL <- max(length(p), length(size), length(prob),
              length(pobs0))
-  if (length(p)      != LLL) p      <- rep_len(p,      LLL)
-  if (length(size)   != LLL) size   <- rep_len(size,   LLL)
-  if (length(prob)   != LLL) prob   <- rep_len(prob,   LLL)
-  if (length(pobs0)  != LLL) pobs0  <- rep_len(pobs0,  LLL)
+  if (length(p)      < LLL) p      <- rep_len(p,      LLL)
+  if (length(size)   < LLL) size   <- rep_len(size,   LLL)
+  if (length(prob)   < LLL) prob   <- rep_len(prob,   LLL)
+  if (length(pobs0)  < LLL) pobs0  <- rep_len(pobs0,  LLL)
 
   if (!is.Numeric(pobs0) || any(pobs0 < 0) || any(pobs0 > 1))
     stop("argument 'pobs0' must be in [0,1]")
@@ -6520,10 +6577,14 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
 
+  if (is.character(lpobs0))
+    lpobs0 <- substitute(y9, list(y9 = lpobs0))
   lpobs0 <- as.list(substitute(lpobs0))
   epobs0 <- link2list(lpobs0)
   lpobs0 <- attr(epobs0, "function.name")
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
@@ -6839,10 +6900,14 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
            zero = "onempobs0") {
 
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lonempobs0))
+    lonempobs0 <- substitute(y9, list(y9 = lonempobs0))
   lonempobs0 <- as.list(substitute(lonempobs0))
   eonempobs0 <- link2list(lonempobs0)
   lonempobs0 <- attr(eonempobs0, "function.name")
@@ -7168,10 +7233,14 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
 
 
 
+  if (is.character(lpobs0))
+    lpobs0 <- substitute(y9, list(y9 = lpobs0))
   lpobs0 <- as.list(substitute(lpobs0))
   epobs0 <- link2list(lpobs0)
   lpobs0 <- attr(epobs0, "function.name")
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
@@ -7480,10 +7549,14 @@ rzabinom <- function(n, size, prob, pobs0 = 0) {
              zero = "onempobs0") {
 
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lonempobs0))
+    lonempobs0 <- substitute(y9, list(y9 = lonempobs0))
   lonempobs0 <- as.list(substitute(lonempobs0))
   eonempobs0 <- link2list(lonempobs0)
   lonempobs0 <- attr(eonempobs0, "function.name")

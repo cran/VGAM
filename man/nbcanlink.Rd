@@ -198,6 +198,7 @@ quantile regression.
 
 }
 \examples{
+\dontrun{
 nbcanlink("mu", short = FALSE)
 
 mymu <- 1:10  # Test some basic operations:
@@ -206,11 +207,10 @@ eta1 <- nbcanlink(mymu, size = kmatrix)
 ans2 <- nbcanlink(eta1, size = kmatrix, inverse = TRUE)
 max(abs(ans2 - mymu))  # Should be 0
 
-\dontrun{ mymu <- seq(0.5, 10, length = 101)
+mymu <- seq(0.5, 10, length = 101)
 kmatrix <- matrix(10, length(mymu), 1)
 plot(nbcanlink(mymu, size = kmatrix) ~ mymu, las = 1,
      type = "l", col = "blue", xlab = expression({mu}))
-}
 
 # Estimate the parameters from some simulated data
 ndata <- data.frame(x2 = runif(nn <- 500))
@@ -230,7 +230,7 @@ nbcfit <-
        data = ndata, trace = TRUE)
 coef(nbcfit, matrix = TRUE)
 summary(nbcfit)
-}
+}}
 \keyword{math}
 \keyword{models}
 \keyword{regression}

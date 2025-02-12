@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -300,11 +300,13 @@ setMethod("summary", "rrvglm",
 show.summary.rrvglm <-
   function(x, digits = NULL, quote = TRUE,
            prefix = "",
-           signif.stars = NULL) {
+           signif.stars = NULL,
+           ...) {  # 20250128
 
 
   show.summary.vglm(x, digits = digits,
-                    quote = quote, prefix = prefix)
+                    quote = quote, prefix = prefix,
+                    ...)
 
 
   invisible(x)

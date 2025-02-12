@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1721,7 +1721,9 @@ if (!inverse && length(bmaxvalue)) theta[theta >= B] <- bmaxvalue
 
 
  linkfunvlm <-
-    function(object, earg = FALSE, ...) {
+     function(object,
+              earg = FALSE,
+              by.var = FALSE, ...) {
   if (!any(slotNames(object) == "extra"))
     stop("no 'extra' slot on the object")
   if (!any(slotNames(object) == "misc"))
@@ -1745,14 +1747,35 @@ if (!inverse && length(bmaxvalue)) theta[theta >= B] <- bmaxvalue
               "component is not ", M)
   }
 
-  if (length(LINKS1)) {
+  ans1 <-  # orig. (!by.var)
+    if (length(LINKS1)) {
       if (earg) list(link = LINKS1,
                      earg = EARGS1) else LINKS1
-  } else {
+    } else {
       if (earg) list(link = LINKS2,
                      earg = EARGS2) else LINKS2
-  }
+    }
+  if (!by.var) return(ans1)
+
+  if (earg) stop("'earg' and 'b.var' both TRUE")
+  ncobj <- names(coef(object))
+  cmat <- constraints(object, matrix = TRUE)
+  ans2 <- character(length(ncobj))
+  names(ans2) <- ncobj
+  for (kay in seq(ncobj)) {
+    rowind <- which(cmat[, kay] != 0)
+    locallinks <- ans1[rowind]
+    if (length(locallinks) > 1) {
+      if (!all(locallinks == locallinks[1]))
+        warning("different links for a single ",
+                "regn coef. Choosing 1st one")
+      locallinks <- locallinks[1]
+    }
+    ans2[kay] <- locallinks
+  }  # kay
+  ans2
 }  # linkfunvlm
+
 
 
 

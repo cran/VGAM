@@ -1,3 +1,41 @@
+	CHANGES IN VGAM VERSION 1.1-13 (2025-02)
+
+NEW FEATURES
+
+    o   New family functions: betabinomial.rho(),
+        binom3.or(dr).
+    o   Improved functions: pospoisson() (Thanks to Spencer Graves).
+    o   Helper function: niters().
+    o   VGAMfamilyfunction(link = Link) should work, where
+        Link <- "identitylink", say.
+        Note: weibullR(lshape = logofflink(offset = -2))
+        will no longer work. Instead, use 
+        weibullR(lshape = "logofflink(offset = -2)")
+        And something like
+        bvalue <- 0.1
+        vglm(interspike ~ 1, garma(loglink(bvalue = bvalue)))
+        will fail. Instead, use 
+        eval(substitute(vglm(interspike ~ 1,
+             garma(paste0("loglink(bvalue = ", .bvalue , ")"),
+                   p = 2, coefstart = c(4, 0.3, 0.4))),
+             list( .bvalue = bvalue)))
+        Sorry about this!
+    o   linkfun() has a new 'by.var = TRUE' argument.
+    o   show.summary.rrvglm() has ... added.
+    o   The WSDM function.
+    o   Tested okay on R 4.4.1.
+
+
+BUG FIXES and CHANGES
+
+    o   summary(vglm(binom2.or())) failed.
+    o   hdeffsev() renamed to hdeffsev0(),
+        hdeffsev2() to hdeffsev2() [no change],
+        and hdeffsev() is new and based on WSDM.
+
+
+
+
 	CHANGES IN VGAM VERSION 1.1-12
 
 NEW FEATURES

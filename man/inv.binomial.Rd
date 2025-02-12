@@ -8,7 +8,7 @@
 
 }
 \usage{
-inv.binomial(lrho = extlogitlink(min = 0.5, max = 1),
+inv.binomial(lrho = "extlogitlink(min = 0.5, max = 1)",
     llambda = "loglink", irho = NULL, ilambda = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

@@ -33,7 +33,7 @@ bibentry(bibtype = "Article",
   textVersion  =
   paste("Thomas W. Yee and C. J. Wild (1996).",
         "Vector Generalized Additive Models.",
-        "Journal of Royal Statistical Society, Series B, 58(3), 481-493.")
+        "Journal of Royal Statistical Society, Series B, 58(3), 481--493.")
 )
 
 
@@ -80,7 +80,7 @@ bibentry(bibtype = "Article",
 
 bibentry(bibtype = "Manual",
          title = "{VGAM}: Vector Generalized Linear and Additive Models",
-  author       = person(c("T.", "W."), "Yee"),
+         author = person(c("T.", "W."), "Yee"),
          year = year,
          note = note,
          url = "https://CRAN.R-project.org/package=VGAM",
@@ -107,7 +107,7 @@ bibentry(bibtype = "Article",
   textVersion  =
   paste("Thomas W. Yee (2013).",
         "Two-parameter reduced-rank vector generalized linear models.",
-        "Computational Statistics and Data Analysis."),
+        "Computational Statistics and Data Analysis, 71, 889--902."),
   header = "and/or"
 )
 
@@ -129,7 +129,7 @@ bibentry(bibtype = "Article",
   textVersion  =
   paste("Thomas W. Yee, Jakub Stoklosa, Richard M. Huggins (2015).",
         "The VGAM Package for Capture-Recapture Data Using the Conditional Likelihood.",
-        "Journal of Statistical Software, 65(5), 1-33.",
+        "Journal of Statistical Software, 65(5), 1--33.",
         "DOI: 10.18637/jss.v065.i05.",
         "URL https://www.jstatsoft.org/article/view/v065i05/."),
   header = "and/or"
@@ -148,7 +148,28 @@ bibentry(bibtype = "Article",
   textVersion  =
   paste("Thomas W. Yee (2020).",
         "The VGAM package for negative binomial regression.",
-        "Australian and New Zealand Journal of Statistics."),
+        "Australian and New Zealand Journal of Statistics,",
+        "62(1), 116--131."),
+  header = "and/or"
+)
+
+
+bibentry(bibtype = "Article",
+  title        = c("On the {H}auck-{D}onner effect in {W}ald tests: ",
+                   "{D}etection, tipping points and parameter space characterization"),
+  author       = person(c("T.", "W."), "Yee"),
+  journal      = "Journal of the American Statistical Association",
+  year         = "2022",
+  volume       = "117",
+  number       = "540",
+  pages        = "1763--1774",
+
+  textVersion  =
+  paste("Thomas W. Yee (2022).",
+        "On the Hauck-Donner effect in Wald tests: ",
+        "Detection, tipping points and parameter space characterization.",
+        "Journal of the American Statistical Association,",
+        "117(540), 1763--1774."),
   header = "and/or"
 )
 
@@ -162,13 +183,13 @@ bibentry(bibtype = "Article",
   journal      = "Statistical Science",
   year         = "2024",
   volume       = "39",
-  number       = "",
-  pages        = "",
+  number       = "4",
+  pages        = "568--588",
 
   textVersion  =
   paste("Thomas W. Yee and Chenchen Ma (2024).",
         "Generally altered, inflated, truncated and deflated regression.",
-        "Statistical Science (in press)."),
+        "Statistical Science, 39(4), 568--588."),
   header = "and/or"
 )
 

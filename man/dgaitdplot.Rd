@@ -179,11 +179,17 @@ in which case \code{fam = "genpois1"}.
   \item{col.d.mix, col.d.mlm, col.d.dip}{
     Similar to above.
     Used when \code{deflation = TRUE}.
-    The website \url{https://www.spycolor.com} was used to
-    choose some of the default colours;
+    The (former?) website
+    \code{https://www.spycolor.com}
+    was used to choose some of the default colours;
     the first two are also called \code{"dirt"}
     and \code{"deer"} respectively, which are
     both brownish.
+
+
+%20241021:
+%   The website \url{https://www.spycolor.com} was used to
+
 
 
 

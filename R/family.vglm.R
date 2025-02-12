@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -86,22 +86,32 @@ GHfun <- function(n) {
   copula <- match.arg(copula, c("gaussian"))[1]
   isdev <- isd
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsdev <- as.list(substitute(lsd))
   esdev <- link2list(lsdev)
   lsdev <- attr(esdev, "function.name")
 
+  if (is.character(lvar))
+    lvar <- substitute(y9, list(y9 = lvar))
   lvare <- as.list(substitute(lvar))
   evare <- link2list(lvare)
   lvare <- attr(evare, "function.name")
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
   lapar <- attr(eapar, "function.name")
@@ -111,8 +121,7 @@ GHfun <- function(n) {
       imethod > 4)
       stop("arg 'imethod' is not 1, 2, 3 or 4")
 
-  if (!is.logical(var.arg) ||
-      length(var.arg) != 1)
+  if (!isFALSE(var.arg) && !isTRUE(var.arg))
     stop("arg 'var.arg' must be a single logical")
   if (var.arg)
     stop("currently 'var.arg' must be FALSE")
@@ -609,8 +618,7 @@ GHfun <- function(n) {
              copula = "gaussian",
              log = FALSE) {
   copula <- match.arg(copula, c("gaussian"))[1]
-  if (!is.logical(log.arg <- log) ||
-      length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -621,12 +629,12 @@ GHfun <- function(n) {
   L <- max(length(x1),   length(x2),
            length(mean), length(sd),
            length(prob), length(apar))
-  if (length(x1)   != L) x1   <- rep_len(x1,   L)
-  if (length(x2)   != L) x2   <- rep_len(x2,   L)
-  if (length(mean) != L) mean <- rep_len(mean, L)
-  if (length(sd)   != L) sd   <- rep_len(sd,   L)
-  if (length(prob) != L) prob <- rep_len(prob, L)
-  if (length(apar) != L) apar <- rep_len(apar, L)
+  if (length(x1)   < L) x1   <- rep_len(x1,   L)
+  if (length(x2)   < L) x2   <- rep_len(x2,   L)
+  if (length(mean) < L) mean <- rep_len(mean, L)
+  if (length(sd)   < L) sd   <- rep_len(sd,   L)
+  if (length(prob) < L) prob <- rep_len(prob, L)
+  if (length(apar) < L) apar <- rep_len(apar, L)
 
   logdensity <- dnorm(x1, mean, sd, log = TRUE)
   Prob <- pfun.N1b((x1 - mean) / sd, prob, apar)
@@ -779,22 +787,32 @@ GHfun <- function(n) {
   copula <- match.arg(copula, c("gaussian"))[1]
   isdev <- isd
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsdev <- as.list(substitute(lsd))
   esdev <- link2list(lsdev)
   lsdev <- attr(esdev, "function.name")
 
+  if (is.character(lvar))
+    lvar <- substitute(y9, list(y9 = lvar))
   lvare <- as.list(substitute(lvar))
   evare <- link2list(lvare)
   lvare <- attr(evare, "function.name")
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llamb <- as.list(substitute(llambda))
   elamb <- link2list(llamb)
   llamb <- attr(elamb, "function.name")
 
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
   lapar <- attr(eapar, "function.name")
@@ -808,8 +826,7 @@ GHfun <- function(n) {
         doff == 0)
     stop("arg 'doff' is unsuitable")
 
-  if (!is.logical(var.arg) ||
-      length(var.arg) != 1)
+  if (!isFALSE(var.arg) && !isTRUE(var.arg))
     stop("arg 'var.arg' must be a single logical")
   if (var.arg)
     stop("currently 'var.arg' must be FALSE")
@@ -1336,8 +1353,7 @@ GHfun <- function(n) {
              log = FALSE) {
   Lamb <- lambda
   copula <- match.arg(copula, c("gaussian"))[1]
-  if (!is.logical(log.arg <- log) ||
-      length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
   if (!is.numeric(doff) || length(doff) != 1 ||
@@ -1348,12 +1364,12 @@ GHfun <- function(n) {
   L <- max(length(x1),   length(x2),
            length(mean), length(sd),
            length(Lamb), length(apar))
-  if (length(x1)   != L) x1   <- rep_len(x1,   L)
-  if (length(x2)   != L) x2   <- rep_len(x2,   L)
-  if (length(mean) != L) mean <- rep_len(mean, L)
-  if (length(sd)   != L) sd   <- rep_len(sd,   L)
-  if (length(Lamb) != L) Lamb <- rep_len(Lamb, L)
-  if (length(apar) != L) apar <- rep_len(apar, L)
+  if (length(x1)   < L) x1   <- rep_len(x1,   L)
+  if (length(x2)   < L) x2   <- rep_len(x2,   L)
+  if (length(mean) < L) mean <- rep_len(mean, L)
+  if (length(sd)   < L) sd   <- rep_len(sd,   L)
+  if (length(Lamb) < L) Lamb <- rep_len(Lamb, L)
+  if (length(apar) < L) apar <- rep_len(apar, L)
 
   logdensity <- dnorm(x1, mean, sd, log = TRUE)
   txlamb <- if (doff > 0)

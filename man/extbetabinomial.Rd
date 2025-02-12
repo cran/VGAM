@@ -263,17 +263,20 @@ covariate measurement errors.
 
 }
 \examples{
+\dontrun{
 # Example 1
-edata <- data.frame(N = 10, mu = 0.5, rho = 0.1)
+edata <- data.frame(N = 10, mu = logitlink(1, inverse = TRUE),
+                    rho = cloglink(0.15, inverse = TRUE))
 edata <- transform(edata,
       y = rextbetabinom(100, N, mu, rho = rho))
+with(edata, plot(table(y)))
 fit1 <- vglm(cbind(y, N-y) ~ 1, extbetabinomial, edata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 Coef(fit1)
 head(cbind(depvar(fit1), weights(fit1, type = "prior")))
 
 # Example 2: VFL model
-\dontrun{N <- size1 <- 10; nn <- 2000; set.seed(1)
+N <- size1 <- 10; nn <- 2000; set.seed(1)
 edata <-  # Generate the data set. Expensive.
     data.frame(x2 = runif(nn),
                ooo =  log(size1 / (size1 - 1)))

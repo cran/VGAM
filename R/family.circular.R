@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -18,7 +18,7 @@
 dvMF3 <-
   function(x, colatitude, longitude, concentration,
            byrow.arg = FALSE, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -27,14 +27,14 @@ dvMF3 <-
   if (!is.matrix(x))
     x <- as.matrix(x)
   LLL <- max(nrow(x), length(colatitude),
-             length(colatitude), length(concentration))
-  if (nrow(x) != LLL)
+             length(longitude), length(concentration))
+  if (nrow(x) < LLL)
     x <- matrix(as.vector(x), LLL, 2, byrow = byrow.arg)
-  if (length(longitude) != LLL)
+  if (length(longitude) < LLL)
     longitude <- rep_len(longitude, LLL)
-  if (length(colatitude) != LLL)
+  if (length(colatitude) < LLL)
     colatitude <- rep_len(colatitude, LLL)
-  if (length(concentration) != LLL)
+  if (length(concentration) < LLL)
     concentration <- rep_len(concentration, LLL)
   
   bad0 <- !is.finite(colatitude) | !is.finite(longitude) |
@@ -69,8 +69,8 @@ dvMF3 <-
 
 
  vMF3 <-
-  function(lcolati = extlogitlink(min = -pi, max = pi),  #"identitylink",
-           llongit = extlogitlink(min = -pi, max = pi),  #"identitylink",
+  function(lcolati = "extlogitlink(min = -pi, max = pi)",  #"identitylink",
+           llongit = "extlogitlink(min = -pi, max = pi)",  #"identitylink",
            lconcen = "loglink",  # "logitlink",
            icolati = NULL, ilongit = NULL, iconcen = NULL,
            gcolati = exp(2*ppoints(5) - 1),
@@ -78,12 +78,20 @@ dvMF3 <-
            gconcen = exp(2*ppoints(5) - 1),
            tol12 = 1.0e-4,
            zero = NULL) {
+  if (is.character(lcolati))
+    lcolati <- substitute(y9, list(y9 = lcolati))
   lcolati <- as.list(substitute(lcolati))
   ecolati <- link2list(lcolati)
   lcolati <- attr(ecolati, "function.name")
+
+  if (is.character(llongit))
+    llongit <- substitute(y9, list(y9 = llongit))
   llongit <- as.list(substitute(llongit))
   elongit <- link2list(llongit)
   llongit <- attr(elongit, "function.name")
+
+  if (is.character(lconcen))
+    lconcen <- substitute(y9, list(y9 = lconcen))
   lconcen <- as.list(substitute(lconcen))
   econcen <- link2list(lconcen)
   lconcen <- attr(econcen, "function.name")
@@ -180,8 +188,6 @@ dvMF3 <-
                        y = yvec, w = wvec,
                        ret.objfun = TRUE)  # Last value is the loglik
 
- print("try.this")
- print( try.this )
           concen.init[, spp.] <- try.this["Value1" ]
           colati.init[, spp.] <- try.this["Value2" ]
           longit.init[, spp.] <- try.this["Value3" ]
@@ -327,15 +333,15 @@ dvMF3 <-
 
 
 dcard <- function(x, mu, rho, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   L <- max(length(x), length(mu), length(rho))
-  if (length(x)   != L) x   <- rep_len(x,   L)
-  if (length(mu)  != L) mu  <- rep_len(mu,  L)
-  if (length(rho) != L) rho <- rep_len(rho, L)
+  if (length(x)   < L) x   <- rep_len(x,   L)
+  if (length(mu)  < L) mu  <- rep_len(mu,  L)
+  if (length(rho) < L) rho <- rep_len(rho, L)
 
   logdensity <- rep_len(log(0), L)
   xok <- (x > 0) & (x < (2*pi))
@@ -352,9 +358,9 @@ dcard <- function(x, mu, rho, log = FALSE) {
 
 pcard <- function(q, mu, rho, lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -391,14 +397,14 @@ qcard <- function(p, mu, rho, tolerance = 1.0e-7, maxits = 500,
     stop("'p' must be between 0 and 1")
 
   nn <- max(length(p), length(mu), length(rho))
-  if (length(p)   != nn) p   <- rep_len(p,   nn)
-  if (length(mu)  != nn) mu  <- rep_len(mu,  nn)
-  if (length(rho) != nn) rho <- rep_len(rho, nn)
+  if (length(p)   < nn) p   <- rep_len(p,   nn)
+  if (length(mu)  < nn) mu  <- rep_len(mu,  nn)
+  if (length(rho) < nn) rho <- rep_len(rho, nn)
 
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -511,15 +517,19 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
 
  cardioid <- function(
-     lmu  = extlogitlink(min = 0, max = 2*pi),
-     lrho = extlogitlink(min = -0.5, max = 0.5),
+     lmu  = "extlogitlink(min = 0, max = 2*pi)",
+     lrho = "extlogitlink(min = -0.5, max = 0.5)",
      imu = NULL, irho = 0.3,
      nsimEIM = 100, zero = NULL) {
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lrho))
+    lrho <- substitute(y9, list(y9 = lrho))
   lrho <- as.list(substitute(lrho))
   erho <- link2list(lrho)
   lrho <- attr(erho, "function.name")
@@ -699,15 +709,18 @@ cardioid.control <- function(save.weights = TRUE, ...) {
 
 
  vonmises <-
-  function(llocation = extlogitlink(min = 0, max = 2*pi),
+  function(llocation = "extlogitlink(min = 0, max = 2*pi)",
            lscale  = "loglink",
            ilocation = NULL, iscale  = NULL,
            imethod = 1, zero = NULL) {
-
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")

@@ -381,6 +381,7 @@ assistance from Alfian F. Hadi.
 }
 
 \examples{
+\dontrun{
 # Example 1: Undergraduate enrolments at Auckland University in 1990
 fitted(grc1 <- grc(auuc))
 summary(grc1)
@@ -395,7 +396,6 @@ fitted(model3)
 summary(model3)
 
 # Median polish but not 100 percent reliable. Maybe call alaplace2()...
-\dontrun{
 rcim0 <- rcim(auuc, fam = alaplace1(tau = 0.5), trace=FALSE, maxit = 500)
 round(fitted(rcim0), digits = 0)
 round(100 * (fitted(rcim0) - auuc) / auuc, digits = 0)  # Discrepancy
@@ -409,21 +409,18 @@ names(constraints(rcim0))
 (med.a <- medpolish(auuc))
 fv <- med.a$overall + outer(med.a$row, med.a$col, "+")
 round(100 * (fitted(rcim0) - fv) / fv)  # Hopefully should be all 0s
-}
 
 
 # Example 2: 2012 Summer Olympic Games in London
-\dontrun{ top10 <- head(olym12, 10)
+top10 <- head(olym12, 10)
 grc1.oly12 <- with(top10, grc(cbind(gold, silver, bronze)))
 round(fitted(grc1.oly12))
 round(resid(grc1.oly12, type = "response"), digits = 1)  # Resp. resids
 summary(grc1.oly12)
 Coef(grc1.oly12)
-}
 
 
 # Example 3: UQO; see Yee and Hadi (2014)
-\dontrun{
 n <- 100; p <- 5; S <- 10
 pdata <- rcqo(n, p, S, es.opt = FALSE, eq.max = FALSE,
               eq.tol = TRUE, sd.latvar = 0.75)  # Poisson counts

@@ -6,9 +6,9 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Hauck-Donner Effects: A Detection Test for Wald Tests }
 \description{
-  A detection test for the
-  Hauck-Donner effect on each regression coefficient
-  of a VGLM regression or 2 x 2 table.
+  A detection test for the Hauck-Donner effect
+  on each regression coefficient
+  of a fitted VGLM or 2 x 2 table.
 
 
 }
@@ -81,7 +81,8 @@ hdeff.matrix(object, ...)
   analytically for \code{derivative = 2}, e.g.,
   \code{\link{binomialff}},
   \code{\link{poissonff}}.
-  However, the numerical method can return the first two
+  However, the numerical method can return
+  the first two
   derivatives for almost all models.
 
 
@@ -89,37 +90,48 @@ hdeff.matrix(object, ...)
   \item{se.arg}{
     Logical. If \code{TRUE} then the derivatives
     of the standard errors
-  are returned as well, because usually the derivatives of
-  the Wald statistics are of central interest.  Requires
-  \code{derivative} to be assigned the value 1 or 2 for this
-  argument to operate.
+    are returned as well, because usually
+    the derivatives of
+    the Wald statistics are of central interest.
+    Requires \code{derivative} to be assigned
+    the value 1 or 2 for this argument to
+    operate.
 
 
   }
   \item{subset}{
   Logical or vector of indices,
-  to select the regression coefficients of interest.
+  to select the regression coefficients
+  of interest.
   The default is to select all coefficients.
   Recycled if necessary if logical.
   If numeric then they should comprise
   elements from \code{1:length(coef(object))}.
-  This argument can be useful for computing the derivatives of a
+  This argument can be useful for computing
+  the derivatives of a
   Cox regression (\code{\link[survival]{coxph}})
   fitted using artificially
-  created Poisson data; then there are many coefficients that
+  created Poisson data; then there are
+  many coefficients that
   are effectively nuisance parameters.
 
 
   }
   \item{theta0}{
-    Numeric. Vector recycled to the necessary length which is
+    Numeric. Vector recycled to the necessary
+    length which is
     the number of regression coefficients.
-    The null hypotheses for the regression coefficients are that
-    they equal those respective values, and the alternative
+    The null hypotheses for the regression
+    coefficients are that
+    they equal those respective values,
+    and the alternative
     hypotheses are all two-sided.
-    It is not recommended that argument \code{subset} be used
-    if a vector of values is assigned here because
-    \code{theta0[subset]} is implied and might not work.
+    It is not recommended that argument
+    \code{subset} be used
+    if a vector of values is assigned
+    here because
+    \code{theta0[subset]} is implied and
+    might not work.
     
 
 % 20210406
@@ -301,8 +313,10 @@ does not suffer from the HDE.
 
 
 Hauck, J. W. W. and A. Donner (1977).
-Wald's test as applied to hypotheses in logit analysis. 
-\emph{Journal of the American Statistical Association},
+Wald's test as applied to hypotheses in
+logit analysis. 
+\emph{Journal of the American Statistical
+  Association},
 \bold{72}, 851--853.
 
 
@@ -324,8 +338,10 @@ Wald's test as applied to hypotheses in logit analysis.
 
 Yee, T. W. (2022).
 On the Hauck-Donner effect in Wald tests:
-Detection, tipping points and parameter space characterization,
-\emph{Journal of the American Statistical Association},
+Detection, tipping points and parameter space
+characterization,
+\emph{Journal of the American Statistical
+  Association},
 \bold{117}, 1763--1774.
 \doi{10.1080/01621459.2021.1886936}.
 
@@ -336,9 +352,10 @@ Detection, tipping points and parameter space characterization,
 
 
 
-Yee, T. W. (2021).
-Some new results concerning the Hauck-Donner effect.
-\emph{Manuscript in preparation}.
+%Yee, T. W. (2021).
+%Some new results concerning the Hauck-Donner
+%effect.
+%\emph{Manuscript in preparation}.
 
 
 
@@ -402,7 +419,8 @@ Some new results concerning the Hauck-Donner effect.
 
   This function is currently under development
   and may change a little in the short future.
-  For HDE severity measures see \code{\link{hdeffsev}}.
+  For HDE severity measures see
+  \code{\link{hdeffsev}}.
 
 
   
@@ -423,6 +441,7 @@ Some new results concerning the Hauck-Donner effect.
   \code{\link{hdeffsev}},
   \code{\link{alogitlink}},
   \code{\link{asinlink}},
+  \code{\link{wsdm}},
   \code{\link{vglm}},
   \code{\link{lrt.stat}},
   \code{\link{score.stat}},

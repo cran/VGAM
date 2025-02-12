@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -361,6 +361,8 @@ asparagus.col <- "#87a96b"
     stop("argument 'max.support' must be 'Inf'.")
 
 
+  if (is.character(lshape.p))
+    lshape.p <- substitute(y9, list(y9 = lshape.p))
   lshape.p <- as.list(substitute(lshape.p))
   eshape.p <- link2list(lshape.p)
   lshape.p <- attr(eshape.p, "function.name")
@@ -404,15 +406,15 @@ asparagus.col <- "#87a96b"
            list( .lshape.p.save = lshape.p.save,
                  .gshape.p.save = gshape.p.save ))))
 
-  if (!is.logical(eq.ap) || length(eq.ap) != 1)
+  if (!isFALSE(eq.ap) && !isTRUE(eq.ap))
     stop("argument 'eq.ap' must be a single logical")
-  if (!is.logical(eq.ip) || length(eq.ip) != 1)
+  if (!isFALSE(eq.ip) && !isTRUE(eq.ip))
     stop("argument 'eq.ip' must be a single logical")
-  if (!is.logical(parallel.a) || length(parallel.a) != 1)
+  if (!isFALSE(parallel.a) && !isTRUE(parallel.a))
     stop("argument 'parallel.a' must be a single logical")
-  if (!is.logical(parallel.i) || length(parallel.i) != 1)
+  if (!isFALSE(parallel.i) && !isTRUE(parallel.i))
     stop("argument 'parallel.i' must be a single logical")
-  if (!is.logical(parallel.d) || length(parallel.d) != 1)
+  if (!isFALSE(parallel.d) && !isTRUE(parallel.d))
     stop("argument 'parallel.d' must be a single logical")
 
 
@@ -3767,6 +3769,8 @@ asparagus.col <- "#87a96b"
   ltruncat <- length(truncate <- sort(truncate))
   ltrunc.use <- ltruncat > 0 || !is.infinite(max.support) 
 
+  if (is.character(lshape.p))
+    lshape.p <- substitute(y9, list(y9 = lshape.p))
   lshape.p <- as.list(substitute(lshape.p))
   eshape.p <- link2list(lshape.p)
   lshape.p <- attr(eshape.p, "function.name")
@@ -3810,15 +3814,15 @@ asparagus.col <- "#87a96b"
            list( .lshape.p.save = lshape.p.save,
                  .gshape.p.save = gshape.p.save ))))
 
-  if (!is.logical(eq.ap) || length(eq.ap) != 1)
+  if (!isFALSE(eq.ap) && !isTRUE(eq.ap))
     stop("argument 'eq.ap' must be a single logical")
-  if (!is.logical(eq.ip) || length(eq.ip) != 1)
+  if (!isFALSE(eq.ip) && !isTRUE(eq.ip))
     stop("argument 'eq.ip' must be a single logical")
-  if (!is.logical(parallel.a) || length(parallel.a) != 1)
+  if (!isFALSE(parallel.a) && !isTRUE(parallel.a))
     stop("argument 'parallel.a' must be a single logical")
-  if (!is.logical(parallel.i) || length(parallel.i) != 1)
+  if (!isFALSE(parallel.i) && !isTRUE(parallel.i))
     stop("argument 'parallel.i' must be a single logical")
-  if (!is.logical(parallel.d) || length(parallel.d) != 1)
+  if (!isFALSE(parallel.d) && !isTRUE(parallel.d))
     stop("argument 'parallel.d' must be a single logical")
 
 

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -14,8 +14,17 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
-
-
+exportMethods(niters)
+export(niters.vlm)
+export(hdeffsev)
+ export(dpospois2)
+ importFrom("stats", "symnum")
+ export(wsdm)
+ export(printCoefmatt)
+ export(binom3.or.control)
+ export(process.binomial3.data.VGAM)
+ export(binom3.or, dbinom3.or, rbinom3.or)
+ export(betabinomial.rho)
  export(DDfun)
  importFrom("stats", "D")
  export(hdeffsev2)
@@ -173,7 +182,7 @@ export(zeta.specials)
 export(stieltjes)
 export(loglogloglink)
 importFrom("graphics", "legend")
-export(hdeffsev, seglines)
+export(hdeffsev0, seglines)
 export(bell)
 exportMethods(calibrate)
 export(fnumat2R)

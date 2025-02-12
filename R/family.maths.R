@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -133,8 +133,8 @@ lambertW <- function(x, tolerance = 1.0e-10, maxit = 50) {
  pgamma.deriv <- function(q, shape, tmax = 100) {
 
   nnn <- max(length(q), length(shape))
-  if (length(q)     != nnn) q     <- rep_len(q,     nnn)
-  if (length(shape) != nnn) shape <- rep_len(shape, nnn)
+  if (length(q)     < nnn) q     <- rep_len(q,     nnn)
+  if (length(shape) < nnn) shape <- rep_len(shape, nnn)
 
   if (!is.Numeric(q, positive = TRUE))
     stop("bad input for argument 'q'")
@@ -345,8 +345,8 @@ expint.E1 <- function(x) {
 
 
   LLL <- max(length(shape), length(qq))
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(qq   ) != LLL) qq    <- rep_len(qq,    LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(qq   ) < LLL) qq    <- rep_len(qq,    LLL)
 
   if (any(qq < 12-1))
     warning("all values of argument 'q' should be 12 or more")

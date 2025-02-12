@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -20,15 +20,15 @@
 
 
 dexppois <- function(x, rate = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(shape), length(rate))
-  if (length(x)      != N) x      <- rep_len(x,     N)
-  if (length(shape)  != N) shape  <- rep_len(shape, N)
-  if (length(rate)   != N) rate   <- rep_len(rate,  N)
+  if (length(x)      < N) x      <- rep_len(x,     N)
+  if (length(shape)  < N) shape  <- rep_len(shape, N)
+  if (length(rate)   < N) rate   <- rep_len(rate,  N)
   logdensity <- rep_len(log(0), N)
 
   xok <- (0 < x)
@@ -50,10 +50,10 @@ dexppois <- function(x, rate = 1, shape, log = FALSE) {
 
 qexppois<- function(p, rate = 1, shape,
                     lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -98,10 +98,10 @@ qexppois<- function(p, rate = 1, shape,
 
 pexppois<- function(q, rate = 1, shape,
                     lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -148,14 +148,19 @@ rexppois <- function(n, rate = 1, shape) {
 
 
 
- exppoisson <- function(lrate = "loglink", lshape = "loglink",
-                        irate = 2.0, ishape = 1.1,
-                        zero = NULL) {
+ exppoisson <-
+  function(lrate = "loglink", lshape = "loglink",
+           irate = 2.0, ishape = 1.1,
+           zero = NULL) {
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
+  if (is.character(lrate))
+    lrate <- substitute(y9, list(y9 = lrate))
   lratee <- as.list(substitute(lrate))
   eratee <- link2list(lratee)
   lratee <- attr(eratee, "function.name")
@@ -337,16 +342,16 @@ rexppois <- function(n, rate = 1, shape) {
 
 
 dgenray <- function(x, scale = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
 
   N <- max(length(x), length(shape), length(scale))
-  if (length(x)      != N) x      <- rep_len(x,     N)
-  if (length(shape)  != N) shape  <- rep_len(shape, N)
-  if (length(scale)  != N) scale  <- rep_len(scale, N)
+  if (length(x)      < N) x      <- rep_len(x,     N)
+  if (length(shape)  < N) shape  <- rep_len(shape, N)
+  if (length(scale)  < N) scale  <- rep_len(scale, N)
   logdensity <- rep_len(log(0), N)
 
   if (any(xok <- (x > 0))) {
@@ -371,10 +376,10 @@ dgenray <- function(x, scale = 1, shape, log = FALSE) {
 
 pgenray <- function(q, scale = 1, shape,
                     lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -408,10 +413,10 @@ pgenray <- function(q, scale = 1, shape,
 
 qgenray <- function(p, scale = 1, shape,
                     lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -464,10 +469,14 @@ genrayleigh.control <- function(save.weights = TRUE, ...) {
            tol12 = 1.0e-05,
            nsimEIM = 300, zero = 2) {
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -676,15 +685,15 @@ genrayleigh.control <- function(save.weights = TRUE, ...) {
 
 
 dexpgeom <- function(x, scale = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(scale), length(shape))
-  if (length(x)      != N) x      <- rep_len(x,     N)
-  if (length(scale)  != N) scale  <- rep_len(scale, N)
-  if (length(shape)  != N) shape  <- rep_len(shape, N)
+  if (length(x)      < N) x      <- rep_len(x,     N)
+  if (length(scale)  < N) scale  <- rep_len(scale, N)
+  if (length(shape)  < N) shape  <- rep_len(shape, N)
   logdensity <- rep_len(log(0), N)
 
   if (any(xok <- (x > 0))) {
@@ -738,16 +747,21 @@ expgeometric.control <- function(save.weights = TRUE, ...) {
 }
 
 
- expgeometric <- function(lscale = "loglink", lshape = "logitlink",
-                          iscale = NULL,   ishape = NULL,
-                          tol12 = 1.0e-05, zero = 1,
-                          nsimEIM = 400) {
+ expgeometric <-
+  function(lscale = "loglink",
+           lshape = "logitlink",
+           iscale = NULL,   ishape = NULL,
+           tol12 = 1.0e-05, zero = 1,
+           nsimEIM = 400) {
 
-
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -965,15 +979,15 @@ expgeometric.control <- function(save.weights = TRUE, ...) {
 
 
 dexplog <- function(x, scale = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(scale), length(shape))
-  if (length(x)      != N) x      <- rep_len(x,     N)
-  if (length(scale)  != N) scale  <- rep_len(scale, N)
-  if (length(shape)  != N) shape  <- rep_len(shape, N)
+  if (length(x)      < N) x      <- rep_len(x,     N)
+  if (length(scale)  < N) scale  <- rep_len(scale, N)
+  if (length(shape)  < N) shape  <- rep_len(shape, N)
 
   logdensity <- rep_len(log(0), N)
   if (any(xok <- (x > 0))) {
@@ -1040,10 +1054,14 @@ explogff.control <- function(save.weights = TRUE, ...) {
                       tol12 = 1.0e-05, zero = 1,
                       nsimEIM = 400) {
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -1265,8 +1283,7 @@ explogff.control <- function(save.weights = TRUE, ...) {
 
 dweibull3 <- function(x, location = 0, scale = 1, shape,
                       log = FALSE) {
-
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1312,10 +1329,10 @@ dtpn <- function(x, location = 0, scale = 1, skewpar = 0.5,
 
   N <- max(length(x), length(location), length(scale),
            length(skewpar))
-  if (length(x)        != N) x         <- rep_len(x,        N)
-  if (length(scale)    != N) scale     <- rep_len(scale,    N)
-  if (length(location) != N) location  <- rep_len(location, N)
-  if (length(skewpar)  != N) skewpar   <- rep_len(skewpar,  N)
+  if (length(x)        < N) x         <- rep_len(x,        N)
+  if (length(scale)    < N) scale     <- rep_len(scale,    N)
+  if (length(location) < N) location  <- rep_len(location, N)
+  if (length(skewpar)  < N) skewpar   <- rep_len(skewpar,  N)
 
   zedd <- (x - location) / scale
 
@@ -1370,10 +1387,10 @@ qtpn <- function(p, location = 0, scale = 1, skewpar = 0.5) {
     # Recycle the vectors to equal lengths
   LLL <- max(length(pp), length(location), length(scale),
              length(skewpar))
-  if (length(pp)       != LLL) pp       <- rep_len(pp,       LLL)
-  if (length(location) != LLL) location <- rep_len(location, LLL)
-  if (length(scale)    != LLL) scale    <- rep_len(scale,    LLL)
-  if (length(skewpar)  != LLL) skewpar  <- rep_len(skewpar,  LLL)
+  if (length(pp)       < LLL) pp       <- rep_len(pp,       LLL)
+  if (length(location) < LLL) location <- rep_len(location, LLL)
+  if (length(scale)    < LLL) scale    <- rep_len(scale,    LLL)
+  if (length(skewpar)  < LLL) skewpar  <- rep_len(skewpar,  LLL)
 
   qtpn <- rep_len(NA_real_, length(LLL))
   qtpn <- qnorm(pp / (2 * skewpar), sd = 2 * skewpar)
@@ -1411,10 +1428,14 @@ tpnff <- function(llocation = "identitylink", lscale = "loglink",
     stop("bad input for argument 'pp'")
 
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -1594,14 +1615,20 @@ tpnff3 <- function(llocation = "identitylink",
 
 
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lskewpar))
+    lskewpar <- substitute(y9, list(y9 = lskewpar))
   lskewp <- as.list(substitute(lskewpar))
   eskewp <- link2list(lskewp)
   lskewp <- attr(eskewp, "function.name")
@@ -1798,11 +1825,11 @@ dzoabeta <- function(x, shape1, shape2, pobs0 = 0,
   rm(log)
   LLL <- max(length(x), length(shape1),
              length(shape2), length(pobs0), length(pobs1))
-  if (LLL != length(x))      x      <- rep_len(x,      LLL)
-  if (LLL != length(shape1)) shape1 <- rep_len(shape1, LLL)
-  if (LLL != length(shape2)) shape2 <- rep_len(shape2, LLL)
-  if (LLL != length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
-  if (LLL != length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
+  if (LLL > length(x))      x      <- rep_len(x,      LLL)
+  if (LLL > length(shape1)) shape1 <- rep_len(shape1, LLL)
+  if (LLL > length(shape2)) shape2 <- rep_len(shape2, LLL)
+  if (LLL > length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
+  if (LLL > length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
   ans <- rep_len(NA_real_, LLL)
 
   k1 <- (pobs0 < -tol | pobs1 < -tol |
@@ -1864,11 +1891,11 @@ pzoabeta <- function(q, shape1, shape2, pobs0 = 0, pobs1 = 0,
                      tol = .Machine$double.eps) {
   LLL <- max(length(q), length(shape1),
              length(shape2), length(pobs0), length(pobs1))
-  if (LLL != length(q))      q      <- rep_len(q,      LLL)
-  if (LLL != length(shape1)) shape1 <- rep_len(shape1, LLL)
-  if (LLL != length(shape2)) shape2 <- rep_len(shape2, LLL)
-  if (LLL != length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
-  if (LLL != length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
+  if (LLL > length(q))      q      <- rep_len(q,      LLL)
+  if (LLL > length(shape1)) shape1 <- rep_len(shape1, LLL)
+  if (LLL > length(shape2)) shape2 <- rep_len(shape2, LLL)
+  if (LLL > length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
+  if (LLL > length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
   k3 <- (pobs0 < -tol | pobs1 < -tol |
         (pobs0 + pobs1) > (1 + tol))
   k4 <- is.na(pobs0) | is.na(pobs1)
@@ -1906,11 +1933,11 @@ qzoabeta <- function(p, shape1, shape2, pobs0 = 0, pobs1 = 0,
                      tol = .Machine$double.eps) {
   LLL <- max(length(p), length(shape1),
              length(shape2), length(pobs0), length(pobs1))
-  if (LLL != length(p))      p      <- rep_len(p,      LLL)
-  if (LLL != length(shape1)) shape1 <- rep_len(shape1, LLL)
-  if (LLL != length(shape2)) shape2 <- rep_len(shape2, LLL)
-  if (LLL != length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
-  if (LLL != length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
+  if (LLL > length(p))      p      <- rep_len(p,      LLL)
+  if (LLL > length(shape1)) shape1 <- rep_len(shape1, LLL)
+  if (LLL > length(shape2)) shape2 <- rep_len(shape2, LLL)
+  if (LLL > length(pobs0))  pobs0  <- rep_len(pobs0,  LLL)
+  if (LLL > length(pobs1))  pobs1  <- rep_len(pobs1,  LLL)
   k0 <- (pobs0 < -tol | pobs1 < -tol |
         (pobs0 + pobs1) > (1 + tol))
   k4 <- is.na(pobs0) | is.na(pobs1)
@@ -1971,12 +1998,12 @@ dzoibetabinom.ab <- function(x, size, shape1, shape2, pstr0 = 0,
   rm(log)
   LLL <- max(length(x), length(size), length(shape1),
              length(shape2), length(pstr0), length(pstrsize))
-  if (LLL != length(x))        x        <- rep_len(x,        LLL)
-  if (LLL != length(size))     size     <- rep_len(size,     LLL)
-  if (LLL != length(shape1))   shape1   <- rep_len(shape1,   LLL)
-  if (LLL != length(shape2))   shape2   <- rep_len(shape2,   LLL)
-  if (LLL != length(pstr0))    pstr0    <- rep_len(pstr0,    LLL)
-  if (LLL != length(pstrsize)) pstrsize <- rep_len(pstrsize, LLL)
+  if (LLL > length(x))        x        <- rep_len(x,        LLL)
+  if (LLL > length(size))     size     <- rep_len(size,     LLL)
+  if (LLL > length(shape1))   shape1   <- rep_len(shape1,   LLL)
+  if (LLL > length(shape2))   shape2   <- rep_len(shape2,   LLL)
+  if (LLL > length(pstr0))    pstr0    <- rep_len(pstr0,    LLL)
+  if (LLL > length(pstrsize)) pstrsize <- rep_len(pstrsize, LLL)
   ans <- rep_len(NA_real_, LLL)
   k1 <- pstr0 < 0 | pstrsize < 0 |
            (pstr0 + pstrsize) > 1
@@ -2071,12 +2098,12 @@ pzoibetabinom.ab <- function(q, size, shape1, shape2, pstr0 = 0,
                              log.p = FALSE) {
   LLL <- max(length(q), length(size), length(shape1),
              length(shape2), length(pstr0), length(pstrsize))
-  if (LLL != length(q))        q        <- rep_len(q,        LLL)
-  if (LLL != length(size))     size     <- rep_len(size,     LLL)
-  if (LLL != length(shape1))   shape1   <- rep_len(shape1,   LLL)
-  if (LLL != length(shape2))   shape2   <- rep_len(shape2,   LLL)
-  if (LLL != length(pstr0))    pstr0    <- rep_len(pstr0,    LLL)
-  if (LLL != length(pstrsize)) pstrsize <- rep_len(pstrsize, LLL)
+  if (LLL > length(q))        q        <- rep_len(q,        LLL)
+  if (LLL > length(size))     size     <- rep_len(size,     LLL)
+  if (LLL > length(shape1))   shape1   <- rep_len(shape1,   LLL)
+  if (LLL > length(shape2))   shape2   <- rep_len(shape2,   LLL)
+  if (LLL > length(pstr0))    pstr0    <- rep_len(pstr0,    LLL)
+  if (LLL > length(pstrsize)) pstrsize <- rep_len(pstrsize, LLL)
   ans <- rep_len(NA_real_, LLL)
   k <- is.na(size) | is.na(shape1) | is.na(shape2) |
     is.na(pstr0) | is.na(pstrsize) | is.na(q)
@@ -2350,14 +2377,14 @@ AR1.gammas <- function(x, y = NULL, lags = 1) {
 
 
 dzipfmb <- function(x, shape, start = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(start), length(shape))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
   
   bad0 <- !is.finite(shape) | !is.finite(start) |
           shape <= 0 | 1 <= shape |
@@ -2384,15 +2411,15 @@ dzipfmb <- function(x, shape, start = 1, log = FALSE) {
 pzipfmb <-
   function(q, shape, start = 1, lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log'")
   
   LLL <- max(length(shape), length(q), length(start))
-  if (length(q)     != LLL) q     <- rep_len(q,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(q)     < LLL) q     <- rep_len(q,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
   
   q.use <- pmax(start, floor(q + 1))
   
@@ -2437,9 +2464,9 @@ pzipfmb <-
 qzipfmb <- function(p, shape, start = 1) {
 
   LLL <- max(length(p), length(shape), length(start))
-  if (length(p)     != LLL) p     <- rep_len(p,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(p)     < LLL) p     <- rep_len(p,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
   ans <- p + shape + start
 
   bad0 <- !is.finite(shape) | !is.finite(start) |
@@ -2511,17 +2538,17 @@ rzipfmb <- function(n, shape, start = 1) {
 
 dextlogF <- function(x, lambda, tau,
                    location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(lambda), length(tau),
              length(location), length(scale))
-  if (length(x)        != LLL) x        <- rep_len(x,        LLL)
-  if (length(lambda)   != LLL) lambda   <- rep_len(lambda,   LLL)
-  if (length(tau)      != LLL) tau      <- rep_len(tau,      LLL)
-  if (length(location) != LLL) location <- rep_len(location, LLL)
-  if (length(scale)    != LLL) scale    <- rep_len(scale,    LLL)
+  if (length(x)        < LLL) x        <- rep_len(x,        LLL)
+  if (length(lambda)   < LLL) lambda   <- rep_len(lambda,   LLL)
+  if (length(tau)      < LLL) tau      <- rep_len(tau,      LLL)
+  if (length(location) < LLL) location <- rep_len(location, LLL)
+  if (length(scale)    < LLL) scale    <- rep_len(scale,    LLL)
   
   bad0 <- !is.finite(lambda) | !is.finite(tau) | 
           !is.finite(location) | !is.finite(scale) | 
@@ -2600,6 +2627,8 @@ extlogF1.control <-
 
 
   llocation <- llocation
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")

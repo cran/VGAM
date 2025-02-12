@@ -1,4 +1,5 @@
-\name{laplaceUC}
+\name{Laplace}
+% \name{laplaceUC}   prior to 20240920
 \alias{dlaplace}
 \alias{plaplace}
 \alias{qlaplace}

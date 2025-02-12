@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -58,10 +58,9 @@ rcqo <- function(n, p, S,
   if (length(seed) &&
       !is.Numeric(seed, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'seed'")
-  if (!is.logical(eq.tolerances) ||
-      length(eq.tolerances) > 1)
+  if (!isFALSE(eq.tolerances) && !isTRUE(eq.tolerances))
     stop("bad input for argument 'eq.tolerances)'")
-  if (!is.logical(sqrt.arg) || length(sqrt.arg) > 1)
+  if (!isFALSE(sqrt.arg) && !isTRUE(sqrt.arg))
     stop("bad input for argument 'sqrt.arg)'")
   if (family != "negbinomial" && sqrt.arg)
     warning("argument 'sqrt.arg' is used only with family='negbinomial'")
@@ -78,7 +77,7 @@ rcqo <- function(n, p, S,
          "be equal when 'eq.tolerances = TRUE'")
   if (any(lo.abundance > hi.abundance))
     stop("lo.abundance > hi.abundance is not allowed")
-  if (!is.logical(Crow1positive)) {
+  if (!isFALSE(Crow1positive) && !isTRUE(Crow1positive)) {
     stop("bad input for argument 'Crow1positive)'")
   } else {
     Crow1positive <- rep_len(Crow1positive, Rank)
@@ -341,7 +340,7 @@ dcqo <-
   if (length(seed) &&
       !is.Numeric(seed, integer.valued = TRUE, positive = TRUE))
     stop("bad input for argument 'seed'")
-  if (!is.logical(eq.tolerances) || length(eq.tolerances)>1)
+  if (!isFALSE(eq.tolerances) && !isTRUE(eq.tolerances))
     stop("bad input for argument 'eq.tolerances)'")
   if (eq.maximums && lo.abundance != hi.abundance)
     stop("'lo.abundance' and 'hi.abundance' must ",

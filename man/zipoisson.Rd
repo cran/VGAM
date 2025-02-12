@@ -310,6 +310,7 @@ with \code{\link{rrvglm}}
 
 }
 \examples{
+\dontrun{
 # Example 1: simulated ZIP data
 zdata <- data.frame(x2 = runif(nn <- 1000))
 zdata <- transform(zdata,
@@ -387,8 +388,8 @@ rrzip <- rrvglm(Alopacce ~ sm.bs(WaterCon, df = 3),
 coef(rrzip, matrix = TRUE)
 Coef(rrzip)
 summary(rrzip)
-\dontrun{plotvgam(rrzip, lcol = "blue")}
-}
+plotvgam(rrzip, lcol = "blue")
+}}
 \keyword{models}
 \keyword{regression}
 
@@ -421,4 +422,4 @@ summary(rrzip)
 %fit4 <- vglm(y3 ~ 1, data = zdata, trace = TRUE, crit = "coef",
 %             zipoissonff(lonempstr0 = "identitylink"))
 %fit4 <- vglm(y3 ~ 1, data = zdata, trace = TRUE, crit = "coef",
-%             zipoissonff(lonempstr0 = extlogitlink(min = -0.5)))
+%             zipoissonff(lonempstr0 = "extlogitlink(min = -0.5)"))

@@ -268,6 +268,7 @@ vglm(cbind(normal, mild, severe) ~ let, multinomial, pneumo,
      maxit = 40)
 
 
+\dontrun{
 # Example 2. The use of the xij argument (simple case).
 ymat <- rdiric(n <- 1000, shape = rep(exp(2), len = 4))
 mydat <- data.frame(x1 = runif(n), x2 = runif(n), x3 = runif(n),
@@ -329,10 +330,8 @@ head(model.matrix(fit3, type = "lm"))   # LM model matrix
 head(model.matrix(fit3, type = "vlm"))  # Big VLM model matrix
 coef(fit3)
 coef(fit3, matrix = TRUE)
-\dontrun{
 plotvgam(fit3, se = TRUE, lcol = 2, scol = 4, xlab = "dum1")
-}
-}
+}}
 \keyword{optimize}
 \keyword{models}
 \concept{Vector Generalized Linear Model}

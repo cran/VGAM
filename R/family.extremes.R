@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -57,7 +57,7 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
 
   oobounds.log <- -Inf   # 20160412; No longer an argument.
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -112,10 +112,10 @@ rgev <- function(n, location = 0, scale = 1, shape = 0) {
 
 pgev <- function(q, location = 0, scale = 1, shape = 0,
                  lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   use.n <- max(length(q), length(location),
@@ -164,7 +164,7 @@ pgev <- function(q, location = 0, scale = 1, shape = 0,
 qgev <- function(p, location = 0, scale = 1, shape = 0,
                  lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
@@ -225,7 +225,7 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   function(
     llocation = "identitylink",
     lscale = "loglink",
-    lshape = logofflink(offset = 0.5),
+    lshape = "logofflink(offset = 0.5)",
     percentiles = c(95, 99),
     ilocation = NULL,
     iscale = NULL, ishape = NULL,
@@ -246,14 +246,20 @@ qgev <- function(p, location = 0, scale = 1, shape = 0,
   type.fitted <- match.arg(type.fitted,
                            c("percentiles", "mean"))[1]
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -760,7 +766,7 @@ dgammadx <- function(x, deriv.arg = 1) {
   function(
     llocation = "identitylink",
     lscale = "loglink",
-    lshape = logofflink(offset = 0.5),
+    lshape = "logofflink(offset = 0.5)",
     percentiles = c(95, 99),
     ilocation = NULL, iscale = NULL, ishape = NULL,
     imethod = 1,
@@ -782,14 +788,20 @@ dgammadx <- function(x, deriv.arg = 1) {
   type.fitted <- match.arg(type.fitted,
                            c("percentiles", "mean"))[1]
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -1263,7 +1275,7 @@ rgumbel <- function(n, location = 0, scale = 1) {
 
 
 dgumbel <- function(x, location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1277,10 +1289,10 @@ dgumbel <- function(x, location = 0, scale = 1, log = FALSE) {
 
 qgumbel <- function(p, location = 0, scale = 1,
                     lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -1311,9 +1323,9 @@ qgumbel <- function(p, location = 0, scale = 1,
 
 pgumbel <- function(q, location = 0, scale = 1,
                     lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -1352,16 +1364,20 @@ pgumbel <- function(q, location = 0, scale = 1,
            R = NA, percentiles = c(95, 99),
            mpv = FALSE, zero = NULL) {
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
 
-  if (!is.logical(mpv) || length(mpv) != 1)
+  if (!isFALSE(mpv) && !isTRUE(mpv))
     stop("bad input for argument 'mpv'")
 
   if (length(percentiles) &&
@@ -1633,7 +1649,7 @@ dgpd <-
     function(x, location = 0, scale = 1, shape = 0,
              log = FALSE,
              tolshape0 = sqrt( .Machine$double.eps )) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1644,10 +1660,10 @@ dgpd <-
 
   L <- max(length(x), length(location),
            length(scale), length(shape))
-  if (length(shape)    != L) shape    <- rep_len(shape,    L)
-  if (length(location) != L) location <- rep_len(location, L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
-  if (length(x)        != L) x        <- rep_len(x,        L)
+  if (length(shape)    < L) shape    <- rep_len(shape,    L)
+  if (length(location) < L) location <- rep_len(location, L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
+  if (length(x)        < L) x        <- rep_len(x,        L)
 
 
   logdensity <- rep_len(log(0), L)
@@ -1683,9 +1699,9 @@ dgpd <-
 
 pgpd <- function(q, location = 0, scale = 1, shape = 0,
                  lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
@@ -1731,10 +1747,10 @@ pgpd <- function(q, location = 0, scale = 1, shape = 0,
 
 qgpd <- function(p, location = 0, scale = 1, shape = 0,
                  lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
   rm(log.p)
 
@@ -1790,7 +1806,7 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
  gpd <-
   function(threshold = 0,
            lscale = "loglink",
-           lshape = logofflink(offset = 0.5),
+           lshape = "logofflink(offset = 0.5)",
            percentiles = c(90, 95),
            iscale = NULL,
            ishape = NULL,
@@ -1804,10 +1820,14 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
   type.fitted <- match.arg(type.fitted,
                            c("percentiles", "mean"))[1]
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -1835,9 +1855,9 @@ qgpd <- function(p, location = 0, scale = 1, shape = 0,
   new("vglmff",
   blurb = c("Generalized Pareto distribution\n",
             "Links:    ",
-            namesof("scale", link = lscale, earg = escale),
+            namesof("scale", link = lscale, escale),
             ", ",
-            namesof("shape", link = lshape, earg = eshape)),
+            namesof("shape", link = lshape, eshape)),
   constraints = eval(substitute(expression({
     constraints <-
       cm.zero.VGAM(constraints, x = x, .zero , M = M,
@@ -2344,16 +2364,20 @@ setMethod("guplot", "vlm",
            zero = "scale",  # Was NULL in egumbel()
            mpv = FALSE) {
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
-
+ 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
 
-  if (!is.logical(mpv) || length(mpv) != 1)
+  if (!isFALSE(mpv) && !isTRUE(mpv))
     stop("bad input for argument 'mpv'")
 
   if (length(percentiles) &&
@@ -2622,16 +2646,20 @@ setMethod("guplot", "vlm",
            iscale = NULL,
            mean = TRUE, percentiles = NULL,
            zero = "scale") {
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
 
-  if (!is.logical(mean) || length(mean) != 1)
+  if (!isFALSE(mean) && !isTRUE(mean))
       stop("mean must be a single logical value")
   if (!mean && (!is.Numeric(percentiles, positive = TRUE) ||
                any(percentiles >= 100)))
@@ -2835,16 +2863,16 @@ setMethod("guplot", "vlm",
 
 dfrechet <-
   function(x, location = 0, scale = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(scale),
            length(shape), length(location))
-  if (length(x)        != L) x        <- rep_len(x,        L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
-  if (length(shape)    != L) shape    <- rep_len(shape,    L)
-  if (length(location) != L) location <- rep_len(location, L)
+  if (length(x)        < L) x        <- rep_len(x,        L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
+  if (length(shape)    < L) shape    <- rep_len(shape,    L)
+  if (length(location) < L) location <- rep_len(location, L)
 
   logdensity <- rep_len(log(0), L)
   xok <- (x > location)
@@ -2863,9 +2891,9 @@ dfrechet <-
 pfrechet <-
   function(q, location = 0, scale = 1, shape,
            lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   rzedd <- scale / (q - location)
@@ -2895,9 +2923,9 @@ pfrechet <-
 
 qfrechet <- function(p, location = 0, scale = 1, shape,
                      lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -2964,10 +2992,14 @@ frechet.control <- function(save.weights = TRUE, ...) {
   if (!is.Numeric(location))
     stop("bad input for argument 'location'")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -3207,10 +3239,14 @@ rec.normal.control <- function(save.weights = TRUE, ...) {
   function(lmean = "identitylink", lsd = "loglink",
            imean = NULL, isd = NULL, imethod = 1,
            zero = NULL) {
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsdev <- as.list(substitute(lsd))
   esdev <- link2list(lsdev)
   lsdev <- attr(esdev, "function.name")
@@ -3376,6 +3412,8 @@ rec.exp1.control <- function(save.weights = TRUE, ...) {
 
   rec.exp1 <-
     function(lrate = "loglink", irate = NULL, imethod = 1) {
+  if (is.character(lrate))
+    lrate <- substitute(y9, list(y9 = lrate))
   lrate <- as.list(substitute(lrate))
   erate <- link2list(lrate)
   lrate <- attr(erate, "function.name")
@@ -3480,19 +3518,19 @@ rec.exp1.control <- function(save.weights = TRUE, ...) {
 dpois.points <- function(x, lambda, ostatistic,
                          dimension = 2, log = FALSE) {
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(lambda),
            length(ostatistic), length(dimension))
-    if (length(x)          != L)
+    if (length(x)          < L)
         x          <- rep_len(x,          L)
-    if (length(lambda)     != L)
+    if (length(lambda)     < L)
         lambda     <- rep_len(lambda,     L)
-    if (length(ostatistic) != L)
+    if (length(ostatistic) < L)
         ostatistic <- rep_len(ostatistic, L)
-    if (length(dimension)  != L)
+    if (length(dimension)  < L)
         dimension  <- rep_len(dimension,  L)
 
   if (!all(dimension %in% c(2, 3)))
@@ -3534,6 +3572,8 @@ dpois.points <- function(x, lambda, ostatistic,
     stop("argument 'dimension' must be 2 or 3")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -3684,6 +3724,8 @@ dpois.points <- function(x, lambda, ostatistic,
            iscale = 1,   # The *actual* value
            zero = NULL) {
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
@@ -3832,13 +3874,13 @@ dpois.points <- function(x, lambda, ostatistic,
 
 
 dhurea <- function(x, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(shape))
-  if (length(x)     != L) x     <- rep_len(x,     L)
-  if (length(shape) != L) shape <- rep_len(shape, L)
+  if (length(x)     < L) x     <- rep_len(x,     L)
+  if (length(shape) < L) shape <- rep_len(shape, L)
 
   logdensity <- rep_len(log(0), L)
   xok <- (0 <= x) & (x <= 1)
@@ -3866,6 +3908,8 @@ dhurea <- function(x, shape, log = FALSE) {
             0 <= nrfs && nrfs <= 1)
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))  # orig
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")

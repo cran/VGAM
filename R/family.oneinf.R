@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1544,14 +1544,14 @@
 
 
 dlog <- function(x, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(shape))
-  if (length(x)     != N) x     <- rep_len(x,     N)
-  if (length(shape) != N) shape <- rep_len(shape, N)
+  if (length(x)     < N) x     <- rep_len(x,     N)
+  if (length(shape) < N) shape <- rep_len(shape, N)
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < 1
   ans <- rep_len(0.0, length(x))
@@ -1579,8 +1579,8 @@ dlog <- function(x, shape, log = FALSE) {
 
 
   N <- max(length(q), length(shape))
-  if (length(q)     != N) q     <- rep_len(q,     N)
-  if (length(shape) != N) shape <- rep_len(shape, N)
+  if (length(q)     < N) q     <- rep_len(q,     N)
+  if (length(shape) < N) shape <- rep_len(shape, N)
 
 
 
@@ -1674,6 +1674,8 @@ rlog <- function(n, shape) {
            gshape = -expm1(-7 * ppoints(4)),
            zero = NULL) {
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")

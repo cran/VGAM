@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -300,11 +300,12 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
 }
 
 
- garma <- function(link = "identitylink",
-                   p.ar.lag = 1,
-                   q.ma.lag = 0,
-                   coefstart = NULL,
-                   step = 1.0) {
+ garma <-
+  function(link = "identitylink",
+           p.ar.lag = 1,
+           q.ma.lag = 0,
+           coefstart = NULL,
+           step = 1.0) {
 
   if (!is.Numeric(p.ar.lag, integer.valued = TRUE, length.arg = 1))
     stop("bad input for argument 'p.ar.lag'")
@@ -314,6 +315,8 @@ vglm.garma.control <- function(save.weights = TRUE, ...) {
     stop("sorry, only q.ma.lag = 0 is currently implemented")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -563,7 +566,7 @@ dAR1 <- function(x,
     warning("Values of argument 'ARcoef1' are greater ",
             "than 1 in absolute value")
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("Bad input for argument 'log'")
   rm(log)
 
@@ -633,30 +636,36 @@ AR1.control <- function(epsilon  = 1e-6,
     type.EIM <- match.arg(type.EIM, c("exact", "approximate"))[1]
     poratM   <- (type.EIM == "exact")
 
-    if (!is.logical(nodrift) ||
-          length(nodrift) != 1)
-      stop("argument 'nodrift' must be a single logical")
+    if (!isFALSE(nodrift) && !isTRUE(nodrift))
+      stop("'nodrift' must be a single logical")
 
-    if (!is.logical(var.arg) ||
-          length(var.arg) != 1)
-      stop("argument 'var.arg' must be a single logical")
+    if (!isFALSE(var.arg) && !isTRUE(var.arg))
+      stop("'var.arg' must be a single logical")
 
-    if (!is.logical(print.EIM))
+    if (!isFALSE(print.EIM) && !isTRUE(print.EIM))
       stop("Invalid 'print.EIM'.")
 
     ismn <- idrift
+    if (is.character(ldrift))
+      ldrift <- substitute(y9, list(y9 = ldrift))
     lsmn <- as.list(substitute(ldrift))
     esmn <- link2list(lsmn)
     lsmn <- attr(esmn, "function.name")
 
+    if (is.character(lsd))
+      lsd <- substitute(y9, list(y9 = lsd))
     lsdv <- as.list(substitute(lsd))
     esdv <- link2list(lsdv)
     lsdv <- attr(esdv, "function.name")
 
+    if (is.character(lvar))
+      lvar <- substitute(y9, list(y9 = lvar))
     lvar  <- as.list(substitute(lvar))
     evar  <- link2list(lvar)
     lvar  <- attr(evar, "function.name")
 
+    if (is.character(lrho))
+      lrho <- substitute(y9, list(y9 = lrho))
     lrho <- as.list(substitute(lrho))
     erho <- link2list(lrho)
     lrho <- attr(erho, "function.name")

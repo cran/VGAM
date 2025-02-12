@@ -4,7 +4,7 @@
 \alias{pextbetabinom}
 \alias{qextbetabinom}
 \alias{rextbetabinom}
-\title{The Beta-Binomial Distribution}
+\title{The Extended Beta-Binomial Distribution}
 \description{
   Density, distribution function,
   quantile function and random generation

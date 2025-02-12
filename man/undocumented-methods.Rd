@@ -4,6 +4,9 @@
 %\alias{ccoef-method}
 %
 %
+% 202502
+\alias{niters,ANY-method}
+\alias{niters,vlm-method}
 % 202402
 \alias{is.zero,NULL-method}
 \alias{is.zero,character-method}
@@ -109,7 +112,7 @@
 % 201604:
 \alias{plot,pvgam,ANY-method}
 % 201602:
-\alias{predictvglmS4VGAM,ANY,binom2.or-method}
+% \alias{predictvglmS4VGAM,ANY,binom2.or-method}    20241003 commented this out
 % 201601:
 \alias{showvglmS4VGAM,ANY,acat-method}
 \alias{showvgamS4VGAM,ANY,acat-method}
@@ -119,8 +122,8 @@
 %\alias{coef,vgam-method}
 %\alias{coefficients,vgam-method}
 % 201512:
-\alias{summaryvglmS4VGAM,ANY,binom2.or-method}
-\alias{showsummaryvglmS4VGAM,ANY,binom2.or-method}
+% \alias{summaryvglmS4VGAM,ANY,binom2.or-method}    20241003 commented this out
+% \alias{showsummaryvglmS4VGAM,ANY,binom2.or-method}    20241003 commented this out
 %
 \alias{summaryvglmS4VGAM,ANY,posbernoulli.tb-method}
 \alias{showsummaryvglmS4VGAM,ANY,posbernoulli.tb-method}

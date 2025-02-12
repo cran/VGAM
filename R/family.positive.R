@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -212,6 +212,8 @@ rposbern <-
   if (earg.link) {
     earg <- link
   } else {
+    if (is.character(link))
+      link <- substitute(y9, list(y9 = link))
     link <- as.list(substitute(link))
     earg <- link2list(link)
   }
@@ -317,8 +319,7 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
   prob  <- as.matrix(prob)
   prob0 <- as.matrix(prob0)
 
-  if (!is.logical(log.arg <- log) ||
-      length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
   if (ncol(x) < 2)
@@ -510,10 +511,14 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
   if (length(isize) && !is.Numeric(isize, positive = TRUE))
       stop("bad input for argument 'isize'")
 
+  if (is.character(lmunb))
+    lmunb <- substitute(y9, list(y9 = lmunb))
   lmunb <- as.list(substitute(lmunb))
   emunb <- link2list(lmunb)
   lmunb <- attr(emunb, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
@@ -741,8 +746,7 @@ posnegbinomial.control <- function(save.weights = TRUE, ...) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <-
-        c(w) * dgaitdnbinom(y, kmat, munb.p = munb,
-                            truncate = 0, log = TRUE)
+  c(w) * dposnegbin2(y, kmat, munb = munb, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1027,8 +1031,8 @@ dposgeom <- function(x, prob, log = FALSE) {
 
 pposgeom <- function(q, prob) {
   L <- max(length(q), length(prob))
-  if (length(q)    != L) q    <- rep_len(q,    L)
-  if (length(prob) != L) prob <- rep_len(prob, L)
+  if (length(q)    < L) q    <- rep_len(q,    L)
+  if (length(prob) < L) prob <- rep_len(prob, L)
 
   ans <- ifelse(q < 1, 0, (pgeom(q, prob) - dgeom(0, prob))
                          / pgeom(0, prob, lower.tail = FALSE))
@@ -1078,12 +1082,14 @@ rposgeom <- function(n, prob) {
            ilambda = NULL, imethod = 1, zero = NULL,
            gt.1 = FALSE) {
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
 
-  if (!is.logical(expected) || length(expected) != 1)
+  if (!isFALSE(expected) && !isTRUE(expected))
     stop("bad input for argument 'expected'")
   if (length( ilambda) && !is.Numeric(ilambda, positive = TRUE))
     stop("bad input for argument 'ilambda'")
@@ -1192,7 +1198,7 @@ rposgeom <- function(n, prob) {
       stop("loglikelihood residuals not implemented yet")
     } else {
       ll.elts <- c(w) * dgaitdpois(y, lambda,
-                                   truncate = 0, log = TRUE)
+                        truncate = 0, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1267,17 +1273,18 @@ rposgeom <- function(n, prob) {
 
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
 
 
 
-    if (!is.logical(multiple.responses) ||
-        length(multiple.responses) != 1)
+    if (!isFALSE(multiple.responses) && !isTRUE(multiple.responses))
     stop("bad input for argument 'multiple.responses'")
 
-  if (!is.logical(omit.constant) || length(omit.constant) != 1)
+  if (!isFALSE(omit.constant) && !isTRUE(omit.constant))
     stop("bad input for argument 'omit.constant'")
 
 
@@ -1606,6 +1613,8 @@ rposgeom <- function(n, prob) {
 
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1616,8 +1625,7 @@ rposgeom <- function(n, prob) {
         max(iprob) >= 1)
     stop("argument 'iprob' must have values in (0, 1)")
 
-  if (!is.logical(apply.parint) ||
-      length(apply.parint) != 1)
+  if (!isFALSE(apply.parint) && !isTRUE(apply.parint))
     stop("argument 'apply.parint' must be a single logical")
 
   if (!is.Numeric(p.small, positive = TRUE, length.arg = 1))
@@ -1888,6 +1896,8 @@ rposgeom <- function(n, prob) {
   type.fitted <- match.arg(type.fitted,
                            c("likelihood.cond", "mean.uncond"))[1]
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1904,8 +1914,7 @@ rposgeom <- function(n, prob) {
         max(iprecapture) >= 1)
     stop("argument 'iprecapture' must have values in (0, 1)")
 
-  if (!is.logical(I2) ||
-      length(I2) != 1)
+  if (!isFALSE(I2) && !isTRUE(I2))
     stop("argument 'I2' must be a single logical")
 
 
@@ -2265,6 +2274,8 @@ rposgeom <- function(n, prob) {
   apply.parint.b <- TRUE
   apply.parint.d <- FALSE  # For 'drop.b' actually.
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -2759,6 +2770,33 @@ setMethod("showsummaryvglmS4VGAM",
   function(object, VGAMff, ...) {
   callNextMethod(VGAMff = VGAMff, object = object, ...)
 })
+
+
+
+
+
+dpospois2 <- function(x, lambda, log = FALSE) {
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
+    stop("bad input for argument 'log'")
+  rm(log)
+
+
+  L <- max(length(x), length(lambda))
+  if (length(x)      < L) x      <- rep_len(x,      L)
+  if (length(lambda) < L) lambda <- rep_len(lambda, L)
+
+  ans <- dpois(x, lambda, log = TRUE) -
+         ppois(0, lambda, lower.tail = FALSE, log.p = TRUE)
+  ans[x == 0] <- log(0)
+  ans[lambda <= 0] <- NaN  # Handle lambda == 0
+  if (log.arg)
+    ans else exp(ans)
+}  # dpospois2
+
+
+
+
+
 
 
 

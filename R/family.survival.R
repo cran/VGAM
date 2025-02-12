@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -25,10 +25,14 @@
       r2 < 0)
     stop("bad input for 'r2'")
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
@@ -193,15 +197,15 @@
 
 
 dbisa <- function(x, scale = 1, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   L <- max(length(x), length(shape), length(scale))
-  if (length(x)     != L) x     <- rep_len(x,     L)
-  if (length(shape) != L) shape <- rep_len(shape, L)
-  if (length(scale) != L) scale <- rep_len(scale, L)
+  if (length(x)     < L) x     <- rep_len(x,     L)
+  if (length(shape) < L) shape <- rep_len(shape, L)
+  if (length(scale) < L) scale <- rep_len(scale, L)
 
   logdensity <- rep_len(log(0), L)
 
@@ -238,10 +242,9 @@ pbisa <- function(q, scale = 1, shape,
 qbisa <- function(p, scale = 1, shape,
                   lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
@@ -327,10 +330,14 @@ rbisa <- function(n, scale = 1, shape) {
 
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")

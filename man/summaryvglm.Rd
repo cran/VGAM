@@ -10,18 +10,20 @@
 \title{Summarizing Vector Generalized Linear Model Fits}
 \usage{
 summaryvglm(object, correlation = FALSE, dispersion = NULL,
-            digits = NULL, presid = FALSE,
-            HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
-            signif.stars = getOption("show.signif.stars"),
-            nopredictors = FALSE,
-            lrt0.arg = FALSE, score0.arg = FALSE, wald0.arg = FALSE,
-            values0 = 0, subset = NULL, omit1s = TRUE,
-            ...)
+     digits = NULL, presid = FALSE,
+     HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
+     signif.stars = getOption("show.signif.stars"),
+     nopredictors = FALSE,
+     lrt0.arg = FALSE, score0.arg = FALSE, wald0.arg = FALSE,
+     values0 = 0, subset = NULL, omit1s = TRUE,
+     wsdm.arg = FALSE, hdiff = 0.005,
+     retry = TRUE, mux.hdiff = 1, eps.wsdm = 0.15,
+     Mux.div = 3, doffset.wsdm = NULL, ...)
 \method{show}{summary.vglm}(x, digits = max(3L, getOption("digits") - 3L),
-           quote = TRUE, prefix = "", presid = length(x@pearson.resid) > 0,
-           HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
-           signif.stars = NULL, nopredictors = NULL,
-           top.half.only = FALSE, ...)
+     quote = TRUE, prefix = "", presid = length(x@pearson.resid) > 0,
+     HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
+     signif.stars = NULL, nopredictors = NULL,
+     top.half.only = FALSE, ...)
 }
 \arguments{
   \item{object}{an object of class \code{"vglm"}, usually, a result of a
@@ -30,7 +32,12 @@ summaryvglm(object, correlation = FALSE, dispersion = NULL,
     a result of a call to \code{summaryvglm()}.}
   \item{dispersion}{
     used mainly for GLMs.
-    See \code{\link[stats]{summary.glm}}. }
+    See \code{\link[stats]{summary.glm}}.
+    This argument should not be used because
+    \pkg{VGAM} now steers away from
+    quasi-likelihood models.
+
+  }
   \item{correlation}{logical; if \code{TRUE}, the correlation matrix of
     the estimated parameters is returned and printed.}
   \item{digits}{the number of significant digits to use when printing. }
@@ -84,8 +91,8 @@ summaryvglm(object, correlation = FALSE, dispersion = NULL,
 
   }
   \item{lrt0.arg, score0.arg, wald0.arg}{
-  Logical.
-  If \code{lrt0.arg = TRUE} then the other
+  logical;
+  if \code{lrt0.arg = TRUE} then the other
   arguments are passed into \code{\link{lrt.stat.vlm}}
   and the equivalent of the so-called Wald table is outputted.
   Similarly,
@@ -122,6 +129,70 @@ summaryvglm(object, correlation = FALSE, dispersion = NULL,
 
   }
   \item{prefix}{ Not used. }
+  \item{wsdm.arg}{
+    logical; compute the WSDM statistics?
+    If so, \code{\link{wsdm}} is called and
+    they are printed as a new fifth column.
+    Also printed is the \emph{max-WSDM} statistic
+    at the bottom.
+    See \code{hdiff} about choosing a suitable
+    \eqn{h}.
+    Note that the arguments supplied here is
+    a subset of those of \code{\link{wsdm}},
+    hence a more detailed WSDM analysis should
+    be conducted by calling \code{\link{wsdm}}
+    directly as well.
+
+
+
+    Note: this argument might not work if
+    \code{lrt0 = TRUE},
+    \code{score0 = TRUE} and/or
+    \code{wald0 = TRUE}.
+
+
+  }
+  \item{hdiff}{
+    numeric; fed into \code{\link{wsdm}}.
+ An important argument if \code{wsdm.arg = TRUE}.
+ If it is too small or large then the max-WSDM
+ statistic will be described as
+ \code{"inaccurate"}
+ in which case trying another value is advised.
+
+
+
+  }
+  \item{retry}{
+    logical; fed into \code{\link{wsdm}}.
+    If \code{TRUE} then the computation will
+    take three times longer in order to
+    confirm the reasonable accuracy of
+    the WSDM statistics.
+
+
+
+  }
+  \item{mux.hdiff}{
+    fed into \code{\link{wsdm}}.
+
+
+  }
+  \item{eps.wsdm, Mux.div}{
+    fed into \code{\link{wsdm}}.
+
+
+  }
+  \item{doffset.wsdm}{
+    numeric; fed into \code{\link{wsdm}}.
+    The default means the vector is searched
+    for on \code{object}
+    (such as logistic regression).
+    If nothing is found, then a vector
+    of 1s is used.
+
+
+  }
   \item{\ldots}{ Not used. }
 
 
@@ -256,6 +327,7 @@ distribution is.
   \code{\link{vglm}},
   \code{\link{confintvglm}},
   \code{\link{vcovvlm}},
+  \code{\link{wsdm}},
   \code{\link{summary.rrvglm}},
   \code{\link[stats]{summary.glm}},
   \code{\link[stats]{summary.lm}},
@@ -273,11 +345,12 @@ distribution is.
 \examples{
 ## For examples see example(glm)
 pneumo <- transform(pneumo, let = log(exposure.time))
-(afit <- vglm(cbind(normal, mild, severe) ~ let, acat, data = pneumo))
+(afit <- vglm(cbind(normal, mild, severe) ~ let, acat, pneumo))
 coef(afit, matrix = TRUE)
-summary(afit)  # Might suffer from the Hauck-Donner effect
+summary(afit)  # Might suffer from the HDE?
 coef(summary(afit))
 summary(afit, lrt0 = TRUE, score0 = TRUE, wald0 = TRUE)
+summary(afit, wsdm = TRUE, hdiff = 0.1)
 }
 \keyword{models}
 \keyword{regression}
@@ -287,7 +360,7 @@ summary(afit, lrt0 = TRUE, score0 = TRUE, wald0 = TRUE)
 % yettodo: add argument \code{lrt0.arg = FALSE}
 
 
-
+%  # HDE affects intercepts only
 
 
 

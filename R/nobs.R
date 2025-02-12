@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -7,7 +7,30 @@
 
 
 
-nobs.vlm <- function(object, type = c("lm", "vlm"), ...) {
+
+
+niters.vlm <-
+    function(object, history = FALSE, ...) {
+  if (history)
+    object@misc$history else
+    NROW(object@misc$history)
+}
+
+
+if (!isGeneric("niters"))
+  setGeneric("niters", function(object, ...)
+             standardGeneric("niters"),
+             package = "VGAM")
+
+setMethod("niters", "vlm",
+         function(object, ...)
+         niters.vlm(object, ...))
+
+
+
+
+nobs.vlm <-
+  function(object, type = c("lm", "vlm"), ...) {
 
 
   if (mode(type) != "character" && mode(type) != "name")
@@ -45,7 +68,8 @@ setMethod("nobs", "vlm",
 
 
 
-nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
+nvar.vlm <-
+  function(object, type = c("vlm", "lm"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
@@ -62,14 +86,15 @@ nvar.vlm <- function(object, type = c("vlm", "lm"), ...) {
 
 
 
-nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
+nvar.vgam <-
+  function(object, type = c("vgam", "zz"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("vgam", "zz"))[1]
 
-  stop("function nvar.vgam() has not been written yet")
+  stop("nvar.vgam() has not been written yet")
 
   if (type == "vgam") {
     object@misc$p
@@ -79,14 +104,16 @@ nvar.vgam <- function(object, type = c("vgam", "zz"), ...) {
 }
 
 
-nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
+nvar.rrvglm <-
+    function(object,
+             type = c("rrvglm", "zz"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rrvglm", "zz"))[1]
 
-  stop("function nvar.rrvglm() has not been written yet")
+  stop("nvar.rrvglm() has not been written yet")
 
   if (type == "vgam") {
     object@misc$p
@@ -97,14 +124,16 @@ nvar.rrvglm <- function(object, type = c("rrvglm", "zz"), ...) {
 
 
 
-nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
+nvar.qrrvglm <-
+    function(object,
+             type = c("qrrvglm", "zz"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("qrrvglm", "zz"))[1]
 
-  stop("function nvar.qrrvglm() has not been written yet")
+  stop("nvar.qrrvglm() has not been written yet")
 
   if (type == "qrrvglm") {
     object@misc$p
@@ -115,14 +144,16 @@ nvar.qrrvglm <- function(object, type = c("qrrvglm", "zz"), ...) {
 
 
 
-nvar.rrvgam <- function(object, type = c("cao", "zz"), ...) {
+nvar.rrvgam <-
+    function(object,
+             type = c("cao", "zz"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rrvglm", "zz"))[1]
 
-  stop("function nvar.rrvgam() has not been written yet")
+  stop("nvar.rrvgam() has not been written yet")
 
   if (type == "cao") {
     object@misc$p
@@ -133,14 +164,16 @@ nvar.rrvgam <- function(object, type = c("cao", "zz"), ...) {
 
 
 
-nvar.rcim <- function(object, type = c("rcim", "zz"), ...) {
+nvar.rcim <-
+    function(object,
+             type = c("rcim", "zz"), ...) {
 
   if (mode(type) != "character" && mode(type) != "name")
     type <- as.character(substitute(type))
   type <- match.arg(type,
                     c("rcim", "zz"))[1]
 
-  stop("function nvar.rcim() has not been written yet")
+  stop("nvar.rcim() has not been written yet")
 
   if (type == "rcim") {
     object@misc$p

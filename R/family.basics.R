@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -64,8 +64,7 @@ Select <-
   if (is.character(exclude))
     if (any(nchar(prefix) == 0))
       stop("bad input for argument 'exclude'")
-  if (!is.logical(sort.arg) ||
-      length(sort.arg) != 1)
+  if (!isFALSE(sort.arg) && !isTRUE(sort.arg))
     stop("bad input for argument 'sort.arg'")
 
 
@@ -1446,7 +1445,7 @@ getfromVGAMenv <- function(varname, prefix = "") {
 lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
   if (!is.Numeric(x) || !is.Numeric(s) || !is.Numeric(v))
     stop("bad input in 'x', 's', and/or 'v'")
-  if (is.complex(c(x,s,v)))
+  if (is.complex(c(x, s, v)))
     stop("complex arguments not allowed in 'x', 's' and 'v'")
   if (!is.Numeric(tolerance, length.arg = 1, positive = TRUE) ||
       tolerance > 0.01)
@@ -1456,9 +1455,9 @@ lerch <- function(x, s, v, tolerance = 1.0e-10, iter = 100) {
     stop("bad input for argument 'iter'")
 
   L <- max(length(x), length(s), length(v))
-  x <- rep_len(x, L)
-  s <- rep_len(s, L)
-  v <- rep_len(v, L)
+  if (length(x) < L) x  <- rep_len(x, L)
+  if (length(s) < L) s  <- rep_len(s, L)
+  if (length(v) < L) v  <- rep_len(v, L)
   xok <- abs(x) < 1 & !(v <= 0 & v == round(v))
   x[!xok] <- 0  # Fix this later
 

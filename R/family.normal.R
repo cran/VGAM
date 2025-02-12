@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -60,12 +60,20 @@ VGAM.weights.function <- function(w, M, n) {
 
 
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
+
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsdev <- as.list(substitute(lsd))
   esdev <- link2list(lsdev)
   lsdev <- attr(esdev, "function.name")
+
+  if (is.character(lvar))
+    lvar <- substitute(y9, list(y9 = lvar))
   lvare <- as.list(substitute(lvar))
   evare <- link2list(lvare)
   lvare <- attr(evare, "function.name")
@@ -160,8 +168,7 @@ if (FALSE)
       assign("CQO.FastAlgorithm", TRUE,
              envir = VGAM::VGAMenv)   # else
     if (any(function.name == c("cqo", "cao")) &&
-       (length( .zero ) ||
-       (is.logical( .parallel ) && .parallel )))
+       (length( .zero ) || isTRUE( .parallel )))
         stop("cannot handle non-default arguments ",
              "for cqo() and cao()")
 
@@ -303,14 +310,14 @@ if (FALSE)
 
 
 dposnorm <- function(x, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(mean), length(sd))
-  if (length(x)    != L) x    <- rep_len(x,    L)
-  if (length(mean) != L) mean <- rep_len(mean, L)
-  if (length(sd)   != L) sd   <- rep_len(sd,   L)
+  if (length(x)    < L) x    <- rep_len(x,    L)
+  if (length(mean) < L) mean <- rep_len(mean, L)
+  if (length(sd)   < L) sd   <- rep_len(sd,   L)
 
   if (log.arg) {
     ifelse(x < 0, log(0), dnorm(x, mean, sd, log = TRUE) -
@@ -324,10 +331,10 @@ dposnorm <- function(x, mean = 0, sd = 1, log = FALSE) {
 
 pposnorm <- function(q, mean = 0, sd = 1,
                      lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
@@ -346,7 +353,7 @@ pposnorm <- function(q, mean = 0, sd = 1,
 
 qposnorm <- function(p, mean = 0, sd = 1,
                      lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
   rm(log.p)   # 20150102 KaiH
 
@@ -396,17 +403,21 @@ if (FALSE)
       imethod > 3)
     stop("argument 'imethod' must be 1 or 2 or 3")
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
 
-  if (!is.logical(eq.mean) || length(eq.mean) != 1)
+  if (!isFALSE(eq.mean) && !isTRUE(eq.mean))
     stop("bad input for argument 'eq.mean'")
-  if (!is.logical(eq.sd  ) || length(eq.sd  ) != 1)
+  if (!isFALSE(eq.sd  ) && !isTRUE(eq.sd  ))
     stop("bad input for argument 'eq.sd'")
 
   if (length(isd) &&
@@ -781,7 +792,7 @@ if (FALSE)
 
  dbetanorm <-
   function(x, shape1, shape2, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -830,7 +841,7 @@ rbetanorm <- function(n, shape1, shape2, mean = 0, sd = 1) {
 
 dfoldnorm <- function(x, mean = 0, sd = 1, a1 = 1, a2 = 1,
                       log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -851,9 +862,9 @@ pfoldnorm <- function(q, mean = 0, sd = 1, a1 = 1, a2 = 1,
                       lower.tail = TRUE, log.p = FALSE) {
 
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
@@ -893,7 +904,7 @@ pfoldnorm <- function(q, mean = 0, sd = 1, a1 = 1, a2 = 1,
   function(p, mean = 0, sd = 1, a1 = 1, a2 = 1,
            lower.tail = TRUE, log.p = FALSE, ...) {
 
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
   rm(log.p)
 
@@ -905,11 +916,11 @@ pfoldnorm <- function(q, mean = 0, sd = 1, a1 = 1, a2 = 1,
 
   L <- max(length(p), length(mean), length(sd),
            length(a1), length(a2))
-  if (length(p)    != L) p    <- rep_len(p,    L)
-  if (length(mean) != L) mean <- rep_len(mean, L)
-  if (length(sd)   != L) sd   <- rep_len(sd,   L)
-  if (length(a1)   != L) a1   <- rep_len(a1,   L)
-  if (length(a2)   != L) a2   <- rep_len(a2,   L)
+  if (length(p)    < L) p    <- rep_len(p,    L)
+  if (length(mean) < L) mean <- rep_len(mean, L)
+  if (length(sd)   < L) sd   <- rep_len(sd,   L)
+  if (length(a1)   < L) a1   <- rep_len(a1,   L)
+  if (length(a2)   < L) a2   <- rep_len(a2,   L)
 
   ans <- p + mean + sd + a1 + a2
 
@@ -983,7 +994,7 @@ qfoldnorm.old <-
 
 
 
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
   rm(log.p)
 
@@ -995,11 +1006,11 @@ qfoldnorm.old <-
 
   L <- max(length(p), length(mean), length(sd),
            length(a1), length(a2))
-  if (length(p)    != L) p    <- rep_len(p,    L)
-  if (length(mean) != L) mean <- rep_len(mean, L)
-  if (length(sd)   != L) sd   <- rep_len(sd,   L)
-  if (length(a1)   != L) a1   <- rep_len(a1,   L)
-  if (length(a2)   != L) a2   <- rep_len(a2,   L)
+  if (length(p)    < L) p    <- rep_len(p,    L)
+  if (length(mean) < L) mean <- rep_len(mean, L)
+  if (length(sd)   < L) sd   <- rep_len(sd,   L)
+  if (length(a1)   < L) a1   <- rep_len(a1,   L)
+  if (length(a2)   < L) a2   <- rep_len(a2,   L)
   ans  <- rep_len(0.0 , L)
 
   myfun <- function(x, mean = 0, sd = 1, a1 = 1, a2 = 2, p)
@@ -1057,10 +1068,14 @@ rfoldnorm <- function(n, mean = 0, sd = 1, a1 = 1, a2 = 1) {
 
 
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
@@ -1283,7 +1298,8 @@ lqnorm <- function(qpower = 2,
                    link = "identitylink",
                    imethod = 1, imu = NULL, ishrinkage = 0.95) {
 
-
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1392,18 +1408,18 @@ lqnorm <- function(qpower = 2,
 dtobit <- function(x, mean = 0, sd = 1,
                    Lower = 0, Upper = Inf, log = FALSE) {
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   L <- max(length(x), length(mean), length(sd),
            length(Lower), length(Upper))
-  if (length(x)     != L) x     <- rep_len(x,     L)
-  if (length(mean)  != L) mean  <- rep_len(mean,  L)
-  if (length(sd)    != L) sd    <- rep_len(sd,    L)
-  if (length(Lower) != L) Lower <- rep_len(Lower, L)
-  if (length(Upper) != L) Upper <- rep_len(Upper, L)
+  if (length(x)     < L) x     <- rep_len(x,     L)
+  if (length(mean)  < L) mean  <- rep_len(mean,  L)
+  if (length(sd)    < L) sd    <- rep_len(sd,    L)
+  if (length(Lower) < L) Lower <- rep_len(Lower, L)
+  if (length(Upper) < L) Upper <- rep_len(Upper, L)
 
   if (!all(Lower < Upper, na.rm = TRUE))
     stop("all(Lower < Upper) is not TRUE")
@@ -1429,10 +1445,10 @@ dtobit <- function(x, mean = 0, sd = 1,
 ptobit <- function(q, mean = 0, sd = 1, Lower = 0, Upper = Inf,
                    lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail) != 1)
-    stop("argument 'lower.tail' must be a single logical")
-  if (!is.logical(log.p) || length(log.p) != 1)
-    stop("argument 'log.p' must be a single logical")
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
+    stop("'lower.tail' must be a single logical")
+  if (!isFALSE(log.p) && !isTRUE(log.p))
+    stop("'log.p' must be a single logical")
 
 
   if (!all(Lower < Upper, na.rm = TRUE))
@@ -1504,10 +1520,10 @@ if (FALSE) {
                            length.arg = 1, positive = TRUE))
             stop("bad input for argument 'n'") else n
   L <- use.n
-  if (length(mean)  != L) mean  <- rep_len(mean,  L)
-  if (length(sd)    != L) sd    <- rep_len(sd,    L)
-  if (length(Lower) != L) Lower <- rep_len(Lower, L)
-  if (length(Upper) != L) Upper <- rep_len(Upper, L)
+  if (length(mean)  < L) mean  <- rep_len(mean,  L)
+  if (length(sd)    < L) sd    <- rep_len(sd,    L)
+  if (length(Lower) < L) Lower <- rep_len(Lower, L)
+  if (length(Upper) < L) Upper <- rep_len(Upper, L)
 
   if (!all(Lower < Upper, na.rm = TRUE))
     stop("all(Lower < Upper) is not TRUE")
@@ -1550,10 +1566,14 @@ if (FALSE) {
 
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
@@ -2087,14 +2107,20 @@ moment.millsratio2 <- function(zedd) {
   apply.parint <- FALSE
 
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsdev <- as.list(substitute(lsd))
   esdev <- link2list(lsdev)
   lsdev <- attr(esdev, "function.name")
 
+  if (is.character(lvar))
+    lvar <- substitute(y9, list(y9 = lvar))
   lvare <- as.list(substitute(lvar))
   evare <- link2list(lvare)
   lvare <- attr(evare, "function.name")
@@ -2113,18 +2139,15 @@ moment.millsratio2 <- function(zedd) {
       imethod > 4)
       stop("arg 'imethod' is not 1, 2, 3 or 4")
 
-  if (!is.logical(var.arg) ||
-      length(var.arg) != 1)
+  if (!isFALSE(var.arg) && !isTRUE(var.arg))
     stop("arg 'var.arg' must be a single logical")
-  if (!is.logical(apply.parint) ||
-      length(apply.parint) != 1)
+  if (!isFALSE(apply.parint) && !isTRUE(apply.parint))
     stop("'apply.parint' isnt a single logical")
 
-  if (!is.logical(vfl) || length(vfl) != 1)
+  if (!isFALSE(vfl) && !isTRUE(vfl))
     stop("argument 'vfl' must be TRUE or FALSE")
 
-  if (is.logical(parallel) &&
-      parallel && length(zero))
+  if (isTRUE(parallel) && length(zero))
     stop("set 'zero = NULL' if 'parallel = TRUE'")
 
   new("vglmff",
@@ -2176,8 +2199,7 @@ moment.millsratio2 <- function(zedd) {
       stop("vfl = T only allowed if ncol(x) > 2")
     if ( .vfl && !is.zero( .zero ))
       stop("Need zero = NULL when vfl = TRUE")
-    if ( .vfl && !(is.logical( .parallel ) &&
-         !( .parallel )))
+    if ( .vfl && !isFALSE( .parallel ))
       stop("Need parallel = FALSE if vfl = TRUE")
     if ( .vfl ) {
       constraints <- cm.VGAM(rbind(0, 1), x = x,
@@ -2682,10 +2704,14 @@ moment.millsratio2 <- function(zedd) {
   orig.esd  <- esd
   orig.evar <- evar
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
 
+  if (is.character(lvar))
+    lvar <- substitute(y9, list(y9 = lvar))
   lvar <- as.list(substitute(lvar))
   evar <- link2list(lvar)
   lvar <- attr(evar, "function.name")
@@ -2701,8 +2727,8 @@ moment.millsratio2 <- function(zedd) {
     stop("argument 'imethod' must be 1 or 2 or 3 or 4")
 
 
-  if (!is.logical(var.arg) || length(var.arg) != 1)
-    stop("argument 'var.arg' must be a single logical")
+  if (!isFALSE(var.arg) && !isTRUE(var.arg))
+    stop("'var.arg' must be a single logical")
 
 
   new("vglmff",
@@ -3308,10 +3334,14 @@ moment.millsratio2 <- function(zedd) {
 
 
 
+  if (is.character(lmeanlog))
+    lmeanlog <- substitute(y9, list(y9 = lmeanlog))
   lmulog <- as.list(substitute(lmeanlog))
   emulog <- link2list(lmulog)
   lmulog <- attr(emulog, "function.name")
 
+  if (is.character(lsdlog))
+    lsdlog <- substitute(y9, list(y9 = lsdlog))
   lsdlog <- as.list(substitute(lsdlog))
   esdlog <- link2list(lsdlog)
   lsdlog <- attr(esdlog, "function.name")
@@ -3473,7 +3503,7 @@ moment.millsratio2 <- function(zedd) {
     function(x, location = 0, scale = 1, shape = 0,
              log = FALSE) {
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -3528,6 +3558,8 @@ rskewnorm <- function(n, location = 0, scale = 1, shape = 0) {
            nsimEIM = NULL) {
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")

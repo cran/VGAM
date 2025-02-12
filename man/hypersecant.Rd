@@ -11,9 +11,9 @@
 
 }
 \usage{
-  hypersecant(link.theta = extlogitlink(min = -pi/2, max = pi/2),
+  hypersecant(link.theta = "extlogitlink(min = -pi/2, max = pi/2)",
               init.theta = NULL)
-hypersecant01(link.theta = extlogitlink(min = -pi/2, max = pi/2),
+hypersecant01(link.theta = "extlogitlink(min = -pi/2, max = pi/2)",
               init.theta = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

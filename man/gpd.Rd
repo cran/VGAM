@@ -8,7 +8,8 @@
 
 }
 \usage{
-gpd(threshold = 0, lscale = "loglink", lshape = logofflink(offset = 0.5),
+gpd(threshold = 0, lscale = "loglink",
+    lshape = "logofflink(offset = 0.5)",
     percentiles = c(90, 95), iscale = NULL, ishape = NULL,
     tolshape0 = 0.001, type.fitted = c("percentiles", "mean"),
     imethod = 1, zero = "shape")
@@ -22,7 +23,8 @@ gpd(threshold = 0, lscale = "loglink", lshape = logofflink(offset = 0.5),
 
   }
   \item{lscale}{
-  Parameter link function for the scale parameter \eqn{\sigma}{sigma}.
+  Parameter link function for the
+  scale parameter \eqn{\sigma}{sigma}.
   See \code{\link{Links}} for more choices.
 
 
@@ -179,9 +181,11 @@ gpd(threshold = 0, lscale = "loglink", lshape = logofflink(offset = 0.5),
   a two parameter problem.
 
 
-  The mean of \eqn{Y} does not exist unless \eqn{\xi < 1}{xi < 1}, and
-  the variance does not exist unless \eqn{\xi < 0.5}{xi < 0.5}.  So if
-  you want to fit a model with finite variance use \code{lshape = "extlogitlink"}.
+  The mean of \eqn{Y} does not exist unless
+  \eqn{\xi < 1}{xi < 1}, and the variance does
+  not exist unless \eqn{\xi < 0.5}{xi < 0.5}.
+  So if you want to fit a model with finite
+  variance use \code{lshape = "extlogitlink"}.
 
 
 }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -27,7 +27,7 @@
 
 dlms.bcn <- function(x, lambda = 1, mu = 0, sigma = 1,
                      tol0 = 0.001, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -65,25 +65,32 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
 
 
- lms.bcn <- function(percentiles = c(25, 50, 75),
-                     zero = c("lambda", "sigma"),
-                     llambda = "identitylink",
-                     lmu = "identitylink",
-                     lsigma = "loglink",
-                     idf.mu = 4,
-                     idf.sigma = 2,
-                     ilambda = 1,
-                     isigma = NULL,
-                     tol0 = 0.001) {
+ lms.bcn <-
+  function(percentiles = c(25, 50, 75),
+           zero = c("lambda", "sigma"),
+           llambda = "identitylink",
+           lmu = "identitylink",
+           lsigma = "loglink",
+           idf.mu = 4,
+           idf.sigma = 2,
+           ilambda = 1,
+           isigma = NULL,
+           tol0 = 0.001) {
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsigma))
+    lsigma <- substitute(y9, list(y9 = lsigma))
   lsigma <- as.list(substitute(lsigma))
   esigma <- link2list(lsigma)
   lsigma <- attr(esigma, "function.name")
@@ -289,23 +296,30 @@ lms.yjn.control <- function(trace = TRUE, ...)
 
 
 
- lms.bcg <- function(percentiles = c(25, 50, 75),
-                     zero = c("lambda", "sigma"),
-                     llambda = "identitylink",
-                     lmu = "identitylink",
-                     lsigma = "loglink",
-                     idf.mu = 4,
-                     idf.sigma = 2,
-                     ilambda = 1,
-                     isigma = NULL) {
+ lms.bcg <-
+  function(percentiles = c(25, 50, 75),
+           zero = c("lambda", "sigma"),
+           llambda = "identitylink",
+           lmu = "identitylink",
+           lsigma = "loglink",
+           idf.mu = 4,
+           idf.sigma = 2,
+           ilambda = 1,
+           isigma = NULL) {
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsigma))
+    lsigma <- substitute(y9, list(y9 = lsigma))
   lsigma <- as.list(substitute(lsigma))
   esigma <- link2list(lsigma)
   lsigma <- attr(esigma, "function.name")
@@ -510,8 +524,8 @@ lms.yjn.control <- function(trace = TRUE, ...)
 dy.dpsi.yeojohnson <- function(psi, lambda) {
 
     L <- max(length(psi), length(lambda))
-    if (length(psi)    != L) psi    <- rep_len(psi,    L)
-    if (length(lambda) != L) lambda <- rep_len(lambda, L)
+    if (length(psi)    < L) psi    <- rep_len(psi,    L)
+    if (length(lambda) < L) lambda <- rep_len(lambda, L)
 
     ifelse(psi > 0, (1 + psi * lambda)^(1/lambda - 1),
     (1 - (2-lambda) * psi)^((lambda - 1) / (2-
@@ -521,8 +535,8 @@ dy.dpsi.yeojohnson <- function(psi, lambda) {
 
 dyj.dy.yeojohnson <- function(y, lambda) {
     L <- max(length(y), length(lambda))
-    if (length(y)      != L) y      <- rep_len(y,      L)
-    if (length(lambda) != L) lambda <- rep_len(lambda, L)
+    if (length(y)      < L) y      <- rep_len(y,      L)
+    if (length(lambda) < L) lambda <- rep_len(lambda, L)
 
     ifelse(y>0, (1 + y)^(lambda - 1), (1 - y)^(1 - lambda))
 }
@@ -543,8 +557,8 @@ dyj.dy.yeojohnson <- function(y, lambda) {
   if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE))
     stop("argument 'epsilon' must be a single positive number")
   L <- max(length(lambda), length(y))
-  if (length(y)      != L) y      <- rep_len(y,      L)
-  if (length(lambda) != L) lambda <- rep_len(lambda, L)
+  if (length(y)      < L) y      <- rep_len(y,      L)
+  if (length(lambda) < L) lambda <- rep_len(lambda, L)
 
   if (inverse) {
     if (derivative != 0)
@@ -607,10 +621,10 @@ dpsi.dlambda.yjn <- function(psi, lambda, mymu, sigma,
 
     L <- max(length(psi), length(lambda), length(mymu),
              length(sigma))
-    if (length(psi)    != L) psi    <- rep_len(psi,    L)
-    if (length(lambda) != L) lambda <- rep_len(lambda, L)
-    if (length(mymu)   != L) mymu   <- rep_len(mymu,   L)
-    if (length(sigma)  != L) sigma  <- rep_len(sigma,  L)
+    if (length(psi)    < L) psi    <- rep_len(psi,    L)
+    if (length(lambda) < L) lambda <- rep_len(lambda, L)
+    if (length(mymu)   < L) mymu   <- rep_len(mymu,   L)
+    if (length(sigma)  < L) sigma  <- rep_len(sigma,  L)
 
     answer <- matrix(NA_real_, L, derivative+1)
     CC <- psi >= 0
@@ -810,14 +824,20 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
                       yoffset = NULL,
                       nsimEIM = 250) {
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsigma))
+    lsigma <- substitute(y9, list(y9 = lsigma))
   lsigma <- as.list(substitute(lsigma))
   esigma <- link2list(lsigma)
   lsigma <- attr(esigma, "function.name")
@@ -1055,10 +1075,14 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
 
 
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
 
+  if (is.character(lsigma))
+    lsigma <- substitute(y9, list(y9 = lsigma))
   lsigma <- as.list(substitute(lsigma))
   esigma <- link2list(lsigma)
   lsigma <- attr(esigma, "function.name")
@@ -1413,7 +1437,7 @@ lms.yjn2.control <- function(save.weights = TRUE, ...) {
 lmscreg.control <-
     function(cdf = TRUE, at.arg = NULL, x0 = NULL, ...) {
 
-  if (!is.logical(cdf)) {
+  if (!isFALSE(cdf) && !isTRUE(cdf)) {
     warning("'cdf' is not logical; using TRUE instead")
     cdf <- TRUE
   }
@@ -1452,7 +1476,7 @@ amlnormal.deviance <-
                                Wr1(myresid[, ii],
                                    w = extra$w.aml[ii]))
   }
-  if (is.logical(extra$individual) && extra$individual)
+  if (isTRUE(extra$individual))
     all.deviances else sum(all.deviances)
 }  # amlnormal.deviance
 
@@ -1476,6 +1500,8 @@ amlnormal.deviance <-
 
 
 
+  if (is.character(lexpectile))
+    lexpectile <- substitute(y9, list(y9 = lexpectile))
   lexpectile <- as.list(substitute(lexpectile))
   eexpectile <- link2list(lexpectile)
   lexpectile <- attr(eexpectile, "function.name")
@@ -1642,8 +1668,8 @@ amlpoisson.deviance <-
                                 Wr1(myresid[, ii],
                                     w=extra$w.aml[ii]))
     }
-    if (is.logical(extra$individual) && extra$individual)
-        all.deviances else sum(all.deviances)
+    if (isTRUE(extra$individual))
+      all.deviances else sum(all.deviances)
 }  # amlpoisson.deviance
 
 
@@ -1655,6 +1681,8 @@ amlpoisson.deviance <-
     stop("'w.aml' must be a vector of positive values")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1810,7 +1838,7 @@ amlbinomial.deviance <-
       for (ii in 1:M) all.deviances[ii] <- sum(c(w) * devi[, ii] *
                              Wr1(myresid[, ii], w=extra$w.aml[ii]))
     }
-    if (is.logical(extra$individual) && extra$individual)
+    if (isTRUE(extra$individual))
       all.deviances else sum(all.deviances)
 }  # amlbinomial.deviance
 
@@ -1824,6 +1852,8 @@ amlbinomial.deviance <-
     stop("'w.aml' must be a vector of positive values")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1983,7 +2013,7 @@ amlexponential.deviance <-
                            (devy[, ii] - devi[, ii]) *
                            Wr1(myresid[, ii], w=extra$w.aml[ii]))
   }
-  if (is.logical(extra$individual) && extra$individual)
+  if (isTRUE(extra$individual))
     all.deviances else sum(all.deviances)
 }  # amlexponential.deviance
 
@@ -2001,6 +2031,8 @@ amlexponential <-
     stop("argument 'imethod' must be 1, 2 or 3")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -2147,6 +2179,8 @@ amlexponential <-
                            c("percentiles", "Qlink"))[1]
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -2380,15 +2414,15 @@ amlexponential <-
 
 
 dbenini <- function(x, y0, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(shape), length(y0))
-  if (length(x)        != N) x        <- rep_len(x,        N)
-  if (length(shape)    != N) shape    <- rep_len(shape,    N)
-  if (length(y0)       != N) y0       <- rep_len(y0,       N)
+  if (length(x)        < N) x        <- rep_len(x,        N)
+  if (length(shape)    < N) shape    <- rep_len(shape,    N)
+  if (length(y0)       < N) y0       <- rep_len(y0,       N)
 
   logdensity <- rep_len(log(0), N)
   xok <- (x > y0)
@@ -2409,15 +2443,15 @@ pbenini <-
     stop("bad input for argument 'shape'")
   if (!is.Numeric(y0, positive = TRUE))
     stop("bad input for argument 'y0'")
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   N <- max(length(q), length(shape), length(y0))
-  if (length(q)        != N) q      <- rep_len(q,     N)
-  if (length(shape)    != N) shape  <- rep_len(shape, N)
-  if (length(y0)       != N) y0     <- rep_len(y0,    N)
+  if (length(q)        < N) q      <- rep_len(q,     N)
+  if (length(shape)    < N) shape  <- rep_len(shape, N)
+  if (length(y0)       < N) y0     <- rep_len(y0,    N)
 
   ans <- y0 * 0
   ok <- q > y0
@@ -2448,9 +2482,9 @@ pbenini <-
 qbenini <- function(p, y0, shape, lower.tail = TRUE, log.p = FALSE) {
 
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -2493,6 +2527,8 @@ rbenini <- function(n, y0, shape) {
     stop("one of 'N' and 'D' needs to be inputted")
 
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   earg <- link2list(lprob)
   lprob <- attr(earg, "function.name")
@@ -2647,16 +2683,16 @@ rbenini <- function(n, y0, shape) {
 
 
 dtriangle <- function(x, theta, lower = 0, upper = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(theta), length(lower), length(upper))
-  if (length(x)     != N) x     <- rep_len(x,     N)
-  if (length(theta) != N) theta <- rep_len(theta, N)
-  if (length(lower) != N) lower <- rep_len(lower, N)
-  if (length(upper) != N) upper <- rep_len(upper, N)
+  if (length(x)     < N) x     <- rep_len(x,     N)
+  if (length(theta) < N) theta <- rep_len(theta, N)
+  if (length(lower) < N) lower <- rep_len(lower, N)
+  if (length(upper) < N) upper <- rep_len(upper, N)
 
   denom1 <- ((upper-lower)*(theta-lower))
   denom2 <- ((upper-lower)*(upper-theta))
@@ -2671,7 +2707,7 @@ dtriangle <- function(x, theta, lower = 0, upper = 1, log = FALSE) {
   logdensity[lower >  theta] <- NaN
   logdensity[upper <  theta] <- NaN
   if (log.arg) logdensity else exp(logdensity)
-}
+}  # dtriangle
 
 
 rtriangle <- function(n, theta, lower = 0, upper = 1) {
@@ -2701,24 +2737,24 @@ rtriangle <- function(n, theta, lower = 0, upper = 1) {
   ifelse(runif(n) < (theta - lower) / (upper - lower),
          lower + (theta - lower) * t1,
          upper - (upper - theta) * t2)
-}
+}  # rtriangle
 
 
 
 qtriangle <- function(p, theta, lower = 0, upper = 1,
                       lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   N <- max(length(p), length(theta), length(lower), length(upper))
-  if (length(p)     != N) p     <- rep_len(p,     N)
-  if (length(theta) != N) theta <- rep_len(theta, N)
-  if (length(lower) != N) lower <- rep_len(lower, N)
-  if (length(upper) != N) upper <- rep_len(upper, N)
+  if (length(p)     < N) p     <- rep_len(p,     N)
+  if (length(theta) < N) theta <- rep_len(theta, N)
+  if (length(lower) < N) lower <- rep_len(lower, N)
+  if (length(upper) < N) upper <- rep_len(upper, N)
 
   ans <- NA_real_ * p
   if (lower.tail) {
@@ -2763,7 +2799,7 @@ qtriangle <- function(p, theta, lower = 0, upper = 1,
 
   ans[theta < lower | theta > upper] <- NaN
   ans
-}
+}  # qtriangle
 
 
 
@@ -2771,15 +2807,15 @@ ptriangle <- function(q, theta, lower = 0, upper = 1,
                       lower.tail = TRUE, log.p = FALSE) {
 
   N <- max(length(q), length(theta), length(lower), length(upper))
-  if (length(q)     != N) q     <- rep_len(q,     N)
-  if (length(theta) != N) theta <- rep_len(theta, N)
-  if (length(lower) != N) lower <- rep_len(lower, N)
-  if (length(upper) != N) upper <- rep_len(upper, N)
+  if (length(q)     < N) q     <- rep_len(q,     N)
+  if (length(theta) < N) theta <- rep_len(theta, N)
+  if (length(lower) < N) lower <- rep_len(lower, N)
+  if (length(upper) < N) upper <- rep_len(upper, N)
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   ans <- q * 0
@@ -2836,177 +2872,10 @@ ptriangle <- function(q, theta, lower = 0, upper = 1,
 
   ans[theta < lower | theta > upper] <- NaN
   ans
-}
+}  # ptriangle
 
 
 
-
-
-
-
-triangle.control <- function(stepsize = 0.33, maxit = 100, ...) {
-  list(stepsize = stepsize, maxit = maxit)
-}
-
-
- triangle <-
-  function(lower = 0, upper = 1,
-           link = extlogitlink(min = 0, max = 1),
-           itheta = NULL) {
-
-
-
-
-
-
-  if (!is.Numeric(lower))
-    stop("bad input for argument 'lower'")
-  if (!is.Numeric(upper))
-    stop("bad input for argument 'upper'")
-  if (!all(lower < upper))
-    stop("lower < upper values are required")
-
-  if (length(itheta) && !is.Numeric(itheta))
-    stop("bad input for 'itheta'")
-
-
-
-
-  link <- as.list(substitute(link))
-  earg <- link2list(link)
-  link <- attr(earg, "function.name")
-
-
-  if (length(earg$min) && any(earg$min != lower))
-    stop("argument 'lower' does not match the 'link'")
-  if (length(earg$max) && any(earg$max != upper))
-    stop("argument 'upper' does not match the 'link'")
-
-
-
-  new("vglmff",
-  blurb = c("Triangle distribution\n\n",
-            "Link:    ",
-            namesof("theta", link, earg = earg)),
-  infos = eval(substitute(function(...) {
-    list(M1 = 1,
-         Q1 = 1,
-         parameters.names = c("theta"),
-         link = .link )
-  }, list( .link = link ))),
-
-  initialize = eval(substitute(expression({
-
-    w.y.check(w = w, y = y,
-              ncol.w.max = 1,
-              ncol.y.max = 1)
-
-
-
-
-    extra$lower <- rep_len( .lower , n)
-    extra$upper <- rep_len( .upper , n)
-
-    if (any(y <= extra$lower | y >= extra$upper))
-      stop("some y values in [lower,upper] detected")
-
-    predictors.names <-
-      namesof("theta", .link , earg = .earg , tag = FALSE)
-
-
-    if (!length(etastart)) {
-      Theta.init <- if (length( .itheta )) .itheta else {
-        weighted.mean(y, w)
-      }
-      Theta.init <- rep_len(Theta.init, n)
-      etastart <- theta2eta(Theta.init, .link , earg = .earg )
-    }
-  }), list( .link = link, .earg = earg, .itheta=itheta,
-            .upper = upper, .lower = lower ))),
-  linkinv = eval(substitute(function(eta, extra = NULL) {
-    Theta <- eta2theta(eta, .link , earg = .earg )
-    lower <- extra$lower
-    upper <- extra$upper
-
-    mu1 <- (lower + upper + Theta) / 3
-
-    mu1
-  }, list( .link = link, .earg = earg ))),
-  last = eval(substitute(expression({
-    misc$link <-    c(theta = .link )
-
-    misc$earg <- list(theta = .earg )
-
-    misc$expected <- TRUE
-  }), list( .link = link, .earg = earg ))),
-  loglikelihood = eval(substitute(
-    function(mu, y, w, residuals = FALSE, eta, extra = NULL,
-             summation = TRUE) {
-    Theta <- eta2theta(eta, .link , earg = .earg )
-    lower <- extra$lower
-    upper <- extra$upper
-    if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
-    } else {
-      ll.elts <- c(w) * dtriangle(y, theta = Theta, lower = lower,
-                                  upper = upper, log = TRUE)
-      if (summation) {
-        sum(ll.elts)
-      } else {
-        ll.elts
-      }
-    }
-  }, list( .link = link, .earg = earg ))),
-  vfamily = c("triangle"),
-  validparams = eval(substitute(function(eta, y, extra = NULL) {
-    Theta <- eta2theta(eta, .link , earg = .earg )
-    okay1 <- all(is.finite(Theta)) &&
-             all(extra$lower < Theta & Theta < extra$upper)
-    okay1
-  }, list( .link = link, .earg = earg ))),
-
-
-
-  simslot = eval(substitute(
-  function(object, nsim) {
-
-    pwts <- if (length(pwts <- object@prior.weights) > 0)
-              pwts else weights(object, type = "prior")
-    if (any(pwts != 1))
-      warning("ignoring prior weights")
-    eta <- predict(object)
-    extra <- object@extra
-    Theta <- eta2theta(eta, .link , earg = .earg )
-    lower <- extra$lower
-    upper <- extra$upper
-    rtriangle(nsim * length(Theta),
-              theta = Theta, lower = lower, upper = upper)
-  }, list( .link = link, .earg = earg ))),
-
-
-
-
-  deriv = eval(substitute(expression({
-    Theta       <- eta2theta(eta,     .link , earg = .earg )
-    dTheta.deta <- dtheta.deta(Theta, .link , earg = .earg )
-
-    pos <- y > Theta
-    neg <- y < Theta
-    lower <- extra$lower
-    upper <- extra$upper
-
-    dl.dTheta <-  0 * y
-    dl.dTheta[neg] <-  -1 / (Theta[neg]-lower[neg])
-    dl.dTheta[pos] <-   1 / (upper[pos]-Theta[pos])
-
-    c(w) * dl.dTheta * dTheta.deta
-  }), list( .link = link, .earg = earg ))),
-  weight = eval(substitute(expression({
-    var.dl.dTheta <-  1 / ((Theta - lower) * (upper - Theta))
-    wz <- var.dl.dTheta * dTheta.deta^2
-    c(w) * wz
-  }), list( .link = link, .earg = earg ))))
-}
 
 
 
@@ -3089,6 +2958,8 @@ fff <-
   function(link = "loglink",
            idf1 = NULL, idf2 = NULL, nsimEIM = 100,  # ncp = 0,
            imethod = 1, zero = NULL) {
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -3273,7 +3144,7 @@ fff <-
 
  dlaplace <-
     function(x, location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -3289,15 +3160,15 @@ plaplace <-
              lower.tail = TRUE, log.p =FALSE) {
   zedd <- (q - location) / scale
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   L <- max(length(q), length(location), length(scale))
-  if (length(q)        != L) q        <- rep_len(q,        L)
-  if (length(location) != L) location <- rep_len(location, L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
+  if (length(q)        < L) q        <- rep_len(q,        L)
+  if (length(location) < L) location <- rep_len(location, L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
 
 
   if (lower.tail) {
@@ -3326,17 +3197,17 @@ plaplace <-
  qlaplace <-
     function(p, location = 0, scale = 1,
              lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
   L <- max(length(p), length(location), length(scale))
-  if (length(p)        != L) p        <- rep_len(p,        L)
-  if (length(location) != L) location <- rep_len(location, L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
+  if (length(p)        < L) p        <- rep_len(p,        L)
+  if (length(location) < L) location <- rep_len(location, L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
 
 
   if (lower.tail) {
@@ -3400,11 +3271,15 @@ plaplace <-
            imethod = 1,
            zero = "scale") {
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
   ilocat <- ilocation
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")

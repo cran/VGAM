@@ -35,7 +35,7 @@
     signif.stars = getOption("show.signif.stars"),
     nopredictors = FALSE, upgrade = FALSE, ...)
 \method{show}{summary.rrvglm}(x, digits = NULL,
-    quote = TRUE, prefix = "", signif.stars = NULL)
+    quote = TRUE, prefix = "", signif.stars = NULL, ...)
 }
 \arguments{
   \item{object}{an object of class

@@ -104,6 +104,7 @@ McCullagh, P. and Nelder, J. A. (1989).
 }
 
 \seealso{
+  \code{\link{binom3.or}},
   \code{\link{loglinb2}},
   \code{\link{binom2.or}},
   \code{\link{hunua}}.

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -9,8 +9,8 @@
  loglinb2 <- function(exchangeable = FALSE, zero = "u12") {
 
 
-  if (!is.logical(exchangeable))
-    warning("argument 'exchangeable' should be a single logical")
+  if (!isFALSE(exchangeable) && !isTRUE(exchangeable))
+    warning("'exchangeable' should be a single logical")
 
 
   new("vglmff",
@@ -168,8 +168,8 @@
                       zero = c("u12", "u13", "u23")) {
 
 
-  if (!is.logical(exchangeable))
-    warning("argument 'exchangeable' should be a single logical")
+  if (!isFALSE(exchangeable) && !isTRUE(exchangeable))
+    warning("'exchangeable' should be a single logical")
 
 
   new("vglmff",

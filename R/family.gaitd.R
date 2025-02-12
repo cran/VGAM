@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -253,6 +253,8 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
   ltruncat <- length(truncate <- sort(truncate))
   ltrunc.use <- ltruncat > 0 || !is.infinite(max.support) 
 
+  if (is.character(llambda.p))
+    llambda.p <- substitute(y9, list(y9 = llambda.p))
   llambda.p <- as.list(substitute(llambda.p))
   elambda.p <- link2list(llambda.p)
   llambda.p <- attr(elambda.p, "function.name")
@@ -291,17 +293,16 @@ gaitdnbinomial.control <-  # Overwrites the summary() default.
            poissonff(link = .llambda.p.save , zero = NULL),
            list( .llambda.p.save = llambda.p.save))))
 
-  if (!is.logical(eq.ap) || length(eq.ap) != 1)
+  if (!isFALSE(eq.ap) && !isTRUE(eq.ap))
     stop("argument 'eq.ap' must be a single logical")
-  if (!is.logical(eq.ip) || length(eq.ip) != 1)
+  if (!isFALSE(eq.ip) && !isTRUE(eq.ip))
     stop("argument 'eq.ip' must be a single logical")
-  if (!is.logical(parallel.a) || length(parallel.a) != 1)
+  if (!isFALSE(parallel.a) && !isTRUE(parallel.a))
     stop("argument 'parallel.a' must be a single logical")
-  if (!is.logical(parallel.i) || length(parallel.i) != 1)
+  if (!isFALSE(parallel.i) && !isTRUE(parallel.i))
     stop("argument 'parallel.i' must be a single logical")
-  if (!is.logical(parallel.d) || length(parallel.d) != 1)
+  if (!isFALSE(parallel.d) && !isTRUE(parallel.d))
     stop("argument 'parallel.d' must be a single logical")
-
 
   if (FALSE) {  # Comment this out to allow default eq.ap=TRUE, etc.
   if (la.mix <= 1 && eq.ap)
@@ -6448,11 +6449,15 @@ plotdgaitd.vglm <-
   ltruncat <- length(truncate <- sort(truncate))
   ltrunc.use <- ltruncat > 0 || !is.infinite(max.support) 
 
+  if (is.character(lmunb.p))
+    lmunb.p <- substitute(y9, list(y9 = lmunb.p))
   lmunb.p <- as.list(substitute(lmunb.p))
   emunb.p <- link2list(lmunb.p)
   lmunb.p <- attr(emunb.p, "function.name")
   lmunb.p.save <- lmunb.p
 
+  if (is.character(lsize.p))
+    lsize.p <- substitute(y9, list(y9 = lsize.p))
   lsize.p <- as.list(substitute(lsize.p))
   esize.p <- link2list(lsize.p)
   lsize.p <- attr(esize.p, "function.name")
@@ -6500,15 +6505,15 @@ plotdgaitd.vglm <-
            list( .lmunb.p.save = lmunb.p.save,
                  .lsize.p.save = lsize.p.save))))
 
-  if (!is.logical(eq.ap) || length(eq.ap) != 1)
+  if (!isFALSE(eq.ap) && !isTRUE(eq.ap))
     stop("argument 'eq.ap' must be a single logical")
-  if (!is.logical(eq.ip) || length(eq.ip) != 1)
+  if (!isFALSE(eq.ip) && !isTRUE(eq.ip))
     stop("argument 'eq.ip' must be a single logical")
-  if (!is.logical(parallel.a) || length(parallel.a) != 1)
+  if (!isFALSE(parallel.a) && !isTRUE(parallel.a))
     stop("argument 'parallel.a' must be a single logical")
-  if (!is.logical(parallel.i) || length(parallel.i) != 1)
+  if (!isFALSE(parallel.i) && !isTRUE(parallel.i))
     stop("argument 'parallel.i' must be a single logical")
-  if (!is.logical(parallel.d) || length(parallel.d) != 1)
+  if (!isFALSE(parallel.d) && !isTRUE(parallel.d))
     stop("argument 'parallel.d' must be a single logical")
 
 
@@ -8111,7 +8116,8 @@ plotdgaitd.vglm <-
                  size.a = size.a, size.i = size.i, size.d = size.d,
                  a.mix = a.mix, i.mix = i.mix, d.mix = d.mix,
                  a.mlm = a.mlm, i.mlm = i.mlm, d.mlm = d.mlm,
-                 truncate = .truncate , max.support = .max.support )
+                 truncate = .truncate ,
+                 max.support = .max.support )
   }, list(
     .lmunb.p = lmunb.p, .emunb.p = emunb.p,
     .lmunb.a = lmunb.a, .emunb.a = emunb.a,
@@ -10669,23 +10675,26 @@ KLDvglm <-
     theta.i <- cbind(theta.i)
     theta.d <- cbind(theta.d)
   } else {
-    theta.a <- if (any(is.na(indeta[ 4, ]))) theta.p else
-                 cbind(eta2theta(etamat[, (indeta[ 4, 1])],
-                                 linkfun(object)[(indeta[ 4, 1])]),
-                       eta2theta(etamat[, (indeta[ 5, 1])],
-                                 linkfun(object)[(indeta[ 5, 1])]))
+    theta.a <-
+      if (any(is.na(indeta[ 4, ]))) theta.p else
+        cbind(eta2theta(etamat[, (indeta[ 4, 1])],
+                        linkfun(object)[(indeta[ 4, 1])]),
+              eta2theta(etamat[, (indeta[ 5, 1])],
+                        linkfun(object)[(indeta[ 5, 1])]))
     colnames(theta.a) <- paste0(infos.list$baseparams.argnames, ".a")
-    theta.i <- if (any(is.na(indeta[ 7, ]))) theta.p else
-                 cbind(eta2theta(etamat[, (indeta[ 7, 1])],
-                                 linkfun(object)[(indeta[ 7, 1])]),
-                       eta2theta(etamat[, (indeta[ 8, 1])],
-                                 linkfun(object)[(indeta[ 8, 1])]))
+    theta.i <-
+      if (any(is.na(indeta[ 7, ]))) theta.p else
+        cbind(eta2theta(etamat[, (indeta[ 7, 1])],
+                        linkfun(object)[(indeta[ 7, 1])]),
+              eta2theta(etamat[, (indeta[ 8, 1])],
+                        linkfun(object)[(indeta[ 8, 1])]))
     colnames(theta.i) <- paste0(infos.list$baseparams.argnames, ".i")
-    theta.d <- if (any(is.na(indeta[10, ]))) theta.p else
-                 cbind(eta2theta(etamat[, (indeta[10, 1])],
-                                 linkfun(object)[(indeta[10, 1])]),
-                       eta2theta(etamat[, (indeta[11, 1])],
-                                 linkfun(object)[(indeta[11, 1])]))
+    theta.d <-
+      if (any(is.na(indeta[10, ]))) theta.p else
+        cbind(eta2theta(etamat[, (indeta[10, 1])],
+                        linkfun(object)[(indeta[10, 1])]),
+              eta2theta(etamat[, (indeta[11, 1])],
+                        linkfun(object)[(indeta[11, 1])]))
     colnames(theta.d) <- paste0(infos.list$baseparams.argnames, ".d")
   }
 

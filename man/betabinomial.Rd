@@ -52,7 +52,7 @@ betabinomial(lmu = "logitlink", lrho = "logitlink",
 
   }
   \item{zero}{
-  Specifyies which
+  Specifies which
   linear/additive predictor is to be modelled as an intercept
   only.  If assigned, the single value can be either \code{1} or
   \code{2}.  The default is to have a single correlation parameter.
@@ -209,6 +209,7 @@ betabinomial(lmu = "logitlink", lrho = "logitlink",
 \seealso{
   \code{\link{extbetabinomial}},
   \code{\link{betabinomialff}},
+  \code{\link{betabinomial.rho}},
   \code{\link{Betabinom}},
   \code{\link{binomialff}},
   \code{\link{betaff}},

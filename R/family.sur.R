@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -35,13 +35,11 @@
   esdev <- list()
 
 
-  if (!is.logical(mle.normal) ||
-      length(mle.normal) != 1)
-    stop("argument 'mle.normal' must be a single logical")
+  if (!isFALSE(mle.normal) && !isTRUE(mle.normal))
+    stop("'mle.normal' must be a single logical")
 
-  if (!is.logical(apply.parint) ||
-      length(apply.parint) != 1)
-    stop("argument 'apply.parint' must be a single logical")
+  if (!isFALSE(apply.parint) && !isTRUE(apply.parint))
+    stop("'apply.parint' must be a single logical")
 
 
 
@@ -83,11 +81,10 @@
       stop("response must be a matrix with at least 2 columns")
     ncoly <- ncol(y)
 
-   if (is.logical( .parallel ) &&
-       .parallel &&
+   if (isTRUE( .parallel ) &&
        !all(as.logical(trivial.constraints(constraints))))
-     warning("setting 'parallel = TRUE' with nontrivial constraints may not ",
-             "make sense")
+     warning("setting 'parallel = TRUE' with nontrivial ",
+             "constraints may not make sense")
 
    temp5 <-
     w.y.check(w = w, y = y,

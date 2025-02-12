@@ -10,7 +10,7 @@ for \emph{vector generalized linear models} (VGLMs).
 }
 \usage{
 linkfun(object, \dots)
-linkfunvlm(object, earg = FALSE, \dots)
+linkfunvlm(object, earg = FALSE, by.var = FALSE, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,16 @@ linkfunvlm(object, earg = FALSE, \dots)
   \item{earg}{ Logical.
     Return the extra arguments associated with each
     link function? If \code{TRUE} then a list is returned.
+
+
+  }
+  \item{by.var}{ Logical.
+    If \code{TRUE} then a named character vector is returned,
+    corresponding to \code{coef(object)},
+    with the link function corresponding to each
+    regression coefficient.
+
+%   Please see \code{\link{coefvlm}}.
 
 
   }
@@ -41,7 +51,8 @@ linkfunvlm(object, earg = FALSE, \dots)
 
 }
 \value{
-  Usually just a (named) character string, with the link functions
+  By default,
+  usually just a (named) character string, with the link functions
   in order.
   It is named with the parameter names.
   If \code{earg = TRUE} then a list with the following components.
@@ -54,6 +65,9 @@ linkfunvlm(object, earg = FALSE, \dots)
 
 
   }
+  If \code{by.var = TRUE} then what is returned is described
+  above.
+
 }
 %\references{
 
@@ -75,7 +89,8 @@ linkfunvlm(object, earg = FALSE, \dots)
 \seealso{
   \code{\link{linkfun}},
   \code{\link{multilogitlink}},
-  \code{\link{vglm}}.
+  \code{\link{vglm}},
+  \code{\link{coefvlm}}.
 
 
 }

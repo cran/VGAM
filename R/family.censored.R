@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -21,6 +21,8 @@
            biglambda = 10,
            smallno = 1e-10) {
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -259,6 +261,8 @@ if (FALSE)
   if (!is.Numeric(location, length.arg = 1))
     stop("bad input for 'location'")
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -410,10 +414,14 @@ if (FALSE)
                          imethod = 1, zero = "sd") {
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsd))
+    lsd <- substitute(y9, list(y9 = lsd))
   lsd <- as.list(substitute(lsd))
   esd <- link2list(lsd)
   lsd <- attr(esd, "function.name")
@@ -619,13 +627,15 @@ if (FALSE)
  cens.rayleigh <- function(lscale = "loglink",
                            oim  = TRUE) {
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
 
 
-  if (!is.logical(oim) || length(oim) != 1)
+  if (!isFALSE(oim) && !isTRUE(oim))
     stop("bad input for argument 'oim'")
 
   new("vglmff",
@@ -738,10 +748,14 @@ if (FALSE)
   imeann <- imean
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmeann <- as.list(substitute(lmean))
   emeann <- link2list(lmeann)
   lmeann <- attr(emeann, "function.name")
@@ -999,10 +1013,14 @@ if (FALSE)
 
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -1519,10 +1537,14 @@ pgamma.deriv.unscaled <- function(q, shape) {
 
 
 
+  if (is.character(lAlpha))
+    lAlpha <- substitute(y9, list(y9 = lAlpha))
   lAlpha <- as.list(substitute(lAlpha))
   eAlpha <- link2list(lAlpha)
   lAlpha <- attr(eAlpha, "function.name")
 
+  if (is.character(lBetaa))
+    lBetaa <- substitute(y9, list(y9 = lBetaa))
   lBetaa <- as.list(substitute(lBetaa))
   eBetaa <- link2list(lBetaa)
   lBetaa <- attr(eBetaa, "function.name")

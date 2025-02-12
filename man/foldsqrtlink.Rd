@@ -216,7 +216,7 @@ par(lwd = 1)
 
 # This is lucky to converge
 fit.h <- vglm(agaaus ~ sm.bs(altitude),
-              binomialff(foldsqrtlink(mux = 5)),
+              binomialff("foldsqrtlink(mux = 5)"),
               hunua, trace = TRUE)
 \dontrun{
 plotvgam(fit.h, se = TRUE, lcol = "orange", scol = "orange",
@@ -227,7 +227,7 @@ head(predict(fit.h, hunua, type = "response"))
 # The following fails.
 pneumo <- transform(pneumo, let = log(exposure.time))
 fit <- vglm(cbind(normal, mild, severe) ~ let,
-       cumulative(foldsqrtlink(mux = 10), par = TRUE, rev = TRUE),
+       cumulative("foldsqrtlink(mux = 10)", par = TRUE, rev = TRUE),
        data = pneumo, trace = TRUE, maxit = 200) }
 }
 \keyword{math}

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -31,6 +31,8 @@ hzeta <-
 
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -180,7 +182,7 @@ hzeta <-
 
 
 dhzeta <- function(x, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -188,8 +190,8 @@ dhzeta <- function(x, shape, log = FALSE) {
     stop("'shape' must be numeric and have positive values")
 
   nn <- max(length(x), length(shape))
-  if (length(x)     != nn) x     <- rep_len(x,     nn)
-  if (length(shape) != nn) shape <- rep_len(shape, nn)
+  if (length(x)     < nn) x     <- rep_len(x,     nn)
+  if (length(shape) < nn) shape <- rep_len(shape, nn)
 
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < 1
@@ -263,16 +265,16 @@ dhzeta <- function(x, shape, log = FALSE) {
 
 
 dkumar <- function(x, shape1, shape2, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
 
   N <- max(length(x), length(shape1), length(shape2))
-  if (length(x)      != N) x      <- rep_len(x,      N)
-  if (length(shape1) != N) shape1 <- rep_len(shape1, N)
-  if (length(shape2) != N) shape2 <- rep_len(shape2, N)
+  if (length(x)      < N) x      <- rep_len(x,      N)
+  if (length(shape1) < N) shape1 <- rep_len(shape1, N)
+  if (length(shape2) < N) shape2 <- rep_len(shape2, N)
 
   logdensity <- rep_len(log(0), N)
   xok <- (0 <= x & x <= 1)
@@ -300,10 +302,10 @@ qkumar <- function(p, shape1, shape2,
 
 
 
-  if (!is.logical(lower.tail) || length(lower.tail) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -341,10 +343,10 @@ qkumar <- function(p, shape1, shape2,
 pkumar <- function(q, shape1, shape2,
                    lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -388,9 +390,14 @@ pkumar <- function(q, shape1, shape2,
            ishape1 = NULL,   ishape2 = NULL,
            gshape1 = exp(2*ppoints(5) - 1), tol12 = 1.0e-4,
            zero = NULL) {
+  if (is.character(lshape1))
+    lshape1 <- substitute(y9, list(y9 = lshape1))
   lshape1 <- as.list(substitute(lshape1))
   eshape1 <- link2list(lshape1)
   lshape1 <- attr(eshape1, "function.name")
+
+  if (is.character(lshape2))
+    lshape2 <- substitute(y9, list(y9 = lshape2))
   lshape2 <- as.list(substitute(lshape2))
   eshape2 <- link2list(lshape2)
   lshape2 <- attr(eshape2, "function.name")
@@ -585,7 +592,7 @@ pkumar <- function(q, shape1, shape2,
 
 
 drice <- function(x, sigma, vee, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -593,9 +600,9 @@ drice <- function(x, sigma, vee, log = FALSE) {
 
 
   N <- max(length(x), length(vee), length(sigma))
-  if (length(x)      != N) x      <- rep_len(x,      N)
-  if (length(vee)    != N) vee    <- rep_len(vee   , N)
-  if (length(sigma ) != N) sigma  <- rep_len(sigma , N)
+  if (length(x)      < N) x      <- rep_len(x,      N)
+  if (length(vee)    < N) vee    <- rep_len(vee   , N)
+  if (length(sigma ) < N) sigma  <- rep_len(sigma , N)
 
   logdensity <- rep_len(log(0), N)
   xok <- (x > 0)
@@ -670,11 +677,15 @@ riceff.control <- function(save.weights = TRUE, ...) {
 
 
 
+  if (is.character(lvee))
+    lvee <- substitute(y9, list(y9 = lvee))
   lvee     <- as.list(substitute(lvee))
   evee     <- link2list(lvee)
   lvee     <- attr(evee, "function.name")
 
 
+  if (is.character(lsigma))
+    lsigma <- substitute(y9, list(y9 = lsigma))
   lsigma <- as.list(substitute(lsigma))
   esigma <- link2list(lsigma)
   lsigma <- attr(esigma, "function.name")
@@ -896,15 +907,15 @@ riceff.control <- function(save.weights = TRUE, ...) {
 
 
 dskellam <- function(x, mu1, mu2, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   L <- max(length(x), length(mu1), length(mu2))
-  if (length(x)      != L) x      <- rep_len(x,      L)
-  if (length(mu1)    != L) mu1    <- rep_len(mu1,    L)
-  if (length(mu2)    != L) mu2    <- rep_len(mu2,    L)
+  if (length(x)      < L) x      <- rep_len(x,      L)
+  if (length(mu1)    < L) mu1    <- rep_len(mu1,    L)
+  if (length(mu2)    < L) mu2    <- rep_len(mu2,    L)
 
   ok2 <- is.finite(mu1) & is.finite(mu2) & (mu1 >= 0) & (mu2 >= 0)
   ok3 <- (mu1 == 0) & (mu2 >  0)
@@ -960,10 +971,14 @@ skellam.control <- function(save.weights = TRUE, ...) {
            imu1 = NULL,   imu2 = NULL,
            nsimEIM = 100, parallel = FALSE, zero = NULL) {
 
+  if (is.character(lmu1))
+    lmu1 <- substitute(y9, list(y9 = lmu1))
   lmu1 <- as.list(substitute(lmu1))
   emu1 <- link2list(lmu1)
   lmu1 <- attr(emu1, "function.name")
 
+  if (is.character(lmu2))
+    lmu2 <- substitute(y9, list(y9 = lmu2))
   lmu2 <- as.list(substitute(lmu2))
   emu2 <- link2list(lmu2)
   lmu2 <- attr(emu2, "function.name")
@@ -1074,9 +1089,7 @@ skellam.control <- function(save.weights = TRUE, ...) {
     } else {
 
       ll.elts <-
-        if ( is.logical( .parallel ) &&
-             length( .parallel ) == 1 &&
-             .parallel )
+        if (isTRUE( .parallel ))
           c(w) * log(besselI(2*mu1, nu = y, expon = TRUE)) else
           c(w) * (-mu1 - mu2 +
                   0.5 * y * log(mu1) -
@@ -1186,13 +1199,13 @@ skellam.control <- function(save.weights = TRUE, ...) {
 
 
 dyules <- function(x, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(x), length(shape))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
   
   bad0 <- !is.finite(shape) | shape <= 0
   bad <- bad0 | !is.finite(x) | x < 1 | x != round(x)
@@ -1238,8 +1251,8 @@ dyules <- function(x, shape, log = FALSE) {
 
  qyules <- function(p, shape) {
   LLL <- max(length(p), length(shape))
-  if (length(p)     != LLL) p     <- rep_len(p,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(p)     < LLL) p     <- rep_len(p,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
   ans <- p + shape
 
   bad0 <- !is.finite(shape) | shape <= 0
@@ -1316,6 +1329,8 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
 
 
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -1512,7 +1527,7 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
 
 
 dlind <- function(x, theta, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1533,10 +1548,10 @@ dlind <- function(x, theta, log = FALSE) {
 plind <- function(q, theta, lower.tail = TRUE, log.p = FALSE) {
 
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -1593,6 +1608,8 @@ rlind <- function(n, theta) {
     stop("argument 'itheta' must be > 0")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1773,7 +1790,7 @@ rlind <- function(n, theta) {
 
 
 dpoislindley <- function(x, theta, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1798,16 +1815,16 @@ dpoislindley <- function(x, theta, log = FALSE) {
 
 dslash <- function(x, mu = 0, sigma = 1, log = FALSE,
                    smallno = .Machine$double.eps * 1000) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   if (!is.Numeric(sigma) || any(sigma <= 0))
     stop("argument 'sigma' must be positive")
   L <- max(length(x), length(mu), length(sigma))
-  if (length(x)     != L) x     <- rep_len(x,     L)
-  if (length(mu)    != L) mu    <- rep_len(mu,    L)
-  if (length(sigma) != L) sigma <- rep_len(sigma, L)
+  if (length(x)     < L) x     <- rep_len(x,     L)
+  if (length(mu)    < L) mu    <- rep_len(mu,    L)
+  if (length(sigma) < L) sigma <- rep_len(sigma, L)
 
   zedd <- (x-mu)/sigma
   if (log.arg) {
@@ -1838,16 +1855,16 @@ pslash <-
      (very.negative >= 0))
     stop("argument 'very.negative' must be quite negative")
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   L <- max(length(q), length(mu), length(sigma))
-  if (length(q)     != L) q     <- rep_len(q,     L)
-  if (length(mu)    != L) mu    <- rep_len(mu,    L)
-  if (length(sigma) != L) sigma <- rep_len(sigma, L)
+  if (length(q)     < L) q     <- rep_len(q,     L)
+  if (length(mu)    < L) mu    <- rep_len(mu,    L)
+  if (length(sigma) < L) sigma <- rep_len(sigma, L)
 
   zedd <- (q - mu)/sigma
   ans <- as.numeric(q * NA)
@@ -1905,10 +1922,14 @@ slash.control <- function(save.weights = TRUE, ...) {
                    nsimEIM = 250, zero = NULL,
                    smallno = .Machine$double.eps * 1000) {
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(lsigma))
+    lsigma <- substitute(y9, list(y9 = lsigma))
   lsigma <- as.list(substitute(lsigma))
   esigma <- link2list(lsigma)
   lsigma <- attr(esigma, "function.name")
@@ -2150,14 +2171,14 @@ dnefghs <- function(x, tau, log = FALSE) {
 
 
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
   N <- max(length(x), length(tau))
-  if (length(x)   != N) x   <- rep_len(x,   N)
-  if (length(tau) != N) tau <- rep_len(tau, N)
+  if (length(x)   < N) x   <- rep_len(x,   N)
+  if (length(tau) < N) tau <- rep_len(tau, N)
 
   logdensity <- log(sin(pi*tau)) + (1-tau)*x -
                 log(pi) - log1pexp(x)
@@ -2176,6 +2197,8 @@ dnefghs <- function(x, tau, log = FALSE) {
       any(itau >= 1))
     stop("argument 'itau' must be in (0, 1)")
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -2288,7 +2311,7 @@ dnefghs <- function(x, tau, log = FALSE) {
 
 
 dlogF <- function(x, shape1, shape2, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2318,11 +2341,14 @@ dlogF <- function(x, shape1, shape2, log = FALSE) {
     stop("argument 'ishape2' must be positive")
 
 
+  if (is.character(lshape1))
+    lshape1 <- substitute(y9, list(y9 = lshape1))
   lshape1 <- as.list(substitute(lshape1))
   eshape1 <- link2list(lshape1)
   lshape1 <- attr(eshape1, "function.name")
 
-
+  if (is.character(lshape2))
+    lshape2 <- substitute(y9, list(y9 = lshape2))
   lshape2 <- as.list(substitute(lshape2))
   eshape2 <- link2list(lshape2)
   lshape2 <- attr(eshape2, "function.name")
@@ -2508,7 +2534,7 @@ dbenf <- function(x, ndigits = 1, log = FALSE) {
   lowerlimit <- ifelse(ndigits == 1, 1, 10)
   upperlimit <- ifelse(ndigits == 1, 9, 99)
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2553,9 +2579,9 @@ rbenf <- function(n, ndigits = 1) {
  pbenf <-
   function(q, ndigits = 1, lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (!is.Numeric(ndigits, length.arg = 1,
@@ -2656,10 +2682,10 @@ qbenf <- function(p, ndigits = 1,
       ndigits > 2)
     stop("argument 'ndigits' must be 1 or 2")
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (log.p) {
@@ -2750,10 +2776,12 @@ qbenf <- function(p, ndigits = 1,
 
 
 
-  if (!is.logical(expected) || length(expected) != 1)
+  if (!isFALSE(expected) && !isTRUE(expected))
     stop("bad input for argument 'expected'")
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -2981,12 +3009,16 @@ qbenf <- function(p, ndigits = 1,
   stdbeta <- (A == 0 && B == 1)
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
 
 
+  if (is.character(lphi))
+    lphi <- substitute(y9, list(y9 = lphi))
   lphi <- as.list(substitute(lphi))
   ephi <- link2list(lphi)
   lphi <- attr(ephi, "function.name")
@@ -3230,10 +3262,14 @@ if (FALSE) {
            i1 = NULL, i2 = NULL, trim = 0.05,
            A = 0, B = 1, parallel = FALSE, zero = NULL) {
 
+  if (is.character(lshape1))
+    lshape1 <- substitute(y9, list(y9 = lshape1))
   lshape1 <- as.list(substitute(lshape1))
   eshape1 <- link2list(lshape1)
   lshape1 <- attr(eshape1, "function.name")
 
+  if (is.character(lshape2))
+    lshape2 <- substitute(y9, list(y9 = lshape2))
   lshape2 <- as.list(substitute(lshape2))
   eshape2 <- link2list(lshape2)
   lshape2 <- attr(eshape2, "function.name")
@@ -3433,6 +3469,8 @@ if (FALSE) {
             ishape1 = 2, ishape2 = NULL,
             zero = NULL) {
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -3574,18 +3612,26 @@ if (FALSE) {
   A <- 0
   B <- 1
 
+  if (is.character(lshape1))
+    lshape1 <- substitute(y9, list(y9 = lshape1))
   lshape1 <- as.list(substitute(lshape1))
   eshape1 <- link2list(lshape1)
   lshape1 <- attr(eshape1, "function.name")
 
+  if (is.character(lshape2))
+    lshape2 <- substitute(y9, list(y9 = lshape2))
   lshape2 <- as.list(substitute(lshape2))
   eshape2 <- link2list(lshape2)
   lshape2 <- attr(eshape2, "function.name")
 
+  if (is.character(lpobs0))
+    lpobs0 <- substitute(y9, list(y9 = lpobs0))
   lprobb0 <- as.list(substitute(lpobs0))
   eprobb0 <- link2list(lprobb0)
   lprobb0 <- attr(eprobb0, "function.name")
 
+  if (is.character(lpobs1))
+    lpobs1 <- substitute(y9, list(y9 = lpobs1))
   lprobb1 <- as.list(substitute(lpobs1))
   eprobb1 <- link2list(lprobb1)
   lprobb1 <- attr(eprobb1, "function.name")
@@ -3637,9 +3683,9 @@ if (FALSE) {
     constraints.orig <- constraints
 
 
-    if (is.logical( .parallel.probb ) && .parallel.probb &&
+    if (isTRUE( .parallel.probb ) &&
         (cind0[1] + cind1[1] <= 1))
-      warning("argument 'parallel.pobs' specified when there is",
+      warning("'parallel.pobs' specified when there is",
               " only one of 'pobs0' and 'pobs1'")
 
 
@@ -4079,13 +4125,13 @@ ned2l.dshape1probb0 <- 0
 
 
 dtopple <- function(x, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(shape))
-  if (length(x)     != L) x     <- rep_len(x,     L)
-  if (length(shape) != L) shape <- rep_len(shape, L)
+  if (length(x)     < L) x     <- rep_len(x,     L)
+  if (length(shape) < L) shape <- rep_len(shape, L)
 
   logdensity <- rep_len(log(0), L)
   xok <- (0 <= x) & (x <= 1)
@@ -4100,10 +4146,10 @@ dtopple <- function(x, shape, log = FALSE) {
 
  ptopple <-
   function(q, shape, lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
 
@@ -4163,6 +4209,8 @@ rtopple <- function(n, shape) {
   type.fitted <- match.arg(type.fitted,
          c("mean", "percentiles", "Qlink"))[1]
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))  # orig
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -4394,15 +4442,15 @@ rtopple <- function(n, shape) {
 
 
 dzeta <- function(x, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
 
   LLL <- max(length(shape), length(x))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
 
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < 1
@@ -4428,8 +4476,8 @@ dzeta <- function(x, shape, log = FALSE) {
 
 
   LLL <- max(lenq <- length(q), lens <- length(shape))
-  if (length(q)     != LLL) q     <- rep_len(q,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(q)     < LLL) q     <- rep_len(q,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
   ans <- rep_len(0, LLL)
 
   aa <- 12  # Same as Zeta.aux()
@@ -4455,8 +4503,8 @@ dzeta <- function(x, shape, log = FALSE) {
  qzeta <- function(p, shape) {
 
   LLL <- max(lenp <- length(p), lens <- length(shape))
-  if (length(p)     != LLL) p     <- rep_len(p,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(p)     < LLL) p     <- rep_len(p,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
   ans <- rep_len(0, LLL)
 
   # First, bracket the solution between 'lo' and 'hi'.
@@ -4510,6 +4558,8 @@ rzeta <- function(n, shape) {
   if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
     stop("argument 'ishape' must be > 0")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -4684,8 +4734,8 @@ gharmonic2 <- function(n, shape = 1) {
     stop("bad input for argument 'n'")
 
   LLL <- max(length(n), length(shape))
-  if (length(n)     != LLL) n     <- rep_len(n,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
+  if (length(n)     < LLL) n     <- rep_len(n,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
 
   aa <- 12
   ans <- rep_len(0, LLL)
@@ -4723,8 +4773,9 @@ gharmonic <- function(n, shape = 1, deriv = 0) {
       sum((1:n)^(-shape))
   } else {
     LEN <- max(length(n), length(shape))
-    n <- rep_len(n, LEN)
-    ans <- shape <- rep_len(shape, LEN)
+    if (length(n)     < LEN) n     <- rep_len(n,     LEN)
+    if (length(shape) < LEN) shape <- rep_len(shape, LEN)
+    ans <- shape
     if (lognexponent != 0) {
       for (ii in 1:LEN)
         ans[ii] <- sum(log(1:n[ii])^lognexponent *
@@ -4744,7 +4795,7 @@ gharmonic <- function(n, shape = 1, deriv = 0) {
 
 
 dzipf <- function(x, N, shape, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -4756,9 +4807,9 @@ dzipf <- function(x, N, shape, log = FALSE) {
   if (!is.Numeric(shape, positive = TRUE))
     stop("bad input for argument 'shape'")
   nn <- max(length(x), length(N), length(shape))
-  if (length(x)     != nn) x     <- rep_len(x,     nn)
-  if (length(N)     != nn) N     <- rep_len(N,     nn)
-  if (length(shape) != nn) shape <- rep_len(shape, nn)
+  if (length(x)     < nn) x     <- rep_len(x,     nn)
+  if (length(N)     < nn) N     <- rep_len(N,     nn)
+  if (length(shape) < nn) shape <- rep_len(shape, nn)
 
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < 1 | x > N
@@ -4782,9 +4833,9 @@ dzipf <- function(x, N, shape, log = FALSE) {
     stop("bad input for argument 'N'")
 
   nn <- max(length(q), length(N), length(shape))
-  if (length(q)     != nn) q     <- rep_len(q,     nn)
-  if (length(N)     != nn) N     <- rep_len(N,     nn)
-  if (length(shape) != nn) shape <- rep_len(shape, nn)
+  if (length(q)     < nn) q     <- rep_len(q,     nn)
+  if (length(N)     < nn) N     <- rep_len(N,     nn)
+  if (length(shape) < nn) shape <- rep_len(shape, nn)
     oq <- !is.finite(q)
   dont.iterate <- shape <= 0
     zeroOR1 <- oq | q < 1 | N <= q | dont.iterate
@@ -4812,9 +4863,9 @@ qzipf <- function(p, N, shape) {
     stop("bad input for argument 'shape'")
 
   nn <- max(length(p), length(N), length(shape))
-  if (length(p)     != nn) p     <- rep_len(p,     nn)
-  if (length(N)     != nn) N     <- rep_len(N,     nn)
-  if (length(shape) != nn) shape <- rep_len(shape, nn)
+  if (length(p)     < nn) p     <- rep_len(p,     nn)
+  if (length(N)     < nn) N     <- rep_len(N,     nn)
+  if (length(shape) < nn) shape <- rep_len(shape, nn)
 
   a <- rep_len(1, nn)
   b <- rep_len(N, nn)
@@ -4861,6 +4912,8 @@ rzipf <- function(n, N, shape) {
   if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
       stop("argument 'ishape' must be > 0")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -5013,14 +5066,14 @@ rzipf <- function(n, N, shape) {
 
 
  ddiffzeta <- function(x, shape, start = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(shape), length(x), length(start))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
 
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < start
@@ -5044,9 +5097,9 @@ rzipf <- function(n, N, shape) {
   function(q, shape, start = 1, lower.tail = TRUE) {
 
   LLL <- max(length(shape), length(q), length(start))
-  if (length(q)     != LLL) q     <- rep_len(q,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(q)     < LLL) q     <- rep_len(q,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
 
   if (lower.tail) {
     ans <- 1 - (start / floor(1 + q))^shape
@@ -5065,9 +5118,9 @@ rzipf <- function(n, N, shape) {
  qdiffzeta <- function(p, shape, start = 1) {
 
   LLL <- max(length(p), length(shape), length(start))
-  if (length(p)     != LLL) p     <- rep_len(p,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(p)     < LLL) p     <- rep_len(p,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
 
   lo <- rep_len(start, LLL)
   approx.ans <- lo  # True at lhs
@@ -5130,6 +5183,8 @@ rdiffzeta <- function(n, shape, start = 1) {
   if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
     stop("argument 'ishape' must be > 0")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
@@ -5274,14 +5329,14 @@ rdiffzeta <- function(n, shape, start = 1) {
 
 
 ddiffzeta <- function(x, shape, start = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   LLL <- max(length(shape), length(x), length(start))
-  if (length(x)     != LLL) x     <- rep_len(x,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(x)     < LLL) x     <- rep_len(x,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
 
   ox <- !is.finite(x)
   zero <- ox | round(x) != x | x < start
@@ -5304,9 +5359,9 @@ ddiffzeta <- function(x, shape, start = 1, log = FALSE) {
  pdiffzeta <- function(q, shape, start = 1, lower.tail = TRUE) {
 
   LLL <- max(length(shape), length(q), length(start))
-  if (length(q)     != LLL) q     <- rep_len(q,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(q)     < LLL) q     <- rep_len(q,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
 
   if (lower.tail) {
     ans <- 1 - (start / floor(1 + q))^shape
@@ -5325,9 +5380,9 @@ ddiffzeta <- function(x, shape, start = 1, log = FALSE) {
  qdiffzeta <- function(p, shape, start = 1) {
 
   LLL <- max(length(p), length(shape), length(start))
-  if (length(p)     != LLL) p     <- rep_len(p,     LLL)
-  if (length(shape) != LLL) shape <- rep_len(shape, LLL)
-  if (length(start) != LLL) start <- rep_len(start, LLL)
+  if (length(p)     < LLL) p     <- rep_len(p,     LLL)
+  if (length(shape) < LLL) shape <- rep_len(shape, LLL)
+  if (length(start) < LLL) start <- rep_len(start, LLL)
 
   lo <- rep_len(start, LLL)
   approx.ans <- lo  # True at lhs
@@ -5390,6 +5445,8 @@ rdiffzeta <- function(n, shape, start = 1) {
   if (length(ishape) && !is.Numeric(ishape, positive = TRUE))
     stop("argument 'ishape' must be > 0")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")

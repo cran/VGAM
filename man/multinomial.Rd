@@ -297,7 +297,7 @@ The \pkg{VGAM} package for categorical data analysis.
 
 Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and deflated regression.
-\emph{Statistical Science}, \bold{39} (in press).
+\emph{Statistical Science}, \bold{39}, 568--588.
 
 
 %Further information and examples on categorical data analysis
@@ -464,7 +464,7 @@ apply(predict(fit4, car.all, type = "response"),
 
 
 # Example 5: Using the xij argument (aka conditional logit model)
-set.seed(111)
+\dontrun{ set.seed(111)
 nn <- 100  # Number of people who travel to work
 M <- 3  # There are M+1 models of transport to go to work
 ycounts <- matrix(0, nn, M+1)
@@ -498,6 +498,7 @@ coef(fit, matrix = TRUE)
 constraints(fit)
 summary(fit)
 max(abs(predict(fit) - predict(fit, new = gotowork)))  # Should be 0
+}
 }
 \keyword{models}
 \keyword{regression}

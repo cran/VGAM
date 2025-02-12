@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -23,16 +23,16 @@
            location = 0, scale = 1,
            tol0 = 1e-4,
            log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(location),
            length(scale), length(shape))
-  if (length(x)        != L) x        <- rep_len(x,        L)
-  if (length(location) != L) location <- rep_len(location, L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
-  if (length(shape)    != L) shape    <- rep_len(shape,    L)
+  if (length(x)        < L) x        <- rep_len(x,        L)
+  if (length(location) < L) location <- rep_len(location, L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
+  if (length(shape)    < L) shape    <- rep_len(shape,    L)
   z <- (x - location) / scale
 
   bad0 <- !is.finite(location) |
@@ -78,15 +78,15 @@
            location = 0, scale = 1,
            tol0 = 1e-4,
            lower.tail = TRUE) {
-  if (!is.logical(lower.tail) || length(lower.tail) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
   L <- max(length(q), length(location),
            length(scale), length(shape))
-  if (length(q)        != L) q        <- rep_len(q,        L)
-  if (length(location) != L) location <- rep_len(location, L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
-  if (length(shape)    != L) shape    <- rep_len(shape,    L)
+  if (length(q)        < L) q        <- rep_len(q,        L)
+  if (length(location) < L) location <- rep_len(location, L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
+  if (length(shape)    < L) shape    <- rep_len(shape,    L)
   z <- (q - location) / scale
 
   bad0 <- !is.finite(location) |
@@ -149,10 +149,10 @@
            tol0 = 1e-4) {
   L <- max(length(p), length(location),
            length(scale), length(shape))
-  if (length(p)        != L) p        <- rep_len(p,        L)
-  if (length(location) != L) location <- rep_len(location, L)
-  if (length(scale)    != L) scale    <- rep_len(scale,    L)
-  if (length(shape)    != L) shape    <- rep_len(shape,    L)
+  if (length(p)        < L) p        <- rep_len(p,        L)
+  if (length(location) < L) location <- rep_len(location, L)
+  if (length(scale)    < L) scale    <- rep_len(scale,    L)
+  if (length(shape)    < L) shape    <- rep_len(shape,    L)
 
   bad0 <- !is.finite(location) |
           !is.finite(scale) |
@@ -232,11 +232,15 @@ rgensh <-
     stop("bad input for argument 'iscale'")
 
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
   ilocat <- ilocation
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")

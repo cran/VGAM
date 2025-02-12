@@ -146,7 +146,7 @@ fit <-
   vglm(cbind(phat, 1 - phat) * ssize ~
        I(srainfall) + I(srainfall^2) + I(srainfall^3) +
        I(sN) + I(sN^2),
-       double.expbinomial(ldisp = extlogitlink(min = 0, max = 1.25),
+       double.expbinomial(ldisp = "extlogitlink(min = 0, max = 1.25)",
                           idisp = 0.2, zero = NULL),
        toxop, trace = TRUE, constraints = cmlist)
 
@@ -177,7 +177,7 @@ cmlist2 <- list("(Intercept)"                 = diag(2),
 fit2 <-
   vglm(cbind(phat, 1 - phat) * ssize ~
        poly(srainfall, degree = 3) + poly(sN, degree = 2),
-       double.expbinomial(ldisp = extlogitlink(min = 0, max = 1.25),
+       double.expbinomial(ldisp = "extlogitlink(min = 0, max = 1.25)",
                           idisp = 0.2, zero = NULL),
        toxop, trace = TRUE, constraints = cmlist2)
 \dontrun{ par(mfrow = c(1, 2))  # Cf. Fig.1

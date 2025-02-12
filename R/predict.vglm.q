@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -348,7 +348,9 @@ untransformVGAM <- function(object, pred) {
 
 
 
-setMethod("predictvglmS4VGAM",  signature(VGAMff = "binom2.or"),
+if (FALSE)  # 20241003; this line added
+setMethod("predictvglmS4VGAM",
+          signature(VGAMff = "binom2.or"),
   function(object,
            VGAMff,
            predn,

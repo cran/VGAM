@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -269,11 +269,10 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
       stop("argument 'imethod' must be 1 or 2")
 
 
-  if (!is.logical( deviance.arg ) ||
-      length( deviance.arg ) != 1)
+  if (!isFALSE(deviance.arg) && !isTRUE(deviance.arg))
     stop("argument 'deviance.arg' must be T or F")
 
-  if (!is.logical(vfl) || length(vfl) != 1)
+  if (!isFALSE(vfl) && !isTRUE(vfl))
     stop("argument 'vfl' must be TRUE or FALSE")
 
 
@@ -281,12 +280,16 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
                  c("mean", "quantiles"))[1]
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmunb <- as.list(substitute(lmu))
   emunb <- link2list(lmunb)
   lmunb <- attr(emunb, "function.name")
 
   imunb <- imu
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
@@ -315,9 +318,8 @@ negbinomial.control <- function(save.weights = FALSE, ...) {
                "integer greater than 10, say")
 
 
-    if (is.logical(parallel) && parallel &&
-        !is.zero(zero))
-      stop("set 'zero = NULL' if parallel = TRUE")
+  if (isTRUE(parallel) && !is.zero(zero))
+    stop("set 'zero = NULL' if parallel = TRUE")
 
 
 
@@ -1137,10 +1139,14 @@ polya.control <- function(save.weights = FALSE, ...) {
             "greater than 10, say")
 
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
@@ -1656,10 +1662,14 @@ polyaR.control <- function(save.weights = TRUE, ...) {
             "greater than 10, say")
 
 
+  if (is.character(lprob))
+    lprob <- substitute(y9, list(y9 = lprob))
   lprob <- as.list(substitute(lprob))
   eprob <- link2list(lprob)
   lprob <- attr(eprob, "function.name")
 
+  if (is.character(lsize))
+    lsize <- substitute(y9, list(y9 = lsize))
   lsize <- as.list(substitute(lsize))
   esize <- link2list(lsize)
   lsize <- attr(esize, "function.name")
@@ -2126,6 +2136,8 @@ polyaR.control <- function(save.weights = TRUE, ...) {
     stop("bad input for argument 'size'")
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")

@@ -147,8 +147,8 @@ forensic genetics.
 
 
 Yu, P. and Shaw, C. A. (2014).
-An Efficient Algorithm for Accurate Computation of
-the Dirichlet-Multinomial Log-Likelihood Function.
+An efficient algorithm for accurate computation of
+the Dirichlet-multinomial log-likelihood function.
 \emph{Bioinformatics},
 \bold{30}, 1547--54.
 

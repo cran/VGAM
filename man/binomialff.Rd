@@ -219,6 +219,7 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
 \seealso{
     \code{\link{hdeff.vglm}},
     \code{\link{Links}},
+    \code{\link{wsdm}},
     \code{\link{alogitlink}},
     \code{\link{asinlink}},
     \code{\link{N1binomial}},
@@ -228,6 +229,8 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
     \code{\link{betabinomial}},
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
+    \code{\link{binom2.or}},
+    \code{\link{binom3.or}},
     \code{\link{double.expbinomial}},
     \code{\link{seq2binomial}},
     \code{\link{amlbinomial}},
@@ -295,6 +298,7 @@ coef(glm.fail)
 vglm.ok <- vglm(cbind(r, n-r) ~ offset(logv) + 1,
                binomialff(link = clogloglink), ridout, trace = TRUE)
 coef(vglm.ok)
+wsdm(vglm.ok)
 
 # Separable data
 set.seed(123)
@@ -304,7 +308,8 @@ bdata <- transform(bdata, y1 = ifelse(x2 < threshold, 0, 1))
 fit <- vglm(y1 ~ x2, binomialff(bred = TRUE),
             data = bdata, criter = "coef", trace = TRUE)
 coef(fit, matrix = TRUE)  # Finite!!
-summary(fit)
+summary(fit, wsdm = TRUE, hdiff = 0.0001)
+
 \dontrun{ plot(depvar(fit) ~ x2, data = bdata, col = "blue", las = 1)
 lines(fitted(fit) ~ x2, data = bdata, col = "orange")
 abline(v = threshold, col = "gray", lty = "dashed") }

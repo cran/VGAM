@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -18,7 +18,7 @@ qeunif <-
            lower.tail = TRUE, log.p = FALSE) {
 
 
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
   rm(log.p)   # 20150102 KaiH
 
@@ -74,10 +74,10 @@ qeunif <-
 peunif <- function(q, min = 0, max = 1,
                    lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (any(min >= max))
@@ -113,7 +113,7 @@ peunif <- function(q, min = 0, max = 1,
 
 
 deunif <- function(x, min = 0, max = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
   if (any(min >= max))
@@ -152,10 +152,10 @@ reunif <- function(n, min = 0, max = 1) {
 qenorm <-
   function(p, mean = 0, sd = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
            lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   ppp <- p
@@ -229,10 +229,10 @@ qenorm <-
 
 penorm <- function(q, mean = 0, sd = 1,
                    lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   eee <- (q - mean) / sd
@@ -265,7 +265,7 @@ penorm <- function(q, mean = 0, sd = 1,
 
 
 denorm <- function(x, mean = 0, sd = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -299,7 +299,7 @@ renorm <- function(n, mean = 0, sd = 1) {
 
 qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
                   lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(log.arg <- log.p) || length(log.p) != 1)
+  if (!isFALSE(log.arg <- log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
   rm(log.p)   # 20150102 KaiH
 
@@ -349,10 +349,10 @@ qeexp <- function(p, rate = 1, Maxit.nr = 10, Tol.nr = 1.0e-6,
 
 peexp <-
     function(q, rate = 1, lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   eee <- q * rate
@@ -385,7 +385,7 @@ peexp <-
 
 
 deexp <- function(x, rate = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
   if (any(rate <= 0))
@@ -418,7 +418,7 @@ reexp <- function(n, rate = 1) {
 
 
 dsc.t2 <- function(x, location = 0, scale = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -438,10 +438,10 @@ dsc.t2 <- function(x, location = 0, scale = 1, log = FALSE) {
 
 psc.t2 <- function(q, location = 0, scale = 1,
                    lower.tail = TRUE, log.p = FALSE) {
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   zedd <- (q - location) / scale
@@ -479,10 +479,10 @@ psc.t2 <- function(q, location = 0, scale = 1,
 qsc.t2 <- function(p, location = 0, scale = 1,
                    lower.tail = TRUE, log.p = FALSE) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
 
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   if (lower.tail) {
@@ -538,17 +538,22 @@ rsc.t2 <- function(n, location = 0, scale = 1) {
 
  sc.studentt2 <-
   function(percentile = 50,
-           llocation = "identitylink", lscale = "loglink",
+           llocation = "identitylink",
+           lscale = "loglink",
            ilocation = NULL,   iscale = NULL,
            imethod = 1,
            zero = "scale") {
 
 
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")

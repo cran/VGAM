@@ -141,9 +141,9 @@ summary(fit1)
 fit2 <-
   vglm(cbind(y1, y2, y3) ~ x2, data = tdata, stepsize = 0.25,
        trinormal(eq.sd = TRUE, eq.cor = TRUE,
-                 lrho12 = extlogitlink(min = -0.5),
-                 lrho23 = extlogitlink(min = -0.5),
-                 lrho13 = extlogitlink(min = -0.5)), trace = TRUE)
+                 lrho12 = "extlogitlink(min = -0.5)",
+                 lrho23 = "extlogitlink(min = -0.5)",
+                 lrho13 = "extlogitlink(min = -0.5)"), trace = TRUE)
 coef(fit2, matrix = TRUE)
 }}
 \keyword{models}

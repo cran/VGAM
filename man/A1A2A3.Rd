@@ -86,6 +86,7 @@ Lange, K. (2002).
 
 }
 \examples{
+\dontrun{
 ymat <- cbind(108, 196, 429, 143, 513, 559)
 fit <- vglm(ymat ~ 1, A1A2A3(link = probitlink), trace = TRUE, crit = "coef")
 fit <- vglm(ymat ~ 1, A1A2A3(link = logitlink, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
@@ -93,6 +94,7 @@ fit <- vglm(ymat ~ 1, A1A2A3(link = logitlink, ip1 = 0.3, ip2 = 0.3, iF = 0.02),
 Coef(fit)  # Estimated p1 and p2
 rbind(ymat, sum(ymat) * fitted(fit))
 sqrt(diag(vcov(fit)))
+}
 }
 \keyword{models}
 \keyword{regression}

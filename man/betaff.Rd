@@ -165,7 +165,7 @@ bdata <- transform(bdata,
                    y = rbeta(nn, shape1 = shape1, shape2 = shape2))
 bdata <- transform(bdata, Y = 5 + 8 * y)  # From 5--13, not 0--1
 fit <- vglm(Y ~ x2, data = bdata, trace = TRUE,
-   betaff(A = 5, B = 13, lmu = extlogitlink(min = 5, max = 13)))
+   betaff(A = 5, B = 13, lmu = "extlogitlink(min = 5, max = 13)"))
 coef(fit, matrix = TRUE)
 }
 \keyword{models}

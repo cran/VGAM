@@ -290,6 +290,7 @@ conditional likelihood.
 }
 
 \examples{
+\dontrun{
 M.t <- vglm(cbind(y1, y2, y3, y4, y5, y6) ~ 1, posbernoulli.t,
             data = deermice, trace = TRUE)
 coef(M.t, matrix = TRUE)
@@ -327,7 +328,7 @@ M.h.3 <- vglm(cbind(ysum, tau - ysum) ~ sex + weight,
 max(abs(coef(M.h.1) - coef(M.h.3)))  # Should be zero
 # Difference is due to the binomial constants:
 logLik(M.h.3) - logLik(M.h.1)
-}
+}}
 \keyword{models}
 \keyword{regression}
 

@@ -917,9 +917,12 @@ cumulative(link = "probitlink", reverse = TRUE, parallel = TRUE)
 wdata <- data.frame(x2 = runif(nn <- 1000))
 wdata <- transform(wdata,
          y = rweibull(nn, shape = 2 + exp(1 + x2), scale = exp(-0.5)))
-fit <- vglm(y ~ x2, weibullR(lshape = logofflink(offset = -2), zero = 2),
+fit <- vglm(y ~ x2,
+            weibullR(lshape = "logofflink(offset = -2)", zero = 2),
+# Was:      weibullR(lshape =  logofflink(offset = -2) , zero = 2),
             data = wdata)
 coef(fit, mat = TRUE)
+fit@misc$earg
 
 # Example 3; multivariate (multiple) response
 \dontrun{

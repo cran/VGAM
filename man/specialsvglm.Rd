@@ -79,7 +79,7 @@ specialsvglm(object, \dots)
 
 Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and deflated regression.
-\emph{Statistical Science}, \bold{39} (in press).
+\emph{Statistical Science}, \bold{39}, 568--588.
 
 
 

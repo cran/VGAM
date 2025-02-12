@@ -8,7 +8,7 @@
 
 }
 \usage{
-mccullagh89(ltheta = "rhobitlink", lnu = logofflink(offset = 0.5),
+mccullagh89(ltheta = "rhobitlink", lnu = "logofflink(offset = 0.5)",
             itheta = NULL, inu = NULL, zero = NULL)
 }
 %- maybe also 'usage' for other objects documented here.

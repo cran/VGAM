@@ -92,21 +92,25 @@ implemented for VGAMs
 (\code{\link{sm.os}} and \code{\link{sm.ps}}
 with a call to \code{\link[mgcv:magic]{magic}}),
 although it has to be refined;
-(iv) \emph{smart} prediction allows correct prediction of nested
-terms in the formula provided smart functions are used.
+(iv) \emph{smart} prediction allows correct
+prediction of nested terms in the formula
+provided smart functions are used.
 
 
 
 
-The GLM and GAM classes are special cases of VGLMs and VGAMs.
-The VGLM/VGAM framework is intended to be very general
-so that it encompasses as many distributions and models as
-possible. VGLMs are limited only by the assumption that the
-regression coefficients enter through a set of linear predictors.
-The VGLM class is very large and encompasses a wide range of
-multivariate response types and models, e.g., it includes
-univariate and multivariate distributions,
-categorical data analysis,
+The GLM and GAM classes are special cases of
+VGLMs and VGAMs.  The VGLM/VGAM framework
+is intended to be very general so that it
+encompasses as many distributions and models
+as possible. VGLMs are limited only by the
+assumption that the regression coefficients
+enter through a set of linear predictors.
+The VGLM class is very large and encompasses
+a wide range of multivariate response types
+and models, e.g., it includes univariate and
+multivariate distributions, categorical data
+analysis,
 extreme values,
 correlated binary data,
 quantile and expectile regression,
@@ -197,25 +201,34 @@ with greater control.
 
 
 
-This package is the first to check for the \emph{Hauck-Donner effect}
-(HDE) in regression models; see \code{\link{hdeff}}.  This is an
-aberration of the Wald statistics when the parameter estimates are too
-close to the boundary of the parameter space.  When present the p-value
-of a regression coefficient is biased upwards so that a highly
-significant variable might be deemed nonsignificant.  Thus the HDE can
-create havoc for variable selection!
+This package is the first to check for the
+\emph{Hauck-Donner effect} (HDE) in regression
+models; see \code{\link{hdeff}}.  This is
+an aberration of the Wald statistics when
+the parameter estimates are too close to the
+boundary of the parameter space.  When present
+the p-value of a regression coefficient is
+biased upwards so that a highly significant
+variable might be deemed nonsignificant.
+Thus the HDE can create havoc for variable
+selection!  The WSDM is an extension of the HDE
+(\code{\link{wsdm}}).
 
 
 
-Somewhat related to the previous paragraph, hypothesis testing
-using the likelihood ratio test,
-Rao's score test (Lagrange multiplier test) and
-(modified) Wald's test are all available; see \code{\link{summaryvglm}}.
-For all regression coefficients of a model, taken one at a time,
-all three methods require further IRLS iterations to obtain
-new values of the other regression coefficients after one
-of the coefficients has had its value set (usually to 0).
-Hence the computation load is overall significant.
+
+Somewhat related to the previous paragraph,
+hypothesis testing using the likelihood ratio
+test, Rao's score test (Lagrange multiplier
+test) and (modified) Wald's test are all
+available; see \code{\link{summaryvglm}}.
+For all regression coefficients of a model,
+taken one at a time, all three methods require
+further IRLS iterations to obtain new values
+of the other regression coefficients after
+one of the coefficients has had its value set
+(usually to 0).  Hence the computation load
+is overall significant.
 
 
 
@@ -230,9 +243,11 @@ Hence the computation load is overall significant.
 
 
 
-For a complete list of this package, use \code{library(help = "VGAM")}.
-New \pkg{VGAM} family functions are continually being written and
-added to the package.
+For a complete list of this package, use
+\code{library(help = "VGAM")}.  New \pkg{VGAM}
+family functions are continually being written
+and added to the package.
+
 
 
 % A monograph about VGLM and VGAMs etc. appeared in October 2015.
@@ -383,7 +398,7 @@ with two linear predictors.
 Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and
 deflated regression.
-\emph{Statistical Science}, \bold{39} (in press).
+\emph{Statistical Science}, \bold{39}, 568--588.
 
 
 
@@ -447,6 +462,7 @@ Chapman and Hall.
   \code{\link{TypicalVGAMfamilyFunction}},
   \code{\link{CommonVGAMffArguments}},
   \code{\link{Links}},
+  \code{\link{wsdm}},
   \code{\link{hdeff}},
   \code{\link[stats]{glm}},
   \code{\link[stats]{lm}},

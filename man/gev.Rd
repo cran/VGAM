@@ -10,7 +10,7 @@
 }
 \usage{
 gev(llocation = "identitylink", lscale = "loglink",
-    lshape = logofflink(offset = 0.5), percentiles = c(95, 99),
+    lshape = "logofflink(offset = 0.5)", percentiles = c(95, 99),
     ilocation = NULL, iscale = NULL, ishape = NULL, imethod = 1,
     gprobs.y = (1:9)/10, gscale.mux = exp((-5:5)/6),
     gshape = (-5:5) / 11 + 0.01,
@@ -18,7 +18,7 @@ gev(llocation = "identitylink", lscale = "loglink",
     type.fitted = c("percentiles", "mean"),
     zero = c("scale", "shape"))
 gevff(llocation = "identitylink", lscale = "loglink",
-    lshape = logofflink(offset = 0.5), percentiles = c(95, 99),
+    lshape = "logofflink(offset = 0.5)", percentiles = c(95, 99),
     ilocation = NULL, iscale = NULL, ishape = NULL, imethod = 1,
     gprobs.y = (1:9)/10, gscale.mux = exp((-5:5)/6),
     gshape = (-5:5) / 11 + 0.01,

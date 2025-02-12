@@ -103,7 +103,7 @@ is.truncated(object, \dots)
 \references{
 Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and deflated regression.
-\emph{Statistical Science}, \bold{39} (in press).
+\emph{Statistical Science}, \bold{39}, 568--588.
 
 
 % with application to heaped and seeped count data.

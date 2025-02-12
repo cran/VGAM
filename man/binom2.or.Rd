@@ -210,14 +210,17 @@ binom2.or(lmu = "logitlink", lmu1 = lmu, lmu2 = lmu, loratio = "loglink",
   \code{\link{rbinom2.or}},
   \code{\link{binom2.rho}},
   \code{\link{loglinb2}},
+  \code{\link{binom3.or}},
   \code{\link{loglinb3}},
-  \code{\link{zipebcom}},
   \code{\link{coalminers}},
   \code{\link{binomialff}},
   \code{\link{logitlink}},
   \code{\link{probitlink}},
   \code{\link{clogloglink}},
   \code{\link{cauchitlink}}.
+
+
+% \code{\link{zipebcom}},
 
 
 }

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -320,7 +320,7 @@ rrvglm.fit <-
 
     iter <- 1
     new.crit <- switch(criterion,
-          coefficients = 1,
+          coefficients = rep(1, ncol(X.vlm.save)),
           tfun(mu = mu, y = y, w = w, res = FALSE,
                eta = eta, extra))
     old.crit <- ifelse(minimize.criterion,
@@ -431,11 +431,7 @@ tfit$predictors <- tfit$fitted.values  # No offset
                     res = FALSE, eta = eta, extra))
 
 
-    if (is.null(history))
-      history <- matrix(NA_real_, maxit,
-      if (criterion == "coefficients")
-          length(new.coeffs) else 1)
-    history[iter, ] <- new.crit  # Imperfect (e.g., step-halving).
+    history <- rbind(history, new.crit)  # Growing
 
 
 

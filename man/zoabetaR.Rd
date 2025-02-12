@@ -85,6 +85,7 @@ zoabetaR(lshape1 = "loglink", lshape2 = "loglink", lpobs0 = "logitlink",
 
 }
 \examples{
+\dontrun{
 nn <- 1000; set.seed(1)
 bdata <- data.frame(x2 = runif(nn))
 bdata <- transform(bdata,
@@ -98,6 +99,7 @@ fit1 <- vglm(y1 ~ x2, zoabetaR(parallel.pobs = TRUE),
              data = bdata, trace = TRUE)
 coef(fit1, matrix = TRUE)
 summary(fit1)
+}
 }
 \keyword{regression}
 

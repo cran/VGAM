@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -19,7 +19,7 @@
            cov12 = 0, cov23 = 0, cov13 = 0,
            log = FALSE) {
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -115,49 +115,67 @@ trinormal.control <-
            imethod = 1) {
 
 
+  if (is.character(lmean1))
+    lmean1 <- substitute(y9, list(y9 = lmean1))
   lmean1 <- as.list(substitute(lmean1))
   emean1 <- link2list(lmean1)
   lmean1 <- attr(emean1, "function.name")
 
+  if (is.character(lmean2))
+    lmean2 <- substitute(y9, list(y9 = lmean2))
   lmean2 <- as.list(substitute(lmean2))
   emean2 <- link2list(lmean2)
   lmean2 <- attr(emean2, "function.name")
 
+  if (is.character(lmean3))
+    lmean3 <- substitute(y9, list(y9 = lmean3))
   lmean3 <- as.list(substitute(lmean3))
   emean3 <- link2list(lmean3)
   lmean3 <- attr(emean3, "function.name")
 
+  if (is.character(lsd1))
+    lsd1 <- substitute(y9, list(y9 = lsd1))
   lsd1 <- as.list(substitute(lsd1))
   esd1 <- link2list(lsd1)
   lsd1 <- attr(esd1, "function.name")
 
+  if (is.character(lsd2))
+    lsd2 <- substitute(y9, list(y9 = lsd2))
   lsd2 <- as.list(substitute(lsd2))
   esd2 <- link2list(lsd2)
   lsd2 <- attr(esd2, "function.name")
 
+  if (is.character(lsd3))
+    lsd3 <- substitute(y9, list(y9 = lsd3))
   lsd3 <- as.list(substitute(lsd3))
   esd3 <- link2list(lsd3)
   lsd3 <- attr(esd3, "function.name")
 
+  if (is.character(lrho12))
+    lrho12 <- substitute(y9, list(y9 = lrho12))
   lrho12 <- as.list(substitute(lrho12))
   erho12 <- link2list(lrho12)
   lrho12 <- attr(erho12, "function.name")
 
+  if (is.character(lrho23))
+    lrho23 <- substitute(y9, list(y9 = lrho23))
   lrho23 <- as.list(substitute(lrho23))
   erho23 <- link2list(lrho23)
   lrho23 <- attr(erho23, "function.name")
 
+  if (is.character(lrho13))
+    lrho13 <- substitute(y9, list(y9 = lrho13))
   lrho13 <- as.list(substitute(lrho13))
   erho13 <- link2list(lrho13)
   lrho13 <- attr(erho13, "function.name")
 
 
-  if (!is.logical(eq.mean) || length(eq.mean) != 1)
-    stop("argument 'eq.mean' must be a single logical")
-  if (!is.logical(eq.sd) || length(eq.sd) != 1)
-    stop("argument 'eq.sd' must be a single logical")
-  if (!is.logical(eq.cor) || length(eq.cor) != 1)
-    stop("argument 'eq.cor' must be a single logical")
+  if (!isFALSE(eq.mean) && !isTRUE(eq.mean))
+    stop("'eq.mean' must be a single logical")
+  if (!isFALSE(eq.sd) && !isTRUE(eq.sd))
+    stop("'eq.sd' must be a single logical")
+  if (!isFALSE(eq.cor) && !isTRUE(eq.cor))
+    stop("'eq.cor' must be a single logical")
 
 
   if (!is.Numeric(imethod, length.arg = 1,
@@ -893,7 +911,7 @@ if (FALSE) {
 
 dbiclaytoncop <-
   function(x1, x2, apar = 0, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -955,6 +973,8 @@ rbiclaytoncop <- function(n, apar = 0) {
   apply.parint <- TRUE
 
 
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
   lapar <- attr(eapar, "function.name")
@@ -1208,7 +1228,7 @@ dbistudentt <-
 
 
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1263,10 +1283,14 @@ bistudent.deriv.dof <-  function(u, v, nu, rho) {
 
   apply.parint <- TRUE
 
+  if (is.character(ldf))
+    ldf <- substitute(y9, list(y9 = ldf))
   ldof <- as.list(substitute(ldf))
   edof <- link2list(ldof)
   ldof <- attr(edof, "function.name")
 
+  if (is.character(lrho))
+    lrho <- substitute(y9, list(y9 = lrho))
   lrho <- as.list(substitute(lrho))
   erho <- link2list(lrho)
   lrho <- attr(erho, "function.name")
@@ -1578,7 +1602,7 @@ dbinormcop <-
     function(x1, x2,
              rho = 0,
              log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -1646,6 +1670,8 @@ rbinormcop <-
   apply.parint <- TRUE
 
 
+  if (is.character(lrho))
+    lrho <- substitute(y9, list(y9 = lrho))
   lrho <- as.list(substitute(lrho))
   erho <- link2list(lrho)
   lrho <- attr(erho, "function.name")
@@ -1889,18 +1915,23 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
 }
 
 
- bilogistic  <- function(llocation = "identitylink",
-                         lscale = "loglink",
-                         iloc1 = NULL, iscale1 = NULL,
-                         iloc2 = NULL, iscale2 = NULL,
-                         imethod = 1,
-                         nsimEIM = 250,
-                         zero = NULL) {
+ bilogistic  <-
+  function(llocation = "identitylink",
+           lscale = "loglink",
+           iloc1 = NULL, iscale1 = NULL,
+           iloc2 = NULL, iscale2 = NULL,
+           imethod = 1,
+           nsimEIM = 250,
+           zero = NULL) {
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -2178,7 +2209,7 @@ bilogistic.control <- function(save.weights = TRUE, ...) {
 dbilogis <-
   function(x1, x2, loc1 = 0, scale1 = 1,
            loc2 = 0, scale2 = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2188,12 +2219,12 @@ dbilogis <-
   L <- max(length(x1), length(x2),
            length(loc1), length(loc2),
            length(scale1), length(scale2))
-  if (length(x1    ) != L) x1     <- rep_len(x1,     L)
-  if (length(x2    ) != L) x2     <- rep_len(x2,     L)
-  if (length(loc1  ) != L) loc1   <- rep_len(loc1,   L)
-  if (length(loc2  ) != L) loc2   <- rep_len(loc2,   L)
-  if (length(scale1) != L) scale1 <- rep_len(scale1, L)
-  if (length(scale2) != L) scale2 <- rep_len(scale2, L)
+  if (length(x1    ) < L) x1     <- rep_len(x1,     L)
+  if (length(x2    ) < L) x2     <- rep_len(x2,     L)
+  if (length(loc1  ) < L) loc1   <- rep_len(loc1,   L)
+  if (length(loc2  ) < L) loc2   <- rep_len(loc2,   L)
+  if (length(scale1) < L) scale1 <- rep_len(scale1, L)
+  if (length(scale2) < L) scale2 <- rep_len(scale2, L)
   zedd1 <- (x1 - loc1) / scale1
   zedd2 <- (x2 - loc2) / scale2
 
@@ -2251,19 +2282,27 @@ rbilogis <-
            ia = NULL, iap = NULL, ib = NULL, ibp = NULL,
            independent = FALSE,
            zero = NULL) {
+  if (is.character(la))
+    la <- substitute(y9, list(y9 = la))
   la <- as.list(substitute(la))
   ea <- link2list(la)
   la <- attr(ea, "function.name")
 
+  if (is.character(lap))
+    lap <- substitute(y9, list(y9 = lap))
   lap <- as.list(substitute(lap))
   eap <- link2list(lap)
   lap <- attr(eap, "function.name")
 
+  if (is.character(lb))
+    lb <- substitute(y9, list(y9 = lb))
   lb <- as.list(substitute(lb))
   eb <- link2list(lb)
   lb <- attr(eb, "function.name")
 
 
+  if (is.character(lbp))
+    lbp <- substitute(y9, list(y9 = lbp))
   lbp <- as.list(substitute(lbp))
   ebp <- link2list(lbp)
   lbp <- attr(ebp, "function.name")
@@ -2493,7 +2532,7 @@ rbilogis <-
     x <- as.matrix(x)
   if (ncol(x) < 2)
     stop("argument 'x' must have at least two columns")
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2530,15 +2569,19 @@ rbilogis <-
              eq.shapes = FALSE,
              sh.byrow = TRUE,
              zero = "shape") {
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
 
+  if (is.character(lshape))
+    lshape <- substitute(y9, list(y9 = lshape))
   lshape <- as.list(substitute(lshape))
   eshape <- link2list(lshape)
   lshape <- attr(eshape, "function.name")
 
-  if (!is.logical(eq.shapes) || length(eq.shapes) != 1)
+  if (!isFALSE(eq.shapes) && !isTRUE(eq.shapes))
     stop("argument 'eq.shapes' must be a single logical")
 
   if (!is.null(iscale))
@@ -2802,9 +2845,9 @@ pbifrankcop <- function(q1, q2, apar) {
     stop("bad input for 'apar'")
 
   L <- max(length(q1), length(q2), length(apar))
-  if (length(apar ) != L) apar  <- rep_len(apar, L)
-  if (length(q1   ) != L) q1    <- rep_len(q1,   L)
-  if (length(q2   ) != L) q2    <- rep_len(q2,   L)
+  if (length(apar ) < L) apar  <- rep_len(apar, L)
+  if (length(q1   ) < L) q1    <- rep_len(q1,   L)
+  if (length(q2   ) < L) q2    <- rep_len(q2,   L)
 
   x <- q1; y <- q2
   index <- (x >= 1 & y <  1) | (y >= 1 & x <  1) |
@@ -2830,7 +2873,7 @@ pbifrankcop <- function(q1, q2, apar) {
 
 if (FALSE)
 dbifrank <- function(x1, x2, apar, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
     logdens <- (x1+x2)*log(apar) + log(apar-1) +
@@ -2845,7 +2888,7 @@ dbifrank <- function(x1, x2, apar, log = FALSE) {
 
 dbifrankcop <-
   function(x1, x2, apar, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -2856,9 +2899,9 @@ dbifrankcop <-
     stop("bad input for 'apar'")
 
   L <- max(length(x1), length(x2), length(apar))
-  if (length(apar ) != L) apar  <- rep_len(apar, L)
-  if (length(x1   ) != L) x1    <- rep_len(x1,   L)
-  if (length(x2   ) != L) x2    <- rep_len(x2,   L)
+  if (length(apar ) < L) apar  <- rep_len(apar, L)
+  if (length(x1   ) < L) x1    <- rep_len(x1,   L)
+  if (length(x2   ) < L) x2    <- rep_len(x2,   L)
 
   if (log.arg) {
     denom <- apar-1 + (apar^x1  - 1) * (apar^x2  - 1)
@@ -2896,6 +2939,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
  bifrankcop <-
     function(lapar = "loglink", iapar = 2, nsimEIM = 250) {
 
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
   lapar <- attr(eapar, "function.name")
@@ -3083,12 +3128,14 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
    function(ltheta = "loglink", itheta = NULL,
             expected = FALSE) {
 
+  if (is.character(ltheta))
+    ltheta <- substitute(y9, list(y9 = ltheta))
   ltheta <- as.list(substitute(ltheta))
   etheta <- link2list(ltheta)
   ltheta <- attr(etheta, "function.name")
 
-  if (!is.logical(expected) || length(expected) != 1)
-      stop("argument 'expected' must be a single logical")
+  if (!isFALSE(expected) && !isTRUE(expected))
+    stop("'expected' must be a single logical")
 
 
   new("vglmff",
@@ -3201,6 +3248,8 @@ bifrankcop.control <- function(save.weights = TRUE, ...) {
   function(lapar = "rhobitlink",
            iapar = NULL, tola0 = 0.01,
            imethod = 1) {
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
   lapar <- attr(earg, "function.name")
@@ -3370,8 +3419,7 @@ rbifgmcop <- function(n, apar) {
 
 
 dbifgmcop <- function(x1, x2, apar, log = FALSE) {
-  if (!is.logical(log.arg <- log) ||
-      length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -3379,14 +3427,11 @@ dbifgmcop <- function(x1, x2, apar, log = FALSE) {
     stop("bad input for 'apar'")
   if (any(abs(apar) > 1))
     stop("'apar' values out of range")
-  if ( !is.logical( log.arg ) ||
-       length( log.arg ) != 1 )
-    stop("bad input for argument 'log'")
 
   L <- max(length(x1), length(x2), length(apar))
-  if (length(x1)    != L)  x1   <- rep_len(x1,   L)
-  if (length(x2)    != L)  x2   <- rep_len(x2,   L)
-  if (length(apar)  != L)  apar <- rep_len(apar, L)
+  if (length(x1)    < L)  x1   <- rep_len(x1,   L)
+  if (length(x2)    < L)  x2   <- rep_len(x2,   L)
+  if (length(apar)  < L)  apar <- rep_len(apar, L)
   ans <- 0 * x1
   xnok <- (x1 <= 0) | (x1 >= 1) | (x2 <= 0) | (x2 >= 1)
   if ( log.arg ) {
@@ -3413,9 +3458,9 @@ pbifgmcop <- function(q1, q2, apar) {
   if (any(abs(apar) > 1)) stop("'apar' values out of range")
 
   L <- max(length(q1), length(q2), length(apar))
-  if (length(q1)    != L)  q1   <- rep_len(q1,   L)
-  if (length(q2)    != L)  q2   <- rep_len(q2,   L)
-  if (length(apar)  != L)  apar <- rep_len(apar, L)
+  if (length(q1)    < L)  q1   <- rep_len(q1,   L)
+  if (length(q2)    < L)  q2   <- rep_len(q2,   L)
+  if (length(apar)  < L)  apar <- rep_len(apar, L)
 
   x <- q1
   y <- q2
@@ -3444,7 +3489,8 @@ pbifgmcop <- function(q1, q2, apar) {
  bifgmcop <-
    function(lapar = "rhobitlink", iapar = NULL,
             imethod = 1) {
-
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
   lapar <- attr(earg, "function.name")
@@ -3603,7 +3649,8 @@ pbifgmcop <- function(q1, q2, apar) {
 
  bigumbelIexp <-
   function(lapar = "identitylink", iapar = NULL, imethod = 1) {
-
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   earg  <- link2list(lapar)
   lapar <- attr(earg, "function.name")
@@ -3759,9 +3806,9 @@ pbiplackcop <- function(q1, q2, oratio) {
     stop("bad input for 'oratio'")
 
   L <- max(length(q1), length(q2), length(oratio))
-  if (length(q1)     != L)  q1     <- rep_len(q1,     L)
-  if (length(q2)     != L)  q2     <- rep_len(q2,     L)
-  if (length(oratio) != L)  oratio <- rep_len(oratio, L)
+  if (length(q1)     < L)  q1     <- rep_len(q1,     L)
+  if (length(q2)     < L)  q2     <- rep_len(q2,     L)
+  if (length(oratio) < L)  oratio <- rep_len(oratio, L)
 
   x <- q1; y <- q2
   index <- (x >= 1 & y <  1) | (y >= 1 & x <  1) |
@@ -3808,7 +3855,7 @@ rbiplackcop <- function(n, oratio) {
 
 
 dbiplackcop <- function(x1, x2, oratio, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -3836,6 +3883,8 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
     function(link = "loglink", ioratio = NULL,
                       imethod = 1, nsimEIM = 200) {
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg  <- link2list(link)
   link <- attr(earg, "function.name")
@@ -4005,16 +4054,16 @@ biplackettcop.control <- function(save.weights = TRUE, ...) {
 
 
 dbiamhcop <- function(x1, x2, apar, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
 
 
   L <- max(length(x1), length(x2), length(apar))
-  if (length(apar)     != L)  apar  <- rep_len(apar,  L)
-  if (length(x1)       != L)  x1    <- rep_len(x1,    L)
-  if (length(x2)       != L)  x2    <- rep_len(x2,    L)
+  if (length(apar)     < L)  apar  <- rep_len(apar,  L)
+  if (length(x1)       < L)  x1    <- rep_len(x1,    L)
+  if (length(x2)       < L)  x2    <- rep_len(x2,    L)
   temp <- 1 - apar*(1-x1)*(1-x2)
 
   if (log.arg) {
@@ -4037,9 +4086,9 @@ pbiamhcop <- function(q1, q2, apar) {
   if (!is.Numeric(apar)) stop("bad input for 'apar'")
 
   L <- max(length(q1), length(q2), length(apar))
-  if (length(q1)    != L)  q1    <- rep_len(q1,   L)
-  if (length(q2)    != L)  q2    <- rep_len(q2,   L)
-  if (length(apar)  != L)  apar  <- rep_len(apar, L)
+  if (length(q1)    < L)  q1    <- rep_len(q1,   L)
+  if (length(q2)    < L)  q2    <- rep_len(q2,   L)
+  if (length(apar)  < L)  apar  <- rep_len(apar, L)
 
   x <- q1
   y <- q2
@@ -4091,6 +4140,8 @@ biamhcop.control <- function(save.weights = TRUE, ...) {
  biamhcop <-
     function(lapar = "rhobitlink", iapar = NULL,
              imethod = 1, nsimEIM = 250) {
+  if (is.character(lapar))
+    lapar <- substitute(y9, list(y9 = lapar))
   lapar <- as.list(substitute(lapar))
   eapar <- link2list(lapar)
   lapar <- attr(eapar, "function.name")
@@ -4270,7 +4321,7 @@ dbinorm <-
   function(x1, x2, mean1 = 0, mean2 = 0,
            var1 = 1, var2 = 1, cov12 = 0,
            log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -4340,23 +4391,33 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
       zero <- NULL  # Make sure
   }
 
-      
+
+  if (is.character(lmean1))
+    lmean1 <- substitute(y9, list(y9 = lmean1))
   lmean1 <- as.list(substitute(lmean1))
   emean1 <- link2list(lmean1)
   lmean1 <- attr(emean1, "function.name")
 
+  if (is.character(lmean2))
+    lmean2 <- substitute(y9, list(y9 = lmean2))
   lmean2 <- as.list(substitute(lmean2))
   emean2 <- link2list(lmean2)
   lmean2 <- attr(emean2, "function.name")
 
+  if (is.character(lsd1))
+    lsd1 <- substitute(y9, list(y9 = lsd1))
   lsd1 <- as.list(substitute(lsd1))
   esd1 <- link2list(lsd1)
   lsd1 <- attr(esd1, "function.name")
 
+  if (is.character(lsd2))
+    lsd2 <- substitute(y9, list(y9 = lsd2))
   lsd2 <- as.list(substitute(lsd2))
   esd2 <- link2list(lsd2)
   lsd2 <- attr(esd2, "function.name")
 
+  if (is.character(lrho))
+    lrho <- substitute(y9, list(y9 = lrho))
   lrho <- as.list(substitute(lrho))
   erho <- link2list(lrho)
   lrho <- attr(erho, "function.name")
@@ -4364,10 +4425,8 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 
 
 
-  trivial1 <- is.logical(eq.mean) &&
-              length(eq.mean) == 1 && !eq.mean
-  trivial2 <- is.logical(eq.sd  ) &&
-              length(eq.sd  ) == 1 && !eq.sd
+  trivial1 <- isFALSE(eq.mean)
+  trivial2 <- isFALSE(eq.sd)
 
   if (!is.Numeric(imethod, length.arg = 1,
                   integer.valued = TRUE, positive = TRUE) ||
@@ -4746,7 +4805,8 @@ rbinorm <- function(n, mean1 = 0, mean2 = 0,
 gumbelI <-
     function(la = "identitylink", earg = list(),
              ia = NULL, imethod = 1) {
-
+  if (is.character(la))
+    la <- substitute(y9, list(y9 = la))
   la <- as.list(substitute(la))
   earg  <- link2list(la)
   la <- attr(earg, "function.name")
@@ -4933,7 +4993,7 @@ kendall.tau <- function(x, y, exact = TRUE, max.n = 1000) {
 dbistudenttcop <-
   function(x1, x2, df, rho = 0, log = FALSE) {
 
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 

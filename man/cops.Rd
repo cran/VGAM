@@ -165,7 +165,8 @@ Musings and new results on the parameter space.
 
 }
 \seealso{
-  \code{\link{hdeff}}.
+  \code{\link{hdeff}},
+  \code{\link{wsdm}},
   \code{\link{coefvlm}},
   \code{\link[stats]{coef}}.
 

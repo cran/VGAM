@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -674,12 +674,9 @@ setMethod("hdeff", "numeric", function(object, ...)
 
 
 
-
-
-
-hdeffsev <-
+hdeffsev0 <-
   function(x, y,
-           dy, ddy,  # 1st and 2nd derivs           
+           dy, ddy,  # 1st and 2nd derivs
            allofit = FALSE,
            eta0 = 0,  # NA or NULL means dont know, may be Inf
            COPS0 = eta0,  # Assumption. May be Inf.
@@ -720,7 +717,7 @@ hdeffsev <-
 
 
 
-  ind.none     <- dy >= 0   # &  # Not SSD: 20220829
+  ind.none <- dy >= 0   # &  # Not SSD: 20220829
   severity[ind.none] <- severity.table[1]
 
 
@@ -753,9 +750,9 @@ if (is.infinite(COPS0) && COPS0 < 0)
 
 
   ind.faint    <- dy >= 0 &
-                  ifelse(COPS0 <= x,
-                         w20.n <= tanzeta & tanzeta <= w10.n,
-                         w10.p <= tanzeta & tanzeta <= w20.p)
+      ifelse(COPS0 <= x,
+             w20.n <= tanzeta & tanzeta <= w10.n,
+             w10.p <= tanzeta & tanzeta <= w20.p)
   severity[ind.faint] <- severity.table[2]
 
 
@@ -829,12 +826,7 @@ if (is.infinite(COPS0) && COPS0 < 0)
          tanzeta      = tanzeta,
          dtanzeta.dx  = dtanzeta.dx) else
     severity
-}  # hdeffsev
-
-
-
-
-
+}  # hdeffsev0
 
 
 
@@ -949,7 +941,7 @@ hdeffsev2 <-
 
 seglines <-
   function(x, y,
-           dy, ddy,  # 1st and 2nd derivs           
+           dy, ddy,  # 1st and 2nd derivs
            lwd = 2,
            cex = 2,
            plot.it = TRUE,
@@ -962,12 +954,14 @@ seglines <-
                          "solid", "dashed",
                          "solid", "dashed",
                          "solid"),
-           col.table = rainbow.sky[-5],  # Omit "yellow"
+           col.table = rainbow.sky[-5],  # -yellow
            pch.table = 7:1,   # 7:1,
            severity.table = c("None",
                               "Faint",
                               "Weak",
-                              "Moderate", "Strong", "Extreme",
+                              "Moderate",
+                              "Strong",
+                              "Extreme",
                               "Undetermined"),
            FYI = FALSE,
            ...) {
@@ -978,11 +972,11 @@ seglines <-
   Six <- 7
 
 
-  answer <- hdeffsev(x, y, dy, ddy,
-                     severity.table = severity.table,
-                     eta0 = eta0,
-                     COPS0 = COPS0,  # Using eta0 instead
-                     allofit = FYI)
+  answer <- hdeffsev0(x, y, dy, ddy,
+                      severity.table = severity.table,
+                      eta0 = eta0,
+                      COPS0 = COPS0,  # Using eta0 instead
+                      allofit = FYI)
   severity <- if (FYI) answer$severity else answer
 
   if (plot.it) {
@@ -1121,7 +1115,8 @@ copsvglm <-
     newwz <- weights(copy.object, type = "working")
     UU <- vchol(newwz, M = M, n = nn)  # Updated.  silent = T
     UtXvlm <- mux111(cc = UU, xmat = Xvlm, M = M,
-                     slowtrain = slowtrain, whichj = jkay)
+                     slowtrain = slowtrain,
+                     whichj = jkay)
     total.info <- sum((UtXvlm[, jkay])^2)
 
     if (M ==  1 && FALSE)
@@ -1153,7 +1148,7 @@ copsvglm <-
            ncol(constraints(object)[["(Intercept)"]]))
   for (kay in startp:ppp) {
     if (trace.) {
- print(paste0("Solving for covariate ", kay, " ,,,,,,,,,,,"))
+ print(paste0("Solving for covariate ", kay, " ,,,,,,"))
     }
     for (jay in 1:Mvec[kay]) {
       try.interval <- sort((1 + abs(cobj[iptr])) *
@@ -1161,8 +1156,8 @@ copsvglm <-
       ofit <- optimize(newinfo,
                        interval = try.interval,
                        maximum = TRUE,
-                       tol = tol,
-                       jkay = iptr)  # , jay = jay, M = M
+                       tol = tol,  # jay = jay,
+                       jkay = iptr)  # M = M
       if (trace.) {
  print("ofit")
  print( ofit )
@@ -1205,10 +1200,58 @@ DDfun <- function(expr, name, order = 0) {
 
 
 
+hdeffsev <-
+  function(object,
+           hdiff = 0.005,
+           eta0 = 0,
+           subset = NULL,
+           maxderiv = 6,
+           severity.table = c("None", "Faint",
+             "Weak", "Moderate", "Strong",
+             "ExtremeI",
+             "ExtremeII",
+             "ExtremeIII",
+             "ExtremeIV+",
+             "Undetermined"),  # Needed, last
+           lookup = c(0, 0.5, 0.7, 1, 1.3, 2:5),
+           tx.some = TRUE,  # log, cauchit
+           wsdmvec = NULL,  # Can input here
+           ...) {
+  lkv <- lookup
+  stab <- severity.table
+  if (length(lkv) + 1 != length(stab) ||
+      max(lkv) > maxderiv - 1)  # Bookkeep checks
+    stop("'severity.table', 'maxderiv' and ",
+         "'lookup' do not match")
+
+  vecTF <- FALSE
+  wvec <- if (length(wsdmvec)) wsdmvec else
+    wsdm(object, eta0 = eta0,
+         subset = subset, hdiff = hdiff,
+         maxderiv = maxderiv, ...)
+  ans1 <- character(length(wvec))
+  names(ans1) <- names(wvec)
+  ans1[is.na(wvec)] <- stab[length(stab)]
+
+  if (tx.some && !length(wsdmvec)) {  # object inputted
+    links.coef <- linkfun(object, by.var = TRUE)
+    vecTF <-
+      (wvec < 1 & links.coef == "loglink") |
+      (wvec > 1 & links.coef == "cauchitlink")
+    wvec[vecTF] <- sqrt(wvec[vecTF])
+  }
+  if (any(vecTF))
+    warning("'loglink' and/or 'cauchitlink' d",
+            "etected; setting 'tx.some = TRUE'",
+            " may be more accurate")
 
 
+  for (jay in seq(lkv)) {
+    ans1[wvec >= lkv[jay]] <- stab[jay]
+  }
 
-
+  ans1
+}  # hdeffsev
 
 
 

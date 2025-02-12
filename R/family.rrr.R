@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -1184,10 +1184,10 @@ Coef.qrrvglm <-
 
 
 
-  if (length(varI.latvar) != 1 || !is.logical(varI.latvar))
-    stop("argument 'varI.latvar' must be TRUE or FALSE")
+  if (!isFALSE(varI.latvar) && !isTRUE(varI.latvar))
+    stop("'varI.latvar' must be TRUE or FALSE")
   if (length(refResponse) > 1)
-    stop("argument 'refResponse' must be of length 0 or 1")
+    stop("'refResponse' must be of length 0 or 1")
   if (length(refResponse) &&
       is.Numeric(refResponse))
       if (!is.Numeric(refResponse, length.arg = 1,
@@ -2750,7 +2750,9 @@ biplot.qrrvglm <-
 
     if (length(ellipse) > 1)
       stop("ellipse must be of length 1 or 0")
-    if (is.logical(ellipse)) {ellipse <- if (ellipse) 0.95 else NULL}
+    if (is.logical(ellipse)) {
+      ellipse <- if (ellipse) 0.95 else NULL
+    }
 
     Rank <- object@control$Rank
     if (Rank > 2)

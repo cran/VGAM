@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -39,8 +39,8 @@ hdeffminp <-
   onedpar = !multiple.responses
 
 
- if (!is.logical(bred) || length(bred) > 1)
-   stop("argument 'bred' must be a single logical")
+  if (!isFALSE(bred) && !isTRUE(bred))
+    stop("'bred' must be a single logical")
 
 
 
@@ -54,6 +54,8 @@ hdeffminp <-
   if (earg.link) {
     earg <- link
   } else {
+    if (is.character(link))
+      link <- substitute(y9, list(y9 = link))
     link <- as.list(substitute(link))
     earg <- link2list(link)
   }
@@ -100,14 +102,17 @@ hdeffminp <-
          dpqrfun = "binom",
          bred = .bred ,
          charfun = TRUE,
+         doffset = cbind("logitlink" =
+  c(2.399, 1.667, 2.178, 1.680, 2.2405, 1.7229)),
          expected = TRUE,
          hadof = TRUE,
          multiple.responses = .multiple.responses ,
          parameters.names = c("prob"),  # new.name
          zero = .zero )
-  }, list( .zero = zero,
-           .bred = bred,
-           .multiple.responses = multiple.responses ))),
+  },
+  list( .zero = zero,
+        .multiple.responses = multiple.responses,
+        .bred = bred ))),
 
   initialize = eval(substitute(expression({
     assign("CQO.FastAlgorithm",
@@ -519,6 +524,8 @@ hdeffminp <-
      estimated.dispersion <- dispersion == 0
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -651,6 +658,8 @@ hdeffminp <-
   warning("@deviance() not finished")
   warning("needs checking, but I'm sure it works")
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -771,14 +780,14 @@ hdeffminp <-
 
 
 dinv.gaussian <- function(x, mu, lambda, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
   L <- max(length(x), length(mu), length(lambda))
-  if (length(x)          != L) x          <- rep_len(x,      L)
-  if (length(mu)         != L) mu         <- rep_len(mu,     L)
-  if (length(lambda)     != L) lambda     <- rep_len(lambda, L)
+  if (length(x)          < L) x          <- rep_len(x,      L)
+  if (length(mu)         < L) mu         <- rep_len(mu,     L)
+  if (length(lambda)     < L) lambda     <- rep_len(lambda, L)
   logdensity <- rep_len(log(0), L)
 
   xok <- (x > 0)
@@ -793,9 +802,9 @@ dinv.gaussian <- function(x, mu, lambda, log = FALSE) {
 
 pinv.gaussian <- function(q, mu, lambda) {
   L <- max(length(q), length(mu), length(lambda))
-  if (length(q)       != L) q      <- rep_len(q,      L)
-  if (length(mu)      != L) mu     <- rep_len(mu,     L)
-  if (length(lambda)  != L) lambda <- rep_len(lambda, L)
+  if (length(q)       < L) q      <- rep_len(q,      L)
+  if (length(mu)      < L) mu     <- rep_len(mu,     L)
+  if (length(lambda)  < L) lambda <- rep_len(lambda, L)
   ans <- q
 
   ans[q <= 0] <- 0
@@ -846,10 +855,14 @@ rinv.gaussian <- function(n, mu, lambda) {
   apply.parint <- FALSE
 
 
+  if (is.character(lmu))
+    lmu <- substitute(y9, list(y9 = lmu))
   lmu <- as.list(substitute(lmu))
   emu <- link2list(lmu)
   lmu <- attr(emu, "function.name")
 
+  if (is.character(llambda))
+    llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
   llambda <- attr(elambda, "function.name")
@@ -865,7 +878,7 @@ rinv.gaussian <- function(n, mu, lambda) {
     stop("bad input for argument 'ishrinkage'")
 
 
-  if (is.logical(parallel) && parallel && length(zero))
+  if (isTRUE(parallel) && length(zero))
     stop("set 'zero = NULL' if 'parallel = TRUE'")
 
 
@@ -1079,7 +1092,7 @@ rinv.gaussian <- function(n, mu, lambda) {
   type.fitted <- match.arg(type.fitted,
                            c("mean", "quantiles"))[1]
 
-  if (!is.logical(bred) || length(bred) > 1)
+  if (!isFALSE(bred) && !isTRUE(bred))
     stop("argument 'bred' must be a single logical")
 
   estimated.dispersion <- (dispersion == 0)
@@ -1088,6 +1101,8 @@ rinv.gaussian <- function(n, mu, lambda) {
   if (earg.link) {
     earg <- link
   } else {
+    if (is.character(link))
+      link <- substitute(y9, list(y9 = link))
     link <- as.list(substitute(link))
     earg <- link2list(link)
   }
@@ -1118,23 +1133,26 @@ rinv.gaussian <- function(n, mu, lambda) {
     } else {
       exp(lambda * (exp(1i * x) - 1))
     }
-  }, list( .link = link, .earg = earg  ))),
+  },
+  list( .link = link, .earg = earg  ))),
 
   constraints = eval(substitute(expression({
     constraints <- cm.VGAM(matrix(1, M, 1), x = x,
-                           bool = .parallel ,
-                           constraints = constraints)
-    constraints <- cm.zero.VGAM(constraints, x = x,
-                                .zero , M = M,
-                                predictors.names = predictors.names,
-                                M1 = 1)
-  }), list( .parallel = parallel, .zero = zero ))),
+                       bool = .parallel ,
+                       constraints = constraints)
+    constraints <-
+      cm.zero.VGAM(constraints, x = x,
+            .zero , M = M, M1 = 1,
+            predictors.names = predictors.names)
+  }),
+  list( .parallel = parallel, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 1,
          Q1 = 1,
          dpqrfun = "pois",
          charfun = TRUE,
+         doffset = cbind("loglink" = rep(2, 9)),
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = TRUE,
@@ -1143,10 +1161,11 @@ rinv.gaussian <- function(n, mu, lambda) {
          percentiles = .percentiles ,
          bred = .bred ,
          zero = .zero )
-  }, list( .zero = zero,
-           .type.fitted = type.fitted,
-           .percentiles = percentiles,
-           .bred = bred ))),
+  },
+  list( .zero = zero,
+        .type.fitted = type.fitted,
+        .percentiles = percentiles,
+        .bred = bred ))),
 
 
   deviance = eval(substitute(
@@ -1443,6 +1462,8 @@ if (FALSE)
            parallel = FALSE, zero = NULL) {
 
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1472,9 +1493,12 @@ if (FALSE)
 
 
 if (FALSE)
- quasipoissonff <- function(link = "loglink", onedpar = FALSE,
-                            parallel = FALSE, zero = NULL) {
+ quasipoissonff <-
+  function(link = "loglink", onedpar = FALSE,
+           parallel = FALSE, zero = NULL) {
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")
@@ -1513,10 +1537,14 @@ if (FALSE)
     stop("bad input for 'idispersion'")
 
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(ldispersion))
+    ldispersion <- substitute(y9, list(y9 = ldispersion))
   ldisp <- as.list(substitute(ldispersion))
   edisp <- link2list(ldisp)
   ldisp <- attr(edisp, "function.name")
@@ -1646,13 +1674,19 @@ if (FALSE)
 
 
  double.expbinomial <-
-  function(lmean = "logitlink", ldispersion = "logitlink",
-           idispersion = 0.25, zero = "dispersion") {
+  function(lmean = "logitlink",
+           ldispersion = "logitlink",
+           idispersion = 0.25,
+           zero = "dispersion") {
 
+  if (is.character(lmean))
+    lmean <- substitute(y9, list(y9 = lmean))
   lmean <- as.list(substitute(lmean))
   emean <- link2list(lmean)
   lmean <- attr(emean, "function.name")
 
+  if (is.character(ldispersion))
+    ldispersion <- substitute(y9, list(y9 = ldispersion))
   ldisp <- as.list(substitute(ldispersion))
   edisp <- link2list(ldisp)
   ldisp <- attr(edisp, "function.name")
@@ -1841,11 +1875,11 @@ if (FALSE)
   function(link = "logitlink", multiple.responses = FALSE,
            parallel = TRUE) {
 
-  if (!is.logical(parallel) ||
-      length(parallel) != 1 ||
-      !parallel)
-    warning("Argument 'parallel' should be assigned 'TRUE' only")
+  if (!isTRUE(parallel))
+    warning("'parallel' should be assigned 'TRUE' only")
 
+  if (is.character(link))
+    link <- substitute(y9, list(y9 = link))
   link <- as.list(substitute(link))
   earg <- link2list(link)
   link <- attr(earg, "function.name")

@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -98,7 +98,7 @@ micmen.control <- function(save.weights = TRUE, ...) {
     stop("argument 'imethod' must be integer")
   if (!is.Numeric(probs.x, length.arg = 2))
     stop("argument 'probs.x' must be numeric and of length two")
-  if (!is.logical(oim) || length(oim) != 1)
+  if (!isFALSE(oim) && !isTRUE(oim))
     stop("argument 'oim' must be single logical")
 
     stopifnot(nsimEIM > 10, length(nsimEIM) == 1,
@@ -112,10 +112,14 @@ micmen.control <- function(save.weights = TRUE, ...) {
 
   estimated.dispersion <- (dispersion == 0)
 
+  if (is.character(link1))
+    link1 <- substitute(y9, list(y9 = link1))
   link1 <- as.list(substitute(link1))
   earg1 <- link2list(link1)
   link1 <- attr(earg1, "function.name")
 
+  if (is.character(link2))
+    link2 <- substitute(y9, list(y9 = link2))
   link2 <- as.list(substitute(link2))
   earg2 <- link2list(link2)
   link2 <- attr(earg2, "function.name")
@@ -320,12 +324,6 @@ micmen.control <- function(save.weights = TRUE, ...) {
       }
     } else {
       temp20101111 <- dmus.dthetas * dthetas.detas
- print("head(temp20101111) in @deriv")
- print( head(temp20101111) )
- print("head(y) in @deriv")
- print( head(y) )
- print("head(mu) in @deriv")
- print( head(mu) )
       c(w) * c(y - mu) * temp20101111
     }
 

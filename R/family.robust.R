@@ -1,5 +1,5 @@
 # These functions are
-# Copyright (C) 1998-2024 T.W. Yee, University of Auckland.
+# Copyright (C) 1998-2025 T.W. Yee, University of Auckland.
 # All rights reserved.
 
 
@@ -16,8 +16,9 @@
 
 
 
-edhuber <- function(x, k = 0.862, mu = 0, sigma = 1, log = FALSE) {
-  if (!is.logical(log.arg <- log) || length(log) != 1)
+edhuber <- function(x, k = 0.862, mu = 0, sigma = 1,
+                    log = FALSE) {
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
   rm(log)
 
@@ -96,9 +97,9 @@ rhuber <- function(n, k = 0.862, mu = 0, sigma = 1) {
 qhuber <- function (p, k = 0.862, mu = 0, sigma = 1,
                     lower.tail = TRUE, log.p = FALSE ) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   cnorm <- sqrt(2 * pi) * ((2 * pnorm(k) - 1) + 2 * dnorm(k) / k)
@@ -143,9 +144,9 @@ qhuber <- function (p, k = 0.862, mu = 0, sigma = 1,
 phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
                    lower.tail = TRUE, log.p = FALSE ) {
 
-  if (!is.logical(lower.tail) || length(lower.tail ) != 1)
+  if (!isFALSE(lower.tail) && !isTRUE(lower.tail))
     stop("bad input for argument 'lower.tail'")
-  if (!is.logical(log.p) || length(log.p) != 1)
+  if (!isFALSE(log.p) && !isTRUE(log.p))
     stop("bad input for argument 'log.p'")
 
   A1  <- (2 * dnorm(k) / k - 2 * pnorm(-k))
@@ -198,10 +199,14 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
 
 
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")
 
+  if (is.character(lscale))
+    lscale <- substitute(y9, list(y9 = lscale))
   lscale <- as.list(substitute(lscale))
   escale <- link2list(lscale)
   lscale <- attr(escale, "function.name")
@@ -384,6 +389,8 @@ phuber <- function(q, k = 0.862, mu = 0, sigma = 1,
     stop("bad input for argument 'k'")
 
 
+  if (is.character(llocation))
+    llocation <- substitute(y9, list(y9 = llocation))
   llocat <- as.list(substitute(llocation))
   elocat <- link2list(llocat)
   llocat <- attr(elocat, "function.name")

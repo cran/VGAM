@@ -195,9 +195,11 @@ gdata <- data.frame(interspike = c(68, 41, 82, 66, 101, 66, 57,  41,  27, 78,
 20, 49, 29, 35,  49, 25, 55,  42,  29, 16))  # See Zeger and Qaqish (1988)
 gdata <- transform(gdata, spikenum = seq(interspike))
 bvalue <- 0.1  # .Machine$double.xmin # Boundary value
-fit <- vglm(interspike ~ 1, trace = TRUE, data = gdata,
-            garma(loglink(bvalue = bvalue),
-                  p = 2, coefstart = c(4, 0.3, 0.4)))
+fit <- eval(substitute(
+  vglm(interspike ~ 1, trace = TRUE, data = gdata,
+       garma(paste0("loglink(bvalue = ", .bvalue , ")"),
+             p = 2, coefstart = c(4, 0.3, 0.4))),
+  list( .bvalue = bvalue)))
 summary(fit)
 coef(fit, matrix = TRUE)
 Coef(fit)  # A bug here
@@ -208,4 +210,13 @@ abline(h = mean(with(gdata, interspike)), lty = "dashed", col = "gray") }
 }
 \keyword{models}
 \keyword{regression}
+
+
+% Prior to 20250106:
+%fit <- vglm(interspike ~ 1, trace = TRUE, data = gdata,
+%            garma(loglink(bvalue = bvalue),
+%                  p = 2, coefstart = c(4, 0.3, 0.4)))
+
+
+
 
