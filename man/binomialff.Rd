@@ -219,6 +219,7 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
 \seealso{
     \code{\link{hdeff.vglm}},
     \code{\link{Links}},
+    \code{\link{copsd}},
     \code{\link{wsdm}},
     \code{\link{alogitlink}},
     \code{\link{asinlink}},
@@ -227,6 +228,7 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
     \code{\link{cqo}},
     \code{\link{cao}},
     \code{\link{betabinomial}},
+    \code{\link{multinomial}},
     \code{\link{posbinomial}},
     \code{\link{zibinomial}},
     \code{\link{binom2.or}},
@@ -237,12 +239,13 @@ binomialff(link = "logitlink", multiple.responses = FALSE,
     \code{\link{simplex}},
     \code{\link[stats:Binomial]{binomial}},
     \code{\link{simulate.vlm}},
-    \pkg{safeBinaryRegression},
+    \pkg{detectseparation},
     \code{\link{residualsvglm}}.
 
 
 
 
+%   \pkg{safeBinaryRegression} is now archived on cran!! 202511
 %   \code{\link{gtbinomial}},
 %   \code{\link{quasibinomialff}},
 %   \code{\link{matched.binomial}},
@@ -287,7 +290,7 @@ fit2 <- vgam(cbind(agaaus, kniexc) ~ s(altitude),
 with(shunua, matplot(altitude, fitted(fit2), type = "l",
      main = "Two species response curves", las = 1)) }
 
-# Shows that Fisher scoring can sometime fail. See Ridout (1990).
+# Shows that Fisher scoring can sometimes fail. See Ridout (1990).
 ridout <- data.frame(v = c(1000, 100, 10), r = c(4, 3, 3), n = rep(5, 3))
 (ridout <- transform(ridout, logv = log(v)))
 # The iterations oscillates between two local solutions:

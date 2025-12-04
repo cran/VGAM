@@ -17,14 +17,15 @@
 
 
 
-vlm.control <- function(save.weights = TRUE,
-                        tol = 1e-7,
-                        method = "qr",
-                        checkwz = TRUE,
-                        wzepsilon = .Machine$double.eps^0.75,
-                        ...) {
+vlm.control <-
+  function(save.weights = TRUE,
+           tol = 1e-7,
+           method = "qr",
+           checkwz = TRUE,
+           wzepsilon = .Machine$double.eps^0.75,
+           ...) {
   if (tol <= 0) {
-    warning("argument 'tol' not positive; using 1e-7 instead")
+    warning("'tol' not positive; using 1e-7 instead")
     tol <- 1e-7
   }
   if (!is.logical(checkwz) || length(checkwz) != 1)
@@ -37,25 +38,28 @@ vlm.control <- function(save.weights = TRUE,
        method = method,
        checkwz = checkwz,
        wzepsilon = wzepsilon)
-}
+}  # vlm.control
 
 
 
 
-vglm.control <- function(checkwz = TRUE,
-                         Check.rank = TRUE,
-                         Check.cm.rank = TRUE,
-                         criterion = names(.min.criterion.VGAM),
-                         epsilon = 1e-7,
-                         half.stepsizing = TRUE,
-                         maxit = 30,
-                         noWarning = FALSE,
-                         stepsize = 1,
-                         save.weights = FALSE,
-                         trace = FALSE,
-                         wzepsilon = .Machine$double.eps^0.75,
-                         xij = NULL,
-                         ...) {
+vglm.control <-
+  function(checkwz = TRUE,
+           Check.rank = TRUE,
+           Check.cm.rank = TRUE,
+           criterion = names(.min.criterion.VGAM),
+           epsilon = 1e-7,
+           half.stepsizing = TRUE,
+           maxit = 30,
+           noWarning = FALSE,
+           stepsize = 1,
+           save.weights = FALSE,
+           trace = FALSE,
+           wzepsilon = .Machine$double.eps^0.75,
+           xij = NULL,
+           bhhh = FALSE,
+           b3h.wz = 0.5,    #NULL,  # 0,
+           ...) {
 
 
 
@@ -77,10 +81,11 @@ vglm.control <- function(checkwz = TRUE,
 
 
     switch(criterion,
-           coefficients = if (iter == 1) iter < maxit else
-                          (iter < maxit &&
-                          max(abs(new.crit - old.crit) / (
-                              abs(old.crit) + epsilon)) > epsilon),
+           coefficients = if (iter == 1)
+             iter < maxit else
+            (iter < maxit &&
+             max(abs(new.crit - old.crit) / (
+             abs(old.crit) + epsilon)) > epsilon),
            iter < maxit &&
            sqrt(eff.n) *
            abs(old.crit - new.crit) / (
@@ -88,18 +93,24 @@ vglm.control <- function(checkwz = TRUE,
   })
 
   if (!is.Numeric(epsilon, length.arg = 1, positive = TRUE)) {
-    warning("bad input for argument 'epsilon'; using 0.00001 instead")
+    warning("bad input for 'epsilon'; using 0.00001 instead")
     epsilon <- 0.00001
   }
   if (!is.Numeric(maxit, length.arg = 1,
                   positive = TRUE, integer.valued = TRUE)) {
-    warning("bad input for argument 'maxit'; using 30 instead")
+    warning("bad input for 'maxit'; using 30 instead")
     maxit <- 30
   }
   if (!is.Numeric(stepsize, length.arg = 1, positive = TRUE)) {
-    warning("bad input for argument 'stepsize'; using 1 instead")
+    warning("bad input for 'stepsize'; using 1 instead")
     stepsize <- 1
   }
+
+  if (!isFALSE(bhhh) && !isTRUE(bhhh))
+    stop("'bhhh' must be a single logical")
+  if (!is.Numeric(b3h.wz, length.arg = 1) ||
+      b3h.wz < 0 || b3h.wz > 1)
+    stop("bad input for 'b3h.wz'")
 
   list(checkwz = checkwz,
        Check.rank = Check.rank,
@@ -115,8 +126,11 @@ vglm.control <- function(checkwz = TRUE,
        stepsize = stepsize,
        trace = as.logical(trace)[1],
        wzepsilon = wzepsilon,
-       xij = if (is(xij, "formula")) list(xij) else xij)
-}
+       xij = if (is(xij, "formula"))
+                 list(xij) else xij,
+       bhhh = bhhh,
+       b3h.wz = b3h.wz)  # Can be a NULL
+}  # vglm.control
 
 
 
@@ -125,13 +139,13 @@ vglm.control <- function(checkwz = TRUE,
 
 vcontrol.expression <- expression({
 
-  control <- control  # First one, e.g., vgam.control(...)
+  control <- control  # 1st 1, e.g., vgam.control(...)
   mylist <- family@vfamily
   for (jay in length(mylist):1) {
     for (ii in 1:2) {
-      temp <- paste(if (ii == 1) "" else
-                    paste(function.name, ".", sep = ""),
-                    mylist[jay], ".control", sep = "")
+      temp <- paste0(if (ii == 1) "" else
+                     paste0(function.name, "."),
+                     mylist[jay], ".control")
       if (exists(temp, envir = VGAMenv)) {
         temp <- get(temp)
         temp <- temp(...)
@@ -165,10 +179,10 @@ vcontrol.expression <- expression({
 
 
   for (ii in 1:2) {
-    temp <- paste(if (ii == 1) "" else
-                  paste(function.name, ".", sep = ""),
-                  family@vfamily[1],
-                  ".", control$criterion, ".control", sep = "")
+    temp <- paste0(if (ii == 1) "" else
+                   paste0(function.name, "."),
+                   family@vfamily[1], ".",
+                   control$criterion, ".control")
     if (exists(temp, inherit = TRUE)) {
       temp <- get(temp)
       temp <- temp(...)
@@ -179,6 +193,10 @@ vcontrol.expression <- expression({
 
 
 })  # vcontrol.expression 
+
+
+
+
 
 
 

@@ -1,5 +1,15 @@
 \name{model.framevlm}
 \alias{model.framevlm}
+
+
+
+% 20250311; Tingting Zhan says add:
+\alias{model.frame.vlm}
+
+
+
+
+
 \title{Construct the Model Frame of a VLM Object}
 \usage{
 model.framevlm(object, setupsmart = TRUE, wrapupsmart = TRUE, \dots)

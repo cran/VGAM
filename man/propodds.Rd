@@ -8,7 +8,8 @@
 }
 \usage{
 propodds(reverse = TRUE, whitespace = FALSE, ynames = FALSE,
-   Thresh = NULL, Trev = reverse, Tref = if (Trev) "M" else 1)
+   Thresh = NULL, Trev = reverse, Tref = if (Trev) "M" else 1,
+   Intercept = NULL)
 }
 \arguments{
 
@@ -22,7 +23,7 @@ propodds(reverse = TRUE, whitespace = FALSE, ynames = FALSE,
   See \code{\link{multinomial}} for information.
 
   }
-  \item{Thresh, Trev, Tref}{
+  \item{Thresh, Trev, Tref, Intercept}{
   Fed into arguments of the same name in
   \code{\link{cumulative}}.
 

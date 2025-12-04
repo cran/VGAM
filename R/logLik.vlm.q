@@ -10,9 +10,10 @@
 
 
 
-logLik.vlm <- function(object,
-                       summation = TRUE,
-                       ...) {
+logLik.vlm <-
+    function(object,
+             summation = TRUE,
+             ...) {
 
   if (summation) {
     object@criterion$loglikelihood
@@ -26,12 +27,12 @@ logLik.vlm <- function(object,
 
 
     object@family@loglikelihood(mu = fitted(object),
-                                y = depvar(object),
-                          w = as.vector(weights(object, type = "prior")),
-                                residuals = FALSE,
-                                eta = predict(object),
-                                extra = object@extra,
-                                summation = summation)
+        y = depvar(object),
+        w = as.vector(weights(object, type = "prior")),
+        residuals = FALSE,
+        eta = predict(object),
+        extra = object@extra,
+        summation = summation)
   }
 }
 
@@ -109,18 +110,6 @@ setMethod("logLik",  "rrvgam", function(object, ...)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 constraints.vlm <-
   function(object,
            type = c("lm", "term"),
@@ -134,9 +123,11 @@ constraints.vlm <-
   type <- match.arg(type, c("lm", "term"))[1]
 
 
-  Hlist <- ans <- slot(object, "constraints")  # For "lm" (formerly "vlm")
+  Hlist <- ans <-
+    slot(object, "constraints")  # 4 "lm" (4erly "vlm")
 
   if (type == "term") {
+
     oassign.LM <- object@misc$orig.assign
 
     x.LM <- model.matrix(object)
@@ -161,17 +152,28 @@ constraints.vlm <-
       mat.ans <- matrix(unlist(ans), nrow = M)
       if (length(object@misc$predictors.names) == M)
         rownames(mat.ans) <- object@misc$predictors.names
-      if (length(object@misc$colnames.X_vlm) == ncol(mat.ans))
+      if (length(object@misc$colnames.X_vlm) ==
+          ncol(mat.ans))
         colnames(mat.ans) <- object@misc$colnames.X_vlm
 
 
       if (colnames.arg || rownames.arg) {
         rownames.cm <- colnames(predict(object))
-        if (!rownames.arg || nrow(mat.ans) != length(rownames.cm))
+        if (!rownames.arg ||
+            nrow(mat.ans) != length(rownames.cm))
           rownames.cm <- NULL
         colnames.cm <- if (colnames.arg)
-          colnames(model.matrix(object, type = "vlm")) else NULL
-        dimnames(mat.ans) <- list(rownames.cm, colnames.cm)
+           colnames(model.matrix(object,
+              type = "vlm")) else NULL
+        if (type == "term")
+          colnames.cm <- if (colnames.arg)
+            vlabel(names(ans),
+                   lapply(ans, ncol),
+                   M = nrow(ans[[1]])) else
+            NULL
+
+        dimnames(mat.ans) <- list(rownames.cm,
+                                  colnames.cm)
       }
       mat.ans
     } else {
@@ -180,7 +182,7 @@ constraints.vlm <-
   } else {
     if (all) ans else ans[[which]]
   }
-}
+}  # constraints.vlm
 
 
 

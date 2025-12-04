@@ -15,7 +15,7 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
      doffset = NULL, subset = NULL,
      derivs.out = FALSE, fixed.hdiff = TRUE,
      eps.wsdm = 0.15, Mux.div = 3, warn.retry = TRUE,
-     with1 = TRUE, ...)
+     with1 = TRUE, \dots)
 }
 \arguments{
   \item{object}{
@@ -51,8 +51,9 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
     values to check that the finite-difference
     approximations were reasonably accurate?
     (For example, \code{hdiff} is multiplied and
-    divided by 5).
-    Thus it takes twice as long to return
+    divided by 3).
+    Thus it takes thrice times longer
+    to return
     the answer if this is \code{TRUE}.
     And the original \code{hdiff} is used for the
     vector returned.
@@ -65,10 +66,10 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
   Numeric, positive and of unit length;
   multiplier for \eqn{h}, i.e.,
   relative to \code{hdiff}.
-  It is sometimes easier specifying a multiplier,
-  instead of the actual value, of \code{hdiff}.
-  So \code{mux.hdiff = 2} will double
-  \code{hdiff}.
+  It is sometimes easier specifying this
+  multiplier, instead of the actual value
+  of \code{hdiff}.  So \code{mux.hdiff = 2}
+  will double \code{hdiff}, etc.
 
 
   }
@@ -85,11 +86,12 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
   }
   \item{theta0}{
     Numeric; the hypothesized value.
-    The default is appropriate for most symmetric
-    \code{\link{binomialff}} links, and also
-    for \code{\link{poissonff}} regression
-    with the natural parameter. Recycled
-    to length \code{length(coef(object))}.
+    The default is appropriate for most
+    symmetric \code{\link{binomialff}} links,
+    and also for \code{\link{poissonff}}
+    regression with the natural
+    parameter. Recycled to length
+    \code{length(coef(object))}.
 
     
 
@@ -196,7 +198,7 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
   Since WSDM statistics for the intercepts are
   less important, it is sometimes a good idea
   to set \code{with1 = FALSE} when
-  computing the (effective) max-WSDM.
+  computing a model's (effective) max-WSDM.
 
 
 
@@ -207,8 +209,7 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
   }
 }
 \details{
-  This function, which is currently experimental
-  and very rough-and-ready,
+  This function
   may be used as a diagnostic
   to see if any regression coefficients are
   alarmingly close to the
@@ -225,9 +226,9 @@ wsdm(object, hdiff = 0.005, retry = TRUE, mux.hdiff = 1,
   locations where the HDE starts taking place.
   As the WSDM statistic increases, the estimate
   is approaching the parameter space boundary,
-  hence standard inference is breaking down
-  and becoming more fraught with various
-  dangers and inaccuracies.
+  hence standard inference is breaking down and
+  becoming more fraught with various dangers
+  and inaccuracies.
 
 
   
@@ -326,11 +327,13 @@ Yee (2022),
   are mainly used as a diagnostic.
   Probably, for most applications, large WSDM
   statistics for the intercepts should not be
-  a problem, hence the max-WSDM excludes these.
+  a problem, hence the max-WSDM excludes these
+  in the \code{\link{summaryvglm}}.
 
 
 
-  Being mainly used as a diagnostic,
+  To repeat,
+  being mainly used as a diagnostic,
   WSDM values need not be computed or stated
   very accurately.
   It is suggested that 2 (or maybe 3)
@@ -384,13 +387,18 @@ beyond.
 \author{ Thomas W. Yee.  }
 
 \section{Warning }{
-  Use with caution.
-  This function has been tested the most
+  This function is currently a little bit
+  experimental and rough-and-ready,
+  hence use with some caution.
+  It has been tested the most
   for logistic regression, and less so for
   other \pkg{VGAM} family functions.
   It will not work for all
   \pkg{VGAM} family functions.
 
+
+
+  
 
 %  The \code{\link{cauchitlink}} needs special
 %  treatment because its tail is very heavy.
@@ -427,7 +435,7 @@ beyond.
 
 }
 
-\examples{# Kosmidis (2014, Table 2), JRSSB 76: 169--196
+\examples{\dontrun{# Kosmidis (2014, Table 2), JRSSB 76: 169--196
 ppom.wine2 <-
   vglm(cbind(bitter1, bitter2, bitter3, bitter4, bitter5) ~
        temp + contact,
@@ -437,7 +445,7 @@ ppom.wine2 <-
 coef(ppom.wine2, matrix = TRUE)
 summary(ppom.wine2, wsdm = TRUE)
 max(wsdm(ppom.wine2, with1 = FALSE))
-}
+}}
 % Add one or more standard keywords, see file 'KEYWORDS'
 % in the R documentation directory.
 \keyword{models}

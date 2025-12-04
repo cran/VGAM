@@ -4,6 +4,9 @@
 %\alias{ccoef-method}
 %
 %
+% 202511
+\alias{copsd3,ANY-method}
+\alias{cops3,ANY-method}
 % 202502
 \alias{niters,ANY-method}
 \alias{niters,vlm-method}

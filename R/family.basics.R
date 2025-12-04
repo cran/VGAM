@@ -14,7 +14,7 @@
 
 
 
-getarg <- function(a) {
+ getarg <- function(a) {
 
 
 
@@ -115,15 +115,15 @@ Select <-
 
 
   if (as.formula.arg) {
-    form.string <- paste0(ifelse(length(lhs), lhs, ""),
-                          ifelse(tilde, " ~ ", ""),
-                          if (ltcn.positive)
-                            paste(temp.col.names, collapse = " + ") else
-                            "",
-                      ifelse(ltcn.positive && length(rhs ), " + ", ""),
-                          ifelse(length(rhs ), rhs, ""),
-                          ifelse(length(rhs2), paste(" +", rhs2), ""),
-                          ifelse(length(rhs3), paste(" +", rhs3), ""))
+    form.string <-
+      paste0(ifelse(length(lhs), lhs, ""),
+             ifelse(tilde, " ~ ", ""),
+             if (ltcn.positive)
+               paste(temp.col.names, collapse = " + ") else "",
+             ifelse(ltcn.positive && length(rhs ), " + ", ""),
+             ifelse(length(rhs ), rhs, ""),
+             ifelse(length(rhs2), paste(" +", rhs2), ""),
+             ifelse(length(rhs3), paste(" +", rhs3), ""))
 
     if (as.character) {
       form.string
@@ -138,7 +138,7 @@ Select <-
     } else {
       ans <- if (is.matrix(data)) data[, index] else
              if (is.list(data)) data[index] else
-             stop("argument 'data' is neither a list or a matrix")
+             stop("arg 'data' is neither a list or a matrix")
       if (length(ans)) {
         as.matrix(ans)
       } else {
@@ -206,9 +206,10 @@ subsetc <-
 
 
 
- grid.search <- function(vov, objfun, y, x, w, extraargs = NULL,
-                         maximize = TRUE, abs.arg = FALSE,
-                         ret.objfun = FALSE, ...) {
+ grid.search <-
+  function(vov, objfun, y, x, w, extraargs = NULL,
+           maximize = TRUE, abs.arg = FALSE,
+           ret.objfun = FALSE, ...) {
   if (!is.vector(vov))
     stop("argument 'vov' must be a vector")
   objvals <- vov
@@ -485,7 +486,8 @@ subsetc <-
 
 
 
-cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
+ cm.nointercept.VGAM <-
+    function(constraints, x, nointercept, M) {
 
   asgn <- attr(x, "assign")
   nasgn <- names(asgn)
@@ -527,8 +529,10 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- cm.zero.VGAM <- function(constraints, x, zero = NULL, M = 1,
-                          predictors.names, M1 = 1) {
+ cm.zero.VGAM <-
+  function(constraints, x, zero = NULL, M = 1,
+           predictors.names, M1 = 1,
+           quiet = FALSE) {
 
 
 
@@ -564,10 +568,12 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     which.numeric <- unique(sort(which.numeric.all))
 
     if (!length(which.numeric)) {
-      warning("No values of argument 'zero' were matched.")
+      warning("No values of 'zero' were matched.")
       which.numeric <- NULL
-    } else if (length(which.numeric.all) > length(which.numeric)) {
-      warning("There were redundant values of argument 'zero'.")
+    } else if (length(which.numeric.all) >
+               length(which.numeric)) {
+      if (!quiet)
+      warning("There were redundant values of 'zero'.")
     }
 
     dotzero <- which.numeric
@@ -594,7 +600,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     NULL
   }
 
-  zpos.index <- if (length(posdotzero)) posdotzero else NULL
+  zpos.index <- if (length(posdotzero))
+                  posdotzero else NULL
   z.Index <- if (!length(dotzero)) NULL else
                unique(sort(c(zneg.index, zpos.index)))
 
@@ -613,15 +620,16 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     stop("'constraints' must be a list")
 
   for (ii in seq_along(asgn))
-    constraints[[nasgn[ii]]] <- if (is.null(constraints[[nasgn[ii]]]))
-      diag(M) else eval(constraints[[nasgn[ii]]])
+    constraints[[nasgn[ii]]] <-
+      if (is.null(constraints[[nasgn[ii]]]))
+        diag(M) else eval(constraints[[nasgn[ii]]])
 
   if (is.null(zero))
     return(constraints)
 
   if (any(zero < 1 | zero > M))
-    stop("argument 'zero' out of range; should have values between ",
-         "1 and ", M, " inclusive")
+    stop("'zero' out of range; should have values ",
+         "between 1 and ", M, " inclusive")
   if (nasgn[1] != "(Intercept)")
     stop("cannot fit an intercept to a no-intercept model")
 
@@ -744,7 +752,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
     if (min(MyVector) < 1.0e-10)
       stop("some constraint matrices are not of ",
            "full column-rank: ",
-           paste(names(MyVector)[MyVector < 1.0e-10], collapse = ", "))
+           paste(names(MyVector)[MyVector < 1.0e-10],
+                 collapse = ", "))
   }
 
   Hlist
@@ -755,7 +764,8 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- trivial.constraints <- function(Hlist, target = diag(M)) {
+ trivial.constraints <-
+    function(Hlist, target = diag(M)) {
 
 
   if (is.null(Hlist))
@@ -791,8 +801,9 @@ cm.nointercept.VGAM <- function(constraints, x, nointercept, M) {
 
 
 
- add.constraints <- function(constraints, new.constraints,
-                             overwrite = FALSE, check = FALSE) {
+ add.constraints <-
+    function(constraints, new.constraints,
+             overwrite = FALSE, check = FALSE) {
 
   empty.list <- function(l)
     (is.null(l) || (is.list(l) && length(l) == 0))
@@ -959,7 +970,8 @@ if (FALSE)
 
 
 
- m2a <- function(m, M, upper = FALSE, allow.vector = FALSE) {
+ m2a <-
+  function(m, M, upper = FALSE, allow.vector = FALSE) {
 
 
   if (!is.numeric(m))
@@ -976,7 +988,8 @@ if (FALSE)
     stop("bad value for 'M'; it is too big")
   }
 
-  fred <- .C("m2accc", as.double(t(m)), ans=double(M*M*n),
+  fred <- .C("m2accc", as.double(t(m)),
+             ans=double(M*M*n),
       as.integer(dimm),
       as.integer(index$row-1),
       as.integer(index$col-1),
@@ -1014,7 +1027,8 @@ if (FALSE)
 
   if (trim)
     for (jay in dimm.value:1) {
-      if (all(mat[, jay] == 0)) mat <- mat[, -jay] else break
+        if (all(mat[, jay] == 0))
+            mat <- mat[, -jay] else break
     }
 
   mat
@@ -1167,7 +1181,7 @@ if (FALSE)
     ans
   } else {
     temp <- object@y
-    ans <- rep_len(1, nrow(temp))  # Assumed all equal and unity.
+    ans <- rep_len(1, nrow(temp))  # Assumed all equal
     names(ans) <- dimnames(temp)[[1]]
     ans
   }
@@ -1235,9 +1249,10 @@ if (FALSE) {
   function(object, type = c("prior", "working"),
            matrix.arg = TRUE, ignore.slot = FALSE,
            deriv.arg = FALSE, ...) {
-  weightsvlm(object, type = type, matrix.arg = matrix.arg,
-              ignore.slot = ignore.slot,
-              deriv.arg = deriv.arg, ...)
+      weightsvlm(object, type = type,
+                 matrix.arg = matrix.arg,
+                 ignore.slot = ignore.slot,
+                 deriv.arg = deriv.arg, ...)
 }
 
 
@@ -1252,11 +1267,12 @@ if (FALSE) {
 
   if (type == "working") {
     wweights(object = object,
-             matrix.arg = matrix.arg, deriv.arg = deriv.arg,
+             matrix.arg = matrix.arg,
+             deriv.arg = deriv.arg,
              ignore.slot = ignore.slot, ...)
   } else {
     if (deriv.arg)
-      stop("cannot set 'deriv = TRUE' when 'type=\"prior\"'")
+      stop("cannot set 'deriv = T' if 'type=\"prior\"'")
     ans <- pweights(object)
     if (matrix.arg) as.matrix(ans) else c(ans)
   }
@@ -1289,9 +1305,10 @@ setMethod("weights", "vglm",
 
 
 
-qnupdate <- function(w, wzold, dderiv, deta, M, keeppd = TRUE,
-                     trace = FALSE, reset = FALSE,
-                     effpos=.Machine$double.eps^0.75) {
+ qnupdate <-
+    function(w, wzold, dderiv, deta, M, keeppd = TRUE,
+             trace = FALSE, reset = FALSE,
+             effpos=.Machine$double.eps^0.75) {
 
 
   if (M == 1) {
@@ -1349,7 +1366,7 @@ mbesselI0 <-
   if (FALSE) {
     }
 
-    ans <- matrix(NA_real_, nrow = nn, ncol = deriv.arg+1)
+    ans <- matrix(NA_real_, nn, deriv.arg + 1)
     ans[, 1] <- besselI(x, nu = 0)
     if (deriv.arg>=1) ans[, 2] <- besselI(x, nu = 1)
     if (deriv.arg>=2) ans[, 3] <- ans[,1] - ans[,2] / x
@@ -1361,10 +1378,11 @@ mbesselI0 <-
 
 
 
-VGAM.matrix.norm <- function(A, power = 2, suppressWarning = FALSE) {
+ VGAM.matrix.norm <-
+    function(A, power = 2, suppressWarning = FALSE) {
   if ((nrow(A) != ncol(A)) && !suppressWarning)
-    warning("norms should be calculated for square matrices; ",
-            "'A' is not square")
+    warning("norms should be calculated for square",
+            " matrices; 'A' is not square")
   if (power == "F") {
     sqrt(sum(A^2))
   } else if (power == 1) {
@@ -1383,7 +1401,8 @@ VGAM.matrix.norm <- function(A, power = 2, suppressWarning = FALSE) {
 
 
 
-rmfromVGAMenv <- function(varnames, prefix = "") {
+ rmfromVGAMenv <-
+    function(varnames, prefix = "") {
   evarnames <- paste(prefix, varnames, sep = "")
   for (ii in evarnames) {
     mytext1 <- "exists(x = ii, envir = VGAMenv)"
@@ -1400,7 +1419,8 @@ rmfromVGAMenv <- function(varnames, prefix = "") {
 
 
 
-existsinVGAMenv <- function(varnames, prefix = "") {
+ existsinVGAMenv <-
+    function(varnames, prefix = "") {
   evarnames <- paste(prefix, varnames, sep = "")
   ans <- NULL
   for (ii in evarnames) {
@@ -1417,7 +1437,8 @@ existsinVGAMenv <- function(varnames, prefix = "") {
 
 
 
-assign2VGAMenv <- function(varnames, mylist, prefix = "") {
+ assign2VGAMenv <-
+    function(varnames, mylist, prefix = "") {
   evarnames <- paste(prefix, varnames, sep = "")
   for (ii in seq_along(varnames)) {
     assign(evarnames[ii], mylist[[(varnames[ii])]],
@@ -1484,7 +1505,8 @@ negzero.expression.VGAM <- expression({
 
 
 
-  if (length(dotzero) == 1 && (dotzero == "" || is.na(dotzero)))
+    if (length(dotzero) == 1 &&
+        (dotzero == "" || is.na(dotzero)))
     dotzero <- NULL
 
 
@@ -1501,8 +1523,8 @@ negzero.expression.VGAM <- expression({
     if (length(which.ones)) {
       which.numeric.all <- c(which.numeric.all, which.ones)
     } else {
-      warning("some values of argument 'zero' are unmatched. ",
-              "Ignoring them")
+      warning("some values of arg 'zero' are unmatched.",
+              " Ignoring them")
     }
   }
   which.numeric <- unique(sort(which.numeric.all))
@@ -1510,8 +1532,9 @@ negzero.expression.VGAM <- expression({
   if (!length(which.numeric)) {
     warning("No values of argument 'zero' were matched.")
     which.numeric <- NULL
-  } else if (length(which.numeric.all) > length(which.numeric)) {
-    warning("There were redundant values of argument 'zero'.")
+  } else
+  if (length(which.numeric.all) > length(which.numeric)) {
+    warning("There were redundant values of 'zero'.")
   }
 
     dotzero <- which.numeric
@@ -1542,9 +1565,10 @@ negzero.expression.VGAM <- expression({
                NULL else
                unique(sort(c(zneg.index, zpos.index)))
 
-  constraints <- cm.zero.VGAM(constraints, x = x, z.Index, M = M,
-                              predictors.names = predictors.names,
-                              M1 = M1)
+  constraints <-
+    cm.zero.VGAM(constraints, x = x, z.Index, M = M,
+                 predictors.names = predictors.names,
+                 M1 = M1)
 })  # negzero.expression.VGAM
 
 
@@ -1665,17 +1689,18 @@ w.wz.merge <- function(w, wz, n, M, ndepy,
 
 
 
-w.y.check <- function(w, y,
-                      ncol.w.max = 1, ncol.y.max = 1,
-                      ncol.w.min = 1, ncol.y.min = 1,
-                      out.wy = FALSE,
-                      colsyperw = 1,
-                      maximize = FALSE,
-                      Is.integer.y = FALSE,
-                      Is.positive.y = FALSE,
-                      Is.nonnegative.y = FALSE,
-                      prefix.w = "PriorWeight",
-                      prefix.y = "Response") {
+ w.y.check <-
+  function(w, y,
+           ncol.w.max = 1, ncol.y.max = 1,
+           ncol.w.min = 1, ncol.y.min = 1,
+           out.wy = FALSE,
+           colsyperw = 1,
+           maximize = FALSE,
+           Is.integer.y = FALSE,
+           Is.positive.y = FALSE,
+           Is.nonnegative.y = FALSE,
+           prefix.w = "PriorWeight",
+           prefix.y = "Response") {
 
 
 
@@ -1691,34 +1716,34 @@ w.y.check <- function(w, y,
 
 
   if (Is.integer.y && any(y != round(y)))
-    stop("response variable 'y' must be integer-valued")
+    stop("response var 'y' must be integer-valued")
   if (Is.positive.y && any(y <= 0))
-    stop("response variable 'y' must be positive-valued")
+    stop("response var 'y' must be positive-valued")
   if (Is.nonnegative.y && any(y < 0))
-    stop("response variable 'y' must be 0 or positive-valued")
+    stop("response var 'y' must be >= 0")
 
   if (nrow(w) != n.lm)
     stop("nrow(w) should be equal to nrow(y)")
 
   if (ncol(w) > ncol.w.max)
-    stop("prior-weight variable 'w' has too many columns")
+    stop("prior-weight variable 'w' has too many colns")
   if (ncol(y) > ncol.y.max)
     stop("response variable 'y' has too many columns; ",
          "only ", ncol.y.max, " allowed")
 
   if (ncol(w) < ncol.w.min)
-    stop("prior-weight variable 'w' has too few columns")
+    stop("prior-weight variable 'w' has too few colns")
   if (ncol(y) < ncol.y.min)
     stop("response variable 'y' has too few columns; ",
          "at least ", ncol.y.max, " needed")
 
   if (min(w) <= 0)
-    stop("prior-weight variable 'w' must contain positive ",
-         "values only")
+    stop("prior-weight variable 'w' must contain",
+         " positive values only")
 
   if (is.numeric(colsyperw) && ncol(y) %% colsyperw != 0)
-    stop("number of columns of the response variable 'y' is not ",
-         "a multiple of ", colsyperw)
+    stop("number of columns of the response variable",
+         " 'y' is not a multiple of ", colsyperw)
 
 
   if (maximize) {
@@ -1758,7 +1783,8 @@ w.y.check <- function(w, y,
 
 
 arwz2wz <-
-    function(arwz, M = 1, M1 = 1, rm.trailing.cols = TRUE,
+    function(arwz, M = 1, M1 = 1,
+             rm.trailing.cols = TRUE,
              full.arg = FALSE) {
 
 
@@ -1775,7 +1801,8 @@ arwz2wz <-
   }
 
   wz <- matrix(0.0, n,
-               if (full.arg) M*(M+1)/2 else sum(M:(M-M1+1)))
+               if (full.arg) M*(M+1)/2 else
+               sum(M:(M-M1+1)))
   ind1 <- iam(NA, NA, M = M1, both = TRUE, diag = TRUE)
   len.ind1 <- dim.val # length(ind1$col.index)
 
@@ -1804,7 +1831,7 @@ arwz2wz <-
 
 
  wz.merge <-
-    function(wz1, wz2, M1, M2, rm.trailing.cols = TRUE) {
+  function(wz1, wz2, M1, M2, rm.trailing.cols = TRUE) {
 
 
   if (!is.matrix(wz1))
@@ -1878,8 +1905,8 @@ vweighted.mean.default <-
 
   ans <- numeric(ncol(w))
   for (ii in 1:ncol(w))
-      ans[ii] <- weighted.mean(x[, ii], w = w[, ii], ...,
-                               na.rm = na.rm)
+      ans[ii] <- weighted.mean(x[, ii], w = w[, ii],
+                               ..., na.rm = na.rm)
   ans
 }  # vweighted.mean.default
 
@@ -1926,7 +1953,8 @@ setMethod("familyname", "vlm",
 
 
 bisection.basic <-
-  function(f, a, b, tol = 1e-9, nmax = NULL, ...) {
+    function(f, a, b, tol = 1e-9, nmax = NULL,
+             Ping = FALSE, ...) {
 
 
 
@@ -1934,7 +1962,7 @@ bisection.basic <-
       
 
   if (any(is.infinite(b))) {
-    warning("replacing 'b' values of Inf by a large value")
+  warning("replacing 'b' Inf values by a large value")
     b[is.infinite(b)] <- .Machine$double.xmax / 4
   }
 
@@ -1947,15 +1975,14 @@ bisection.basic <-
       nmax <- log2(.Machine$double.xmax) - 5
   }
   signtest <- (sign(f(a, ...)) * sign(f(b, ...)) <= 0)
+  if (Ping) return(signtest)
 
   allsign <- all(signtest, na.rm = TRUE)
-  if (!allsign || any(is.na(signtest))){
+  if (!allsign || any(is.na(signtest))) {
     warning("roots do not exist between 'a' and 'b'. ",
             "Some answers may be misleading.")
   }
       
-
-
   N <- 1
   while (N <= nmax) {
     mid <- (a + b) / 2
@@ -1969,7 +1996,7 @@ bisection.basic <-
     b[!vecTF] <- mid[!vecTF]
   }
 
-  warning("did not coverge. Returning final root")
+  warning("did not converge. Returning final root")
   mid
 }  # bisection.basic
 

@@ -397,6 +397,7 @@ show.summary.pvgam <-
 
 
   show.summary.vglm(x, quote = quote, prefix = prefix,
+                    presid = FALSE,  # 20250212
                     digits = digits, top.half.only = TRUE)
 
 

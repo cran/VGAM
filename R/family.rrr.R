@@ -2972,7 +2972,8 @@ Alabels= if (length(object@misc$predictors.names))
     Cmat <- Coef.list@C
 
     Amat <- Amat * scaleA
-    dimnames(Amat) <- list(object@misc$predictors.names, NULL)
+      dimnames(Amat) <- list(object@misc$predictors.names,
+                             NULL)
     Cmat <- Cmat / scaleA
 
     if (!length(object@x)) {
@@ -3246,18 +3247,21 @@ setMethod("biplot",  "rrvglm", function(x, ...)
 
 summary.qrrvglm <-
   function(object,
-           varI.latvar = FALSE, refResponse = NULL, ...) {
+           varI.latvar = FALSE,
+           refResponse = NULL, ...) {
     answer <- object
-    answer@post$Coef <- Coef(object,
-                             varI.latvar = varI.latvar,
-                             refResponse = refResponse,
-                             ...)  # Store it here; non-elegant
+    answer@post$Coef <-
+      Coef(object,
+           varI.latvar = varI.latvar,
+           refResponse = refResponse,
+           ...)  # Store it here; non-elegant
 
   if (length((answer@post$Coef)@dispersion) &&
      length(object@misc$estimated.dispersion) &&
      object@misc$estimated.dispersion)
       answer@dispersion <-
-      answer@misc$dispersion <- (answer@post$Coef)@dispersion
+      answer@misc$dispersion <-
+     (answer@post$Coef)@dispersion
 
   as(answer, "summary.qrrvglm")
 }  # summary.qrrvglm
@@ -3451,8 +3455,10 @@ trplot.qrrvglm <-
            xlab = NULL, ylab = NULL,
            main = "",   # "Trajectory plot",
            type = "b",
+           asp = NULL,   # 20251017
            check.ok = TRUE, ...) {
-  coef.obj <- Coef(object)  # use defaults for those two arguments
+  F <- FALSE; T <- TRUE
+  coef.obj <- Coef(object)  # use defaults for those 2 args
   if (coef.obj@Rank != 1)
     stop("object must be a rank-1 model")
   fv <- fitted(object)
@@ -3473,17 +3479,21 @@ trplot.qrrvglm <-
   } else {
      which.species.numer <- match(which.species, sppNames)
   }
-    nos <- length(which.species)  # nos = number of species to be plotted
+  nos <- length(which.species)
 
   if (length(which.species.numer) <= 1)
     stop("must have at least 2 species to be plotted")
   cx1i <- object@control$colx1.index
   if (check.ok)
-  if (!(length(cx1i) == 1 && names(cx1i) == "(Intercept)"))
-    stop("trajectory plots allowable only for noRRR = ~ 1 models")
+    if (!(length(cx1i) == 1 &&
+          names(cx1i) == "(Intercept)"))
+    stop("trajectory plots allowable only ",
+         "for noRRR = ~ 1 models")
 
-  first.spp  <- iam(1, 1,M = M,both = TRUE,diag = FALSE)$row.index
-  second.spp <- iam(1, 1,M = M,both = TRUE,diag = FALSE)$col.index
+      first.spp  <- iam(1, 1, M = M, both = T,
+                        diag = F)$row.index
+      second.spp <- iam(1, 1, M = M, both = T,
+                        diag = F)$col.index
   myxlab <- if (length(which.species.numer) == 2) {
               paste("Fitted value for",
               if (is.character(which.species.numer))
@@ -3503,7 +3513,8 @@ trplot.qrrvglm <-
            fv[,which.species.numer[first.spp]]
     yyy <- if (axes.equal) fv[,which.species.numer] else
            fv[,which.species.numer[second.spp]]
-    matplot(xxx, yyy, type = "n", log = log, xlab = myxlab,
+    matplot(xxx, yyy, type = "n", log = log,
+            xlab = myxlab, asp = asp,
             ylab = myylab, main = main, ...)
   }
 
@@ -3512,7 +3523,7 @@ trplot.qrrvglm <-
   lty  <- rep_len(lty,  nos*(nos-1)/2)
   tcol <- rep_len(tcol, nos*(nos-1)/2)
 
-  oo <- order(coef.obj@latvar)  # Sort by the latent variable
+  oo <- order(coef.obj@latvar)  # Sort by the latvars
   ii <- 0
   col <- rep_len(col, nos*(nos-1)/2)
   species.names <- NULL
@@ -3521,17 +3532,22 @@ trplot.qrrvglm <-
       for (i2 in seq(which.species.numer))
         if (i1 < i2) {
           ii <- ii + 1
-          species.names <- rbind(species.names,
-                                 cbind(sppNames[i1], sppNames[i2]))
+          species.names <-
+              rbind(species.names,
+                    cbind(sppNames[i1],
+                          sppNames[i2]))
           matplot(fv[oo, which.species.numer[i1]],
                   fv[oo, which.species.numer[i2]],
                   type = type, add = TRUE,
-                  lty = lty[ii], lwd = lwd[ii], col = col[ii],
-                  pch = if (label.sites) "   " else "*" )
+                  asp = asp,
+                  lty = lty[ii], lwd = lwd[ii],
+                  col = col[ii],
+                  pch = if (label.sites) "   " else "*")
           if (label.sites && length(sitenames))
               text(fv[oo, which.species.numer[i1]],
                    fv[oo, which.species.numer[i2]],
-                   labels = sitenames[oo], cex = cex, col = tcol[ii])
+                   labels = sitenames[oo],
+                   cex = cex, col = tcol[ii])
         }
     }
   invisible(list(species.names = species.names,
@@ -3596,11 +3612,14 @@ I.tolerances = object@control$eq.tolerances
 
   
 
-  if (mode(MaxScale) != "character" && mode(MaxScale) != "name")
+      if (mode(MaxScale) != "character" &&
+          mode(MaxScale) != "name")
     MaxScale <- as.character(substitute(MaxScale))
-  MaxScale <- match.arg(MaxScale, c("predictors", "response"))[1]
+      MaxScale <- match.arg(MaxScale,
+                  c("predictors", "response"))[1]
   if (MaxScale != "predictors")
-    stop("can currently only handle MaxScale='predictors'")
+      stop("can currently only handle ",
+           "MaxScale='predictors'")
 
   sobj <- summary(object)
   cobj <- Coef(object, I.tolerances = I.tolerances, ...)
@@ -3612,11 +3631,12 @@ I.tolerances = object@control$eq.tolerances
   dvecMax <- cbind(1, -0.5 * cobj@A / c(cobj@D),
                    (cobj@A / c(2*cobj@D))^2)
   dvecTol <- cbind(0, 0, 1 / c(-2 * cobj@D)^1.5)
-  dvecOpt <- cbind(0, -0.5 / c(cobj@D), 0.5 * cobj@A / c(cobj@D^2))
+      dvecOpt <- cbind(0, -0.5 / c(cobj@D),
+                       0.5 * cobj@A / c(cobj@D^2))
 
   if ((length(object@control$colx1.index) != 1) ||
      (names(object@control$colx1.index) != "(Intercept)"))
-    stop("Can only handle noRRR=~1 models")
+    stop("Can only handle noRRR = ~ 1 models")
 
   okvals <- c(3*M, 2*M+1)
   if (all(length(coef(object)) != okvals))
@@ -3624,13 +3644,17 @@ I.tolerances = object@control$eq.tolerances
          "eq.tolerances = FALSE")
 
   answer <- NULL
-  Cov.unscaled <- array(NA_real_, c(3, 3, M), dimnames = list(
+      Cov.unscaled <- array(NA_real_, c(3, 3, M),
+                            dimnames = list(
       c("(Intercept)", "latvar", "latvar^2"),
-      c("(Intercept)", "latvar", "latvar^2"), dimnames(cobj@D)[[3]]))
+      c("(Intercept)", "latvar", "latvar^2"),
+      dimnames(cobj@D)[[3]]))
   for (spp in 1:M) {
-    index <- c(M + ifelse(object@control$eq.tolerances, 1, M) + spp,
+      index <- c(M + ifelse(object@control$eq.tolerances,
+                            1, M) + spp,
                spp,
-               M + ifelse(object@control$eq.tolerances, 1, spp))
+               M + ifelse(object@control$eq.tolerances,
+                          1, spp))
     vcov <- Cov.unscaled[,,spp] <-
         sobj@cov.unscaled[index, index]  # Order is A, D, B1
     se2Max <- dvecMax[spp,, drop = FALSE] %*% vcov %*%
@@ -3639,13 +3663,14 @@ I.tolerances = object@control$eq.tolerances
         cbind(dvecTol[spp,])
     se2Opt <- dvecOpt[spp,, drop = FALSE] %*% vcov %*%
         cbind(dvecOpt[spp,])
-    answer <- rbind(answer, dispersion[spp]^0.5 *
-                            c(se2Opt = se2Opt, se2Tol = se2Tol,
-                              se2Max = se2Max))
+    answer <- rbind(answer,
+                    dispersion[spp]^0.5 *
+                    c(se2Opt = se2Opt, se2Tol = se2Tol,
+                      se2Max = se2Max))
   }
 
   link.function <- if (MaxScale == "predictors")
-      remove.arg(object@misc$predictors.names[1]) else ""
+    remove.arg(object@misc$predictors.names[1]) else ""
   dimnames(answer) <-
     list(dimnames(cobj@D)[[3]],
          c("Optimum", "Tolerance",

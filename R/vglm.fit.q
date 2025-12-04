@@ -17,7 +17,8 @@ vglm.fit <-
            qr.arg = FALSE,
            constraints = NULL,
            extra = NULL,
-           Terms = Terms, function.name = "vglm", ...) {
+           Terms = Terms,
+           function.name = "vglm", ...) {
 
     if (length(slot(family, "start1")))
       eval(slot(family, "start1"))
@@ -110,9 +111,10 @@ vglm.fit <-
     eval(slot(family, "constraints"))
 
 
-  Hlist <- process.constraints(constraints, x = x, M = M,
-                               specialCM = specialCM,
-                               Check.cm.rank = control$Check.cm.rank)
+  Hlist <- process.constraints(constraints,
+           x = x, M = M,
+           specialCM = specialCM,
+           Check.cm.rank = control$Check.cm.rank)
 
 
   ncolHlist <- unlist(lapply(Hlist, ncol))
@@ -154,12 +156,14 @@ vglm.fit <-
 
   deriv.mu <- eval(slot(family, "deriv"))
   wz <- eval(slot(family, "weight"))
+  if (control$bhhh)
+    wz <- b3hfun(wz, deriv.mu, w, control$b3h.wz)
   if (control$checkwz)
     wz <- checkwz(wz, M, trace = trace, wzepsilon = control$wzepsilon)
 
   U <- vchol(wz, M = M, n = n, silent = !trace)
-  tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-  z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
+  tvfor <- vforsub(U, as.matrix(deriv.mu), M, n)
+  z <- eta + vbacksub(U, tvfor, M, n) - offset
 
   one.more <- TRUE
 
@@ -167,8 +171,8 @@ vglm.fit <-
   nrow.X.vlm <- nrow(X.vlm.save)
   ncol.X.vlm <- ncol(X.vlm.save)
   if (nrow.X.vlm < ncol.X.vlm)
-    stop("There are ", ncol.X.vlm, " parameters but only ",
-         nrow.X.vlm, " observations")
+      stop("There are ", ncol.X.vlm, " parameters",
+      " but only ", nrow.X.vlm, " observations")
 
 
 
@@ -229,11 +233,11 @@ vglm.fit <-
 
 
     take.half.step <- (control$half.stepsizing && length(old.coeffs)) &&
-                      ((orig.stepsize != 1) ||
-                       any(!is.finite(new.crit)) ||  # 20160321; 20190213
-                       (criterion != "coefficients" &&
-                       (if (minimize.criterion) new.crit > old.crit else
-                                                new.crit < old.crit)))
+      ((orig.stepsize != 1) ||
+       any(!is.finite(new.crit)) ||  # 20160321; 20190213
+      (criterion != "coefficients" &&
+      (if (minimize.criterion) new.crit > old.crit else
+      new.crit < old.crit)))
     if (!is.logical(take.half.step))
       take.half.step <- TRUE
 
@@ -270,7 +274,7 @@ vglm.fit <-
         if (too.small <- stepsize < 1e-6)
           break
         new.coeffs <- (1-stepsize) * old.coeffs +
-                         stepsize  * new.coeffs.save
+                     stepsize  * new.coeffs.save
 
         if (length(slot(family, "middle1")))
           eval(slot(family, "middle1"))
@@ -319,12 +323,12 @@ vglm.fit <-
 
           UUUU <- switch(criterion,
                          coefficients =
-                           format(new.crit,
-                                  digits = round(1 - log10(epsilon))),
-                           format(new.crit,
-                                  digits = max(4,
-                                           round(-0 - log10(epsilon) +
-                                                 log10(sqrt(eff.n))))))
+      format(new.crit,
+             digits = round(1 - log10(epsilon))),
+             format(new.crit,
+             digits = max(4,
+                      round(-0 - log10(epsilon) +
+                      log10(sqrt(eff.n))))))
 
           switch(criterion,
                  coefficients = {
@@ -347,13 +351,16 @@ vglm.fit <-
       iter <- iter + 1
       deriv.mu <- eval(slot(family, "deriv"))
       wz <- eval(slot(family, "weight"))
+      if (control$bhhh)
+        wz <- b3hfun(wz, deriv.mu, w,
+                     control$b3h.wz)
       if (control$checkwz)
         wz <- checkwz(wz, M = M, trace = trace,
                       wzepsilon = control$wzepsilon)
 
-      U <- vchol(wz, M = M, n = n, silent = !trace)
-      tvfor <- vforsub(U, as.matrix(deriv.mu), M = M, n = n)
-      z <- eta + vbacksub(U, tvfor, M = M, n = n) - offset
+      U <- vchol(wz, M, n = n, silent = !trace)
+      tvfor <- vforsub(U, as.matrix(deriv.mu),M,n)
+      z <- eta + vbacksub(U, tvfor, M, n) - offset
 
     }  # if (one.more)
 
@@ -370,7 +377,8 @@ vglm.fit <-
 
 
   if (maxit > 1 && iter >= maxit && !control$noWarning)
-    warning("convergence not obtained in ", maxit, " IRLS iterations")
+    warning("convergence not obtained in ",
+            maxit, " IRLS iterations")
 
 
 
@@ -399,10 +407,13 @@ vglm.fit <-
     stop("vglm() only handles full-rank models (currently)")
 
 
-  R <- tfit$qr$qr[1:ncol.X.vlm, 1:ncol.X.vlm, drop = FALSE]
+  R <- tfit$qr$qr[1:ncol.X.vlm,
+                  1:ncol.X.vlm, drop = FALSE]
   R[lower.tri(R)] <- 0
-  attributes(R) <- list(dim = c(ncol.X.vlm, ncol.X.vlm),
-                        dimnames = list(cnames, cnames), rank = rank)
+  attributes(R) <-
+    list(dim = c(ncol.X.vlm, ncol.X.vlm),
+         dimnames = list(cnames, cnames),
+         rank = rank)
 
   effects <- tfit$effects
   neff <- rep_len("", nrow.X.vlm)
@@ -422,7 +433,7 @@ vglm.fit <-
     names(wresiduals) <- names(fv) <- yn
   } else {
     dimnames(wresiduals) <-
-    dimnames(fv)         <- list(yn, predictors.names)
+    dimnames(fv) <- list(yn, predictors.names)
   }
 
   if (is.matrix(mu)) {
@@ -457,7 +468,7 @@ vglm.fit <-
   }
 
   if (M == 1) {
-    wz <- as.vector(wz)  # Convert wz into a vector
+    wz <- as.vector(wz)  # Make wz a vector
   } # else
   fit$weights <- if (save.weights) wz else NULL
 

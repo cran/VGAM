@@ -1,23 +1,23 @@
-\name{flourbeetle}
-\alias{flourbeetle}
+\name{fbeetle}
+\alias{fbeetle}
 \docType{data}
 \title{Mortality of Flour Beetles from Carbon Disulphide}
 \description{
-The \code{flourbeetle} data frame has 8 rows and 4 columns.
+The \code{fbeetle} data frame has 8 rows and 4 columns.
 Two columns are explanatory, the other two are responses.
 
 
 }
-\usage{data(flourbeetle)}
+\usage{data(fbeetle)}
 \format{
   This data frame contains the following columns:
   \describe{
-    \item{logdose}{\code{\link[base]{log10}} applied to \code{CS2mgL}. }
-    \item{CS2mgL}{a numeric vector, the concentration of gaseous
+  \item{logdose}{\code{\link[base]{log10}} applied to \code{CS2mgL}.}
+  \item{CS2mgL}{a numeric vector, the concentration of gaseous
                   carbon disulphide in mg per litre. }
-    \item{exposed}{a numeric vector, counts; the number of
-                   beetles exposed to the poison. }
-    \item{killed}{a numeric vector, counts; the numbers killed. }
+  \item{n}{a numeric vector, counts; the number of
+             beetles exposed to the poison. }
+  \item{dead}{a numeric vector, counts; the numbers killed. }
   }
 }
 \details{
@@ -28,6 +28,15 @@ two series of toxicological experiments involving
 Groups of such adult beetles were exposed for 5 hours of
 gaseous carbon disulphide at different concentrations,
 and their mortality measured.
+
+
+%20251128:
+
+
+This data frame used to be called \code{flourbeetle}
+with different variable names.
+
+
 
 
 
@@ -49,15 +58,11 @@ and their mortality measured.
 
 %\references{
 %
-%
-%
-%
-%
 %}
 
 \examples{
-fit1 <- vglm(cbind(killed, exposed - killed) ~ logdose,
-             binomialff(link = probitlink), flourbeetle, trace = TRUE)
+fit1 <- vglm(cbind(dead, n - dead) ~ logdose, trace = TRUE,
+             binomialff("probitlink"), fbeetle)
 summary(fit1)
 }
 \keyword{datasets}

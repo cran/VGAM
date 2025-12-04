@@ -21,12 +21,13 @@
 
 }
 \usage{
-CM.equid(M, Trev = FALSE, Tref = 1)
- CM.free(M, Trev = FALSE, Tref = 1)
- CM.ones(M, Trev = FALSE, Tref = 1)
-CM.symm0(M, Trev = FALSE, Tref = 1)
-CM.symm1(M, Trev = FALSE, Tref = 1)
-CM.qnorm(M, Trev = FALSE, Tref = 1)
+ CM.equid(M, Trev = FALSE, Tref = 1, Intercept = TRUE)
+  CM.free(M, Trev = FALSE, Tref = 1, Intercept = FALSE)
+  CM.ones(M, Trev = FALSE, Tref = 1, Intercept = TRUE)
+ CM.symm0(M, Trev = FALSE, Tref = 1, Intercept = FALSE)
+ CM.symm1(M, Trev = FALSE, Tref = 1, Intercept = TRUE)
+ CM.qnorm(M, Trev = FALSE, Tref = 1, Intercept = FALSE)
+CM.qlogis(M, Trev = FALSE, Tref = 1, Intercept = FALSE)
 }
 %- maybe also 'usage' 4 other objs docted here.
 \arguments{
@@ -46,6 +47,14 @@ CM.qnorm(M, Trev = FALSE, Tref = 1)
   for the thresholds direction?
   This argument is ignored by some of the above
   functions.
+
+}
+\item{Intercept}{ Logical.
+  Include an intercept? If so, the first
+  column is a vector of ones.
+  For some of these functions, the default value
+  of this argument must be used, hence can be
+  considered fixed and cannot be changed.
 
 }
 
@@ -150,9 +159,23 @@ CM.qnorm(M, Trev = FALSE, Tref = 1)
 %\author{
 %%  ~~who you are~~
 %}
-%\note{
-%%  ~~further notes~~
-%}
+
+
+
+% 20251117; yettodo:
+\note{
+  The categorical family functions do not yet have
+  an \code{Intercept} argument to feed into
+  these functions.
+  When done, it will allow a more flexibility
+  for interpretation because each term has its
+  own constraint matrix.
+
+
+
+}
+
+
 
 %% \section{Warning }{....}
 

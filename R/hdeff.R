@@ -295,18 +295,18 @@ if (FALSE) {  ###################################################
 
   kvec.use <- 1:p.VLM
   if (length(subset))
-    kvec.use <- kvec.use[subset]  # & !is.na(subset)
+    kvec.use <- kvec.use[subset]  #&!is.na(subset)
 
 
 
 
-  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,,
   dwz.dbetas   <-
-  d2wz.dbetas2 <- 0  # Good for the first instance of use.
+  d2wz.dbetas2 <- 0  # Good 4the 1st instance of use.
 
 
   wetas.kay <- which.etas(object, kay = kay)
-  for (jay in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  for (jay in wetas.kay) {  # ,,,,,,,,,,,,,,,,,,,
     vecTF.jay <- as.logical(eijfun(jay, M))
     bix.jk <- X.vlm[vecTF.jay, kay]  # An n-vector for xij.
 
@@ -1028,7 +1028,8 @@ seglines <-
 
     if (add.legend) {
       if (TRUE &&
-          !any(is.element(severity,  severity.table[Six]))) {
+          !any(is.element(severity,
+                          severity.table[Six]))) {
         use.pch.table <- use.pch.table[-Six]
         col.table <- col.table[-Six]
         severity.table <- severity.table[-Six]
@@ -1056,129 +1057,234 @@ seglines <-
 
 
 
-
-
-
-
-
-
 copsvglm <-
   function(object,
-           beta.range = c(-5, 6),  # Unsymmetric is better?
-           tol = .Machine$double.eps^0.25,  # == optimize()
-           dointercepts = TRUE,  # FALSE for propodds()
-           trace. = FALSE,  # TRUE,
-           slowtrain = FALSE,  # FALSE,  # TRUE,
+           level = 0.999,   #1 - 1e-6,
+           beta.range = confint(object, level = level),
+           muxrange = 4,  # 2, or 4, or 7, or...
+           iter.max = 8,  # Gridsearch  # Not 20,
+           tol = 1e-5,  # 4 optim()
+           subset = NULL,  # 20250219
+           do1 = TRUE,  # F 4 propodds()
+           slowtrain = FALSE,  # TRUE,
            ...) {
+  T <- TRUE; F <- FALSE
+  if (is.null(subset)) {
+    subset <- TRUE
+  }
+
+  if (length(muxrange) != 1 || muxrange < 1.1)
+    stop("'muxrange' must be > 1.1")
+  if (!is.Numeric(iter.max, positive = TRUE,
+       length.arg = 1, integer.valued = TRUE) ||
+      iter.max <= 2)
+    stop("'iter.max' must be an integer > 2")
+  if (!isFALSE(do1) && !isTRUE(do1))
+    stop("'do1' must be TRUE or FALSE")
+
+
   M <- npred(object)
   cobj <- coef(object)  # Original coeffs
-  objC <- coef(object, matrix = TRUE) 
+  pwts <- c(weights(object, type = "prior"))
+  nmcobj <- names(cobj)
+  p.VLM <- length(cobj)
+  ind.ok <- if (is.character(subset))
+    match(subset, nmcobj) else  # Unsorted
+    (1:p.VLM)[subset]  # Sorted
   Hlist <- constraints(object)
-  Mvec <- sapply(Hlist, ncol)  # rep(M, ppp) if trivial
-  Hobj <- constraints(object, matrix = TRUE)
-  copsvec <- cobj  # Overwrite for the answer
+  has.intercept <- names(Hlist[1]) == "(Intercept)"
+  if (has.intercept) {
+    if (do1) {
+      ind.ok <- unique(c(1:ncol(Hlist[[1]]), ind.ok))
+    } else {
+      ind.ok <- setdiff(ind.ok, 1:ncol(Hlist[[1]]))
+      if (!length(ind.ok))
+        stop("No coefficients! Change 'subset' or set ",
+             "'do1 = TRUE'")
+    }
+  }  # has.intercept
+
+
+
+  if (!is(object, "vglm")) stop("not a 'vglm' object")
   nn <- nobs(object)
   Xvlm  <- model.matrix(object, type = "vlm")
-  offset <- if (length(object@offset))
-              object@offset else matrix(0, 1, 1)
-  etamat <- matrix(Xvlm %*% cobj, nn, M, byrow = TRUE)
-  if (any(offset != 0))
-    etamat <- etamat + offset
-  ppp <- nrow(objC)    # ncol(Xvlm)  # length(copsvec)
-  startp <- ifelse(dointercepts, 1, 2)
-  if (startp > ppp)
-    stop("no coefficients to find the COPS for!")
-  has.intercept <- names(Hlist[1]) == "(Intercept)"
-  if (!has.intercept)
-    stop("the models has no intercept term")
+  etamat <- predict(object)  # Contains offsets
 
-  whichjay <- function(vec)
-      as.vector(which(vec != 0))
-  if (trace.) {
-    copsenv <- new.env()
-    cops.trace <- NULL  # Growing!
-    cops.iter <- 1  # For plotting
-    assign("cops.trace", cops.trace, envir = copsenv)
-    assign("cops.iter",  cops.iter,  envir = copsenv)
-  }
-  
+
   newinfo <-  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-    function(beta.try1, jkay)  {   #, jay = 1, M = 1
+    function(beta.try1, jkay)  {
     copy.object <- object 
+    copy.object@coefficients <- cobj
     copy.object@coefficients[jkay] <- beta.try1
     newetamat <- matrix(Xvlm %*%
                         copy.object@coefficients,
                         nn, M, byrow = TRUE)
+    copy.object@predictors <- newetamat
     newmu <- object@family@linkinv(newetamat,
                              extra = object@extra)
     copy.object@fitted.values <- newmu
     newwz <- weights(copy.object, type = "working")
-    UU <- vchol(newwz, M = M, n = nn)  # Updated.  silent = T
+    UU <- vchol(newwz, M = M, n = nn)  # silent = T
     UtXvlm <- mux111(cc = UU, xmat = Xvlm, M = M,
                      slowtrain = slowtrain,
                      whichj = jkay)
     total.info <- sum((UtXvlm[, jkay])^2)
-
-    if (M ==  1 && FALSE)
-      Total.info <- sum(
-      rowSums(newwz *
-      matrix((Xvlm[, jkay])^2, nn, M, byrow = TRUE)))
-    if (trace.) {
- print("c(beta.try1, format(total.info))")
- print( c(beta.try1, format(total.info)) )
-    }  # trace.
-    if (trace.) {
-      cops.trace <- get("cops.trace", envir = copsenv)
-      cops.iter  <- get("cops.iter",  envir = copsenv)
-      cops.trace <- rbind(cops.trace, matrix(0, 1, 3))
-      colnames(cops.trace)  <- c('betatry', 'totinfo', 'jk')
-      cops.trace[cops.iter, 1] <- beta.try1
-      cops.trace[cops.iter, 2] <- total.info
-      cops.trace[cops.iter, 3] <- jkay
-      cops.iter <- cops.iter + 1
-      assign("cops.trace", cops.trace, envir = copsenv)
-      assign("cops.iter",  cops.iter,  envir = copsenv)
-    }  # trace.
     total.info
   }  # newinfo
 
 
-  iptr <- 1 +  # Initial value
-    ifelse(dointercepts, 0,
-           ncol(constraints(object)[["(Intercept)"]]))
-  for (kay in startp:ppp) {
-    if (trace.) {
- print(paste0("Solving for covariate ", kay, " ,,,,,,"))
-    }
-    for (jay in 1:Mvec[kay]) {
-      try.interval <- sort((1 + abs(cobj[iptr])) *
-                           beta.range)
-      ofit <- optimize(newinfo,
-                       interval = try.interval,
-                       maximum = TRUE,
-                       tol = tol,  # jay = jay,
-                       jkay = iptr)  # M = M
-      if (trace.) {
- print("ofit")
- print( ofit )
-      }
-      copsvec[iptr] <- ofit$maximum
-      iptr <- iptr + 1  # Point to next coefficient
-    }  # jay
-  }  # kay
+  gridpts <- 1 + 2 * iter.max
+  gmat <- matrix(NA_real_, p.VLM, gridpts)
+  tmp <- 1:iter.max
+  nmgmat <- as.character(sort(c(-tmp, 0, tmp)))
+  dimnames(gmat) <- list(nmcobj, nmgmat)
+  jmat <- gmat  # To store total info
+  midpts <- gmat[, '0'] <- rowMeans(beta.range)
+  gmat[,  '1'] <- beta.range[, 2]
+  gmat[, '-1'] <- beta.range[, 1]
+  if (iter.max > 1)  # Redundant
+    for (iter in 2:iter.max) {
+      muxr <- muxrange * iter  # Linear spread
+      acit <- as.character( iter)
+      Acit <- as.character(-iter)
+      gmat[, acit] <- midpts + muxr *
+                     (beta.range[, 2] - midpts)
+      gmat[, Acit] <- midpts - muxr *
+                     (midpts - beta.range[, 1])
+    }  # for iter
+    for (rr in ind.ok)   #1:nrow(gmat)
+      for (cc in 1:ncol(gmat))
+        jmat[rr, cc] <- newinfo(gmat[rr, cc], rr)
 
-  if (trace.)
-    list(cops = copsvec,
-         trace = get("cops.trace", envir = copsenv)) else
-    copsvec
-}  # copsvglm 
+  initLHS <- initRHS <- numeric(p.VLM)
+  for (rr in ind.ok) {  # 1:p.VLM
+    wmax <- which.max(jmat[rr, ])
+    if (wmax %in% c(1, ncol(jmat)))
+      stop("try increasing 'iter.max' and/or 'muxrange'")
+    initLHS[rr] <- gmat[rr, wmax - 1]  # Bracket the
+    initRHS[rr] <- gmat[rr, wmax + 1]  # maximum
+  }  # rr
+
+  copsvec <- cobj  # Named storage
+  for (rr in ind.ok) {  # 1:p.VLM
+    ofit <- optimize(newinfo, maximum = TRUE,
+                     lower = initLHS[rr],
+                     upper = initRHS[rr],
+                     tol = tol, jkay = rr)
+    copsvec[rr] <- ofit$maximum
+  }  # rr
+
+  copsvec[ind.ok]
+}  # copsvglm
+
+
+
+
+
+
+
+
+copsvglmb <-
+  function(object,
+           level = 0.999,   #1 - 1e-6,
+           beta.range = confint(object, level = level),
+           muxrange = 4,  # 2, or 4, or 7, or...
+           iter.max = 20,
+           tol = 1e-5,  # 4 bisection.basic()
+           nmax = NULL,  # 4 bisection.basic()
+           subset = NULL,  # 20250219
+           ...) {
+  T <- TRUE; F <- FALSE
+  if (is.null(subset)) subset <- TRUE
+
+  M <- npred(object)
+  cobj <- coef(object)  # Original coeffs
+  pwts <- c(weights(object, type = "prior"))
+
+  vfamily <- object@family@vfamily
+  Fam <- if (inherits(object, "vlm")) object@family else
+    stop("cannot get at the 'family' slot")
+  Fam.infos <- Fam@infos()
+  if (!is(object, "vglm")) stop("not a 'vglm' object")
+  if (!any(vfamily == "binomialff") || M > 1 ||
+      !any(linkfun(object) == "logitlink"))
+    stop("not a (single) logistic regression")
+
+  nn <- nobs(object)
+  Xvlm  <- model.matrix(object, type = "vlm")
+  etamat <- predict(object)  # Contains offsets
+  if (F) {
+  Etamat <- matrix(Xvlm %*% cobj, nn, M, byrow = T)
+  offset <- if (length(object@offset))
+              object@offset else matrix(0, 1, 1)
+  if (any(offset != 0))
+    Etamat <- Etamat + offset
+ }
+
+
+
+  dinfo.dbetak <-  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    function(beta2)  {  #, jkay, jay=1, M=1
+    jay2 <- numeric(length(beta2))
+    for (uu in 1:length(beta2)) {
+      eta <- etamat - cobj[uu] * Xvlm[, uu]
+      eta <- eta + beta2[uu] * Xvlm[, uu]
+      prob <- logitlink(eta, inverse = TRUE)
+      wz <- pwts * prob * (1 - prob) * (1 - 2 * prob)
+      jay2[uu] <- sum((Xvlm[, uu])^3 * wz)
+    }
+    jay2
+  }  # dinfo.dbetak 
+
+
+
+
+
+
+
+    try.int <- beta.range  # Fixed seems bad 
+    iter <- 0; muxr <- muxrange
+    midpts <- rowMeans(beta.range)
+    Ping <- bisection.basic(dinfo.dbetak, Ping = T,
+                            a = try.int[, 1],
+                            b = try.int[, 2])
+    while(any(!Ping)) {  # Need to bracket the root
+      iter <- iter + 1
+      if (iter > iter.max + 1)
+        stop("could not bracket the root within ",
+             iter,  " iterations")
+      muxr <- muxrange * iter  # Linear spread
+      try.int[!Ping, 1] <- midpts[!Ping] -
+        (midpts[!Ping] - beta.range[!Ping, 1]) * muxr
+      try.int[!Ping, 2] <- midpts[!Ping] +
+        (beta.range[!Ping, 2] - midpts[!Ping]) * muxr
+      Ping <- bisection.basic(dinfo.dbetak, Ping = T,
+                              a = try.int[, 1],
+                              b = try.int[, 2])
+    }  # while
+
+
+        ofit <- bisection.basic(dinfo.dbetak,
+                         a = try.int[, 1],
+                         b = try.int[, 2],
+                         tol = tol,  # jay = jay,
+                         nmax = nmax)  # M = M
+        copsvec <- ofit
+
+    copsvec[subset]
+}  # copsvglmb
+
+
+
 
 
 
 
 if (!isGeneric("cops"))
   setGeneric("cops",
-             function(object, ...) standardGeneric("cops"),
+             function(object, ...)
+                 standardGeneric("cops"),
              package = "VGAM")
 
 setMethod("cops", "vglm",
@@ -1252,6 +1358,204 @@ hdeffsev <-
 
   ans1
 }  # hdeffsev
+
+
+
+
+
+
+
+cops3 <- function(object, ...) UseMethod("cops3")
+
+
+cops3.default <-
+  function(object, ...)
+    stop("there is no default method!!")
+
+
+cops3.glm <-
+  function(object,
+           level = 0.999,   #1 - 1e-6,
+           beta.range = confint.default(object,
+                                        level = level),
+           muxrange = 4,  # 2, or 4, or 7, or...
+           iter.max = 8,  # Gridsearch  # Not 20,
+           tol = 1e-5,  # 4 optim()
+           subset = NULL,  # 20250219
+           do1 = TRUE,  # F 4 propodds()
+           ...) {
+  T <- TRUE; F <- FALSE
+  if (is.null(subset)) {
+    subset <- TRUE
+  }
+
+  if (length(muxrange) != 1 || muxrange < 1.1)
+    stop("'muxrange' must be > 1.1")
+  if (!is.Numeric(iter.max, positive = TRUE,
+       length.arg = 1, integer.valued = TRUE) ||
+      iter.max <= 2)
+    stop("'iter.max' must be an integer > 2")
+  if (!isFALSE(do1) && !isTRUE(do1))
+    stop("'do1' must be TRUE or FALSE")
+
+
+  M <- 1   #npred(object)
+  cobj <- coef(object)  # Original coeffs
+  nmcobj <- names(cobj)
+  p.VLM <- length(cobj)
+  ind.ok <- if (is.character(subset))
+    match(subset, nmcobj) else  # Unsorted
+    (1:p.VLM)[subset]  # Sorted
+  if (!inherits(object, "glm")) stop("not a 'glm' object")
+  nn <- nobs(object)
+  Xvlm  <- model.matrix(object)   #, type = "vlm"
+  etamat <- predict(object)  # Contains offsets
+
+
+
+  has.intercept <- all(Xvlm[, 1] == 1)
+  tltmp <- attr(terms(object), "term.labels")
+  Hlist <- vector("list", has.intercept + length(tltmp))
+  for (i in 1:length(Hlist))
+    Hlist[[i]] <- diag(1)
+  names(Hlist) <-
+    c(if (has.intercept) "(Intercept)" else NULL, tltmp)
+  if (has.intercept) {
+    if (do1) {
+      ind.ok <- unique(c(1:ncol(Hlist[[1]]), ind.ok))
+    } else {
+      ind.ok <- setdiff(ind.ok, 1:ncol(Hlist[[1]]))
+      if (!length(ind.ok))
+        stop("No coefficients! Change 'subset' or set ",
+             "'do1 = TRUE'")
+    }
+  }  # has.intercept
+
+
+
+  newinfo <-  # ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    function(beta.try1, jkay)  {
+    copy.object <- object 
+    copy.object$qr <- NULL
+    copy.object$coefficients <- cobj
+    copy.object$coefficients[jkay] <- beta.try1
+    neweta <- c(Xvlm %*% copy.object$coefficients)
+    copy.object$linear.predictors <- neweta
+    newmu <- object$family$linkinv(neweta)
+    copy.object$fitted.values <- newmu
+
+    variance <- object$family$variance
+    mu.eta <- object$family$mu.eta
+    pwt <- weights(object, type = "prior")
+    newwz <- pwt * (mu.eta(neweta)^2) / variance(newmu)
+    UU <- vchol(newwz, M = M, n = nn)  # silent = T
+    UtXvlm <- mux111(cc = UU, xmat = Xvlm, M = M,
+                     whichj = jkay)
+    total.info <- sum((UtXvlm[, jkay])^2)
+    total.info
+  }  # newinfo
+
+
+  gridpts <- 1 + 2 * iter.max
+  gmat <- matrix(NA_real_, p.VLM, gridpts)
+  tmp <- 1:iter.max
+  nmgmat <- as.character(sort(c(-tmp, 0, tmp)))
+  dimnames(gmat) <- list(nmcobj, nmgmat)
+  jmat <- gmat  # To store total info
+  beta.range <- cbind(beta.range)  # Wald, silent, 2-cols
+  midpts <- gmat[, '0'] <- rowMeans(beta.range)
+  gmat[,  '1'] <- beta.range[, 2]
+  gmat[, '-1'] <- beta.range[, 1]
+  if (iter.max > 1)  # Redundant
+    for (iter in 2:iter.max) {
+      muxr <- muxrange * iter  # Linear spread
+      acit <- as.character( iter)
+      Acit <- as.character(-iter)
+      gmat[, acit] <- midpts + muxr *
+                     (beta.range[, 2] - midpts)
+      gmat[, Acit] <- midpts - muxr *
+                     (midpts - beta.range[, 1])
+    }  # for iter
+    for (rr in ind.ok)   #1:nrow(gmat)
+      for (cc in 1:ncol(gmat))
+        jmat[rr, cc] <- newinfo(gmat[rr, cc], rr)
+
+  initLHS <- initRHS <- numeric(p.VLM)
+  for (rr in ind.ok) {  # 1:p.VLM
+    wmax <- which.max(jmat[rr, ])
+    if (wmax %in% c(1, ncol(jmat)))
+      stop("try increasing 'iter.max' and/or 'muxrange'")
+    initLHS[rr] <- gmat[rr, wmax - 1]  # Bracket the
+    initRHS[rr] <- gmat[rr, wmax + 1]  # maximum
+  }  # rr
+
+  copsvec <- cobj  # Named storage
+  for (rr in ind.ok) {  # 1:p.VLM
+    ofit <- optimize(newinfo, maximum = TRUE,
+                     lower = initLHS[rr],
+                     upper = initRHS[rr],
+                     tol = tol, jkay = rr)
+    copsvec[rr] <- ofit$maximum
+  }  # rr
+
+  copsvec[ind.ok]
+}  # cops3.glm
+
+
+
+
+
+copsdvglm <-
+    function(object, doffset = 0.1,
+             ...) {
+  if (!is.Numeric(doffset, 1L, positive = TRUE))
+    stop("bad input for 'doffset'")
+  cc.tmp <- abs(cops(object, ...))
+  cf.tmp <- abs(coef(object))
+    cc.tmp / (doffset + cf.tmp)
+}
+
+
+if (!isGeneric("copsd"))
+  setGeneric("copsd",
+             function(object, ...)
+                 standardGeneric("copsd"),
+             package = "VGAM")
+
+
+setMethod("copsd", "vglm",
+          function(object, ...) {
+  copsdvglm(object, ...)
+})
+
+
+
+
+copsd3 <- function(object, ...) UseMethod("copsd3")
+copsd3.default <-
+  function(object, ...)
+    stop("there is no default method!!")
+copsd3.glm <-
+    function(object, doffset = 0.1,
+             ...) {
+  cc.tmp <- abs(cops3(object, ...))
+  cf.tmp <- abs(coef(object))
+    cc.tmp / (doffset + cf.tmp)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

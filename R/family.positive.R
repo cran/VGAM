@@ -468,8 +468,80 @@ dposbern <- function(x, prob, prob0 = prob, log = FALSE) {
 
 
 
-posNBD.Loglikfun2 <- function(munbval, sizeval,
-                              y, x, w, extraargs) {
+dposnegbin2 <-
+    function(x, size, prob = NULL, munb = NULL,
+             log = FALSE) {
+  if (length(munb)) {
+    if (length(prob))
+      stop("args 'prob' & 'munb' both specified")
+  } else {
+    if (!length(prob))
+      stop("Only one of 'prob' or 'munb' must be specified")
+  }
+
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
+    stop("bad input for argument 'log'")
+  rm(log)
+
+
+  LLL <- max(length(x), length(prob), length(munb), length(size))
+  if (length(x)    < LLL) x    <- rep_len(x,    LLL)
+  if (length(size) < LLL) size <- rep_len(size, LLL)
+  ans <- if (length(munb)) {
+    if (length(munb) != LLL) munb <- rep_len(munb, LLL)
+    dnbinom(x, size = size, mu   = munb, log = TRUE)
+  } else {
+    if (length(prob) != LLL) prob <- rep_len(prob, LLL)
+    dnbinom(x, size = size, prob = prob, log = TRUE)
+  }
+
+  index0 <- (x == 0) & !is.na(size)  # & (!is.na(prob) |  !is.na(munb))
+  ans[ index0] <- log(0.0)
+  ans[!index0] <- ans[!index0] - (
+    if (length(prob))
+      pnbinom(0, size = size[!index0], prob = prob[!index0],
+              lower.tail = FALSE, log.p = TRUE) else
+      pnbinom(0, size = size[!index0], mu   = munb[!index0],
+              lower.tail = FALSE, log.p = TRUE))
+
+
+  if (!log.arg)
+    ans <- exp(ans)
+
+  if (!length(prob))
+    prob <- prob.munb.size.VGAM2(munb, size)
+  ans[prob == 0 | prob == 1] <- NaN
+
+  ans
+}  # dposnegbin2
+
+
+
+
+
+
+
+prob.munb.size.VGAM2 <-
+    function(munb, size) {
+  prob <- size / (size + munb)
+  inf.munb <- is.infinite(munb)
+  inf.size <- is.infinite(size)
+  prob[inf.munb] <- 0
+  prob[inf.size] <- 1
+  prob[inf.munb & inf.size] <- NaN
+  prob[size < 0 | munb < 0] <- NaN
+  prob
+}  # prob.munb.size.VGAM2
+
+
+
+
+
+
+
+posNBD.Loglikfun2 <-
+    function(munbval, sizeval,
+             y, x, w, extraargs) {
   sum(c(w) * dgaitdnbinom(y, sizeval, munb.p = munbval,
                           truncate = 0, log = TRUE))
 }

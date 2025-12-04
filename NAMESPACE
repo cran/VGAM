@@ -14,6 +14,30 @@ useDynLib(VGAM, .registration = TRUE)
 
 
 
+
+export(copsd, copsdvglm)
+S3method("copsd3", "default")
+S3method("copsd3", "glm")
+export(copsd3)
+export(copsd3.default)
+export(copsd3.glm)
+S3method("wsdm3", "default")
+S3method("wsdm3", "glm")
+export(wsdm3)
+export(wsdm3.default)
+export(wsdm3.glm)
+export(dcard2, pcard2, qcard2, rcard2, cardioid2)
+export(loglinb4)
+export(dposnegbin2, prob.munb.size.VGAM2)
+export(b3hfun)
+export(acat.deriv)
+S3method(model.frame, vlm, model.frame.vlm)
+export(model.frame.vlm)
+S3method(summary, vglm, summary.vglm)
+export(summary.vglm)
+
+
+
 exportMethods(niters)
 export(niters.vlm)
 export(hdeffsev)
@@ -53,7 +77,13 @@ export(CM.qlogis)
 exportClasses(drrvglm)
 export(lcalogitlink, lcsloglink, Coef.drrvglm)
 export(asinlink, alogitlink, sqrtlink, sloglink)
-export(cops, copsvglm)
+importFrom("stats", "confint.default")
+S3method("cops3", "default")
+S3method("cops3", "glm")
+export(cops3)
+export(cops3.default)
+export(cops3.glm)
+export(cops, copsvglm, copsvglmb)
 importFrom("stats", "optimize")
 export(hurea, dhurea)
 export(CM.symm1, CM.symm0)
@@ -426,7 +456,6 @@ export(arwz2wz)
 
 
 export(link2list)
-export(multilogit)
 
 
 export(perks, dperks, pperks, qperks, rperks)
@@ -681,12 +710,12 @@ S3method(terms, vlm)
 
 
 
-export(cloglog,cauchit,extlogit,explink,fisherz,logc,loge,logneg,logit,
-       logoff,negreciprocal,
-       probit,reciprocal,rhobit,
-       golf,polf,nbolf,nbolf2,Cut)
+export(explink)
 export(ordpoisson)
 export(poisson.points, dpois.points)
+
+
+
 
 
 
@@ -694,7 +723,7 @@ export(poisson.points, dpois.points)
 export(
 erlang,
 dfelix, felix,
-fittedvlm, fittedvsmooth.spline, foldsqrt,
+fittedvlm, fittedvsmooth.spline, 
 formulavlm, formulaNA.VGAM,
 garma,
 gaussianff,
@@ -722,7 +751,7 @@ model.matrixvlm,
 model.framevlm,
 nakagami, dnaka, pnaka, qnaka, rnaka,
 namesof,
-nlminbcontrol, negloge,
+nlminbcontrol, 
 Opt.Coef.qrrvglm, Opt.qrrvglm, persp.rrvgam)
 
 
@@ -922,7 +951,7 @@ geometric, truncgeometric,
 dlino, plino, qlino, rlino, lino,
 grc,
 dhzeta, phzeta, qhzeta, rhzeta, hzeta,
-negidentity, identitylink,
+identitylink,
 dprentice74, prentice74,
 amlnormal, amlbinomial, amlexponential, amlpoisson, Wr1, Wr2,
 dkumar, pkumar, qkumar, rkumar, kumar,
@@ -930,7 +959,6 @@ dyules, pyules, qyules, ryules, yulesimon,
 logff, dlog, plog, qlog, rlog,
 logF, dlogF,
 loglinb2, loglinb3,
-loglog,
 lvplot.qrrvglm, lvplot.rrvglm,
 Max, MNSs,
 dmultinomial, multinomial,

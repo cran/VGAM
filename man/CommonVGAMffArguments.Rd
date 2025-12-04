@@ -22,6 +22,7 @@ TypicalVGAMfamilyFunction(lsigma = "loglink",
                           eq.mean = FALSE,
                           parallel = TRUE,
                           imethod = 1,
+                          bhhh = FALSE, oim.bhhh = NULL,
                           vfl = FALSE, Form2 = NULL, 
                           type.fitted = c("mean", "quantiles", "Qlink",
                                           "pobs0", "pstr0", "onempstr0"),
@@ -356,8 +357,9 @@ what was expected, type
 
   \item{nsimEIM}{
   Some \pkg{VGAM} family functions use
-  simulation to obtain an approximate expected
-  information matrix (EIM).  For those that
+  simulation to obtain an approximate
+  \emph{expected information matrix} (EIM).
+  For those that
   do, the \code{nsimEIM} argument specifies
   the number of random variates used per
   observation; the mean of \code{nsimEIM} random
@@ -415,6 +417,46 @@ what was expected, type
 
 
   }
+  \item{bhhh}{
+    The BHHH method has now been implemented
+    in \code{\link{vglm.control}} so it works
+    at a much wider level rather than being
+    family function specific.
+    What is below are remnants of some
+    dated information that may be deleted
+    in the future.
+
+    
+    Logical. Use the BHHH method?
+    Although \pkg{VGAM} is primarily
+    based on Fisher scoring,
+    the EIM for some models cannot be
+    derived or be computed. For those,
+    the Berndt-Hall-Hall-Hausman algorithm 
+    might be implemented or be an alternative.
+    Being an approximation,
+    The results should not differ much if
+    \eqn{n} is very large, however for small
+    \eqn{n} the difference can be substantial,
+    e.g., Greene (2012).
+
+
+  }
+  \item{oim.bhhh}{
+    Numeric. Shrinkage factor between the BHHH
+    working weights and the OIM.
+    Is used only if \code{bhhh = TRUE} and
+    valid values are in \eqn{[0, 1]}.
+    So \code{oim.bhhh = 0.9} should be very
+    similar to Newton--Raphson.
+    Individual negative Hessian matrices may be
+    negative-definite depending on the response,
+    hence it is necessary for the IRLS algorithm
+    to shrink them towards a positive-definite
+    matrix, such as that provided by the BHHH method.
+
+
+  }
   \item{Form2}{
     Formula.
     Using applied to models with \eqn{M=2}.
@@ -445,8 +487,7 @@ what was expected, type
   \item{vfl}{
     A single logical.
     This stands for
-    \emph{variance--variance factored loglinear}
-    (VFL)
+    \emph{variance factorized loglinear} (VFL)
     model.
     If \code{TRUE} then usually
     some other argument such
@@ -606,6 +647,12 @@ what was expected, type
   \code{\link{sratio}},
   \code{\link{cumulative}},
   \code{\link{acat}}.
+  The associated arguments are
+  \code{Trev},
+  \code{Tref} and
+  \code{Intercept}.
+  Since \code{Intercept = NULL} always, this
+  signifies using the \code{"CM."} function default.
 
 
 
@@ -628,7 +675,8 @@ what was expected, type
   In general, setting \code{oim = TRUE} means
   the Newton-Raphson algorithm,
   and \code{oim = FALSE} means Fisher-scoring.
-  The latter uses the EIM, and is usually recommended.
+  The latter uses the EIM, and is usually
+  recommended.
   If \code{oim = TRUE} then \code{nsimEIM}
   is ignored.
 
@@ -755,8 +803,8 @@ what was expected, type
   (such as \code{\link{normal.vcm}})
   implement models with
   potentially lots of parameter link functions.
-  These two arguments allow many such links and extra arguments
-  to be inputted more easily.
+  These two arguments allow many such links
+  and extra arguments to be inputted more easily.
   One has something like
   \code{link.list = list}
 \code{("(Default)" = "identitylink", x2 = "loglink", x3 = "logofflink")}
@@ -805,7 +853,7 @@ what was expected, type
 
   Be careful about the use of other
   potentially contradictory constraints, e.g.,
-  \code{multinomial(zero = 2, parallel = TRUE ~ x3)}.
+\code{multinomial(zero = 2, parallel = TRUE ~ x3)}.
   If in doubt, apply \code{constraints()}
   to the fitted object to check.
 
@@ -854,7 +902,8 @@ New York, USA: \emph{Springer}.
 
 
 Kosmidis, I. and Firth, D. (2009).
-Bias reduction in exponential family nonlinear models.
+Bias reduction in exponential family
+nonlinear models.
 \emph{Biometrika},
 \bold{96}, 793--804.
 
@@ -868,11 +917,27 @@ Bias reduction in exponential family nonlinear models.
 %\bold{4}, 1097--1112.
 
 
+Berndt, E. K., Hall, B. H.,
+Hall, R. E. and Hausman, J. A. (1974).
+Estimation and inference in nonlinear
+structural models,
+\emph{Annals of Economic and Social Measurement},
+\bold{3--4}, 653--665.
+
+
+Greene, W. H. (2012).
+\emph{Econometric Analysis},
+7th Edition.
+Prentice Hall:
+Harlow, Essex, UK.
+
+% Pearson Education, Harlow, Essex.
+
 
 Miranda-Soberanis, V. F. and Yee, T. W. (2019).
 New link functions for distribution--specific
-quantile regression based on vector generalized linear and
-additive models.
+quantile regression based on vector
+generalized linear and additive models.
 \emph{Journal of Probability and Statistics},
 \bold{5}, 1--11.
 

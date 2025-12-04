@@ -7,11 +7,17 @@
 \name{summaryvglm}
 \alias{summaryvglm}
 \alias{show.summary.vglm}
+
+
+% 20250311; Tingting Zhan says add:
+\alias{summary.vglm}
+
+
 \title{Summarizing Vector Generalized Linear Model Fits}
 \usage{
 summaryvglm(object, correlation = FALSE, dispersion = NULL,
      digits = NULL, presid = FALSE,
-     HDEtest = TRUE, hde.NA = TRUE, threshold.hde = 0.001,
+     HDEtest = FALSE, hde.NA = TRUE, threshold.hde = 0.001,
      signif.stars = getOption("show.signif.stars"),
      nopredictors = FALSE,
      lrt0.arg = FALSE, score0.arg = FALSE, wald0.arg = FALSE,
@@ -53,8 +59,13 @@ summaryvglm(object, correlation = FALSE, dispersion = NULL,
 
   }
   \item{HDEtest}{logical;
-    if \code{TRUE} (the default) then a test for the HDE is performed,
+    if \code{TRUE}
+    then a test for the HDE is performed,
     else all arguments related to the HDE are ignored.
+
+
+%   if \code{TRUE} (the default) 20251118 changed to F
+
 
 
   }
@@ -350,7 +361,7 @@ coef(afit, matrix = TRUE)
 summary(afit)  # Might suffer from the HDE?
 coef(summary(afit))
 summary(afit, lrt0 = TRUE, score0 = TRUE, wald0 = TRUE)
-summary(afit, wsdm = TRUE, hdiff = 0.1)
+summary(afit, HDEtest = TRUE)
 }
 \keyword{models}
 \keyword{regression}

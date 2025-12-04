@@ -135,7 +135,7 @@ Hoboken, NJ, USA: John Wiley and Sons, Fourth edition.
 
 \seealso{
   \code{\link[base]{Bessel}},
-  \code{\link{cardioid}}.
+  \code{\link{cardioid2}}.
 
 
   \pkg{CircStats} and \pkg{circular} currently have a lot more

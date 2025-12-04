@@ -15,7 +15,7 @@ genpoisson1(lmeanpar = "loglink", ldispind = "logloglink",
      parallel = FALSE, zero = "dispind",
      vfl = FALSE, Form2 = NULL,
      imeanpar = NULL, idispind = NULL, imethod = c(1, 1),
-     ishrinkage = 0.95, gdispind = exp(1:5))
+     ishrinkage = 0.95, gdispind = exp(1:4 / 2))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

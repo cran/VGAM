@@ -3,10 +3,13 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Multinomial Logit Model }
 \description{
-  Fits a multinomial logit model (MLM) to a (preferably unordered)
+  Fits a multinomial logit model (MLM) to a
+  (preferably unordered)
   factor response.
-% The deflated--altered MLM (DAML model, or DAMLM) may also be
-% fitted.
+
+
+% The deflated--altered MLM (DAML model, or DAMLM)
+% may also be fitted.
 
   
 }
@@ -14,20 +17,23 @@
 multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
      refLevel = "(Last)", ynames = FALSE,
      imethod = 1, imu = NULL, byrow.arg = FALSE,
-     Thresh = NULL, Trev = FALSE,
-     Tref = if (Trev) "M" else 1, whitespace = FALSE)
+     sumcon = FALSE, Thresh = NULL, Trev = FALSE,
+     Tref = if (Trev) "M" else 1, Intercept = NULL,
+     whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
-%           refLevel = "(Last)", d.mlm = NULL, imethod = 1,
+%   refLevel = "(Last)", d.mlm = NULL, imethod = 1,
 \arguments{
 
   \item{zero}{
   Can be an integer-valued vector specifying which
-  linear/additive predictors are modelled as intercepts only.
+  linear/additive predictors are modelled as
+  intercepts only.
   Any values must be from the set \{1,2,\ldots,\eqn{M}\}.
   The default value means none are modelled as
   intercept-only terms.
-  See \code{\link{CommonVGAMffArguments}} for more information.
+  See \code{\link{CommonVGAMffArguments}} for
+  more information.
 
 
 
@@ -66,12 +72,41 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   See \code{\link{CommonVGAMffArguments}} for details.
 
 
+}
+  \item{sumcon}{
+  Logical.
+  Use \emph{sum}mation \emph{con}straints?
+  If \code{TRUE} then the baseline linear
+  predictor is negative the sum of the other
+  linear predictors.
+  That is, instead of the baseline eta being 0,
+  it is minus the sum of the others.
+  This parameterization is symmetric and is
+  more suitable for techniques such as the LASSO
+  where regression coefficients are shrunk
+  towards zero.
+  If \code{TRUE} then the fitted values and
+  log-likelihood should be unchanged,
+  however \code{\link[VGAM:coefvlm]{coef}} and
+  \code{\link[VGAM:predictvglm]{predict}}, etc.
+  will return different answers, of course.
+  Link \code{\link{multilogitlink}} has been
+  modified to allow for \code{sumcon}.
+
+
+% 20250321
+
   }
+
+
+
+
   \item{refLevel}{
-    Either a (1) single positive integer or (2) a value of
-    the factor or (3) a character string.
+  Either a (1) single positive integer or (2) a value of
+  the factor or (3) a character string.
   If inputted as an integer then it specifies which
-  column of the response matrix is the reference or baseline level.
+  column of the response matrix is the
+  \emph{reference} or \emph{baseline} level.
   The default is the \emph{last} one (the \eqn{(M+1)}th one).
   If used, this argument will be usually assigned
   the value \code{1}.
@@ -93,22 +128,24 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
   Another example is
   \code{vglm(ethnicity ~ age,}
   \code{multinomial(refLevel = "European"), data = xs.nz)}
-  if it was applied to the \code{\link[VGAMdata]{xs.nz}} data set.
+  if it was applied to \code{\link[VGAMdata]{xs.nz}}.
 
 
 
   }
   \item{imethod}{
-    Choosing 2 will use the mean sample proportions of each
+    Choosing 2 will use the mean sample proportions
+    of each
     column of the response matrix, which corresponds to
     the MLEs for intercept-only models.
-    See \code{\link{CommonVGAMffArguments}} for more details.
+    See \code{\link{CommonVGAMffArguments}} for
+    more details.
 
 
 
-%    Initial values for the DAMLM often need to be better than
-%    the ordinary MLM, hence choosing various values of
-%    this argument is encouraged.
+%   Initial values for the DAMLM often need to be better than
+%   the ordinary MLM, hence choosing various values of
+%   this argument is encouraged.
 
 
 
@@ -136,7 +173,7 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 % }
 
 
-\item{Thresh, Trev, Tref}{
+\item{Thresh, Trev, Tref, Intercept}{
   Same as \code{\link{cumulative}}.
   Because these arguments concern the intercepts,
   they should not be confused with the
@@ -175,23 +212,29 @@ multinomial(zero = NULL, parallel = FALSE, nointercept = NULL,
 
 
   
-  In almost all the literature, the constraint matrices associated with
-  this family of models are known.  For example, setting \code{parallel
-  = TRUE} will make all constraint matrices (including the intercept)
-  equal to a vector of \eqn{M} 1's; to suppress the intercepts from
-  being parallel then set \code{parallel = FALSE ~ 1}.  If the
-  constraint matrices are unknown and to be estimated, then this can be
-  achieved by fitting the model as a reduced-rank vector generalized
-  linear model (RR-VGLM; see \code{\link{rrvglm}}).  In particular, a
-  multinomial logit model with unknown constraint matrices is known as a
-  \emph{stereotype} model (Anderson, 1984), and can be fitted with
-  \code{\link{rrvglm}}.
+  In almost all the literature, the
+  constraint matrices associated with this
+  family of models are known.  For example,
+  setting \code{parallel = TRUE} will make
+  all constraint matrices (including the
+  intercept) equal to a vector of \eqn{M}
+  1's; to suppress the intercepts from
+  being parallel then set \code{parallel =
+  FALSE ~ 1}.  If the constraint matrices
+  are unknown and to be estimated, then this
+  can be achieved by fitting the model as
+  a reduced-rank vector generalized linear
+  model (RR-VGLM; see \code{\link{rrvglm}}).
+  In particular, a multinomial logit model
+  with unknown constraint matrices is known as
+  a \emph{stereotype} model (Anderson, 1984),
+  and can be fitted with \code{\link{rrvglm}}.
 
 
 
 % Pre 20170816; Stuart Coles picked up an error:
-% For example, setting \code{parallel = TRUE} will make all
-% constraint matrices
+% For example, setting \code{parallel = TRUE} will
+% make all constraint matrices
 % (except for the intercept)
 % equal to a vector of \eqn{M} 1's.
 
@@ -203,21 +246,26 @@ MLM where all the levels are \emph{altered}
 
 
 
-%The \eqn{j}th linear/additive predictor is different from above if
-%level \eqn{j} is deflated: it is negated so that increasing the
-%linear/additive predictor results in a decreasing probability.  Thus
-%the DAMLM simply has a sign change for those levels that are deflated.
+%The \eqn{j}th linear/additive predictor is
+%different from above if level \eqn{j} is
+%deflated: it is negated so that increasing
+%the linear/additive predictor results in a
+%decreasing probability.  Thus the DAMLM simply
+%has a sign change for those levels that are
+%deflated.
 
 
 
 
 
-%DAMLMs require skill to fit because handling data that is extreme (high
-%or low fitted values) means that \code{eta.d.max} may need to be
-%increased.  It pays to fit an intercept-only model first and to monitor
-%convergence carefully.  One disadvantage of DAMLMs is that the
-%regression coefficients depend on \code{eta.d.max} so there is no
-%unique solution.
+%DAMLMs require skill to fit because handling
+%data that is extreme (high or low fitted values)
+%means that \code{eta.d.max} may need to be
+%increased.  It pays to fit an intercept-only
+%model first and to monitor convergence
+%carefully.  One disadvantage of DAMLMs is
+%that the regression coefficients depend on
+%\code{eta.d.max} so there is no unique solution.
 
 
 
@@ -249,7 +297,8 @@ Regression and ordered categorical variables.
 
 
 
-Hastie, T. J., Tibshirani, R. J. and Friedman, J. H. (2009).
+Hastie, T. J., Tibshirani, R. J. and Friedman, J. H.
+(2009).
 \emph{The Elements of Statistical Learning: Data Mining,
       Inference and Prediction},
 2nd ed.
@@ -260,6 +309,7 @@ New York, USA: Springer-Verlag.
 McCullagh, P. and Nelder, J. A. (1989).
 \emph{Generalized Linear Models}, 2nd ed.
 London: Chapman & Hall.
+
 
 
 
@@ -374,38 +424,45 @@ Generally altered, inflated, truncated and deflated regression.
 % e.g., the Hauck-Donner effect detection using derivatives.
 
 
+  Argument \code{sumcon} is a recent addition
+  and may have limited functionality in other
+  parts of \pkg{VGAM}.
+  It has not been tested extensively.
+
+
   See \code{\link{CommonVGAMffArguments}} for more warnings.
 
 
 }
 \seealso{
-    \code{\link{multilogitlink}},
-    \code{\link{margeff}},
-    \code{\link{cumulative}},
-    \code{\link{acat}},
-    \code{\link{cratio}},
-    \code{\link{sratio}},
+  \code{\link{multilogitlink}},
+  \code{\link{margeff}},
+  \code{\link{cumulative}},
+  \code{\link{acat}},
+  \code{\link{cratio}},
+  \code{\link{sratio}},
   \code{\link{CM.equid}},
   \code{\link{CommonVGAMffArguments}},
-    \code{\link{dirichlet}},
-    \code{\link{dirmultinomial}},
-    \code{\link{rrvglm}},
-    \code{\link{fill1}},
-    \code{\link[stats:Multinom]{Multinomial}},
-    \code{\link{gaitdpoisson}},
-    \code{\link{Gaitdpois}},
-    \code{\link[datasets]{iris}}.
+  \code{\link{dirichlet}},
+  \code{\link{dirmultinomial}},
+  \code{\link{copsd}},
+  \code{\link{rrvglm}},
+  \code{\link{fill1}},
+  \code{\link[stats:Multinom]{Multinomial}},
+  \code{\link{gaitdpoisson}},
+  \code{\link{Gaitdpois}},
+  \code{\link[datasets]{iris}}.
 
 
 
-%   \code{\link{gatnbinomial.mlm}},
+% \code{\link{gatnbinomial.mlm}},
 % The author's homepage has further documentation about
 % categorical data analysis using \pkg{VGAM}.
 
 
 }
-%   \code{\link[base:Multinom]{rmultinom}}
-%   \code{\link{pneumo}},
+% \code{\link[base:Multinom]{rmultinom}}
+% \code{\link{pneumo}},
 
 
 \examples{
@@ -421,18 +478,19 @@ legend("topright", leg = colnames(fitted(fit1)),
        lty = 1:4, col = 1:4, lwd = 2) }
 
 # Example 2a: a simple example
+set.seed(123)
 ycounts <- t(rmultinom(10, size = 20, prob = c(0.1, 0.2, 0.8)))
-fit <- vglm(ycounts ~ 1, multinomial)
-head(fitted(fit))   # Proportions
-fit@prior.weights   # NOT recommended for the prior weights
-weights(fit, type = "prior", matrix = FALSE)  # The better method
-depvar(fit)         # Sample proportions; same as fit@y
-constraints(fit)    # Constraint matrices
+fit2 <- fit <- vglm(ycounts ~ 1, multinomial)
+head(fitted(fit2))   # Proportions
+fit2@prior.weights   # NOT recommended for the prior weights
+weights(fit2, type = "prior", matrix = FALSE)  # Better
+depvar(fit2)         # Sample proportions; same as fit2@y
+constraints(fit2)    # Constraint matrices
 
 # Example 2b: Different reference level used as the baseline
-fit2 <- vglm(ycounts ~ 1, multinomial(refLevel = 2))
-coef(fit2, matrix = TRUE)
-coef(fit , matrix = TRUE)  # Easy to reconcile this output with fit2
+Fit2 <- vglm(ycounts ~ 1, multinomial(refLevel = 2))
+coef(Fit2, matrix = TRUE)
+coef(fit2, matrix = TRUE)  # Easy to reconcile this output with fit2
 
 # Example 3: The response is a factor.
 nn <- 10
@@ -462,7 +520,6 @@ colnames(fitted(fit4))[apply(fitted(fit4), 1, which.max)]
 apply(predict(fit4, car.all, type = "response"),
       1, which.max)  # Ditto
 
-
 # Example 5: Using the xij argument (aka conditional logit model)
 \dontrun{ set.seed(111)
 nn <- 100  # Number of people who travel to work
@@ -484,20 +541,20 @@ gotowork <- transform(gotowork,
               Time.car   = time.car   - time.walk,
               Time.train = time.train - time.walk,
               Time       = time.train - time.walk)  # for labelling
-fit <- vglm(ycounts ~ Cost + Time,
+fit5 <- vglm(ycounts ~ Cost + Time,
             multinomial(parall = TRUE ~ Cost + Time - 1),
             xij = list(Cost ~ Cost.bus + Cost.train + Cost.car,
                        Time ~ Time.bus + Time.train + Time.car),
             form2 =  ~ Cost + Cost.bus + Cost.train + Cost.car +
                        Time + Time.bus + Time.train + Time.car,
             data = gotowork, trace = TRUE)
-head(model.matrix(fit, type = "lm"))   # LM model matrix
-head(model.matrix(fit, type = "vlm"))  # Big VLM model matrix
-coef(fit)
-coef(fit, matrix = TRUE)
-constraints(fit)
-summary(fit)
-max(abs(predict(fit) - predict(fit, new = gotowork)))  # Should be 0
+head(model.matrix(fit5, type = "lm"))   # LM model matrix
+head(model.matrix(fit5, type = "vlm"))  # Big VLM model matrix
+coef(fit5)
+coef(fit5, matrix = TRUE)
+constraints(fit5)
+summary(fit5)
+max(abs(predict(fit5) - predict(fit5, new = gotowork)))  # 0?
 }
 }
 \keyword{models}

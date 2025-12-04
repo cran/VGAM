@@ -15,9 +15,9 @@
 }
 \usage{
 poissonff(link = "loglink", imu = NULL, imethod = 1,
-          parallel = FALSE, zero = NULL, bred = FALSE,
-          earg.link = FALSE, type.fitted = c("mean", "quantiles"),
-          percentiles = c(25, 50, 75))
+  parallel = FALSE, zero = NULL, bred = FALSE,
+  earg.link = FALSE, type.fitted = c("mean", "quantiles"),
+  percentiles = c(25, 50, 75), bhhh = FALSE, oim.bhhh = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -54,6 +54,9 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
 
   }
   \item{imu, imethod}{
+  Currently, if \code{weights} are specified then
+  \code{imethod = 2} is effectively called, which
+  invokes \code{\link[stats]{weighted.mean}}.
   See \code{\link{CommonVGAMffArguments}} for more information.
 
 
@@ -79,6 +82,10 @@ poissonff(link = "loglink", imu = NULL, imethod = 1,
 
   }
   \item{type.fitted, percentiles}{
+  Details at \code{\link{CommonVGAMffArguments}}.
+
+  }
+  \item{bhhh, oim.bhhh}{
   Details at \code{\link{CommonVGAMffArguments}}.
 
   }
@@ -218,8 +225,8 @@ set.seed(123)
 pdata <- data.frame(x2 = rnorm(nn <- 100))
 pdata <- transform(pdata, y1 = rpois(nn, exp(1 + x2)),
                           y2 = rpois(nn, exp(1 + x2)))
-(fit1 <- vglm(cbind(y1, y2) ~ x2, poissonff, data = pdata))
-(fit2 <- vglm(y1 ~ x2, poissonff(bred = TRUE), data = pdata))
+(fit1 <- vglm(cbind(y1, y2) ~ x2, poissonff, pdata))
+(fit2 <- vglm(y1 ~ x2, poissonff(bred = TRUE), pdata))
 coef(fit1, matrix = TRUE)
 coef(fit2, matrix = TRUE)
 

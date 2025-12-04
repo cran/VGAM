@@ -180,6 +180,13 @@ capture--recapture experiments.
   \bold{62}, 3--135.
 
 
+Seber, G. A. F. and Schofield, M. R. (2023).
+  Estimating Presence and Abundance of
+  Closed Populations.
+  Cham, Switzerland: Springer.
+
+
+
 Yee, T. W. and Stoklosa, J. and Huggins, R. M. (2015).
 The \pkg{VGAM} package for capture--recapture data using the
 conditional likelihood.

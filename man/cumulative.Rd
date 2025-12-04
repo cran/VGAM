@@ -1,29 +1,32 @@
 \name{cumulative}
 \alias{cumulative}
 %\alias{scumulative}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ Ordinal Regression with Cumulative Probabilities }
+%- Also NEED an '\alias' for EACH other topic doced here.
+\title{Ordinal Regression with Cumulative Probabilities}
 \description{
   Fits a cumulative link
-  regression model to a (preferably ordered) factor response.
+  regression model to a (preferably ordered) factor
+  response.
 
 }
 \usage{
 cumulative(link = "logitlink", parallel = FALSE,
     reverse = FALSE, multiple.responses = FALSE,
     ynames = FALSE, Thresh = NULL, Trev = reverse,
-    Tref = if (Trev) "M" else 1, whitespace = FALSE)
+    Tref = if (Trev) "M" else 1, Intercept = NULL,
+    whitespace = FALSE)
 }
 %apply.parint = FALSE,
 %scumulative(link = "logitlink",
-%            lscale = "loglink", escale = list(),
-%            parallel = FALSE, sparallel = TRUE, reverse = FALSE,
-%            iscale = 1)
+%  lscale = "loglink", escale = list(),
+%  parallel = FALSE, sparallel = TRUE, reverse = FALSE,
+%  iscale = 1)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
   \item{link}{
-  Link function applied to the \eqn{J} cumulative probabilities.
+    Link function applied to the \eqn{J} cumulative
+    probabilities.
   See \code{\link{Links}} for more choices,
   e.g., for the cumulative
 \code{\link{probitlink}}/\code{\link{clogloglink}}/\ldots
@@ -32,7 +35,7 @@ cumulative(link = "logitlink", parallel = FALSE,
 
   }
 % \item{lscale}{
-% Link function applied to the \eqn{J} scaling parameters.
+% Link function applied to the eqn{J} scaling parameters.
 % See \code{\link{Links}} for more choices.
 %
 % }
@@ -45,8 +48,8 @@ cumulative(link = "logitlink", parallel = FALSE,
   assumption.
   The default results in what some people call the
   \emph{generalized ordered logit model} to be fitted.
-  If \code{parallel = TRUE} then it does not apply to the
-  intercept.
+  If \code{parallel = TRUE} then it does not apply
+  to the intercept.
 
 
   
@@ -72,7 +75,8 @@ cumulative(link = "logitlink", parallel = FALSE,
 % A logical, or formula specifying which terms have
 % equal/unequal coefficients.
 % This argument is not applied to the intercept.
-% The \code{scumulative()} function requires covariates; for
+% The \code{scumulative()} function requires
+% covariates; for
 % intercept models use \code{cumulative()}.
 
 % }
@@ -82,7 +86,8 @@ cumulative(link = "logitlink", parallel = FALSE,
   \eqn{P(Y\leq 1)}{P(Y<=1)}, \eqn{P(Y\leq 2)}{P(Y<=2)},
   \dots, \eqn{P(Y\leq J)}{P(Y<=J)}.
   If \code{reverse} is \code{TRUE} then
-  \eqn{P(Y\geq 2)}{P(Y>=2)}, \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
+  \eqn{P(Y\geq 2)}{P(Y>=2)},
+  \eqn{P(Y\geq 3)}{P(Y>=3)}, \dots,
   \eqn{P(Y\geq J+1)}{P(Y>=J+1)} are used.
 
   
@@ -91,9 +96,9 @@ cumulative(link = "logitlink", parallel = FALSE,
 % \code{\link{gordlink}},
 % \code{\link{pordlink}},
 % \code{\link{nbordlink}}.
-% For these links the cutpoints must be an increasing sequence;
-% if \code{reverse = FALSE} for then the cutpoints must be an
-% decreasing sequence.
+% For these links the cutpoints must be an incng
+% sequence; if \code{reverse = F} 4 then the cutpoints
+% must be an decreasing sequence.
 
 
   
@@ -224,6 +229,14 @@ of the standard normal.
 
 
   }
+  \item{Intercept}{
+  Another support argument for \code{Thresh}:
+  does the constraint matrix include an intercept?
+  The \code{NULL} default means to use the default
+  of the \code{"CM."} function.
+
+
+  }
 
   \item{whitespace}{
   See \code{\link{CommonVGAMffArguments}} for
@@ -246,14 +259,18 @@ of the standard normal.
   This \pkg{VGAM} family function fits the class of
   \emph{cumulative link models} to (hopefully)
   an ordinal response.
-  By default, the \emph{non-parallel} cumulative logit model
+  By default,
+  the \emph{non-parallel} cumulative logit model
   is fitted, i.e.,
   \deqn{\eta_j = logit(P[Y \leq j])}{%
          eta_j = logit(P[Y<=j])}
   where \eqn{j=1,2,\dots,M} and
-  the \eqn{\eta_j}{eta_j} are not constrained to be parallel.
-  This is also known as the \emph{non-proportional odds model}.
-  If the logit link is replaced by a complementary log-log link
+  the \eqn{\eta_j}{eta_j} are not constrained to
+  be parallel.
+  This is also known as the
+  \emph{non-proportional odds model}.
+  If the logit link is replaced by a
+  complementary log-log link
   (\code{\link{clogloglink}}) then
   this is known as the \emph{proportional-hazards model}.
 
@@ -262,14 +279,17 @@ of the standard normal.
   In almost all the literature, the constraint matrices
   associated with this family of models are known.
   For example, setting
-  \code{parallel = TRUE} will make all constraint matrices
-  (except for the intercept) equal to a vector of \eqn{M} 1's.
+  \code{parallel = TRUE} will make all constraint
+  matrices
+  (except for the intercept) equal to a vector
+  of \eqn{M} 1's.
   If the constraint matrices are equal, unknown and to
   be estimated,
   then this can be achieved by fitting the model as a
   reduced-rank vector generalized
   linear model (RR-VGLM; see \code{\link{rrvglm}}).
-  Currently, reduced-rank vector generalized additive models
+  Currently,
+  reduced-rank vector generalized additive models
   (RR-VGAMs) have not been implemented here.
 
 
@@ -329,6 +349,21 @@ McCullagh, P. and Nelder, J. A. (1989).
 London: Chapman & Hall.
 
 
+
+
+
+Pujol-Rigol, S., Fernandez, D. and Casals, M. (2025).
+A systematic review and comparative study of R packages
+for ordinal response regression models.
+\emph{WIREs Computational Statistics},
+\bold{17}, e70025.
+
+% volume2
+
+
+
+
+
 %Simonoff, J. S. (2003).
 %\emph{Analyzing Categorical Data},
 %New York: Springer-Verlag.
@@ -369,8 +404,8 @@ Vector generalized additive models.
 \bold{58}, 481--493.
 
 
-%Further information and examples on categorical data analysis
-%by the \pkg{VGAM} package can be found at
+%Further information and examples on categorical data analysis by the
+%\pkg{VGAM} package can be found at
 %\url{www.stat.auckland.ac.nz/~yee/VGAM/doc/categorical.pdf}.
 
 
@@ -386,13 +421,14 @@ Vector generalized additive models.
   is the matrix
   of counts.
   The formula must contain an intercept term.
-  Other \pkg{VGAM} family functions for an ordinal response
-  include
+  Other \pkg{VGAM} family functions for an ordinal
+  response include
   \code{\link{acat}},
   \code{\link{cratio}},
   \code{\link{sratio}}.
-  For a nominal (unordered) factor response, the multinomial
-  logit model (\code{\link{multinomial}}) is more appropriate.
+  For a nominal (unordered) factor response, the
+  multinomial logit model (\code{\link{multinomial}})
+  is more appropriate.
 
   
 
@@ -421,12 +457,14 @@ Vector generalized additive models.
   \code{parallel = FALSE ~ x4} are equivalent.
   This would constrain the regression coefficients
   for \code{x2} and \code{x3} to be equal;
-  those of the intercepts and \code{x4} would be different.
+  those of the intercepts and \code{x4} would be
+  different.
 
   
 
   If the data is inputted in \emph{long} format
-  (not \emph{wide} format, as in \code{\link{pneumo}} below)
+  (not \emph{wide} format, as in \code{\link{pneumo}}
+  below)
   and the self-starting initial values are not
   good enough then try using
   \code{mustart},
@@ -444,9 +482,9 @@ Vector generalized additive models.
   \code{cumulative(parallel =}
   \code{TRUE, reverse = reverse, link = "logitlink")}).
   It is for convenience only. A call to
-  \code{cumulative()} is preferred since it reminds the user
-  that a parallelism assumption is made, as well as
-  being a lot more flexible.
+  \code{cumulative()} is preferred since it reminds
+  the user that a parallelism assumption is made,
+  as well as being a lot more flexible.
 
 
   
@@ -550,14 +588,14 @@ fit2 <- vgam(cbind(normal, mild, severe) ~ s(let, df = 2),
 \dontrun{
  plot(fit2, se = TRUE, overlay = TRUE, lcol = 1:2, scol = 1:2) }
 
-# Check the proportional odds assumption with a LRT ----------
+# Check the proportional odds assumption with a LRT -----
 (fit3 <- vglm(cbind(normal, mild, severe) ~ let,
               cumulative(parallel = FALSE, reverse = TRUE), pneumo))
 pchisq(2 * (logLik(fit3) - logLik(fit)), df =
        length(coef(fit3)) - length(coef(fit)), lower.tail = FALSE)
 lrtest(fit3, fit)  # More elegant
 
-# A factor() version of fit ----------------------------------
+# A factor() version of fit ----------------------------
 # This is in long format (cf. wide format above)
 Nobs <- round(depvar(fit) * c(weights(fit, type = "prior")))
 sumNobs <- colSums(Nobs)  # apply(Nobs, 2, sum)

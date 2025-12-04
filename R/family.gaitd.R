@@ -6498,12 +6498,15 @@ plotdgaitd.vglm <-
 
 
   lall.len <- la.mix + li.mix + ld.mix + la.mlm + li.mlm + ld.mlm
-  if (lall.len + ltruncat == 0 && is.infinite(max.support))
+  if (lall.len + ltruncat == 0 && is.infinite(max.support)) {
     return(eval(substitute(
-           negbinomial(lmu = .lmunb.p.save , lsize = .lsize.p.save ,
-                       zero = NULL),
+           negbinomial(lmu = .lmunb.p.save ,
+                       lsize = .lsize.p.save ,
+                       zero = zero  # 20250717, 4 "size"
+                       ),
            list( .lmunb.p.save = lmunb.p.save,
                  .lsize.p.save = lsize.p.save))))
+  }
 
   if (!isFALSE(eq.ap) && !isTRUE(eq.ap))
     stop("argument 'eq.ap' must be a single logical")
@@ -6620,7 +6623,8 @@ plotdgaitd.vglm <-
 
 
 
-      
+
+
   new("vglmff",
   blurb = c(blurb1, "NB regression\n",
             "(GAITD-NB(munb.p, size.p)-",
@@ -6683,7 +6687,7 @@ plotdgaitd.vglm <-
     }
 
     if (la.mlm + li.mlm + ld.mlm == 0) {
-      warning("20211115; unsure; above vs. below line is right?")
+
       Use.mat <- use.mat.mlm <- diag(M)  # munb.p only  20211115
     }
     if (la.mlm + li.mlm + ld.mlm) {
@@ -6769,7 +6773,6 @@ plotdgaitd.vglm <-
 
 
 
-    if (la.mix + li.mix + ld.mix + la.mlm + li.mlm + ld.mlm)
       constraints <-
         cm.zero.VGAM(constraints, x = x, .zero , M = M, M1 = M1,
                      predictors.names = paste0(predictors.names,

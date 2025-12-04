@@ -394,6 +394,15 @@ with two linear predictors.
 \bold{71}, 889--902.
 
 
+Yee, T. W. and Frigau, L. and Ma, C. (2025).
+Heaping and seeping,
+GAITD regression and
+doubly constrained reduced-rank vector
+generalized linear models.
+\emph{Annals of Applied Statistics},
+in press.
+
+
 
 Yee, T. W. and Ma, C. (2024).
 Generally altered, inflated, truncated and

@@ -19,8 +19,8 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE,
                lty = rep_len(par()$lty, nos * (nos - 1)/2),
                lwd = rep_len(par()$lwd, nos * (nos - 1)/2),
                tcol = rep_len(par()$col, nos * (nos - 1)/2),
-               xlab = NULL, ylab = NULL,
-               main = "", type = "b", check.ok = TRUE, ...)
+               xlab = NULL, ylab = NULL, main = "",
+               type = "b", asp = NULL, check.ok = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -78,6 +78,11 @@ trplot.qrrvglm(object, which.species = NULL, add = FALSE,
   \item{tcol}{Color of the text for the site names.
   See the \code{col} argument in \code{\link[graphics]{par}}.
   Used only if \code{label.sites} is \code{TRUE}.
+
+
+  }
+  \item{asp}{Aspect ratio.
+  See the \code{asp} argument in \code{\link[graphics]{par}}.
 
 
   }

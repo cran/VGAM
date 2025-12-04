@@ -1319,9 +1319,10 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
 
 
 
- yulesimon <- function(lshape = "loglink",
-                       ishape = NULL, nsimEIM = 200,
-                       zero = NULL) {
+ yulesimon <-
+    function(lshape = "loglink",
+             ishape = NULL, nsimEIM = 200,
+             zero = NULL) {
 
   if (length(ishape) &&
       !is.Numeric(ishape, positive = TRUE))
@@ -1491,7 +1492,7 @@ yulesimon.control <- function(save.weights = TRUE, ...) {
     M1 <- 1
     shape <- eta2theta(eta, .lshape , earg = .eshape )
     dl.dshape <- 1/shape + digamma(1+shape) - digamma(1+shape+y)
-    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    dshape.deta <- dtheta.deta(shape, .lshape , .eshape )
     c(w) * dl.dshape * dshape.deta
   }), list( .lshape = lshape, .eshape = eshape ))),
   weight = eval(substitute(expression({

@@ -32,12 +32,15 @@ ToString <- function(x)
 
 
 
+
+
  multilogitlink <-
   function(theta,
            refLevel = "(Last)",
-           M = NULL,  # stop("argument 'M' not specified"),
+           M = NULL,  # stop("'M' unspecified"),
            whitespace = FALSE,
            bvalue = NULL,
+           sumcon = FALSE,  # 20250318
            inverse = FALSE, deriv = 0,
            all.derivs = FALSE,
            short = TRUE, tag = FALSE) {
@@ -47,8 +50,16 @@ ToString <- function(x)
 
   fillerChar <- ifelse(whitespace, " ", "")
 
+  if (!isFALSE(sumcon) && !isTRUE(sumcon))
+    stop("bad input for 'sumcon'")
+  if (sumcon && (deriv > 0 || all.derivs))
+    stop("'sumcon' unavailable for deriv > 0")
+  if (sumcon && is.character(theta) && short)
+    warning("blurb is incorrect")
+
+
   if (length(refLevel) != 1)
-    stop("the length of argument 'refLevel' must be one")
+    stop("the length of 'refLevel' must be one")
 
   if (is.character(refLevel)) {
     if (refLevel != "(Last)")
@@ -57,18 +68,17 @@ ToString <- function(x)
   } else
   if (is.factor(refLevel)) {
     if (is.ordered(refLevel))
-      warning("argument 'refLevel' is from an ordered factor")
+      warning("'refLevel' is from an ordered factor")
     refLevel <- as.character(refLevel) == levels(refLevel)
     refLevel <- (seq_along(refLevel))[refLevel]
     if (!is.Numeric(refLevel, length.arg = 1,
-                    integer.valued = TRUE, positive = TRUE))
-      stop("could not coerce 'refLevel' into a single ",
-           "positive integer")
+        integer.valued = TRUE, positive = TRUE))
+      stop("could not coerce 'refLevel' into a",
+           " single positive integer")
   } else
   if (!is.Numeric(refLevel, length.arg = 1,
-                  positive = TRUE, integer.valued = TRUE))
-    stop("'refLevel' must be a single positive integer")
-
+      positive = TRUE, integer.valued = TRUE))
+    stop("'refLevel' must be a single +ve integer")
 
 
 
@@ -120,10 +130,10 @@ ToString <- function(x)
   M <- NCOL(theta) - !(inverse && deriv == 0)
   if (M < 1)
     ifelse(inverse,
-       stop("argument 'eta' should have at least one column"),
-       stop("argument 'theta' should have at least two columns"))
+       stop("'eta' should have >= 1 column"),
+       stop("'theta' should have >= 2 columns"))
   if (is.numeric(M.orig) && M != M.orig) {
-    warning("argument 'M' does not seem right but using it")
+    warning("'M' does not seem right but using it")
     M <- M.orig
   }
   if (is.numeric(refLevel) && refLevel > M + 1)
@@ -137,25 +147,28 @@ ToString <- function(x)
     theta[theta >= 1.0] <- 1 - bvalue
 
 
-  foo <- function(eta, refLevel = -1, M) {
-    use.refLevel <- if ( refLevel < 0)
-                    M+1 else refLevel  # unneeded
-    phat <- if ((refLevel < 0) || (refLevel == M+1)) {
-      care.exp2(cbind(eta, 0.0))
+  foom <- function(eta, refLevel = -1, M,
+                   sumcon = FALSE) {
+
+    if (!is.matrix(eta)) eta <- cbind(eta)
+    zors <- if (sumcon) -rowSums(eta) else 0.0
+
+    phat <- if (refLevel < 0 || refLevel == M+1) {
+      care.exp2(cbind(eta, zors))
     } else if ( refLevel == 1) {
-      care.exp2(cbind(0.0, eta))
+      care.exp2(cbind(zors, eta))
     } else {
-      etamat <- cbind(eta[, 1:( refLevel - 1), drop = FALSE],
-                      0.0,
-                      eta[, ( refLevel ):M, drop = FALSE])
+      etamat <- cbind(
+        eta[, 1:(refLevel - 1), drop = FALSE],
+        zors,
+        eta[, (refLevel):M, drop = FALSE])
       care.exp2(etamat)
     }
 
-    rSp <- rowSums(phat)
-    ans <- phat / rSp
+    ans <- phat / rowSums(phat)
     colnames(ans) <- NULL  # Safest for now
     ans
-  }  # foo
+  }  # foom
 
 
 
@@ -165,57 +178,64 @@ ToString <- function(x)
     use.refLevel <- if (refLevel < 0) ncol(theta) else refLevel
     switch(as.character(deriv),
       "0" = {
-              foo(theta, refLevel,  # refLevel, not use.refLevel
-                  M = M)
-            },
+         foom(theta, refLevel,  # Not use.refLevel
+              M = M, sumcon = sumcon)
+      },
       "1" = if (all.derivs) {
-              index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
-              theta <- theta[, -use.refLevel, drop = FALSE]  # n x M
-              wz <- -theta[, index$row, drop = FALSE] *
-                     theta[, index$col, drop = FALSE]
-              wz[, 1:M] <- wz[, 1:M] + theta
-              wz
-            } else {
-              theta[, -use.refLevel,  drop = FALSE] *
-              theta[,  use.refLevel] / (
-              theta[, -use.refLevel,  drop = FALSE] +
-              theta[,  use.refLevel])
-            },
-      "2" = (theta*(1-theta)*(1-2*theta))[, -use.refLevel,
-                                          drop = FALSE],
+        index <- iam(NA, NA, M = M, both = TRUE, diag = TRUE)
+        theta <- theta[, -use.refLevel, drop = FALSE]  # n x M
+        wz <- -theta[, index$row, drop = FALSE] *
+               theta[, index$col, drop = FALSE]
+        wz[, 1:M] <- wz[, 1:M] + theta
+        wz
+      } else {
+          theta[, -use.refLevel,  drop = FALSE] *
+          theta[,  use.refLevel] / (
+          theta[, -use.refLevel,  drop = FALSE] +
+          theta[,  use.refLevel])
+      },
+      "2" = (theta*(1-theta)*(1-2*theta))[,
+               -use.refLevel,
+                drop = FALSE],
       "3" = {
-              temp1 <- theta * (1 - theta)
-             (temp1 * (1 - 6 * temp1))[, -use.refLevel,
-                                       drop = FALSE]
+         temp1 <- theta * (1 - theta)
+        (temp1 * (1 - 6 * temp1))[, -use.refLevel,
+                                  drop = FALSE]
             },
       stop("argument 'deriv' unmatched"))
-  } else {  # Not inverse below here ,,,,,,,,,,,,,,,,,,,
+  } else {  # Not inverse below here ============
 
     switch(as.character(deriv),
            "0" = {
       ans <- if (refLevel < 0) {
-        log(theta[, -ncol(theta), drop = FALSE] / (
-            theta[, ncol(theta)]))
+        log(theta[, -ncol(theta), drop = FALSE] /
+            theta[,  ncol(theta)])
       } else {
         use.refLevel <- if (refLevel < 0)
-                          ncol(theta) else refLevel
-        log(theta[, -( use.refLevel ), drop = FALSE] / (
-            theta[, use.refLevel ]))
+                        ncol(theta) else refLevel
+        log(theta[, -use.refLevel, drop = FALSE] /
+            theta[,  use.refLevel])
       }
 
       colnames(ans) <- NULL  # Safest for now
+      if (sumcon) {  # 0s colns arbitrary 1st:
+        ans <- ans - rowMeans(cbind(0, ans))
+      }
       ans
-      },
+      },  # 0
       "1" = care.exp(-log(theta) - log1p(-theta)),
-      "2" = (2 * theta - 1) / care.exp(2*log(theta) +
-                                       2*log1p(-theta)),
+      "2" = (2 * theta - 1) / care.exp(
+             2 * log(theta) + 2 * log1p(-theta)),
       "3" = {
-        temp1 <- care.exp(log(theta) + log1p(-theta))
-        2 * (1 - 3 * temp1) / temp1^3
+        tmp <- care.exp(log(theta) + log1p(-theta))
+        2 * (1 - 3 * tmp) / tmp^3
       },
       stop("argument 'deriv' unmatched"))
   }
-}  # multilogitlink
+}  # multilogitsumconlink
+
+
+
 
 
 
@@ -259,6 +279,7 @@ if (FALSE) {
            eq.mean = FALSE,
            parallel = TRUE,
            imethod = 1,
+           bhhh = FALSE, oim.bhhh = NULL,
            vfl = FALSE, Form2 = NULL,
            type.fitted = c("mean", "quantiles", "Qlink",
                            "pobs0", "pstr0", "onempstr0"),
@@ -689,11 +710,11 @@ care.exp2 <- function(x) {
   if (inverse) {
     switch(as.character(deriv),
            "0" = exp(exp(theta)),
-           "1" = (theta * log(theta)),
+           "1" = theta * log(theta),
            "2" = { junk <- log(theta)
                    theta  * junk * (1 + junk) },
            "3" = { Junk3 <- theta * log(theta)
-                   Junk3 * ((1 + log(theta))^2 + Junk3 / theta)
+                   Junk3 * ((1+log(theta))^2 + Junk3/theta)
       },
            stop("argument 'deriv' unmatched"))
   } else {
@@ -704,7 +725,7 @@ care.exp2 <- function(x) {
                    -(1 + junk) / (theta * junk)^2
            },
            "3" = { Junk3 <- theta * log(theta)
-           (2 * (1 + log(theta))^2 / Junk3 - 1 / theta) / Junk3^2
+           (2*(1+log(theta))^2 / Junk3 - 1/theta) / Junk3^2
                  },
            stop("argument 'deriv' unmatched"))
   }
@@ -1446,10 +1467,10 @@ if (!inverse && length(bmaxvalue)) theta[theta >= B] <- bmaxvalue
 
   if (is.character(theta)) {
     string <- if (short) {
-      if (A != 0 || B != 1)
+      if (any(A != 0) || any(B != 1))
         paste0("extlogitlink(", theta,
-               ", min = ", A,
-               ", max = ", B, ")") else
+               ", min = ", min(A),
+               ", max = ", max(B), ")") else
         paste0("extlogitlink(", theta, ")")
     } else {
       paste0("log((",

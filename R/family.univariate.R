@@ -1081,7 +1081,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
            imeanpar = NULL, idispind = NULL,
            imethod = c(1, 1),
            ishrinkage = 0.95,
-           gdispind = exp(1:5)) {
+           gdispind = exp(1:4 / 2)) {
   if (is.character(lmeanpar))
     lmeanpar <- substitute(y9, list(y9 = lmeanpar))
   lmeanpar <- as.list(substitute(lmeanpar))
@@ -1108,8 +1108,8 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
   imethod <- rep_len(imethod, 2)  # 4 the 2 params
   if (!is.Numeric(imethod, length.arg = 2,
       integer.valued = TRUE, positive = TRUE) ||
-     any(imethod > 3))
-    stop("arg 'imethod' must have values from 1:3")
+     any(imethod > 5))
+    stop("arg 'imethod' must have values from 1:5")
 
   if (isTRUE(parallel) && length(zero))
     stop("set 'zero = NULL' if 'parallel = TRUE'")
@@ -1128,7 +1128,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
               constraints = constraints,
               apply.int = FALSE )
 
-
+    H2CM <- rbind(0, 1)  # 20250919
 
     if ( .vfl && M != 2)
       stop("vfl = TRUE only allowed when M == 2")
@@ -1144,12 +1144,11 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     if ( .vfl && !isFALSE( .parallel ))
       stop("Need parallel = FALSE if vfl = TRUE")
     if ( .vfl ) {
-      constraints <- cm.VGAM(rbind(0, 1), x = x,
-                       bool = .Form2 ,
+      constraints <- cm.VGAM(H2CM, x, bool = .Form2 ,
                        constraints = constraints)
       mterms <- 0
       for (jay in 1:LC) {  # Include the intercept
-      if (!all(c(constraints[[jay]]) == 0:1)) {
+      if (!all(c(constraints[[jay]]) == c(H2CM))) {
           mterms <- mterms + 1
           constraints[[jay]] <- rbind(1, 0)
         }
@@ -1202,7 +1201,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     extra$ncoly <- ncoly <- NOS <- ncol(y)
     extra$M1 <- M1 <- 2
     M <- M1 * ncoly
-    mynames1 <- param.names("meanpar",  NOS, skip1 = TRUE)
+    mynames1 <- param.names("meanpar", NOS, skip1 = TRUE)
     mynames2 <- param.names("dispind", NOS, skip1 = TRUE)
 
     predictors.names <-
@@ -1213,46 +1212,62 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     imethod <- as.vector( .imethod )
     init.dispind <- init.meanpar <- matrix(0, n, NOS)
     for (spp. in 1: NOS) {
-      meay.w <- weighted.mean(y[, spp.], w[, spp.]) + 0.5
-      vary.w <- c(cov.wt(cbind(y[, spp.]), wt = w[, spp.])$cov) + 0.5
+      meay.w <- weighted.mean(y[, spp.], w[, spp.])  # + 0.5
+      vary.w <- c(cov.wt(cbind(y[, spp.]),
+                         wt  = w[, spp.])$cov)  # + 0.5
       if ((dispind.index <- vary.w / meay.w) < 0.5)
         warning("Response ", spp. , " is underdispersed. ",
                 "Numerical problems will probably arise.") else
       if (dispind.index < 0.875)
-        warning("Response ", spp. , " appears underdispersed. ",
-                "Numerical problems may arise.")
-      init.meanpar[, spp.]  <- if (imethod[1] == 2) {
-        meay.w
-      } else if (imethod[1] == 3) {
-        (y[, spp.] + median(y[, spp.]) + 0.125) / 2
-      } else {  # imethod[1] == 1
-        (1 - .ishrinkage ) * y[, spp.] + .ishrinkage * meay.w
-      }
+        warning("Response ", spp. , " looks underdispersed",
+                ". Numerical problems may arise.")
+      init.meanpar[, spp.] <-
+        switch(as.character(imethod[1]),
+               '1' = (1 - .ishrinkage ) * y[, spp.] +
+                     .ishrinkage * meay.w,
+               '2' = meay.w + 1/8,
+               '3' = median(y[, spp.]) + 1/8,
+               '4' = (1 - .ishrinkage ) * y[, spp.] +
+            1 / 8 + .ishrinkage * median(y[, spp.]),
+               '5' = (median(y[, spp.]) + meay.w +
+                      1/8) / 2,
+               stop("run out of options!"))
 
-      init.dispind[, spp.] <- if (imethod[2] == 1) {  # Weighted MOM
-        max(1.0625, (vary.w / meay.w))
-      } else if (imethod[2] == 2) {
-        genpois1.Loglikfun <- function(dispind1, y, x, w, extraargs)
-          sum(c(w) * dgenpois1(y, mean = extraargs$meanpar0,
-                               dispind = dispind1, log = TRUE))
+      init.dispind[, spp.] <-
+        switch(as.character(imethod[2]),
+               '1' = max(1.008, vary.w / meay.w),
+               '2' = ,  # Overwritten below
+               '3' = max(1.108, (1.25 * vary.w / meay.w)),
+               '4' = max(1.208, (2.50 * vary.w / meay.w)),
+               '5' = max(1.308, (5.00 * vary.w / meay.w)),
+               stop("run out of options!"))
+
+
+
+        if (imethod[2] == 2) {
+          genpois1.Loglikfun <-
+            function(dispind1, y, x, w, extraargs)
+          sum(c(w) * dgenpois1(y, extraargs$meanpar0,
+                               dispind1, log = TRUE))
         dispind1.grid <- as.vector( .gdispind )
-        dispind1.init <- 
-          grid.search(dispind1.grid, objfun = genpois1.Loglikfun,
+        init.dispind[, spp.] <-  #dispind1.init <- 
+          grid.search(dispind1.grid,
+                      objfun = genpois1.Loglikfun,
                       y = y,  x = x, w = w,
-              extraargs = list(meanpar0 = init.meanpar[, spp.]))
-        dispind1.init
-      } else {  # imethod[2] == 3
-        max(1.0625, (0.25 * vary.w / meay.w))
-      }
+          extraargs = list(meanpar0 = init.meanpar[, spp.]))
+      }  # imethod[2] == 2
     }  # for spp.
+
+
+
 
     if (!length(etastart)) {
       init.meanpar  <- if (length( .imeanpar ))
-             matrix( .imeanpar  , n, NOS, byrow = TRUE) else
-             init.meanpar
+         matrix( .imeanpar , n, NOS, byrow = TRUE) else
+         init.meanpar
       init.dispind <- if (length( .idispind ))
-             matrix( .idispind , n, NOS, byrow = TRUE) else
-             init.dispind
+         matrix( .idispind , n, NOS, byrow = TRUE) else
+         init.dispind
       etastart <-
         cbind(theta2eta(init.meanpar, .lmeanpar , .emeanpar ),
               theta2eta(init.dispind, .ldispind , .edispind ))
@@ -1266,9 +1281,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
         .imethod  = imethod,  .gdispind = gdispind,
         .ishrinkage = ishrinkage )) ),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
-                         earg = .emeanpar )
-    meanpar
+    eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar , .emeanpar )
   },
   list( .lmeanpar = lmeanpar, .ldispind = ldispind,
         .emeanpar = emeanpar, .edispind = edispind ))),
@@ -1301,8 +1314,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     if (residuals) {
       stop("loglikelihood residuals not implemented yet")
     } else {
-      ll.elts <- dgenpois1(y, mean = meanpar, dispind = dispind,
-                           log = TRUE)
+      ll.elts <- dgenpois1(y, meanpar, dispind, log = TRUE)
       if (summation) {
         sum(ll.elts)
       } else {
@@ -1311,55 +1323,51 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     }
   },
   list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-        .emeanpar = emeanpar, .edispind = edispind
-      ))),
+        .emeanpar = emeanpar, .edispind = edispind ))),
    vfamily = c("genpoisson1"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
                          earg = .emeanpar  )
     dispind <- eta2theta(eta[, c(FALSE, TRUE)], .ldispind ,
                          earg = .edispind )
-    Lbnd <- 1  # pmax(-1, -meanpar / mmm)
-    okay1 <- all(is.finite(dispind)) && all(Lbnd < dispind) &&
-             all(is.finite(meanpar)) && all(0 < meanpar)
-    okay1
+    Lbd <- 1  # pmax(-1, -meanpar / mmm)
+    ok1 <- all(is.finite(dispind)) && all(Lbd < dispind) &&
+           all(is.finite(meanpar)) && all(0 < meanpar)
+    ok1
   },
   list( .lmeanpar = lmeanpar, .ldispind = ldispind,
         .emeanpar = emeanpar, .edispind = edispind ))),
   deriv = eval(substitute(expression({
     M1  <- 2
+    T <- TRUE; F <- FALSE
     NOS <- ncol(eta) / M1
-    meanpar <- eta2theta(eta[, c(TRUE, FALSE)], .lmeanpar ,
+    meanpar <- eta2theta(eta[, c(T, F)], .lmeanpar ,
                          earg = .emeanpar  )
-    dispind <- eta2theta(eta[, c(FALSE, TRUE)], .ldispind ,
+    dispind <- eta2theta(eta[, c(F, T)], .ldispind ,
                          earg = .edispind )
     Tmp.y <- meanpar + y * (sqrt(dispind) - 1)
-    dl.dmeanpar <- 1 / meanpar - 1 / sqrt(dispind) + (y - 1) / Tmp.y
-    dl.ddispind <- 0.5 * y * (y - 1) / (sqrt(dispind) * Tmp.y) -
+    dl.dmeanpar <- 1 / meanpar - 1 / sqrt(dispind) +
+                   (y - 1) / Tmp.y
+    dl.ddispind <- 0.5 * y * (y - 1) / (sqrt(dispind) *
+                                        Tmp.y) -
                    0.5 * y / dispind -
                    0.5 * (y - meanpar) / dispind^1.5
-    dmeanpar.deta <- dtheta.deta(meanpar, .lmeanpar , earg = .emeanpar )
-    ddispind.deta <- dtheta.deta(dispind, .ldispind , earg = .edispind )
-    myderiv <- c(w) * cbind(dl.dmeanpar * dmeanpar.deta ,
-                            dl.ddispind * ddispind.deta)
+    dmeanpar.deta <- dtheta.deta(meanpar, .lmeanpar , .emeanpar )
+    ddispind.deta <- dtheta.deta(dispind, .ldispind , .edispind )
+    myderiv <- c(w) *
+        cbind(dl.dmeanpar * dmeanpar.deta ,
+              dl.ddispind * ddispind.deta)
     myderiv[, interleave.VGAM(M, M1 = M1)]
   }),
   list( .lmeanpar = lmeanpar, .ldispind = ldispind,
         .emeanpar = emeanpar, .edispind = edispind
        ))),
   weight = eval(substitute(expression({
-    wz <- matrix(0, n, M + M-1)  # Tridiagonal here but...
-
-    lambda <- 1 - 1 / sqrt(dispind)  # In the unit interval
-    theta <- meanpar / sqrt(dispind)
-    ned2l.dtheta2 <- 1 / theta - lambda / (theta + 2 * lambda)
-    ned2l.dthetalambda <- theta / (theta + 2 * lambda)
-    ned2l.dlambda2 <- theta / (1 - lambda) +
-                      2 * theta / (theta + 2 * lambda)
+    wz <- matrix(0, n, M + M-1)  # Tridiagonal here
 
 
     Manual <- FALSE  # okay 
-    Manual <- TRUE   # okay 
+    Manual <- TRUE   # okay; use this as default
     if (Manual) {
 
 
@@ -1367,8 +1375,8 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
 
       calA.tmp <- meanpar + 2 * (sqrt(dispind) - 1)
       ned2l.dmeanpar2 <- (meanpar + 2 * sqrt(dispind) *
-        (sqrt(dispind) - 1)) / (meanpar * dispind * calA.tmp)
-      ned2l.ddispind2 <- meanpar / (2 * calA.tmp * dispind^2)
+        (sqrt(dispind) - 1)) / (meanpar*dispind * calA.tmp)
+      ned2l.ddispind2 <- meanpar / (2*calA.tmp * dispind^2)
       ned2l.dmeanpardispind <-
         (1 - sqrt(dispind)) / (calA.tmp * dispind^1.5)
 
@@ -1389,7 +1397,15 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
       wz.ind <- arwz2wz(arwz1, M = M, M1 = M1)
       
 
-      Mie <- eiM <- matrix(0, n, M + (M - 1))  # Diagonal really
+    lambda <- 1 - 1 / sqrt(dispind)  # In the unit interval
+    theta <- meanpar / sqrt(dispind)
+    ned2l.dtheta2 <- 1/theta - lambda / (theta + 2 * lambda)
+    ned2l.dthetalambda <- theta / (theta + 2 * lambda)
+    ned2l.dlambda2 <- theta / (1 - lambda) +
+                      2 * theta / (theta + 2 * lambda)
+
+      Mie <-
+      eiM <- matrix(0, n, M + (M - 1))  # Diagonal really
       eiM[, M1*(1:NOS) - 1    ] <- ned2l.dtheta2
       eiM[, M1*(1:NOS)        ] <- ned2l.dlambda2
       eiM[, M1*(1:NOS) + M - 1] <- ned2l.dthetalambda
@@ -1415,20 +1431,22 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
 
       for (jay in 1:M1) {
         for (kay in (jay):M1) {
-          jk.indices <- which(wz.ind[1, ] == iam(jay, kay, M = M1))
+          jk.indices <- which(wz.ind[1, ] ==
+                             iam(jay, kay, M = M1))
           for (sss in 1:M1)
             Mie[, jk.indices] <- Mie[, jk.indices] +
-                                 J01[, , jay, sss] * Tmp[, , sss, kay]
+                J01[, , jay, sss] * Tmp[, , sss, kay]
         }  # kay
       }  # jay
 
-      wz <- matrix(0, n, M + M-1)  # Tridiagonal but diagonal okay
+      wz <- matrix(0, n, M + M-1)  # Trid but diagonal okay
        wz[, M1*(1:NOS) - 1    ] <-
       Mie[, M1*(1:NOS) - 1    ] * dmeanpar.deta^2
        wz[, M1*(1:NOS)        ] <-
       Mie[, M1*(1:NOS)        ] * ddispind.deta^2
        wz[, M1*(1:NOS) + M - 1] <-
-      Mie[, M1*(1:NOS) + M - 1] * dmeanpar.deta * ddispind.deta
+           Mie[, M1*(1:NOS) + M - 1] * dmeanpar.deta *
+                                       ddispind.deta
     }  # Manual TRUE/FALSE
 
     wz <- w.wz.merge(w = w, wz = wz, n = n, M = M + (M - 1),
@@ -1436,8 +1454,7 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     wz
   }),
   list( .lmeanpar = lmeanpar, .ldispind = ldispind,
-        .emeanpar = emeanpar, .edispind = edispind
-      ))))
+        .emeanpar = emeanpar, .edispind = edispind ))))
 }  # genpoisson1
 
 
@@ -1586,8 +1603,8 @@ rgenpois2 <- function(n, meanpar, disppar = 0) {
     Theta <- eta2theta(eta[, 1], .ltheta , earg = .etheta )
     nuvec <- eta2theta(eta[, 2], .lnuvec , earg = .enuvec )
 
-    dTheta.deta <- dtheta.deta(Theta, .ltheta , earg = .etheta )
-    dnuvec.deta <- dtheta.deta(nuvec, .lnuvec , earg = .enuvec )
+    dTheta.deta <- dtheta.deta(Theta, .ltheta , .etheta )
+    dnuvec.deta <- dtheta.deta(nuvec, .lnuvec , .enuvec )
 
     dl.dTheta <- 2 * nuvec * (y-Theta) / (1 -2*Theta*y + Theta^2)
     dl.dnuvec <- log1p(-y^2) - log1p(-2 * Theta * y + Theta^2) -
@@ -3555,53 +3572,57 @@ dfelix <- function(x, rate = 0.25, log = FALSE) {
 
 
 
+
+
 simple.exponential <- function() {
   new("vglmff",
   blurb = c("Simple exponential distribution\n",
             "Link:    log(rate)\n"),
+  infos = function(...)
+            list(M1 = 1, Q1 = 1, dpqrfun = "exp",
+            expected = TRUE, multipleResponses = FALSE,
+            parameters.names = "rate"),
   deviance = function(mu, y, w, residuals = FALSE, eta,
                       extra = NULL, summation = TRUE) {
-    devy <- -log(y) - 1
-    devmu <- -log(mu) - y / mu
+    devy <- -log(y) - 1; devmu <- -log(mu) - y / mu
     devi <- 2 * (devy - devmu)
-    if (residuals) {
-      sign(y - mu) * sqrt(abs(devi) * c(w))
-    } else {
+    if (residuals)
+      sign(y - mu) * sqrt(abs(devi) * c(w)) else {
       dev.elts <- c(w) * devi
-      if (summation) sum(dev.elts) else dev.elts
-    }
+      if (summation) sum(dev.elts) else dev.elts}
   },
-  rqresslot = function(mu, y, w, eta, extra = NULL) {
-    scrambleseed <- runif(1)  # To scramble the seed
-    qnorm(pexp(y, rate = 1 / mu))
-  },
-  loglikelihood = function(mu, y, w, residuals = FALSE, eta,
-                           extra = NULL,
-                           summation = TRUE) {
+  rqresslot = function(mu, y, w, eta, extra = NULL)
+    qnorm(pexp(y, rate = 1 / mu)),
+  loglikelihood = function(mu, y, w, residuals = FALSE,
+       eta, extra = NULL, summation = TRUE) {
     if (residuals) return(NULL)
     if (summation)
-      sum(c(w) * dexp(y, rate  = 1 / mu, log = TRUE)) else
-      c(w) * dexp(y, rate  = 1 / mu, log = TRUE)
+      sum(c(w) * dexp(y, 1 / mu, log = TRUE)) else
+          c(w) * dexp(y, 1 / mu, log = TRUE)
   },
   initialize = expression({
     predictors.names <- "loglink(rate)"
     mustart <- y + (y == 0) / 8
   }),
+  last = expression({
+    misc$link <- c(rate = "loglink")
+    misc$earg <- list()
+  }),
   linkinv = function(eta, extra = NULL) exp(-eta),
   linkfun = function(mu,  extra = NULL) -log(mu),
   vfamily = "simple.exponential",
   deriv = expression({
-    rate <- 1 / mu
-    dl.drate <- mu - y
+    rate <- 1 / mu; dl.drate <- mu - y
     drate.deta <- dtheta.deta(rate, "loglink")
     c(w) * dl.drate * drate.deta
   }),
   weight = expression({
     ned2l.drate2 <- 1 / rate^2  # EIM
-    wz <- c(w) * drate.deta^2 * ned2l.drate2
-    wz
+    c(w) * ned2l.drate2 * drate.deta^2
   }))
 }  # simple.exponential
+
+
 
 
 
@@ -3630,18 +3651,17 @@ simple.exponential <- function() {
             if (all(location == 0)) "1 / rate" else
             if (length(unique(location)) == 1)
               paste(location[1],
-                    "+ 1 / rate") else "location + 1 / rate"),
+              "+ 1 / rate") else "location + 1 / rate"),
   constraints = eval(substitute(expression({
     constraints <-
       cm.VGAM(matrix(1, M, 1), x = x, bool = .parallel ,
               constraints = constraints, apply.int = TRUE)
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+    constraints <- cm.zero.VGAM(constraints, x, .zero ,
                      M = M, M1 = 1,
                      predictors.names = predictors.names)
   }), list( .parallel = parallel, .zero = zero ))),
   infos = eval(substitute(function(...) {
-    list(M1 = 1,
-         Q1 = 1,
+    list(M1 = 1, Q1 = 1, expected = TRUE,
          dpqrfun = "exp",
          multipleResponses = TRUE,
          zero = .zero )
@@ -3652,7 +3672,7 @@ simple.exponential <- function() {
     devy <- -log(y - location) - 1
     devmu <- -log(mu - location) - (y - location ) / (mu - location)
     devi <- 2 * (devy - devmu)
-    if (residuals) sign(y - mu) * sqrt(abs(devi) * w) else {
+    if (residuals) sign(y - mu) * sqrt(abs(devi) * c(w)) else {
       dev.elts <- c(w) * devi
       if (summation) sum(dev.elts) else dev.elts
     }
@@ -3671,10 +3691,10 @@ simple.exponential <- function() {
 
     extra$location <- matrix( .location , n, ncoly, byrow = TRUE)
     if (any(y <= extra$location))
-      stop("all responses must be greater than argument 'location'")
+      stop("all responses must be > argument 'location'")
 
     mynames1 <- param.names("rate", M, skip1 = TRUE)
-    predictors.names <- namesof(mynames1, .link , earg = .earg ,
+    predictors.names <- namesof(mynames1, .link , .earg ,
                                 short = TRUE)
 
     if (length(mustart) + length(etastart) == 0)
@@ -3684,10 +3704,11 @@ simple.exponential <- function() {
     if (!length(etastart))
         etastart <- theta2eta(1 / (mustart - extra$location),
                               .link , .earg )
-  }), list( .location = location, .link = link, .earg = earg,
+  }),
+  list( .location = location, .link = link, .earg = earg,
             .ishrinkage = ishrinkage ))),
   linkinv = eval(substitute(function(eta, extra = NULL)
-    extra$location + 1 / eta2theta(eta, .link , earg = .earg ),
+    extra$location + 1 / eta2theta(eta, .link , .earg ),
   list( .link = link, .earg = earg ))),
   last = eval(substitute(expression({
     misc$link <- rep_len( .link , M)
@@ -3697,18 +3718,19 @@ simple.exponential <- function() {
       misc$earg[[ii]] <- .earg
     misc$location <- .location
     misc$expected <- .expected
-  }), list( .link = link, .earg = earg,
-            .expected = expected, .location = location ))),
+  }),
+  list( .link = link, .earg = earg,
+        .expected = expected, .location = location ))),
   linkfun = eval(substitute(function(mu, extra = NULL)
-    theta2eta(1 / (mu - extra$location), .link , earg = .earg ),
+    theta2eta(1 / (mu - extra$location), .link , .earg ),
   list( .link = link, .earg = earg ))),
   loglikelihood =
   function(mu, y, w, residuals = FALSE, eta, extra = NULL,
            summation = TRUE)
       if (residuals)
-        stop("loglikelihood residuals not implemented yet") else {
+        stop("loglikelihood residuals not implemented") else {
       rate <- 1 / (mu - extra$location)
-      ll.elts <- c(w) * dexp(y - extra$location, rate = rate,
+      ll.elts <- c(w) * dexp(y - extra$location, rate,
                              log = TRUE)
       if (summation) sum(ll.elts) else ll.elts
     },
@@ -3724,14 +3746,14 @@ simple.exponential <- function() {
   deriv = eval(substitute(expression({
     rate <- 1 / (mu - extra$location)
     dl.drate <- mu - y
-    drate.deta <- dtheta.deta(rate, .link , earg = .earg )
+    drate.deta <- dtheta.deta(rate, .link , .earg )
     c(w) * dl.drate * drate.deta
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
     ned2l.drate2 <- (mu - extra$location)^2
     wz <- ned2l.drate2 * drate.deta^2  # EIM
     if (! .expected ) {  # Use the OIM, not the EIM
-      d2rate.deta2 <- d2theta.deta2(rate, .link , earg = .earg )
+      d2rate.deta2 <- d2theta.deta2(rate, .link , .earg )
       wz <- wz - dl.drate * d2rate.deta2
     }
     c(w) * wz
@@ -3780,7 +3802,7 @@ simple.exponential <- function() {
   charfun = eval(substitute(function(x, eta, extra = NULL,
                                      varfun = FALSE) {
     if (length(extra$location) && !all(extra$location == 0))
-      stop("need the location to be 0 for this slot to work")
+      stop("location must be 0 for this slot to work")
     rate <- eta2theta(eta, .link , earg = .earg )
     if (varfun) {
       1 / rate^2
@@ -3794,7 +3816,7 @@ simple.exponential <- function() {
                            bool = .parallel ,
                            constraints = constraints,
                    apply.int = FALSE)  # 20181121; was TRUE
-    constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
+    constraints <- cm.zero.VGAM(constraints, x, .zero ,
                      M = M, M1 = 1,
                      predictors.names = predictors.names)
   }), list( .parallel = parallel, .zero = zero ))),
@@ -3816,7 +3838,6 @@ simple.exponential <- function() {
 
     rate <- eta2theta(eta, .link , earg = .earg )
     mu <- extra$location + 1 / rate
-
 
     location <- extra$location
     devy <- -log(y - location) - 1
@@ -3868,10 +3889,10 @@ simple.exponential <- function() {
                              byrow = TRUE)  # By row!
 
     if (any(y <= extra$location))
-      stop("all responses must be greater than ", extra$location)
+      stop("all responses must be > ", extra$location)
 
     mynames1 <- param.names("rate", M, skip1 = TRUE)
-    predictors.names <- namesof(mynames1, .link , earg = .earg ,
+    predictors.names <- namesof(mynames1, .link , .earg ,
                                 short = TRUE)
 
     if (length(mustart) + length(etastart) == 0)
@@ -3931,20 +3952,19 @@ simple.exponential <- function() {
       misc$earg[[ii]] <- .earg
     misc$location <- .location
     misc$expected <- .expected
-  }), list( .link = link, .earg = earg,
-            .expected = expected, .location = location ))),
+  }),
+  list( .link = link, .earg = earg,
+        .expected = expected, .location = location ))),
   linkfun = eval(substitute(function(mu, extra = NULL)
-    theta2eta(1 / (mu - extra$location), .link , earg = .earg ),
+    theta2eta(1 / (mu - extra$location), .link , .earg ),
   list( .link = link, .earg = earg ))),
 
   loglikelihood =  eval(substitute(
     function(mu, y, w, residuals = FALSE, eta,
-                           extra = NULL, summation = TRUE)
+                    extra = NULL, summation = TRUE)
     if (residuals) {
-      stop("loglikelihood residuals not implemented yet")
+      stop("loglikelihood residuals not implemented")
     } else {
-
-
     rate <- eta2theta(eta, .link , earg = .earg )
     proper.mu <- extra$location + 1 / rate
 
@@ -3977,19 +3997,18 @@ simple.exponential <- function() {
 
 
   deriv = eval(substitute(expression({
-
     rate <- eta2theta(eta, .link , earg = .earg )
     proper.mu <- extra$location + 1 / rate
 
     dl.drate <- proper.mu - y
-    drate.deta <- dtheta.deta(rate, .link , earg = .earg )
+    drate.deta <- dtheta.deta(rate, .link , .earg )
     c(w) * dl.drate * drate.deta
   }), list( .link = link, .earg = earg ))),
   weight = eval(substitute(expression({
     ned2l.drate2 <- (proper.mu - extra$location)^2
     wz <- ned2l.drate2 * drate.deta^2
     if (! .expected ) {  # Use the OIM, not the EIM
-      d2rate.deta2 <- d2theta.deta2(rate, .link , earg = .earg )
+      d2rate.deta2 <- d2theta.deta2(rate, .link , .earg )
       wz <- wz - dl.drate * d2rate.deta2
     }
     c(w) * wz

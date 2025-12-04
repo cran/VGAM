@@ -15,8 +15,8 @@
 }
 \usage{
 multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
-       bvalue = NULL, inverse = FALSE, deriv = 0, all.derivs = FALSE,
-       short = TRUE, tag = FALSE)
+       bvalue = NULL, sumcon = FALSE, inverse = FALSE, deriv = 0,
+       all.derivs = FALSE, short = TRUE, tag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 %      d.mlm = NULL, short = TRUE, tag = FALSE
@@ -34,6 +34,16 @@ multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
   \item{bvalue}{
   See \code{\link{Links}}.
 
+
+  }
+  \item{sumcon}{
+  Logical.
+  Use \emph{sum}mation \emph{con}straints?
+  Details are at
+  \code{\link{multinomial}}.
+ 
+
+% 20250321
 
   }
 
@@ -131,11 +141,15 @@ multilogitlink(theta, refLevel = "(Last)", M = NULL, whitespace = FALSE,
 
 
 }
-%\section{Warning }{
-% Currently \code{d.mlm} only works for \code{deriv = 0}.
+\section{Warning}{
+  Argument \code{sumcon} is a recent addition
+  and may have limited functionality in other
+  parts of \pkg{VGAM}.
+  It has not been tested extensively.
 
 
-%}
+
+}
 
 \seealso{
     \code{\link{Links}},

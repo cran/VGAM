@@ -191,10 +191,7 @@ relative to the mean, than it is below this threshold
 \item{vfl}{
 Logical.
 Fit the 
-Variance--variance
-Factorized
-Loglinear
-(VFL)
+Variance Factorized Loglinear (VFL)
 model?
 If \code{TRUE} then the constraint matrix
 \code{rbind(0, -1)} is assigned to all covariates
@@ -213,6 +210,7 @@ Some general information is at
 
 
 
+% Variance--variance Factorized Loglinear (VFL) model?
 % Variance--Mean Factorization (VMF) model
 % loglinear variance--variance ratio (LVVR) model?
 % loglinear variance--variance factorization (LVF)

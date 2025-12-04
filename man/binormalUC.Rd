@@ -4,8 +4,10 @@
 \alias{dbinorm}
 \alias{pbinorm}
 \alias{rbinorm}
-\title{Bivariate Normal Distribution Cumulative Distribution
-Function}
+\title{Bivariate Normal Distribution}
+
+%Density and Random Variates
+%Cumulative Distribution Function
 
 \description{
   Density,
@@ -73,8 +75,8 @@ rbinorm(n,      mean1 = 0, mean2 = 0, var1 = 1, var2 = 1, cov12 = 0)
 \details{
 
   The default arguments correspond to the standard bivariate normal
-  distribution with correlation parameter \eqn{\rho = 0}{rho = 0}.
-  That is, two independent standard normal distributions.
+  distribution with correlation parameter \eqn{\rho = 0}{rho = 0},
+  i.e., two independent standard normal distributions.
   Let \code{sd1} (say) be \code{sqrt(var1)} and
   written \eqn{\sigma_1}{sigma_1}, etc.
   Then the general formula for the correlation coefficient is

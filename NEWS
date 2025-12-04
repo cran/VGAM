@@ -1,3 +1,62 @@
+	CHANGES IN VGAM VERSION 1.1-14 (2025-12)
+
+NEW FEATURES
+
+    o   New family functions: loglinb4(), cardioid2(dpqr).
+        Thanks to Arthur Pewsey for his cardioid preprint.
+    o   loglinb3() now supports u123 which used to be 0
+        by definition. Yunhao (Harry) Han added this feature.
+    o   cops() improved: 'beta.range' is better and
+        'subset' added.
+    o   cops3.glm(), copsd3.glm() and wsdm3.glm() written for
+        class "glm" objects. And copsd() is for "vglm"  objects.
+    o   Arguments 'muxypw = FALSE, roundmux = FALSE'
+        added to depvar.vlm().  The two appear in @infos
+        in some family functions, along with 'Mux4vglmnet'.
+    o   Argument 'bhhh' added to vglm.control()
+        and vglm.fit(), and also to some family functions.
+        Argument 'b3h.wz' might accompany this.
+        Function b3hfun() is new.
+    o   Argument 'sumcon' added to multinomial() and
+        multilogitlink().
+    o   For Tingting Zhan: export S3 method model.frame
+        for "vlm", and ditto to summaryvglm().
+    o   acat.deriv() is exported.
+    o   trplot(asp = NULL) added for objects of class "qrrvglm".
+    o   New data set: eyed.
+    o   Functions CM.*() have an 'Intercept' argument.
+    o   Tested okay on R 4.5.2.
+
+
+BUG FIXES and CHANGES
+
+    o   No longer exported: cloglog, cauchit, extlogit,
+        fisherz, logc, loge, logneg, logit, logoff, negreciprocal,
+        probit, reciprocal, rhobit, golf, polf, nbolf, nbolf2, Cut.
+    o   Renamed data sets: flourbeetle changed to fbeetle.
+    o   summaryvglm(HDEtest = FALSE) is the new default,
+        mainly because it may be slow for some models.
+    o   gaitdnbinomial(zero = 2) did not work, and
+        neither was 'size' intercept-only by default.
+    o   cardioid(dpqr) improved markedly.
+    o   constraints(fit, type = "term", matrix = TRUE)
+        had a bug.
+    o   seq2binomial()@infos was faulty.
+    o   simple.exponential() and better exponential() updated
+        and tested okay.
+    o   Better initial values for genpoisson1().
+    o   stop() replaces warning() in multinomial() if
+        eta or the fitted values contains NAs.  Thanks to
+        Fabrice Rossi for picking this up.
+    o   dposnegbin2() added (same as dposnegbin() in VGAMdata).
+        for posnegbinomial(). Thanks to Karl-Joan Alesma
+        for first picking up this bug.
+    o   poissonff(imethod = 2) is used if 'weights' is
+        inputted; then weighted.mean() is called.
+
+
+
+
 	CHANGES IN VGAM VERSION 1.1-13 (2025-02)
 
 NEW FEATURES
@@ -29,6 +88,8 @@ NEW FEATURES
 BUG FIXES and CHANGES
 
     o   summary(vglm(binom2.or())) failed.
+    o   summary(vgamObject) no longer prints the
+        Pearson residuals at all.
     o   hdeffsev() renamed to hdeffsev0(),
         hdeffsev2() to hdeffsev2() [no change],
         and hdeffsev() is new and based on WSDM.
@@ -139,7 +200,7 @@ BUG FIXES and CHANGES
     o   "rrvglm" objects have new slots "A.est" and "C.est"
         which simplifies the code.
     o   "rrvglm" objects are estimated using the "alternating"
-         'Algorithm' only, and the "derivative" method withdrawn.
+        'Algorithm' only, and the "derivative" method withdrawn.
     o   For RR-VGLMs and DRR-VGLMs, 'kill.all' changed to 'omit123'.
     o   rrvglm.control() has some of parameters changed
         (for more stringent convergence).

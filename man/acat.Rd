@@ -10,7 +10,8 @@
 \usage{
 acat(link = "loglink", parallel = FALSE, reverse = FALSE,
      zero = NULL, ynames = FALSE, Thresh = NULL, Trev = reverse,
-     Tref = if (Trev) "M" else 1, whitespace = FALSE)
+     Tref = if (Trev) "M" else 1, Intercept = NULL,
+     whitespace = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,7 +50,7 @@ acat(link = "loglink", parallel = FALSE, reverse = FALSE,
 
 
   }
-  \item{Thresh, Trev, Tref}{
+  \item{Thresh, Trev, Tref, Intercept}{
     See \code{\link{cumulative}} for information.
     These arguments apply to ordinal
     categorical regression models.

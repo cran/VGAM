@@ -138,7 +138,7 @@ show.summary.vgam <-
       cat("\nPearson residuals:\n")
       print(t(rq), digits = digits)
     } else
-    if (rdf > 0) {
+    if (FALSE && rdf > 0) {   # 20250212; FALSE && added
       cat("\nPearson residuals:\n")
       print(Presid, digits = digits)
     }

@@ -77,28 +77,52 @@ rdiag <- function(...) {
 
 
 
- CM.free <- function(M, Trev = FALSE, Tref = 1) {
+ CM.free <-
+    function(M, Trev = FALSE, Tref = 1,
+             Intercept = FALSE) {
+  if (is.null(Intercept)) Intercept = FALSE
+  if (!isFALSE(Intercept))
+    stop("'Intercept = FALSE' is needed by definition")
   diag(M)
 }  # CM.free
 
 
 
- CM.ones <- function(M, Trev = FALSE, Tref = 1) {
+ CM.ones <-
+    function(M, Trev = FALSE, Tref = 1,
+             Intercept = TRUE) {
+  if (is.null(Intercept)) Intercept = TRUE
+  if (!isTRUE(Intercept))
+    stop("'Intercept = TRUE' is needed by definition")
   matrix(1, M, 1)
 }  # CM.ones
 
 
 
- CM.qnorm <- function(M, Trev = FALSE, Tref = 1) {
-  matrix(qnorm(seq(M) / (M + 1)) *
-         ifelse(Trev, -1, 1), M, 1) 
+CM.qnorm <- function(M, Trev = FALSE, Tref = 1,
+                     Intercept = FALSE) {
+  if (is.null(Intercept)) Intercept = FALSE
+  if (!isFALSE(Intercept) && !isTRUE(Intercept))
+    stop("bad input for argument 'Intercept'")
+  if (!isFALSE(Trev) && !isTRUE(Trev))
+    stop("bad input for argument 'Trev'")
+  cbind(if (Intercept) rep(M, 1) else NULL,
+         matrix(qnorm(seq(M) / (M + 1)) *
+                ifelse(Trev, -1, 1), M, 1))
 }  # CM.qnorm
 
 
 
- CM.qlogis <- function(M, Trev = FALSE, Tref = 1) {
-  matrix(qlogis(seq(M) / (M + 1)) *
-         ifelse(Trev, -1, 1), M, 1) 
+ CM.qlogis <- function(M, Trev = FALSE, Tref = 1,
+                       Intercept = FALSE) {
+  if (is.null(Intercept)) Intercept = FALSE
+  if (!isFALSE(Intercept) && !isTRUE(Intercept))
+    stop("bad input for argument 'Intercept'")
+  if (!isFALSE(Trev) && !isTRUE(Trev))
+    stop("bad input for argument 'Trev'")
+  cbind(if (Intercept) rep(M, 1) else NULL,
+        matrix(qlogis(seq(M) / (M + 1)) *
+               ifelse(Trev, -1, 1), M, 1))
 }  # CM.qlogis
 
 
@@ -107,7 +131,12 @@ rdiag <- function(...) {
 
 
 
- CM.symm1 <- function(M, Trev = FALSE, Tref = 1) {
+CM.symm1 <-
+    function(M, Trev = FALSE, Tref = 1,
+             Intercept = TRUE) {
+  if (is.null(Intercept)) Intercept = TRUE  # (54322)
+  if (!isTRUE(Intercept))
+    stop("'Intercept = TRUE' is needed by definition")
   if (M <  1)
     stop("argument 'M' should never be < 1")
   if (M == 1)
@@ -118,7 +147,7 @@ rdiag <- function(...) {
   H1 <- matrix(0, M, Modd)
   if (M %% 2 == 0)  # Add another row
     H1 <- rbind(0, H1)
-  H1[, 1] <- 1
+  H1[, 1] <- 1  # Intercept essentially
   for (jay in 1:(Modd - 1)) {
     H1[Modd - jay, 1 + jay] <- -1
     H1[Modd + jay, 1 + jay] <-  1
@@ -130,7 +159,12 @@ rdiag <- function(...) {
 
 
 
- CM.symm0 <- function(M, Trev = FALSE, Tref = 1) {
+ CM.symm0 <-
+   function(M, Trev = FALSE, Tref = 1,
+            Intercept = FALSE) {
+  if (is.null(Intercept)) Intercept = FALSE
+  if (!isFALSE(Intercept))
+    stop("'Intercept = FALSE' is needed by definition")
   H1 <- CM.symm1(M)
   if (M == 1)
     stop("cannot have 'symm0' when M == 1")
@@ -149,7 +183,11 @@ rdiag <- function(...) {
  CM.equid <-
     function(M,
              Trev = FALSE,
-             Tref = 1) {
+             Tref = 1,
+             Intercept = TRUE) {
+  if (is.null(Intercept)) Intercept = TRUE
+  if (!isFALSE(Intercept) && !isTRUE(Intercept))
+    stop("bad input for argument 'Intercept'")
   if (!isFALSE(Trev) && !isTRUE(Trev))
     stop("bad input for argument 'Trev'")
   if (is.character(Tref) && Tref == "M")
@@ -158,15 +196,15 @@ rdiag <- function(...) {
     Tref <- as.numeric(Tref)
   if (M <  1)
     stop("argument 'M' should never be less than 1")
+  if (M == 1 && !Intercept)
+    stop("Need Intercept = TRUE when M = 1")
   if (M == 1)
     return(cbind(1))
   H1 <- matrix(1, M, 2)
   H1[, 2] <- if (Trev) rev(seq(M)) else seq(M)
   H1[, 2] <- H1[, 2] - H1[Tref, 2]
-  H1
+  if (Intercept) H1 else H1[, -1, drop = FALSE]
 }  # CM.equid
-
-
 
 
 
@@ -185,9 +223,11 @@ rdiag <- function(...) {
       ynames = FALSE,  # 20240216
       imethod = 1,
       imu = NULL, byrow.arg = FALSE,  # 20211105
+      sumcon = FALSE,  # 20250318
       Thresh = NULL,  # "free",
       Trev = FALSE,  # reverse (propodds())
       Tref = if (Trev) "M" else 1,
+      Intercept = NULL,
       whitespace = FALSE) {
 
 
@@ -225,6 +265,8 @@ rdiag <- function(...) {
 
   if (!isFALSE(ynames) && !isTRUE(ynames))
     stop("bad input for 'ynames'")
+  if (!isFALSE(sumcon) && !isTRUE(sumcon))
+    stop("bad input for 'sumcon'")
 
 
 
@@ -266,6 +308,9 @@ rdiag <- function(...) {
                     fillerChar,
                     refLevel, "',\n")
          },
+         if (sumcon) paste0("          ",
+         "with summation constraints on the ",
+         "eta[,j] to sum to 0,\n"),
          "Variance: ",
            ifelse(whitespace,
         "mu[,j] * (1 - mu[,j]); -mu[,j] * mu[,k]",
@@ -286,11 +331,12 @@ rdiag <- function(...) {
       constraints[["(Intercept)"]] <-
         do.call(paste0("CM.", .Thresh ),
                 list(M = M, Trev = .Trev ,
+                     Intercept = .Intercept ,
                      Tref = .Tref ))
   }),
   list( .parallel = parallel, .zero = zero,
         .Thresh = Thresh, .Tref = Tref,
-        .Trev = Trev,
+        .Trev = Trev, .Intercept = Intercept,
         .nointercept = nointercept ))),
 
   deviance = Deviance.categorical.data.vgam,
@@ -304,19 +350,23 @@ rdiag <- function(...) {
          mixture.links = FALSE,  # Not a mixture.
          expected = TRUE,
          imethod = .imethod ,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # Needed 4 lasso etc
+         roundmux = TRUE,  # If so, round it?
          multipleResponses = FALSE,
          parameters.names = as.character(NA),
+         sumcon = .sumcon ,
          Thresh = .Thresh ,
          Tref = .Tref ,
-         Trev = .Trev ,
+         Trev = .Trev , Intercept = .Intercept ,
          ynames = .ynames ,
          zero = .zero )
   },
   list( .zero = zero, .ynames = ynames,
         .refLevel = refLevel, .imethod = imethod,
-        .Thresh = Thresh,
+        .Thresh = Thresh, .sumcon = sumcon,
         .Tref = Tref ,
-        .Trev = Trev ,
+        .Trev = Trev , .Intercept = Intercept,
         .parallel = parallel ))),
   initialize = eval(substitute(expression({
 
@@ -327,10 +377,10 @@ rdiag <- function(...) {
     delete.zero.colns <- TRUE
     eval(process.categorical.data.VGAM)
 
-    if ( .imethod == 2) {  # MLE for intercept-only.
+    if ( .imethod == 2) {  # MLE 4 intercept-only.
       mustart <- matrix(colMeans(y), n, NCOL(y), byrow = TRUE)
     }
-    if ( .imethod > 2) stop("argument 'imethod' unmatched")
+    if ( .imethod > 2) stop("'imethod' unmatched")
     
 
     M <- ncol(y) - 1
@@ -346,7 +396,7 @@ rdiag <- function(...) {
 
 
     if (use.refLevel > (M + 1))
-      stop("argument 'refLevel' has a value that is too high")
+      stop("'refLevel' is too high")
     extra$use.refLevel <- use.refLevel  # Used in
     pmone <- rep_len(1, M + 1)
 
@@ -375,7 +425,8 @@ rdiag <- function(...) {
 
     imu <- as.vector( .imu )
     if (length(imu)) {
-      mustart <- matrix(imu, n, NCOL(y), byrow = .byrow.arg )
+      mustart <- matrix(imu, n, NCOL(y),
+                        byrow = .byrow.arg )
     }
   }),
   list( .refLevel = refLevel,
@@ -386,24 +437,30 @@ rdiag <- function(...) {
         .whitespace = whitespace ))),
   linkinv = eval(substitute( function(eta, extra = NULL) {
     if (anyNA(eta))
-      warning("there are NAs in eta in slot inverse")
+      stop("there are NAs in eta in @inverse")
     ans <-
       multilogitlink(eta,  # .refLevel ,
-                     refLevel = extra$use.refLevel,
-                     inverse = TRUE)
+                 refLevel = extra$use.refLevel,
+                 sumcon = .sumcon ,
+                 inverse = TRUE)
     if (anyNA(ans))
-      warning("there are NAs here in slot linkinv")
-    if (min(ans) == 0 || max(ans) == 1)
-      warning("fitted probabilities numerically ",
-              "0 or 1 occurred")
+      stop("NAs in fitted values in @linkinv")
+    if (min(ans, na.rm = TRUE) == 0 ||
+        max(ans, na.rm = TRUE) == 1)
+      warning("fitted probabilities numerically",
+              " 0 or 1 occurred")
 
-    label.cols.y(ans, colnames.y = extra$colnames.y, NOS = 1)
-  }), list( .refLevel = refLevel )),
+    label.cols.y(ans, NOS = 1,
+                 colnames.y = extra$colnames.y)
+  }),
+  list( .refLevel = refLevel,
+        .sumcon = sumcon )),
   last = eval(substitute(expression({
     misc$link <- "multilogitlink"
 
     misc$earg <- list(multilogitlink = list(
       M = M,
+      sumcon   = .sumcon ,
       refLevel = use.refLevel
     ))
 
@@ -415,17 +472,23 @@ rdiag <- function(...) {
     misc$parallel <- ( .parallel )
     misc$refLevel <- use.refLevel
     misc$refLevel.orig <- ( .refLevel )
+    misc$sumcon <- ( .sumcon )
     misc$zero <- ( .zero )
   }),
-  list( .refLevel = refLevel, .nointercept = nointercept,
+  list( .refLevel = refLevel,
+        .nointercept = nointercept,
         .parallel = parallel,
+        .sumcon = sumcon,
         .zero = zero ))),
 
   linkfun = eval(substitute( function(mu, extra = NULL) {
 
     multilogitlink(mu,
+                   sumcon = .sumcon ,
                    refLevel = extra$use.refLevel)
-  }), list( .refLevel = refLevel )),
+  }),
+  list( .refLevel = refLevel,
+        .sumcon   = sumcon)),
 
   loglikelihood =
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
@@ -435,18 +498,18 @@ rdiag <- function(...) {
     } else {
       ycounts <- if (is.numeric(extra$orig.w))
                    y * w / extra$orig.w else
-                   y * w  # Convert proportions to counts
+                   y * w  # propns 2 counts
       nvec <- if (is.numeric(extra$orig.w))
-                round(w / extra$orig.w) else round(w)
+        round(w / extra$orig.w) else round(w)
 
       smallno <- 1.0e4 * .Machine$double.eps
       if (max(abs(ycounts - round(ycounts))) > smallno)
-        warning("converting 'ycounts' to integer in ",
-                "@loglikelihood")
+        warning("converting 'ycounts' to integer",
+                " in @loglikelihood")
       ycounts <- round(ycounts)
       ll.elts <-
         (if (is.numeric(extra$orig.w)) extra$orig.w else 1) *
-         dmultinomial(x = ycounts, size = nvec, prob = mu,
+         dmultinomial(ycounts, size = nvec, prob = mu,
                       log = TRUE, dochecking = FALSE)
       if (summation) {
         sum(ll.elts)
@@ -470,7 +533,8 @@ rdiag <- function(...) {
   hadof = eval(substitute(
   function(eta, extra = list(),
            linpred.index = 1, w = 1,
-           dim.wz = c(NROW(eta), NCOL(eta) * (NCOL(eta)+1)/2), 
+           dim.wz = c(NROW(eta),
+                 NCOL(eta) * (NCOL(eta)+1)/2), 
            deriv = 1, ...) {
 
 
@@ -510,9 +574,9 @@ rdiag <- function(...) {
         wz1[, iam(i1, j1, M = M)] <-  zz.yettodo
       }
       if (i1 != jay && j1 == i1) {
-        wz1[, iam(i1, j1, M = M)] <- -mu[, i1] * mu[, jay] *
-                           (1 - 2 * mu[, i1] - 2 * mu[, jay] +
-                                6 * mu[, i1] * mu[, jay])
+        wz1[, iam(i1, j1, M = M)] <- -mu[, i1] *
+ mu[, jay] * (1 - 2 * mu[, i1] - 2 * mu[, jay] +
+              6 * mu[, i1] * mu[, jay])
                                             
       }
       if (i1 == jay && j1 != jay) {
@@ -522,9 +586,9 @@ rdiag <- function(...) {
         wz1[, iam(i1, j1, M = M)] <- zz.yettodo
       }
       if (any(is.na(wz1[, iam(i1, j1, M = M)]))) {
-        wz1[, iam(i1, j1, M = M)] <-   2 * mu[, i1]  * 
-                                       mu[, j1] * mu[, jay] *
-                                       (1 - 3 * mu[, jay])
+        wz1[, iam(i1, j1, M = M)] <-
+          2 * mu[, i1]  * mu[, j1] * mu[, jay] *
+          (1 - 3 * mu[, jay])
       }
     }  # for (i)
  cat("\n\n\n\n")
@@ -533,16 +597,18 @@ rdiag <- function(...) {
 
 
     M <- NCOL(eta)
-    use.refLevel <- extra$use.refLevel  # Restore its value
+    use.refLevel <- extra$use.refLevel  # Restore
     if (!is.numeric(use.refLevel)) {
-      warning("variable 'use.refLevel' cannot be found. ",
-              "Trying the original value.")
+      warning("var 'use.refLevel' cannot be ",
+         "found. Trying the original value.")
       use.refLevel <- .refLevel  # Only if numeric...
       if (use.refLevel == "(Last)")
         use.refLevel <- M+1
     }
-    mu.use <- multilogitlink(eta, refLevel = use.refLevel,
-                             inverse = TRUE)
+    mu.use <-
+      multilogitlink(eta, inverse = TRUE,
+                     sumcon = .sumcon ,
+                     refLevel = use.refLevel)
     mu.use <- pmax(mu.use, .Machine$double.eps * 1.0e-0)
 
 
@@ -561,17 +627,18 @@ rdiag <- function(...) {
        },
        "1" = {
          multinomial.eim.deriv1(mu.use[, -use.refLevel,
-                                       drop = FALSE],
-                                jay = linpred.index, w = w)
+                   drop = FALSE],
+                   jay = linpred.index, w = w)
        },
        "2" = {
          multinomial.eim.deriv2(mu.use[, -use.refLevel,
-                                       drop = FALSE],
-                                jay = linpred.index, w = w)
+                     drop = FALSE],
+                     jay = linpred.index, w = w)
        },
-       stop("argument 'deriv' must be 0 or 1 or 2"))
-  }, list( .refLevel = refLevel  # End of @hadof
-         ))),
+       stop("'deriv' must be 0 or 1 or 2"))
+  },
+ list( .sumcon   = sumcon,
+       .refLevel = refLevel))),  # End of @hadof
 
 
 
@@ -579,35 +646,49 @@ rdiag <- function(...) {
  validparams =
    eval(substitute(function(eta, y, extra = NULL) {
     probs <-
-      multilogitlink(eta, refLevel = extra$use.refLevel,
-                     inverse = TRUE)  # ( .refLevel )
+      multilogitlink(eta,
+                 refLevel = extra$use.refLevel,
+                 sumcon = .sumcon ,
+                 inverse = TRUE)  # ( .refLevel )
      okay1 <- all(is.finite(probs)) &&
               all(0 < probs & probs < 1)
     okay1
-  }, list( .refLevel = refLevel ))),
+   },
+   list( .refLevel = refLevel,
+         .sumcon   = sumcon))),
   deriv = eval(substitute(expression({
-    use.refLevel <- extra$use.refLevel  # Restore its value
+    use.refLevel <- extra$use.refLevel  # Restore
     ansd <- ( y[, -use.refLevel, drop = FALSE] -
-             mu[, -use.refLevel, drop = FALSE])  # AMLM
+             mu[, -use.refLevel, drop = FALSE])
+
+
+    if ( .sumcon ) {
+      ansd <- ansd - ( y[, use.refLevel] -
+                      mu[, use.refLevel])  # Opt2
+    }
 
 
     c(w) * ansd
-  }), list( .refLevel = refLevel ))),
+  }),
+  list( .refLevel = refLevel,
+        .sumcon   = sumcon))),
   weight = eval(substitute(expression({
-    mytiny <- (mu <       sqrt(.Machine$double.eps)) |
-              (mu > 1.0 - sqrt(.Machine$double.eps))
+    mytiny <- (mu <   sqrt(.Machine$double.eps)) |
+              (mu > 1 - sqrt(.Machine$double.eps))
 
     if (M == 1) {
       wz <- mu[, 3 - use.refLevel] * (1 - mu[, 3 - use.refLevel])
     } else {  # M > 1
       index <- iam(NA, NA, M, both = TRUE, diag = TRUE)
       myinc <- (index$row.index >= use.refLevel)
-      index$row.index[myinc] <- index$row.index[myinc] + 1
+      index$row.index[myinc] <-
+      index$row.index[myinc] + 1
       myinc <- (index$col.index >= use.refLevel)
-      index$col.index[myinc] <- index$col.index[myinc] + 1
+      index$col.index[myinc] <-
+      index$col.index[myinc] + 1
       wz <- -mu[, index$row, drop = FALSE] *
              mu[, index$col, drop = FALSE]
-      wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel ]  # AMLM
+      wz[, 1:M] <- wz[, 1:M] + mu[, -use.refLevel]
     }
 
 
@@ -617,15 +698,34 @@ rdiag <- function(...) {
     atiny <- (mytiny %*% rep(1, ncol(mu))) > 0
     if (any(atiny)) {
       if (M == 1)
-        wz[atiny] <- wz[atiny] * (1 + .Machine$double.eps^0.5) +
-                                      .Machine$double.eps else
-        wz[atiny, 1:M] <- .Machine$double.eps +
-        wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5)
+        wz[atiny] <- wz[atiny] * (
+        1 + .Machine$double.eps^0.5) +
+            .Machine$double.eps else
+    wz[atiny, 1:M] <- .Machine$double.eps +
+    wz[atiny, 1:M] * (1 + .Machine$double.eps^0.5)
     }  # atiny
-    c(w) * wz
-  }), list( .refLevel = refLevel ))))
-}  # multinomial()
 
+
+
+    if ( .sumcon ) {
+      wz[, 1:M] <- wz[, 1:M] + 
+        (1 - mu[,  use.refLevel]) *
+             mu[,  use.refLevel]  + 2 *
+             mu[,  use.refLevel]  *
+             mu[, -use.refLevel]
+      wz[, -(1:M)] <- wz[, -(1:M)] +
+        mu[, use.refLevel] * (1 -
+        mu[, use.refLevel] +
+        mu[, index$row[-(1:M)], drop = FALSE] +
+        mu[, index$col[-(1:M)], drop = FALSE])
+    }
+
+
+    c(w) * wz
+  }),
+  list( .refLevel = refLevel,
+        .sumcon   = sumcon))))
+}  # multinomial()
 
 
 
@@ -754,7 +854,7 @@ Deviance.categorical.data.vgam <-
       dev.elts
     }
   }
-}
+}  # Deviance.categorical.data.vgam
 
 
 
@@ -817,6 +917,7 @@ Deviance.categorical.data.vgam <-
     Thresh = NULL,   # "free",
     Trev = reverse,
     Tref = if (Trev) "M" else 1,
+    Intercept = NULL,
     whitespace = FALSE) {
   if (is.character(link))
     link <- substitute(y9, list(y9 = link))
@@ -856,12 +957,16 @@ Deviance.categorical.data.vgam <-
          Q1 = NA,
          expected = TRUE,
          multipleResponses = FALSE,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          Thresh = .Thresh ,
          Tref = .Tref ,
          Trev = .Trev ,
+         Intercept = .Intercept ,
          whitespace = .whitespace ,
          ynames = .ynames ,
          zero = .zero ,
@@ -874,6 +979,7 @@ Deviance.categorical.data.vgam <-
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .whitespace = whitespace ))),
 
   constraints = eval(substitute(expression({
@@ -896,12 +1002,14 @@ Deviance.categorical.data.vgam <-
       constraints[["(Intercept)"]] <-
         do.call(paste0("CM.", .Thresh ),
                 list(M = M, Trev = .Trev ,
+                     Intercept = .Intercept ,
                      Tref = .Tref ))
   }),
   list( .parallel = parallel,
         .Thresh = Thresh,
         .Tref = Tref ,
         .Trev = Trev ,
+        .Intercept = Intercept,
         .zero = zero ))),
   deviance = Deviance.categorical.data.vgam,
 
@@ -1138,6 +1246,7 @@ Deviance.categorical.data.vgam <-
     Thresh = NULL,   # "free",
     Trev = reverse,
     Tref = if (Trev) "M" else 1,
+    Intercept = NULL,
     whitespace = FALSE) {
   if (is.character(link))
     link <- substitute(y9, list(y9 = link))
@@ -1180,12 +1289,16 @@ Deviance.categorical.data.vgam <-
          Q1 = NA,
          expected = TRUE,
          multipleResponses = FALSE,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          Thresh = .Thresh ,
          Tref = .Tref ,
          Trev = .Trev ,
+         Intercept = .Intercept ,
          whitespace = .whitespace ,
          ynames = .ynames ,
          zero = .zero ,
@@ -1198,6 +1311,7 @@ Deviance.categorical.data.vgam <-
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .whitespace = whitespace ))),
 
 
@@ -1219,12 +1333,14 @@ Deviance.categorical.data.vgam <-
       constraints[["(Intercept)"]] <-
         do.call(paste0("CM.", .Thresh ),
                 list(M = M, Trev = .Trev ,
-                     Tref = .Tref ))
+                     Intercept = .Intercept ,  # (54322)
+                     Tref = .Tref ))  # else
   }),
   list( .parallel = parallel,
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
@@ -1484,10 +1600,11 @@ Deviance.categorical.data.vgam <-
       maxit <- 31
   }
   list(maxit = maxit, panic = as.logical(panic)[1])
-}
+}  # vglm.multinomial.deviance.control
 
 
- vglm.multinomial.control <-
+
+ vglm.multinomial.control <-  # In NAMESPACE
   function(maxit = 21, panic = FALSE,
            criterion = c("aic1", "aic2",
                          names( .min.criterion.VGAM )),
@@ -1507,7 +1624,8 @@ Deviance.categorical.data.vgam <-
        criterion = criterion,
        min.criterion = c("aic1" = FALSE, "aic2" = TRUE,
                          .min.criterion.VGAM))
-}
+}  # vglm.multinomial.control
+
 
 
  vglm.VGAMcategorical.control <-
@@ -1539,6 +1657,7 @@ Deviance.categorical.data.vgam <-
     Thresh = NULL,  # "free",
     Trev = reverse,
     Tref = if (Trev) "M" else 1,
+    Intercept = NULL,
     whitespace = FALSE) {
 
   if (length( Thresh ) &&
@@ -1595,12 +1714,16 @@ Deviance.categorical.data.vgam <-
          expected = TRUE,
          hadof = TRUE,
          multipleResponses = .multiple.responses ,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          Thresh = .Thresh ,
          Tref = .Tref ,
          Trev = .Trev ,
+         Intercept = .Intercept ,
          whitespace = .whitespace ,
          ynames = .ynames ,
          link =  .link )
@@ -1612,6 +1735,7 @@ Deviance.categorical.data.vgam <-
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .whitespace = whitespace ))),
 
   constraints = eval(substitute(expression({
@@ -1642,6 +1766,7 @@ Deviance.categorical.data.vgam <-
       constraints[["(Intercept)"]] <-
         do.call(paste0("CM.", .Thresh ),
                 list(M = M, Trev = .Trev ,
+                     Intercept = .Intercept ,
                      Tref = .Tref ))
   }),
   list( .parallel = parallel,
@@ -1649,6 +1774,7 @@ Deviance.categorical.data.vgam <-
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .apply.parint = apply.parint ))),
   deviance = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL) {
@@ -2151,7 +2277,8 @@ Deviance.categorical.data.vgam <-
               ynames = FALSE,
        Thresh = NULL,  # "free",
        Trev = reverse,
-       Tref = if (Trev) "M" else 1) {
+       Tref = if (Trev) "M" else 1,
+       Intercept = NULL) {
   if (!isFALSE(reverse) && !isTRUE(reverse))
     stop("'reverse' not a single logical")
   if (length( Thresh ) &&
@@ -2161,8 +2288,8 @@ Deviance.categorical.data.vgam <-
 
   cumulative(parallel = TRUE, reverse = reverse,
              ynames = ynames,
-             Thresh = Thresh,
-             Trev = Trev, Tref = Tref,
+             Thresh = Thresh, Trev = Trev,
+             Tref = Tref, Intercept = Intercept,
              whitespace = whitespace)
 }
 
@@ -2177,6 +2304,7 @@ Deviance.categorical.data.vgam <-
        Thresh = NULL,  # "free",
        Trev = reverse,
        Tref = if (Trev) "M" else 1,
+       Intercept = NULL,
        whitespace = FALSE) {
 
 
@@ -2218,12 +2346,16 @@ Deviance.categorical.data.vgam <-
          Q1 = NA,
          expected = TRUE,
          multipleResponses = FALSE,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = as.character(NA),
          parallel = .parallel ,
          reverse = .reverse ,
          Thresh = .Thresh ,
          Tref = .Tref ,
          Trev = .Trev ,
+         Intercept = .Intercept ,
          whitespace = .whitespace ,
          ynames = .ynames ,
          zero = .zero ,
@@ -2236,6 +2368,7 @@ Deviance.categorical.data.vgam <-
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .whitespace = whitespace ))),
 
   constraints = eval(substitute(expression({
@@ -2255,12 +2388,14 @@ Deviance.categorical.data.vgam <-
       constraints[["(Intercept)"]] <-
         do.call(paste0("CM.", .Thresh ),
                 list(M = M, Trev = .Trev ,
+                     Intercept = .Intercept ,
                      Tref = .Tref ))
   }),
   list( .parallel = parallel,
         .Thresh = Thresh,
         .Tref = Tref,
         .Trev = Trev,
+        .Intercept = Intercept,
         .zero = zero ))),
 
   deviance = Deviance.categorical.data.vgam,
@@ -2530,6 +2665,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
          Q1 = NA,
          expected = TRUE,
          multipleResponses = FALSE,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = as.character(NA),
          refvalue = .refvalue ,
          refgp = .refgp ,
@@ -2729,6 +2867,9 @@ acat.deriv <- function(zeta, reverse, M, n) {
          Q1 = NA,
          expected = TRUE,
          multipleResponses = FALSE,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = as.character(NA),
          refvalue = .refvalue ,
          refgp = .refgp ,
@@ -3141,6 +3282,9 @@ InverseBrat <-
          Q1 = 1,
          expected = TRUE,
          multipleResponses = TRUE,
+         muxypw = FALSE,  # 20250606
+         Mux4vglmnet = TRUE,  # 20250606
+         roundmux = TRUE,  # 20250606
          parameters.names = c("mu"),
          lmu = .link ,
          zero = .zero )
@@ -4980,7 +5124,7 @@ ordsup.vglm <-
   if (isFALSE(infos$parallel))
     stop("the linear predictors are not parallel")
   if (!all(unlist(constraints(object)[-1]) == 1))
-      stop("the linear predictors are not parallel")
+    stop("the linear predictors are not parallel")
 
 
   reverse <- infos$reverse

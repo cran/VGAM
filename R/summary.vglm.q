@@ -18,7 +18,7 @@ summaryvglm <-
   function(object, correlation = FALSE,
            dispersion = NULL, digits = NULL,
            presid = FALSE,  # TRUE,
-           HDEtest = TRUE,  # Added 20180203
+           HDEtest = FALSE,  # Changed 20251117
            hde.NA = TRUE,
            threshold.hde = 0.001,
            signif.stars = getOption("show.signif.stars"),
@@ -1058,7 +1058,6 @@ signif.stars <- signif.stars && any(pv[okP] < 0.1)
 
 
 
-
 wsdm <-
   function(object,
        hdiff = 0.005,  # Recycled to length >= 2
@@ -1259,7 +1258,6 @@ wsdm <-
   }
   hdiff.use[abs(hdiff.use) < 1e-10] <- hdiff
   p.VLM <- length(cobj)
-  p.VLM <- length(cobj)
   if (length(theta0) > p.VLM)
     warning("Truncating theta0")
   theta0 <- rep_len(theta0, p.VLM)
@@ -1392,7 +1390,362 @@ wsdm <-
 
 
 
+summary.vglm <- summaryvglm
 
+
+
+
+
+
+wsdm3.glm <-
+  function(object,
+       hdiff = 0.005,  # Recycled to length >= 2
+       retry = TRUE,   # FALSE,
+       mux.hdiff = 1,
+       maxderiv = 5,   # 0:maxderiv
+       theta0 = 0,  # Recycled 20210406
+       use.hdeff = FALSE,
+       doffset = NULL,  # denominator offset
+       subset = NULL,  # numeric, logical, chars
+       derivs.out = FALSE,
+       fixed.hdiff = TRUE,
+       eps.wsdm = 0.15,
+       Mux.div = 3,
+       warn.retry = TRUE,
+       with1 = TRUE, ...) {
+  if (!inherits(object, "glm")) stop("not a 'glm' object")
+  seems.okay <- NA  # Unsure
+  hdiff <- hdiff * mux.hdiff  # Adjustment
+  if (!is.Numeric(eps.wsdm, positive = TRUE,
+                  length.arg = 1))
+    stop("bad 'eps.wsdm'")
+  if (!is.Numeric(Mux.div - 1, positive = TRUE,
+                  length.arg = 1))
+    stop("bad 'Mux.div'")
+
+  T <- TRUE; F <- FALSE
+  if (is.null(doffset) &&
+      object$family$family == "binomial") {  # nnnn
+      doffset <- rep(1, 6)
+    if (object$family$link == "logit") doffset <-
+        c(2.399, 1.667, 2.178, 1.680, 2.2405, 1.7229)
+    if (object$family$link == "probit") doffset <-
+      c(1.5750, 0.7290, 0.9526, 0.5208, 0.7497, 0.4321)
+  }
+  lambdas <- if (length(doffset)) doffset else 1
+
+
+  fdderiv <-
+    function(which.d = 1,  # which.deriv
+             mat.Wald.deriv,
+             mat.Wald.tmp,
+             hdeff.output = NULL,
+             use.hdiff = 0.005) {
+  if (which.d == 0) return(mat.Wald.deriv)  # Done
+  if (which.d >= 9) stop("excessive which.d")
+  if (which.d == 1)
+    mat.Wald.deriv[, "1"] <- (
+        mat.Wald.tmp[, "1"]
+      - mat.Wald.tmp[, "0"]) / use.hdiff
+  if (which.d == 2)
+    mat.Wald.deriv[, "2"] <- (
+      - mat.Wald.tmp[, "0"] * 2
+      + mat.Wald.tmp[, "1"]
+      + mat.Wald.tmp[, "2"]) / use.hdiff^2
+  if (which.d == 3)
+      mat.Wald.deriv[, "3"] <- (
+        mat.Wald.tmp[, "0"] * 3
+      - mat.Wald.tmp[, "1"] * 3
+      - mat.Wald.tmp[, "2"]
+      + mat.Wald.tmp[, "3"]) / use.hdiff^3
+  if (which.d == 4)
+      mat.Wald.deriv[, "4"] <- (
+        mat.Wald.tmp[, "0"] * 6
+      - mat.Wald.tmp[, "1"] * 4
+      - mat.Wald.tmp[, "2"] * 4
+      + mat.Wald.tmp[, "3"]
+      + mat.Wald.tmp[, "4"]) / use.hdiff^4
+  if (which.d == 5)  # 20241120
+      mat.Wald.deriv[, "5"] <- (
+      - mat.Wald.tmp[, "0"] * 10
+      + mat.Wald.tmp[, "1"] * 10
+      + mat.Wald.tmp[, "2"] * 5
+      - mat.Wald.tmp[, "3"] * 5
+      - mat.Wald.tmp[, "4"]
+      + mat.Wald.tmp[, "5"]) / use.hdiff^5
+  if (which.d == 6)  # 20241120
+      mat.Wald.deriv[, "6"] <- (
+      - mat.Wald.tmp[, "0"] * 20
+      + mat.Wald.tmp[, "1"] * 15
+      + mat.Wald.tmp[, "2"] * 15
+      - mat.Wald.tmp[, "3"] * 6
+      - mat.Wald.tmp[, "4"] * 6
+      + mat.Wald.tmp[, "5"]
+      + mat.Wald.tmp[, "6"]) / use.hdiff^6
+  if (which.d == 7)  # 20241120
+      mat.Wald.deriv[, "7"] <- (
+        mat.Wald.tmp[, "0"] * 35
+      - mat.Wald.tmp[, "1"] * 35
+      - mat.Wald.tmp[, "2"] * 21
+      + mat.Wald.tmp[, "3"] * 21
+      + mat.Wald.tmp[, "4"] * 7
+      - mat.Wald.tmp[, "5"] * 7
+      - mat.Wald.tmp[, "6"]
+      + mat.Wald.tmp[, "7"]) / use.hdiff^7
+  if (which.d == 8)  # 20241120
+      mat.Wald.deriv[, "8"] <- (
+        mat.Wald.tmp[, "0"] * 70
+      - mat.Wald.tmp[, "1"] * 56
+      - mat.Wald.tmp[, "2"] * 56
+      + mat.Wald.tmp[, "3"] * 28
+      + mat.Wald.tmp[, "4"] * 28
+      - mat.Wald.tmp[, "5"] * 8
+      - mat.Wald.tmp[, "6"] * 8
+      + mat.Wald.tmp[, "7"]
+      + mat.Wald.tmp[, "8"]) / use.hdiff^8
+    return(mat.Wald.deriv)
+  }  # fdderiv
+  doone <-  # One value of dirr := \pm1, \pm2, ...
+    function(dirrval,  # e.g., 2 for -1; direction
+             mat.coef.tmp,
+             mat.Stdr.tmp) {
+
+
+  for (kay in kvec.use) {  # ,,,,,,,,,,,,,,,,,,,,
+
+    bix.jk <- X.vlm[, kay]  # n-vector for xij
+
+    object$linear.predictors <- etamat0 + matrix(
+       byrow = TRUE, nrow = n.LM, ncol = M,
+ bix.jk * vec.step[dirrval] * hdiff.use[kay])  # @@
+
+
+
+
+
+
+    neweta <- object$linear.predictors
+    newmu <- object$family$linkinv(neweta)
+    variance <- object$family$variance
+    mu.eta <- object$family$mu.eta
+    pwt <- weights(object, type = "prior")
+    newwz <- pwt * (mu.eta(neweta)^2) / variance(newmu)
+    wz.fb <- newwz
+
+
+
+
+
+
+
+
+
+
+    U.fb <- if (M == 1) { # 1 x (n.VLM * M)
+      wz.fb <- sqrt(wz.fb)
+      dim(wz.fb) <- c(1, n.LM * M)
+      wz.fb
+    } else vchol(wz.fb, M, n.LM)
+    cp.X.vlm <- if (M == 1) {  # dim(X.vlm)
+      c(U.fb) * X.vlm
+    } else mux111(U.fb, X.vlm, M)
+
+    qrR <- qr(cp.X.vlm)  # Faster; not lm.fit()
+    R <- qrR$qr[1:p.VLM, 1:p.VLM, drop = F]
+    R[lower.tri(R)] <- 0
+    if (p.VLM < max(dim(R)))
+      stop("'R' is rank deficient")
+    attributes(R) <-  # Might be unnecessary
+      list(dim = c(p.VLM, p.VLM),
+           dimnames = list(nmcobj, nmcobj),
+           rank = p.VLM)
+    covun <- chol2inv(R)
+    SE1.fb <- sqrt(covun[kay, kay])
+    ch.d <- as.character(dirrval)  # Safer
+    mat.Stdr.tmp[kay, ch.d] <- SE1.fb
+    mat.coef.tmp[kay, ch.d] <- cobj[kay] +
+      vec.step[dirrval] * hdiff.use[kay]  # @@
+  }  # for (kay in kvec.use)  # ,,,,,,,,,,,,,,,,
+
+  list(mat.coef.tmp = mat.coef.tmp,
+       mat.Stdr.tmp = mat.Stdr.tmp)
+}  # doone
+
+
+  lambdas <- rep_len(lambdas, 1 + (maxderiv - 1))
+  names(lambdas) <- as.character(seq(lambdas) - 1)
+
+  if (!is.Numeric(hdiff, positive = TRUE,
+                  length.arg = 1))
+    stop("bad input for argument 'hdiff'")
+  if (hdiff > 0.5) warning("'hdiff' too large?")
+
+  if (!isFALSE(with1) && !isTRUE(with1))
+    stop("'with1' must be TRUE or FALSE")
+  if (!isFALSE(use.hdeff) && !isTRUE(use.hdeff))
+    stop("'use.hdeff' must be TRUE or FALSE")
+  if (use.hdeff)
+    warning("'use.hdeff' is not yet implemented")
+
+  if (is.null(subset)) subset <- TRUE
+
+
+  M <- 1
+  X.vlm <- if (M == 1 && length(object$x))
+    object$x else  # May have dimnames
+    model.matrix(object)
+  dimnames(X.vlm) <- NULL  # Faster!!
+  etamat0 <- object$linear.predictors  # yettodo: offsets
+  n.LM <- NROW(etamat0)
+  cobj <- object$coefficients  # coef(object)
+  nmcobj <- names(cobj)
+  p.VLM <- length(cobj)
+  hdiff.use <- if (fixed.hdiff)
+    rep(hdiff, length = p.VLM) else {
+    abs(cobj) * hdiff
+  }
+  hdiff.use[abs(hdiff.use) < 1e-10] <- hdiff
+  p.VLM <- length(cobj)
+  if (length(theta0) > p.VLM)
+    warning("Truncating theta0")
+  theta0 <- rep_len(theta0, p.VLM)
+  SE1 <- sqrt(diag(chol2inv(object$R)))
+
+
+  mat.coef.deriv <-
+  mat.Stdr.deriv <-
+  mat.Wald.deriv <-
+    matrix(NA, p.VLM, 1 + maxderiv, dimnames =
+           list(nmcobj,
+                as.character(0:maxderiv)))
+  mat.coef.deriv[, "0"] <- cobj
+  mat.Stdr.deriv[, "0"] <- SE1
+  mat.Wald.deriv[, "0"] <- (cobj - theta0) / SE1
+  mat.coef.tmp <- mat.coef.deriv  # Temporary
+  mat.Stdr.tmp <- mat.Stdr.deriv
+  vec.step <- head(rep(1:9, each = 2) *
+                   c(1, -1), maxderiv)
+  names(vec.step) <- as.character(seq(vec.step))
+  kvec.use <- 1:p.VLM
+  names(kvec.use) <- nmcobj  # For char subset
+  if (length(subset))
+    kvec.use <- kvec.use[subset]
+
+
+
+  upsvec2 <- rep(NA_real_, length(cobj))
+  names(upsvec2) <- nmcobj
+
+  TFmat <- NULL
+  for (ddd in 0:(maxderiv - 1)) {  # ++++++++++++
+
+  doone.ans <-
+    doone(dirrval = ddd + 1,  # \in 1:maxderiv
+          mat.coef.tmp = mat.coef.tmp,
+          mat.Stdr.tmp = mat.Stdr.tmp)
+    mat.coef.tmp <- doone.ans$mat.coef.tmp
+    mat.Stdr.tmp <- doone.ans$mat.Stdr.tmp
+
+    mat.Wald.tmp <- (mat.coef.tmp - theta0) / (
+                     mat.Stdr.tmp)
+    mat.Wald.deriv <-
+        fdderiv(which.d = ddd + 1,  # Crucial
+                mat.Wald.deriv,
+                mat.Wald.tmp,
+                use.hdiff = hdiff.use)
+    dddp0 <- as.character(ddd)
+    dddp1 <- as.character(ddd + 1)
+    TFmat <- cbind(TFmat,
+                (((-1)^((ddd + 1) * (
+                mat.Wald.deriv[, "0"] > 0))) *
+                mat.Wald.deriv[, dddp0]) < 0)
+    new.indd <- apply(TFmat, 1, all) & 
+                (((-1)^(ddd * (
+                mat.Wald.deriv[, "0"] > 0))) *
+                mat.Wald.deriv[, dddp1]) > 0
+    new.indd.use <- new.indd[subset]
+
+
+   tmp2 <- abs(mat.Wald.deriv[new.indd.use, dddp0])
+   tmp3 <- abs(mat.Wald.deriv[new.indd.use, dddp1])
+    upsvec2[new.indd.use] <- ddd + tmp2 / (
+      tmp2 + lambdas[dddp0] * tmp3)
+
+    if (all(!apply(TFmat, 1, all))) break;
+    if (ddd == maxderiv - 1)
+      warning("Right-censored WSDM returned. ",
+              "Increase 'maxderiv'?")
+  }  # for ddd  # ++++++++++++++++
+
+
+
+  if (retry) {
+    seems.okay <- TRUE
+    alist <- vector("list", 3)
+    alist[[1]] <- upsvec2[kvec.use]  # kay == 1
+    for (kay in 2:3) {  # Compute WSDM thrice
+      hdiff.o <- if (kay == 2) hdiff * Mux.div else
+                 hdiff / Mux.div
+      alist[[kay]] <- ans5 <-
+        Recall(object, hdiff = hdiff.o,
+               mux.hdiff = 1,  # Adjusted already
+               maxderiv = maxderiv,
+               theta0 = theta0,
+               use.hdeff = use.hdeff,
+               doffset = doffset,
+               subset = subset,
+               derivs.out = FALSE,   # derivs.out
+               fixed.hdiff = fixed.hdiff,
+               retry = FALSE,  # Nonrecursive!!
+               eps.wsdm = eps.wsdm,
+               Mux.div = Mux.div,
+               warn.retry = FALSE, ...)
+      if (any(abs(ans5 - upsvec2[kvec.use]) > eps.wsdm,
+              na.rm = TRUE)) {  # Discordant
+        if (warn.retry)
+        warning("another solution quite diffe",
+        "rent... best to try another 'hdiff' ",
+        "value; returning the original solution")
+        seems.okay <- FALSE
+        break
+      }
+    }  # kay
+  }  # retry
+      
+
+  if (any(is.na(upsvec2[kvec.use])))
+    warning("Some NAs are returned")
+  ans8 <- upsvec2[kvec.use]  # No lost attributes
+  attr(ans8, "seems.okay") <- seems.okay
+
+
+  if (!with1) {
+    H1mat <- constraints(object)[["(Intercept)"]]
+    if (!length(H1mat) || !is.matrix(H1mat))
+      stop("'object' has no intercepts!")
+    ans8 <- ans8[-seq(ncol(H1mat))]
+    kvec.use <- setdiff(kvec.use, 1:ncol(H1mat))
+  }
+
+
+  if (derivs.out)
+    list(WSDM   = ans8,
+         derivs = mat.Wald.deriv[kvec.use, ]) else
+    ans8
+}  # wsdm3.glm
+
+
+
+
+
+
+
+
+wsdm3 <- function(object, ...) UseMethod("wsdm3")
+
+wsdm3.default <-
+  function(object, ...)
+    stop("there is no default method!!")
 
 
 

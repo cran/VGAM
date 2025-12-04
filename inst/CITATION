@@ -175,7 +175,6 @@ bibentry(bibtype = "Article",
 
 
 
-
 bibentry(bibtype = "Article",
   title        = "Generally altered, inflated, truncated and deflated regression",
   author       = c(person(c("T.", "W."), "Yee"),
@@ -192,6 +191,32 @@ bibentry(bibtype = "Article",
         "Statistical Science, 39(4), 568--588."),
   header = "and/or"
 )
+
+
+
+
+
+bibentry(bibtype = "Article",
+  title        =
+  paste("Heaping and seeping, GAITD regression and",
+        "doubly constrained reduced-rank vector ",
+        "generalized linear models."),
+  author       = c(person(c("T.", "W."), "Yee"),
+                   person(c("L."), "Frigau"),
+                   person(c("C."), "Ma")),
+  journal      = "Annals of Applied Statistics",
+  year         = "2025",
+  volume       = "(in press)",
+  number       = "",
+  pages        = "1--25",
+  textVersion  =
+  paste("Thomas W. Yee and Luca Frigau and Chenchen Ma (2025).",
+        "Heaping and seeping, GAITD regression and",
+        "doubly constrained reduced-rank vector generalized linear models.", 
+        "Annals of Applied Statistics, (in press)."),
+  header = "and/or"
+)
+
 
 
 

@@ -11,7 +11,23 @@
 %
 %
 %
+% 202511
+%\alias{wsdm.glm}
+%\alias{cops.glm}
+%\alias{copsd3}
+%\alias{copsd3.default}
+%\alias{copsd3.glm}
+\alias{copsvglmb}
+% 202505; to fix Karl-Joan Alesma bug:
+\alias{dposnegbin2}
+\alias{prob.munb.size.VGAM2}
+% 202504
+\alias{b3hfun}
+% 202503
+\alias{acat.deriv}
 %
+% 202503; Tingting Zhan:
+%%%%\alias{model.frame.vlm}
 % 202411
 \alias{dpospois2}
 \alias{printCoefmatt}
@@ -1013,15 +1029,17 @@
 %  }
 %}
 \details{
-  In the \pkg{VGAM} package there are currently many
-  objects/methods/classes which are currently internal and/or
-  undocumented. The help file suppresses the warnings when the package is
-  'CHECK'ed.
+  In the \pkg{VGAM} package there are currently
+  many objects/methods/classes which are
+  currently internal and/or undocumented. The
+  help file suppresses the warnings when the
+  package is 'CHECK'ed.
 
 }
 \value{
-  Each objects/methods/classes may or may not have its own individual value.
-  These will be documented over time.
+  Each objects/methods/classes may or may not
+  have its own individual value.  These will
+  be documented over time.
 
 
 }

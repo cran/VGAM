@@ -16,7 +16,8 @@
 \usage{
 binom2.or(lmu = "logitlink", lmu1 = lmu, lmu2 = lmu, loratio = "loglink",
           imu1 = NULL, imu2 = NULL, ioratio = NULL, zero = "oratio",
-          exchangeable = FALSE, tol = 0.001, more.robust = FALSE)
+          exchangeable = FALSE, tol = 0.001, bhhh = FALSE,
+          more.robust = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -69,6 +70,10 @@ binom2.or(lmu = "logitlink", lmu1 = lmu, lmu2 = lmu, loratio = "loglink",
   Tolerance for testing independence. Should be some
   small positive numerical value.
 
+
+  }
+  \item{bhhh}{
+  Details at \code{\link{CommonVGAMffArguments}}.
 
   }
   \item{more.robust}{

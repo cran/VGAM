@@ -447,7 +447,7 @@ betabinomial.control <-
                size = nvec, shape1 = shape1,
                shape2 = shape2, log = TRUE))
       }
-      rho.grid <- seq(0.05, 0.95, len = 25)  # rvar =
+      rho.grid <- seq(0.05, 0.95, len = 25)
       mustart.use <- if (length(mustart.orig)) {
         mustart.orig
       } else if ( .imethod == 1) {
@@ -831,10 +831,12 @@ betabinomial.control <-
   function(lmu = "logitlink",
            lmu1 = lmu, lmu2 = lmu,
            loratio = "loglink",
-           imu1 = NULL, imu2 = NULL, ioratio = NULL,
+           imu1 = NULL, imu2 = NULL,
+           ioratio = NULL,
            zero = "oratio",  # zero = 3,
            exchangeable = FALSE,
            tol = 0.001,
+           bhhh = FALSE,
            more.robust = FALSE) {
 
   lmu1 <- lmu1
@@ -859,6 +861,9 @@ betabinomial.control <-
   eoratio <- link2list(loratio)
   loratio <- attr(eoratio, "function.name")
 
+  if (!isFALSE(bhhh) && !isTRUE(bhhh))
+    stop("'bhhh' must be a single logical")
+     
 
   if (!isFALSE(exchangeable) && !isTRUE(exchangeable))
     stop("'exchangeable' is not a single logical")
@@ -901,6 +906,7 @@ betabinomial.control <-
 
   infos = eval(substitute(function(...) {
     list(M1 = 3,
+         bhhh = .bhhh ,
          expected = TRUE,
          multipleResponses = FALSE,
          parameters.names = c("mu1", "mu2", "oratio"),
@@ -912,15 +918,15 @@ betabinomial.control <-
   },
   list( .lmu1 = lmu1, .lmu2 = lmu2,
         .loratio = loratio,
-        .zero = zero,
+        .zero = zero, .bhhh = bhhh,
         .exchangeable = exchangeable))),
 
 
   initialize = eval(substitute(expression({
     mustart.orig <- mustart
     eval(process.binomial2.data.VGAM)
-    if (length(mustart.orig))
-      mustart <- mustart.orig  # Retain it if inputted
+    if (length(mustart.orig))  # Retain it if
+      mustart <- mustart.orig  # if inputted
 
     predictors.names <-
        c(namesof("mu1",    .lmu1 ,    .emu1 ,    short = TRUE),
@@ -1024,7 +1030,7 @@ betabinomial.control <-
       }
     }
   }, list( .more.robust = more.robust ))),
-  vfamily = c("binom2.or", "binom2"),  # Prior to 20241003
+  vfamily = c("binom2.or", "binom2"),  # < 20241003
   validparams = eval(substitute(function(eta, y, extra = NULL) {
     pmargin <- cbind(eta2theta(eta[, 1], .lmu1 , .emu1 ),
                      eta2theta(eta[, 2], .lmu2 , .emu2 ))
@@ -1065,33 +1071,37 @@ betabinomial.control <-
                pmargin[, 1] * pmargin[, 2]
     temp9 <- sqrt(a.temp^2 + b.temp)
 
-    coeff12 <- -0.5 + (2 * oratio * pmargin - a.temp) / (
-        2 * temp9)
+    coeff12 <- -0.5 + (2 * oratio * pmargin -
+                       a.temp) / (2 * temp9)
     dl.dmu1 <- coeff12[, 2] *
-      (y[, 1] / mu.use[, 1] - y[, 3] / mu.use[, 3]) -
-      (1 + coeff12[, 2]) * (y[, 2] / mu.use[, 2] -
-                            y[, 4] / mu.use[, 4])
+        (y[, 1] / mu.use[, 1] -
+         y[, 3] / mu.use[, 3]) - (1 +
+         coeff12[, 2]) * (y[, 2] / mu.use[, 2] -
+                          y[, 4] / mu.use[, 4])
 
     dl.dmu2 <- coeff12[, 1] *
-       (y[, 1] / mu.use[, 1] - y[, 2] / mu.use[, 2]) -
-       (1 + coeff12[, 1]) * (y[, 3] / mu.use[, 3] -
-                             y[, 4] / mu.use[, 4])
+  (y[, 1] / mu.use[, 1] - y[, 2] / mu.use[, 2]) -
+  (1 + coeff12[, 1]) * (y[, 3] / mu.use[, 3] -
+                        y[, 4] / mu.use[, 4])
 
-    coeff3 <- (y[, 1]/mu.use[, 1] - y[, 2]/mu.use[, 2] -
-               y[, 3]/mu.use[, 3] + y[, 4]/mu.use[, 4])
+    coeff3 <- (y[, 1] / mu.use[, 1] -
+               y[, 2] / mu.use[, 2] -
+               y[, 3] / mu.use[, 3] +
+               y[, 4] / mu.use[, 4])
     Vab <- pmax(smallno,
-                1 / (1 / mu.use[, 1] + 1 / mu.use[, 2] +
-                     1 / mu.use[, 3] + 1 / mu.use[, 4]))
+        1 / (1 / mu.use[, 1] + 1 / mu.use[, 2] +
+        1 / mu.use[, 3] + 1 / mu.use[, 4]))
     dp11.doratio <- Vab / use.oratio
     dl.doratio <- coeff3 * dp11.doratio
     dpmar1.deta <-dtheta.deta(pmargin[, 1], .lmu1, .emu1 )
     dpmar2.deta <-dtheta.deta(pmargin[, 2], .lmu2, .emu2 )
     doratio.deta <- dtheta.deta(use.oratio,
-                                .loratio, .eoratio )
+                           .loratio , .eoratio )
 
-    c(w) * cbind(dl.dmu1 * dpmar1.deta,
-                 dl.dmu2 * dpmar2.deta,
-                 dl.doratio * doratio.deta)
+    ans1 <- cbind(dl.dmu1    * dpmar1.deta,
+                  dl.dmu2    * dpmar2.deta,
+                  dl.doratio * doratio.deta)
+    c(w) * ans1
   }),
   list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
         .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))),
@@ -1104,18 +1114,39 @@ betabinomial.control <-
     pqmargin <- pmargin * (1 - pmargin)
     pqmargin[pqmargin < smallno] <- smallno
 
-    wz <- matrix(0, n, 4)
-    wz[, iam(1, 1, M)] <-
-      (pqmargin[, 2] * Vab / myDelta) * dpmar1.deta^2
-    wz[, iam(2, 2, M)] <-
-      (pqmargin[, 1] * Vab / myDelta) * dpmar2.deta^2
+    ncwz <- 4  # Four
+    wz <- matrix(0, n, ncwz)
+    wz[, iam(1, 1, M)] <- dpmar1.deta^2 *
+      (pqmargin[, 2] * Vab / myDelta)
+    wz[, iam(2, 2, M)] <- dpmar2.deta^2 *
+      (pqmargin[, 1] * Vab / myDelta)
     wz[, iam(3, 3, M)] <- (Vab / use.oratio^2) *
       doratio.deta^2
-    wz[, iam(1, 2, M)] <- (Vab * Deltapi / myDelta) *
-      dpmar1.deta * dpmar2.deta
-    c(w) * wz
+    wz[, iam(1, 2, M)] <-
+        (Vab * Deltapi / myDelta) *
+        dpmar1.deta * dpmar2.deta
+    ans4 <- wz  # Fisher scoring
+
+
+    if ( .bhhh ) {
+      T <- TRUE
+      ind5 <- iam(NA, NA, M, both = T, diag = T)
+      ncwz <- 4  # Trick
+      ind5$row.index <- ind5$row.index[1:ncwz]
+      ind5$col.index <- ind5$col.index[1:ncwz]
+      bhhhmat <-  # Unweighted xprod matrix
+          ans1[, ind5$row, drop = FALSE] *
+          ans1[, ind5$col, drop = FALSE]
+      ans4 <- matrix(0, n, ncwz)
+      for (jay in 1:ncwz)
+        ans4[, jay] <-  # w is a n-vector:
+          weighted.mean(bhhhmat[, jay], w)
+    }  # bhhh
+
+    c(w) * ans4
   }),
   list( .lmu1 = lmu1, .lmu2 = lmu2, .loratio = loratio,
+        .bhhh = bhhh,
         .emu1 = emu1, .emu2 = emu2, .eoratio = eoratio ))))
 }  # binom2.or
 
@@ -1144,8 +1175,8 @@ setMethod("summaryvglmS4VGAM",
   if (rownames(cfit)[1] == "(Intercept)" &&
       all(cfit[-1, 3] == 0)) {
     object@post$oratio <- eta2theta(cfit[1, 3],
-                                    link = object@misc$link[3],
-                                    earg = object@misc$earg[[3]])
+                                  object@misc$link[3],
+                                  object@misc$earg[[3]])
   }
 
   object@post
@@ -1158,7 +1189,8 @@ setMethod("showsummaryvglmS4VGAM",
   function(object, VGAMff, ...) {
  if (length(object@post$oratio) == 1 &&
       is.numeric(object@post$oratio)) {
-    cat("\nOdds ratio: ", round(object@post$oratio, digits = 4), "\n")
+   cat("\nOdds ratio: ",
+       round(object@post$oratio, digits = 4), "\n")
   }
 })
 
@@ -1248,7 +1280,7 @@ setMethod("showsummaryvglmS4VGAM",
 
   answer <- matrix(0, use.n, 2,
                    dimnames = list(NULL,
-                                   if (twoCols) colnames else NULL))
+                   if (twoCols) colnames else NULL))
   yy <- runif(use.n)
   cs1 <- dmat[, "00"] + dmat[, "01"]
   cs2 <- cs1 + dmat[, "10"]
@@ -1335,7 +1367,7 @@ binom2.rho.control <-
             namesof("mu2", lmu12, earg = emu12), ", ",
             namesof("rho", lrho,  earg = erho)),
   constraints = eval(substitute(expression({
-    constraints <- cm.VGAM(matrix(c(1, 1, 0, 0, 0, 1), 3, 2),
+    constraints <- cm.VGAM(matrix(c(1,1,0, 0,0,1), 3),
                            x = x,
                            bool = .exchangeable ,
                            constraints = constraints,
@@ -1343,7 +1375,8 @@ binom2.rho.control <-
     constraints <- cm.zero.VGAM(constraints, x = x, .zero ,
                      M = M, M1 = 3,
                      predictors.names = predictors.names)
-  }), list( .exchangeable = exchangeable, .zero = zero ))),
+  }),
+  list( .exchangeable = exchangeable, .zero = zero ))),
 
   infos = eval(substitute(function(...) {
     list(M1 = 3,
@@ -1366,9 +1399,9 @@ binom2.rho.control <-
       mustart <- mustart.orig  # Retain it if inputted
 
     predictors.names <- c(
-        namesof("mu1", .lmu12 , earg = .emu12 , short = TRUE),
-        namesof("mu2", .lmu12 , earg = .emu12 , short = TRUE),
-        namesof("rho", .lrho ,  earg = .erho,  short = TRUE))
+        namesof("mu1", .lmu12 , .emu12 , short = TRUE),
+        namesof("mu2", .lmu12 , .emu12 , short = TRUE),
+        namesof("rho", .lrho ,  .erho  , short = TRUE))
 
     if (is.null( .nsimEIM )) {
       save.weights <- control$save.weights <- FALSE
@@ -1434,8 +1467,8 @@ binom2.rho.control <-
 
           sum((if (is.numeric(extraargs$orig.w))
                extraargs$orig.w else 1) *
-               dmultinomial(x = ycounts, size = nvec, prob = mumat,
-                            log = TRUE, dochecking = FALSE))
+               dmultinomial(ycounts, size = nvec,
+           prob = mumat, log = TRUE, dochecking = FALSE))
         }
         rho.grid <- .grho # seq(-0.95, 0.95, len = 31)
         try.this <-
@@ -1453,9 +1486,10 @@ binom2.rho.control <-
           try.this
       }
 
-      etastart <- cbind(theta2eta(mu1.init, .lmu12 , earg = .emu12 ),
-                        theta2eta(mu2.init, .lmu12 , earg = .emu12 ),
-                        theta2eta(rho.init, .lrho ,  earg = .erho ))
+      etastart <-
+          cbind(theta2eta(mu1.init, .lmu12 , .emu12 ),
+                theta2eta(mu2.init, .lmu12 , .emu12 ),
+                theta2eta(rho.init, .lrho ,  .erho  ))
       mustart <- NULL # Since etastart has been computed.
     }
   }), list( .lmu12 = lmu12, .lrho = lrho,
@@ -1465,8 +1499,8 @@ binom2.rho.control <-
             .imethod = imethod, .nsimEIM = nsimEIM,
             .imu1 = imu1, .imu2 = imu2 ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , earg = .emu12 ),
-                     eta2theta(eta[, 2], .lmu12 , earg = .emu12 ))
+    pmargin <- cbind(eta2theta(eta[, 1], .lmu12 , .emu12 ),
+                     eta2theta(eta[, 2], .lmu12 , .emu12 ))
     rho <- eta2theta(eta[, 3], .lrho , earg = .erho )
     p11 <- pbinorm(eta[, 1], eta[, 2], cov12 = rho)
     p01 <- pmin(pmargin[, 2] - p11, pmargin[, 2])
@@ -1632,7 +1666,8 @@ binom2.rho.control <-
         matrix(colMeans(run.varcov),
                n, ncol(run.varcov), byrow = TRUE) else run.varcov
 
-      wz <- wz * dthetas.detas[, ind1$row] * dthetas.detas[, ind1$col]
+        wz <- wz * dthetas.detas[, ind1$row] *
+                   dthetas.detas[, ind1$col]
     }
     c(w) * wz
   }), list( .nsimEIM = nsimEIM ))))
@@ -2652,15 +2687,16 @@ betabinomialff.control <-
       NCOL(etastart) != 2) {
       shape.init <- rep_len( .ishape , n)
       etastart <-
-        cbind(theta2eta(prob.init,  .lprob ,  earg = .eprob ),
-              theta2eta(shape.init, .lshape , earg = .eshape ))
+        cbind(theta2eta(prob.init,  .lprob ,  .eprob ),
+              theta2eta(shape.init, .lshape , .eshape ))
       }
-  }), list( .iprob = iprob, .ishape = ishape, .lprob = lprob,
-            .eprob = eprob, .eshape = eshape,
-            .lshape = lshape ))),
+  }),
+  list( .iprob = iprob, .ishape = ishape,
+        .eprob = eprob, .eshape = eshape,
+        .lprob = lprob, .lshape = lshape ))),
   linkinv = eval(substitute(function(eta, extra = NULL) {
-    prob  <- eta2theta(eta[, 1], .lprob ,  earg = .eprob )
-    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    prob  <- eta2theta(eta[, 1], .lprob ,  .eprob )
+    shape <- eta2theta(eta[, 2], .lshape , .eshape )
     mymu <- (1-prob) / (prob - shape)
     ifelse(mymu >= 0, mymu, NA)
   }, list( .lprob = lprob, .lshape = lshape,
@@ -2716,10 +2752,11 @@ betabinomialff.control <-
            .eprob = eprob, .eshape = eshape ))),
   vfamily = c("betageometric"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
-    prob  <- eta2theta(eta[, 1], .lprob ,  earg = .eprob )
-    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
-    okay1 <- all(is.finite(prob )) && all(0 < prob  & prob < 1) &&
-             all(is.finite(shape)) && all(0 < shape)
+    prob  <- eta2theta(eta[, 1], .lprob ,  .eprob )
+    shape <- eta2theta(eta[, 2], .lshape , .eshape )
+    okay1 <-
+    all(is.finite(prob )) && all(0 < prob  & prob < 1) &&
+    all(is.finite(shape)) && all(0 < shape)
     okay1
   },
   list( .lprob = lprob, .lshape = lshape,
@@ -2736,8 +2773,8 @@ betabinomialff.control <-
     if (any(pwts != 1))
       warning("ignoring prior weights")
     eta <- predict(object)
-    prob  <- eta2theta(eta[, 1], .lprob  , earg = .eprob  )
-    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    prob  <- eta2theta(eta[, 1], .lprob  , .eprob  )
+    shape <- eta2theta(eta[, 2], .lshape , .eshape )
     rbetageom(nsim * length(shape),
               shape1 = shape, shape2 = shape)
   },
@@ -2745,25 +2782,23 @@ betabinomialff.control <-
         .eprob = eprob, .eshape = eshape ))),
 
 
-
-
   deriv = eval(substitute(expression({
-    prob  <- eta2theta(eta[, 1], .lprob ,  earg = .eprob )
-    shape <- eta2theta(eta[, 2], .lshape , earg = .eshape )
+    prob  <- eta2theta(eta[, 1], .lprob ,  .eprob )
+    shape <- eta2theta(eta[, 2], .lshape , .eshape )
     shape1 <-      prob  / shape
     shape2 <- (1 - prob) / shape
-    dprob.deta  <- dtheta.deta(prob , .lprob  , earg = .eprob  )
-    dshape.deta <- dtheta.deta(shape, .lshape , earg = .eshape )
+    dprob.deta  <- dtheta.deta(prob , .lprob  , .eprob  )
+    dshape.deta <- dtheta.deta(shape, .lshape , .eshape )
     dl.dprob <- 1 / prob
     dl.dshape <- 0 * y
     maxy <- max(y)
     for (ii in 1:maxy) {
       index <- (ii <= y)
       dl.dprob[index] <- dl.dprob[index] -
-                         1/(1-prob[index]+(ii-1) * shape[index])
+         1 / (1 - prob[index]+(ii-1) * shape[index])
       dl.dshape[index] <- dl.dshape[index] +
-                         (ii-1)/(1-prob[index]+(ii-1) * shape[index]) -
-                         (ii-1)/(1+(ii-1) * shape[index])
+        (ii-1)/(1-prob[index]+(ii-1) * shape[index]) -
+                    (ii-1)/(1+(ii-1) * shape[index])
     }
     dl.dshape <- dl.dshape - (y+1 -1)/(1+(y+1 -1) * shape)
     c(w) * cbind(dl.dprob * dprob.deta,
@@ -2868,22 +2903,22 @@ betabinomialff.control <-
          lprob1 = .lprob1 ,
          lprob2 = .lprob2 ,
          zero = .zero )
-  }, list( .zero = zero ))),
-
+  }, list( .lprob1 = lprob1, .lprob2 = lprob2,
+          .zero = zero ))),
 
   initialize = eval(substitute(expression({
     if (!is.vector(w))
       stop("the 'weights' argument must be a vector")
 
     if (any(abs(w - round(w)) > 1e-6))
-      stop("the 'weights' argument does not seem to be integer-valued")
+      stop("'weights' seems not to be integer-valued")
 
 
     if (ncol(y <- cbind(y)) != 2)
       stop("the response must be a 2-column matrix")
 
     if (any(y < 0 | y > 1))
-      stop("the response must have values between 0 and 1")
+      stop("the response must have values in [0, 1]")
 
 
     w <- round(w)
@@ -2897,20 +2932,20 @@ betabinomialff.control <-
               " two should be integer-valued")
 
     predictors.names <-
-        c(namesof("prob1", .lprob1 , .eprob1 , tag = FALSE),
-          namesof("prob2", .lprob2 , .eprob2 , tag = FALSE))
+      c(namesof("prob1", .lprob1 , .eprob1 , tag = FALSE),
+        namesof("prob2", .lprob2 , .eprob2 , tag = FALSE))
 
     prob1.init <- if (is.Numeric( .iprob1))
-                   rep_len( .iprob1 , n) else
-                   rep_len(weighted.mean(y[, 1], w = w), n)
+             rep_len( .iprob1 , n) else
+             rep_len(weighted.mean(y[, 1], w = w), n)
     prob2.init <- if (is.Numeric( .iprob2 ))
-                   rep_len( .iprob2 , n) else
-                   rep_len(weighted.mean(y[, 2], w = w*y[, 1]), n)
+             rep_len( .iprob2 , n) else
+             rep_len(weighted.mean(y[, 2], w*y[, 1]), n)
 
     if (!length(etastart)) {
       etastart <-
-        cbind(theta2eta(prob1.init, .lprob1 , earg = .eprob1 ),
-              theta2eta(prob2.init, .lprob2 , earg = .eprob2 ))
+        cbind(theta2eta(prob1.init, .lprob1 , .eprob1 ),
+              theta2eta(prob2.init, .lprob2 , .eprob2 ))
     }
   }),
   list( .iprob1 = iprob1, .iprob2 = iprob2,
@@ -2927,10 +2962,9 @@ betabinomialff.control <-
 
     misc$earg <- list("prob1" = .eprob1 , "prob2" = .eprob2 )
 
-    misc$expected <- TRUE
-    misc$zero <- .zero
-    misc$parallel <- .parallel
-    misc$apply.parint <- .apply.parint
+    misc$zero <- ( .zero )
+    misc$parallel <- ( .parallel )
+    misc$apply.parint <- ( .apply.parint )
   }), list( .lprob1 = lprob1, .lprob2 = lprob2,
             .eprob1 = eprob1, .eprob2 = eprob2,
             .parallel = parallel,
@@ -2939,8 +2973,8 @@ betabinomialff.control <-
   loglikelihood = eval(substitute(
     function(mu, y, w, residuals = FALSE, eta, extra = NULL,
              summation = TRUE) {
-    prob1 <- eta2theta(eta[, 1], .lprob1 , earg = .eprob1 )
-    prob2 <- eta2theta(eta[, 2], .lprob2 , earg = .eprob2 )
+    prob1 <- eta2theta(eta[, 1], .lprob1 , .eprob1 )
+    prob2 <- eta2theta(eta[, 2], .lprob2 , .eprob2 )
 
     smallno <- 100 * .Machine$double.eps
     prob1 <- pmax(prob1,   smallno)
@@ -2971,10 +3005,11 @@ betabinomialff.control <-
         .eprob1 = eprob1, .eprob2 = eprob2 ))),
   vfamily = c("seq2binomial"),
   validparams = eval(substitute(function(eta, y, extra = NULL) {
-    prob1 <- eta2theta(eta[, 1], .lprob1 , earg = .eprob1 )
-    prob2 <- eta2theta(eta[, 2], .lprob2 , earg = .eprob2 )
-    okay1 <- all(is.finite(prob1)) && all(0 < prob1 & prob1 < 1) &&
-             all(is.finite(prob2)) && all(0 < prob2 & prob2 < 1)
+    prob1 <- eta2theta(eta[, 1], .lprob1 , .eprob1 )
+    prob2 <- eta2theta(eta[, 2], .lprob2 , .eprob2 )
+    okay1 <-
+    all(is.finite(prob1)) && all(0 < prob1 & prob1 < 1) &&
+    all(is.finite(prob2)) && all(0 < prob2 & prob2 < 1)
     okay1
   }, list( .lprob1 = lprob1, .lprob2 = lprob2,
            .eprob1 = eprob1, .eprob2 = eprob2 ))),
@@ -2997,7 +3032,8 @@ betabinomialff.control <-
     dl.dprob1 <- rvector / prob1 - (mvector-rvector) / (1-prob1)
     dl.dprob2 <- svector / prob2 - (rvector-svector) / (1-prob2)
 
-    cbind(dl.dprob1 * dprob1.deta, dl.dprob2 * dprob2.deta)
+    cbind(dl.dprob1 * dprob1.deta,
+          dl.dprob2 * dprob2.deta)
   }), list( .lprob1 = lprob1, .lprob2 = lprob2,
             .eprob1 = eprob1, .eprob2 = eprob2 ))),
   weight = eval(substitute(expression({
@@ -3054,8 +3090,8 @@ betabinomialff.control <-
 
   new("vglmff",
   blurb = c("Exchangeable bivariate ", lmu12,
-            " odds-ratio model based on\n",
-            "a zero-inflated Poisson distribution\n\n",
+        " odds-ratio model based on a \n",
+        "zero-inflated Poisson distribution\n\n",
             "Links:    ",
   namesof("mu12",   lmu12,   earg = emu12), ", ",
   namesof("phi12",  lphi12,  earg = ephi12), ", ",
@@ -4502,6 +4538,7 @@ debbhelper <-
   j1 <- if (x == size) NULL else 0:(size - x - 1)
   h1 <- 0:(size - 1)
 
+  lchoose(size, x) +
   sum(log(prob + Gama * i1)) +
   sum(log1p(-prob + Gama * j1)) -
   sum(log1p(Gama * h1))
@@ -4533,12 +4570,13 @@ dextbetabinom2 <-
           !is.finite(rho) |
           size < 2 | 1 <= rho |
           prob < 0 | 1 < prob |
-          pmin(prob, 1 - prob) + Gama * (size - 1) < 0
+          pmin(prob, 1 - prob) +
+          Gama * (size - 1) < 0
   bad1 <- bad0 | x != round(x) | x < 0 | size < x
   bad2 <- bad0 | !is.finite(x)
   bad  <- bad0 | bad1 | bad2
   logpdf <- rho
-  logpdf[!bad] <- lchoose(size[!bad], x[!bad])
+  logpdf[!bad] <- 0  # lchoose(size[!bad],x[!bad])
   logpdf[ bad] <- NA  # x + size + prob + rho
   Gama <- rho / (1 - rho)
   if (any(!bad))
@@ -4560,6 +4598,44 @@ dextbetabinom2 <-
 }  # dextbetabinom2
 
     
+
+
+
+
+
+
+dextbetabinom3 <-
+  function(x, size, prob, rho = 0, log = FALSE) {
+  if (!isFALSE(log.arg <- log) && !isTRUE(log))
+    stop("bad input for argument 'log'")
+  rm(log)
+
+  L <- max(length(x), length(size), length(prob),
+           length(rho))
+  if (length(x)    < L) x    <- rep_len(x,    L)
+  if (length(size) < L) size <- rep_len(size, L)
+  if (length(prob) < L) prob <- rep_len(prob, L)
+  if (length(rho)  < L) rho  <- rep_len(rho,  L)
+
+
+  if (all(is.finite(rho)) && all(rho == 0))
+    return(dbinom(x, size, prob, log = log.arg))
+
+  Gama <- rho / (1 - rho)
+  a6 <- mapply(debbhelper, x, size, prob, Gama)
+
+  a6[x != round(x)] <- NA_real_
+  a6[x < 0 | x > size] <- log(0.0)
+  a6[size != round(size) | size < 1] <- NA_real_
+  a6[prob < 0 | prob > 1] <- NA_real_
+
+  if (log.arg) a6 else exp(a6)
+}  # dextbetabinom3
+
+  
+
+
+
 
 
 

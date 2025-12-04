@@ -12,7 +12,7 @@
 fill1 <- fill2 <- fill3 <- fill4 <-
   function(x, values = 0, ncolx = ncol(x)) {
   x <- as.matrix(x)
-  matrix(values, nrow = nrow(x), ncol = ncolx, byrow = TRUE)
+  matrix(values, nrow(x), ncolx, byrow = TRUE)
 }
 
 
@@ -34,7 +34,7 @@ remove.arg <- function(string) {
   nc <- nchar(string)
   bits <- substring(string, 1:nc, 1:nc)
   b1 <- (1:nc)[bits == "("]
-  b1 <- if (length(b1)) b1[1]-1 else nc
+  b1 <- if (length(b1)) b1[1] - 1 else nc
   if (b1 == 0)
     return("")
   string <- paste(bits[1:b1], collapse = "")
@@ -53,17 +53,17 @@ add.arg <- function(string, arg.string) {
   nc <- nchar(string)
   lastc <- substring(string, nc, nc)
   if (lastc == ")") {
-    if (substring(string, nc-1, nc-1) == "(") {
-      paste(substring(string, 1, nc-2), "(", arg.string, ")",
-            sep = "")
+    if (substring(string, nc - 1, nc - 1) == "(") {
+      paste0(substring(string, 1, nc - 2),
+             "(", arg.string, ")")
     } else {
-      paste(substring(string, 1, nc-1), ", ", arg.string, ")",
-            sep = "")
+      paste0(substring(string, 1, nc - 1),
+             ", ", arg.string, ")")
     }
   } else {
-    paste(string, "(", arg.string, ")", sep = "")
+    paste0(string, "(", arg.string, ")")
   }
-}
+}  # add.arg
 
 
 
@@ -78,8 +78,9 @@ get.arg <- function(string) {
   b2 <- (1:nc)[bits == ")"]
   b1 <- if (length(b1)) min(b1) else return("")
   b2 <- if (length(b2)) max(b2) else return("")
-  if (b2-b1 == 1) "" else paste(bits[(1+b1):(b2-1)], collapse = "")
-}
+  if (b2 - b1 == 1) "" else
+    paste(bits[(1+b1):(b2-1)], collapse = "")
+}  # get.arg
 
 
 
@@ -186,7 +187,7 @@ matrix.power <- function(wz, M, power, fast = TRUE) {
   WW <- mux55(evects, temp, M = M)
   WW[,!index] <- NA
   WW
-}
+}  # matrix.power
 
 
 
@@ -201,21 +202,23 @@ ResSS.vgam <- function(z, wz, M) {
 
   wz.z <- mux22(t(wz), z, M = M, as.matrix = TRUE)
   sum(wz.z * z)
-}
+}  # ResSS.vgam
 
 
 
 
 
 
-wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE) {
+wweighted.mean <-
+    function(y, w = NULL, matrix.arg = TRUE) {
   if (!matrix.arg)
-    stop("currently, argument 'matrix.arg' must be TRUE")
+    stop("currently, 'matrix.arg' must be TRUE")
   y <- as.matrix(y)
   M <- ncol(y)
   n <- nrow(y)
   if (M == 1) {
-    if (missing(w)) mean(y) else sum(w * y) / sum(w)
+    if (missing(w))
+      mean(y) else sum(w * y) / sum(w)
   } else {
     if (missing(w)) y %*% rep(1, n) else {
       numer <- mux22(t(w), y, M, as.matrix = TRUE)
@@ -227,7 +230,7 @@ wweighted.mean <- function(y, w = NULL, matrix.arg = TRUE) {
       c(solve(denom, numer))
     }
   }
-}
+}  # wweighted.mean
 
 
 
@@ -264,7 +267,7 @@ veigen <- function(x, M) {
   z$vectors <- z$vectors[, ord, , drop = FALSE]
   return(list(values  = z$values,
               vectors = z$vectors))
-}
+}  # veigen
 
 
 
@@ -272,8 +275,8 @@ veigen <- function(x, M) {
 
 
 ima <- function(j, k, M) {
-  if (length(M) > 1 || M <= 0 || j <= 0 || k <= 0 ||
-      j > M || k > M)
+  if (length(M) > 1 || M <= 0 || j <= 0 ||
+      k <= 0 || j > M || k > M)
     stop("input wrong in ima()")
   m <- diag(M)
   m[col(m) <= row(m)] <- 1:(M*(M+1)/2)
@@ -285,25 +288,27 @@ ima <- function(j, k, M) {
 
 
 
-checkwz <- function(wz, M, trace = FALSE,
-                    wzepsilon = .Machine$double.eps^0.75) {
+checkwz <-
+  function(wz, M, trace = FALSE,
+           wzepsilon = .Machine$double.eps^0.75) {
   if (wzepsilon > 0.5)
     warning("argument 'wzepsilon' is probably too large")
   if (!is.matrix(wz))
     wz <- as.matrix(wz)
   wzsubset <- wz[, 1:M, drop = FALSE]
   if (any(is.na(wzsubset)))
-    stop("NAs found in the working weights variable 'wz'")
+    stop("NAs in the working weights var 'wz'")
   if (any(!is.finite(wzsubset)))
-    stop("Some elements in the working weights variable 'wz' are ",
-         "not finite")
+    stop("Some elements in the working weights",
+         " variable 'wz' are not finite")
 
   if ((temp <- sum(wzsubset < wzepsilon)))
-    warning(temp, " diagonal elements of the working weights variable ",
-            "'wz' have been replaced by ", signif(wzepsilon, 5))
+    warning(temp, " diagonal elements of the ",
+      "working weights variable 'wz' have ",
+       "been replaced by ", signif(wzepsilon, 5))
   wz[, 1:M] <- pmax(wzepsilon, wzsubset)
   wz
-}
+}  # checkwz
 
 
 
@@ -342,12 +347,13 @@ label.cols.y <-
   percentiles <- signif(percentiles, digits = 5)
 
   ab1 <- rep(as.character(percentiles), length = ncol(answer))
-  ab1 <- paste(ab1, "%", sep = "")
+  ab1 <- paste0(ab1, "%")
   if (NOS > 1) {
     suffix.char <- if (length(colnames.y) == NOS)
       colnames.y else as.character(1:NOS)
-    ab1 <- paste(ab1, rep(suffix.char, each = length(percentiles)),
-                 sep = "")
+    ab1 <- paste0(ab1,
+                  rep(suffix.char,
+                      each = length(percentiles)))
   }
   colnames(answer) <- ab1
 
@@ -359,7 +365,64 @@ label.cols.y <-
              drop = FALSE]
   }
   answer
-}
+}  # label.cols.y
+
+
+
+
+
+
+b3hfun <- 
+  function(wz, dmat, w,
+           b3h.wz = 0.5   # == 0.5 by default
+           ) {
+  if (!is.matrix(wz))   wz   <- cbind(wz)
+  if (!is.matrix(w))    w    <- cbind(w)
+  if (!is.matrix(dmat)) dmat <- cbind(dmat)
+  
+  M <- ncol(dmat)
+  i5 <- iam(NA, NA, M, both = TRUE, diag = TRUE)
+  ncwz <- ncol(wz)
+  if (ncol(w) != 1 && ncol(w) != M)
+    stop("ncol(w) must be 1 or M")
+  ncwz <- ncol(wz)  # Prune i5
+  ind.w <- rep(1:ncol(w), length = ncwz)
+  i5$row.index <- i5$row.index[1:ncwz]
+  i5$col.index <- i5$col.index[1:ncwz]
+  dmat <- as.matrix(dmat) / c(w)  # Undo 'c(w) *'
+  bhhhmat <-  # Unweighted xprod matrix
+      dmat[, i5$row, drop = FALSE] *
+      dmat[, i5$col, drop = FALSE]
+  ans4 <- matrix(0, nrow(dmat), ncwz)
+  for (jay in 1:ncwz)
+    ans4[, jay] <-
+      weighted.mean(bhhhmat[, jay],
+                    w[, ind.w[jay]])
+  ans4 <- c(w) * ans4
+
+    if (length(b3h.wz)) {
+      ans4 <- if (b3h.wz == 0) wz else
+        if (b3h.wz == 1) ans4 else
+        ans4 * b3h.wz + (1 - b3h.wz) * wz
+    }  # length(oim.bhhh) && bhhh
+
+  ans4
+}  # b3hfun
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

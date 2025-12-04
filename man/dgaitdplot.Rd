@@ -196,7 +196,10 @@ in which case \code{fam = "genpois1"}.
 }
   \item{col.t}{
     Point colour for truncated values, the default is
-    \code{"tan"}.
+    turquoise.
+
+%   \code{"tan"}.
+
 
     
 }

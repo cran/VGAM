@@ -16,10 +16,11 @@
 
 
 
- dzanegbin <- function(x, size,  #  prob = NULL,
-                       munb,  #  = NULL,
-                       pobs0 = 0,
-                       log = FALSE) {
+ dzanegbin <-
+    function(x, size,  #  prob = NULL,
+             munb,  #  = NULL,
+             pobs0 = 0,
+             log = FALSE) {
 
   if (!isFALSE(log.arg <- log) && !isTRUE(log))
     stop("bad input for argument 'log'")
@@ -2319,7 +2320,8 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
  zipoisson <-
-  function(lpstr0 = "logitlink", llambda = "loglink",
+  function(lpstr0 = "logitlink",
+           llambda = "loglink",
            type.fitted = c("mean", "lambda", "pobs0",
                            "pstr0", "onempstr0"),
            ipstr0 = NULL,    ilambda = NULL,
@@ -2333,13 +2335,13 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
   ipstr0.small <- 1/64  # A number easily represented exactly
 
 
-  if (is.character(lpstr0))
+  if (is.character(lpstr0))  # 20250408
     lpstr0 <- substitute(y9, list(y9 = lpstr0))
   lpstr0 <- as.list(substitute(lpstr0))
   epstr00 <- link2list(lpstr0)
   lpstr00 <- attr(epstr00, "function.name")
 
-  if (is.character(llambda))
+  if (is.character(llambda))  # 20250408
     llambda <- substitute(y9, list(y9 = llambda))
   llambda <- as.list(substitute(llambda))
   elambda <- link2list(llambda)
@@ -2347,26 +2349,27 @@ zanegbinomialff.control <- function(save.weights = TRUE, ...) {
 
 
 
-  type.fitted <- match.arg(type.fitted,
-                           c("mean", "lambda", "pobs0",
-                             "pstr0", "onempstr0"))[1]
+  type.fitted <-
+      match.arg(type.fitted,
+                c("mean", "lambda", "pobs0",
+                  "pstr0", "onempstr0"))[1]
 
 
   if (length(ipstr00))
     if (!is.Numeric(ipstr00, positive = TRUE) ||
         any(ipstr00 >= 1))
-      stop("argument 'ipstr0' values must be inside the ",
+      stop("'ipstr0' values must be inside the ",
            "interval (0, 1)")
   if (length(ilambda))
     if (!is.Numeric(ilambda, positive = TRUE))
-      stop("argument 'ilambda' values must be positive")
+      stop("'ilambda' values must be positive")
 
 
   new("vglmff",
   blurb = c("Zero-inflated Poisson\n\n",
             "Links:    ",
-            namesof("pstr0",  lpstr00, earg = epstr00 ), ", ",
-            namesof("lambda", llambda, earg = elambda ), "\n",
+            namesof("pstr0", lpstr00, epstr00 ), ", ",
+            namesof("lambda",llambda, elambda ), "\n",
             "Mean:     (1 - pstr0) * lambda"),
 
   constraints = eval(substitute(expression({

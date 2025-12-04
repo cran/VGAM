@@ -15,7 +15,7 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
              maxit = 30, noWarning = FALSE,
              stepsize = 1, save.weights = FALSE,
              trace = FALSE, wzepsilon = .Machine$double.eps^0.75,
-             xij = NULL, ...)
+             xij = NULL, bhhh = FALSE, b3h.wz = 0.5, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -180,6 +180,53 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 % different values for each linear/additive predictor.
 %
 % }
+  \item{bhhh}{
+    Logical. Use the BHHH method?
+    Although \pkg{VGAM} is primarily
+    based on Fisher scoring,
+    the EIM for some models cannot be
+    derived or be computed. For those,
+    the Berndt-Hall-Hall-Hausman (BHHH) algorithm 
+    can be used and/or be an alternative.
+    Being an approximation based on the first
+    derivatives,
+    the results should not differ much if
+    \eqn{n} is very large, however for small
+    \eqn{n} the difference can be substantial,
+    e.g., Greene (2012).
+    Note that Fisher scoring
+    is recommended over the BHHH method
+    in general.
+    Note also that, internally, the code works
+    only
+    for \pkg{VGAM} family functions that have
+    \code{@deriv} returning the first derivatives
+    in the form \code{c(w) * d1mat}.
+    That's because \code{b3hfun()} divides
+    it by \code{c(w)}
+    to remove the weighting before taking the
+    (weighted) outer-product mean.
+
+
+  }
+  \item{b3h.wz}{
+    Numeric. Shrinkage factor between the BHHH
+    working weights and what is returned in
+    \code{@wz} (which is usually the EIM, but
+    might be the OIM).
+    Is used only if \code{bhhh = TRUE} and
+    valid values are in \eqn{[0, 1]}.
+    So \code{b3h.wz = 0.1} might be very
+    similar to Newton--Raphson for example.
+    If so,
+    individual negative Hessian matrices may be
+    negative-definite depending on the response,
+    hence it is necessary for the IRLS algorithm
+    to shrink them towards a positive-definite
+    matrix, such as that provided by the BHHH method.
+
+
+  }
 
   \item{\dots}{
   other parameters that may be picked up from control
@@ -219,6 +266,20 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
   \emph{Statistical Modelling},
   \bold{3}, 15--41.
 
+  Berndt, E. K. and Hall, B. H. and Hall, R. E. and
+  Hausman, J. A. (1974).
+  Estimation and inference in nonlinear structural models.
+  \emph{Annals of Economic and Social Measurement},
+  \bold{3--4}, 653--665.
+
+Greene, W. H. (2012).
+\emph{Econometric Analysis},
+7th Edition.
+Prentice Hall:
+Harlow, Essex, UK.
+
+% Pearson Education, Harlow, Essex.
+
 
 }
 \author{ Thomas W. Yee}
@@ -246,6 +307,7 @@ vglm.control(checkwz = TRUE, Check.rank = TRUE, Check.cm.rank = TRUE,
 
 
 }
+
 
 
 

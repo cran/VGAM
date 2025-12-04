@@ -487,20 +487,24 @@ setMethod("model.matrix",  "vgam", function(object, ...)
 
 
 
- model.framevlm <- function(object,
-                            setupsmart = TRUE,
-                            wrapupsmart = TRUE, ...) {
+  model.framevlm <-
+    function(object,
+             setupsmart = TRUE,
+             wrapupsmart = TRUE, ...) {
 
   dots <- list(...)
-  nargs <- dots[match(c("data", "na.action", "subset"), names(dots), 0)]
+  nargs <- dots[match(c("data", "na.action",
+                   "subset"), names(dots), 0)]
   if (length(nargs) || !length(object@model)) {
     fcall <- object@call
     fcall$method <- "model.frame"
     fcall[[1]] <- as.name("vlm")
 
     fcall$smart <- FALSE
-    if (setupsmart && length(object@smart.prediction)) {
-      setup.smart("read", smart.prediction=object@smart.prediction)
+    if (setupsmart &&
+        length(object@smart.prediction)) {
+      setup.smart("read", smart.prediction =
+                  object@smart.prediction)
     }
 
     fcall[names(nargs)] <- nargs
@@ -509,7 +513,8 @@ setMethod("model.matrix",  "vgam", function(object, ...)
       env <- parent.frame()
     ans <- eval(fcall, env, parent.frame())
 
-    if (wrapupsmart && length(object@smart.prediction)) {
+    if (wrapupsmart &&
+        length(object@smart.prediction)) {
       wrapup.smart()
     }
     ans
@@ -517,12 +522,30 @@ setMethod("model.matrix",  "vgam", function(object, ...)
 }  # model.framevlm
 
 
+
 if (!isGeneric("model.frame"))
-    setGeneric("model.frame", function(formula, ...)
+    setGeneric("model.frame",
+               function(formula, ...)
         standardGeneric("model.frame"))
 
-setMethod("model.frame",  "vlm", function(formula, ...)
-           model.framevlm(object = formula, ...))
+
+setMethod("model.frame",  "vlm",
+          function(formula, ...)
+          model.framevlm(object = formula, ...))
+
+
+
+
+
+
+model.frame.vlm <- function(formula, ...)
+  model.framevlm(object = formula, ...)
+
+
+
+
+
+
 
 
 
@@ -530,7 +553,8 @@ setMethod("model.frame",  "vlm", function(formula, ...)
 
  vmodel.matrix.default <-
   function(object, data = environment(object),
-           contrasts.arg = NULL, xlev = NULL, ...) {
+           contrasts.arg = NULL, xlev = NULL,
+           ...) {
 
   t <- if (missing(data)) terms(object) else
                           terms(object, data = data)
@@ -598,15 +622,20 @@ depvar.vlm <-
   function(object,
            type = c("lm", "lm2"),
            drop = FALSE,
+           muxypw = FALSE,
+           roundmux = TRUE,
            ...) {
   type <- match.arg(type, c("lm", "lm2"))[1]
-  ans <- if (type == "lm") {
-    object@y
+  ans <- if (type == "lm") object@y else object@Ym2
+
+  if (muxypw) {
+    ans <- ans * c(weights(object, type = "prior"))
+    if (roundmux)
+      round(ans) else ans
   } else {
-    object@Ym2
+      ans[, , drop = drop]
   }
-  ans[, , drop = drop]
-}
+}  # depvar.vlm
 
 
 
@@ -674,7 +703,9 @@ npred.vlm <- function(object,
 
 
 if (!isGeneric("npred"))
-    setGeneric("npred", function(object, ...) standardGeneric("npred"),
+    setGeneric("npred",
+               function(object, ...)
+                   standardGeneric("npred"),
                package = "VGAM")
 
 
@@ -682,7 +713,8 @@ setMethod("npred",  "vlm", function(object, ...)
            npred.vlm(object, ...))
 setMethod("npred",  "rrvglm", function(object, ...)
            npred.vlm(object, ...))
-setMethod("npred",  "qrrvglm", function(object, ...)
+setMethod("npred",  "qrrvglm",
+          function(object, ...)
            npred.vlm(object, ...))
 setMethod("npred",  "rrvgam", function(object, ...)
            npred.vlm(object, ...))
